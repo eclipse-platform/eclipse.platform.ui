@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class LaunchMode implements ILaunchMode {
 	
 	/**
 	 * Verifies the given attribute exists
+	 * @param name the attribute name to check
 	 * 
 	 * @exception CoreException if attribute does not exist
 	 */
@@ -63,7 +64,7 @@ public class LaunchMode implements ILaunchMode {
 	 * This method is used to create a new internal error describing that the specified attribute
 	 * is missing 
 	 * @param attrName the name of the attribute that is missing
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	private void missingAttribute(String attrName) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LaunchMode_1,new String[]{attrName}), null));

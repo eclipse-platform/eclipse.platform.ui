@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,7 +117,7 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Sets the attributes in this info to those in the given map.
 	 * 
-	 * @param map
+	 * @param map the {@link Map} of attributes to set
 	 */
 	protected void setAttributes(Map map) {
 		if (map == null) {
@@ -130,6 +130,8 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Returns the <code>String</code> attribute with the given key or the
 	 * given default value if undefined.
+	 * @param key the attribute name
+	 * @param defaultValue the value to be returned if the given key does not exist in the attribute table
 	 * 
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
@@ -155,6 +157,8 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Returns the <code>int</code> attribute with the given key or the given
 	 * default value if undefined.
+	 * @param key the name of the attribute
+	 * @param defaultValue the default value to return if the key does not appear in the attribute table
 	 * 
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
@@ -180,6 +184,8 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Returns the <code>boolean</code> attribute with the given key or the
 	 * given default value if undefined.
+	 * @param key the name of the attribute
+	 * @param defaultValue the default value to return if the key does not appear in the attribute table
 	 * 
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
@@ -205,6 +211,8 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Returns the <code>java.util.List</code> attribute with the given key or
 	 * the given default value if undefined.
+	 * @param key the name of the attribute
+	 * @param defaultValue the default value to return if the key does not appear in the attribute table
 	 * 
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
@@ -230,6 +238,8 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Returns the <code>java.util.Set</code> attribute with the given key or
 	 * the given default value if undefined.
+	 * @param key the name of the attribute
+	 * @param defaultValue the default value to return if the key does not xist in the attribute table
 	 * 
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
@@ -257,6 +267,8 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Returns the <code>java.util.Map</code> attribute with the given key or
 	 * the given default value if undefined.
+	 * @param key the name of the attribute
+	 * @param defaultValue the default value to return if the key does not exist in the attribute table
 	 * 
 	 * @return attribute specified by given key or the defaultValue if undefined
 	 * @throws CoreException
@@ -400,6 +412,11 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Helper method that creates a 'key value' element of the specified type
 	 * with the specified attribute values.
+	 * @param doc the {@link Document}
+	 * @param elementType the {@link Element} type to create
+	 * @param key the {@link Element} key
+	 * @param value the {@link Element} value
+	 * @return the new {@link Element}
 	 */
 	protected Element createKeyValueElement(Document doc, String elementType, String key, String value) {
 		Element element = doc.createElement(elementType);
@@ -414,7 +431,7 @@ public class LaunchConfigurationInfo {
 	 * 
 	 * @param doc the doc to add the element to
 	 * @param elementType the type of the element
-	 * @param setKey the key for the element
+	 * @param listKey the key for the element
 	 * @param list the list to fill the new element with
 	 * @return the new element
 	 */
@@ -464,7 +481,7 @@ public class LaunchConfigurationInfo {
 	 * 
 	 * @param doc the doc to add the element to
 	 * @param elementType the type of the element
-	 * @param setKey the key for the element
+	 * @param mapKey the key for the element
 	 * @param map the map to fill the new element with
 	 * @return the new element
 	 * 
@@ -490,7 +507,7 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Initializes the mapping of attributes from the XML file
 	 * @param root the root node from the XML document
-	 * @throws CoreException 
+	 * @throws CoreException if a problem is encountered
 	 */
 	protected void initializeFromXML(Element root) throws CoreException {
 		if (!root.getNodeName().equalsIgnoreCase(LAUNCH_CONFIGURATION)) { 
@@ -544,7 +561,7 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Loads a <code>String</code> from the specified element into the local attribute mapping
 	 * @param element the element to load from
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	protected void setStringAttribute(Element element) throws CoreException {
 		setAttribute(getKeyAttribute(element), getValueAttribute(element));
@@ -553,7 +570,7 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Loads an <code>Integer</code> from the specified element into the local attribute mapping
 	 * @param element the element to load from
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	protected void setIntegerAttribute(Element element) throws CoreException {
 		setAttribute(getKeyAttribute(element), new Integer(getValueAttribute(element)));
@@ -562,7 +579,7 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Loads a <code>Boolean</code> from the specified element into the local attribute mapping
 	 * @param element the element to load from
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	protected void setBooleanAttribute(Element element) throws CoreException {
 		setAttribute(getKeyAttribute(element), Boolean.valueOf(getValueAttribute(element)));
@@ -655,7 +672,7 @@ public class LaunchConfigurationInfo {
 	 * Returns the <code>String</code> representation of the 'key' attribute from the specified element
 	 * @param element the element to read from
 	 * @return the value
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	protected String getKeyAttribute(Element element) throws CoreException {
 		String key = element.getAttribute(KEY);
@@ -669,7 +686,7 @@ public class LaunchConfigurationInfo {
 	 * Returns the <code>String</code> representation of the 'value' attribute from the specified element
 	 * @param element the element to read from
 	 * @return the value
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	protected String getValueAttribute(Element element) throws CoreException {
 		String value = element.getAttribute(VALUE);   
@@ -773,7 +790,7 @@ public class LaunchConfigurationInfo {
 
 	/**
 	 * Returns if the attribute map contains the specified key
-	 * @param attributeName
+	 * @param attributeName the name of the attribute to check for
 	 * @return true if the attribute map contains the specified key, false otherwise
 	 * 
 	 * @since 3.4.0
@@ -786,7 +803,7 @@ public class LaunchConfigurationInfo {
 	 * Removes the specified attribute from the mapping and returns
 	 * its value, or <code>null</code> if none. Does nothing
 	 * if the attribute name is <code>null</code>
-	 * @param attributeName
+	 * @param attributeName the name of the attribute to remove
 	 * @return attribute value or <code>null</code>
 	 * 
 	 * @since 3.4.0

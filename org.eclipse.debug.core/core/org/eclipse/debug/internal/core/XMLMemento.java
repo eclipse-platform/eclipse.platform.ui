@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -355,6 +355,7 @@ public final class XMLMemento {
 
     /**
      * Places the element's attributes into the document.
+     * @param element1 the element
      * @param copyText true if the first text node should be copied
      */
     private void putElement(Element element1, boolean copyText) {
@@ -416,8 +417,8 @@ public final class XMLMemento {
     }
 
 	/**
-	 * @param key 
-	 * @param value 
+	 * @param key the attribute key
+	 * @param value the boolean value for the key
 	 * @since 3.4
 	 */
 	public void putBoolean(String key, boolean value) {

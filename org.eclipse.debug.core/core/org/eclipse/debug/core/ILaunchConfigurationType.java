@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,7 +140,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @param modes set of launch modes
 	 * @return the <code>ILaunchDelegate</code>s capable of launching
 	 * 		in the specified modes or an empty collection if none
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 * @since 3.3
 	 */
 	public ILaunchDelegate[] getDelegates(Set modes) throws CoreException;
@@ -151,7 +151,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * 
 	 * @param modes the set of modes to support
 	 * @return the preferred delegate or <code>null</code> if none
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 * 
 	 * @since 3.3
 	 */
@@ -164,7 +164,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * 
 	 * @param modes launch mode combination
 	 * @param delegate preferred launch delegate or <code>null</code>
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 * 
 	 * @since 3.3
 	 */

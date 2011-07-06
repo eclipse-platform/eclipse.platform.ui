@@ -1234,7 +1234,7 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	private static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, message, exception);

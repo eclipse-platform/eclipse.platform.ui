@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,6 +111,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/**
 	 * Notifies the listeners that text has
 	 * been appended to the stream.
+	 * @param text the text that was appended to the stream
 	 */
 	private void fireStreamAppended(String text) {
 		getNotifier().notifyAppend(text);

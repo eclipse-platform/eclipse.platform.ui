@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -204,9 +204,9 @@ public class LogicalStructureManager {
     
     /**
      * 
-     * @param types
+     * @param types the array of types
      * @param selected the type that is selected for the given combo or <code>null</code>
-     *  if the user has deselected any structure for the given combo
+     *  if the user has de-selected any structure for the given combo
      */
     public void setEnabledType(ILogicalStructureType[] types, ILogicalStructureType selected) {
         String combo= getComboString(types);
@@ -223,8 +223,8 @@ public class LogicalStructureManager {
     /**
      * Returns the string representing the given combination of logical
      * structure types. This string will be a series of comma-separated
-     * indeces representing the various types. If any of the given types
-     * don't have indeces associated with them, this method will create
+     * indices representing the various types. If any of the given types
+     * don't have indices associated with them, this method will create
      * the appropriate index.
      * @param types the logical structure types
      * @return the string representing the given combination of logical

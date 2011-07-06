@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -401,7 +401,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * if we initialize the delegate and it has not been provided, return false instead of failing
 	 * @param candidate the candidate to inspect for migration suitability
 	 * @return true if the specified launch configuration is suitable for migration, false otherwise
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 * 
 	 * @since 3.2
 	 */
@@ -415,7 +415,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	
 	/**
 	 * This method initializes the migration delegate
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	private synchronized void initializeMigrationDelegate() throws CoreException {
 		if(fElement.getAttribute(IConfigurationElementConstants.MIGRATION_DELEGATE) != null && fMigrationDelegate == null) {
@@ -440,7 +440,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * Migrates the specified launch configuration by loading its delegate.
 	 * In the event the migration delegate has not been provided do nothing.
 	 * @param candidate the candidate launch configuration to migrate
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 * 
 	 * @since 3.2
 	 */

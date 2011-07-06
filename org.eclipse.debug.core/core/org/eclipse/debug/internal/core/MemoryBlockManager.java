@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -250,8 +250,8 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	
 	/**
 	 * Notifies the listeners about the given memory blocks and the event to be sent
-	 * @param memBlocks
-	 * @param event
+	 * @param memBlocks the array of memory blocks
+	 * @param event the event to notify to the blocks
 	 */
 	private void notifyListeners(IMemoryBlock[] memBlocks, int event) {
 		getMemoryBlockNotifier().notify(memBlocks, event);
@@ -268,7 +268,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	
 	/**
 	 * Handles a debug event
-	 * @param event
+	 * @param event the {@link DebugEvent}
 	 */
 	public void handleDebugEvent(DebugEvent event) {
 		Object obj = event.getSource();

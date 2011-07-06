@@ -42,10 +42,10 @@ public final class Preferences {
 	/**
 	 * Sets a string preference in the {@link InstanceScope} or the given {@link IScopeContext} if it
 	 * is not <code>null</code>. Preferences set in a given context are flushed as they are set.
-	 * @param qualifier 
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the value
-	 * @param context
+	 * @param context the context to set the value in
 	 */
 	public static synchronized void setString(String qualifier, String key, String value, IScopeContext context) {
 		if(context != null) {
@@ -66,10 +66,10 @@ public final class Preferences {
 	/**
 	 * Sets a boolean preference in the {@link InstanceScope} or the given {@link IScopeContext} if it
 	 * is not <code>null</code>. Preferences set in a given context are flushed as they are set.
-	 * @param qualifier 
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the value
-	 * @param context
+	 * @param context the context to set the value in 
 	 */
 	public static synchronized void setBoolean(String qualifier, String key, boolean value, IScopeContext context) {
 		if(context != null) {
@@ -90,10 +90,10 @@ public final class Preferences {
 	/**
 	 * Sets a integer preference in the {@link InstanceScope} or the given {@link IScopeContext} if it
 	 * is not <code>null</code>. Preferences set in a given context are flushed as they are set.
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the value
-	 * @param context
+	 * @param context the context to set the value in
 	 */
 	public static synchronized void setInt(String qualifier, String key, int value, IScopeContext context) {
 		if(context != null) {
@@ -114,10 +114,10 @@ public final class Preferences {
 	/**
 	 * Sets a long preference in the {@link InstanceScope} or the given {@link IScopeContext} if it
 	 * is not <code>null</code>. Preferences set in a given context are flushed as they are set.
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the value
-	 * @param context
+	 * @param context the context to set the value in
 	 */
 	public static synchronized void setLong(String qualifier, String key, long value, IScopeContext context) {
 		if(context != null) {
@@ -138,10 +138,10 @@ public final class Preferences {
 	/**
 	 * Sets a byte array preference in the {@link InstanceScope} or the given {@link IScopeContext} if it
 	 * is not <code>null</code>. Preferences set in a given context are flushed as they are set.
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the value
-	 * @param context
+	 * @param context the context to set the value in
 	 */
 	public static synchronized void setByteArray(String qualifier, String key, byte[] value, IScopeContext context) {
 		if(context != null) {
@@ -162,10 +162,10 @@ public final class Preferences {
 	/**
 	 * Sets a double preference in the {@link InstanceScope} or the given {@link IScopeContext} if it
 	 * is not <code>null</code>. Preferences set in a given context are flushed as they are set.
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the value
-	 * @param context
+	 * @param context the context to set the value in
 	 */
 	public static synchronized void setDouble(String qualifier, String key, double value, IScopeContext context) {
 		if(context != null) {
@@ -186,10 +186,10 @@ public final class Preferences {
 	/**
 	 * Sets a float preference in the {@link InstanceScope} or the given {@link IScopeContext} if it
 	 * is not <code>null</code>. Preferences set in a given context are flushed as they are set.
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the value
-	 * @param context
+	 * @param context the context to setthe value in
 	 */
 	public static synchronized void setFloat(String qualifier, String key, float value, IScopeContext context) {
 		if(context != null) {
@@ -209,7 +209,7 @@ public final class Preferences {
 	
 	/**
 	 * Sets a string in the {@link DefaultScope}
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the new value
 	 */
@@ -219,7 +219,7 @@ public final class Preferences {
 	
 	/**
 	 * Sets a boolean in the {@link DefaultScope}
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the new value
 	 */
@@ -229,7 +229,7 @@ public final class Preferences {
 	
 	/**
 	 * Sets a byte array in the {@link DefaultScope}
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the new value
 	 */
@@ -239,7 +239,7 @@ public final class Preferences {
 	
 	/**
 	 * Sets a double in the {@link DefaultScope}
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the new value
 	 */
@@ -249,7 +249,7 @@ public final class Preferences {
 	
 	/**
 	 * Sets a float in the {@link DefaultScope}
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the new value
 	 */
@@ -259,7 +259,7 @@ public final class Preferences {
 	
 	/**
 	 * Sets a integer in the {@link DefaultScope}
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the new value
 	 */
@@ -269,7 +269,7 @@ public final class Preferences {
 	
 	/**
 	 * Sets a long in the {@link DefaultScope}
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key
 	 * @param value the new value
 	 */
@@ -280,7 +280,7 @@ public final class Preferences {
 	/**
 	 * Sets the given preference to its default value. This is done by removing any set value
 	 * from the {@link InstanceScope}. Has no effect if the given key is <code>null</code>.
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 * @param key the key for the preference
 	 */
 	public static synchronized void setToDefault(String qualifier, String key) {
@@ -292,9 +292,9 @@ public final class Preferences {
 	/**
 	 * Returns the default boolean value stored in the {@link DefaultScope} for the given key
 	 * or the specified default value if the key does not appear in the {@link DefaultScope}
-	 * @param qualifier
-	 * @param key
-	 * @param defaultvalue
+	 * @param qualifier the preference qualifier
+	 * @param key the preference key
+	 * @param defaultvalue the default value
 	 * 
 	 * @return the boolean value set in the {@link DefaultScope} for the given key, or the specified default value.
 	 */
@@ -305,9 +305,9 @@ public final class Preferences {
 	/**
 	 * Returns the default string value stored in the {@link DefaultScope} for the given key
 	 * or the specified default value if the key does not appear in the {@link DefaultScope}
-	 * @param qualifier
-	 * @param key
-	 * @param defaultvalue
+	 * @param qualifier the preference qualifier
+	 * @param key the preference key
+	 * @param defaultvalue the default value
 	 * 
 	 * @return the string value set in the {@link DefaultScope} for the given key, or the specified default value.
 	 */
@@ -318,9 +318,9 @@ public final class Preferences {
 	/**
 	 * Returns the default byte array value stored in the {@link DefaultScope} for the given key
 	 * or the specified default value if the key does not appear in the {@link DefaultScope}
-	 * @param qualifier
-	 * @param key
-	 * @param defaultvalue
+	 * @param qualifier the preference qualifier
+	 * @param key the preference key
+	 * @param defaultvalue the default value
 	 * 
 	 * @return the byte array value set in the {@link DefaultScope} for the given key, or the specified default value.
 	 */
@@ -331,9 +331,9 @@ public final class Preferences {
 	/**
 	 * Returns the default integer value stored in the {@link DefaultScope} for the given key
 	 * or the specified default value if the key does not appear in the {@link DefaultScope}
-	 * @param qualifier
-	 * @param key
-	 * @param defaultvalue
+	 * @param qualifier the preference qualifier
+	 * @param key the preference key
+	 * @param defaultvalue the default value
 	 * 
 	 * @return the integer value set in the {@link DefaultScope} for the given key, or the specified default value.
 	 */
@@ -344,9 +344,9 @@ public final class Preferences {
 	/**
 	 * Returns the default long value stored in the {@link DefaultScope} for the given key
 	 * or the specified default value if the key does not appear in the {@link DefaultScope}
-	 * @param qualifier
-	 * @param key
-	 * @param defaultvalue
+	 * @param qualifier the preference qualifier
+	 * @param key the preference key
+	 * @param defaultvalue the default value
 	 * 
 	 * @return the long value set in the {@link DefaultScope} for the given key, or the specified default value.
 	 */
@@ -357,9 +357,9 @@ public final class Preferences {
 	/**
 	 * Returns the default double value stored in the {@link DefaultScope} for the given key
 	 * or the specified default value if the key does not appear in the {@link DefaultScope}
-	 * @param qualifier
-	 * @param key
-	 * @param defaultvalue
+	 * @param qualifier the preference qualifier
+	 * @param key the preference key
+	 * @param defaultvalue the default value
 	 * 
 	 * @return the double value set in the {@link DefaultScope} for the given key, or the specified default value.
 	 */
@@ -370,9 +370,9 @@ public final class Preferences {
 	/**
 	 * Returns the default float value stored in the {@link DefaultScope} for the given key
 	 * or the specified default value if the key does not appear in the {@link DefaultScope}
-	 * @param qualifier
-	 * @param key
-	 * @param defaultvalue
+	 * @param qualifier the preference qualifier
+	 * @param key the preference key
+	 * @param defaultvalue the default value
 	 * 
 	 * @return the float value set in the {@link DefaultScope} for the given key, or the specified default value.
 	 */
@@ -381,9 +381,9 @@ public final class Preferences {
 	}
 	
 	/**
-	 * Save the preferences for the given plugin identifier.
+	 * Save the preferences for the given plug-in identifier.
 	 * It should be noted that all pending preference changes will be flushed with this method.
-	 * @param qualifier
+	 * @param qualifier the preference qualifier
 	 */
 	public static synchronized void savePreferences(String qualifier) {
 		try {
@@ -397,8 +397,8 @@ public final class Preferences {
 	
 	/**
 	 * Adds the given preference listener to the {@link DefaultScope} and the {@link InstanceScope}
-	 * @param qualifier
-	 * @param listener
+	 * @param qualifier the preference qualifier
+	 * @param listener the listener to register
 	 */
 	public static void addPreferenceListener(String qualifier, IEclipsePreferences.IPreferenceChangeListener listener) {
 		contexts[DEFAULT_CONTEXT].getNode(qualifier).addPreferenceChangeListener(listener);
@@ -407,8 +407,8 @@ public final class Preferences {
 	
 	/**
 	 * Removes the given preference listener from the {@link DefaultScope} and the {@link InstanceScope}
-	 * @param qualifier
-	 * @param listener
+	 * @param qualifier the preference qualifier
+	 * @param listener the listener to register
 	 */
 	public static void removePreferenceListener(String qualifier, IEclipsePreferences.IPreferenceChangeListener listener) {
 		contexts[DEFAULT_CONTEXT].getNode(qualifier).removePreferenceChangeListener(listener);

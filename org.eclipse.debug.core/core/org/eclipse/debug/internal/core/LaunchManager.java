@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -741,6 +741,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * method preserves mixed-case keys using the variable names 
 	 * recorded by the OS.
 	 * </p>
+	 * @param cache the map
 	 * @since 3.1
 	 */	
 	private void cacheNativeEnvironment(Map cache) {
@@ -892,6 +893,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 
 	/**
 	 * Return an instance of DebugException containing the specified message and Throwable.
+	 * @param message the message for the new {@link DebugException}
+	 * @param throwable the underlying {@link Exception}
+	 * @return the new {@link DebugException}
 	 */
 	protected DebugException createDebugException(String message, Throwable throwable) {
 		return new DebugException(
@@ -907,6 +911,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * the specified stream.  Simply pass out any exceptions encountered so that
 	 * caller can deal with them.  This is important since caller may need access to the
 	 * actual exception.
+	 * 
+	 * @param stream the {@link InputStream} to read from
+	 * @return the new {@link LaunchConfigurationInfo}
+	 * @throws CoreException if a problem is encountered
+	 * @throws ParserConfigurationException if the stream fails to parse
+	 * @throws IOException if there is a problem handling the given stream or writing the new info file
+	 * @throws SAXException if there is a SAX parse exception
 	 */
 	protected LaunchConfigurationInfo createInfoFromXML(InputStream stream) throws CoreException,
 																			 ParserConfigurationException,
@@ -926,8 +937,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * container (and sub-containers)
 	 * 
 	 * @param container the container to search
-	 * @exception CoreException an exception occurs traversing
-	 *  the container.
 	 * @return all launch configurations in the given container
 	 */
 	protected List findLaunchConfigurations(IContainer container) {
@@ -1100,6 +1109,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Return a sorted array of the names of all <code>ILaunchConfiguration</code>s in 
 	 * the workspace.  These are cached, and cache is cleared when a new config is added,
 	 * deleted or changed.
+	 * @return the sorted array of {@link ILaunchConfiguration} names
 	 */
 	protected synchronized String[] getAllSortedConfigNames() {
 		if (fSortedConfigNames == null) {
@@ -1127,6 +1137,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	
 	/**
 	 * Returns comparators, loading if required
+	 * @return the complete map of {@link ILaunchConfiguration} {@link Comparator}s
 	 */
 	protected Map getComparators() {
 		initializeComparators();
@@ -1139,7 +1150,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * 
 	 * @param root XML document
 	 * @return list of launch configurations
-	 * @exception IOException if an exception occurs reading the XML
+	 * @throws CoreException if a problem is encountered
 	 */	
 	protected List getConfigsFromXML(Element root) throws CoreException {
 		DebugException invalidFormat = 
@@ -1305,6 +1316,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Returns the info object for the specified launch configuration.
 	 * If the configuration exists, but is not yet in the cache,
 	 * an info object is built and added to the cache.
+	 * @param config the {@link ILaunchConfiguration} to get the info object from
+	 * @return the {@link LaunchConfigurationInfo} object from the given {@link ILaunchConfiguration}
 	 * 
 	 * @exception CoreException if an exception occurs building
 	 *  the info object
@@ -1887,10 +1900,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	
 	/**
 	 * Load comparator extensions.
-	 * 
-	 * @exception CoreException if an exception occurs reading
-	 *  the extensions
-	 *  
 	 */
 	private synchronized void initializeLaunchModes() {
 		if (fLaunchModes == null) {
@@ -1934,9 +1943,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 
 	/**
 	 * Register source locators.
-	 * 
-	 * @exception CoreException if an exception occurs reading
-	 *  the extensions
 	 */
 	private synchronized void initializeSourceLocators() {
 		if (fSourceLocators == null) {
@@ -2010,6 +2016,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	
 	/**
 	 * Returns whether the given String is composed solely of digits
+	 * @param string the {@link String} to check
+	 * @return <code>true</code> if the given {@link String} is a number <code>false</code> otherwise
 	 */
 	private boolean isNumber(String string) {
 		int numChars= string.length();
@@ -2161,7 +2169,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * launch configurations from the cached index.
 	 * 
 	 * @param project the project that has been closed
-	 * @exception CoreException if writing the index fails
 	 */
 	protected void projectClosed(IProject project) {
 		List configs = getLaunchConfigurations(project);
@@ -2180,7 +2187,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * configs in the project to the index of all configs.
 	 * 
 	 * @param project the project that has been opened
-	 * @exception CoreException if reading the index fails
 	 */
 	protected void projectOpened(IProject project) {
 		List configs = findLaunchConfigurations(project);
@@ -2417,6 +2423,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Throws a debug exception with the given throwable that occurred
 	 * while processing the given configuration.
+	 * @param config the {@link ILaunchConfiguration} causing the exception
+	 * @param e the {@link Exception} to throw
+	 * @throws DebugException the new {@link DebugException} wrapping the given {@link Exception} and {@link ILaunchConfiguration}
 	 * @since 3.5
 	 */
 	private void throwException(LaunchConfiguration config, Throwable e) throws DebugException {
@@ -2592,7 +2601,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * 
 	 * @param in the file to copy
 	 * @param out the file to be copied out to
-	 * @throws IOException 
+	 * @throws IOException if the file read fails
 	 * @since 3.4.0
 	 */
 	private void copyFile(File in, File out) throws IOException {

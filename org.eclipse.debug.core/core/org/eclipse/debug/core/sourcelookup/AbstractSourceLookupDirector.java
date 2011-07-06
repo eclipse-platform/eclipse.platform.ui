@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -230,7 +230,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * 
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, message, exception);

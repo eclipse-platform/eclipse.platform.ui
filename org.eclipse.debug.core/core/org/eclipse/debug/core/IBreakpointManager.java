@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -253,7 +253,7 @@ public interface IBreakpointManager {
      * Returns an array of {@link IBreakpointImportParticipant}s for the given 
      * breakpoint marker id, never <code>null</code>.
      * 
-     * @param markertype
+     * @param markertype the {@link String} identifier of the marker type
      * @return an array of {@link IBreakpointImportParticipant}s for the given marker type, 
      * never <code>null</code>
      * @throws CoreException if an exception occurs

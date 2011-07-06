@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,6 +135,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 * 
 	 * @param file zip file to search in
 	 * @param name file name
+	 * @return the {@link ZipEntry} with the given name or <code>null</code>
 	 * @exception CoreException if an exception occurs while detecting the root
 	 */
 	private ZipEntry searchRoots(ZipFile file, String name) throws CoreException {
@@ -208,6 +209,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 
 	/**
 	 * Returns the archive to search in.
+	 * @return the {@link ZipFile} to search in
 	 * 
 	 * @throws CoreException if unable to access the archive
 	 */

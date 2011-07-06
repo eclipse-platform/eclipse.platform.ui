@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class LogicalStructureType implements ILogicalStructureType {
 	
 	/**
 	 * Verifies the given attribute exists
+	 * @param name the name to verify
 	 * 
 	 * @exception CoreException if attribute does not exist
 	 */
@@ -72,7 +73,7 @@ public class LogicalStructureType implements ILogicalStructureType {
 	/**
 	 * Throws a new <code>CoreException</code> about the specified attribute being missing
 	 * @param attrName the name of the missing attribute
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	private void missingAttribute(String attrName) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LogicalStructureType_1, new String[]{attrName}), null));

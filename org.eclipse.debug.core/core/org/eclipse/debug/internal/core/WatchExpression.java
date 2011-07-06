@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -136,7 +136,7 @@ public class WatchExpression implements IWatchExpression {
 
 	/**
 	 * Fires the given debug event
-	 * @param event
+	 * @param event the {@link DebugEvent}
 	 */
 	protected void fireEvent(DebugEvent event) {
 		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
@@ -146,8 +146,6 @@ public class WatchExpression implements IWatchExpression {
 	 * Notifies the expression manager that this watch expression's
 	 * values have changed so the manager can update the
 	 * persisted expression.
-	 * 
-	 * @param persist whether to persist the expression
 	 */
 	private void watchExpressionChanged() {
 		((ExpressionManager)DebugPlugin.getDefault().getExpressionManager()).watchExpressionChanged(this);
@@ -229,7 +227,9 @@ public class WatchExpression implements IWatchExpression {
 	}
 
 	/**
-	 * @param enabled
+	 * Set the enabled state of the {@link WatchExpression}
+	 * 
+	 * @param enabled the new enabled state
 	 */
 	public void setEnabled(boolean enabled) {
 		fEnabled= enabled;
@@ -238,7 +238,8 @@ public class WatchExpression implements IWatchExpression {
 	}
 
 	/**
-	 * @param expression
+	 * Set the text of the expression
+	 * @param expression the new expression text
 	 */
 	public void setExpressionText(String expression) {
 		fExpressionText= expression;

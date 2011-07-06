@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -258,7 +258,7 @@ public class RefreshUtil {
 	 * Returns whether the refresh scope specified by the given launch
 	 * configuration is recursive.
 	 * 
-	 * @param configuration
+	 * @param configuration the {@link ILaunchConfiguration}
 	 * @return whether the refresh scope is recursive
 	 * @throws CoreException
 	 *             if unable to access the associated attribute

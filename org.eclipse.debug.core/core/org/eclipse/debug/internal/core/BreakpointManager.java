@@ -21,20 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
@@ -46,7 +32,17 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
@@ -55,6 +51,8 @@ import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IBreakpointImportParticipant;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The breakpoint manager manages all registered breakpoints
@@ -79,7 +77,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * Map of breakpoint import participants.
 	 * Map has the form:
-	 * <pre>Map(String - markerid, List of {@link IBreakpointImportParticipantDelegate})</pre>
+	 * <pre>Map(String - marker_id, List of {@link IBreakpointImportParticipant})</pre>
 	 */
 	private HashMap fImportParticipants = null;
 	
@@ -253,6 +251,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * 
 	 * @param resource the resource which contains the breakpoints
 	 * @param notify whether to notify of the breakpoint additions
+	 * @throws CoreException if a problem is encountered
 	 */
 	private void loadBreakpoints(IResource resource, boolean notify) throws CoreException {
 		initBreakpointExtensions();
@@ -287,6 +286,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * does this for us (at shutdown, transient markers are not saved). However,
 	 * the code is still present to delete non-persisted markers from old
 	 * workspaces.
+	 * @param resource the {@link IResource} to get markers for
+	 * @return the complete listing of persisted markers for the given {@link IResource}
+	 * @throws CoreException if a problem is encountered
 	 */
 	protected IMarker[] getPersistedMarkers(IResource resource) throws CoreException {
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
@@ -363,6 +365,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 	/**
 	 * Convenience method to get the workspace
+	 * @return the default {@link IWorkspace}
 	 */
 	private IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
@@ -394,6 +397,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * The BreakpointManager waits to load the breakpoints
 	 * of the workspace until a request is made to retrieve the 
 	 * breakpoints.
+	 * @return the underlying {@link Vector} of breakpoints
 	 */
 	private synchronized Vector getBreakpoints0() {
 		if (fBreakpoints == null) {
@@ -556,8 +560,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * 
 	 * @param breakpoints the breakpoints to register
 	 * @param notify whether to notify listeners of the add
-	 * @param loading whether the given breakpoints are being automatically loaded
-	 *  from previously persisted markers
+	 * @throws CoreException if a problem is encountered
 	 */
 	private void addBreakpoints(IBreakpoint[] breakpoints, boolean notify) throws CoreException {
 		List added = new ArrayList(breakpoints.length);
@@ -607,7 +610,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Returns whether change notification is to be suppressed for the given breakpoint.
 	 * Used when adding breakpoints and changing the "REGISTERED" attribute.
 	 * 
-	 * @param breakpoint
+	 * @param breakpoint the breakpoint
 	 * @return boolean whether change notification is suppressed
 	 */
 	protected boolean isChangeSuppressed(IBreakpoint breakpoint) {
@@ -628,6 +631,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * Verifies that the breakpoint marker has the minimal required attributes,
 	 * and throws a debug exception if not.
+	 * @param breakpoint the {@link IBreakpoint} to verify
+	 * @throws DebugException if a problem is encountered
 	 */
 	private void verifyBreakpoint(IBreakpoint breakpoint) throws DebugException {
 		try {
@@ -783,6 +788,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 		/**
 		 * Wrapper for handling adds
+		 * @param rDelta the {@link IResourceDelta}
+		 * @param marker the new {@link IMarker}
+		 * @param mDelta the accompanying {@link IMarkerDelta}
 		 */
 		protected void handleAddBreakpoint(IResourceDelta rDelta, IMarker marker, IMarkerDelta mDelta) {
 			if (0 != (rDelta.getFlags() & IResourceDelta.MOVED_FROM)) {
@@ -812,6 +820,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		
 		/**
 		 * Wrapper for handling removes
+		 * @param marker the {@link IMarker}
 		 */
 		protected void handleRemoveBreakpoint(IMarker marker) {
 			synchronized (fPostChangMarkersChanged) {
@@ -826,6 +835,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 		/**
 		 * Wrapper for handling changes
+		 * @param marker the {@link IMarker} that was changed
+		 * @param delta the {@link IMarkerDelta}
 		 */
 		protected void handleChangeBreakpoint(IMarker marker, IMarkerDelta delta) {
 			IBreakpoint breakpoint= getBreakpoint(marker);
@@ -838,6 +849,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		/**
 		 * A project has been opened or closed.  Updates the breakpoints for
 		 * that project
+		 * @param project the {@link IProject} that was changed
 		 */
 		private void handleProjectResourceOpenStateChange(final IResource project) {
 			if (!project.isAccessible()) {

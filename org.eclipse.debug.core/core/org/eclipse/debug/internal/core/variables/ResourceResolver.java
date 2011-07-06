@@ -105,7 +105,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 	 *  
 	 * @param message exception message
 	 * @param exception underlying exception or <code>null</code> 
-	 * @throws CoreException
+	 * @throws CoreException if a problem occurs
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception));

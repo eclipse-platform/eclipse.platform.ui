@@ -176,7 +176,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * Given a name that ends with .launch, return the simple name of the configuration.
 	 * 
-	 * @param fileName
+	 * @param fileName the name to parse
 	 * @return simple name
 	 * @since 3.5
 	 */
@@ -328,8 +328,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * Returns whether the given objects are equal or both <code>null</code>.
 	 * 
-	 * @param o1
-	 * @param o2
+	 * @param o1 the object
+	 * @param o2 the object to be compared to o1
 	 * @return whether the given objects are equal or both <code>null</code>
 	 * @since 3.5
 	 */
@@ -485,7 +485,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * is in a project that is closed or does not exist, <code>null</code> is returned.
 	 * 
 	 * @return file store this configuration is persisted in or <code>null</code>
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 * @since 3.5
 	 */
 	public IFileStore getFileStore() throws CoreException {
@@ -645,6 +645,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * by this configuration.
 	 * 
 	 * @param launch the launch on which to set the source locator
+	 * @throws CoreException if a problem is encountered
 	 */
 	protected void initializeSourceLocator(ILaunch launch) throws CoreException {
 		if (launch.getSourceLocator() == null) {

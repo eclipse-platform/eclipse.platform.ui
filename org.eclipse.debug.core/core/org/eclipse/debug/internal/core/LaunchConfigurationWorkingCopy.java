@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -173,9 +173,9 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	/**
 	 * Saves with progress.
 	 * 
-	 * @param monitor
+	 * @param monitor the {@link IProgressMonitor}
 	 * @return the saved <code>ILaunchConfiguration</code>
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 * 
 	 * @since 3.3
 	 */
@@ -228,7 +228,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	
 	/**
 	 * Performs the actual saving of the launch configuration.
-	 * @throws CoreException
+	 * @param monitor the {@link IProgressMonitor}
+	 * @throws CoreException if a problem is encountered
 	 */
 	private void doSave0(IProgressMonitor monitor) throws CoreException {
 		SubMonitor lmonitor = SubMonitor.convert(monitor, MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_0, new String[] {getName()}), 2);
@@ -259,6 +260,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	
 	/**
 	 * Writes the new configuration information to a file.
+	 * @param monitor the {@link IProgressMonitor}
 	 * 
 	 * @exception CoreException if writing the file fails
 	 */
@@ -388,9 +390,9 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	/**
 	 * Updates the given monitor with the given tick count and polls for cancellation. If the monitor
 	 * is cancelled an {@link OperationCanceledException} is thrown
-	 * @param monitor
-	 * @param ticks
-	 * @throws OperationCanceledException
+	 * @param monitor the {@link IProgressMonitor}
+	 * @param ticks the amount of work to advance the monitor
+	 * @throws OperationCanceledException if the user cancels the operation
 	 */
 	private void updateMonitor(IProgressMonitor monitor, int ticks) throws OperationCanceledException {
 		if(monitor != null) {
@@ -642,6 +644,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	/**
 	 * Returns whether change notification should be
 	 * suppressed
+	 * @return if changes notification should be suppressed
 	 */
 	protected boolean suppressChangeNotification() {
 		return fSuppressChange;

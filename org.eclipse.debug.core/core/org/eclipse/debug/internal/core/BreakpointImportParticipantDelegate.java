@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.debug.core.model.IBreakpointImportParticipant;
    </extension>
  * </pre>
  * 
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * 
  * @since 3.5
@@ -55,7 +55,7 @@ public class BreakpointImportParticipantDelegate {
 	 * a problem loading the delegate
 	 * 
 	 * @return the {@link IBreakpointImportParticipant} or <code>null</code>
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	public IBreakpointImportParticipant getDelegate() throws CoreException {
 		if(fParticipant == null) {
@@ -68,7 +68,7 @@ public class BreakpointImportParticipantDelegate {
 	 * Returns the marker type this participant is registered for.
 	 * 
 	 * @return the marker type this participant is registered for
-	 * @throws CoreException
+	 * @throws CoreException if a problem is encountered
 	 */
 	public String getType() throws CoreException {
 		return fElement.getAttribute(IConfigurationElementConstants.TYPE);

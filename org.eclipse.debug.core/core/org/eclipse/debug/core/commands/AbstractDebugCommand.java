@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 		/**
 		 * Creates a new job to update the specified request
 		 * 
-		 * @param stateRequest
+		 * @param stateRequest the {@link IEnabledStateRequest}
 		 */
 		UpdateJob(IEnabledStateRequest stateRequest) {
 			super(getEnabledStateTaskName());
@@ -304,6 +304,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	 * @param monitor progress monitor
 	 * @param request can be used to cancel this update request
 	 * @return whether this command can be executed for the given targets
+	 * @throws CoreException if a problem is encountered
 	 */
 	protected abstract boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request) throws CoreException;
 	
