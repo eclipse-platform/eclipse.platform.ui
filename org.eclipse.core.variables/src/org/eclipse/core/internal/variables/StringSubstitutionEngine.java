@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,7 @@ public class StringSubstitutionEngine {
 	 * 
 	 * @param expression expression to resolve
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
+	 * @param resolveVariables if the variables should be resolved during the substitution
 	 * @param manager registry of variables
 	 * @return the resulting string with all variables recursively
 	 *  substituted
@@ -131,6 +132,8 @@ public class StringSubstitutionEngine {
 	 * @param expression source expression
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @param resolveVariables whether to resolve the value of any variables
+	 * @param manager the {@link IStringVariableManager} to use for the substitution
+	 * @return the set of {@link String}s resolved from the given expression
 	 * @exception CoreException if unable to resolve a variable
 	 */
 	private HashSet substitute(String expression, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
@@ -228,7 +231,7 @@ public class StringSubstitutionEngine {
 	 * Resolve and return the value of the given variable reference,
 	 * possibly <code>null</code>. 
 	 * 
-	 * @param var
+	 * @param var the {@link VariableReference} to try and resolve
 	 * @param reportUndefinedVariables whether to report undefined variables as
 	 *  an error
 	 * @param resolveVariables whether to resolve the variables value or just to validate that this variable is valid

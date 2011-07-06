@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.core.internal.variables;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.variables.IStringVariable;
+import org.eclipse.core.variables.IValueVariable;
 
 /**
  * Common implementation of context and value variables
@@ -72,7 +73,7 @@ public abstract class StringVariable implements IStringVariable {
 	
 	/**
 	 * @see IValueVariable#setDescription(String)
-	 * @param description
+	 * @param description the new description to set for the variable
 	 */
 	public void setDescription(String description) {
 		fDescription = description;

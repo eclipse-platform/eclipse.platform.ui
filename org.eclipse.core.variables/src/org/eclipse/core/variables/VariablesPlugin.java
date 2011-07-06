@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,6 +98,7 @@ public class VariablesPlugin extends Plugin {
 	
 	/**
 	 * Convenience method which returns the unique identifier of this plug-in.
+	 * @return the identifier of this plug-in
 	 */
 	public static String getUniqueIdentifier() {
 		return PI_CORE_VARIABLES;

@@ -147,8 +147,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		/**
 		 * Notifies the given listener of the add/change/remove
 		 * 
-		 * @param listener the listener to notify
-		 * @param launch the launch that has changed
+		 * @param variables the {@link IValueVariable}s to notify about
 		 * @param update the type of change
 		 */
 		public void notify(IValueVariable[] variables, int update) {
@@ -443,6 +442,8 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	 * 
 	 * @return memento representing the value variables currently registered
 	 * @throws IOException if an I/O exception occurs while creating the XML.
+	 * @throws ParserConfigurationException if an I/O exception occurs while creating the XML.
+	 * @throws TransformerException if an exception occurs while creating the XML.
 	 */
 	private String getValueVariablesAsXML() throws IOException, ParserConfigurationException, TransformerException {
 		IValueVariable[] variables = getValueVariables();
@@ -487,7 +488,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	 * @param doc document to serialize
 	 * @return the document as a string
 	 * @throws TransformerException if an unrecoverable error occurs during the serialization
-	 * @throws IOException if the encoding attempted to be used is not supported
+	 * @throws UnsupportedEncodingException if the encoding attempted to be used is not supported
 	 */
 	private String serializeDocument(Document doc) throws TransformerException, UnsupportedEncodingException {
 		ByteArrayOutputStream s= new ByteArrayOutputStream();
