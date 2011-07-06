@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,18 +11,19 @@
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-import org.osgi.framework.BundleContext;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Plugin;
+import org.osgi.framework.BundleContext;
 
 /**
- * The main plugin class to be used in the desktop.
+ * The main plug-in class to be used in the desktop.
  */
 public class DebugCorePlugin extends Plugin {
 	//The shared instance.
@@ -42,9 +43,9 @@ public class DebugCorePlugin extends Plugin {
 	 */
 	public static final String VARIALBE_PERL_EXECUTABLE = "perlExecutable";
 	/**
-	 * Launch configuration attribute key. Value is a path to a perl
+	 * Launch configuration attribute key. Value is a path to a Perl
 	 * program. The path is a string representing a full path
-	 * to a perl program in the workspace. 
+	 * to a Perl program in the workspace. 
 	 */
 	public static final String ATTR_PDA_PROGRAM = ID_PDA_DEBUG_MODEL + ".ATTR_PDA_PROGRAM";
 	
@@ -118,13 +119,12 @@ public class DebugCorePlugin extends Plugin {
 	
 	/**
 	 * Return a <code>java.io.File</code> object that corresponds to the specified
-	 * <code>IPath</code> in the plugin directory, or <code>null</code> if none.
+	 * <code>IPath</code> in the plug-in directory, or <code>null</code> if none.
 	 */
 	public static File getFileInPlugin(IPath path) {
 		try {
-			URL installURL =
-				new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
-			URL localURL = Platform.asLocalURL(installURL);
+			URL installURL = getDefault().getBundle().getEntry(path.toString());
+			URL localURL = FileLocator.toFileURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException ioe) {
 			return null;

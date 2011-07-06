@@ -14,7 +14,7 @@
    <extension
          point="org.eclipse.core.variables.valueVariables">
       <variable
-            description="Path to Perl executable in the local file system"
+            description="%variable.description"
             name="perlExecutable"
             initialValue="c:\perl\bin\perl.exe"/>
    </extension>
@@ -26,7 +26,7 @@
             sourceLocatorId="pda.sourceLocator"
             delegate="org.eclipse.debug.examples.core.pda.launcher.PDALaunchDelegate"
             sourcePathComputerId="pda.sourcePathComputer"
-            name="PDA Application"
+            name="%pda.launchConfigurationType.name"
             id="pda.launchType"
             modes="run, debug"/>
    </extension>
@@ -36,7 +36,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="org.eclipse.debug.examples.core.midi.launcher.MidiLaunchDelegate"
-            name="MIDI Sequence"
+            name="%midi.launchConfigurationType.name"
             id="midi.launchType"
             modes="run, debug"/>
    </extension>
@@ -47,7 +47,7 @@
          point="org.eclipse.debug.core.sourceLocators">
       <sourceLocator
             class="org.eclipse.debug.examples.core.pda.sourcelookup.PDASourceLookupDirector"
-            name="PDA Source Locator"
+            name="%sourceLocator.name"
             id="pda.sourceLocator"/>
    </extension>
    <extension
@@ -64,25 +64,25 @@
          point="org.eclipse.debug.core.breakpoints">
       <breakpoint
             class="org.eclipse.debug.examples.core.pda.breakpoints.PDALineBreakpoint"
-            name="PDA Line Breakpoints"
+            name="%line.breakpoints.name"
             markerType="org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint"
             id="pda.lineBreakpoint"/>
       <breakpoint
             class="org.eclipse.debug.examples.core.pda.breakpoints.PDAWatchpoint"
-            name="PDA Watchpoints"
+            name="%watchpoints.name"
             markerType="org.eclipse.debug.examples.core.pda.markerType.watchpoint"
             id="pda.watchpoint"/>
    </extension>
    <extension
          id="pda.markerType.lineBreakpoint"
-         name="PDA Line Breakpoint Marker"
+         name="%line.breakpoint.marker.name"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.debug.core.lineBreakpointMarker"/>
       <persistent value="true"/>
    </extension>
    <extension
          id="pda.markerType.watchpoint"
-         name="PDA Watchpoint Marker"
+         name="%watchpoint.marker.name"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint"/>
       <persistent value="true"/>
@@ -95,7 +95,7 @@
          point="org.eclipse.debug.core.logicalStructureTypes">
       <logicalStructureType
             class="org.eclipse.debug.examples.core.pda.model.WordStructureDelegate"
-            description="Words"
+            description="%logicalStructureType.description"
             id="pda.wordStructure"
             modelIdentifier="pda.debugModel"/>
    </extension>

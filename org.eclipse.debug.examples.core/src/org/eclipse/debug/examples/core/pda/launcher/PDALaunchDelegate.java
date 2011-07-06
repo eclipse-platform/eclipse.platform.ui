@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
 
 
 /**
- * Launches PDA program on a PDA interpretter written in Perl
+ * Launches PDA program on a PDA interpreter written in Perl
  */
 public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 	/* (non-Javadoc)
@@ -118,7 +118,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 	 * @throws CoreException
 	 */
 	private void abort(String message, Throwable e) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, message, e));
+		throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, 0, message, e));
 	}
 	
 	/**

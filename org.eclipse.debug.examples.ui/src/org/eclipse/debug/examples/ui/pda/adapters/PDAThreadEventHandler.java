@@ -98,14 +98,14 @@ public class PDAThreadEventHandler extends DebugEventHandler {
 	protected ModelDelta addTarget(ModelDelta delta, IThread thread) {
 		ILaunch launch = thread.getLaunch();
 		Object[] children = launch.getChildren();
-		delta = delta.addNode(launch, indexOf(getLaunchManager().getLaunches(), launch), IModelDelta.NO_CHANGE, children.length);
+		ModelDelta newdelta = delta.addNode(launch, indexOf(getLaunchManager().getLaunches(), launch), IModelDelta.NO_CHANGE, children.length);
 		IDebugTarget debugTarget = thread.getDebugTarget();
 		int numFrames = -1;
 		try {
 			numFrames = thread.getStackFrames().length;
 		} catch (DebugException e) {
 		}
-		return delta.addNode(debugTarget, indexOf(children, debugTarget), IModelDelta.NO_CHANGE, numFrames);
+		return newdelta.addNode(debugTarget, indexOf(children, debugTarget), IModelDelta.NO_CHANGE, numFrames);
 	}
 
 	private void fireDeltaAndClearTopFrame(IThread thread, int flags) {

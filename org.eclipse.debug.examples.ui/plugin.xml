@@ -18,12 +18,12 @@
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             class="org.eclipse.debug.examples.ui.pda.launcher.PDATabGroup"
-            description="Specify and launch a PDA program"
+            description="%pda.launchConfigurationTabGroup.description"
             id="pda.tabGroup"
             type="pda.launchType"/>
       <launchConfigurationTabGroup
             class="org.eclipse.debug.examples.ui.midi.launcher.MidiTabGroup"
-            description="Play a MIDI file"
+            description="%midi.launchConfigurationTabGroup.description"
             id="midi.tabGroup"
             type="midi.launchType"/>            
    </extension>
@@ -41,7 +41,7 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            label="PDA Application"
+            label="%pda.shortcut.label"
             icon="icons/full/obj16/pda.gif"
             class="org.eclipse.debug.examples.ui.pda.launcher.PDALaunchShortcut"
             modes="run, debug"
@@ -65,10 +65,10 @@
       </shortcut>
       <shortcut
             class="org.eclipse.debug.examples.ui.midi.launcher.MidiLaunchShortcut"
-            description="Plays a standard MIDI file"
+            description="%midi.shortcut.description"
             icon="icons/full/obj16/note.gif"
             id="midi.launchShortcut"
-            label="MIDI File"
+            label="%midi.shortcut.label"
             modes="run, debug">
         <contextualLaunch>
             <enablement>
@@ -102,7 +102,7 @@
             class="org.eclipse.debug.examples.ui.pda.editor.PDAEditor"
             icon="icons/full/obj16/pda.gif"
             default="true"
-            name="PDA Editor"
+            name="%pda.editor.name"
             id="pda.editor"
             extensions="pda"/>
    </extension>
@@ -112,7 +112,7 @@
             targetID="pda.editor"
             id="pda.rulerActions">
          <action
-               label="Not Used"
+               label="%notused.action.label"
                class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                style="push"
                actionID="RulerDoubleClick"
@@ -124,12 +124,12 @@
       <view
             icon="icons/full/obj16/pda.gif"
             class="org.eclipse.debug.examples.ui.pda.views.DataStackView"
-            name="PDA Data Stack"
+            name="%data.stack.view.name"
             id="pda.dataStackView"/>
       <view
             class="org.eclipse.debug.examples.ui.pda.views.CheckboxView"
             id="org.eclipse.debug.examples.ui.checkboxView"
-            name="Checkbox View"
+            name="%checkbox.view.name"
             restorable="true">
       </view>
    </extension>
@@ -148,8 +148,8 @@
            point="org.eclipse.ui.contexts">
         <context
               parentId="org.eclipse.debug.ui.debugging"
-              description="Debugging PDA Programs"
-              name="Debugging PDA Programs"
+              description="%context.description"
+              name="%context.name"
               id="pda.debugging"/>
      </extension>
 	  <extension
@@ -171,7 +171,7 @@
             targetID="pda.editor.rulerMenu"
             id="pda.editor.rulerActions">
          <action
-               label="Toggle Breakpoint"
+               label="%toggle.bp.action.label"
                class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                menubarPath="debug"
                id="pda.editor.ruler.toggleBreakpointAction"/>
@@ -180,7 +180,7 @@
             targetID="pda.editor.contextMenu"
             id="pda.editor.menuActions">
          <action
-               label="Run to Line"
+               label="%run.to.line.action.label"
                definitionId="org.eclipse.debug.ui.commands.RunToLine"
                class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
                menubarPath="additions"
@@ -195,7 +195,7 @@
          <action
                class="org.eclipse.debug.examples.ui.pda.editor.PopFrameActionDelegate"
                id="pda.dropToFrame"
-               label="Pop Frame"/>
+               label="%pop.frame.action.label"/>
       </objectContribution>
       <objectContribution
             adaptable="false"
@@ -204,7 +204,7 @@
          <action
                class="org.eclipse.debug.examples.ui.pda.adapters.AddPDAMemoryBlockAction"
                id="pda.addMemoryBlock"
-               label="Add Memory Block">
+               label="%add.memoryblock.action.label">
          </action>
       </objectContribution> 
 <!--#endif -->       
@@ -366,11 +366,11 @@
          point="org.eclipse.ui.commands">
       <command
             id="org.eclipse.debug.examples.ui.pushCommand"
-            name="Push">
+            name="%push.command.name">
       </command>
       <command
             id="org.eclipse.debug.examples.ui.popCommand"
-            name="Pop">
+            name="%pop.command.name">
       </command>
    </extension>
    <extension
@@ -436,14 +436,14 @@
                commandId="org.eclipse.debug.examples.ui.pushCommand"
                disabledIcon="icons/full/dlcl16/push.gif"
                icon="icons/full/elcl16/push.gif"
-               label="Push"
+               label="%push.command.label"
                style="push">
          </command>
          <command
                commandId="org.eclipse.debug.examples.ui.popCommand"
                disabledIcon="icons/full/dlcl16/pop.gif"
                icon="icons/full/elcl16/pop.gif"
-               label="Pop"
+               label="%pop.command.label"
                style="push">
          </command>
       </menuContribution>
@@ -453,14 +453,14 @@
                commandId="org.eclipse.debug.examples.ui.pushCommand"
                disabledIcon="icons/full/dlcl16/push.gif"
                icon="icons/full/elcl16/push.gif"
-               label="Push"
+               label="%push.command.label2"
                style="push">
          </command>
          <command
                commandId="org.eclipse.debug.examples.ui.popCommand"
                disabledIcon="icons/full/dlcl16/pop.gif"
                icon="icons/full/elcl16/pop.gif"
-               label="Pop"
+               label="%pop.command.label2"
                style="push">
          </command>
       </menuContribution>

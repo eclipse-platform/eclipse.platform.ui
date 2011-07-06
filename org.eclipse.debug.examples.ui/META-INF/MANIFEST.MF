@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Example Debug UI Plug-in
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.debug.examples.ui;singleton:=true
-Bundle-Version: 1.3.0.qualifier
+Bundle-Version: 1.3.100.qualifier
 Bundle-Activator: org.eclipse.debug.examples.ui.pda.DebugUIPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
@@ -16,15 +16,15 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.examples.core,
  org.eclipse.core.expressions
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.debug.examples.ui.midi.adapters,
- org.eclipse.debug.examples.ui.midi.detailpanes,
- org.eclipse.debug.examples.ui.midi.launcher,
- org.eclipse.debug.examples.ui.pda,
- org.eclipse.debug.examples.ui.pda.adapters,
- org.eclipse.debug.examples.ui.pda.breakpoints,
- org.eclipse.debug.examples.ui.pda.editor,
- org.eclipse.debug.examples.ui.pda.launcher,
- org.eclipse.debug.examples.ui.pda.presentation,
- org.eclipse.debug.examples.ui.pda.views
+Export-Package: org.eclipse.debug.examples.ui.midi.adapters;x-internal:=true,
+ org.eclipse.debug.examples.ui.midi.detailpanes;x-internal:=true,
+ org.eclipse.debug.examples.ui.midi.launcher;x-internal:=true,
+ org.eclipse.debug.examples.ui.pda;x-internal:=true,
+ org.eclipse.debug.examples.ui.pda.adapters;x-internal:=true,
+ org.eclipse.debug.examples.ui.pda.breakpoints;x-internal:=true,
+ org.eclipse.debug.examples.ui.pda.editor;x-internal:=true,
+ org.eclipse.debug.examples.ui.pda.launcher;x-internal:=true,
+ org.eclipse.debug.examples.ui.pda.presentation;x-internal:=true,
+ org.eclipse.debug.examples.ui.pda.views;x-internal:=true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ActivationPolicy: lazy

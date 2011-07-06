@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Example Debug Core Plug-in
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.debug.examples.core;singleton:=true
-Bundle-Version: 1.3.0.qualifier
+Bundle-Version: 1.3.100.qualifier
 Bundle-Activator: org.eclipse.debug.examples.core.pda.DebugCorePlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
@@ -10,12 +10,12 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
  org.apache.ant;bundle-version="1.7.0";resolution:=optional
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.debug.examples.core.midi.launcher,
- org.eclipse.debug.examples.core.pda,
- org.eclipse.debug.examples.core.pda.breakpoints,
- org.eclipse.debug.examples.core.pda.launcher,
- org.eclipse.debug.examples.core.pda.model,
- org.eclipse.debug.examples.core.pda.protocol,
- org.eclipse.debug.examples.core.pda.sourcelookup
+Export-Package: org.eclipse.debug.examples.core.midi.launcher;x-friends:="org.eclipse.debug.examples.ui",
+ org.eclipse.debug.examples.core.pda;x-friends:="org.eclipse.debug.examples.ui",
+ org.eclipse.debug.examples.core.pda.breakpoints;x-friends:="org.eclipse.debug.examples.ui",
+ org.eclipse.debug.examples.core.pda.launcher;x-friends:="org.eclipse.debug.examples.ui",
+ org.eclipse.debug.examples.core.pda.model;x-friends:="org.eclipse.debug.examples.ui",
+ org.eclipse.debug.examples.core.pda.protocol;x-friends:="org.eclipse.debug.examples.ui",
+ org.eclipse.debug.examples.core.pda.sourcelookup;x-friends:="org.eclipse.debug.examples.ui"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ActivationPolicy: lazy
