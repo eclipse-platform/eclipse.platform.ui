@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,9 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	
 	/**
 	 * Constructor
+	 * @param shell the shell to open this dialog on
+	 * @param viewer the view associated with this dialog
+	 * @param director the backing director
 	 */
 	public AddSourceContainerDialog(Shell shell, SourceContainerViewer viewer, ISourceLookupDirector director) {		
 		super(shell);

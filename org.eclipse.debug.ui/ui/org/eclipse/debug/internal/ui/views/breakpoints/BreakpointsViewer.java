@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     /**
      * Constructs a new breakpoints viewer with the given tree.
      * 
-     * @param tree
+     * @param tree the backing tree widget
      */
     public BreakpointsViewer(Tree tree) {
         super(tree);
@@ -99,7 +99,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
      * Adds expanded breakpoints to the list. Traverses children of the given
      * tree item if any.
      * 
-     * @param item  
+     * @param item the item to get breakpoints from
      * @param list collection of visible breakpoints
      */
     private void collectExpandedBreakpoints(TreeItem item, List list) {
@@ -119,7 +119,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     /**
      * Sets the selection to a specific tree item
      * 
-     * @param item
+     * @param item the item to set as the current tree selection
      */
     protected void setSelection(TreeItem item) {
     	getTree().setSelection(new TreeItem[]{item});
@@ -128,7 +128,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 
 	/**
      * Returns the container from within the specified path that is the container the breakpoint can be removed from
-     * @param breakpoint the breakpoint to get the container for
+     * @param item the item to get the container for
      * @return the first found container that includes the breakpoint that allows removal, or <code>null</code> if none found
      * @since 3.3
      */
@@ -154,7 +154,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 	
     /**
      * Returns the addable breakpoint container of the specified breakpoint
-     * @param breakpoint the breakpoint to get the container for
+     * @param item the item to get the container for
      * @return the first found addable container for the specified breakpoint or <code>null</code> if none found
      * @since 3.3
      */
@@ -185,7 +185,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
      * <li>breakpoints can be dragged iff the container they reside in supports the removal of breakpoints</li>
      * </ul>
      * </p>
-     * @param element the element to test if it can be dragged
+     * @param items the items to test if they can be dragged
      * @return true if the selected element can be dragged, false otherwise
      * @since 3.3
      */
@@ -206,7 +206,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     
     /**
      * Performs the actual removal of breakpoints from their respective (removable) containers on a successful drag operation
-     * @param selection the selection of breakpoints involved in the drag
+     * @param items the items involved in the drag
      * @since 3.3
      */
     public void performDrag(Item[] items) {
@@ -258,7 +258,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
      * </ul>
      * </p>
      * @param target the target for the drop
-     * @param element the element we want to drop
+     * @param selection the selection we want to drop
      * @return true if the specified element can be dropped into the specified target, false otherwise
      * @since 3.3
      */
@@ -278,12 +278,12 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 	/**
 	 * This method is used to determine if there is an addable parent container available for the specified drop target.
 	 * <p>
-	 * A drop target can be either a <code>BreakpointContainer</code> or an <code>IBreakpoint</code>. This method always checks the entire heirarchy
+	 * A drop target can be either a <code>BreakpointContainer</code> or an <code>IBreakpoint</code>. This method always checks the entire hierarchy
 	 * of the tree path for the specified target in the event one of the parent element does not support dropping. 
 	 * </p>
-	 * @param target
-	 * @param breakpoint
-	 * @return
+	 * @param target the target to check
+	 * @param breakpoint the breakpoint we would like to drop
+	 * @return <code>true</code> if there is a parent container we can drop into
 	 */
 	private boolean checkAddableParentContainers(Item target, IBreakpoint breakpoint) {
 		IBreakpointContainer container = null;
@@ -358,7 +358,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     /**
      * Update the checked state up the given element and all of its children.
      * 
-     * @param element
+     * @param element the element to update
      */
 	public void updateCheckedState(Object element) {
         Widget[] widgets = searchItems(element);
@@ -403,7 +403,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     /**
      * Update the checked state up the given element and all of its children.
      * 
-     * @param element
+     * @param item the item to update
      */
     public void updateCheckedState(TreeItem item) {
         Object element = item.getData();

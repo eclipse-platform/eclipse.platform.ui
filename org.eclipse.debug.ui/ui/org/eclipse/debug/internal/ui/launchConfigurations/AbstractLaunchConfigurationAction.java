@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,9 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 
 	/**
 	 * Constructor for AbstractLaunchConfigurationAction.
-	 * @param text
+	 * @param text the action label
+	 * @param viewer the viewer the action belongs to
+	 * @param mode the mode the action applies to
 	 */
 	public AbstractLaunchConfigurationAction(String text, Viewer viewer, String mode) {
 		super(text);
@@ -109,7 +111,7 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 	/**
 	 * Sets this action's confirmation requestor.
 	 * 
-	 * @param confirmationRequestor
+	 * @param confirmationRequestor the new {@link IConfirmationRequestor}
 	 */
 	public void setConfirmationRequestor(IConfirmationRequestor confirmationRequestor) {
 		fConfirmationRequestor = confirmationRequestor;
@@ -125,7 +127,7 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 	/**
 	 * Show an error dialog on the given exception.
 	 * 
-	 * @param exception
+	 * @param exception the exception to show in the dialog
 	 */
 	protected void errorDialog(CoreException exception) {
 		ErrorDialog.openError(getShell(), null, null, exception.getStatus());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,8 +111,8 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 
     /**
      * Executes this action on the given target object
-     * 
-     * @param target the target to perform the action on
+     * @param targets the targets to perform the action on 
+     * @return if the command stays enabled while the command executes
      */
     private boolean execute(final Object[] targets) {
     	return fUpdateService.executeCommand(

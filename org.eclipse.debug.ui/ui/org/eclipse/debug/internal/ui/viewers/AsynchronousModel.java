@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,6 @@ public abstract class AsynchronousModel {
 	 * Initializes this model. Called once after creation.
 	 * 
 	 * @param root root element or <code>null</code>
-	 * @param widget root widget/control
 	 */
 	public void init(Object root) {
 		if (root != null) {
@@ -154,6 +153,7 @@ public abstract class AsynchronousModel {
     
     /**
      * Returns whether this model has been disposed
+     * @return <code>true</code> if the model is disposed <code>false</code> otherwise
      */
     public synchronized boolean isDisposed() {
         return fDisposed;
@@ -205,7 +205,7 @@ public abstract class AsynchronousModel {
 	/**
 	 * Uninstalls the model proxy installed for the given element, if any.
 	 * 
-	 * @param element
+	 * @param element the element context
 	 */
 	protected synchronized void disposeModelProxy(Object element) {
 		IModelProxy proxy = (IModelProxy) fModelProxies.remove(element);
@@ -234,7 +234,7 @@ public abstract class AsynchronousModel {
 	/**
 	 * Returns the presentation this model is installed in
 	 * 
-	 * @return
+	 * @return the presentation context from the backing viewer
 	 */
 	protected IPresentationContext getPresentationContext() {
 		return fViewer.getPresentationContext();
@@ -260,8 +260,8 @@ public abstract class AsynchronousModel {
 	/**
 	 * Maps the given element to the given node.
 	 * 
-	 * @param element
-	 * @param node
+	 * @param element the element context
+	 * @param node the model node
 	 */
 	protected synchronized void mapElement(Object element, ModelNode node) {
 		ModelNode[] nodes = getNodes(element);
@@ -286,7 +286,7 @@ public abstract class AsynchronousModel {
     /**
      * Unmaps the given node from its element and widget.
      * 
-     * @param node
+     * @param node the model node
      */
     protected synchronized void unmapNode(ModelNode node) {
         Object element = node.getElement();
@@ -356,7 +356,7 @@ public abstract class AsynchronousModel {
 	/**
 	 * Removes the update from the pending updates list.
 	 * 
-	 * @param update
+	 * @param update the update to remove
 	 */
 	protected void requestComplete(IStatusMonitor update) {
 		synchronized (fPendingUpdates) {
@@ -367,7 +367,7 @@ public abstract class AsynchronousModel {
 	/**
 	 * An viewer update has been scheduled due to the following update request.
 	 * 
-	 * @param update
+	 * @param update the update to add
 	 */
 	protected void viewerUpdateScheduled(IStatusMonitor update) {
 		// synch viewer updates and pending updates on same lock - fPendingUpdates
@@ -406,7 +406,7 @@ public abstract class AsynchronousModel {
 	/**
 	 * Refreshes the given node.
 	 * 
-	 * @param node
+	 * @param node the model node to update
 	 */
 	protected void updateLabel(ModelNode node) {
 		Object element = node.getElement();
@@ -480,16 +480,16 @@ public abstract class AsynchronousModel {
 	/**
 	 * Update this model's viewer preserving its selection.
 	 * 
-	 * @param update
+	 * @param update the update code to run in the backing viewer's preserving selection method
 	 */
 	protected void preservingSelection(Runnable update) {
 		getViewer().preservingSelection(update);
 	}
 
 	/**
-	 * The viewer updated associated with a request is compelte.
+	 * The viewer updated associated with a request is complete.
 	 * 
-	 * @param monitor
+	 * @param monitor the status to remove and complete
 	 */
 	protected void viewerUpdateComplete(IStatusMonitor monitor) {
 		// synch viewer updates and pending updates on same lock - fPendingUpdates
@@ -502,7 +502,7 @@ public abstract class AsynchronousModel {
 	/**
 	 * An update request was cancelled
 	 * 
-	 * @param monitor
+	 * @param monitor the monitor to remove
 	 */
 	protected void requestCanceled(AsynchronousRequestMonitor monitor) {
 		synchronized (fPendingUpdates) {
@@ -513,7 +513,7 @@ public abstract class AsynchronousModel {
 	/**
 	 * Whether any updates are still in progress in the model or against the viewer.
 	 * 
-	 * @return
+	 * @return <code>true</code> if there are pending changes <code>false</code> otherwise
 	 */
 	protected boolean hasPendingUpdates() {
 		synchronized (fViewerUpdates) {
@@ -524,8 +524,8 @@ public abstract class AsynchronousModel {
     /**
      * Asynchronous update for add/set children request.
      * 
-     * @param parent
-     * @param element
+     * @param parent the parent model node
+     * @param element the element context
      */
 	protected abstract void add(ModelNode parent, Object element);
 	

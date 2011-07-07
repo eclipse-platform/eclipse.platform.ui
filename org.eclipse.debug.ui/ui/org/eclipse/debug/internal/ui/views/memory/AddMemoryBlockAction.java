@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 	}
 	
 	/**
+	 * @param site the site to add the action to
 	 * @param addDefaultRenderings - specify if the action should add
 	 * default renderings for the new memory block when it is run
 	 */
@@ -79,7 +80,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 	}
 	
 	/**
-	 * 
+	 * @param site the site to initialize
 	 */
 	private void initialize(IMemoryRenderingSite site) {
 		setText(DebugUIMessages.AddMemoryBlockAction_title);
@@ -94,7 +95,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 	}
 	
 	/**
-	 * 
+	 * @param site the site to initialize
 	 */
 	private void doInitialization(IMemoryRenderingSite site) {
 		fSite = site;
@@ -182,12 +183,12 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 	}
 
 	/**
-	 * @param exit
-	 * @param elem
-	 * @param standardMemRetrieval
-	 * @param dialog
-	 * @param expressionsArray
-	 * @return
+	 * @param exit the exit value
+	 * @param elem the element context
+	 * @param standardMemRetrieval the {@link IMemoryBlockRetrieval}
+	 * @param dialog the dialog to use
+	 * @param expressionsArray the array of memory expressions
+	 * @return if we should exit
 	 */
 	private boolean addMemoryBlocks(boolean exit, Object elem, IMemoryBlockRetrieval standardMemRetrieval, MonitorMemoryBlockDialog dialog, final String[] expressionsArray) {
 		for (int i=0; i<expressionsArray.length; i++)
@@ -388,9 +389,10 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 	}
 
 	/**
-	 * @param memoryBlock
-	 * @param primaryType
-	 * @throws CoreException
+	 * @param memoryBlock the memory block to create a rendering for
+	 * @param primaryType the type of the desired rendering
+	 * @param paneId the id of the pane
+	 * @throws CoreException if an exception occurs
 	 */
 	private void createRenderingInContainer(IMemoryBlock memoryBlock, IMemoryRenderingType primaryType, String paneId) throws CoreException {
 		IMemoryRendering rendering = primaryType.createRendering();

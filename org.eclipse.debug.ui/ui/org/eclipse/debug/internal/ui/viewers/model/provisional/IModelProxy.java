@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
+import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
@@ -25,7 +26,7 @@ import org.eclipse.jface.viewers.Viewer;
  * within that model for a specific presentation context. 
  * </p>
  * <p>
- * Clients may implement this interface. Implementation of this interface
+ * Clients may implement this interface. Implementations of this interface
  * must subclass {@link AbstractModelProxy}.
  * </p>
  * @see IModelDelta

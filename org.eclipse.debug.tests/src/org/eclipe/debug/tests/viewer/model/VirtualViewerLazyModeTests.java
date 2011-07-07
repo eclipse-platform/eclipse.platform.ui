@@ -54,6 +54,11 @@ public class VirtualViewerLazyModeTests extends TestCase {
         fShell.open ();
     }
 
+    /**
+     * @param display the display
+     * @param shell the shell
+     * @return the viewer
+     */
     protected ITreeModelViewer createViewer(Display display, Shell shell) {
         return new VirtualTreeModelViewer(display, SWT.VIRTUAL, new PresentationContext("TestViewer"));
     }

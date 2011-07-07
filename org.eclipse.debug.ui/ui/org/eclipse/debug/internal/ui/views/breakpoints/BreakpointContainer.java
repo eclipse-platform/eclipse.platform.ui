@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -267,7 +267,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * 
      * @param breakpoint the breakpoint to added
      * @param rootDelta the root delta of this container
-     * @see removeBreakpoint
+     * @see #removeBreakpoint
      */
     public void addBreakpoint(IBreakpoint breakpoint, ModelDelta rootDelta) {    	
     	final int bpIndex = insertBreakpoint(breakpoint);
@@ -320,8 +320,9 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * Remove a breakpoint from the container, additional delta will be added to the root delta.
      * 
      * @param breakpoint the breakpoint to remove
-     * @param delta the root delta of this container
-     * @see addBreakpoint
+     * @param rootDelta the root delta of this container
+     * @return if the breakpoint was successfully removed
+     * @see #addBreakpoint
      */
     public boolean removeBreakpoint(IBreakpoint breakpoint, ModelDelta rootDelta) {
     	boolean removed = fBreakpoints.remove(breakpoint);
@@ -431,7 +432,6 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * 
      * @param container the container to append child delta
      * @param containerDelta the delta of the breakpoint container, additional delta will be added to this delta
-     * @see BreakpointContainer.addContainer
      */
     static private void appendContainerDelta(BreakpointContainer container, ModelDelta containerDelta) {
     	Object[] children = container.getChildren();
@@ -467,7 +467,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * Remove all child elements including the given container itself.
      * 
      * @param container the breakpoint container
-     * @param parentDelta the parent delta
+     * @param delta the parent delta
      */
     static public void removeAll(BreakpointContainer container, ModelDelta delta) {
     	BreakpointContainer parent = container.getParent();
@@ -575,7 +575,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     /**
      * Returns whether this container contains the given breakpoint.
      * 
-     * @param breakpoint
+     * @param breakpoint the breakpoint to check
      * @return true if this container contains the given breakpoint
      */
     public boolean contains(IBreakpoint breakpoint) {
@@ -585,7 +585,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
     /**
      * Returns the child containers for the given breakpoint.
      *  
-     * @param breakpoint
+     * @param breakpoint the breakpoint to get containers for
      * @return child containers
      */
     public BreakpointContainer[] getContainers(IBreakpoint breakpoint) {

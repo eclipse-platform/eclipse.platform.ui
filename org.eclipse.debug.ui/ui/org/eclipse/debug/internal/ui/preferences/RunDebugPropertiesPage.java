@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationComparator;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -65,10 +66,9 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Displays default launch configuration settings for a selected resource - associated launch configurations.
  * 
- * @see {@link PropertyPage}
- * @see {@link ILaunchConfiguration}
- * @see {@link org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog}
- * @see {@link IDebugHelpContextIds#DEFAULT_LAUNCHCONFIGURATION_PROPERTY_PAGE}
+ * @see PropertyPage
+ * @see ILaunchConfiguration
+ * @see LaunchConfigurationsDialog
  * 
  * CONTEXTLAUNCHING
  * 
@@ -425,7 +425,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * Edits the given configuration as a nested working copy.
 	 * Returns the code from the dialog used to edit the configuration.
 	 * 
-	 * @param configuration
+	 * @param configuration the configuration working copy to editor
 	 * @param setDefaults whether to set default values in the config
 	 * @return dialog return code - OK or CANCEL
 	 */

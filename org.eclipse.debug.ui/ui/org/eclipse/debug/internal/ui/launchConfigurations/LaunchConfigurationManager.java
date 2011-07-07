@@ -30,7 +30,6 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IContainer;
@@ -212,11 +211,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	
 	/**
 	 * Returns whether the given launch configuration should be visible in the
-	 * debug ui. If the config is marked as private, or belongs to a different
+	 * debug UI. If the config is marked as private, or belongs to a different
 	 * category (i.e. non-null), then this configuration should not be displayed
-	 * in the debug ui.
+	 * in the debug UI.
 	 * 
-	 * @param launchConfiguration
+	 * @param launchConfiguration the configuration to check for the {@link IDebugUIConstants#ATTR_PRIVATE} attribute
 	 * @return boolean
 	 */
 	public static boolean isVisible(ILaunchConfiguration launchConfiguration) {
@@ -259,8 +258,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 
 	/**
 	 * Returns a listing of <code>IlaunchDeleagtes</code> that does not contain any delegates from disabled activities
-	 * @param delegates the raw listing of delegates to filter
+	 * @param type the type to get the delegates from
+	 * @param modes the set of launch modes to get delegates for
 	 * @return the filtered listing of <code>ILaunchDelegate</code>s or an empty array, never <code>null</code>.
+	 * @throws CoreException if an exception occurs
 	 * @since 3.3
 	 */
 	public static ILaunchDelegate[] filterLaunchDelegates(ILaunchConfigurationType type, Set modes) throws CoreException {
@@ -336,6 +337,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * if none. This method does not include any filtering for the returned launch configuration.
 	 *	
 	 * This method is exposed via DebugTools.getLastLaunch
+	 * @param groupId the identifier of the {@link ILaunchGroup} to get the last launch from
 	 *
 	 * @return the last launch, or <code>null</code> if none
 	 */	
@@ -368,6 +370,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Add the specified listener to the list of listeners that will be notified when the
 	 * launch history changes.
+	 * @param listener the listener to add - adding a duplicate listener has no effect
 	 */
 	public void addLaunchHistoryListener(ILaunchHistoryChangedListener listener) {
 		if (!fLaunchHistoryChangedListeners.contains(listener)) {
@@ -378,6 +381,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Remove the specified listener from the list of listeners that will be notified when the
 	 * launch history changes.
+	 * @param listener the listener to remove
 	 */
 	public void removeLaunchHistoryListener(ILaunchHistoryChangedListener listener) {
 		fLaunchHistoryChangedListeners.remove(listener);
@@ -398,10 +402,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Returns the history listing as XML
 	 * @return the history listing as XML
-	 * @throws CoreException
-	 * @throws ParserConfigurationException
-	 * @throws TransformerException
-	 * @throws IOException
+	 * @throws CoreException if an exception occurs
+	 * @throws ParserConfigurationException if there is a problem creating the XML for the launch history
 	 */
 	protected String getHistoryAsXML() throws CoreException, ParserConfigurationException {
 		Document doc = DebugUIPlugin.getDocument();
@@ -430,9 +432,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Creates a new launch history element and adds it to the specified <code>Document</code>
 	 * @param doc the <code>Document</code> to add the new element to
 	 * @param historyRootElement the root element
-	 * @param mode the modes the history element should apply to
 	 * @param configurations the configurations to create entries for
-	 * @throws CoreException
+	 * @throws CoreException is an exception occurs
 	 */
 	protected void createEntry(Document doc, Element historyRootElement, ILaunchConfiguration[] configurations) throws CoreException {
 		for (int i = 0; i < configurations.length; i++) {
@@ -456,6 +457,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Write out an XML file indicating the entries on the run & debug history lists and
 	 * the most recent launch.
+	 * @throws IOException if writing the history file fails
+	 * @throws CoreException is an exception occurs
+	 * @throws ParserConfigurationException if there is a problem reading the XML
 	 */
 	protected void persistLaunchHistory() throws IOException, CoreException, ParserConfigurationException {
 		synchronized (this) {
@@ -617,6 +621,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Construct a launch configuration corresponding to the specified XML
 	 * element, and place it in the appropriate history.
+	 * @param entry the XML entry to read from
+	 * @param histories the array of histories to try and add the restored configurations to
+	 * @param prepend if any restored items should be added to to top of the launch history
 	 */
 	private void createHistoryElement(Element entry, LaunchHistory[] histories, boolean prepend) {
 		String memento = entry.getAttribute(IConfigurationElementConstants.MEMENTO); 
@@ -765,6 +772,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	
 	/**
 	 * Returns an array of the <code>ILaunchConfiguration</code>s that apply to the specified <code>IResource</code>
+	 * @param types the array of launch configuration type identifiers
 	 * @param resource the resource
 	 * @return an array of applicable <code>ILaunchConfiguration</code>s for the specified <code>IResource</code> or an empty 
 	 * array if none, never <code>null</code>
@@ -814,9 +822,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	
 	/**
 	 * Returns if the specified configuration should be considered as a potential candidate
-	 * @param config
+	 * @param config to configuration
 	 * @return if the specified configuration should be considered as a potential candidate
-	 * @throws CoreException
+	 * @throws CoreException if an exception occurs
 	 */
 	private boolean acceptConfiguration(ILaunchConfiguration config) throws CoreException {
 		if(config != null && !DebugUITools.isPrivate(config)) {
@@ -835,6 +843,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	
 	/**
 	 * Returns all launch shortcuts for the given category
+	 * @param category the identifier of the category
 	 *
 	 * @return all launch shortcuts
 	 */
@@ -845,8 +854,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Return a list of filtered launch shortcuts, based on the given category.
 	 *  
-	 * @param unfiltered
-	 * @param category
+	 * @param unfiltered the raw list of shortcuts to filter
+	 * @param category the category to filter by
 	 * @return List
 	 */
 	protected List filterShortcuts(List unfiltered, String category) {
@@ -907,9 +916,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Returns the first occurrence of any one of the configurations in the provided list, if they are found in the launch history
 	 * for the corresponding launch group
-	 * @param configurations
-	 * @param mode
-	 * @param resource
+	 * @param configurations the raw list of configurations to examine
+	 * @param group the launch group to get the launch history from
+	 * @param resource the {@link IResource} context
 	 * @return the associated launch configuration from the MRU listing or <code>null</code> if there isn't one
 	 * @since 3.3
 	 */
@@ -996,6 +1005,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	
 	/**
 	 * Returns the image used to display an error in the given tab
+	 * @param tab the tab to get the error image for
+	 * @return the error image associated with the given tab
 	 */
 	public Image getErrorTabImage(ILaunchConfigurationTab tab) {
 		if (fErrorImages == null) {
@@ -1019,6 +1030,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	
 	/**
 	 * Return the launch group with the given id, or <code>null</code>
+	 * @param id the identifier of the {@link LaunchGroupExtension}
 	 * 
 	 * @return the launch group with the given id, or <code>null</code>
 	 */
@@ -1044,7 +1056,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	
 	/**
 	 * Return the launch history with the given group id, or <code>null</code>
-	 * 
+	 * @param id the identifier of the launch history 
 	 * @return the launch history with the given group id, or <code>null</code>
 	 */
 	public LaunchHistory getLaunchHistory(String id) {
@@ -1084,7 +1096,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Returns the default launch group for the given mode.
 	 * 
-	 * @param mode
+	 * @param mode the mode identifier
 	 * @return launch group
 	 */
 	public LaunchGroupExtension getDefaultLaunchGroup(String mode) {
@@ -1155,6 +1167,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * 
 	 * @param type launch configuration type
 	 * @return launch configuration
+	 * @throws CoreException if an excpetion occurs
 	 * @since 3.0
 	 */
 	public static ILaunchConfiguration getSharedTypeConfig(ILaunchConfigurationType type) throws CoreException {
@@ -1216,7 +1229,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Sets the given launch to be the most recent launch in the launch
 	 * history (for applicable histories).
 	 * <p>
-	 * @param configuration configuration to be set as most recent
+	 * @param launch the launch to prepend to its associated histories 
 	 * @since 3.3
 	 */
 	public void setRecentLaunch(ILaunch launch) {

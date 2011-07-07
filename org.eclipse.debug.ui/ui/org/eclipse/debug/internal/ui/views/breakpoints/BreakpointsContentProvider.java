@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,7 +143,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
      * Returns the root containers containing the given breakpoint, or <code>null</code>
      * if none
      * 
-     * @param breakpoint
+     * @param breakpoint the breakpoint to get containers for
      * @return root containers containing the given breakpoint or <code>null</code>
      */
     public BreakpointContainer[] getRoots(IBreakpoint breakpoint) {
@@ -234,7 +234,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
     /**
      * Returns the existing containers the given breakpoint is contained in, or <code>null</code>.
      * 
-     * @param breakpoint
+     * @param breakpoint the breakpoint to get containers for
      * @return the existing containers the given breakpoint is contained in, or <code>null</code>
      */
     protected BreakpointContainer[] getContainers(IBreakpoint breakpoint) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * Base implementation of an asynchronous request monitor.
  * <p>
- * Not intended to be subclassed or instantiated by clients. For internal use
+ * Not intended to be sub-classed or instantiated by clients. For internal use
  * with the <code>AsynchronousViewer</code> implementation.
  * </p>
  * @since 3.2
@@ -110,7 +110,7 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
      * That is, whether this update is for the same node or a child of
      * the given node.
      * 
-     * @param ndoe node to test containment on
+     * @param node node to test containment on
      * @return whether this update contains the given node
      */
     protected boolean contains(ModelNode node) {
@@ -151,7 +151,7 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
     /**
      * Returns whether this request is done yet.
      * 
-     * @return
+     * @return if the request is done
      */
     protected synchronized boolean isDone() {
     	return fDone;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,6 @@ import org.eclipse.ui.actions.SelectionProviderAction;
  * Action for changing the value of primitives and <code>String</code> variables.
  * This action will attempt to delegate the editing operation to a registered
  * variable value editor, if any is provided for the variable's debug model.
- * @see org.eclipse.debug.ui.actions.VariableValueEditorManager
  */
 public class ChangeVariableValueAction extends SelectionProviderAction {
     
@@ -67,6 +66,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	 * Indicates whether this action is applicable for the current selection.
 	 * If the element selected in the viewer is not a standard debug model 
 	 * element this action is not applicable. 
+	 * @return if this action applies to the current selection
 	 */
 	public boolean isApplicable() {
 	    return isApplicable;
@@ -74,6 +74,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	
 	/**
 	 * Edit the variable value with an in-line text editor.  
+	 * @param variable run the action on the given variable
 	 */
 	protected void doActionPerformed(final IVariable variable) {
 	    Shell shell = fView.getViewSite().getShell();
@@ -153,6 +154,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	/**
 	 * Updates the enabled state of this action based
 	 * on the selection
+	 * @param sel the selection to update
 	 */
 	protected void update(IStructuredSelection sel) {
 	    isApplicable = false;
@@ -173,8 +175,8 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		setEnabled(false);
 	}
 
-	/**
-	 * @see IAction#run()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
 		Iterator iterator= getStructuredSelection().iterator();

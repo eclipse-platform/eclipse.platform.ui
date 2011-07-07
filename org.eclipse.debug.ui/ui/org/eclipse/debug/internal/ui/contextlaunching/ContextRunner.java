@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public final class ContextRunner {
 	
 	/**
 	 * Performs the context launching given the object context and the mode to launch in.
-	 * @param group 
+	 * @param group the launch group to launch using
 	 */
 	public void launch(ILaunchGroup group) {
 		IStructuredSelection selection = SelectedResourceManager.getDefault().getCurrentSelection();
@@ -105,8 +105,9 @@ public final class ContextRunner {
 	 * Prompts the user to select a way of launching the current resource, where a 'way'
 	 * is defined as a launch shortcut.
 	 * 
-	 * @param resource
-	 * @param group
+	 * @param resource the resource context
+	 * @param group the launch group to launch with
+	 * @param selection the current selection
 	 */
 	protected void selectAndLaunch(IResource resource, ILaunchGroup group, IStructuredSelection selection) {
 		if(group != null) {			
@@ -274,7 +275,9 @@ public final class ContextRunner {
 	 * launch using that shortcut.
 	 * 
 	 * @param resource the resource context
+	 * @param shortcuts the list of applicable shortcuts
 	 * @param mode the mode
+	 * @param selection the current selection
 	 */
 	protected void showShortcutSelectionDialog(IResource resource, List shortcuts, String mode, IStructuredSelection selection) {
 		LaunchShortcutSelectionDialog dialog = new LaunchShortcutSelectionDialog(shortcuts, resource, mode);

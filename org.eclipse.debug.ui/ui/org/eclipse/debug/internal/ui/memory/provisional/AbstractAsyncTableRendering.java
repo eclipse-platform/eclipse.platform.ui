@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2010 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -75,6 +75,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.debug.ui.memory.IResettableMemoryRendering;
+import org.eclipse.debug.ui.memory.MemoryRenderingElement;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -581,7 +582,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	/**
 	 * Create the error page of this rendering
-	 * @param parent
+	 * @param parent the parent to add the page to
 	 */
 	private void createMessagePage(Composite parent)
 	{
@@ -596,7 +597,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	/**
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	private void createTableViewer(final Composite parent)
 	{
@@ -1109,7 +1110,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 
 	/**
-	 * 
+	 * @param pageSize the new page size
 	 */
 	private void handlePageSizeChanged(int pageSize) {
 		fPageSize = pageSize;
@@ -1175,7 +1176,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	/**
-	 * @param address
+	 * @param address the changed address
 	 */
 	private void doTopVisibleAddressChanged(final BigInteger address) {
 		if (fIsDisposed)
@@ -1423,7 +1424,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	/**
-	 * @param modelId
+	 * @param modelId the {@link String} model id
 	 * @return default number of addressable units per line for the model
 	 */
 	private int getDefaultRowSizeByModel(String modelId)
@@ -1440,7 +1441,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	/**
-	 * @param modelId
+	 * @param modelId the {@link String} model id
 	 * @return default number of addressable units per column for the model
 	 */
 	private int getDefaultColumnSizeByModel(String modelId)
@@ -2591,7 +2592,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	/**
 	 * Handle column size changed event from synchronizer
-	 * @param newColumnSize
+	 * @param newColumnSize the new column size
 	 */
 	private void columnSizeChanged(final int newColumnSize) {
 		// ignore event if rendering is not visible
@@ -2631,6 +2632,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	/**
 	 * update selected address in synchronizer if update is true.
+	 * @param address the address to update
 	 */
 	private void updateSyncSelectedAddress(BigInteger address) {
 		
@@ -2666,6 +2668,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	/**
 	 * update top visible address in synchronizer
+	 * @param address the address to update
 	 */
 	private void updateSyncTopAddress(BigInteger address) {
 		
@@ -2860,7 +2863,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * table item if SWT.FULL_SELECTION is not on when the table is created.
 	 * Created the following function to work around the problem.
 	 * We can remove this method when the bug is fixed.
-	 * @param point
+	 * @param point the given {@link Point} to find the {@link TableItem} for
 	 * @return the table item where the point is located, return null if the item cannot be located.
 	 */
 	private TableItem getItem(Point point)
@@ -2884,7 +2887,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	/**
 	 * Method for figuring out which column the point is located.
-	 * @param point
+	 * @param point the {@link Point} the get the column number for
 	 * @return the column index where the point is located, return -1 if column is not found.
 	 */
 	private int getColumn(Point point)
@@ -3047,7 +3050,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	/**
-	 * @param topVisibleAddress
+	 * @param topVisibleAddress the address to get the description for
 	 */
 	private void createContentDescriptor(final BigInteger topVisibleAddress) {
 		fContentDescriptor = new TableRenderingContentDescriptor(AbstractAsyncTableRendering.this);

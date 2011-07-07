@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,9 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * This class is a base implementation of a 'remove all' debug action
  * 
  * This class is intended to be extended by clients
- * @see {@link IViewActionDelegate}
- * @see {@link IActionDelegate2}}
- * @see {@link IWorkbenchWindowActionDelegate}
+ * @see IViewActionDelegate
+ * @see IActionDelegate2
+ * @see IWorkbenchWindowActionDelegate
  */
 public abstract class AbstractRemoveAllActionDelegate implements IViewActionDelegate, IActionDelegate2, IWorkbenchWindowActionDelegate {
 	

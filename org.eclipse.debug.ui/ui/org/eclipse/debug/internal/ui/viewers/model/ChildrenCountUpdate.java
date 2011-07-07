@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,13 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 	private List fBatchedRequests = null;
 	
 	/**
-	 * @param contentProvider
+	 * Constructor
+	 * @param contentProvider the content provider to use for the update
+	 * @param viewerInput the current input
+	 * @param elementPath the path of the element to update
+	 * @param element the element to update
+	 * @param elementContentProvider the content provider for the element
+	 * @param context the presentation context
 	 */
 	public ChildrenCountUpdate(ModelContentProvider contentProvider, Object viewerInput, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
 		super(contentProvider, viewerInput, elementPath, element, elementContentProvider, context);

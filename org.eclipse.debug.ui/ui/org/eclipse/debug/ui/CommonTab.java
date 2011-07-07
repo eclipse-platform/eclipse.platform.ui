@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,6 +172,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
+	 * Returns the {@link IDialogSettings} for the given id
+	 * 
+	 * @param id the id of the dialog settings to get
 	 * @return the {@link IDialogSettings} to pass into the {@link ContainerSelectionDialog}
 	 * @since 3.6
 	 */
@@ -349,7 +352,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     
     /**
      * Returns the default encoding for the specified config
-     * @param config
+     * @param config the configuration to get the encoding for
      * @return the default encoding
      * 
      * @since 3.4
@@ -699,6 +702,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	
 	/**
 	 * Convenience accessor
+	 * @return the singleton {@link LaunchConfigurationManager}
 	 */
 	protected LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
@@ -710,6 +714,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * NOTE: set to <code>null</code> instead of <code>false</code> for backwards compatibility
 	 *  when comparing if content is equal, since 'false' is default
 	 * 	and will be missing for older configurations.
+	 * @param config the configuration to update
 	 */
 	private void updateConfigFromFavorites(ILaunchConfigurationWorkingCopy config) {
 		try {
@@ -760,6 +765,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	
 	/**
 	 * Convenience method for getting the workspace root.
+	 * @return the singleton {@link IWorkspaceRoot}
 	 */
 	private IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();

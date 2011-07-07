@@ -111,14 +111,13 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * The Debug UI Plug-in.
  * 
- * Since 3.3 this plugin registers an <code>ISaveParticipant</code>, allowing this plugin to participate
+ * Since 3.3 this plug-in registers an <code>ISaveParticipant</code>, allowing this plug-in to participate
  * in workspace persistence life-cycles
  * 
  * @see ISaveParticipant
  * @see ILaunchListener
  * @see LaunchConfigurationManager
  * @see PerspectiveManager
- * @see ContextLaunch
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
@@ -246,7 +245,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
 	/**
 	 * If the debug flag is set the specified message is printed to the console
-	 * @param message
+	 * @param message the message to print the {@link System#out}
 	 */
 	public static void debug(String message) {
 		if (DEBUG) {
@@ -256,6 +255,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		
 	/**
 	 * Returns the singleton instance of the debug plug-in.
+	 * @return the singleton {@link DebugUIPlugin}
 	 */
 	public static DebugUIPlugin getDefault() {
 		if(fgDebugUIPlugin == null) {
@@ -266,6 +266,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
 	/**
 	 * Convenience method which returns the unique identifier of this plug-in.
+	 * @return the identifier of the plug-in
 	 */
 	public static String getUniqueIdentifier() {
 		return IDebugUIConstants.PLUGIN_ID;
@@ -340,6 +341,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 
 	/**
 	 * Returns the default label provider for the debug UI.
+	 * @return the singleton {@link DefaultLabelProvider}
 	 */
 	public static ILabelProvider getDefaultLabelProvider() {
 		if (fgDefaultLabelProvider == null) {
@@ -356,6 +358,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @param element the config element defining the extension
 	 * @param classAttribute the name of the attribute carrying the class
 	 * @return the extension object
+	 * @throws CoreException if an exception occurs
 	 */
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		// If plug-n has been loaded create extension.
@@ -448,7 +451,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Add the specified <code>ISaveParticipant</code> to the current listing of
 	 * registered participants
-	 * @param participant
+	 * @param participant the save participant to add
 	 * @return true if this current listing did not already contain the specified participant
 	 * @since 3.3
 	 */
@@ -459,7 +462,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Removes the specified <code>ISaveParticipant</code> from the current listing of registered
 	 * participants
-	 * @param participant
+	 * @param participant the save participant to remove
 	 * @return true if the set contained the specified element
 	 * 
 	 * @since 3.3
@@ -468,8 +471,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return fSaveParticipants.remove(participant);
 	}
 	
-	/**
-	 * @see AbstractUIPlugin#startup()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -551,6 +554,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 
 	/**
 	 * Utility method with conventions
+	 * @param shell the shell to open the dialog on
+	 * @param title the title of the dialog
+	 * @param message the message to display in the dialog
+	 * @param s the underlying {@link IStatus} to display
 	 */
 	public static void errorDialog(Shell shell, String title, String message, IStatus s) {
 		// if the 'message' resource string and the IStatus' message are the same,
@@ -563,6 +570,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
 	/**
 	 * Utility method with conventions
+	 * @param shell the shell to open the dialog on
+	 * @param title the title for the dialog
+	 * @param message the message to display in the dialog
+	 * @param t the underlying exception for the dialog
 	 */
 	public static void errorDialog(Shell shell, String title, String message, Throwable t) {
 		IStatus status;
@@ -690,11 +701,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      * Opens the {@link LaunchConfigurationsDialog} on the given selection for the given group. A status
      * can be provided or <code>null</code> and the dialog can initialize the given {@link ILaunchConfiguration}
      * to its defaults when opening as well - as long as the specified configuration is an {@link ILaunchConfigurationWorkingCopy}.
-     * @param shell
-     * @param selection
-     * @param groupIdentifier
-     * @param status
-     * @param setDefaults
+     * @param shell the shell to open the dialog on
+     * @param selection the non-null selection to show when the dialog opens
+     * @param groupIdentifier the identifier of the launch group to open the dialog on
+     * @param setDefaults if the default values should be set on the opened configuration - if there is one
      * @return the return code from the dialog.open() call
      * @since 3.6
      */
@@ -713,6 +723,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Save all dirty editors in the workbench.
 	 * Returns whether the operation succeeded.
+	 * @param confirm if the user should be asked before saving
 	 * 
 	 * @return whether all saving was completed
 	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
@@ -728,6 +739,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Save & build the workspace according to the user-specified preferences.  Return <code>false</code> if
 	 * any problems were encountered, <code>true</code> otherwise.
+	 * @return <code>false</code> if any problems were encountered, <code>true</code> otherwise.
 	 * 
 	 * @deprecated this method is no longer to be used. It is an artifact from 2.0, and all saving is now done with the
 	 * launch delegate <code>LaunchConfigurationDelegate</code>
@@ -778,7 +790,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
 	/**
 	 * Returns the workbench's display.
-	 * 
+	 * @return the standard display 
 	 */
 	public static Display getStandardDisplay() {
 		return PlatformUI.getWorkbench().getDisplay();
@@ -791,6 +803,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * <li>CONSOLE_SYS_ERR_RGB</li>
 	 * <li>CONSOLE_SYS_IN_RGB</li>
 	 * <li>CHANGED_VARIABLE_RGB</li>
+	 * @param type the name of the type to ask for
+	 * @return the {@link Color}
 	 */
 	public static Color getPreferenceColor(String type) {
 		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), type));
@@ -852,7 +866,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Returns the perspective manager.
 	 * 
-	 * @return
+	 * @return the singleton {@link PerspectiveManager}
 	 */
 	public PerspectiveManager getPerspectiveManager() {
 		return fPerspectiveManager;
@@ -1171,6 +1185,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 
 	/**
 	 * Returns the label with any accelerators removed.
+	 * @param label the label to remove accelerators from
 	 * 
 	 * @return label without accelerators
 	 */
@@ -1200,6 +1215,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Returns the label with any DBCS accelerator moved to the end of the string.
 	 * See bug 186921.
+	 * @param label the label to be adjusted
 	 * 
 	 * @return label with moved accelerator
 	 */
@@ -1229,6 +1245,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 
     /**
      * Returns the image descriptor registry used for this plug-in.
+     * @return the singleton {@link ImageDescriptorRegistry}
      * 
      * @since 3.1
      */
@@ -1243,8 +1260,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      * Returns an image descriptor for the icon referenced by the given attribute
      * and configuration element, or <code>null</code> if none.
      * 
-     * @param element
-     * @param attr
+     * @param element the configuration element
+     * @param attr the name of the attribute
      * @return image descriptor or <code>null</code>
      */
     public static ImageDescriptor getImageDescriptor(IConfigurationElement element, String attr) {

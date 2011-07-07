@@ -270,6 +270,12 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     }
     
     
+    /**
+     * @param context the context
+     * @param viewerInput the input
+     * @param path the path
+     * @param checked the checked state
+     */
     public void elementChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
         TestElement element = getElement(path); 
         Assert.assertFalse(element.getGrayed());

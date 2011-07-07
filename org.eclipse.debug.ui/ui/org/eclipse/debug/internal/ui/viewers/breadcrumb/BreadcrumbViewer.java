@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,9 +150,10 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
     /**
      * Configure the given drop down viewer. The given input is used for the viewers input. Clients
      * must at least set the label and the content provider for the viewer.
-     *
-     * @param viewer the viewer to configure
-     * @param input the input for the viewer
+     * @param parent the parent composite 
+     * @param site the site to create the drop down for
+     * @param path the path to show
+     * @return the drop down control
      */
 	protected abstract Control createDropDown(Composite parent, IBreadcrumbDropDownSite site, TreePath path);
 	
@@ -323,6 +324,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
    /**
      * This implementation of getSelection() returns an instance of
      * ITreeSelection.
+     * @return the current selection
      */
     public ISelection getSelection() {
         Control control = getControl();
@@ -500,7 +502,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	/**
 	 * The given element was selected from a drop down menu.
 	 *
-	 * @param element the selected element
+	 * @param selection the selected element
 	 */
 	void fireMenuSelection(ISelection selection) {
 		fireOpen(new OpenEvent(this, selection));
@@ -552,10 +554,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 
 	/**
 	 * Generates the parent chain of the given element.
-	 *
-	 * @param element element to build the parent chain for
-	 * @return the first index of an item in fBreadcrumbItems which is not 
-	 *         part of the chain
+	 * @param input element to build the parent chain for
 	 */
 	private void buildItemChain(Object input) {
 		if (fBreadcrumbItems.size() > 0) {
@@ -645,6 +644,9 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	
 	/**
 	 * Creates or updates a breadcrumb item.
+	 * @param index the index 
+	 * @param path the path
+	 * @param element the element
 	 *
 	 * @return whether breadcrumb layout needs to be updated due to this change
 	 */
@@ -856,7 +858,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	 *            second component
 	 * @param ratio
 	 *            percentage of the first component in the blend
-	 * @return
+	 * @return the blended color
 	 */
 	private static int blend(int v1, int v2, int ratio) {
 		int b = (ratio * v1 + (100 - ratio) * v2) / 100;

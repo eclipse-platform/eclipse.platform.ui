@@ -212,7 +212,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         // delta only wait for the delta to be processed.
         fListener.reset(); 
         model.postDelta(delta);
-        while (!fListener.isFinished(TestModelUpdatesListener.MODEL_CHANGED_COMPLETE)) 
+        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Check to make sure the selection was made
@@ -260,7 +260,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
 
         // Refresh the viewer
         model.postDelta( new ModelDelta(model.getRootElement(), IModelDelta.CONTENT) );
-        while (!fListener.isFinished(TestModelUpdatesListener.ALL_UPDATES_COMPLETE)) 
+        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.ALL_UPDATES_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Check to make sure the selection was made

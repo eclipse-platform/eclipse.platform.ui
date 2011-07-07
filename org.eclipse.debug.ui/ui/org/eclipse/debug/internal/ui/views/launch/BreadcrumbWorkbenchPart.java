@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * Fake part to used to create the breadcrumb page.
  * 
  * @since 3.5
- * @see LaunchView#fDefaultPageRec
  */
 class BreadcrumbWorkbenchPart implements IWorkbenchPart {
 
@@ -44,6 +43,7 @@ class BreadcrumbWorkbenchPart implements IWorkbenchPart {
     /**
      * Constructs a part for the given console that binds to the given
      * site
+     * @param site the backing site
      */
     public BreadcrumbWorkbenchPart(IWorkbenchPartSite site) {
         fSite = site;

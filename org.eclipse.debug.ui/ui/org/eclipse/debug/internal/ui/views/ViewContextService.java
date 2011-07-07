@@ -224,6 +224,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	/**
     	 * Activates the views in this context hierarchy. Views are activated top down, allowing
     	 * sub-contexts to override settings in a parent context.
+    	 * @param page the page context
+    	 * @param perspective the perspective description
     	 */
     	public void activateChain(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
     		initializeChain();
@@ -235,6 +237,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	 * specified contexts in the given page.
     	 *  
     	 * @param page page to activate views in
+    	 * @param perspective the perspective description
     	 * @param viewIds id's of views to activate
     	 * @param contextIds associated contexts that are activated
     	 */
@@ -298,6 +301,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	 * Deactivates this context only (not parents)
     	 * 
     	 * @param page workbench page
+    	 * @param perspective the perspective description
     	 */
     	public void deactivate(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 			removeActivated(getId());
@@ -315,7 +319,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	 * Notes when a view is opened/closed manually.
     	 * 
     	 * @param opened opened or closed
-    	 * @param viewId
+    	 * @param viewId the view identifier
     	 */
     	public void setViewOpened(boolean opened, String viewId) {
     		initializeChain();
@@ -340,8 +344,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         /**
          * Save view binding settings into XML document.
          * 
-         * @param document
-         * @param root
+         * @param document the document to save to
+         * @param root the root XML element
          * @param alreadyDone views already done
          */
         public void saveBindings(Document document, Element root, Set alreadyDone) {
@@ -381,7 +385,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         /**
          * Returns the id of the view this binding pertains to.
          * 
-         * @return
+         * @return the id of the view
          */
         public String getViewId() {
             return fElement.getAttribute(ATTR_VIEW_ID);
@@ -390,7 +394,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         /**
          * Returns whether this view binding is set for auto-open.
          * 
-         * @return
+         * @return if the view is set to auto-open
          */
         public boolean isAutoOpen() {
             String autoopen = fElement.getAttribute(ATTR_AUTO_OPEN);
@@ -400,7 +404,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         /**
          * Returns whether this view binding is set for auto-close.
          * 
-         * @return
+         * @return if the view is set to auto-close
          */
         public boolean isAutoClose() {
             String autoclose = fElement.getAttribute(ATTR_AUTO_CLOSE);
@@ -409,7 +413,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         
         /**
          * Returns whether this view was opened by the user in the active perspective.
-         * @return
+         * @param perspective the perspective description
+         * @return if this view was opened by the user
          */
         public boolean isUserOpened(IPerspectiveDescriptor perspective) {
             return fUserOpened.contains(perspective.getId());
@@ -417,7 +422,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         
         /**
          * Returns whether this view was closed by the user in the active perspective
-         * @return
+         * @param perspective the description of the perspective
+         * @return if this view was closed by the user in the active perspective 
          */
         public boolean isUserClosed(IPerspectiveDescriptor perspective) {
             return fUserClosed.contains(getActivePerspective().getId());
@@ -428,8 +434,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          * 
          * TODO: we really need an API to determine which views are
          * in a perspective by default, but it does not seem to exist.
-         * 
-         * @return
+         * @param perspective  the description of the perspective
+         * @return if this view is part of the active perspective by default
          */
         public boolean isDefault(IPerspectiveDescriptor perspective) {
             String id = perspective.getId();
@@ -462,7 +468,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         /**
          * Returns whether the preference is set to track user view open/close.
          * 
-         * @return
+         * @return if the service is set to track user view open/close
          */
         protected boolean isTrackingViews() {
             return DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS);
@@ -471,7 +477,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         /**
          * Context has been activated, open/show as required.
          * 
-         * @param page
+         * @param page the workbench page
+         * @param perspective the perspective description
          */
         public void activated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
             if (!isUserClosed(perspective)) {
@@ -497,7 +504,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          * Context has been activated. Check the view stack to see if this view
          * should be made visible.
          * 
-         * @param page
+         * @param page the page to check
+         * @param relevantViews the array of view identifiers
          */
         public void checkZOrder(IWorkbenchPage page, String[] relevantViews) {
         	// see if view is open already
@@ -526,7 +534,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         /**
          * Context has been deactivated, close as required.
          * 
-         * @param page
+         * @param page the workbench page
+         * @param perspective the perspective description
          */
         public void deactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
             if (!isUserOpened(perspective)) {
@@ -547,8 +556,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         /**
          * Save view binding settings into XML document.
          * 
-         * @param document
-         * @param root
+         * @param document the document to save to
+         * @param root the root XML element
          */
         public void saveBindings(Document document, Element root) {
             Element viewElement = document.createElement(XML_ELEMENT_VIEW);
@@ -602,7 +611,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/**
 	 * Creates a service for the given window
 	 * 
-	 * @param window
+	 * @param window the window to attach this service to
 	 */
 	ViewContextService(IWorkbenchWindow window) {
 		fWindow = window;
@@ -749,6 +758,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	
 	/**
 	 * Parses the comma separated string into a list of strings
+	 * @param listString the comma separated string to parse into a list object
 	 * 
 	 * @return list
 	 */
@@ -838,8 +848,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/**
 	 * Returns whether the given context is the active context in the active perspective.
 	 * 
-	 * @param contextId
-	 * @return
+	 * @param contextId the id of the context
+	 * @return if the given id is the id for the currently active context
 	 */
 	private boolean isActiveContext(String contextId) {
 		IPerspectiveDescriptor activePerspective = getActivePerspective();
@@ -853,8 +863,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/**
 	 * Returns whether the given context is activated in the active perspective. 
 	 * 
-	 * @param contextId
-	 * @return
+	 * @param contextId the context id
+	 * @return if the given context is activated in the active perspective 
 	 */
 	private boolean isActivated(String contextId) {
 		IPerspectiveDescriptor activePerspective = getActivePerspective();
@@ -916,8 +926,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/**
 	 * Closes all auto-opened views.
 	 * 
-	 * @param page
-	 * @param perspective
+	 * @param perspective the perspective descriptor
 	 */
 	private void clean(IPerspectiveDescriptor perspective) {
 		Set contexts = (Set) fPerspectiveToActivatedContexts.remove(perspective);
@@ -983,7 +992,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/**
 	 * Activates all parent contexts of the given context, top down.
 	 * 
-	 * @param contextId
+	 * @param contextId the identifier of the {@link DebugContextViewBindings} to activate
+	 * @param perspective the perspective description
 	 */
 	private void activateChain(String contextId, IPerspectiveDescriptor perspective) {
 	    if (fWindow == null) return; // disposed
@@ -1021,8 +1031,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * Sets the active context in the given perspective, or removes
 	 * when <code>null</code>.
 	 * 
-	 * @param perspective
-	 * @param contextId
+	 * @param perspective the perspective descriptor
+	 * @param contextId the context identifier
 	 */
 	private void setActive(IPerspectiveDescriptor perspective, String contextId) {
 		if (contextId == null) {
@@ -1042,7 +1052,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 				Iterator contexts = disabledContexts.iterator();
 				while (contexts.hasNext()) {
 					String contextId = (String)contexts.next();
-					if (isViewConetxt(contextId)) {
+					if (isViewContext(contextId)) {
 						if (isActivated(contextId)) {
 							deactivate(contextId, getActivePerspective());
 						}
@@ -1069,7 +1079,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/**
 	 * Returns a set of contexts disabled in the given event, possibly empty.
 	 * 
-	 * @param event
+	 * @param event the event
 	 * @return disabled context id's
 	 */
 	private Set getDisabledContexts(ContextManagerEvent event) {
@@ -1084,10 +1094,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	/**
 	 * Returns whether the given context has view bindings.
 	 * 
-	 * @param id
+	 * @param id the context id
 	 * @return whether the given context has view bindings
 	 */
-	private boolean isViewConetxt(String id) {
+	private boolean isViewContext(String id) {
 		return fContextIdsToBindings.containsKey(id);
 	}
     
@@ -1122,7 +1132,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     /**
      * Returns the perspectives in which debugging is enabled.
      * 
-     * @return
+     * @return the array of perspective identifiers in which debugging is enabled 
      */
     public String[] getEnabledPerspectives() {
     	return (String[]) fEnabledPerspectives.toArray(new String[fEnabledPerspectives.size()]);
@@ -1131,7 +1141,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     /**
      * Show the view without effecting user preferences
      * 
-     * @param viewId
+     * @param viewId the id of the view to show
      */
     public void showViewQuiet(String viewId) {
         if (fWindow == null) return;  // disposed;

@@ -323,8 +323,8 @@ public class InternalTreeModelViewer extends TreeViewer
 
 			/**
 			 * Constructs a new listener waiting 
-			 * @param parentPath
-			 * @param childIndex
+			 * @param parentPath the parent path
+			 * @param childIndex the current child index
 			 */
 			UpdateListener(TreePath parentPath, int childIndex) {
 				fParentPath = parentPath;
@@ -526,8 +526,7 @@ public class InternalTreeModelViewer extends TreeViewer
 		
 		/**
 		 * Sets the underlying model object.
-		 * 
-		 * @param path path to the element
+		 * @param data the model object
 		 */
 		void setElement(Object data) {
 			fElement = data;
@@ -536,7 +535,7 @@ public class InternalTreeModelViewer extends TreeViewer
 		/**
 		 * Sets the label update associated with this element
 		 * 
-		 * @param update
+		 * @param update the new label update
 		 */
 		void setLabelUpdate(VirtualLabelUpdate update) {
 			fLabel = update;
@@ -606,6 +605,9 @@ public class InternalTreeModelViewer extends TreeViewer
 		
 		/**
 		 * Creates a new update based for the given element and model
+		 * @param model the backing model
+		 * @param element the element to update
+		 * @param elementPath the path of the element
 		 */
 		public VirtualUpdate(VirtualModel model, VirtualElement element, TreePath elementPath) {
 			fPath = elementPath;
@@ -714,7 +716,7 @@ public class InternalTreeModelViewer extends TreeViewer
 		/**
 		 * update progress monitor
 		 * 
-		 * @param work
+		 * @param work the number of units worked
 		 */
 		void worked(int work) {
 			fMonitor.worked(work);
@@ -722,6 +724,7 @@ public class InternalTreeModelViewer extends TreeViewer
 		
 		/**
 		 * Schedules a children update.
+		 * @param update the update to schedule
 		 */
 		private synchronized void scheduleUpdate(IChildrenUpdate update) {
 			Object element = update.getElement();
@@ -871,7 +874,9 @@ public class InternalTreeModelViewer extends TreeViewer
 		private int fLength = 0;
 		
 		/**
-		 * @param elementPath
+		 * @param parentPath the parent path
+		 * @param parent the parent element
+		 * @param model the model
 		 */
 		public VirtualChildrenUpdate(TreePath parentPath, VirtualElement parent, VirtualModel model) {
 			super(model, parent, parentPath);
@@ -914,8 +919,7 @@ public class InternalTreeModelViewer extends TreeViewer
 		}
 
 		/**
-		 * @param treeItem
-		 * @param i
+		 * @param i the new offset
 		 */
 		void add(int i) {
 			if (fOffset == -1) {
@@ -930,8 +934,9 @@ public class InternalTreeModelViewer extends TreeViewer
 		
 		/**
 		 * Constructs a label request for the given element;
-		 * 
-		 * @param elementPath
+		 * @param coordinator  the model
+		 * @param element the element to update
+		 * @param elementPath the element path
 		 */
 		public VirtualLabelUpdate(VirtualModel coordinator, VirtualElement element, TreePath elementPath) {
 			super(coordinator, element, elementPath);
@@ -996,8 +1001,9 @@ public class InternalTreeModelViewer extends TreeViewer
 	}
 	
 	/**
-	 * @param parent
-	 * @param style
+	 * @param parent the parent composite
+	 * @param style the widget style bits
+	 * @param context the presentation context
 	 */
 	public InternalTreeModelViewer(Composite parent, int style, IPresentationContext context) {
 		super(parent, style);
@@ -1057,7 +1063,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	}
 	
 	/**
-	 * @param item
+	 * @param item the item 
 	 */
 	private void preserveItem(TreeItem item) {
 		Object[] labels = (Object[]) item.getData(PREV_LABEL_KEY);
@@ -1242,7 +1248,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	/**
      * Configures the columns for the given viewer input.
      * 
-     * @param input
+     * @param input the viewer input
      */
     protected void resetColumns(Object input) {
     	if (input != null) {
@@ -1280,8 +1286,6 @@ public class InternalTreeModelViewer extends TreeViewer
         
     /**
      * Configures the columns based on the current settings.
-     * 
-     * @param input
      */
     protected void configureColumns() {
     	if (fColumnPresentation != null) {
@@ -1317,6 +1321,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	
 	/**
 	 * Resets any persisted column size for the given columns
+	 * @param columnIds the identifiers of the columns to reset
 	 */
 	public void resetColumnSizes(String[] columnIds) {
 		for (int i = 0; i < columnIds.length; i++) {
@@ -1369,7 +1374,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	/**
 	 * Returns whether columns are being displayed currently.
 	 * 
-	 * @return
+	 * @return if columns are being shown 
 	 */
 	public boolean isShowColumns() {
 		if (fColumnPresentation != null) {
@@ -1400,7 +1405,7 @@ public class InternalTreeModelViewer extends TreeViewer
      * 
      * TODO: does this need to be asynchronous?
      * 
-     * @param presentation
+     * @param presentation the column presentation to build from
      */
     protected void buildColumns(IColumnPresentation presentation) {
     	// dispose current columns, persisting their weights
@@ -1578,7 +1583,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	/**
 	 * Save viewer state into the given memento.
 	 * 
-	 * @param memento
+	 * @param memento the {@link IMemento} to save to
 	 */
 	public void saveState(IMemento memento) {
 		if (!fColumnSizes.isEmpty()) {
@@ -1635,7 +1640,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	/**
 	 * Initializes viewer state from the memento
 	 * 
-	 * @param memento
+	 * @param memento the {@link IMemento} to read from
 	 */
 	public void initState(IMemento memento) {
 		IMemento[] mementos = memento.getChildren(COLUMN_SIZES);
@@ -1696,10 +1701,9 @@ public class InternalTreeModelViewer extends TreeViewer
 	/**
 	 * Returns whether the candidate selection should override the current
 	 * selection.
-	 * 
-	 * @param current
-	 * @param curr
-	 * @return
+	 * @param current the current selection
+	 * @param candidate the candidate for the new selection
+	 * @return if the current selection should be replaced with the candidate selection
 	 */
 	public boolean overrideSelection(ISelection current, ISelection candidate) {
 		IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(current, getPresentationContext());
@@ -1878,7 +1882,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	
 	/**
 	 * Returns the tree path for the given item.
-	 * @param item
+	 * @param item the item to compute the {@link TreePath} for
 	 * @return {@link TreePath}
 	 */
 	protected TreePath getTreePathFromItem(Item item) {
@@ -1929,8 +1933,8 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * workaround for bug 183463
 	 * </p>
 	 * @param parent the parent of the widget, or <code>null</code> if the widget is the tree
-	 * @param widget
-	 * @param element
+	 * @param widget the parent widget
+	 * @param element the underlying object
 	 * @param index the index of the widget in the children array of its parent, or 0 if the widget is the tree
 	 */
 	private void virtualRefreshExpandedItems(Widget parent, Widget widget, Object element, int index) {
@@ -1960,8 +1964,8 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * workaround for bug 183463
 	 * 
 	 * Update the child count
-	 * @param widget
-	 * @param currentChildCount
+	 * @param widget the widget
+	 * @param currentChildCount the current child count
 	 */
 	private void virtualLazyUpdateChildCount(Widget widget, int currentChildCount) {
 		TreePath treePath;
@@ -1979,8 +1983,8 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * <p>
 	 * workaround for bug 183463
 	 * </p>
-	 * @param widget
-	 * @param index
+	 * @param widget the widget
+	 * @param index the index to update
 	 */
 	private void virtualLazyUpdateWidget(Widget widget, int index) {
 		TreePath treePath;
@@ -2424,7 +2428,7 @@ public class InternalTreeModelViewer extends TreeViewer
     /**
      * Retrieves the element's check box grayed state.
      * 
-     * @param path
+     * @param path the path of the element to set grayed
      * @return grayed
      */
     public boolean getElementGrayed(TreePath path) {

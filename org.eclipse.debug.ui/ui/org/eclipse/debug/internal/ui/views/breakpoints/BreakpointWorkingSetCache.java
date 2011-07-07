@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,13 +36,12 @@ public class BreakpointWorkingSetCache {
 	/**
 	 * the entire cache
 	 * key: marker
-	 * value: vector of workingsets the marker belongs to
+	 * value: vector of working sets the marker belongs to
 	 */
 	HashMap fCache = null;
 	
 	/**
 	 * Default constructor
-	 * @param organizer the oprganizer that owns this cache
 	 */
 	public BreakpointWorkingSetCache() {
 		fCache = new HashMap(15);

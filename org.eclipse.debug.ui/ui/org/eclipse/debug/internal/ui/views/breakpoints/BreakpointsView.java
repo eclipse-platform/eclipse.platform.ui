@@ -188,7 +188,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	
 	/**
 	 * Returns the tree model viewer.
-	 * @return
+	 * @return the backin gviewer
 	 */
 	public TreeModelViewer getTreeModelViewer() {
 		return (TreeModelViewer) getViewer();
@@ -376,6 +376,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	
 	/**
 	 * Initializes the persisted breakpoints organizers.
+	 * @param memento the memento to read 
 	 */
 	private void initBreakpointOrganizers(IMemento memento) {
 		if (memento != null) {
@@ -405,6 +406,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	
     /**
      * Initializes drag and drop for the breakpoints viewer
+     * @param viewer the viewer to add drag and drop support to
      */
 	protected void initDragAndDrop(TreeModelViewer viewer) {
         int ops = DND.DROP_MOVE | DND.DROP_COPY;
@@ -490,8 +492,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 
 	/**
 	 * Sets the breakpoint filter for this view.
-	 * 
-	 * @param ss the selection, can be <code>null</code>.
+	 * @param filter the selection to act as a filter 
 	 */
 	public void setFilterSelection(boolean filter) {
 		TreeModelViewer viewer = getTreeModelViewer();
@@ -615,7 +616,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
     
 	/**
      * Returns the container from within the specified path that is the container the breakpoint can be removed from
-     * @param breakpoint the breakpoint to get the container for
+	 * @param path the path to get the container from 
      * @return the first found container that includes the breakpoint that allows removal, or <code>null</code> if none found
      * @since 3.3
      */
@@ -642,7 +643,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 
     /**
      * Returns the addable breakpoint container of the specified tree path
-     * @param breakpoint the breakpoint to get the container for
+     * @param path the path to get the container for 
      * @return the first found addable container for the specified tree path or <code>null</code> if none found
      * @since 3.3
      */
@@ -671,12 +672,12 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	/**
 	 * This method is used to determine if there is an addable parent container available for the specified drop target.
 	 * <p>
-	 * A drop target can be either a <code>IBreakpointContainer</code> or an <code>IBreakpoint</code>. This method always checks the entire heirarchy
+	 * A drop target can be either a <code>IBreakpointContainer</code> or an <code>IBreakpoint</code>. This method always checks the entire hierarchy
 	 * of the tree path for the specified target in the event one of the parent element does not support dropping. 
 	 * </p>
-	 * @param target
-	 * @param breakpoint
-	 * @return
+	 * @param path the path
+	 * @param breakpoint the breakpoint
+	 * @return <code>true</code> if there is a parent container available for the drop target <code>false</code> otherwise
 	 */
 	private boolean checkAddableParentContainers(TreePath path, IBreakpoint breakpoint) {
 		if (path != null) {
@@ -703,7 +704,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
      * <li>breakpoints can be dragged iff the container they reside in supports the removal of breakpoints</li>
      * </ul>
      * </p>
-     * @param element the element to test if it can be dragged
+     * @param items the tree paths to check if they can be dragged
      * @return true if the selected element can be dragged, false otherwise
      * @since 3.3
      */
@@ -724,7 +725,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
     
     /**
      * Performs the actual removal of breakpoints from their respective (removable) containers on a successful drag operation
-     * @param selection the selection of breakpoints involved in the drag
+     * @param paths the tree paths to drag 
      * @since 3.3
      */
     void performDrag(TreePath[] paths) {
@@ -814,7 +815,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
      * </ul>
      * </p>
      * @param target the target for the drop
-     * @param element the element we want to drop
+     * @param selection the selection to see if we can drop 
      * @return true if the specified element can be dropped into the specified target, false otherwise
      * @since 3.3
      */

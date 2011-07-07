@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -368,6 +368,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * contribute to. Subclasses must override this method.
 	 * 
 	 * @param parent the parent control
+	 * @return the new {@link Viewer}
 	 */
 	protected abstract Viewer createViewer(Composite parent);
 	
@@ -441,7 +442,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * Generate a String that can be used as a key into a preference store based
 	 * on the specified action.  The resulting String will be unique across
 	 * views.
-	 * 
+	 * @param action the action to generate a key for
 	 * @return a String suitable for use as a preference store key for the given
 	 * action
 	 * @since 2.1
@@ -709,6 +710,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * <ol> 
 	 * <li><code>REMOVE_ACTION</code> when the delete
 	 * key is pressed</li>
+	 * @param event the {@link KeyEvent}
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
@@ -735,6 +737,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * Registers the given runnable with the display
 	 * associated with this view's control, if any.
+	 * @param r the {@link Runnable} to run
 	 * 
 	 * @see org.eclipse.swt.widgets.Display#asyncExec(java.lang.Runnable)
 	 */
@@ -757,6 +760,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * Registers the given runnable with the display
 	 * associated with this view's control, if any.
+	 * @param r the {@link Runnable} to run
  	 *
 	 * @see org.eclipse.swt.widgets.Display#syncExec(java.lang.Runnable)
 	 */
@@ -769,6 +773,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * Returns the memento that contains the persisted state of
 	 * the view.  May be <code>null</code>.
+	 * @return the current {@link IMemento}
 	 */
 	protected IMemento getMemento() {
 		return fMemento;
@@ -777,6 +782,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/** 
 	 * Sets the memento that contains the persisted state of the 
 	 * view.
+	 * @param memento the new {@link IMemento}
 	 */
 	protected void setMemento(IMemento memento) {
 		fMemento = memento;
@@ -981,7 +987,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * Returns a map of the current attribute settings in the model
 	 * presentation in this view associated with the given debug model.
-	 * 
+	 * @param modelId the debug model identifier
 	 * @return a map of the current attribute settings in the model
 	 * presentation in this view associated with the given debug model
 	 * @since 3.0

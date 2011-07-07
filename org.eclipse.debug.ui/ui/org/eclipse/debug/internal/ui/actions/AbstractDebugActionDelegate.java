@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,8 @@ import org.eclipse.ui.IWorkbenchWindow;
  * This class is an abstract implementation of common features for a debug <code>IViewActionDelegate</code>
  *
  * This class is intended to be extended by clients
- * @see {@link IViewActionDelegate}
- * @see {@link IActionDelegate2}
+ * @see IViewActionDelegate
+ * @see IActionDelegate2
  */
 public abstract class AbstractDebugActionDelegate implements IViewActionDelegate, IActionDelegate2 {
 	
@@ -87,6 +87,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	
 	/**
 	 * Runs this action in the UI thread.
+	 * @param selection the current selection
 	 */
 	private void runInForeground(final IStructuredSelection selection) {
 	    final MultiStatus status= 
@@ -172,6 +173,8 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	
 	/**
 	 * Performs the specific action on this element.
+	 * @param element the element context to perform the action on
+	 * @throws DebugException if an exception occurs
 	 */
 	protected abstract void doAction(Object element) throws DebugException;
 
@@ -180,6 +183,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 * a failed action. This message appears as the "Message:" in
 	 * the error dialog for this action.
 	 * Default is to return null.
+	 * @return the message to be displayed in the an error dialog
 	 */
 	protected String getErrorDialogMessage(){
 		return null;
@@ -189,6 +193,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 * a failed action. This message appears as the "Reason:"
 	 * in the error dialog for this action.
 	 * Default is to return the empty String.
+	 * @return the message to be displayed as a status
 	 */
 	protected String getStatusMessage(){
 		return IInternalDebugCoreConstants.EMPTY_STRING;
@@ -218,6 +223,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 * have the initial enabled state set with a call to update(IAction, ISelection).
 	 * 
 	 * @param action the presentation for this action
+	 * @param selection the current selection - workbench or text
 	 * @return whether the action was initialized
 	 */
 	protected boolean initialize(IAction action, ISelection selection) {
@@ -242,7 +248,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	/**
 	 * Sets the most recent selection
 	 * 
-	 * @parm selection structured selection
+	 * @param selection structured selection
 	 */	
 	private void setSelection(IStructuredSelection selection) {
 		fSelection = selection;
@@ -282,6 +288,8 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	
 	/**
 	 * Return whether the action should be enabled or not based on the given selection.
+	 * @param selection the selection
+	 * @return if the action should be enabled or not
 	 */
 	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
 		if (selection.size() == 0) {

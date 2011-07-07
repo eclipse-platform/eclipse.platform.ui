@@ -316,6 +316,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         return fViewer == null;
     }
 
+    /**
+     * @param viewer the viewer whose input will change
+     * @param oldInput the old input
+     * @param newInput the new input
+     */
     public synchronized void inputAboutToChange(ITreeModelContentProviderTarget viewer, Object oldInput, Object newInput) {
         if (newInput != oldInput && oldInput != null) {
             for (Iterator itr = fCompareRequestsInProgress.values().iterator(); itr.hasNext();) {
@@ -489,14 +494,17 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 
     /**
      * Restore selection/expansion based on items already in the viewer
+     * @param delta the {@link ModelDelta} to restore from
      */
     protected abstract void doInitialRestore(ModelDelta delta);
 
     /**
-     * @param delta
+     * @param delta the {@link ModelDelta} to restore from
+     * @param knowsHasChildren if the content provider has computed its children
+     * @param knowsChildCount if the content provider has already computed the child count
+     * @param checkChildrenRealized if any realized children should be checked
      */
-    abstract void restorePendingStateNode(final ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount,
-        boolean checkChildrenRealized);
+    abstract void restorePendingStateNode(final ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized);
 
     public void cancelRestore(final TreePath path, final int flags) {
         if (fInStateRestore) {
@@ -712,7 +720,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * Perform any restoration required for the given tree path.
      * 
-     * @param path
+     * @param path the tree path to update
+     * @param modelIndex the index in the current model
+     * @param knowsHasChildren if the content provider knows it has children already
+     * @param knowsChildCount if the content provider knows the current child count already
+     * @param checkChildrenRealized if any realized children should be checked or not
      */
     protected synchronized void restorePendingStateOnUpdate(final TreePath path, final int modelIndex, final boolean knowsHasChildren,
         final boolean knowsChildCount, final boolean checkChildrenRealized) {
@@ -807,6 +819,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 
     /**
      * Saves the viewer's state for the previous input. * @param oldInput
+     * @param input the {@link ModelDelta} input
      */
     protected void saveViewerState(Object input) {
         IElementMementoProvider stateProvider = ViewerAdapterService.getMementoProvider(input);
@@ -1002,9 +1015,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 
     /**
      * Encodes delta elements into mementos using the given provider.
+     * @param rootDelta the {@link ModelDelta} to encode
+     * @param defaultProvider the default provider to use when processing the given delta
      * 
-     * @param delta
-     * @param stateProvider
      */
     protected void encodeDelta(final ModelDelta rootDelta, final IElementMementoProvider defaultProvider) {
         final Object input = rootDelta.getElement();
@@ -1165,8 +1178,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 
     /**
      * Called when a state save is starting.
-     * 
-     * @param manager
+     * @param input the {@link ModelDelta} input
+     * @param manager the manager to notify
      */
     private synchronized void stateSaveStarted(Object input, IMementoManager manager) {
         notifyStateUpdate(input, STATE_SAVE_SEQUENCE_BEGINS, null);
@@ -1175,8 +1188,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 
     /**
      * Called when a state save is complete.
-     * 
-     * @param manager
+     * @param input the {@link ModelDelta} input
+     * @param manager the manager to notify
      */
     private synchronized void stateSaveComplete(Object input, IMementoManager manager) {
         notifyStateUpdate(input, STATE_SAVE_SEQUENCE_COMPLETE, null);
@@ -1207,8 +1220,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 
     /**
      * Uninstalls the model proxy installed for the given element, if any.
-     * 
-     * @param element
+     * @param path the {@link TreePath} to dispose the model proxy for
      */
     protected synchronized void disposeModelProxy(TreePath path) {
         IModelProxy proxy = (IModelProxy) fTreeModelProxies.remove(path);
@@ -1268,9 +1280,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * Installs the model proxy for the given element into this content provider
      * if not already installed.
-     * 
-     * @param element
-     *            element to install an update policy for
+     * @param input the input to install the model proxy on
+     * @param path the {@link TreePath} to install the proxy for
      */
     protected synchronized void installModelProxy(Object input, TreePath path) {
         if (!fTreeModelProxies.containsKey(path) && !fModelProxies.containsKey(path.getLastSegment())) {
@@ -1393,14 +1404,16 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     }
     
     /**
-     * @see ITreeModelContentProvider#setModelDeltaMask(int)
+     * @param mask the new mask to set
+     * @see ITreeModelContentProvider for a list of masks
      */
     public void setModelDeltaMask(int mask) {
         fModelDeltaMask = mask;
     }
 
     /**
-     * @see ITreeModelContentProvider#getModelDeltaMask()
+     * @return the current model delta mask
+     * @see IModelDelta for a list of masks
      */
     public int getModelDeltaMask() {
         return fModelDeltaMask;
@@ -1419,11 +1432,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * Updates the viewer with the following deltas.
      * 
-     * @param nodes
-     *            Model deltas to be processed.
-     * @param override
-     *            If true, it overrides the mode which suppresses processing of
-     *            SELECT, REVEAL, EXPAND, COLLAPSE flags of {@link IModelDelta}.
+     * @param nodes Model deltas to be processed.
+     * @param mask the model delta mask
+     * @see IModelDelta for a list of masks
      */
     protected void updateNodes(IModelDelta[] nodes, int mask) {
         for (int i = 0; i < nodes.length; i++) {
@@ -1680,8 +1691,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      * Returns whether the given index of the specified parent was previously
      * filtered.
      * 
-     * @param parentPath
-     * @param index
+     * @param parentPath the parent path
+     * @param index the index of parent path
      * @return whether the element at the given index was filtered
      */
     protected boolean isFiltered(TreePath parentPath, int index) {
@@ -1691,7 +1702,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * Notification the given element is being unmapped.
      * 
-     * @param path
+     * @param path the path to remove from the {@link FilterTransform} and cancel updates from
      */
     public void unmapPath(TreePath path) {
         // System.out.println("Unmap " + path.getLastSegment());
@@ -1702,7 +1713,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * Returns filtered children or <code>null</code>
      * 
-     * @param parent
+     * @param parent the parent path to get children for
      * @return filtered children or <code>null</code>
      */
     protected int[] getFilteredChildren(TreePath parent) {
@@ -1869,7 +1880,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * Notification an update request has started
      * 
-     * @param update
+     * @param update the update to notify about
      */
     void updateStarted(ViewerUpdateMonitor update) {
         boolean begin = false;
@@ -1897,7 +1908,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * Notification an update request has completed
      * 
-     * @param update
+     * @param update the update to notify
      */
     void updateComplete(final ViewerUpdateMonitor update) {
         notifyUpdate(UPDATE_COMPLETE, update);
@@ -2049,8 +2060,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      * Returns whether this given request should be run, or should wait for
      * parent update to complete.
      * 
-     * @param update
-     * @return whether to start the given request
+     * @param update the update the schedule
      */
     void schedule(ViewerUpdateMonitor update) {
         synchronized (fRequestsInProgress) {
@@ -2119,7 +2129,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      * 
      * TODO: should we cancel child updates if a request has been canceled?
      * 
-     * @param request
+     * @param request the request that just completed
      */
     void trigger(ViewerUpdateMonitor request) {
         if (fWaitingRequests.isEmpty()) {
@@ -2150,8 +2160,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     }
 
     /**
-     * @param key
-     * @param waiting
+     * @param key the {@link TreePath}
+     * @param waiting the list of waiting requests
      */
     private void startHighestPriorityRequest(TreePath key, List waiting) {
         int priority = 4;

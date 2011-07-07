@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
     
     /**
      * Constructor
-     * @param view the associated view, which acts as the selection provider and therefore <b>must</b> implement <code>ISelectionProvider</code>
+     * @param viewer the associated viewer, which acts as the selection provider and therefore <b>must</b> implement <code>ISelectionProvider</code>
      */
     public BreakpointsDragAdapter(BreakpointsViewer viewer) {
         Assert.isNotNull(viewer);
@@ -52,8 +52,8 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
         fView = view;
     }
 
-    /**
-     * @see TransferDragSourceListener#getTransfer
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.util.TransferDragSourceListener#getTransfer()
      */
     public Transfer getTransfer() {
         return LocalSelectionTransfer.getTransfer();

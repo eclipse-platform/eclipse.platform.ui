@@ -168,7 +168,7 @@ abstract public class CheckTests extends TestCase {
         
         fListener.reset(elementPath, element, -1, true, false); 
         model.postDelta(delta);
-        while (!fListener.isFinished(TestModelUpdatesListener.LABEL_COMPLETE | TestModelUpdatesListener.MODEL_CHANGED_COMPLETE)) 
+        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.LABEL_COMPLETE | ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
     }

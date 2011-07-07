@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -380,7 +380,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	
 	/**
 	 * 
-	 * @param key
+	 * @param key the element
 	 * @return the coordinates of the key
 	 * Element[0] is the row index
 	 * Element[1] is the column index
@@ -628,9 +628,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	}
 
 	/**
-	 * Activate cell editor and prefill it with initial value.
+	 * Activate cell editor and pre-fill it with initial value.
 	 * If initialValue is null, use cell content as initial value
-	 * @param initialValue
+	 * @param initialValue the initial value for the cell editor
 	 */
 	private void activateCellEditor(String initialValue) {
 
@@ -729,7 +729,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	}
 	
 	/**
-	 * @param event
+	 * @param event the key event
 	 */
 	private void handleKeyEventInEditor(KeyEvent event) {
 		
@@ -837,7 +837,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	}
 	
 	/**
-	 * @param control
+	 * @param control the control to remove the default key listener from
 	 */
 	private void removeListeners(Control control) {
 		
@@ -846,10 +846,10 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	
 	/**
 	 * Modify value and send new value to debug adapter
-	 * @param row
-	 * @param col
-	 * @param newValue
-	 * @throws NumberFormatException
+	 * @param row the row
+	 * @param col the column
+	 * @param newValue the new value
+	 * @throws NumberFormatException if trying to set a number value fails
 	 */
 	private void modifyValue(int row, int col, Object newValue) throws NumberFormatException
 	{	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,6 +145,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 	/**
 	 * Hash lookup is required, don't let subclasses change behavior.
+	 * @param enable if hash lookup should be used in the viewer
 	 */
 	public final void setUseHashlookup(boolean enable) {
 		Assert.isTrue(enable);
@@ -214,7 +215,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Updates the label for a specific element (node) in the model.
 	 * 
 	 * @param node node to update
-	 * @param item its associated item
 	 */
 	protected void updateLabel(ModelNode node) {
 		// the input is not displayed
@@ -396,7 +396,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * Sets the context for this viewer. 
 	 * 
-	 * @param context
+	 * @param context the presentation context
 	 */
 	public void setContext(IPresentationContext context) {
 		fContext = context;
@@ -522,9 +522,9 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Returns whether the candidate selection should override the current
 	 * selection.
 	 * 
-	 * @param current
-	 * @param curr
-	 * @return
+	 * @param current the current selection
+	 * @param candidate the new selection
+	 * @return if the selection should be overridden
 	 */
 	protected boolean overrideSelection(ISelection current, ISelection candidate) {
 		IModelSelectionPolicy selectionPolicy = getSelectionPolicy(current);
@@ -779,6 +779,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	
 	/**
 	 * Returns whether the selection exists in the model
+	 * @param selection the selection context
+	 * @return <code>true</code> if the selecton exists in the model <code>false</code> otherwise
 	 */
 	protected boolean selectionExists(ISelection selection) {
 		if (selection.isEmpty()) {
@@ -836,7 +838,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * Notification the given model proxy has been added to this viewer's model.
 	 * 
-	 * @param proxy
+	 * @param proxy the model proxy that has been added
 	 */
 	protected void modelProxyAdded(IModelProxy proxy) {
 		if (fUpdatePolicy instanceof IModelChangedListener) {
@@ -847,7 +849,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * Notification the given model proxy has been removed from this viewer's model.
 	 * 
-	 * @param proxy
+	 * @param proxy the model proxy that has been removed
 	 */
 	protected void modelProxyRemoved(IModelProxy proxy) {
 		if (fUpdatePolicy instanceof IModelChangedListener) {
@@ -867,7 +869,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * A node in the model has been updated
 	 * 
-	 * @param node
+	 * @param node the model node that has been changed
 	 */
 	protected void nodeChanged(ModelNode node) {
 		Widget widget = findItem(node);
@@ -888,7 +890,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Notification from the model that the update for the given request
 	 * has completed.
 	 * 
-	 * @param monitor
+	 * @param monitor the monitor
 	 */
 	protected void updateComplete(IStatusMonitor monitor) {
 	}
@@ -896,22 +898,22 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * Clears the given widget
 	 * 
-	 * @param item
+	 * @param item the widget
 	 */
     protected abstract void clear(Widget item);
     
     /**
      * Clears the children of the widget.
      * 
-     * @param item
+     * @param item the widget to clear children from
      */
     protected abstract void clearChildren(Widget item);
     
     /**
      * Clears the child at the given index.
      * 
-     * @param parent
-     * @param childIndex
+     * @param parent the parent widget
+     * @param childIndex the index of the child widget to clear
      */
     protected abstract void clearChild(Widget parent, int childIndex);
 
@@ -919,17 +921,17 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Returns the child widget at the given index for the given parent or
 	 * <code>null</code>
 	 * 
-	 * @param parent
-	 * @param index
-	 * @return
+	 * @param parent the parent widget
+	 * @param index the index of the child in the parent widget 
+	 * @return the widget at the given index in the parent or <code>null</code>
 	 */
 	protected abstract Widget getChildWidget(Widget parent, int index);
 
 	/**
 	 * Sets the item count for a parent widget
 	 * 
-	 * @param parent
-	 * @param itemCount
+	 * @param parent the parent widget
+	 * @param itemCount the new item count to set
 	 */
 	protected abstract void setItemCount(Widget parent, int itemCount);
 
@@ -945,7 +947,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Updates the child count for the parent's widget
 	 * and clears children to be updated.
 	 * 
-	 * @param parentNode
+	 * @param parentNode the parent model node
 	 */
 	protected void nodeChildrenChanged(ModelNode parentNode) {
 		Widget widget = findItem(parentNode);
@@ -961,7 +963,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Notification children have been added to the end
 	 * of the given parent.
 	 * 
-	 * @param parentNode
+	 * @param parentNode the parent model node
 	 */
 	protected void nodeChildrenAdded(ModelNode parentNode) {
 		Widget widget = findItem(parentNode);
@@ -976,7 +978,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Notification children have been added to the end
 	 * of the given parent.
 	 * 
-	 * @param parentNode
+	 * @param parentNode the parent model node
+	 * @param index the index of the child that was removed 
 	 */
 	protected void nodeChildRemoved(ModelNode parentNode, int index) {
 		Widget widget = findItem(parentNode);
@@ -1000,7 +1003,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Unmaps the node from its widget and all of its children nodes from
 	 * their widgets.
 	 * 
-	 * @param node
+	 * @param node the model node
 	 */
 	protected void unmapNode(ModelNode node) {
 		unmapElement(node);
@@ -1033,8 +1036,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     
     /**
      * Returns the item for the node or <code>null</code>
-     * @param node
-     * @return
+     * @param node the model node
+     * @return the widget or <code>null</code>
      */
     protected Widget findItem(ModelNode node) {
     	return findItem((Object)node);
@@ -1145,8 +1148,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Sets the index of a child node being mapped at the given expansion level
 	 * in the tree.
 	 * 
-	 * @param nodeIndex
-	 * @param level
+	 * @param nodeIndex the index of the node
+	 * @param level the expansion level
 	 */
 	private void setNodeIndex(int nodeIndex, int level) {
 		if (level > (fSetDataIndicies.length - 1)) {
@@ -1162,8 +1165,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Returns the index of a child node being mapped at the given expansion level in
 	 * the tree.
 	 * 
-	 * @param level
-	 * @return
+	 * @param level the expansion level
+	 * @return the child index
 	 */
 	private int getNodeIndex(int level) {
 		return fSetDataIndicies[level];
@@ -1176,7 +1179,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * Returns the parent widget for the given widget or <code>null</code>
 	 * 
-	 * @param widget
+	 * @param widget the widget to get the parent from
 	 * @return parent widget or <code>null</code>
 	 */
 	protected abstract Widget getParentWidget(Widget widget);

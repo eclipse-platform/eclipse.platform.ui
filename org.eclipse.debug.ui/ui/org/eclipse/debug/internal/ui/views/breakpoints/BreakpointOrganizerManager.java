@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class BreakpointOrganizerManager {
 	/**
 	 * Returns the singleton instance of the breakpoint container
 	 * factory manager.
+	 * @return the singleton {@link BreakpointOrganizerManager}
 	 */
 	public static BreakpointOrganizerManager getDefault() {
 		if (fgManager == null) {
@@ -100,7 +101,7 @@ public class BreakpointOrganizerManager {
     /**
      * Validates the given organizer. Checks that certain required attributes
      * are available.
-     * @param extension the organizer to validate
+     * @param organizer the organizer to check
      * @return whether the given organizer is valid
      */
     protected static boolean validateOrganizer(IBreakpointOrganizer organizer) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,9 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	
 	/**
 	 * Create the content of the view pane
-	 * @param parent
+	 * @param parent the parent composite
+	 * @param paneId the id of the pane to create
+	 * @param label the label for the new pane
 	 * @return the control of the view pane
 	 */
 	public Control createViewPane(Composite parent, String paneId, String label)
@@ -342,6 +344,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	 * Helper method to dispose of a tab folder,
 	 * and of any tab items it contains.
 	 * Must be called from the UI thread.
+	 * @param tabFolder the {@link CTabFolder} to dispose
 	 * */
 	private void disposeOfFolder(CTabFolder tabFolder) 
 	{

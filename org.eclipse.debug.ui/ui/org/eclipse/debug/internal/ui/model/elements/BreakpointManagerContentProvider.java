@@ -132,9 +132,6 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
          * Constructor
          *  
          * @param input the breakpoint manager input
-         * @param proxy the model proxy 
-         * @param filter the debug context selection 
-         * @param comparator the element comparator 
          */
         InputData(DefaultBreakpointsViewInput input) {
             fInput = input;
@@ -282,8 +279,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         /**
          * Handles the property changed events in presentation contexts.
          * Sub-classes may override to perform additional handling.
-         * 
-         * @param presentation Presentation context that changed.
+         * @param event the event 
          */
         private void presentationPropertyChanged(PropertyChangeEvent event) {
             if (IPresentationContext.PROPERTY_DISPOSED.equals(event.getProperty())) {
@@ -455,7 +451,6 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         /**
          * Helper method to add breakpoints to the given input.
          * 
-         * @param data the input to add the breakpoints
          * @param breakpoints the breakpoints
          */
         void breakpointsAdded(IBreakpoint[] breakpoints) {
@@ -493,7 +488,6 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         /**
          * Helper method to remove breakpoints from a given input.
          * 
-         * @param data the input to add the breakpoints
          * @param breakpoints the breakpoints
          */
         void breakpointsRemoved(IBreakpoint[] breakpoints) {
@@ -581,6 +575,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
          * @param container the existing  container to insert the new elements.
          * @param refContainer the reference container to compare elements that are added.
          * @param containerDelta the delta of the existing container.
+         * @return the breakpoint that was inserted
          */
         private IBreakpoint insertAddedElements(BreakpointContainer container, BreakpointContainer refContainer, ModelDelta containerDelta) {
             IBreakpoint newBreakpoint = null;
@@ -652,8 +647,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
          * @param collection the collection of elements.
          * @param element the element to search.
          * @return if element exist in collection, than it is returned, otherwise <code>null</code> is returned.
-         * @see insertAddedElements
-         * @see deleteRemovedElements
+         * @see #insertAddedElements
+         * @see #deleteRemovedElements
          */
         private Object getElement(Object[] collection, Object element) {
             for (int i = 0; i < collection.length; ++i)
@@ -673,8 +668,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
          * @param rootDelta the root delta.
          * @param input the view input.
          * @param organizers the breakpoint organizers.
-         * @param oldContainer the old container, use to determine whether a new breakpoint should be expanded.
-         * @param the breakpoint manager.
+         * @param breakpoints the breakpoints to add to the container 
+         * @return the new root container
          */
         private BreakpointContainer createRootContainer(
             ModelDelta rootDelta, DefaultBreakpointsViewInput input, 
@@ -694,9 +689,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         /**
          * Fire model change event for the input.
          * 
-         * @param input the input.
          * @param delta the model delta.
-         * @param debugReason the debug string.
+         * @param select if the viewer selection should change
          */
         synchronized private void postModelChanged(final IModelDelta delta, boolean select) {
             for (int i = 0; fProxies != null && i < fProxies.size(); i++) {
@@ -766,6 +760,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * Sub-classes may override this method to filter the breakpoints.
      * 
      * @param input the breakpoint manager input.
+     * @param selectionFilter the selection to use as filter 
      * @param breakpoints the list of breakpoint to filter.
      * @return the filtered list of breakpoint based on the input.
      */
@@ -892,9 +887,6 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * 
      * @param input the breakpoint manager input to register.
      * @param proxy the model proxy of the input.
-     * @param organizers the breakpoint organizer, can be <code>null</code>.
-     * @param selectionFilter the selection filter, can be <code>null</code>.
-     * @param comparator the element comparator.
      */
     public void registerModelProxy(DefaultBreakpointsViewInput input, BreakpointManagerProxy proxy) {
         synchronized(this) {
@@ -913,6 +905,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * Unregister the breakpoint manager input with this content provider.
      * 
      * @param input the breakpoint manager input to unregister.
+     * @param proxy the manager proxy
      */
     public void unregisterModelProxy(DefaultBreakpointsViewInput input, BreakpointManagerProxy proxy) {
         InputData inputData = (InputData)fInputToData.get(input);
@@ -950,6 +943,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
      * Returns the selection filter for the input.
      * 
      * @param input the selection.
+     * @param debugContext the current context
+     * @return the filtered selection or <code>null</code>
      */
     protected IStructuredSelection getSelectionFilter(Object input, IStructuredSelection debugContext) {
         if (input instanceof DefaultBreakpointsViewInput) {

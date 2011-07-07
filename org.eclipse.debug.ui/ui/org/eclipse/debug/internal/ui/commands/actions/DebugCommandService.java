@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class DebugCommandService implements IDebugContextListener {
 	/**
 	 * Returns the service for a window.
 	 * 
-	 * @param window
+	 * @param window the window
 	 * @return service
 	 */
 	public synchronized static DebugCommandService getService(IWorkbenchWindow window) {
@@ -106,8 +106,8 @@ public class DebugCommandService implements IDebugContextListener {
 	/**
 	 * Updates the given command type after the next context change.
 	 * 
-	 * @param commandType
-	 * @param monitor
+	 * @param commandType the command class
+	 * @param action the action to add to the update list
 	 */
 	public void postUpdateCommand(Class commandType, IEnabledTarget action) {
 		synchronized (fCommandUpdates) {
@@ -124,8 +124,8 @@ public class DebugCommandService implements IDebugContextListener {
 	/**
 	 * Updates the given command type based on the active context.
 	 * 
-	 * @param commandType
-	 * @param requestMonitor
+	 * @param commandType the command class
+	 * @param action the action to update
 	 */
 	public void updateCommand(Class commandType, IEnabledTarget action) {
 		ISelection context = fContextService.getActiveContext();
@@ -167,10 +167,9 @@ public class DebugCommandService implements IDebugContextListener {
 	
 	/**
 	 * Updates the given command type for the specified elements.
-	 * 
-	 * @param commandType command class to update
+	 * @param handlerType the handle type class 
 	 * @param elements elements to update for
-	 * @param monitor status monitor
+	 * @param actions the actions to update
 	 */
 	private void updateCommand(Class handlerType, Object[] elements, IEnabledTarget[] actions) {
 		if (elements.length == 1) {
@@ -205,10 +204,10 @@ public class DebugCommandService implements IDebugContextListener {
 	
 	/**
 	 * Updates the given command type for the specified elements.
-	 * 
-	 * @param commandType command class to update
+	 * @param handlerType the handler type class 
 	 * @param elements elements to update for
-	 * @param monitor status monitor
+	 * @param participant the participant
+	 * @return if the command stays enabled while the command executes
 	 */
 	public boolean executeCommand(Class handlerType, Object[] elements, ICommandParticipant participant) {
 		if (elements.length == 1) {
@@ -249,7 +248,8 @@ public class DebugCommandService implements IDebugContextListener {
 	 * Returns a map of command handlers to associated elements, or <code>null</code> if 
 	 * one is missing.
 	 * 
-	 * @param elements
+	 * @param elements the elements
+	 * @param handlerType the handler type class
 	 * @return map of command handlers to associated elements or <code>null</code>
 	 */
 	private Map collate(Object[] elements, Class handlerType) {

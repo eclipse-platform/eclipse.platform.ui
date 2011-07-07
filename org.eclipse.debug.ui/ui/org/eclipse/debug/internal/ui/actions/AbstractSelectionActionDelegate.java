@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,8 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
  * 
  * This class is intended to be extended by clients
  * 
- * @see {@link IViewActionDelegate}
- * @see {@link IActionDelegate2}
+ * @see IViewActionDelegate
+ * @see IActionDelegate2
  *
  */
 public abstract class AbstractSelectionActionDelegate implements IViewActionDelegate, IActionDelegate2 {
@@ -142,7 +142,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	/**
 	 * Sets the most recent selection
 	 * 
-	 * @parm selection structured selection
+	 * @param context structured selection
 	 */
 	private void setSelection(IStructuredSelection context) {
 		fSelection = context;
@@ -175,6 +175,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	/**
 	 * Return whether the action should be enabled or not based on the given
 	 * selection.
+	 * @param selection the current selection
 	 * 
 	 * @return true if the action should be enabled for the specified selection context
 	 * false otherwise
@@ -220,7 +221,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	/**
 	 * Schedules the given job with this action's progress service
 	 * 
-	 * @param job
+	 * @param job the {@link Job} to schedule
 	 */
 	protected void schedule(Job job) {
 		if (fProgressService == null) {

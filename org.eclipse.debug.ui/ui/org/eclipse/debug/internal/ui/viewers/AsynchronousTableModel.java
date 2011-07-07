@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	/**
 	 * Constructs a new table model.
 	 * 
-	 * @param viewer
+	 * @param viewer the backing viewer
 	 */
 	public AsynchronousTableModel(AsynchronousViewer viewer) {
 		super(viewer);
@@ -38,7 +38,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	/**
 	 * Adds the given elements to the table.
 	 * 
-	 * @param elements
+	 * @param elements the new elements to add
 	 */
 	public void add(Object[] elements) {
 		TableAddRequestMonitor update = new TableAddRequestMonitor(getRootNode(), elements, this);
@@ -79,8 +79,8 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	/**
 	 * Inserts the given elements to the table.
 	 * 
-	 * @param elements
-	 * @param index
+	 * @param elements the new elements to insert
+	 * @param index the index to insert the elements at
 	 */
 	public void insert(Object[] elements, int index) {
 		TableAddRequestMonitor update = new TableInsertRequestMonitor(getRootNode(), elements, index, this);
@@ -123,7 +123,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	/**
 	 * Removes the given elements from the table.
 	 * 
-	 * @param elements
+	 * @param elements the elements to remove
 	 */
 	public void remove(Object[] elements) {
 		TableRemoveRequestMonitor update = new TableRemoveRequestMonitor(getRootNode(), elements, this);
@@ -160,8 +160,8 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	
 	/**
 	 * Adds the given elements to the table.
-	 * 
-	 * @param elements
+	 * @param element the element to replace 
+	 * @param replacement the element to replace the old element with
 	 */
 	public void replace(Object element, Object replacement) {
 		TableReplaceRequestMonitor update = new TableReplaceRequestMonitor(getRootNode(), element, replacement, this);
@@ -171,8 +171,8 @@ public class AsynchronousTableModel extends AsynchronousModel {
 	
 	/**
 	 * Notification add request is complete.
-	 * 
-	 * @param elements elements to add
+	 * @param element the element to be replaced 
+	 * @param replacement the element that replaced the old element
 	 */
 	protected void replaced(Object element, Object replacement) {
         Object[] filtered = filter(getRootNode().getElement(), new Object[] { replacement });

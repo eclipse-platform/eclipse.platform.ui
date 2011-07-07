@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,7 +206,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	
 	/**
 	 * Adds a breakpoint to a working set
-	 * @param breakpoint the breakpoint to add
+	 * @param breakpoints the breakpoints to add
 	 * @param set the set to add it to or <code>null</code> if none
 	 * 
 	 * @since 3.2
@@ -366,9 +366,9 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	/**
 	 * Gets the working set names from the marker
 	 * 
-	 * @param marker
-	 *            them marker to get the names from
-	 * @return the listing of markers or an empty String array, never null
+	 * @param marker them marker to get the names from
+	 * @param type the type attribute to look up
+	 * @return the listing of markers or an empty String array, never <code>null</code>
 	 * 
 	 * @since 3.2
 	 */

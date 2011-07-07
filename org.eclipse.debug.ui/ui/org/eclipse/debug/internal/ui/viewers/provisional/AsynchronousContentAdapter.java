@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,8 +52,8 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
     /**
      * Returns the scheduling rule for jobs retrieving children.
      * 
-     * @param parent
-     * @param context
+     * @param parent the parent
+     * @param context the presentation context
      * @return scheduling rule or <code>null</code>
      */
     protected ISchedulingRule getRetrieveChildrenRule(Object parent, IPresentationContext context) {
@@ -82,8 +82,8 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
     /**
      * Returns the scheduling rule for jobs determining if an element is a container.
      * 
-     * @param parent
-     * @param context
+     * @param parent the parent
+     * @param context the presentation context
      * @return scheduling rule or <code>null</code>
      */
     protected ISchedulingRule getIsContainerRule(Object parent, IPresentationContext context) {
@@ -156,7 +156,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
     /**
      * Returns whether this adapter supports the given context.
      * 
-     * @param context
+     * @param context the presentation context
      * @return whether this adapter supports the given context
      */
     protected boolean supportsContext(IPresentationContext context) {

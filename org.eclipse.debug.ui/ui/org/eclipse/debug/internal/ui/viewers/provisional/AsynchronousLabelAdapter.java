@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,8 +62,8 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
     /**
      * Returns the scheduling rule for label jobs.
      * 
-     * @param element
-     * @param context
+     * @param element the element context
+     * @param context the presentation context
      * @return scheduling rule or <code>null</code>
      */
     protected ISchedulingRule getLabelRule(Object element, IPresentationContext context) {
@@ -74,6 +74,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 	 * Returns whether this label adapter requires to be run in the UI thread.
 	 * By default, label jobs are not run in the UI thread. Subclasses should
 	 * override if required.
+	 * @param object the object context
 	 * 
 	 * @return whether this label adapter requires to be run in the UI thread.
 	 */
@@ -86,7 +87,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 	 * 
 	 * @param element element to compute label for
 	 * @param context presentation context
-	 * @param result monitor to report results to
+	 * @param monitor monitor to report results to
 	 */
 	protected void computeLabels(Object element, IPresentationContext context, ILabelRequestMonitor monitor) {
 		if (!monitor.isCanceled()) {

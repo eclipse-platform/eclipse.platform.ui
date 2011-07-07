@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	/**
 	 * Returns whether this content provider has already
 	 * been disposed.
+	 * @return if the provider is disposed
 	 */
 	protected boolean isDisposed() {
 		return fDisposed;
@@ -78,6 +79,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 			
 	/**
 	 * Refresh the given element in the viewer - must be called in UI thread.
+	 * @param element the element to refresh in the viewer
 	 */
 	protected void refresh(Object element) {
 		if (fViewer != null) {
@@ -87,7 +89,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	
 	/**
 	 * Handle debug events on the main thread.
-	 * @param event
+	 * @param event the debug event
 	 */
 	public void handleDebugEvent(final DebugEvent event) {
 		if (fViewer == null) {
@@ -118,6 +120,7 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	
 	/**
 	 * Performs an update based on the event
+	 * @param event the debug event
 	 */
 	protected abstract void doHandleDebugEvent(DebugEvent event);
 }

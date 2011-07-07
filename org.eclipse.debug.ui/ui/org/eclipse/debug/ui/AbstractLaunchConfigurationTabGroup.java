@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,10 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	 * By default, delegate to all of the tabs in this group.
 	 * 
 	 * @see ILaunchConfigurationTabGroup#launched(ILaunch)
-	 * @deprecated
+	 * @deprecated As of R3.0, this method is no longer called by the launch
+	 *  framework. Since tabs do not exist when launching is performed elsewhere
+	 *  than the launch dialog, this method cannot be relied upon for launching
+	 *  functionality.
 	 */
 	public void launched(ILaunch launch) {
 		ILaunchConfigurationTab[] tabs = getTabs();

@@ -81,9 +81,14 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
     }
     
     protected ITreeModelContentProviderTarget getCTargetViewer() {
-        return (ITreeModelContentProviderTarget)fViewer;
+        return fViewer;
     }
 
+    /**
+     * @param display the display
+     * @param shell the shell
+     * @return the new viewer
+     */
     protected TreeModelViewer createViewer(Display display, Shell shell) {
         return new TreeModelViewer(fShell, SWT.VIRTUAL | SWT.MULTI, new PresentationContext("TestViewer"));
     }

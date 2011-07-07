@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.debug.ui; singleton:=true
-Bundle-Version: 3.7.100.qualifier
+Bundle-Version: 3.7.200.qualifier
 Bundle-Activator: org.eclipse.debug.internal.ui.DebugUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -28,7 +28,7 @@ Export-Package: org.eclipse.debug.internal.ui;x-friends:="org.eclipse.jdt.debug.
  org.eclipse.debug.internal.ui.launchConfigurations;x-internal:=true,
  org.eclipse.debug.internal.ui.memory;x-internal:=true,
  org.eclipse.debug.internal.ui.memory.provisional;x-internal:=true,
- org.eclipse.debug.internal.ui.model.elements;x-internal:=true,
+ org.eclipse.debug.internal.ui.model.elements;x-friends:="org.eclipse.debug.examples.ui",
  org.eclipse.debug.internal.ui.preferences;x-internal:=true,
  org.eclipse.debug.internal.ui.sourcelookup;x-internal:=true,
  org.eclipse.debug.internal.ui.sourcelookup.browsers;x-internal:=true,
@@ -43,7 +43,7 @@ Export-Package: org.eclipse.debug.internal.ui;x-friends:="org.eclipse.jdt.debug.
    org.eclipse.cdt.dsf.gdb.ui,
    org.eclipse.debug.tests",
  org.eclipse.debug.internal.ui.viewers.provisional;x-friends:="org.eclipse.debug.tests",
- org.eclipse.debug.internal.ui.viewers.update;x-internal:=true,
+ org.eclipse.debug.internal.ui.viewers.update;x-friends:="org.eclipse.debug.examples.ui",
  org.eclipse.debug.internal.ui.views;x-internal:=true,
  org.eclipse.debug.internal.ui.views.breakpoints;x-internal:=true,
  org.eclipse.debug.internal.ui.views.console;x-internal:=true,

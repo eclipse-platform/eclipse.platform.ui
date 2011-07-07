@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,13 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	/**
 	 * Constructs a request to update an element
 	 * 
-	 * @param node node to update
-	 * @param model model containing the node
+	 * @param provider the content provider 
+	 * @param viewerInput the current input
+	 * @param elementPath the path to the element being update
+	 * @param element the element
+	 * @param index the index of the element
+	 * @param elementContentProvider the content provider for the element
+	 * @param context the presentation context
 	 */
 	public ChildrenUpdate(ModelContentProvider provider, Object viewerInput, TreePath elementPath, Object element, int index, IElementContentProvider elementContentProvider, IPresentationContext context) {
 		super(provider, viewerInput, elementPath, element, elementContentProvider, context);

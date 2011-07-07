@@ -279,7 +279,10 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	 * Evaluate the enablement logic in the contextualLaunch
 	 * element description. A true result means that we should
 	 * include this shortcut in the context menu.
+	 * @param ext the shortcut extension to get the enablement expression from
+	 * @param context the evaluation context to use
 	 * @return true iff shortcut should appear in context menu
+	 * @throws CoreException if an exception occurs
 	 */
 	private boolean isApplicable(LaunchShortcutExtension ext, IEvaluationContext context) throws CoreException {
 		Expression expr = ext.getContextualLaunchEnablementExpression();
@@ -288,6 +291,10 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 
 	/**
 	 * Add the shortcut to the context menu's launch sub-menu.
+	 * @param mode the id of the mode
+	 * @param ext the extension to get label and help info from
+	 * @param menu the menu to add to
+	 * @param accelerator the accelerator to use with the new menu item
 	 */
 	private void populateMenuItem(String mode, LaunchShortcutExtension ext, Menu menu, int accelerator) {
 		LaunchShortcutAction action = new LaunchShortcutAction(mode, ext);

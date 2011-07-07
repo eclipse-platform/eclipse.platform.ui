@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -212,9 +212,10 @@ public abstract class DebugCommandHandler extends AbstractHandler {
     }
     
     /**
-     * Executes this action on the given target object
-     * 
-     * @param target the target to perform the action on
+     * Executes this action on the given target objects
+     * @param window the window 
+     * @param targets the targets to execute this action on
+     * @return  if the command stays enabled while the command executes
      */
     private boolean execute(IWorkbenchWindow window, final Object[] targets) {
         DebugCommandService service = DebugCommandService.getService(window); 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,7 +98,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
      * Adds the given listener to the list of listeners notified when a line of
      * text is appended to the console.
      * 
-     * @param listener
+     * @param listener the listener to add 
      */
 	public void addConsoleListener(IConsoleLineTracker listener) {
         if (!fListeners.contains(listener))

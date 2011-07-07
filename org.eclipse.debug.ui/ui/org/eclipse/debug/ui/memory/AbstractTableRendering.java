@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -487,7 +487,8 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 
 	/**
 	 * Handle top visible address change event from synchronizer
-	 * @param address
+	 * @param address the address
+	 * @param force if the notification should be forced
 	 */
 	private void topVisibleAddressChanged(final BigInteger address, boolean force)
 	{
@@ -510,7 +511,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			updateSyncTopAddress();
 			if (getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
-			
 				handleTopAddressChangedforExtended(address);
 			}
 			else
@@ -521,7 +521,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 
 	/**
-	 * @param address
+	 * @param address the address
 	 */
 	private void handleTopAddressChangedForSimple(final BigInteger address) {
 		// IMemoryBlock support
@@ -540,7 +540,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 
 	/**
-	 * @param address
+	 * @param address the address
 	 */
 	private void handleTopAddressChangedforExtended(final BigInteger address) {
 		
@@ -605,7 +605,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}	
 	
 	/**
-	 * @param value
+	 * @param value the new value
 	 */
 	private void selectedAddressChanged(BigInteger value) {
 		
@@ -1284,7 +1284,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	
 	/**
 	 * Calculate selected address based on cursor's current position
-	 * @param cursor
+	 * @param cursor the cursor
 	 * @return the selected address
 	 */
 	private BigInteger getSelectedAddressFromCursor(TableCursor cursor)
@@ -1321,7 +1321,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	
 	/**
 	 * Sets the cursor at the specified address
-	 * @param address
+	 * @param address the address
 	 * @return true if successful, false otherwise
 	 */
 	private boolean setCursorAtAddress(BigInteger address)
@@ -1537,7 +1537,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * Create the error page for this rendering.
 	 * The error page is used to report any error resulted from
 	 * getting memory from a memory block.
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	private void createErrorPage(Composite parent)
 	{
@@ -1647,9 +1647,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 
 	/**
-	 * @param table
-	 * @param height
-	 * @return
+	 * @param table the table
+	 * @param height the current height of the table
+	 * @return the number of visible lines in the table
 	 */
 	private int doGetNumberOfVisibleLines(Table table, int height) {
 		// height of border
@@ -2265,6 +2265,8 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	
 	/**
 	 * Returns this rendering's table viewer.
+	 * 
+	 * @return the {@link TableViewer}
 	 */
 	public TableViewer getTableViewer()
 	{
@@ -2449,7 +2451,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	
 	/**
 	 * Check if address provided is out of buffered range
-	 * @param address
+	 * @param address the address
 	 * @return if address is out of buffered range
 	 */
 	private boolean isAddressOutOfRange(BigInteger address)
@@ -2459,7 +2461,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	
 	/**
 	 * Check if address is visible
-	 * @param address
+	 * @param address the address
 	 * @return if the given address is visible
 	 */
 	private boolean isAddressVisible(BigInteger address)
@@ -2505,7 +2507,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	
 	/**
 	 * Handle scrolling and reload table if necessary
-	 * @param event
 	 */
 	private synchronized void handleScrollBarSelection()
 	{
@@ -2701,7 +2702,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	
 	/**
 	 * Handle column size changed event from synchronizer
-	 * @param newColumnSize
+	 * @param newColumnSize the new column size
 	 */
 	private void columnSizeChanged(final int newColumnSize) {
 		// ignore event if view tab is disabled
@@ -2750,7 +2751,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	/**
 	 * Activate cell editor and pre-fill it with initial value.
 	 * If initialValue is null, use cell content as initial value
-	 * @param initialValue
+	 * @param initialValue the initial value to edit 
 	 */
 	private void activateCellEditor(String initialValue) {
 		
@@ -2839,7 +2840,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 	
 	/**
-	 * @param text
+	 * @param text the {@link Text} widget to add the listeners to
 	 */
 	private void addListeners(Text text) {
 		fEditorFocusListener = new FocusAdapter() {
@@ -2860,7 +2861,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 	
 	/**
-	 * @param text
+	 * @param text the {@link Text} widget to remove the listeners from
 	 */
 	private void removeListeners(Text text) {
 		
@@ -2906,7 +2907,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 	
 	/**
-	 * @param event
+	 * @param event the {@link KeyEvent}
 	 */
 	private void handleKeyEventInEditor(KeyEvent event) {
 		final KeyEvent e = event;
@@ -3058,10 +3059,10 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	
 	/**
 	 * Modify value and send new value to debug adapter
-	 * @param row
-	 * @param col
-	 * @param newValue
-	 * @throws NumberFormatException
+	 * @param row the row
+	 * @param col the column
+	 * @param newValue the new value
+	 * @throws NumberFormatException if the {@link ICellModifier} cannot convert the new value to a string - in cases where it needs to do so
 	 */
 	private void modifyValue(int row, int col, String newValue) throws NumberFormatException
 	{
@@ -3151,7 +3152,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * The cursor will be moved to the base address of the memory block.
 	 * The table will be positioned to have the base address
 	 * at the top.
-	 * @throws DebugException
+	 * @throws DebugException is an exception occurs
 	 */
 	private void resetToBaseAddress() throws DebugException
 	{
@@ -3586,7 +3587,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * table item if SWT.FULL_SELECTION is not on when the table is created.
 	 * Created the following function to work around the problem.
 	 * We can remove this method when the bug is fixed.
-	 * @param point
+	 * @param point the {@link Point} to get the {@link TableItem} from
 	 * @return the table item where the point is located, return null if the item cannot be located.
 	 */
 	private TableItem getItem(Point point)
@@ -3606,7 +3607,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	
 	/**
 	 * Method for figuring out which column the point is located.
-	 * @param point
+	 * @param point the {@link Point} to et the column number for
 	 * @return the column index where the point is located, return -1 if column is not found.
 	 */
 	private int getColumn(Point point) {
@@ -3730,7 +3731,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 	
 	/**
-	 * @param modelId
+	 * @param modelId the debug model identifier
 	 * @return default number of addressable units per line for the model
 	 */
 	private int getDefaultRowSizeByModel(String modelId)
@@ -3747,7 +3748,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 	
 	/**
-	 * @param modelId
+	 * @param modelId the debug model identifier
 	 * @return default number of addressable units per column for the model
 	 */
 	private int getDefaultColumnSizeByModel(String modelId)

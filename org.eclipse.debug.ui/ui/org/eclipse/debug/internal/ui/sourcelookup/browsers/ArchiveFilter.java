@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,8 +72,9 @@ public class ArchiveFilter extends ViewerFilter {
 	/**
 	 * Traverse the given container, adding archives to the given set.
 	 * Returns whether any files were added
-	 * 
-	 * @param root
+	 * @param container the container to check 
+	 * @param set the set to add any found archives to
+	 * @return <code>true</code> if any archives have been added false otherwise
 	 */
 	private boolean traverse(IContainer container, Set set) {
 		boolean added = false;

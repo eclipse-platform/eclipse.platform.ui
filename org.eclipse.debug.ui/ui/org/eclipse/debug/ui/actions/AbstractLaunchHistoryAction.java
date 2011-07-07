@@ -158,6 +158,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * Initialize this action so that it can dynamically set its tool-tip.  Also set the enabled state
 	 * of the underlying action based on whether there are any registered launch configuration types that 
 	 * understand how to launch in the mode of this action.
+	 * @param action the {@link IAction} to initialize
 	 */
 	private void initialize(IAction action) {
 		getLaunchConfigurationManager().addLaunchHistoryListener(this);
@@ -283,8 +284,8 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		return fMenu;
 	}
 	
-	/**
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
 	public Menu getMenu(Menu parent) {
 		setMenu(new Menu(parent));
@@ -368,7 +369,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	/**
 	 * Adds a separator to the given menu
 	 * 
-	 * @param menu 
+	 * @param menu the menu to add the separator to
 	 */
 	protected void addSeparator(Menu menu) {
 		new MenuItem(menu, SWT.SEPARATOR);
@@ -462,7 +463,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	
 	/**
 	 * Creates an {@link ILaunchConfiguration} from the given set of {@link ILaunchConfigurationType}s
-	 * @param types
+	 * @param types the set of {@link String} {@link ILaunchConfigurationType} identifiers
 	 * @return a new {@link ILaunchConfiguration}
 	 * @since 3.6
 	 */
