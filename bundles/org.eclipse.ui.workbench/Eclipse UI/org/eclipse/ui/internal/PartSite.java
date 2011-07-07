@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Control;
@@ -25,18 +31,29 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IPageService;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.contexts.SlaveContextService;
+import org.eclipse.ui.internal.expressions.ActivePartExpression;
+import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceScopes;
@@ -118,25 +135,35 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	private IWorkbenchPart part;
 
-	private IWorkbenchPage page;
-
-	private String extensionID;
-
-	private String pluginID;
-
-	private String extensionName;
-
 	private ISelectionProvider selectionProvider;
 
 	private SubActionBars actionBars;
 
 	private KeyBindingService keyBindingService;
 
+	private SlavePageService pageService;
+
+	private SlavePartService partService;
+
+	private SlaveSelectionService selectionService;
+
+	private SlaveContextService contextService;
+
 	protected ArrayList menuExtenders;
 
 	private WorkbenchSiteProgressService progressService;
 
 	protected final ServiceLocator serviceLocator;
+
+	protected MPart model;
+
+	private IConfigurationElement element;
+
+	private IEclipseContext e4Context;
+
+	private IWorkbenchWindow workbenchWindow;
+
+	private String extensionId;
 
 	/**
 	 * Build the part site.
@@ -148,41 +175,132 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @param page
 	 *            the page it belongs to
 	 */
-	public PartSite(IWorkbenchPartReference ref, IWorkbenchPart part,
-			IWorkbenchPage page) {
-		this.partReference = ref;
+	public PartSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref,
+			IConfigurationElement element) {
+		this.model = model;
 		this.part = part;
-		this.page = page;
-		extensionID = "org.eclipse.ui.UnknownID"; //$NON-NLS-1$
-		extensionName = "Unknown Name"; //$NON-NLS-1$
+		this.partReference = ref;
+		this.element = element;
 
-		// Initialize the service locator.
-		final WorkbenchWindow workbenchWindow = (WorkbenchWindow) page.getWorkbenchWindow();
-		IServiceLocatorCreator slc = (IServiceLocatorCreator) workbenchWindow
-				.getService(IServiceLocatorCreator.class);
-		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
-				workbenchWindow, null, new IDisposable(){
+		MElementContainer<?> parent = (MElementContainer<?>) ((EObject) model).eContainer();
+		while (!(parent instanceof MWindow)) {
+			parent = (MElementContainer<?>) ((EObject) parent).eContainer(); // parent.getParent();
+		}
+
+		setWindow((MWindow) parent);
+
+		e4Context = model.getContext();
+		IServiceLocatorCreator slc = (IServiceLocatorCreator) e4Context
+				.get(IServiceLocatorCreator.class.getName());
+		IWorkbenchWindow workbenchWindow = getWorkbenchWindow();
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbenchWindow, null,
+				new IDisposable() {
 					public void dispose() {
-						final Control control = getPane().getControl();
-						if (control != null && !control.isDisposed()) {
-							getPane().doHide();
-						}
+						// not sure what to do here
 					}
 				});
-
+		serviceLocator.setContext(e4Context);
 		initializeDefaultServices();
+	}
+
+	void setExtensionId(String extensionId) {
+		this.extensionId = extensionId;
+	}
+
+	private void setWindow(MWindow window) {
+		MWindow topWindow = getTopLevelModelWindow(window);
+		MApplication application = (MApplication) topWindow.getContext().get(
+				MApplication.class.getName());
+		Workbench workbench = (Workbench) application.getContext().get(IWorkbench.class.getName());
+
+		workbenchWindow = workbench.createWorkbenchWindow(
+				workbench.getDefaultPageInput(),
+				workbench.getPerspectiveRegistry().findPerspectiveWithId(
+						workbench.getPerspectiveRegistry().getDefaultPerspective()), topWindow,
+				false);
 	}
 
 	/**
 	 * Initialize the local services.
 	 */
 	private void initializeDefaultServices() {
+		IHandlerService handlerService = new LegacyHandlerService(e4Context);
+		e4Context.set(IHandlerService.class.getName(), handlerService);
+
 		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.PARTSITE_SCOPE,
 						getWorkbenchWindow().getWorkbench(),
 						getWorkbenchWindow(), this, null, null, 2));
 		// added back for legacy reasons
 		serviceLocator.registerService(IWorkbenchPartSite.class, this);
+
+		e4Context.set(IWorkbenchSiteProgressService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (progressService == null) {
+					progressService = new WorkbenchSiteProgressService(PartSite.this);
+				}
+				return progressService;
+			}
+		});
+		e4Context.set(IProgressService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (progressService == null) {
+					progressService = new WorkbenchSiteProgressService(PartSite.this);
+				}
+				return progressService;
+			}
+		});
+		e4Context.set(IKeyBindingService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (keyBindingService == null) {
+					keyBindingService = new KeyBindingService(PartSite.this);
+				}
+
+				return keyBindingService;
+			}
+		});
+		e4Context.set(IPageService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (pageService == null) {
+					pageService = new SlavePageService(context.getParent().get(IPageService.class));
+				}
+
+				return pageService;
+			}
+		});
+		e4Context.set(IPartService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (partService == null) {
+					partService = new SlavePartService(context.getParent().get(IPartService.class));
+				}
+				return partService;
+			}
+		});
+		e4Context.set(ISelectionService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (selectionService == null) {
+					selectionService = new SlaveSelectionService(context.getParent().get(
+							ISelectionService.class));
+				}
+				return selectionService;
+			}
+		});
+		e4Context.set(IContextService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (contextService == null) {
+					contextService = new SlaveContextService(context.getParent().get(
+							IContextService.class), new ActivePartExpression(part));
+				}
+				return contextService;
+			}
+		});
 	}
 
 	/**
@@ -216,6 +334,22 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			progressService = null;
 		}
 
+		if (pageService != null) {
+			pageService.dispose();
+		}
+
+		if (partService != null) {
+			partService.dispose();
+		}
+
+		if (selectionService != null) {
+			selectionService.dispose();
+		}
+
+		if (contextService != null) {
+			contextService.dispose();
+		}
+
 		if (serviceLocator != null) {
 			serviceLocator.dispose();
 		}
@@ -232,13 +366,34 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		return actionBars;
 	}
 
-	/**
-	 * Returns the part registry extension ID.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return the registry extension ID
+	 * @see org.eclipse.ui.IWorkbenchPartSite#getId()
 	 */
 	public String getId() {
-		return extensionID;
+		return extensionId == null ? element == null ? model.getElementId() : element
+				.getAttribute(IWorkbenchRegistryConstants.ATT_ID)
+				: extensionId;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPartSite#getPluginId()
+	 */
+	public String getPluginId() {
+		return element == null ? model.getElementId() : element.getNamespaceIdentifier();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPartSite#getRegisteredName()
+	 */
+	public String getRegisteredName() {
+		return element == null ? model.getLocalizedLabel() : element
+				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
 	/**
@@ -247,15 +402,9 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @return the page containing this part
 	 */
 	public IWorkbenchPage getPage() {
-		return page;
+		return getWorkbenchWindow().getActivePage();
 	}
 
-	/**
-	 * Gets the part pane.
-	 */
-	public PartPane getPane() {
-		return ((WorkbenchPartReference) partReference).getPane();
-	}
 
 	/**
 	 * Returns the part.
@@ -272,22 +421,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	}
 
 	/**
-	 * Returns the part registry plugin ID. It cannot be <code>null</code>.
-	 * 
-	 * @return the registry plugin ID
-	 */
-	public String getPluginId() {
-		return pluginID;
-	}
-
-	/**
-	 * Returns the registered name for this part.
-	 */
-	public String getRegisteredName() {
-		return extensionName;
-	}
-
-	/**
 	 * Returns the selection provider for a part.
 	 */
 	public ISelectionProvider getSelectionProvider() {
@@ -300,7 +433,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @return the shell containing this part
 	 */
 	public Shell getShell() {
-		PartPane pane = getPane();
 
 		// Compatibility: This method should not be used outside the UI
 		// thread... but since this condition
@@ -308,9 +440,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		// about the shell if it is
 		// called from the wrong thread.
 		Display currentDisplay = Display.getCurrent();
-		if (currentDisplay == null
-				|| currentDisplay != getWorkbenchWindow().getWorkbench()
-						.getDisplay()) {
+		if (currentDisplay == null) {
 			// Uncomment this to locate places that try to access the shell from
 			// a background thread
 			// WorkbenchPlugin.log(new Exception("Error:
@@ -320,17 +450,27 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			return getWorkbenchWindow().getShell();
 		}
 
-		if (pane == null) {
-			return getWorkbenchWindow().getShell();
+		Control control = (Control) model.getWidget();
+		if (control != null && !control.isDisposed()) {
+			return control.getShell();
+		}
+		// likely means the part has been destroyed, return the parent window's
+		// shell, we don't just arbitrarily return the workbench window's shell
+		// because we may be in a detached window
+		MWindow window = e4Context.get(MWindow.class);
+		return window == null ? getWorkbenchWindow().getShell() : (Shell) window.getWidget();
+	}
+
+	private MWindow getTopLevelModelWindow(MWindow window) {
+		EObject previousParent = (EObject) window;
+		EObject parent = previousParent.eContainer();
+		// we can't simply stop at an MWindow because the part may be in a detached window
+		while (!(parent instanceof MApplication)) {
+			previousParent = parent;
+			parent = parent.eContainer();
 		}
 
-		Shell s = pane.getShell();
-
-		if (s == null) {
-			return getWorkbenchWindow().getShell();
-		}
-
-		return s;
+		return (MWindow) previousParent;
 	}
 
 	/**
@@ -339,7 +479,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @return the workbench window containing this part
 	 */
 	public IWorkbenchWindow getWorkbenchWindow() {
-		return page.getWorkbenchWindow();
+		return workbenchWindow;
 	}
 
 	/**
@@ -386,37 +526,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		actionBars = bars;
 	}
 
-	/**
-	 * Sets the configuration element for a part.
-	 */
-	public void setConfigurationElement(IConfigurationElement configElement) {
-
-		// Get extension ID.
-		extensionID = configElement.getAttribute("id"); //$NON-NLS-1$
-
-		// Get plugin ID.
-		pluginID = configElement.getNamespace();
-
-		// Get extension name.
-		String name = configElement.getAttribute("name"); //$NON-NLS-1$
-		if (name != null) {
-			extensionName = name;
-		}
-	}
-
-	protected void setPluginId(String pluginId) {
-		this.pluginID = pluginId;
-	}
-
-	/**
-	 * Sets the part registry extension ID.
-	 * 
-	 * @param id
-	 *            the registry extension ID
-	 */
-	protected void setId(String id) {
-		extensionID = id;
-	}
 
 	/**
 	 * Sets the part.
@@ -425,15 +534,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		part = newPart;
 	}
 
-	/**
-	 * Sets the registered name for this part.
-	 * 
-	 * @param name
-	 *            the registered name
-	 */
-	protected void setRegisteredName(String name) {
-		extensionName = name;
-	}
 
 	/**
 	 * Set the selection provider for a part.
@@ -446,11 +546,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @see IWorkbenchPartSite#getKeyBindingService()
 	 */
 	public IKeyBindingService getKeyBindingService() {
-		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(this);
-		}
-
-		return keyBindingService;
+		return (IKeyBindingService) e4Context.get(IKeyBindingService.class.getName());
 	}
 
 	protected String getInitialScopeId() {
@@ -466,7 +562,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	public final Object getAdapter(Class adapter) {
 
 		if (IWorkbenchSiteProgressService.class == adapter) {
-			return getSiteProgressService();
+			return getService(adapter);
 		}
 		
 		if (IWorkbenchPartTestable.class == adapter) {
@@ -501,10 +597,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @return WorkbenchSiteProgressService
 	 */
 	WorkbenchSiteProgressService getSiteProgressService() {
-		if (progressService == null) {
-			progressService = new WorkbenchSiteProgressService(this);
-		}
-		return progressService;
+		return (WorkbenchSiteProgressService) e4Context.get(IWorkbenchSiteProgressService.class
+				.getName());
 	}
 
 	public final Object getService(final Class key) {
@@ -533,5 +627,13 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		buffer.append(hashCode());
 		buffer.append(')');
 		return buffer.toString();
+	}
+
+	public MPart getModel() {
+		return model;
+	}
+
+	public IEclipseContext getContext() {
+		return e4Context;
 	}
 }

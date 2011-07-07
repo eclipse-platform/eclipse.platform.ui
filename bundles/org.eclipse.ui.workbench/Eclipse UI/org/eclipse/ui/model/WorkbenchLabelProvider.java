@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - http://bugs.eclipse.org/326695
+ *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - Bug 326695
  *******************************************************************************/
 package org.eclipse.ui.model;
 
@@ -223,10 +223,9 @@ public class WorkbenchLabelProvider extends LabelProvider implements
     }
 
 	/**
-	 * Sets the {@link org.eclipse.jface.viewers.StyledString.Styler} to be used
-	 * for string decorations. By default the
-	 * {@link StyledString#DECORATIONS_STYLER decoration style}. Clients can
-	 * override.
+	 * Sets the {@link StyledString.Styler} to be used for string decorations.
+	 * By default the {@link StyledString#DECORATIONS_STYLER decoration style}.
+	 * Clients can override.
 	 * 
 	 * @param element
 	 *            the element that has been decorated

@@ -30,7 +30,7 @@ public class WorkbenchPartTestable implements IWorkbenchPartTestable {
 	 * @param partSite the part to test
 	 */
 	public WorkbenchPartTestable(PartSite partSite) {
-		Composite paneComposite = (Composite)partSite.getPane().getControl();
+		Composite paneComposite = (Composite) partSite.getModel().getWidget();
 		Control [] paneChildren = paneComposite.getChildren();
 		this.composite = ((Composite) paneChildren[0]);
 	}

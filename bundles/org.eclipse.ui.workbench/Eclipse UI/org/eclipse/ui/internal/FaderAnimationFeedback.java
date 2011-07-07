@@ -70,11 +70,11 @@ public class FaderAnimationFeedback extends	AnimationFeedbackBase {
 		getAnimationShell().setBounds(psRect);
 
 		// Capture the background image
-		System.out.println("Start time = " + System.currentTimeMillis()); //$NON-NLS-1$
 		if (useCopy) {
 			backingStore = new Image(getAnimationShell().getDisplay(), psRect);
 			GC gc = new GC(getAnimationShell());
-			gc.copyArea(backingStore, psRect.x, psRect.y);
+			// gc.copyArea(backingStore, psRect.x, psRect.y);
+			gc.copyArea(backingStore, 0, 0);
 			gc.dispose();
 		}
 		else {
@@ -85,9 +85,6 @@ public class FaderAnimationFeedback extends	AnimationFeedbackBase {
 		getAnimationShell().setAlpha(254);
 		getAnimationShell().setBackgroundImage(backingStore);
 		getAnimationShell().setVisible(true);
-		System.out.println("End time = " + System.currentTimeMillis()); //$NON-NLS-1$
-		//display.update();
-
 	}
 
 	public void renderStep(AnimationEngine engine) {

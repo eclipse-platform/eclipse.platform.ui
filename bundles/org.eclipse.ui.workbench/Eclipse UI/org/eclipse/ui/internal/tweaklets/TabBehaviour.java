@@ -22,8 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.internal.EditorAreaHelper;
-import org.eclipse.ui.internal.EditorManager;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -56,7 +54,8 @@ public abstract class TabBehaviour {
 	public abstract IEditorReference findReusableEditor(WorkbenchPage page);
 
 	public abstract IEditorReference reuseInternalEditor(WorkbenchPage page,
-			EditorManager manager, EditorAreaHelper editorPresentation,
+ Object manager,
+			Object editorPresentation,
 			EditorDescriptor desc, IEditorInput input,
 			IEditorReference reusableEditorRef);
 

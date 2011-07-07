@@ -11,13 +11,13 @@
 
 package org.eclipse.ui.internal.expressions;
 
+import java.util.Collection;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 
 /**
  * <p>
@@ -69,7 +69,7 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 
 	public final void collectExpressionInfo(final ExpressionInfo info) {
 		super.collectExpressionInfo(info);
-		info.addVariableNameAccess(ISources.ACTIVE_ACTION_SETS_NAME);
+		info.addVariableNameAccess(ISources.ACTIVE_CONTEXT_NAME);
 	}
 
 	protected final int computeHhashCode() {
@@ -95,20 +95,10 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 			return result;
 		}
 
-		// Check the action sets.
-		final Object variable = context
-				.getVariable(ISources.ACTIVE_ACTION_SETS_NAME);
-		if (variable instanceof IActionSetDescriptor[]) {
-			final IActionSetDescriptor[] descriptors = (IActionSetDescriptor[]) variable;
-			for (int i = 0; i < descriptors.length; i++) {
-				final IActionSetDescriptor descriptor = descriptors[i];
-				final String currentId = descriptor.getId();
-				if (actionSetId.equals(currentId)) {
-					return EvaluationResult.TRUE;
-				}
-			}
+		Object obj = context.getVariable(ISources.ACTIVE_CONTEXT_NAME);
+		if (obj instanceof Collection<?>) {
+			return EvaluationResult.valueOf(((Collection) obj).contains(actionSetId));
 		}
-
 		return EvaluationResult.FALSE;
 	}
 

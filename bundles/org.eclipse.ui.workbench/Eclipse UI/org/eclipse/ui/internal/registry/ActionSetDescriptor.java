@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.PluginActionSet;
-import org.eclipse.ui.internal.PluginActionSetReader;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -97,9 +96,7 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
      * @see IWorkbenchAdapter#getChildren
      */
     public Object[] getChildren(Object o) {
-        if (o == this) {
-			return (new PluginActionSetReader()).readActionDescriptors(this);
-		}
+
 
         return NO_CHILDREN;
     }

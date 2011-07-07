@@ -6,11 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - Initial API and implementation - http://bugs.eclipse.org/326695
+ *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - Initial API and implementation(Bug 326695)
  ******************************************************************************/
 
 package org.eclipse.ui.model;
 
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 
 /**
@@ -20,7 +21,7 @@ import org.eclipse.jface.viewers.StyledString;
  * @see IWorkbenchAdapter
  * @see WorkbenchLabelProvider
  * @see BaseWorkbenchContentProvider
- * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider
+ * @see DelegatingStyledCellLabelProvider.IStyledLabelProvider
  * 
  * @since 3.7
  */
@@ -30,7 +31,8 @@ public interface IWorkbenchAdapter3 {
 	 * Returns the styled text label for the given element.
 	 * 
 	 * @param element
-	 *            the element to evaluate the styled string for
+	 *            the element to evaluate the styled string for.
+	 * 
 	 * @return the styled string.
 	 */
 	public StyledString getStyledText(Object element);

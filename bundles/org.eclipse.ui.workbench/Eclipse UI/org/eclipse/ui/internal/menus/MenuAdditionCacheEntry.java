@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,222 +13,249 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ExpressionConverter;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MParameter;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.commands.ICommandImageService;
-import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.services.IWorkbenchLocationService;
-import org.eclipse.ui.menus.CommandContributionItem;
-import org.eclipse.ui.menus.CommandContributionItemParameter;
-import org.eclipse.ui.menus.IContributionRoot;
-import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.internal.services.ServiceLocator;
 
-/**
- * @since 3.3
- * 
- */
-public class MenuAdditionCacheEntry extends AbstractMenuAdditionCacheEntry {
-	
-	/**
-	 * Maps an IConfigurationElement to its parsed Expression
-	 */
-	private HashMap visWhenMap = new HashMap();
+public class MenuAdditionCacheEntry {
+	private final static String MAIN_TOOLBAR = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
 
-	/**
-	 * The menu service on which to generate all subcaches.
-	 */
-	private IMenuService menuService;
+	private final static String TRIM_COMMAND1 = "org.eclipse.ui.trim.command1"; //$NON-NLS-1$
 
-	/**
-	 * List of caches created while processing this one. Used to clean up
-	 * stale cache entries during removal
-	 */
-	private List subCaches;
+	private final static String TRIM_COMMAND2 = "org.eclipse.ui.trim.command2"; //$NON-NLS-1$
 
-	private boolean hasAdditions = false;
+	private final static String TRIM_VERTICAL1 = "org.eclipse.ui.trim.vertical1"; //$NON-NLS-1$
 
-	private Boolean contributeToAllPopups = null;
+	private final static String TRIM_VERTICAL2 = "org.eclipse.ui.trim.vertical2"; //$NON-NLS-1$
 
-	public MenuAdditionCacheEntry(IMenuService menuService,
-			IConfigurationElement element, String location, String namespace) {
-		super(location, namespace, element);
-		this.menuService = menuService;
-		findAdditions();
-		generateSubCaches();
+	private final static String TRIM_STATUS = "org.eclipse.ui.trim.status"; //$NON-NLS-1$
+
+	private MApplication application;
+	// private IEclipseContext appContext;
+	private IConfigurationElement configElement;
+	private MenuLocationURI location;
+
+	// private String namespaceIdentifier;
+
+	public MenuAdditionCacheEntry(MApplication application, IEclipseContext appContext,
+			IConfigurationElement configElement, String attribute, String namespaceIdentifier) {
+		this.application = application;
+		// this.appContext = appContext;
+		assert appContext.equals(this.application.getContext());
+		this.configElement = configElement;
+		this.location = new MenuLocationURI(attribute);
+		// this.namespaceIdentifier = namespaceIdentifier;
 	}
 
-	/**
-	 * 
-	 */
-	private void generateSubCaches() {
-		IConfigurationElement[] items = getConfigElement().getChildren();
-		for (int i = 0; i < items.length; i++) {
-			String itemType = items[i].getName();
-			if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)
-					|| IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
-				// Menus and toolbars are special...we have to add any sub menu
-				// items into their own cache
-				// If the locationURI is null then this should be a sub menu
-				// addition..create the 'root' URI
-
-				String location = new MenuLocationURI(getLocation())
-						.getScheme()
-						+ ":" + MenuAdditionCacheEntry.getId(items[i]); //$NON-NLS-1$
-
-				// -ALL- contibuted menus must have an id so create one
-				// if necessary
-				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(
-						menuService, items[i], location, getNamespace());
-				menuService.addContributionFactory(subMenuEntry);
-				
-				if (subCaches == null)
-					subCaches = new ArrayList();
-				
-				subCaches.add(subMenuEntry);
-			}
-		}
-	}
-
-	private Expression getVisibleWhenForItem(IContributionItem item, IConfigurationElement configElement) {
-		if (!visWhenMap.containsKey(configElement)) {
-			// Not parsed yet
-			try {
-				IConfigurationElement[] visibleConfig = configElement
-						.getChildren(IWorkbenchRegistryConstants.TAG_VISIBLE_WHEN);
-				if (visibleConfig.length > 0 && visibleConfig.length < 2) {
-					IConfigurationElement[] visibleChild = visibleConfig[0]
-							.getChildren();
-					if (visibleChild.length > 0) {
-						Expression visWhen = ExpressionConverter.getDefault()
-								.perform(visibleChild[0]);
-						visWhenMap.put(configElement, visWhen);
-					}
-				}
-			} catch (InvalidRegistryObjectException e) {
-				visWhenMap.put(configElement, null);
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CoreException e) {
-				visWhenMap.put(configElement, null);
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		return (Expression) visWhenMap.get(configElement);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.menus.AbstractContributionFactory#createContributionItems(org.eclipse.ui.internal.menus.IMenuService,
-	 *      java.util.List)
-	 */
-	public void createContributionItems(IServiceLocator serviceLocator,
-			IContributionRoot additions) {
-		IActionBarPresentationFactory actionBarPresentationFactory = null;
-
-		IWorkbenchLocationService wls = (IWorkbenchLocationService) serviceLocator
-		.getService(IWorkbenchLocationService.class);
-		WorkbenchWindow window = (WorkbenchWindow) wls.getWorkbenchWindow();
-		if (window != null) {
-			actionBarPresentationFactory = window
-					.getActionBarPresentationFactory();
-		}
-
-		IConfigurationElement[] items = getConfigElement().getChildren();
-		for (int i = 0; i < items.length; i++) {
-			String itemType = items[i].getName();
-			IContributionItem newItem = null;
-
-			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
-				newItem = createCommandAdditionContribution(serviceLocator,
-						items[i]);
-			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
-				newItem = createDynamicAdditionContribution(serviceLocator,
-						items[i]);
-			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
-				newItem = createControlAdditionContribution(serviceLocator,
-						items[i]);
-			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR
-					.equals(itemType)) {
-				newItem = createSeparatorAdditionContribution(items[i]);
-			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
-				newItem = createMenuAdditionContribution(items[i]);
-			} else if (IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
-				newItem = createToolBarAdditionContribution(window,
-						actionBarPresentationFactory, items[i]);
-			}
-			
-			if (newItem instanceof InternalControlContribution) {
-				((InternalControlContribution) newItem).setWorkbenchWindow(window);
-			}
-
-			// Cache the relationship between the ICI and the
-			// registry element used to back it
-			if (newItem != null) {
-				additions.addContributionItem(newItem,
-						getVisibleWhenForItem(newItem, items[i]));
-			}
-		}
-	}
-
-	/**
-	 * @param window
-	 * @param configurationElement
-	 * @return the toolbar contribution item
-	 */
-	private IContributionItem createToolBarAdditionContribution(WorkbenchWindow window,
-			IActionBarPresentationFactory actionBarPresentationFactory,
-			IConfigurationElement configurationElement) {
-		if (!inToolbar()) {
-			return null;
-		}
-		String id = getId(configurationElement);
-		String label = getLabel(configurationElement);
-		if (label != null && label.length() > 0) {
-			window.putToolbarLabel(id, label);
-		}
-		if (actionBarPresentationFactory != null) {
-			return actionBarPresentationFactory.createToolBarContributionItem(
-					actionBarPresentationFactory.createToolBarManager(),
-					id);
-		}
-		return new ToolBarContributionItem(new ToolBarManager(),
-				id);
+	private boolean inToolbar() {
+		return location.getScheme().startsWith("toolbar"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @return <code>true</code> if this is a toolbar contribution
 	 */
-	private boolean inToolbar() {
-		return getLocation().startsWith("toolbar"); //$NON-NLS-1$
+	public void mergeIntoModel(ArrayList<MMenuContribution> menuContributions,
+			ArrayList<MToolBarContribution> toolBarContributions,
+			ArrayList<MTrimContribution> trimContributions) {
+		if ("menu:help?after=additions".equals(location.toString())) { //$NON-NLS-1$
+			IConfigurationElement[] menus = configElement
+					.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
+			if (menus.length == 1
+					&& "org.eclipse.update.ui.updateMenu".equals(MenuHelper.getId(menus[0]))) { //$NON-NLS-1$
+				return;
+			}
+		}
+		if (inToolbar()) {
+			String path = location.getPath();
+			if (path.equals(MAIN_TOOLBAR) || path.equals(TRIM_COMMAND1)
+					|| path.equals(TRIM_COMMAND2) || path.equals(TRIM_VERTICAL1)
+					|| path.equals(TRIM_VERTICAL2) || path.equals(TRIM_STATUS)) {
+				processTrimChildren(trimContributions, toolBarContributions, configElement);
+			} else {
+				String query = location.getQuery();
+				if (query == null || query.length() == 0) {
+					query = "after=additions"; //$NON-NLS-1$
+				}
+				processToolbarChildren(toolBarContributions, configElement, path,
+						query);
+			}
+			return;
+		}
+		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		String idContrib = MenuHelper.getId(configElement);
+		if (idContrib != null && idContrib.length() > 0) {
+			menuContribution.setElementId(idContrib);
+		}
+		if ("org.eclipse.ui.popup.any".equals(location.getPath())) { //$NON-NLS-1$
+			menuContribution.setParentId("popup"); //$NON-NLS-1$
+		} else {
+			menuContribution.setParentId(location.getPath());
+		}
+		String query = location.getQuery();
+		if (query == null || query.length() == 0) {
+			query = "after=additions"; //$NON-NLS-1$
+		}
+		menuContribution.setPositionInParent(query);
+		menuContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
+		String filter = ContributionsAnalyzer.MC_MENU;
+		if ("popup".equals(location.getScheme())) { //$NON-NLS-1$
+			filter = ContributionsAnalyzer.MC_POPUP;
+		}
+		menuContribution.getTags().add(filter);
+		menuContribution.setVisibleWhen(MenuHelper.getVisibleWhen(configElement));
+		addMenuChildren(menuContribution, configElement, filter);
+		menuContributions.add(menuContribution);
+		processMenuChildren(menuContributions, configElement, filter);
 	}
 
 	/**
-	 * @param configurationElement
-	 * @return the menu manager
+	 * @param menuContributions
+	 * @param filter
 	 */
-	private IContributionItem createMenuAdditionContribution(
-			final IConfigurationElement menuAddition) {
+	private void processMenuChildren(ArrayList<MMenuContribution> menuContributions,
+			IConfigurationElement element, String filter) {
+		IConfigurationElement[] menus = element.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
+		if (menus.length == 0) {
+			return;
+		}
+		for (IConfigurationElement menu : menus) {
+			MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+			String idContrib = MenuHelper.getId(menu);
+			if (idContrib != null && idContrib.length() > 0) {
+				menuContribution.setElementId(idContrib);
+			}
+			menuContribution.setParentId(idContrib);
+			menuContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
+			menuContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
+			menuContribution.getTags().add(filter);
+			menuContribution.setVisibleWhen(MenuHelper.getVisibleWhen(menu));
+			addMenuChildren(menuContribution, menu, filter);
+			menuContributions.add(menuContribution);
+			processMenuChildren(menuContributions, menu, filter);
+		}
+	}
+
+	private void addMenuChildren(final MElementContainer<MMenuElement> container,
+			IConfigurationElement parent, String filter) {
+		IConfigurationElement[] items = parent.getChildren();
+		for (int i = 0; i < items.length; i++) {
+			final IConfigurationElement child = items[i];
+			String itemType = child.getName();
+			String id = MenuHelper.getId(child);
+
+			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
+				MMenuElement element = createMenuCommandAddition(child);
+				container.getChildren().add(element);
+			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType)) {
+				MMenuElement element = createMenuSeparatorAddition(child);
+				container.getChildren().add(element);
+			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
+				MMenu element = createMenuAddition(child, filter);
+				container.getChildren().add(element);
+			} else if (IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
+				System.out.println("Toolbar: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
+			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
+				ContextFunction generator = new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context) {
+						ServiceLocator sl = new ServiceLocator();
+						sl.setContext(context);
+						DynamicMenuContributionItem item = new DynamicMenuContributionItem(
+								MenuHelper.getId(child), sl, child);
+						return item;
+					}
+				};
+
+				MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
+				menuItem.setElementId(id);
+				menuItem.setContributionItem(generator);
+				container.getChildren().add(menuItem);
+			}
+		}
+	}
+
+	/**
+	 * @param iConfigurationElement
+	 * @return
+	 */
+	private MMenuElement createMenuCommandAddition(IConfigurationElement commandAddition) {
+		MHandledMenuItem item = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
+		item.setElementId(MenuHelper.getId(commandAddition));
+		String commandId = MenuHelper.getCommandId(commandAddition);
+		MCommand commandById = ContributionsAnalyzer.getCommandById(application, commandId);
+		if (commandById == null) {
+			commandById = CommandsFactoryImpl.eINSTANCE.createCommand();
+			commandById.setElementId(commandId);
+			commandById.setCommandName(commandId);
+			application.getCommands().add(commandById);
+		}
+		item.setCommand(commandById);
+		Map parms = MenuHelper.getParameters(commandAddition);
+		for (Object obj : parms.entrySet()) {
+			Map.Entry e = (Map.Entry) obj;
+			MParameter parm = CommandsFactoryImpl.eINSTANCE.createParameter();
+			parm.setName(e.getKey().toString());
+			parm.setValue(e.getValue().toString());
+			item.getParameters().add(parm);
+		}
+		String iconUrl = MenuHelper.getIconUrl(commandAddition,
+				IWorkbenchRegistryConstants.ATT_ICON);
+
+		if (iconUrl == null) {
+			ICommandImageService commandImageService = application.getContext().get(
+					ICommandImageService.class);
+			ImageDescriptor descriptor = commandImageService == null ? null : commandImageService
+					.getImageDescriptor(item.getElementId());
+			if (descriptor != null) {
+				item.setIconURI(MenuHelper.getImageUrl(descriptor));
+			}
+		} else {
+			item.setIconURI(iconUrl);
+		}
+		item.setLabel(MenuHelper.getLabel(commandAddition));
+		item.setMnemonics(MenuHelper.getMnemonic(commandAddition));
+		item.setTooltip(MenuHelper.getTooltip(commandAddition));
+		item.setType(MenuHelper.getStyle(commandAddition));
+		item.setVisibleWhen(MenuHelper.getVisibleWhen(commandAddition));
+		return item;
+	}
+
+	private MMenuElement createMenuSeparatorAddition(final IConfigurationElement sepAddition) {
+		String name = MenuHelper.getName(sepAddition);
+		MMenuElement element = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		element.setElementId(name);
+		if (!MenuHelper.isSeparatorVisible(sepAddition)) {
+			element.setVisible(false);
+			element.getTags().add(MenuManagerRenderer.GROUP_MARKER);
+		}
+		return element;
+	}
+
+	private MMenu createMenuAddition(final IConfigurationElement menuAddition, String filter) {
 		// Is this for a menu or a ToolBar ? We can't create
 		// a menu directly under a Toolbar; we have to add an
 		// item of style 'pulldown'
@@ -236,283 +263,137 @@ public class MenuAdditionCacheEntry extends AbstractMenuAdditionCacheEntry {
 			return null;
 		}
 
-		String text = getLabel(menuAddition);
-		String mnemonic = getMnemonic(menuAddition);
-		if (text != null && mnemonic != null) {
-			int idx = text.indexOf(mnemonic);
-			if (idx != -1) {
-				text = text.substring(0, idx) + '&' + text.substring(idx);
-			}
+		MMenu menu = MenuHelper.createMenuAddition(menuAddition);
+		menu.getTags().add(filter);
+		// addMenuChildren(menu, menuAddition, filter);
+		return menu;
+	}
+
+	private void processTrimChildren(ArrayList<MTrimContribution> trimContributions,
+			ArrayList<MToolBarContribution> toolBarContributions, IConfigurationElement element) {
+		IConfigurationElement[] toolbars = element
+				.getChildren(IWorkbenchRegistryConstants.TAG_TOOLBAR);
+		if (toolbars.length == 0) {
+			return;
 		}
-		MenuManager menuManager = new MenuManager(text, getIconDescriptor(menuAddition), getId(menuAddition));
-		menuManager.setActionDefinitionId(getCommandId(menuAddition));
-		return menuManager;
-	}
-
-	/**
-	 * @param configurationElement
-	 * @return
-	 */
-	private IContributionItem createSeparatorAdditionContribution(
-			final IConfigurationElement sepAddition) {
-		if (isSeparatorVisible(sepAddition)) {
-			return new Separator(getName(sepAddition));
+		MTrimContribution trimContribution = MenuFactoryImpl.eINSTANCE.createTrimContribution();
+		String idContrib = MenuHelper.getId(configElement);
+		if (idContrib != null && idContrib.length() > 0) {
+			trimContribution.setElementId(idContrib);
 		}
-		return new GroupMarker(getName(sepAddition));
-	}
-
-	/**
-	 * @return
-	 */
-	private IContributionItem createDynamicAdditionContribution(
-			final IServiceLocator locator,
-			final IConfigurationElement dynamicAddition) {
-		
-		return new DynamicMenuContributionItem(getId(dynamicAddition), locator,
-				dynamicAddition);
-		
-	}
-
-	private IContributionItem createControlAdditionContribution(
-			final IServiceLocator locator,
-			final IConfigurationElement widgetAddition) {
-
-		if (inToolbar()) {
-			return new DynamicToolBarContributionItem(getId(widgetAddition), locator, widgetAddition);
+		trimContribution.setParentId(location.getPath());
+		String query = location.getQuery();
+		if (query == null || query.length() == 0) {
+			query = "after=additions"; //$NON-NLS-1$
 		}
-		
-		return null;
-		
-	}
-
-	private IContributionItem createCommandAdditionContribution(
-			IServiceLocator locator, final IConfigurationElement commandAddition) {
-		CommandContributionItemParameter parm = new CommandContributionItemParameter(
-				locator, getId(commandAddition), getCommandId(commandAddition),
-				getParameters(commandAddition),
-				getIconDescriptor(commandAddition),
-				getDisabledIconDescriptor(commandAddition),
-				getHoverIconDescriptor(commandAddition),
-				getLabel(commandAddition), getMnemonic(commandAddition),
-				getTooltip(commandAddition), getStyle(commandAddition),
-				getHelpContextId(commandAddition),
-				getVisibleEnabled(commandAddition));
-		if (inToolbar()) {
-			parm.iconStyle = ICommandImageService.IMAGE_STYLE_TOOLBAR;
+		trimContribution.setPositionInParent(query);
+		trimContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
+		for (IConfigurationElement toolbar : toolbars) {
+			MToolBar item = MenuFactoryImpl.eINSTANCE.createToolBar();
+			item.setElementId(MenuHelper.getId(toolbar));
+			processToolbarChildren(toolBarContributions, toolbar, item.getElementId(),
+					"after=additions"); //$NON-NLS-1$
+			trimContribution.getChildren().add(item);
 		}
-		parm.mode = getMode(commandAddition);
-		return new CommandContributionItem(parm);
+		trimContributions.add(trimContribution);
 	}
 
-	/**
-	 * @param element the configuration element
-	 * @return <code>true</code> if the checkEnabled is <code>true</code>.
-	 */
-	static boolean getVisibleEnabled(IConfigurationElement element) {
-		IConfigurationElement[] children = element
-				.getChildren(IWorkbenchRegistryConstants.TAG_VISIBLE_WHEN);
-		String checkEnabled = null;
-		
-		if (children.length>0) {
-			checkEnabled = children[0]
-				.getAttribute(IWorkbenchRegistryConstants.ATT_CHECK_ENABLED);
+	private void processToolbarChildren(ArrayList<MToolBarContribution> contributions,
+			IConfigurationElement toolbar, String parentId, String position) {
+		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
+				.createToolBarContribution();
+		String idContrib = MenuHelper.getId(toolbar);
+		if (idContrib != null && idContrib.length() > 0) {
+			toolBarContribution.setElementId(idContrib);
 		}
-		
-		return checkEnabled != null && checkEnabled.equalsIgnoreCase("true"); //$NON-NLS-1$
-	}
+		toolBarContribution.setParentId(parentId);
+		toolBarContribution.setPositionInParent(position);
+		toolBarContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
 
-	/*
-	 * Support Utilities
-	 */
-	public static String getId(IConfigurationElement element) {
-		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-
-		// For sub-menu management -all- items must be id'd so enforce this
-		// here (we could optimize by checking the 'name' of the config
-		// element == "menu"
-		if (id == null || id.length() == 0) {
-			id = getCommandId(element);
-		}
-		if (id == null || id.length() == 0) {
-			id = element.toString();
-		}
-
-		return id;
-	}
-
-	static String getName(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-	}
-	
-	static int getMode(IConfigurationElement element) {
-		if ("FORCE_TEXT".equals(element.getAttribute(IWorkbenchRegistryConstants.ATT_MODE))) { //$NON-NLS-1$
-			return CommandContributionItem.MODE_FORCE_TEXT;
-		}
-		return 0;
-	}
-
-	static String getLabel(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
-	}
-
-	static String getMnemonic(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_MNEMONIC);
-	}
-
-	static String getTooltip(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_TOOLTIP);
-	}
-
-	static String getIconPath(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-	}
-
-	static String getDisabledIconPath(IConfigurationElement element) {
-		return element
-				.getAttribute(IWorkbenchRegistryConstants.ATT_DISABLEDICON);
-	}
-
-	static String getHoverIconPath(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_HOVERICON);
-	}
-
-	static ImageDescriptor getIconDescriptor(IConfigurationElement element) {
-		String extendingPluginId = element.getDeclaringExtension()
-				.getContributor().getName();
-
-		String iconPath = getIconPath(element);
-		if (iconPath != null) {
-			return AbstractUIPlugin.imageDescriptorFromPlugin(
-					extendingPluginId, iconPath);
-		}
-		return null;
-	}
-
-	static ImageDescriptor getDisabledIconDescriptor(
-			IConfigurationElement element) {
-		String extendingPluginId = element.getDeclaringExtension()
-				.getContributor().getName();
-
-		String iconPath = getDisabledIconPath(element);
-		if (iconPath != null) {
-			return AbstractUIPlugin.imageDescriptorFromPlugin(
-					extendingPluginId, iconPath);
-		}
-		return null;
-	}
-
-	static ImageDescriptor getHoverIconDescriptor(IConfigurationElement element) {
-		String extendingPluginId = element.getDeclaringExtension()
-				.getContributor().getName();
-
-		String iconPath = getHoverIconPath(element);
-		if (iconPath != null) {
-			return AbstractUIPlugin.imageDescriptorFromPlugin(
-					extendingPluginId, iconPath);
-		}
-		return null;
-	}
-
-	static String getHelpContextId(IConfigurationElement element) {
-		return element
-				.getAttribute(IWorkbenchRegistryConstants.ATT_HELP_CONTEXT_ID);
-	}
-
-	public static boolean isSeparatorVisible(IConfigurationElement element) {
-		String val = element
-				.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
-		return Boolean.valueOf(val).booleanValue();
-	}
-
-	public static String getClassSpec(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
-	}
-
-	public static String getCommandId(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_COMMAND_ID);
-	}
-
-	private int getStyle(IConfigurationElement element) {
-		String style = element
-				.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
-		if (style == null || style.length() == 0) {
-			return CommandContributionItem.STYLE_PUSH;
-		}
-		if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {
-			return CommandContributionItem.STYLE_CHECK;
-		}
-		if (IWorkbenchRegistryConstants.STYLE_RADIO.equals(style)) {
-			return CommandContributionItem.STYLE_RADIO;
-		}
-		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
-			return CommandContributionItem.STYLE_PULLDOWN;
-		}
-		return CommandContributionItem.STYLE_PUSH;
-	}
-
-	/**
-	 * @param element
-	 * @return A map of parameters names to parameter values. All Strings. The
-	 *         map may be empty.
-	 */
-	public static Map getParameters(IConfigurationElement element) {
-		HashMap map = new HashMap();
-		IConfigurationElement[] parameters = element
-				.getChildren(IWorkbenchRegistryConstants.TAG_PARAMETER);
-		for (int i = 0; i < parameters.length; i++) {
-			String name = parameters[i]
-					.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-			String value = parameters[i]
-					.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
-			if (name != null && value != null) {
-				map.put(name, value);
-			}
-		}
-		return map;
-	}
-
-	/**
-	 * @return Returns the subCaches.
-	 */
-	public List getSubCaches() {
-		return subCaches;
-	}
-	
-	private void findAdditions() {
-		IConfigurationElement[] items = getConfigElement().getChildren();
-		boolean done = false;
-		for (int i = 0; i < items.length && !done; i++) {
+		IConfigurationElement[] items = toolbar.getChildren();
+		for (int i = 0; i < items.length; i++) {
 			String itemType = items[i].getName();
-			if (IWorkbenchRegistryConstants.TAG_SEPARATOR
-			.equals(itemType)) {
-				if (IWorkbenchActionConstants.MB_ADDITIONS.equals(getName(items[i]))) {
-					hasAdditions  = true;
-					done = true;
-				}
+
+			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
+				MToolBarElement element = createToolBarCommandAddition(items[i]);
+				toolBarContribution.getChildren().add(element);
+
+			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType)) {
+				MToolBarElement element = createToolBarSeparatorAddition(items[i]);
+				toolBarContribution.getChildren().add(element);
+			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
+				MToolBarElement element = createToolControlAddition(items[i]);
+				toolBarContribution.getChildren().add(element);
 			}
 		}
-	}
-	
-	public boolean hasAdditions() {
-		return hasAdditions;
+
+		contributions.add(toolBarContribution);
 	}
 
-	/**
-	 * 
-	 * Returns the value of the allPopups attribute
-	 * 
-	 * @return <code>true</code> if specified and the value equals to true,
-	 *         <code>false</code> otherwise
-	 * 
-	 */
-	public boolean contributeToAllPopups() {
-		if (contributeToAllPopups == null) {
-			String allPopups = getConfigElement().getAttribute("allPopups"); //$NON-NLS-1$
-			if (allPopups == null || Boolean.valueOf(allPopups).booleanValue())
-				contributeToAllPopups = Boolean.TRUE;
-			else
-				contributeToAllPopups = Boolean.FALSE;
+	private MToolBarElement createToolControlAddition(IConfigurationElement element) {
+		String id = MenuHelper.getId(element);
+		MToolControl control = MenuFactoryImpl.eINSTANCE.createToolControl();
+		control.setElementId(id);
+		control.setContributionURI(CompatibilityWorkbenchWindowControlContribution.CONTROL_CONTRIBUTION_URI);
+		ControlContributionRegistry.add(id, element);
+		return control;
+	}
+
+	private MToolBarElement createToolBarSeparatorAddition(final IConfigurationElement sepAddition) {
+		String name = MenuHelper.getName(sepAddition);
+		MToolBarElement element = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+		element.setElementId(name);
+		if (!MenuHelper.isSeparatorVisible(sepAddition)) {
+			element.setToBeRendered(false);
 		}
-		return contributeToAllPopups.booleanValue();
+		return element;
+	}
+
+	private MToolBarElement createToolBarCommandAddition(final IConfigurationElement commandAddition) {
+		MHandledToolItem item = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
+		item.setElementId(MenuHelper.getId(commandAddition));
+		String commandId = MenuHelper.getCommandId(commandAddition);
+		MCommand commandById = ContributionsAnalyzer.getCommandById(application, commandId);
+		if (commandById == null) {
+			commandById = CommandsFactoryImpl.eINSTANCE.createCommand();
+			commandById.setElementId(commandId);
+			commandById.setCommandName(commandId);
+			application.getCommands().add(commandById);
+		}
+		item.setCommand(commandById);
+		Map parms = MenuHelper.getParameters(commandAddition);
+		for (Object obj : parms.entrySet()) {
+			Map.Entry e = (Map.Entry) obj;
+			MParameter parm = CommandsFactoryImpl.eINSTANCE.createParameter();
+			parm.setName(e.getKey().toString());
+			parm.setValue(e.getValue().toString());
+			item.getParameters().add(parm);
+		}
+		String iconUrl = MenuHelper.getIconUrl(commandAddition,
+				IWorkbenchRegistryConstants.ATT_ICON);
+
+		if (iconUrl == null) {
+			ICommandImageService commandImageService = application.getContext().get(
+					ICommandImageService.class);
+			ImageDescriptor descriptor = commandImageService == null ? null : commandImageService
+					.getImageDescriptor(commandId);
+			if (descriptor == null) {
+				descriptor = commandImageService == null ? null : commandImageService
+						.getImageDescriptor(item.getElementId());
+				if (descriptor == null) {
+					item.setLabel(MenuHelper.getLabel(commandAddition));
+				} else {
+					item.setIconURI(MenuHelper.getImageUrl(descriptor));
+				}
+			} else {
+				item.setIconURI(MenuHelper.getImageUrl(descriptor));
+			}
+		} else {
+			item.setIconURI(iconUrl);
+		}
+		item.setTooltip(MenuHelper.getTooltip(commandAddition));
+		item.setType(MenuHelper.getStyle(commandAddition));
+		item.setVisibleWhen(MenuHelper.getVisibleWhen(commandAddition));
+		return item;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,27 @@
 
 package org.eclipse.ui.internal;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
@@ -34,6 +45,7 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.WorkbenchSourceProvider;
 import org.eclipse.ui.internal.util.Util;
@@ -174,10 +186,46 @@ public class ShowInMenu extends ContributionItem implements
 			if (sp instanceof WorkbenchSourceProvider) {
 				((WorkbenchSourceProvider) sp).checkActivePart(true);
 			}
-			IMenuService service = (IMenuService) locator
-					.getService(IMenuService.class);
-			service.populateContributionManager((ContributionManager) innerMgr,
-					MenuUtil.SHOW_IN_MENU_ID);
+
+			// add contributions targeting popup:org.eclipse.ui.menus.showInMenu
+			String location = MenuUtil.SHOW_IN_MENU_ID;
+			location = location.substring(location.indexOf(':') + 1);
+			WorkbenchWindow workbenchWindow = (WorkbenchWindow) getWindow();
+			MApplication application = workbenchWindow.getModel().getContext()
+					.get(MApplication.class);
+
+			MMenu menuModel = MenuFactoryImpl.eINSTANCE.createMenu();
+			final ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
+			final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
+			ExpressionContext eContext = new ExpressionContext(workbenchWindow.getModel()
+					.getContext());
+			ContributionsAnalyzer.gatherMenuContributions(menuModel,
+					application.getMenuContributions(), menuModel.getElementId(), toContribute,
+					eContext, true);
+			ContributionsAnalyzer.gatherMenuContributions(menuModel,
+					application.getMenuContributions(), location, toContribute, eContext, false);
+			ContributionsAnalyzer.addMenuContributions(menuModel, toContribute,
+					menuContributionsToRemove);
+
+			ICommandImageService imgService = (ICommandImageService) workbenchWindow
+					.getService(ICommandImageService.class);
+
+			for (MMenuElement menuElement : menuModel.getChildren()) {
+				if (menuElement instanceof MHandledMenuItem) {
+					MCommand command = ((MHandledMenuItem) menuElement).getCommand();
+					String commandId = command.getElementId();
+					CommandContributionItemParameter ccip = new CommandContributionItemParameter(
+							workbenchWindow, commandId, commandId,
+							CommandContributionItem.STYLE_PUSH);
+					String iconURI = menuElement.getIconURI();
+					try {
+						ccip.icon = ImageDescriptor.createFromURL(new URL(iconURI));
+					} catch (MalformedURLException e) {
+						ccip.icon = imgService.getImageDescriptor(commandId);
+					}
+					innerMgr.add(new CommandContributionItem(ccip));
+				}
+			}
 		}
 	}
 
@@ -195,9 +243,6 @@ public class ShowInMenu extends ContributionItem implements
 				viewDescriptor.getId());
 		parm.parameters = targetId;
 		parm.label = viewDescriptor.getLabel();
-		if (parm.label.length() > 0) {
-			parm.mnemonic = parm.label.substring(0, 1);
-		}
 		parm.icon = viewDescriptor.getImageDescriptor();
 		return new CommandContributionItem(parm);
 	}

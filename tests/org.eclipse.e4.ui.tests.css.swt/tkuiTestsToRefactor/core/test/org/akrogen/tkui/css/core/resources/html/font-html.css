@@ -1,0 +1,14 @@
+font {
+	color:red;
+}
+
+font#MyId {
+	color:yellow;
+	font-size:5;
+}
+
+.purpleClass {
+	color:purple;
+	font-weight:bold;
+	font-style:italic;
+}

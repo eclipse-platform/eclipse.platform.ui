@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -96,7 +95,7 @@ public class EditorMenuManager extends SubMenuManager {
     /**
      * Constructs a new editor manager.
      */
-    public EditorMenuManager(IMenuManager mgr) {
+	public EditorMenuManager(IMenuManager mgr) {
         super(mgr);
     }
 
@@ -119,25 +118,26 @@ public class EditorMenuManager extends SubMenuManager {
      * Inserts the new item after any action set contributions which may
      * exist within the toolbar to ensure a consistent order for actions.
      */
-    public void insertAfter(String id, IContributionItem item) {
-        IContributionItem refItem = PluginActionSetBuilder.findInsertionPoint(
-                id, null, getParentMenuManager(), false);
-        if (refItem != null) {
-            super.insertAfter(refItem.getId(), item);
-        } else {
-            WorkbenchPlugin
-                    .log("Reference item " + id + " not found for action " + item.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
-
-    /* (non-Javadoc)
-     * Method declared on IContributionManager.
-     * Inserts the new item after any action set contributions which may
-     * exist within the toolbar to ensure a consistent order for actions.
-     */
     public void prependToGroup(String groupName, IContributionItem item) {
         insertAfter(groupName, item);
     }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.action.SubContributionManager#appendToGroup(java.lang
+	 * .String, org.eclipse.jface.action.IContributionItem)
+	 */
+	@Override
+	public void appendToGroup(String groupName, IContributionItem item) {
+		try {
+			// FIXME: this is killing at least SSE editors, see bug 318034
+			super.appendToGroup(groupName, item);
+		} catch (RuntimeException e) {
+			WorkbenchPlugin.log(e);
+		}
+	}
 
     /**
      * Sets the visibility of the manager. If the visibility is <code>true</code>
@@ -200,7 +200,7 @@ public class EditorMenuManager extends SubMenuManager {
         if (wrappers == null) {
 			wrappers = new ArrayList();
 		}
-        EditorMenuManager manager = new EditorMenuManager(menu);
+		EditorMenuManager manager = new EditorMenuManager(menu);
         wrappers.add(manager);
         return manager;
     }
@@ -235,5 +235,4 @@ public class EditorMenuManager extends SubMenuManager {
             set.add(((ActionContributionItem) item).getAction());
         }
     }
-
 }

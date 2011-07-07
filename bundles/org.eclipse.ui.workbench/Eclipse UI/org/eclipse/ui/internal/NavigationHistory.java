@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -31,8 +30,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
-import org.eclipse.ui.internal.tweaklets.TabBehaviour;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 
 /**
  * Implementation of the back and forward actions.
@@ -88,7 +85,7 @@ public class NavigationHistory implements INavigationHistory {
             public void partClosed(IWorkbenchPartReference partRef) {
             	if (isPerTabHistoryEnabled() && partRef instanceof EditorReference) {
             		if (!((EditorReference)partRef).isDisposed()) {
-	            		Object editorTabCookie = ((EditorReference)partRef).getPane();
+						Object editorTabCookie = ((EditorReference) partRef).getModel().getWidget();
 	            		disposeHistoryForTab(editorTabCookie);
 	            		updateActions();
             		}
@@ -172,7 +169,7 @@ public class NavigationHistory implements INavigationHistory {
     }
     
     private boolean isPerTabHistoryEnabled() {
-    	return ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).isPerTabHistoryEnabled();
+		return false;
     }
 
     /*
@@ -190,7 +187,7 @@ public class NavigationHistory implements INavigationHistory {
                 if (--ignoreEntries == 0) {
 	                if (part.getEditorSite() instanceof EditorSite) {
 						EditorSite site = (EditorSite) part.getEditorSite();
-		                Control c = site.getPane().getControl();
+						Control c = (Control) site.getModel().getWidget();
 		                if (c == null || c.isDisposed()) {
 							return;
 						}
@@ -720,7 +717,7 @@ public class NavigationHistory implements INavigationHistory {
 	        	PartSite partSite = (PartSite) site;
 	        	WorkbenchPartReference ref = (WorkbenchPartReference) partSite.getPartReference();
 	        	if (!ref.isDisposed()) {
-	        		return partSite.getPane();
+					return partSite.getModel().getWidget();
 	        	}
 	        }
     	}

@@ -15,16 +15,11 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.window.Window;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.FastViewBar;
-import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -39,7 +34,6 @@ import org.eclipse.ui.views.IViewDescriptor;
  */
 public final class ShowViewHandler extends AbstractHandler {
 
-    private boolean makeFast = false;
   
     /**
      * Creates a new ShowViewHandler that will open the view in its default location.
@@ -56,7 +50,7 @@ public final class ShowViewHandler extends AbstractHandler {
      * false is equivalent to using the default constructor.
      */    
     public ShowViewHandler(boolean makeFast) {
-        this.makeFast = makeFast;
+
     }
     
 	public final Object execute(final ExecutionEvent event)
@@ -65,15 +59,15 @@ public final class ShowViewHandler extends AbstractHandler {
 				.getActiveWorkbenchWindowChecked(event);
 		// Get the view identifier, if any.
 		final Map parameters = event.getParameters();
-		final Object viewId = parameters.get(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID);
-		final Object secondary = parameters.get(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_SECONDARY_ID);
-		makeFast = "true".equals(parameters.get(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_FASTVIEW)); //$NON-NLS-1$
+		final Object value = parameters
+				.get(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID);
 		
-		if (viewId == null) {
+
+		if (value == null) {
 			openOther(window);
 		} else {
             try {
-				openView((String) viewId, (String) secondary, window);
+                openView((String) value, window);
             } catch (PartInitException e) {
                 throw new ExecutionException("Part could not be initialized", e); //$NON-NLS-1$
             }
@@ -102,7 +96,7 @@ public final class ShowViewHandler extends AbstractHandler {
 		final IViewDescriptor[] descriptors = dialog.getSelection();
 		for (int i = 0; i < descriptors.length; ++i) {
 			try {
-				openView(descriptors[i].getId(), null, window);
+                openView(descriptors[i].getId(), window);
 			} catch (PartInitException e) {
 				StatusUtil.handleStatus(e.getStatus(),
 						WorkbenchMessages.ShowView_errorTitle
@@ -117,50 +111,19 @@ public final class ShowViewHandler extends AbstractHandler {
 	 * 
 	 * @param viewId
 	 *            The view to open; must not be <code>null</code>
-	 * @param secondaryId
-	 *            an optional secondary id; may be <code>null</code>
 	 * @throws PartInitException
 	 *             If the part could not be initialized.
 	 */
-	private final void openView(final String viewId, final String secondaryId,
-			final IWorkbenchWindow activeWorkbenchWindow) throws PartInitException {
+	private final void openView(final String viewId,
+			final IWorkbenchWindow activeWorkbenchWindow)
+			throws PartInitException {
 
 		final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
 		if (activePage == null) {
 			return;
 		}
 
-        if (makeFast) {
-            WorkbenchPage wp = (WorkbenchPage) activePage;
-        	Perspective persp = wp.getActivePerspective();
-
-            // If we're making a fast view then use the new mechanism directly
-            boolean useNewMinMax = Perspective.useNewMinMax(persp);
-            if (useNewMinMax) {
-				IViewReference ref = persp.getViewReference(viewId, secondaryId);
-            	if (ref == null)
-            		return;
-
-            	persp.getFastViewManager().addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, true);
-        		wp.activate(ref.getPart(true));
-        		
-        		return;
-            }
-            
-			IViewReference ref = wp.findViewReference(viewId, secondaryId);
-            
-            if (ref == null) {
-				IViewPart part = wp.showView(viewId, secondaryId, IWorkbenchPage.VIEW_CREATE);
-                ref = (IViewReference)wp.getReference(part); 
-            }
-            
-            if (!wp.isFastView(ref)) {
-                wp.addFastView(ref);
-            }
-            wp.activate(ref.getPart(true));
-        } else {
-			activePage.showView(viewId, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
-        }
+		activePage.showView(viewId);
 		
 	}
 }

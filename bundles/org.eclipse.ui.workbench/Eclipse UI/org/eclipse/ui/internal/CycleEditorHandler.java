@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,11 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ParameterizedCommand;
-
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -38,8 +36,8 @@ public class CycleEditorHandler extends CycleBaseHandler {
 	 */
 	protected void addItems(Table table, WorkbenchPage page) {
 		// TODO Auto-generated method stub
-        IEditorReference refs[] = page.getSortedEditors();
-        for (int i = refs.length - 1; i >= 0; i--) {
+		IEditorReference refs[] = page.getEditorReferences();
+		for (int i = 0; i < refs.length; i++) {
             TableItem item = null;
             item = new TableItem(table, SWT.NONE);
             if (refs[i].isDirty()) {

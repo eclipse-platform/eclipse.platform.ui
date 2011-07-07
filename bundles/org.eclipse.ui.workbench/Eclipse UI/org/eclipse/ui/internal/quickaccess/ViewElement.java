@@ -11,12 +11,21 @@
 
 package org.eclipse.ui.internal.quickaccess;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import org.eclipse.e4.ui.model.LocalizationHelper;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.views.IViewCategory;
-import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 
 /**
  * @since 3.3
@@ -24,120 +33,72 @@ import org.eclipse.ui.views.IViewDescriptor;
  */
 public class ViewElement extends QuickAccessElement {
 
-	private final IViewDescriptor viewDescriptor;
-	private String secondaryId;
-	private boolean multiInstance;
-	private String contentDescription;
+	private MWindow window;
+	private MPartDescriptor viewDescriptor;
+	private ImageDescriptor imageDescriptor;
 
-	private String category;
+	public ViewElement(QuickAccessProvider provider, MWindow window, MPartDescriptor descriptor) {
+		super(provider);
+		this.window = window;
+		this.viewDescriptor = descriptor;
 
-	/* package */ViewElement(IViewDescriptor viewDescriptor, ViewProvider viewProvider) {
-		super(viewProvider);
-		this.viewDescriptor = viewDescriptor;
-
-		IViewCategory[] categories = PlatformUI.getWorkbench().getViewRegistry().getCategories();
-		for (int i = 0; i < categories.length; i++) {
-			IViewDescriptor[] views = categories[i].getViews();
-			for (int j = 0; j < views.length; j++) {
-				if (views[j] == viewDescriptor) {
-					category = categories[i].getLabel();
-					return;
-				}
-			}
+		try {
+			imageDescriptor = ImageDescriptor.createFromURL(new URL(descriptor.getIconURI()));
+		} catch (MalformedURLException e) {
+			imageDescriptor = null;
 		}
 	}
 
-	/**
-	 * @return The primary id of the view
-	 */
-	public String getPrimaryId() {
-
-		return viewDescriptor.getId();
-	}
-
-	/**
-	 * @param secondaryId
-	 *            The secondaryId to set.
-	 */
-	public void setSecondaryId(String secondaryId) {
-		this.secondaryId = secondaryId;
-	}
-
-	/**
-	 * @param multiInstance
-	 *            The multiInstance to set.
-	 */
-	public void setMultiInstance(boolean multiInstance) {
-		this.multiInstance = multiInstance;
-	}
-
-	/**
-	 * @param contentDescription
-	 *            The contentDescription to set.
-	 */
-	public void setContentDescription(String contentDescription) {
-		this.contentDescription = contentDescription;
-	}
-
-	/**
-	 * @return Returns the multiInstance.
-	 */
-	public boolean isMultiInstance() {
-		return multiInstance;
-	}
-
+	@Override
 	public void execute() {
-		IWorkbenchPage activePage = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
-		if (activePage != null) {
-			try {
-				activePage.showView(viewDescriptor.getId(), secondaryId,
-						IWorkbenchPage.VIEW_ACTIVATE);
-			} catch (PartInitException e) {
+		String id = viewDescriptor.getElementId();
+		if (id != null) {
+			if (CompatibilityPart.COMPATIBILITY_VIEW_URI
+					.equals(viewDescriptor.getContributionURI())) {
+				IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
+				IWorkbenchPage page = workbenchWindow.getActivePage();
+				if (page != null) {
+					try {
+						page.showView(viewDescriptor.getElementId());
+					} catch (PartInitException e) {
+						WorkbenchPlugin.log(e);
+					}
+				}
+			} else {
+				EPartService partService = window.getContext().get(EPartService.class);
+				MPart part = partService.findPart(id);
+				if (part == null) {
+					MPlaceholder placeholder = partService.createSharedPart(id);
+					part = (MPart) placeholder.getRef();
+				}
+				partService.showPart(part, PartState.ACTIVATE);
 			}
 		}
 	}
 
+	@Override
 	public String getId() {
-		if(secondaryId ==null)
-			return viewDescriptor.getId();
-		return viewDescriptor.getId() + ':' + secondaryId;
+		return viewDescriptor.getElementId();
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return viewDescriptor.getImageDescriptor();
+		return imageDescriptor;
 	}
 
+	@Override
 	public String getLabel() {
-		String label = viewDescriptor.getLabel();
-
-		if (isMultiInstance() && contentDescription != null)
-			label = label + " (" + contentDescription + ')'; //$NON-NLS-1$
-
-		if (category != null) {
-			label = label + separator + category;
-		}
-		return label;
+		return LocalizationHelper.getLocalized(viewDescriptor.getLabel(), viewDescriptor, window.getContext());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((secondaryId == null) ? 0 : secondaryId.hashCode());
-		result = prime * result + ((viewDescriptor == null) ? 0 : viewDescriptor.hashCode());
+		result = prime * result
+				+ ((viewDescriptor == null) ? 0 : viewDescriptor.hashCode());
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -145,12 +106,7 @@ public class ViewElement extends QuickAccessElement {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ViewElement other = (ViewElement) obj;
-		if (secondaryId == null) {
-			if (other.secondaryId != null)
-				return false;
-		} else if (!secondaryId.equals(other.secondaryId))
-			return false;
+		final ViewElement other = (ViewElement) obj;
 		if (viewDescriptor == null) {
 			if (other.viewDescriptor != null)
 				return false;
@@ -158,5 +114,4 @@ public class ViewElement extends QuickAccessElement {
 			return false;
 		return true;
 	}
-
 }

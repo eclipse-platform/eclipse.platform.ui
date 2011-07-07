@@ -18,6 +18,14 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabItem;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -40,13 +48,35 @@ public class ShowPartPaneMenuHandler extends AbstractEvaluationHandler {
 	}
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (part != null) {
 			IWorkbenchPartSite site = part.getSite();
 			if (site instanceof PartSite) {
-				PartPane pane = ((PartSite) site).getPane();
-				pane.showSystemMenu();
+				final MPart model = ((PartSite) site).getModel();
+				Composite partContainer = (Composite) model.getWidget();
+				if (partContainer != null) {
+					Composite parent = partContainer.getParent();
+					while (parent != null && parent instanceof Composite) {
+						if (parent instanceof CTabFolder) {
+							CTabFolder ctf = (CTabFolder) parent;
+							final CTabItem item = ctf.getSelection();
+							if (item != null) {
+								final Display disp = item.getDisplay();
+								final Rectangle bounds = item.getBounds();
+								final Rectangle info = disp.map(ctf, null, bounds);
+								Event sevent = new Event();
+								sevent.type = SWT.MenuDetect;
+								sevent.widget = ctf;
+								sevent.x = info.x;
+								sevent.y = info.y + info.height - 1;
+								sevent.doit = true;
+								ctf.notifyListeners(SWT.MenuDetect, sevent);
+							}
+							return null;
+						}
+						parent = parent.getParent();
+					}
+				}
 			}
 		}
 		return null;
@@ -55,15 +85,15 @@ public class ShowPartPaneMenuHandler extends AbstractEvaluationHandler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.AbstractEvaluationHandler#getEnabledWhenExpression()
+	 * @see
+	 * org.eclipse.ui.internal.AbstractEvaluationHandler#getEnabledWhenExpression
+	 * ()
 	 */
 	protected Expression getEnabledWhenExpression() {
 		if (enabledWhen == null) {
 			enabledWhen = new Expression() {
-				public EvaluationResult evaluate(IEvaluationContext context)
-						throws CoreException {
-					IWorkbenchPart part = InternalHandlerUtil
-							.getActivePart(context);
+				public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+					IWorkbenchPart part = InternalHandlerUtil.getActivePart(context);
 
 					if (part != null) {
 						return EvaluationResult.TRUE;
@@ -74,7 +104,9 @@ public class ShowPartPaneMenuHandler extends AbstractEvaluationHandler {
 				/*
 				 * (non-Javadoc)
 				 * 
-				 * @see org.eclipse.core.expressions.Expression#collectExpressionInfo(org.eclipse.core.expressions.ExpressionInfo)
+				 * @see
+				 * org.eclipse.core.expressions.Expression#collectExpressionInfo
+				 * (org.eclipse.core.expressions.ExpressionInfo)
 				 */
 				public void collectExpressionInfo(ExpressionInfo info) {
 					info.addVariableNameAccess(ISources.ACTIVE_PART_NAME);

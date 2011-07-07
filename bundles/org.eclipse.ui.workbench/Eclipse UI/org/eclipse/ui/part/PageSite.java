@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,20 +13,25 @@ package org.eclipse.ui.part;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.contexts.NestableContextService;
+import org.eclipse.ui.internal.expressions.ActivePartExpression;
+import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.part.IPageSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
@@ -70,6 +75,12 @@ public class PageSite implements IPageSite, INestable {
 	 */
 	private SubActionBars subActionBars;
 
+	private IEclipseContext e4Context;
+
+	private NestableContextService contextService;
+
+	private boolean active = false;
+
 	/**
 	 * Creates a new sub view site of the given parent view site.
 	 * 
@@ -84,15 +95,19 @@ public class PageSite implements IPageSite, INestable {
 		// Initialize the service locator.
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentSite
 				.getService(IServiceLocatorCreator.class);
-		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
-				parentViewSite, null, new IDisposable(){
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(parentViewSite, null,
+				new IDisposable() {
 					public void dispose() {
-						final Control control = ((PartSite)parentViewSite).getPane().getControl();
-						if (control != null && !control.isDisposed()) {
-							((PartSite)parentViewSite).getPane().doHide();
-						}
+						// final Control control =
+						// ((PartSite)parentViewSite).getPane().getControl();
+						// if (control != null && !control.isDisposed()) {
+						// ((PartSite)parentViewSite).getPane().doHide();
+						// }
+						// TODO compat: not tsure what this should do
 					}
 				});
+		e4Context = ((PartSite) parentViewSite).getContext().createChild("PageSite"); //$NON-NLS-1$
+		serviceLocator.setContext(e4Context);
 		initializeDefaultServices();
 	}
 
@@ -110,6 +125,23 @@ public class PageSite implements IPageSite, INestable {
 						return PageSite.this;
 					}
 				});
+
+		// create a local handler service so that when this page
+		// activates/deactivates, its handlers will also be taken into/out of
+		// consideration during handler lookups
+		IHandlerService handlerService = new LegacyHandlerService(e4Context);
+		e4Context.set(IHandlerService.class, handlerService);
+
+		e4Context.set(IContextService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (contextService == null) {
+					contextService = new NestableContextService(context.getParent().get(
+							IContextService.class), new ActivePartExpression(parentSite.getPart()));
+				}
+				return contextService;
+			}
+		});
 	}
 
 	/**
@@ -133,7 +165,13 @@ public class PageSite implements IPageSite, INestable {
 			menuExtenders = null;
 		}
 		subActionBars.dispose();
+
+		if (contextService != null) {
+			contextService.dispose();
+		}
+
 		serviceLocator.dispose();
+		e4Context.dispose();
 	}
 
 	/**
@@ -170,7 +208,11 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	public final Object getService(final Class key) {
-		return serviceLocator.getService(key);
+		Object service = serviceLocator.getService(key);
+		if (active && service instanceof INestable) {
+			((INestable) service).activate();
+		}
+		return service;
 	}
 
 	/*
@@ -218,7 +260,13 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void activate() {
+		active = true;
+		e4Context.activate();
 		serviceLocator.activate();
+
+		if (contextService != null) {
+			contextService.activate();
+		}
 	}
 
 	/*
@@ -229,6 +277,12 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void deactivate() {
+		active = false;
+		if (contextService != null) {
+			contextService.deactivate();
+		}
+
 		serviceLocator.deactivate();
+		e4Context.deactivate();
 	}
 }

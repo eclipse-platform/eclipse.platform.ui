@@ -45,6 +45,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -103,10 +104,6 @@ public class ProgressAnimationItem extends AnimationItem implements
 		for (int i = jobTreeElements.length - 1; i >= 0; i--) {
 			if (jobTreeElements[i] instanceof JobInfo) {
 				JobInfo ji = (JobInfo) jobTreeElements[i];
-				if (ji.isReported()) {
-					// the error was already reported, so do nothing.
-					continue;
-				}
 				Job job = ji.getJob();
 				if (job != null) {
 
@@ -121,19 +118,10 @@ public class ProgressAnimationItem extends AnimationItem implements
 						StatusManager.getManager().handle(statusAdapter,
 								StatusManager.SHOW);
 
-						if (FinishedJobs.keep(ji)) {
-							ji.setReported(true);
-						} else {
-							removeTopElement(ji);
-						}
+						removeTopElement(ji);
 					}
 
-					// To fix a bug (335543) introduced in 3.6.1.
-					// doAction() should return if progress region button was
-					// selected to open a job result action or command.
-					if (execute(ji, job)) {
-						return;
-					}
+					execute(ji, job);
 				}
 			}
 		}
@@ -145,16 +133,14 @@ public class ProgressAnimationItem extends AnimationItem implements
 	/**
 	 * @param ji
 	 * @param job
-	 * @return <code>true</code> if Action or Command is executed
 	 */
-	private boolean execute(JobInfo ji, Job job) {
+	private void execute(JobInfo ji, Job job) {
 
-		Object prop = job.getProperty(IProgressConstants2.ACTION_PROPERTY);
+		Object prop = job.getProperty(IProgressConstants.ACTION_PROPERTY);
 		if (prop instanceof IAction && ((IAction) prop).isEnabled()) {
 			IAction action = (IAction) prop;
 			action.run();
 			removeTopElement(ji);
-			return true;
 		}
 
 		prop = job.getProperty(IProgressConstants2.COMMAND_PROPERTY);
@@ -183,9 +169,8 @@ public class ProgressAnimationItem extends AnimationItem implements
 				StatusManager.getManager().handle(status,
 						StatusManager.LOG | StatusManager.SHOW);
 			}
-			return true;
+
 		}
-		return false;
 	}
 
 	/**
@@ -200,7 +185,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 	}
 
 	private IAction getAction(Job job) {
-		Object property = job.getProperty(IProgressConstants2.ACTION_PROPERTY);
+		Object property = job.getProperty(IProgressConstants.ACTION_PROPERTY);
 		if (property instanceof IAction) {
 			return (IAction) property;
 		}
@@ -225,7 +210,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 			if (jobTreeElements[i] instanceof JobInfo) {
 				JobInfo ji = (JobInfo) jobTreeElements[i];
 				Job job = ji.getJob();
-				if ((job != null) && (!ji.isReported())) {
+				if (job != null) {
 					IStatus status = job.getResult();
 					if (status != null && status.getSeverity() == IStatus.ERROR) {
 						// green arrow with error overlay

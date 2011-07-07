@@ -39,10 +39,7 @@ public class UIExtensionTracker extends ExtensionTracker {
 	}
 
 	protected void applyRemove(final IExtensionChangeHandler handler, final IExtension removedExtension, final Object[] objects) {
-		if (display.isDisposed())
-			return;
-
-		display.syncExec(new Runnable() {
+        display.syncExec(new Runnable() {
 
             public void run() {
                 try {
@@ -55,9 +52,6 @@ public class UIExtensionTracker extends ExtensionTracker {
     }
 
     protected void applyAdd(final IExtensionChangeHandler handler, final IExtension addedExtension) {
-		if (display.isDisposed())
-			return;
-
         display.syncExec(new Runnable() {
             public void run() {
                 try {

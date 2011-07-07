@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -350,21 +350,4 @@ public interface IWorkingSetManager {
 	 * @since 3.4
 	 */
 	public void addToWorkingSets(IAdaptable element, IWorkingSet[] workingSets);
-
-	/**
-	 * Sets maximum length of the recent working sets list.
-	 * 
-	 * @param length
-	 *            maximum number of recent working sets to be kept in the list
-	 * @since 3.7
-	 */
-	public void setRecentWorkingSetsLength(int length);
-
-	/**
-	 * Returns the maximum length of the recent working sets list.
-	 * 
-	 * @return the maximum length of the recent working sets list.
-	 * @since 3.7
-	 */
-	public int getRecentWorkingSetsLength();
 }

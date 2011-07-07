@@ -25,7 +25,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.core.commands.AbstractHandler;
@@ -50,7 +50,6 @@ import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ContentViewer;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -73,6 +72,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
@@ -178,8 +178,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	private ItemsListLabelProvider itemsListLabelProvider;
 
 	private MenuManager menuManager;
-
-	private MenuManager contextMenuManager;
 
 	private boolean multi;
 
@@ -413,10 +411,6 @@ public abstract class FilteredItemsSelectionDialog extends
 			showViewHandler.getHandler().dispose();
 			showViewHandler = null;
 		}
-		if (menuManager != null)
-			menuManager.dispose();
-		if (contextMenuManager != null)
-			contextMenuManager.dispose();
 		storeDialog(getDialogSettings());
 		return super.close();
 	}
@@ -618,16 +612,16 @@ public abstract class FilteredItemsSelectionDialog extends
 		removeHistoryActionContributionItem = new ActionContributionItem(
 				removeHistoryItemAction);
 
-		contextMenuManager = new MenuManager();
-		contextMenuManager.setRemoveAllWhenShown(true);
-		contextMenuManager.addMenuListener(new IMenuListener() {
+		MenuManager manager = new MenuManager();
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
 				fillContextMenu(manager);
 			}
 		});
 
 		final Table table = list.getTable();
-		Menu menu= contextMenuManager.createContextMenu(table);
+		Menu menu= manager.createContextMenu(table);
 		table.setMenu(menu);
 	}
 
@@ -2214,7 +2208,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private static final int MAX_HISTORY_SIZE = 60;
 
-		private final Set historyList;
+		private final List historyList;
 
 		private final String rootNodeName;
 
@@ -2222,7 +2216,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private SelectionHistory(String rootNodeName, String infoNodeName) {
 
-			historyList = Collections.synchronizedSet(new LinkedHashSet() {
+			historyList = Collections.synchronizedList(new LinkedList() {
 
 				private static final long serialVersionUID = 0L;
 
@@ -2232,12 +2226,11 @@ public abstract class FilteredItemsSelectionDialog extends
 				 * @see java.util.LinkedList#add(java.lang.Object)
 				 */
 				public boolean add(Object arg0) {
-					if (this.size() >= MAX_HISTORY_SIZE) {
-						Iterator iterator = this.iterator();
-						iterator.next();
-						iterator.remove();
-					}
-					return super.add(arg0);
+					if (this.size() >= MAX_HISTORY_SIZE)
+						this.removeFirst();
+					if (!this.contains(arg0))
+						return super.add(arg0);
+					return false;
 				}
 
 			});
@@ -2260,7 +2253,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *            the item to be added to the history
 		 */
 		public synchronized void accessed(Object object) {
-			historyList.remove(object);
 			historyList.add(object);
 		}
 
@@ -3285,14 +3277,13 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Object o1, Object o2) {
-			boolean h1 = isHistoryElement(o1);
-			boolean h2 = isHistoryElement(o2);
-			if (h1 == h2)
+			if ((isHistoryElement(o1) && isHistoryElement(o2))
+					|| (!isHistoryElement(o1) && !isHistoryElement(o2)))
 				return getItemsComparator().compare(o1, o2);
 
-			if (h1)
+			if (isHistoryElement(o1))
 				return -2;
-			if (h2)
+			if (isHistoryElement(o2))
 				return +2;
 
 			return 0;

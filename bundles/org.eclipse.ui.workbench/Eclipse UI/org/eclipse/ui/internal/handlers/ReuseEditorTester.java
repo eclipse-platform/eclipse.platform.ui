@@ -15,8 +15,6 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.tweaklets.TabBehaviour;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 
 /**
  * Test to see if pinning is available.
@@ -34,9 +32,7 @@ public class ReuseEditorTester extends PropertyTester {
 			Object expectedValue) {
 		IPreferenceStore store = WorkbenchPlugin.getDefault()
 				.getPreferenceStore();
-		return store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-				|| ((TabBehaviour) Tweaklets.get(TabBehaviour.KEY))
-						.alwaysShowPinAction();
+		return store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
 	}
 
 }

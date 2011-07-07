@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
@@ -52,6 +53,7 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -133,7 +135,7 @@ final class KeyAssistDialog extends PopupDialog {
 	/**
 	 * The key binding listener for the associated workbench.
 	 */
-	private final WorkbenchKeyboard workbenchKeyboard;
+	private final KeyBindingDispatcher workbenchKeyboard;
 
 	/**
 	 * A sorted map of conflicts to be used when the dialog pops up.
@@ -160,7 +162,7 @@ final class KeyAssistDialog extends PopupDialog {
 	 *            be <code>null</code>.
 	 */
 	KeyAssistDialog(final IWorkbench workbench,
-			final WorkbenchKeyboard associatedKeyboard,
+ final KeyBindingDispatcher associatedKeyboard,
 			final KeyBindingState associatedState) {
 		super((Shell) null, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false,
 				false, false, null, null);
@@ -547,11 +549,10 @@ final class KeyAssistDialog extends PopupDialog {
 		if (selectionIndex >= 0) {
 			final Binding binding = (Binding) bindings.get(selectionIndex);
 			try {
-				workbenchKeyboard.updateShellKludge(null);
-				workbenchKeyboard.executeCommand(binding, trigger);
+				// workbenchKeyboard.updateShellKludge(null);
+				workbenchKeyboard.executeCommand(binding.getParameterizedCommand(), trigger);
 			} catch (final CommandException e) {
-				workbenchKeyboard.logException(e, binding
-						.getParameterizedCommand());
+				WorkbenchPlugin.log(binding.getParameterizedCommand().toString(), e);
 			}
 		}
 	}

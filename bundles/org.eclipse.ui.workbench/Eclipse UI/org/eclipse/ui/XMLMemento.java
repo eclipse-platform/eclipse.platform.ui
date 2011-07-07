@@ -21,7 +21,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -144,14 +143,12 @@ public final class XMLMemento implements IMemento {
     }
 
     /**
-	 * Returns a root memento for writing a document.
-	 * 
-	 * @param type
-	 *            the element node type to create on the document
-	 * @return the root memento for writing a document
-	 * @throws DOMException
-	 */
-	public static XMLMemento createWriteRoot(String type) throws DOMException {
+     * Returns a root memento for writing a document.
+     * 
+     * @param type the element node type to create on the document
+     * @return the root memento for writing a document
+     */
+    public static XMLMemento createWriteRoot(String type) {
         Document document;
         try {
             document = DocumentBuilderFactory.newInstance()
@@ -182,61 +179,29 @@ public final class XMLMemento implements IMemento {
         this.element = element;
     }
 
-	/**
-	 * Creates a new child of this memento with the given type.
-	 * <p>
-	 * The <code>getChild</code> and <code>getChildren</code> methods are used
-	 * to retrieve children of a given type.
-	 * </p>
-	 * 
-	 * @param type
-	 *            the type
-	 * @return a new child memento
-	 * @see #getChild
-	 * @see #getChildren
-	 * @throws DOMException
-	 *             if the child cannot be created
-	 */
-	public IMemento createChild(String type) throws DOMException {
+    /* (non-Javadoc)
+     * Method declared in IMemento.
+     */
+    public IMemento createChild(String type) {
         Element child = factory.createElement(type);
         element.appendChild(child);
         return new XMLMemento(factory, child);
     }
 
-	/**
-	 * Creates a new child of this memento with the given type and id. The id is
-	 * stored in the child memento (using a special reserved key,
-	 * <code>TAG_ID</code>) and can be retrieved using <code>getId</code>.
-	 * <p>
-	 * The <code>getChild</code> and <code>getChildren</code> methods are used
-	 * to retrieve children of a given type.
-	 * </p>
-	 * 
-	 * @param type
-	 *            the type
-	 * @param id
-	 *            the child id
-	 * @return a new child memento with the given type and id
-	 * @see #getID
-	 * @throws DOMException
-	 *             if the child cannot be created
-	 */
-	public IMemento createChild(String type, String id) throws DOMException {
+    /* (non-Javadoc)
+     * Method declared in IMemento.
+     */
+    public IMemento createChild(String type, String id) {
         Element child = factory.createElement(type);
         child.setAttribute(TAG_ID, id == null ? "" : id); //$NON-NLS-1$
         element.appendChild(child);
         return new XMLMemento(factory, child);
     }
 
-	/**
-	 * Create a copy of the child node and append it to this node.
-	 * 
-	 * @param child
-	 * @return An IMenento for the new child node.
-	 * @throws DOMException
-	 *             if the child cannot be created
-	 */
-	public IMemento copyChild(IMemento child) throws DOMException {
+    /* (non-Javadoc)
+     * Method declared in IMemento.
+     */
+    public IMemento copyChild(IMemento child) {
         Element childElement = ((XMLMemento) child).element;
         Element newElement = (Element) factory.importNode(childElement, true);
         element.appendChild(newElement);
@@ -376,17 +341,10 @@ public final class XMLMemento implements IMemento {
         return Boolean.valueOf(attr.getValue());
 	}
 
-	/**
-	 * Returns the data of the Text node of the memento. Each memento is allowed
-	 * only one Text node.
-	 * 
-	 * @return the data of the Text node of the memento, or <code>null</code> if
-	 *         the memento has no Text node.
-	 * @since 2.0
-	 * @throws DOMException
-	 *             if the text node is too big
-	 */
-	public String getTextData() throws DOMException {
+    /* (non-Javadoc)
+     * Method declared in IMemento.
+     */
+    public String getTextData() {
         Text textNode = getTextNode();
         if (textNode != null) {
             return textNode.getData();
@@ -433,14 +391,10 @@ public final class XMLMemento implements IMemento {
     }
 
     /**
-	 * Places the element's attributes into the document.
-	 * 
-	 * @param copyText
-	 *            true if the first text node should be copied
-	 * @throws DOMException
-	 *             if the attributes or children cannot be copied to this node.
-	 */
-	private void putElement(Element element, boolean copyText) throws DOMException {
+     * Places the element's attributes into the document.
+     * @param copyText true if the first text node should be copied
+     */
+    private void putElement(Element element, boolean copyText) {
         NamedNodeMap nodeMap = element.getAttributes();
         int size = nodeMap.getLength();
         for (int i = 0; i < size; i++) {
@@ -465,60 +419,33 @@ public final class XMLMemento implements IMemento {
         }
     }
 
-	/**
-	 * Sets the value of the given key to the given floating point number.
-	 * 
-	 * @param key
-	 *            the key
-	 * @param f
-	 *            the value
-	 * @throws DOMException
-	 *             if the attribute cannot be set
-	 */
-	public void putFloat(String key, float f) throws DOMException {
+    /* (non-Javadoc)
+     * Method declared in IMemento.
+     */
+    public void putFloat(String key, float f) {
         element.setAttribute(key, String.valueOf(f));
     }
 
-	/**
-	 * Sets the value of the given key to the given integer.
-	 * 
-	 * @param key
-	 *            the key
-	 * @param n
-	 *            the value
-	 * @throws DOMException
-	 *             if the attribute cannot be set
-	 */
-	public void putInteger(String key, int n) throws DOMException {
+    /* (non-Javadoc)
+     * Method declared in IMemento.
+     */
+    public void putInteger(String key, int n) {
         element.setAttribute(key, String.valueOf(n));
     }
 
-	/**
-	 * Copy the attributes and children from <code>memento</code> to the
-	 * receiver.
-	 * 
-	 * @param memento
-	 *            the IMemento to be copied.
-	 * @throws DOMException
-	 *             if the attributes or children cannot be copied to this node.
-	 */
-	public void putMemento(IMemento memento) throws DOMException {
+    /* (non-Javadoc)
+     * Method declared in IMemento.
+     */
+    public void putMemento(IMemento memento) {
     	// Do not copy the element's top level text node (this would overwrite the existing text).
     	// Text nodes of children are copied.
         putElement(((XMLMemento) memento).element, false);
     }
 
-	/**
-	 * Sets the value of the given key to the given string.
-	 * 
-	 * @param key
-	 *            the key
-	 * @param value
-	 *            the value
-	 * @throws DOMException
-	 *             if the attribute cannot be set
-	 */
-	public void putString(String key, String value) throws DOMException {
+    /* (non-Javadoc)
+     * Method declared in IMemento.
+     */
+    public void putString(String key, String value) {
         if (value == null) {
 			return;
 		}
@@ -526,32 +453,16 @@ public final class XMLMemento implements IMemento {
     }
 
 	/**
-	 * Sets the value of the given key to the given boolean value.
-	 * 
-	 * @param key
-	 *            the key
-	 * @param value
-	 *            the value
 	 * @since 3.4
-	 * @throws DOMException
-	 *             if the attribute cannot be set
 	 */
-	public void putBoolean(String key, boolean value) throws DOMException {
+	public void putBoolean(String key, boolean value) {
 		element.setAttribute(key, value ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/**
-	 * Sets the memento's Text node to contain the given data. Creates the Text
-	 * node if none exists. If a Text node does exist, it's current contents are
-	 * replaced. Each memento is allowed only one text node.
-	 * 
-	 * @param data
-	 *            the data to be placed on the Text node
-	 * @since 2.0
-	 * @throws DOMException
-	 *             if the text node cannot be created under this node.
-	 */
-	public void putTextData(String data) throws DOMException {
+    /* (non-Javadoc)
+     * Method declared in IMemento.
+     */
+    public void putTextData(String data) {
         Text textNode = getTextNode();
         if (textNode == null) {
             textNode = factory.createTextNode(data);

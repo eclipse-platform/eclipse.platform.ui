@@ -11,54 +11,163 @@
 
 package org.eclipse.ui.internal.services;
 
+import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.services.IEvaluationReference;
 
 /**
  * @since 3.3
  * 
  */
-public class EvaluationReference extends EvaluationResultCache implements
-		IEvaluationReference {
+public class EvaluationReference extends RunAndTrack implements IEvaluationReference {
+	final IEclipseContext context;
+	final Expression expression;
+	final IPropertyChangeListener listener;
+	final String property;
+	final int sourcePriority;
+	boolean cache;
+	boolean participating = true;
+	boolean postingChanges = true;
+	boolean hasRun = false;
 
-	private IPropertyChangeListener listener;
-	private String property;
-	private boolean postingChanges = true;
-
-	/**
-	 * @param expression
-	 */
-	public EvaluationReference(Expression expression,
+	public EvaluationReference(IEclipseContext context, Expression expression,
 			IPropertyChangeListener listener, String property) {
-		super(expression);
+		this.context = context;
+		this.expression = expression;
 		this.listener = listener;
 		this.property = property;
+		this.sourcePriority = SourcePriorityNameMapping.computeSourcePriority(expression);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.services.IEvaluationReference#getListener()
+	 * @see
+	 * org.eclipse.ui.internal.services.IEvaluationResultCache#clearResult()
+	 */
+	public void clearResult() {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getExpression()
+	 */
+	public Expression getExpression() {
+		return expression;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getSourcePriority
+	 * ()
+	 */
+	public int getSourcePriority() {
+		return sourcePriority;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IEvaluationResultCache#evaluate(org.
+	 * eclipse.core.expressions.IEvaluationContext)
+	 */
+	public boolean evaluate(IEvaluationContext context) {
+		if (expression == null) {
+			cache = true;
+		} else {
+			try {
+				cache = expression.evaluate(context) != EvaluationResult.FALSE;
+			} catch (CoreException e) {
+				Activator.trace(Policy.DEBUG_CMDS, "Failed to calculate active", e); //$NON-NLS-1$
+			}
+		}
+		return cache;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IEvaluationResultCache#setResult(boolean
+	 * )
+	 */
+	public void setResult(boolean result) {
+		cache = result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.core.services.context.IRunAndTrack#notify(org.eclipse.
+	 * e4.core.services.context.ContextChangeEvent)
+	 */
+	public boolean changed(IEclipseContext context) {
+		if (!participating) {
+			return false;
+		}
+
+		evaluate();
+		return participating;
+	}
+
+	public void evaluate() {
+		boolean value = cache;
+		evaluate(new ExpressionContext(context));
+		if (!postingChanges) {
+			return;
+		}
+		if (!hasRun) {
+			getListener().propertyChange(
+					new PropertyChangeEvent(this, getProperty(), null, Boolean.valueOf(cache)));
+		} else if (!participating) {
+			getListener().propertyChange(
+					new PropertyChangeEvent(this, getProperty(), Boolean.valueOf(value), null));
+		}
+		if (value != cache) {
+			getListener().propertyChange(
+					new PropertyChangeEvent(this, getProperty(), Boolean.valueOf(value), Boolean
+							.valueOf(cache)));
+		}
+		hasRun = true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.services.IEvaluationReference#getListener()
 	 */
 	public IPropertyChangeListener getListener() {
 		return listener;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.services.IEvaluationReference#getProperty()
+	 */
 	public String getProperty() {
 		return property;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.services.IEvaluationReference#setFlopping(boolean)
-	 */
-	public void setPostingChanges(boolean evaluationEnabled) {
-		this.postingChanges = evaluationEnabled;
+
+	public void setPostingChanges(boolean b) {
+		postingChanges = b;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.services.IEvaluationReference#isFlopping()
-	 */
+
 	public boolean isPostingChanges() {
 		return postingChanges;
 	}

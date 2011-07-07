@@ -142,7 +142,7 @@ public class KeyController {
 				final Scheme copy = bindingManager.getScheme(scheme.getId());
 				copy.define(scheme.getName(), scheme.getDescription(), scheme
 						.getParentId());
-				if (definedSchemes[i] == bindingService.getActiveScheme()) {
+				if (definedSchemes[i].getId().equals(bindingService.getActiveScheme().getId())) {
 					modelActiveScheme = copy;
 				}
 			}
@@ -152,6 +152,7 @@ public class KeyController {
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
 							"Keys page found an undefined scheme", e)); //$NON-NLS-1$
 		}
+		
 		bindingManager.setLocale(bindingService.getLocale());
 		bindingManager.setPlatform(bindingService.getPlatform());
 		bindingManager.setBindings(bindingService.getBindings());
@@ -379,16 +380,6 @@ public class KeyController {
 							activeBinding);
 
 					// Remove binding for any system conflicts
-					Object[] keys = bindingToElement.keySet().toArray();
-					for (int i = 0; i < keys.length; i++) {
-						Binding bindingKey = (Binding) keys[i];
-						if (oldSequence.equals(bindingKey.getTriggerSequence())
-								&& bindingKey.getType() == Binding.SYSTEM) {
-							BindingElement be = (BindingElement) bindingToElement
-									.get(bindingKey);
-							bindingModel.remove(be);
-						}
-					}
 
 					bindingModel.setSelectedElement(activeBinding);
 				} else {
@@ -466,12 +457,11 @@ public class KeyController {
 	 * @param actionSets
 	 *            <code>true</code> to filter action set contexts
 	 * @param internal
-	 *            <code>true</code> to filter internal contexts
-	 * @param workbenchMenu
-	 *            <code>true</code> to filter Workbench Menu Context
+	 *            <code>false</code> to filter internal contexts
+	 * 
 	 */
-	public void filterContexts(boolean actionSets, boolean internal, boolean workbenchMenu) {
-		contextModel.filterContexts(actionSets, internal, workbenchMenu);
+	public void filterContexts(boolean actionSets, boolean internal) {
+		contextModel.filterContexts(actionSets, internal);
 	}
 
 	/**
@@ -524,9 +514,7 @@ public class KeyController {
 					for (int i = 0; i < bindingElements.length; i++) {
 						final BindingElement be = (BindingElement) bindingElements[i];
 						if (be.getTrigger() == null
-								|| be.getTrigger().isEmpty()
-								|| be.getContext() == null
-								|| be.getContext().getName() == null) {
+								|| be.getTrigger().isEmpty()) {
 							continue;
 						}
 						StringBuffer buffer = new StringBuffer();

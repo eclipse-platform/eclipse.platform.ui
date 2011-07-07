@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.tweaklets;
 
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.internal.tweaklets.Tweaklets.TweakKey;
 
 /**

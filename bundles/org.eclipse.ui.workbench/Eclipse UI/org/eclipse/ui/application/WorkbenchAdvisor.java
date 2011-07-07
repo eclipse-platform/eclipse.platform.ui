@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -232,7 +232,7 @@ public abstract class WorkbenchAdvisor {
 
 	/**
 	 * Performs arbitrary actions just before the first workbench window is
-	 * opened (or restored), and before the main event loop is run.
+	 * opened (or restored).
 	 * <p>
 	 * This method is called after the workbench has been initialized and just
 	 * before the first window is about to be opened. Clients must not call this

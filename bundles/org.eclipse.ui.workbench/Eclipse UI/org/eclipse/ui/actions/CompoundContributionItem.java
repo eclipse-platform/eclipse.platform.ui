@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 
 /**
  * A compound contribution is a contribution item consisting of a
@@ -27,12 +25,9 @@ import org.eclipse.swt.widgets.MenuItem;
  */
 public abstract class CompoundContributionItem extends ContributionItem {
 
-    private boolean dirty = true;
-
     private IMenuListener menuListener = new IMenuListener() {
         public void menuAboutToShow(IMenuManager manager) {
             manager.markDirty();
-            dirty = true;
         }
     };
     
@@ -61,13 +56,11 @@ public abstract class CompoundContributionItem extends ContributionItem {
         if (index == -1) {
 			index = menu.getItemCount();
 		}
-        if (!dirty && menu.getParentItem() != null) {
-            // insert a dummy item so that the parent item is not disabled
-            new MenuItem(menu, SWT.NONE, index);
-            return;
-        }
         
         IContributionItem[] items = getContributionItemsToFill();
+		if (index > menu.getItemCount()) {
+			index = menu.getItemCount();
+		}
         for (int i = 0; i < items.length; i++) {
             IContributionItem item = items[i];
             int oldItemCount = menu.getItemCount();
@@ -78,7 +71,6 @@ public abstract class CompoundContributionItem extends ContributionItem {
             int numAdded = newItemCount - oldItemCount;
             index += numAdded;
         }
-        dirty = false;
     }
     
     /**
@@ -91,26 +83,22 @@ public abstract class CompoundContributionItem extends ContributionItem {
     protected abstract IContributionItem[] getContributionItems();
     
     private IContributionItem[] getContributionItemsToFill() {
-		disposeOldItems();
-		oldItems = getContributionItems();
-		return oldItems;
-	}
-
-	private void disposeOldItems() {
-		if (oldItems != null) {
+        if (oldItems != null) {
             for (int i = 0; i < oldItems.length; i++) {
                 IContributionItem oldItem = oldItems[i];
                 oldItem.dispose();
             }
             oldItems = null;
         }
-	}
+        oldItems = getContributionItems();
+        return oldItems;
+    }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionItem#isDirty()
      */
     public boolean isDirty() {
-        return dirty;
+		return true;
     }
     
     /* (non-Javadoc)
@@ -120,15 +108,6 @@ public abstract class CompoundContributionItem extends ContributionItem {
         return true;
     }
     
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.ContributionItem#dispose()
-	 */
-	public void dispose() {
-		disposeOldItems();
-		super.dispose();
-	}
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionItem#setParent(org.eclipse.jface.action.IContributionManager)

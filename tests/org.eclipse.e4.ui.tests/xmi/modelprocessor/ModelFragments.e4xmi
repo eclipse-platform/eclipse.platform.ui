@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced http://www.eclipse.org/ui/2010/UIModel/application#//ui/advanced http://www.eclipse.org/ui/2010/UIModel/application/ui/basic http://www.eclipse.org/ui/2010/UIModel/application#//ui/basic http://www.eclipse.org/ui/2010/UIModel/application/commands http://www.eclipse.org/ui/2010/UIModel/application#//commands http://www.eclipse.org/ui/2010/UIModel/application/ui/menu http://www.eclipse.org/ui/2010/UIModel/application#//ui/menu" xmi:id="_YoHdUHVHEd-aXt9fFntEtw">
+  <imports xsi:type="commands:Command" xmi:id="_Mc_5YHVJEd-aXt9fFntEtw" elementId="app.base.command"/>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_aeLAAHVHEd-aXt9fFntEtw" featurename="children" parentElementId="app.base">
+    <elements xsi:type="basic:Window" xmi:id="_w4fQ8HVHEd-aXt9fFntEtw" elementId="fragment.contributedWindow">
+      <children xsi:type="advanced:PerspectiveStack" xmi:id="_rdlLgJQUEd-6X_lmWgGEDA"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_UWgzUHVJEd-aXt9fFntEtw" featurename="handlers" parentElementId="app.base">
+    <elements xsi:type="commands:Handler" xmi:id="_iEipkHVJEd-aXt9fFntEtw" elementId="fragment.contributedHandler" command="_Mc_5YHVJEd-aXt9fFntEtw"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_BxfigHVVEd-aXt9fFntEtw" featurename="mainMenu" parentElementId="app.base.window">
+    <elements xsi:type="menu:Menu" xmi:id="_EYjrYHVVEd-aXt9fFntEtw" elementId="fragment.contributedMainMenu"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_1t2R8HY6Ed-w8OZmMuje3w" featurename="children" parentElementId="app.base.window" positionInList="first">
+    <elements xsi:type="basic:Part" xmi:id="_8qi-UHY6Ed-w8OZmMuje3w" elementId="fragment.contributedPosFirst"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Nts9UHY7Ed-w8OZmMuje3w" featurename="children" parentElementId="app.base.window" positionInList="index:1">
+    <elements xsi:type="basic:Part" xmi:id="_Nts9UXY7Ed-w8OZmMuje3w" elementId="fragment.contributedPos1"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_SiXmMHY7Ed-w8OZmMuje3w" featurename="children" parentElementId="app.base.window" positionInList="before:app.base.part1">
+    <elements xsi:type="basic:Part" xmi:id="_SiYNQHY7Ed-w8OZmMuje3w" elementId="fragment.contributedBeforePart1"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_WfRgoHY7Ed-w8OZmMuje3w" featurename="children" parentElementId="app.base.window" positionInList="after:app.base.part1">
+    <elements xsi:type="basic:Part" xmi:id="_WfRgoXY7Ed-w8OZmMuje3w" elementId="fragment.contributedAfterPart1"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Y_faoHY7Ed-w8OZmMuje3w" featurename="children" parentElementId="app.base.window" positionInList="before:app.base.part2">
+    <elements xsi:type="basic:Part" xmi:id="_Y_faoXY7Ed-w8OZmMuje3w" elementId="fragment.contributedBeforePart2"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_2n64EHY7Ed-w8OZmMuje3w" featurename="children" parentElementId="app.base.window" positionInList="after:app.base.part2">
+    <elements xsi:type="basic:Part" xmi:id="_2n64EXY7Ed-w8OZmMuje3w" elementId="fragment.contributedAfterPart2"/>
+  </fragments>
+</fragment:ModelFragments>

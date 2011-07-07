@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
                         public void propertyChanged(Object source, int propId) {
                             if (handleZoomEvents) {
                                 if (propId == WorkbenchPartReference.INTERNAL_PROPERTY_ZOOMED) {
-                                    setStandby(!ref.getPane().isZoomed());
+							// setStandby(!ref.getPane().isZoomed());
                                 }
                             }
                         }
@@ -67,7 +67,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
      * @param standby update the standby state
      */
     public void setStandby(final boolean standby) {
-        final Control control = ((PartSite) getSite()).getPane().getControl();
+		final Control control = (Control) ((PartSite) getSite()).getModel().getWidget();
         BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
             public void run() {
                 try {
@@ -203,7 +203,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 			window.setCoolBarVisible(coolbarVisible);
 			window.setPerspectiveBarVisible(persBarVisible);
 		} else {
-			layout = window.getCoolBarVisible() || window.getPerspectiveBarVisible();
+			layout = !window.getCoolBarVisible() || !window.getPerspectiveBarVisible();
 			window.setCoolBarVisible(false);
 			window.setPerspectiveBarVisible(false);
 		}

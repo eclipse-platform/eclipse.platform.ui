@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - http://bugs.eclipse.org/333590
+ *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - Bug 326695
  *******************************************************************************/
 package org.eclipse.ui.model;
 
@@ -86,16 +86,17 @@ public abstract class WorkbenchAdapter implements IWorkbenchAdapter,
         return null;
     }
 
-    /**
-     * The default implementation of this <code>IWorkbenchAdapter3</code> method
-     * returns the {@link StyledString} which wraps the label of the element.
-     * Subclasses may override.
-     * 
-     * @return Return the {@link StyledString} which wraps the label of the
-     *         element.
-     * @since 3.7
-     */
-    public StyledString getStyledText(Object object) {
-        return new StyledString(getLabel(object));
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter3</code> method
+	 * returns the {@link StyledString} which wraps the label of the element.
+	 * Subclasses may override.
+	 * 
+	 * @return Return the {@link StyledString} which wraps the label of the
+	 *         element.
+	 * 
+	 * @since 3.7
+	 */
+	public StyledString getStyledText(Object object) {
+		return new StyledString(getLabel(object));
     }
 }

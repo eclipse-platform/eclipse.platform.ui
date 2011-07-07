@@ -95,7 +95,7 @@ public class SaveableHelper {
 	 * @return <code>true</code> for continue, <code>false</code> if the operation
 	 * was canceled.
 	 */
-	static boolean savePart(final ISaveablePart saveable, IWorkbenchPart part, 
+	public static boolean savePart(final ISaveablePart saveable, IWorkbenchPart part,
 			IWorkbenchWindow window, boolean confirm) {
 		// Short circuit.
 		if (!saveable.isDirty()) {
@@ -183,23 +183,20 @@ public class SaveableHelper {
 			public void run(IProgressMonitor monitor) {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
 				monitorWrap.beginTask(WorkbenchMessages.Save, dirtyModels.size());
-				try {
-					for (Iterator i = dirtyModels.iterator(); i.hasNext();) {
-						Saveable model = (Saveable) i.next();
-						// handle case where this model got saved as a result of
-						// saving another
-						if (!model.isDirty()) {
-							monitor.worked(1);
-							continue;
-						}
-						doSaveModel(model, new SubProgressMonitor(monitorWrap, 1), window, confirm);
-						if (monitor.isCanceled()) {
-							break;
-						}
+				for (Iterator i = dirtyModels.iterator(); i.hasNext();) {
+					Saveable model = (Saveable) i.next();
+					// handle case where this model got saved as a result of saving another
+					if (!model.isDirty()) {
+						monitor.worked(1);
+						continue;
 					}
-				} finally {
-					monitorWrap.done();
+					doSaveModel(model, new SubProgressMonitor(monitorWrap, 1),
+							window, confirm);
+					if (monitor.isCanceled()) {
+						break;
+					}
 				}
+				monitorWrap.done();
 			}
 		};
 

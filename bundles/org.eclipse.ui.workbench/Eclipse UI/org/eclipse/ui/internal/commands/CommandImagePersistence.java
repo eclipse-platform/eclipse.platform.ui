@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -43,7 +42,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  * @since 3.2
  */
-final class CommandImagePersistence extends RegistryPersistence {
+public final class CommandImagePersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the image elements in the indexed array.
@@ -169,6 +168,10 @@ final class CommandImagePersistence extends RegistryPersistence {
 				PlatformUI.PLUGIN_ID,
 				IWorkbenchRegistryConstants.PL_COMMAND_IMAGES);
 		return (imageDeltas.length != 0);
+	}
+
+	public void reRead() {
+		read();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.handlers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -58,16 +59,6 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		if (rc != isEnabled()) {
 			setBaseEnabled(rc);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
-	 */
-	public void setEnabled(Object evaluationContext) {
-		updateEnablement();
 	}
 
 	/**

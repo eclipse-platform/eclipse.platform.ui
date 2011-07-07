@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.preferences.ViewSettingsDialog;
 
 /**
@@ -33,12 +32,10 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 	private Button actionSetFilterCheckBox;
 	private Button internalFilterCheckBox;
 	private Button uncategorizedFilterCheckBox;
-	private Button workbenchMenuFilterCheckBox;
 
 	private boolean filterActionSet;
 	private boolean filterInternal;
 	private boolean filterUncategorized;
-	private boolean filterWorkbenchMenu;
 	private boolean filterShowUnboundCommands;
 
 	void setFilterActionSet(boolean b) {
@@ -49,10 +46,6 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 		filterInternal = b;
 	}
 	
-	void setFilterWorkbenchMenu(boolean b) {
-		filterWorkbenchMenu = b;
-	}
-
 	void setFilterUncategorized(boolean b) {
 		filterUncategorized = b;
 	}
@@ -67,10 +60,6 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 	
 	boolean getFilterUncategorized() {
 		return filterUncategorized;
-	}
-
-	boolean getFilterWorkbenchMenu() {
-		return filterWorkbenchMenu;
 	}
 
 	/**
@@ -89,7 +78,6 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 		actionSetFilterCheckBox.setSelection(true);
 		internalFilterCheckBox.setSelection(true);
 		uncategorizedFilterCheckBox.setSelection(true);
-		workbenchMenuFilterCheckBox.setSelection(!Workbench.getInstance().hasAppMenu());
 		super.performDefaults();
 	}
 
@@ -113,15 +101,9 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 		uncategorizedFilterCheckBox
 				.setText(NewKeysPreferenceMessages.UncategorizedFilterCheckBox_Text);
 
-		workbenchMenuFilterCheckBox = new Button(topComposite, SWT.CHECK);
-		workbenchMenuFilterCheckBox
-				.setText(NewKeysPreferenceMessages.WorkbenchMenuFilterCheckBox_Text);
-
 		actionSetFilterCheckBox.setSelection(filterActionSet);
 		internalFilterCheckBox.setSelection(filterInternal);
 		uncategorizedFilterCheckBox.setSelection(filterUncategorized);
-		workbenchMenuFilterCheckBox.setSelection(filterWorkbenchMenu);
-
 		applyDialogFont(topComposite);
 
 		return topComposite;
@@ -136,7 +118,6 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 		filterActionSet = actionSetFilterCheckBox.getSelection();
 		filterInternal = internalFilterCheckBox.getSelection();
 		filterUncategorized = uncategorizedFilterCheckBox.getSelection();
-		filterWorkbenchMenu = workbenchMenuFilterCheckBox.getSelection();
 		super.okPressed();
 	}
 

@@ -23,10 +23,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.PartService;
-import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 
 /**
  * A AbstractMultiEditor is a composite of editors.
@@ -191,9 +188,10 @@ public abstract class AbstractMultiEditor extends EditorPart {
      */
     public void activateEditor(IEditorPart part) {
         activeEditorIndex = getIndex(part);
-        IEditorPart e = getActiveEditor();
-        EditorSite innerSite = (EditorSite) e.getEditorSite();
-        ((WorkbenchPage) innerSite.getPage()).requestActivation(e);
+		// IEditorPart e = getActiveEditor();
+		// EditorSite innerSite = (EditorSite) e.getEditorSite();
+		// ((WorkbenchPage) innerSite.getPage()).requestActivation(e);
+		E4Util.unsupported("We need to request an activation of this part"); //$NON-NLS-1$
     }
 
     /**
@@ -227,14 +225,8 @@ public abstract class AbstractMultiEditor extends EditorPart {
 			public void partClosed(IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if (part == AbstractMultiEditor.this && innerEditors != null) {
-					PartService partService = ((WorkbenchPage) getSite()
-							.getPage()).getPartService();
-					for (int i = 0; i < innerEditors.length; i++) {
-						IEditorPart editor = innerEditors[i];
-						IWorkbenchPartReference innerRef = ((PartSite) editor
-								.getSite()).getPartReference();
-						partService.firePartClosed(innerRef);
-					}
+					// propagate the events
+					E4Util.unsupported("propogate the events needed"); //$NON-NLS-1$
 				}
 			}
 
@@ -244,14 +236,16 @@ public abstract class AbstractMultiEditor extends EditorPart {
 			public void partOpened(IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if (part == AbstractMultiEditor.this && innerEditors != null) {
-					PartService partService = ((WorkbenchPage) getSite()
-							.getPage()).getPartService();
-					for (int i = 0; i < innerEditors.length; i++) {
-						IEditorPart editor = innerEditors[i];
-						IWorkbenchPartReference innerRef = ((PartSite) editor
-								.getSite()).getPartReference();
-						partService.firePartOpened(innerRef);
-					}
+					// PartService partService = ((WorkbenchPage) getSite()
+					// .getPage()).getPartService();
+					// for (int i = 0; i < innerEditors.length; i++) {
+					// IEditorPart editor = innerEditors[i];
+					// IWorkbenchPartReference innerRef = ((PartSite) editor
+					// .getSite()).getPartReference();
+					// partService.firePartOpened(innerRef);
+					// }
+					// propagate the events
+					E4Util.unsupported("propogate the events needed"); //$NON-NLS-1$
 				}
 			}
 

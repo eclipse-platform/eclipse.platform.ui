@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -189,15 +190,13 @@ public class SubActionBars extends EventManager implements IActionBars {
 				final IHandlerService service = (IHandlerService) locator
 						.getService(IHandlerService.class);
 				final Map activationsByActionId = (Map) value.getValue();
-				final Iterator iterator = activationsByActionId.values()
-						.iterator();
-				while (iterator.hasNext()) {
-					final IHandlerActivation activation = (IHandlerActivation) iterator
-							.next();
-					if (service != null) {
-						service.deactivateHandler(activation);
-					}
-					activation.getHandler().dispose();
+				Collection activations = activationsByActionId.values();
+				if (service != null) {
+					service.deactivateHandlers(activations);
+				}
+
+				for (Object activation : activations) {
+					((IHandlerActivation) activation).getHandler().dispose();
 				}
 			}
 			activationsByActionIdByServiceLocator.clear();

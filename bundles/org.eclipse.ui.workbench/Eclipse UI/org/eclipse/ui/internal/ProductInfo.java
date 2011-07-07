@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.Version;
 
 /**
  * Stores information about the product.  This class replaces the old AboutInfo.
@@ -28,8 +25,6 @@ public class ProductInfo {
     private String productName;
 
     private String appName;
-
-	private Version appVersion;
 
     private ImageDescriptor[] windowImages;
 
@@ -72,32 +67,6 @@ public class ProductInfo {
 		}
         return appName;
     }
-
-	/**
-	 * Return the application version, as defined by the product.
-	 * 
-	 * @return the application version, or the empty version.
-	 * @see org.eclipse.swt.widgets.Display#setAppVersion
-	 * @see Version#emptyVersion
-	 * @since 3.6
-	 */
-	public String getAppVersion() {
-		if (appVersion == null) {
-			if (product != null) {
-				Bundle bundle = product.getDefiningBundle();
-				if (bundle != null) {
-					appVersion = bundle.getVersion();
-				}
-			}
-			if (appVersion == null) {
-				// if we can't find a useful product bundle, try and return
-				// the org.eclipse.ui version (approx of the workbench)
-				Bundle bundle = Platform.getBundle("org.eclipse.ui"); //$NON-NLS-1$
-				appVersion = bundle == null ? Version.emptyVersion : bundle.getVersion();
-			}
-		}
-		return appVersion.toString();
-	}
 
     /**
      * Returns the descriptor for an image which can be shown in an "about" dialog 

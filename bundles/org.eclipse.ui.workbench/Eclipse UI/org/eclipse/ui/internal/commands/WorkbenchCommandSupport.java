@@ -86,7 +86,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 						.getKeyFormatterForPlatform());
 	}
 
-	public final void addHandlerSubmission(final HandlerSubmission handlerSubmission) {
+	public final void addHandlerSubmission(
+			final HandlerSubmission handlerSubmission) {
 		final IHandlerActivation activation = handlerService.activateHandler(
 				handlerSubmission.getCommandId(), new LegacyHandlerWrapper(
 						handlerSubmission.getHandler()),

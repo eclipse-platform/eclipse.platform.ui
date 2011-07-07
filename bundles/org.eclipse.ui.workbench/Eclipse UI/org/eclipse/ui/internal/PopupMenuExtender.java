@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,15 +15,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
+import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
+import org.eclipse.e4.ui.workbench.swt.modeling.MenuService;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener2;
@@ -40,10 +54,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.internal.menus.InternalMenuService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.menus.MenuUtil;
 
 /**
  * This class extends a single popup menu
@@ -82,6 +94,8 @@ public class PopupMenuExtender implements IMenuListener2,
 	private ArrayList actionContributionCache = new ArrayList();
 	private ArrayList managerContributionCache = new ArrayList();
 	private boolean cleanupNeeded = false;
+
+	private MPart modelPart;
 
     /**
      * Construct a new menu extender.
@@ -122,6 +136,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		this.menu = menu;
 		this.selProvider = prov;
 		this.part = part;
+		this.modelPart = (MPart) part.getSite().getService(MPart.class);
 		if (includeEditorInput) {
 			bitSet |= INCLUDE_EDITOR_INPUT;
 		}
@@ -130,11 +145,43 @@ public class PopupMenuExtender implements IMenuListener2,
 			menuWrapper = new SubMenuManager(menu);
 			menuWrapper.setVisible(true);
 		}
-		readStaticActionsFor(id);
+		createModelFor(id);
+		addMenuId(id);
 				
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 	}
 
+	private void createModelFor(String id) {
+		if (id == null) {
+			id = getClass().getName() + '.' + System.identityHashCode(this);
+		}
+		menuModel = null;
+		for (MMenu item : modelPart.getMenus()) {
+			if (id.equals(item.getElementId()) && item instanceof MPopupMenu
+					&& item.getTags().contains("popup")) { //$NON-NLS-1$
+				menuModel = (MPopupMenu) item;
+				break;
+			}
+		}
+		if (menuModel == null) {
+			menuModel = MenuFactoryImpl.eINSTANCE.createPopupMenu();
+			menuModel.setElementId(id);
+			menuModel.getTags().add(ContributionsAnalyzer.MC_POPUP);
+			modelPart.getMenus().add(menuModel);
+		}
+		IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);
+		AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
+		if (obj instanceof MenuManagerRenderer) {
+			((MenuManagerRenderer) obj).linkModelToManager(menuModel, menu);
+		}
+		registerE4Support();
+	}
+
+	private void registerE4Support() {
+		if (menuModel.getWidget() == null && menu.getMenu() != null) {
+			MenuService.registerMenu(menu.getMenu().getParent(), menuModel, modelPart);
+		}
+	}
 	// getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)
     /**
      * Return the menu identifiers for this extender.
@@ -171,6 +218,13 @@ public class PopupMenuExtender implements IMenuListener2,
      */
     public final void addMenuId(final String menuId) {
 		bitSet &= ~STATIC_ACTION_READ;
+		if (menuModel != null) {
+			List<String> tags = menuModel.getTags();
+			String tag = "popup:" + menuId; //$NON-NLS-1$
+			if (!tags.contains(tag)) {
+				tags.add(tag);
+			}
+		}
 		readStaticActionsFor(menuId);
 	}
 
@@ -302,7 +356,7 @@ public class PopupMenuExtender implements IMenuListener2,
      * Notifies the listener that the menu is about to be shown.
      */
     public void menuAboutToShow(IMenuManager mgr) {
-    	IMenuManager originalManager = mgr;
+		registerE4Support();
     	
     	// Add this menu as a visible menu.
     	final IWorkbenchPartSite site = part.getSite();
@@ -326,48 +380,41 @@ public class PopupMenuExtender implements IMenuListener2,
 			}
 		}
     	
+		addMenuContributions(mgr);
+
     	readStaticActions();
         // test for additions removed to comply with menu contributions
         if (menuWrapper != null) {
             mgr = menuWrapper;
             menuWrapper.removeAll();
         }
-        addMenuContributions(originalManager);
         if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
             addEditorActions(mgr);
         }
         addObjectActions(mgr);
         addStaticActions(mgr);
-        cleanUpContributionCache();
     }
     
-    private boolean contributionsPopulated = false;
-    
-    private void addMenuContributions(IMenuManager mgr) {
-		final IMenuService menuService = (IMenuService) part.getSite()
-				.getService(IMenuService.class);
-		if (menuService == null) {
-			return;
-		}
-		if ((mgr.getRemoveAllWhenShown() || !contributionsPopulated)
-				&& mgr instanceof ContributionManager) {
-			ContributionManager manager = (ContributionManager) mgr;
-			contributionsPopulated = true;
-			menuService
-					.populateContributionManager(manager, MenuUtil.ANY_POPUP);
-			Iterator i = getMenuIds().iterator();
-			while (i.hasNext()) {
-				String id = "popup:" + i.next(); //$NON-NLS-1$
-				if (menuService instanceof InternalMenuService) {
-					((InternalMenuService) menuService)
-							.populateContributionManager(manager, id, false);
-				} else {
-					menuService.populateContributionManager(manager, id);
-				}
-			}
+
+	/**
+	 * well, this goes to the renderer.
+	 * 
+	 * @param mgr
+	 */
+	private void addMenuContributions(IMenuManager mgr) {
+		IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);
+		AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
+		if (obj instanceof MenuManagerRenderer) {
+			MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
+			renderer.reconcileManagerToModel(menu, menuModel);
+			renderer.processContributions(menuModel, false, true);
+			// double cast because we're bad people
+			renderer.processContents((MElementContainer<MUIElement>) ((Object) menuModel));
 		}
 	}
 
+	private MPopupMenu menuModel;
+    
     /**
 	 * Notifies the listener that the menu is about to be hidden.
 	 */
@@ -426,23 +473,16 @@ public class PopupMenuExtender implements IMenuListener2,
 				items[i].dispose();
 			}
 		}
-		if (!managerContributionCache.isEmpty() && menu.getRemoveAllWhenShown()) {
-			ContributionManager[] items = (ContributionManager[]) managerContributionCache
-					.toArray(new ContributionManager[managerContributionCache
-							.size()]);
-			managerContributionCache.clear();
-			final IMenuService menuService = (IMenuService) part.getSite()
-					.getService(IMenuService.class);
-			if (menuService instanceof InternalMenuService) {
-				InternalMenuService realService = (InternalMenuService) menuService;
-				for (int i = 0; i < items.length; i++) {
-					realService.releaseContributions(items[i]);
-					items[i].removeAll();
-				}
-			}
-		} else {
-			managerContributionCache.clear();
+
+		IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);
+		AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
+		if (obj instanceof MenuManagerRenderer) {
+			MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
+			renderer.cleanUp(menuModel);
 		}
+
+		managerContributionCache.clear();
+
 	}
 
 	/**
@@ -500,6 +540,58 @@ public class PopupMenuExtender implements IMenuListener2,
 		}
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		menu.removeMenuListener(this);
+
+		if (menuModel != null) {
+			// unlink ourselves from the renderer
+			IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);
+			AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
+			if (obj instanceof MenuManagerRenderer) {
+				MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
+				unlink(renderer, menuModel);
+				renderer.clearModelToManager(menuModel, menu);
+			}
+		}
+	}
+
+	/**
+	 * Unlink all contribution items from the given model menu.
+	 * 
+	 * @param renderer
+	 *            the renderer that is holding the links
+	 * @param menu
+	 *            the model menu whose children should have its items unlinked
+	 *            from their corresponding contribution items
+	 */
+	private void unlink(MenuManagerRenderer renderer, MMenu menu) {
+		for (MMenuElement menuElement : menu.getChildren()) {
+			if (menuElement instanceof MOpaqueMenuItem) {
+				MOpaqueMenuItem opaqueMenuItem = (MOpaqueMenuItem) menuElement;
+				Object item = opaqueMenuItem.getOpaqueItem();
+				if (item instanceof IContributionItem) {
+					renderer.clearModelToContribution(opaqueMenuItem, (IContributionItem) item);
+					opaqueMenuItem.setOpaqueItem(null);
+				}
+			} else if (menuElement instanceof MOpaqueMenuSeparator) {
+				MOpaqueMenuSeparator opaqueMenuItem = (MOpaqueMenuSeparator) menuElement;
+				Object item = opaqueMenuItem.getOpaqueItem();
+				if (item instanceof IContributionItem) {
+					renderer.clearModelToContribution(opaqueMenuItem, (IContributionItem) item);
+					opaqueMenuItem.setOpaqueItem(null);
+				}
+			} else if (menuElement instanceof MMenu) {
+				MMenu subMenu = (MMenu) menuElement;
+				unlink(renderer, subMenu);
+				MenuManager manager = renderer.getManager(subMenu);
+				if (manager != null) {
+					renderer.clearModelToManager(subMenu, manager);
+				}
+			} else {
+				IContributionItem contribution = renderer.getContribution(menuElement);
+				if (contribution != null) {
+					renderer.clearModelToContribution(menuElement, contribution);
+				}
+			}
+		}
 	}
 
 	/*

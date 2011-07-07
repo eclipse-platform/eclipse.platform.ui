@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,9 +29,9 @@ public class QuickAccessMessages extends NLS {
 	public static String QuickAccess_Previous;
 	public static String QuickAccess_Views;
 	public static String QuickAccess_PressKeyToShowAllMatches;
-	public static String QuickAccess_PressKeyToShowInitialMatches;
 	public static String QuickAccess_StartTypingToFindMatches;
 	public static String QuickAccess_AvailableCategories;
+	public static String QuickAccess_EnterSearch;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, QuickAccessMessages.class);

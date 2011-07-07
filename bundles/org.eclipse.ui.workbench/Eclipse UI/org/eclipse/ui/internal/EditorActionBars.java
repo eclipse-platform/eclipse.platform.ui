@@ -26,6 +26,8 @@ import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.SubStatusLineManager;
 import org.eclipse.jface.action.SubToolBarManager;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
+import org.eclipse.jface.internal.provisional.action.ToolBarContributionItem2;
+import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
@@ -35,7 +37,6 @@ import org.eclipse.ui.SubActionBars2;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.internal.expressions.LegacyEditorActionBarExpression;
 import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -66,9 +67,13 @@ public class EditorActionBars extends SubActionBars2 {
 		public String getText(IContributionItem item) {
 			return null;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IContributionManagerOverrides#getVisible(org.eclipse.jface.action.IContributionItem)
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.jface.action.IContributionManagerOverrides#getVisible
+		 * (org.eclipse.jface.action.IContributionItem)
 		 */
 		public Boolean getVisible(IContributionItem item) {
 			return null;
@@ -96,19 +101,20 @@ public class EditorActionBars extends SubActionBars2 {
 	private IToolBarContributionItem toolBarContributionItem = null;
 
 	private String type;
-	
-	private IActionBarPresentationFactory actionBarPresentation;
 
+	private WorkbenchPage page;
 
 	/**
 	 * Constructs the EditorActionBars for an editor.
 	 */
-	public EditorActionBars(WorkbenchPage page,
-			final IServiceLocator serviceLocator, String type) {
-		super((IActionBars2)page.getActionBars(), serviceLocator);
+	public EditorActionBars(WorkbenchPage page, final IServiceLocator serviceLocator, String type) {
+		super((IActionBars2) page.getActionBars(), serviceLocator);
+		this.page = page;
 		this.type = type;
-		this.actionBarPresentation = ((WorkbenchWindow) page
-				.getWorkbenchWindow()).getActionBarPresentationFactory();
+	}
+
+	public WorkbenchPage getPage() {
+		return page;
 	}
 
 	/**
@@ -171,32 +177,28 @@ public class EditorActionBars extends SubActionBars2 {
 			if (coolBarManager instanceof SubContributionManager) {
 				SubContributionManager subManager = (SubContributionManager) coolBarManager;
 				IContributionManager manager = subManager.getParent();
-				if (manager instanceof ContributionManager) {
+				if (manager instanceof CoolBarToTrimManager) {
+					CoolBarToTrimManager trimManager = (CoolBarToTrimManager) manager;
+					trimManager.remove(toolBarContributionItem);
+				} else if (manager instanceof ContributionManager) {
 					final IContributionItem replacementItem = new PlaceholderContributionItem(
 							toolBarContributionItem);
-					boolean succeeded = ((ContributionManager) manager)
-							.replaceItem(replacementItem.getId(),
-									replacementItem);
+					boolean succeeded = ((ContributionManager) manager).replaceItem(replacementItem
+							.getId(), replacementItem);
 					if (!succeeded && DEBUG_TOOLBAR_DISPOSAL) {
-						System.out
-								.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
+						System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
 						System.out
 								.println("Could not replace " + replacementItem.getId() + " in the contribution manager."); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				} else if (DEBUG_TOOLBAR_DISPOSAL) {
-					System.out
-							.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
-					System.out
-							.println("The manager was not a ContributionManager."); //$NON-NLS-1$
-					System.out
-							.println("It was a " + manager.getClass().getName()); //$NON-NLS-1$
+					System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
+					System.out.println("The manager was not a ContributionManager."); //$NON-NLS-1$
+					System.out.println("It was a " + manager.getClass().getName()); //$NON-NLS-1$
 				}
 			} else if (DEBUG_TOOLBAR_DISPOSAL) {
 				System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
-				System.out
-						.println("The coolBarManager was not a SubContributionManager"); //$NON-NLS-1$
-				System.out
-						.println("It was a " + coolBarManager.getClass().getName()); //$NON-NLS-1$
+				System.out.println("The coolBarManager was not a SubContributionManager"); //$NON-NLS-1$
+				System.out.println("It was a " + coolBarManager.getClass().getName()); //$NON-NLS-1$
 			}
 
 			// Dispose of the replaced item.
@@ -257,8 +259,7 @@ public class EditorActionBars extends SubActionBars2 {
 		// add the editor group if the app did not add it already,
 		// otherwise the references to it below will fail
 		if (coolBarManager.find(IWorkbenchActionConstants.GROUP_EDITOR) == null) {
-			coolBarManager.add(new GroupMarker(
-					IWorkbenchActionConstants.GROUP_EDITOR));
+			coolBarManager.add(new GroupMarker(IWorkbenchActionConstants.GROUP_EDITOR));
 		}
 		if (toolBarContributionItem == null) {
 			IContributionItem foundItem = coolBarManager.find(type);
@@ -266,48 +267,45 @@ public class EditorActionBars extends SubActionBars2 {
 				toolBarContributionItem = (IToolBarContributionItem) foundItem;
 				coolItemToolBarMgr = toolBarContributionItem.getToolBarManager();
 				if (coolItemToolBarMgr == null) {
-					coolItemToolBarMgr = actionBarPresentation.createToolBarManager();
-					toolBarContributionItem = actionBarPresentation.createToolBarContributionItem(
-							coolItemToolBarMgr, type);
+					coolItemToolBarMgr = new ToolBarManager2();
+					toolBarContributionItem = new ToolBarContributionItem2(coolItemToolBarMgr, type);
 					// Add editor item to group
-					coolBarManager.prependToGroup(
-							IWorkbenchActionConstants.GROUP_EDITOR,
+					coolBarManager.prependToGroup(IWorkbenchActionConstants.GROUP_EDITOR,
 							toolBarContributionItem);
 				}
 			} else {
-				coolItemToolBarMgr = actionBarPresentation.createToolBarManager();
+				coolItemToolBarMgr = new ToolBarManager2();
 				if ((coolBarManager instanceof ContributionManager)
 						&& (foundItem instanceof PlaceholderContributionItem)) {
 					PlaceholderContributionItem placeholder = (PlaceholderContributionItem) foundItem;
-					toolBarContributionItem = createToolBarContributionItem(coolItemToolBarMgr, placeholder);
+					toolBarContributionItem = createToolBarContributionItem(coolItemToolBarMgr,
+							placeholder);
 					// Restore from a placeholder
 					((ContributionManager) coolBarManager).replaceItem(type,
 							toolBarContributionItem);
 				} else {
-					toolBarContributionItem = actionBarPresentation.createToolBarContributionItem(
-							coolItemToolBarMgr, type);
+					toolBarContributionItem = new ToolBarContributionItem2(coolItemToolBarMgr, type);
 					// Add editor item to group
-					coolBarManager.prependToGroup(
-							IWorkbenchActionConstants.GROUP_EDITOR,
+					coolBarManager.prependToGroup(IWorkbenchActionConstants.GROUP_EDITOR,
 							toolBarContributionItem);
 				}
 			}
-			((ContributionManager)coolItemToolBarMgr).setOverrides(new Overrides());
+			((ContributionManager) coolItemToolBarMgr).setOverrides(new Overrides());
 			toolBarContributionItem.setVisible(getActive());
 			coolItemToolBarMgr.markDirty();
 		}
 
 		return coolItemToolBarMgr;
 	}
-	
-    /*
-     * Creates a new tool bar contribution item on the given manager -- using
-     * the stored data to initialize some of its properties.
-     */
-    IToolBarContributionItem createToolBarContributionItem(
-			final IToolBarManager manager, PlaceholderContributionItem item) {
-		IToolBarContributionItem toolBarContributionItem = actionBarPresentation
-				.createToolBarContributionItem(manager, item.getId());
+
+	/*
+	 * Creates a new tool bar contribution item on the given manager -- using
+	 * the stored data to initialize some of its properties.
+	 */
+	IToolBarContributionItem createToolBarContributionItem(final IToolBarManager manager,
+			PlaceholderContributionItem item) {
+		IToolBarContributionItem toolBarContributionItem = new ToolBarContributionItem2(manager,
+				item.getId());
 		toolBarContributionItem.setCurrentHeight(item.getHeight());
 		toolBarContributionItem.setCurrentWidth(item.getWidth());
 		toolBarContributionItem.setMinimumItemsToShow(item.getMinimumItemsToShow());
@@ -366,8 +364,7 @@ public class EditorActionBars extends SubActionBars2 {
 	private void setActive(boolean set, boolean forceVisibility) {
 		basicSetActive(set);
 		if (isSubMenuManagerCreated()) {
-			((EditorMenuManager) getMenuManager()).setVisible(set,
-					forceVisibility);
+			((EditorMenuManager) getMenuManager()).setVisible(set, forceVisibility);
 		}
 
 		if (isSubStatusLineManagerCreated()) {
@@ -400,7 +397,9 @@ public class EditorActionBars extends SubActionBars2 {
 			IContributionItem[] items = coolItemToolBarMgr.getItems();
 			for (int i = 0; i < items.length; i++) {
 				IContributionItem item = items[i];
-				item.update(IContributionManagerOverrides.P_ENABLED);
+				if (item != null) {
+					item.update(IContributionManagerOverrides.P_ENABLED);
+				}
 			}
 		}
 	}
@@ -486,9 +485,10 @@ public class EditorActionBars extends SubActionBars2 {
 	}
 
 	private LegacyEditorActionBarExpression editorHandlerExpression = null;
-	
+
 	/**
 	 * Returns the expression used for action handler activation.
+	 * 
 	 * @return the expression used for action handler activation.
 	 */
 	public Expression getHandlerExpression() {

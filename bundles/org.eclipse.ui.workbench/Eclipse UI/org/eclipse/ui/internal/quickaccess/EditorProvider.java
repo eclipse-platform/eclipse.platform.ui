@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -64,5 +63,9 @@ public class EditorProvider extends QuickAccessProvider {
 
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_Editors;
+	}
+
+	protected void doReset() {
+		idToElement = null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009-2010 IBM Corporation and others.
+ * Copyright (c) 2009-2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -566,8 +566,9 @@ public interface IWorkbenchCommandConstants {
 	public static final String VIEWS_SHOW_VIEW_PARM_ID = "org.eclipse.ui.views.showView.viewId"; //$NON-NLS-1$
 
 	/**
-	 * Id for parameter "Secondary Id" in command "Show View" in category "Views"
-	 * (value is <code>"org.eclipse.ui.views.showView.secondaryId"</code>).
+	 * Id for parameter "Secondary Id" in command "Show View" in category
+	 * "Views" (value is
+	 * <code>"org.eclipse.ui.views.showView.secondaryId"</code>).
 	 * 
 	 * @since 3.7
 	 */
@@ -582,7 +583,7 @@ public interface IWorkbenchCommandConstants {
 	 */
 	public static final String VIEWS_SHOW_VIEW_PARM_FASTVIEW = "org.eclipse.ui.views.showView.makeFast"; //$NON-NLS-1$
 
-	// Perspectives Category:
+    // Perspectives Category:
 
     /**
      * Id for command "Show Perspective" in category "Perspectives"

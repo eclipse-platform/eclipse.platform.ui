@@ -12,8 +12,8 @@ package org.eclipse.ui.internal;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.ui.IMemento;
@@ -91,7 +91,7 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
      */
     public WindowManager getWorkbenchWindowManager() {
         // return the global workbench window manager
-        return ((Workbench) getWorkbench()).getWindowManager();
+		return null;
     }
 
     /* (non-javadoc)
@@ -180,7 +180,7 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
      * @see org.eclipse.ui.application.IWorkbenchConfigurer#restoreState()
      */
     public IStatus restoreState() {
-        return ((Workbench) getWorkbench()).restoreState();
+		return Status.OK_STATUS;
     }
 
     /* (non-Javadoc)
@@ -194,7 +194,7 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#restoreWorkbenchWindow(org.eclipse.ui.IMemento)
 	 */
 	public IWorkbenchWindowConfigurer restoreWorkbenchWindow(IMemento memento) throws WorkbenchException {
-		return getWindowConfigurer(((Workbench) getWorkbench()).restoreWorkbenchWindow(memento));
+		return getWindowConfigurer(null);
 	}
 
 	/* (non-Javadoc)

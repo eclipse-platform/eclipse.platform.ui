@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -50,18 +51,16 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.PreferencePersistence;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * <p>
@@ -231,7 +230,7 @@ public final class BindingPersistence extends PreferencePersistence {
 	 *         <code>null</code>, but may be empty or point to an undefined
 	 *         scheme.
 	 */
-	static final String getDefaultSchemeId() {
+	public static final String getDefaultSchemeId() {
 		final IPreferenceStore store = PlatformUI.getPreferenceStore();
 		return store
 				.getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
@@ -477,13 +476,11 @@ public final class BindingPersistence extends PreferencePersistence {
 	 *            The command service for the workbench; must not be
 	 *            <code>null</code>.
 	 */
-	private static final void readBindingsFromPreferences(
-			final IMemento preferences, final BindingManager bindingManager,
-			final ICommandService commandService) {
+	private static final void readBindingsFromPreferences(final IMemento preferences,
+			final BindingManager bindingManager, final CommandManager commandService) {
 		List warningsToLog = new ArrayList(1);
 
 		if (preferences != null) {
-			IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
 			final IMemento[] preferenceMementos = preferences
 					.getChildren(TAG_KEY_BINDING);
 			int preferenceMementoCount = preferenceMementos.length;
@@ -498,14 +495,7 @@ public final class BindingPersistence extends PreferencePersistence {
 				String viewParameter = null;
 				final Command command;
 				if (commandId != null) {
-					if (viewRegistry.find(commandId) == null) {
-						command = commandService.getCommand(commandId);
-					} else {
-						// we must be able to translate old view commands to the new
-						// parameterized command
-						viewParameter = commandId;
-						command = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
-					}
+					command = commandService.getCommand(commandId);
 				} else {
 					command = null;
 				}
@@ -578,7 +568,7 @@ public final class BindingPersistence extends PreferencePersistence {
 					parameterizedCommand = null;
 				} else if (viewParameter != null) { 
 					HashMap parms = new HashMap();
-					parms.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, viewParameter);
+					parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
 					parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
 				} else {
 					parameterizedCommand = readParameters(memento,
@@ -617,12 +607,13 @@ public final class BindingPersistence extends PreferencePersistence {
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final BindingManager bindingManager,
-			final ICommandService commandService) {
+			final CommandManager commandService) {
 		final Collection bindings = new ArrayList(configurationElementCount);
 		final List warningsToLog = new ArrayList(1);
 
 		HashSet cocoaTempList = new HashSet();
-		IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
+		// IViewRegistry viewRegistry =
+		// PlatformUI.getWorkbench().getViewRegistry();
 		
 		// the local cache for the sequence modifiers
 		IConfigurationElement[] sequenceModifiers = new IConfigurationElement[0];
@@ -647,32 +638,14 @@ public final class BindingPersistence extends PreferencePersistence {
 			String viewParameter = null;
 			final Command command;
 			if (commandId != null) {
-				if (viewRegistry.find(commandId) == null) {
-					command = commandService.getCommand(commandId);
-					if (!command.isDefined()) {
-						// Reference to an undefined command. This is invalid.
-						addWarning(warningsToLog,
-								"Cannot bind to an undefined command", //$NON-NLS-1$
-								configurationElement, commandId);
-						continue;
-					}
-				} else {
-					// we must be able to translate old view commands to the new
-					// parameterized command
-					viewParameter = commandId;
-					command = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
-					if (DEBUG) {
-						Tracing.printTrace("BINDINGS", "Command '" //$NON-NLS-1$ //$NON-NLS-2$
-								+ commandId + "\' should be migrated to "  //$NON-NLS-1$
-								+ IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
-					}
-					if (!command.isDefined()) {
-						// Reference to an undefined command. This is invalid.
-						addWarning(warningsToLog,
-								"Cannot bind to an undefined command", //$NON-NLS-1$
-								configurationElement, commandId);
-						continue;
-					}
+				// TODO should we still try processing keybindings to viewIds?
+				// if (viewRegistry.find(commandId) == null) {
+				command = commandService.getCommand(commandId);
+				if (!command.isDefined()) {
+					// Reference to an undefined command. This is invalid.
+					addWarning(warningsToLog, "Cannot bind to an undefined command", //$NON-NLS-1$
+							configurationElement, commandId);
+					continue;
 				}
 			} else {
 				command = null;
@@ -941,7 +914,7 @@ public final class BindingPersistence extends PreferencePersistence {
 			parameterizedCommand = null;
 		} else if (viewParameter != null) { 
 			HashMap parms = new HashMap();
-			parms.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, viewParameter);
+			parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
 			parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
 		} else {
 			parameterizedCommand = readParameters(configurationElement,
@@ -1236,7 +1209,7 @@ public final class BindingPersistence extends PreferencePersistence {
 	/**
 	 * The command service for the workbench; must not be <code>null</code>.
 	 */
-	private final ICommandService commandService;
+	private final CommandManager commandManager;
 
 	/**
 	 * Constructs a new instance of <code>BindingPersistence</code>.
@@ -1249,10 +1222,10 @@ public final class BindingPersistence extends PreferencePersistence {
 	 *            The command service for the workbench; must not be
 	 *            <code>null</code>.
 	 */
-	BindingPersistence(final BindingManager bindingManager,
-			final ICommandService commandService) {
+	public BindingPersistence(final BindingManager bindingManager,
+			final CommandManager commandManager) {
 		this.bindingManager = bindingManager;
-		this.commandService = commandService;
+		this.commandManager = commandManager;
 	}
 
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
@@ -1306,7 +1279,7 @@ public final class BindingPersistence extends PreferencePersistence {
 	 * Reads all of the binding information from the registry and from the
 	 * preference store.
 	 */
-	protected final void read() {
+	public final void read() {
 		super.read();
 		reRead();
 	}
@@ -1408,8 +1381,8 @@ public final class BindingPersistence extends PreferencePersistence {
 				activeSchemeElementCount, preferenceMemento, bindingManager);
 		readBindingsFromRegistry(
 				indexedConfigurationElements[INDEX_BINDING_DEFINITIONS],
-				bindingDefinitionCount, bindingManager, commandService);
+				bindingDefinitionCount, bindingManager, commandManager);
 		readBindingsFromPreferences(preferenceMemento, bindingManager,
-				commandService);
+				commandManager);
 	}
 }

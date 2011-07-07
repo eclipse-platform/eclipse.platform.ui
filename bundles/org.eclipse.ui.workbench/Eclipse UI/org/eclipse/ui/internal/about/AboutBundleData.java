@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.about;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.signedcontent.SignedContent;
 import org.eclipse.osgi.signedcontent.SignedContentFactory;
@@ -104,17 +105,17 @@ public class AboutBundleData extends AboutData {
 		SignedContentFactory contentFactory = (SignedContentFactory) bundleContext
 				.getService(factoryRef);
 		try {
-			isSignedDetermined = true;
 			SignedContent signedContent = contentFactory.getSignedContent(bundle);
 			isSigned = signedContent != null && signedContent.isSigned();
+			isSignedDetermined = true;
+			return isSigned;
 		} catch (IOException e) {
-			isSigned = false;
+			throw (IllegalStateException) new IllegalStateException().initCause(e);
 		} catch (GeneralSecurityException e){
-			isSigned = false;
+			throw (IllegalStateException) new IllegalStateException().initCause(e);
 		} finally {
 			bundleContext.ungetService(factoryRef);
 		}
-		return isSigned;
 	}
 
 	/**

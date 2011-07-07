@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 
@@ -52,19 +50,6 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
     public WizardPreferencesImportPage1() {
         this("preferencesImportPage1");//$NON-NLS-1$
     }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#
-	 * createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(getControl(), IWorkbenchHelpContextIds.PREFERENCES_IMPORT_WIZARD_PAGE);
-
-	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getAllButtonText()

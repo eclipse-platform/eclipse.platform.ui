@@ -10,7 +10,7 @@
  *     Kiryl Kazakevich, Intel - bug 88359
  *     Tonny Madsen, RCP Company - bug 201055
  *     Mark Hoffmann <mark.hoffmann@web.de> - Fix for bug 84603
-*******************************************************************************/
+ *******************************************************************************/
 package org.eclipse.ui;
 
 import org.eclipse.swt.SWT;

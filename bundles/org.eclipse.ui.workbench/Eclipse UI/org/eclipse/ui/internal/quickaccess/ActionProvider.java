@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -89,5 +88,9 @@ public class ActionProvider extends QuickAccessProvider {
 
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_Menus;
+	}
+
+	protected void doReset() {
+		idToElement = null;
 	}
 }

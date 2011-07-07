@@ -92,7 +92,6 @@ import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.model.BindingElement;
 import org.eclipse.ui.internal.keys.model.BindingModel;
@@ -168,8 +167,6 @@ public class NewKeysPreferencePage extends PreferencePage implements
 	private boolean fFilterActionSetContexts = true;
 
 	private boolean fFilterInternalContexts = true;
-
-	private boolean fFilterWorkbenchMenuContext = !Workbench.getInstance().hasAppMenu();
 
 	private KeyController keyController;
 
@@ -572,20 +569,17 @@ public class NewKeysPreferencePage extends PreferencePage implements
 						getShell());
 				dialog.setFilterActionSet(fFilterActionSetContexts);
 				dialog.setFilterInternal(fFilterInternalContexts);
-				dialog.setFilterWorkbenchMenu(fFilterWorkbenchMenuContext);
-
 				dialog.setFilterUncategorized(fFilteredTree
 						.isFilteringCategories());
 				if (dialog.open() == Window.OK) {
 					fFilterActionSetContexts = dialog.getFilterActionSet();
 					fFilterInternalContexts = dialog.getFilterInternal();
-					fFilterWorkbenchMenuContext = dialog.getFilterWorkbenchMenu();
 					fFilteredTree.filterCategories(dialog
 							.getFilterUncategorized());
 
 					// Apply context filters
-					keyController.filterContexts(fFilterActionSetContexts, fFilterInternalContexts,
-							fFilterWorkbenchMenuContext);
+					keyController.filterContexts(fFilterActionSetContexts,
+							fFilterInternalContexts);
 
 					ISelection currentContextSelection = fWhenCombo
 							.getSelection();
@@ -1172,8 +1166,8 @@ public class NewKeysPreferencePage extends PreferencePage implements
 				.getSchemeModel().getSelectedElement()));
 
 		// Apply context filters
-		keyController.filterContexts(fFilterActionSetContexts, fFilterInternalContexts,
-				fFilterWorkbenchMenuContext);
+		keyController.filterContexts(fFilterActionSetContexts,
+				fFilterInternalContexts);
 		fWhenCombo.setInput(keyController.getContextModel());
 
 		fFilteredTree.filterCategories(fPatternFilter.isFilteringCategories());

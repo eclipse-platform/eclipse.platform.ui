@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.ui.contexts.IContextService;
@@ -103,10 +104,8 @@ public class ContextModel extends CommonModel {
 	 *            <code>true</code> to filter action set contexts.
 	 * @param internal
 	 *            <code>true</code> to filter internal contexts
-	 * @param workbenchMenu
-	 *            <code>true</code> to filter Workbench Menu Context
 	 */
-	public void filterContexts(boolean actionSets, boolean internal, boolean workbenchMenu) {
+	public void filterContexts(boolean actionSets, boolean internal) {
 		// Remove undesired contexts
 		for (int i = 0; i < contexts.size(); i++) {
 			boolean removeContext = false;
@@ -138,11 +137,6 @@ public class ContextModel extends CommonModel {
 				removeContext = true;
 			}
 
-			if (workbenchMenu == true
-					&& contextElement.getId().equals(IContextService.CONTEXT_ID_WORKBENCH_MENU)) {
-				removeContext = true;
-			}
-
 			if (removeContext) {
 				contextIdToFilteredContexts.put(contextElement.getId(),
 						contextElement);
@@ -160,26 +154,18 @@ public class ContextModel extends CommonModel {
 					.get(iterator.next());
 
 			try {
-				if (actionSets == false) {
-					if (contextElement.getId().equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
-						restoreContext = true;
-					} else {
-						String parentId = ((Context) contextElement.getModelObject()).getParentId();
-						if (parentId != null && parentId.equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
-							restoreContext = true;
-						}
-					}
+				if (actionSets == false
+						&& (contextElement.getId().equalsIgnoreCase(
+								CONTEXT_ID_ACTION_SETS) || ((Context) contextElement
+								.getModelObject()).getParentId()
+								.equalsIgnoreCase(CONTEXT_ID_ACTION_SETS))) {
+					restoreContext = true;
 				}
 			} catch (NotDefinedException e) {
 				// No parentId to check
 			}
 			if (internal == false
 					&& contextElement.getId().indexOf(CONTEXT_ID_INTERNAL) != -1) {
-				restoreContext = true;
-			}
-
-			if (workbenchMenu == false
-					&& contextElement.getId().equals(IContextService.CONTEXT_ID_WORKBENCH_MENU)) {
 				restoreContext = true;
 			}
 

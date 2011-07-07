@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,15 +29,6 @@ public class SwitchToWindowMenu extends ContributionItem {
     private IWorkbenchWindow workbenchWindow;
 
     private boolean showSeparator;
-
-    private boolean dirty = true;
-
-    private IMenuListener menuListener = new IMenuListener() {
-        public void menuAboutToShow(IMenuManager manager) {
-            manager.markDirty();
-            dirty = true;
-        }
-    };
 
     /**
      * Creates a new instance of this class.
@@ -94,14 +82,6 @@ public class SwitchToWindowMenu extends ContributionItem {
 			return;
 		}
 
-        if (getParent() instanceof MenuManager) {
-			((MenuManager) getParent()).addMenuListener(menuListener);
-		}
-
-        if (!dirty) {
-			return;
-		}
-
         // Add separator.
         if (showSeparator) {
             new MenuItem(menu, SWT.SEPARATOR, index);
@@ -134,14 +114,13 @@ public class SwitchToWindowMenu extends ContributionItem {
                 }
             }
         }
-        dirty = false;
     }
 
     /**
      * Overridden to always return true and force dynamic menu building.
      */
     public boolean isDirty() {
-        return dirty;
+		return true;
     }
 
     /**

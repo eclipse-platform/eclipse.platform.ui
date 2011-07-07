@@ -62,7 +62,7 @@ public class NullEditorInput implements IEditorInput {
     public String getName() {
 		String result = null;
 		if (editorReference != null) {
-			result = editorReference.internalGetName();
+			result = editorReference.getName();
 		}
 		if (result != null) {
 			return result;

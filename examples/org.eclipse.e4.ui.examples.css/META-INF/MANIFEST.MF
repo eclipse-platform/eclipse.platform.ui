@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Css Examples Plug-in (Incubation)
+Bundle-SymbolicName: org.eclipse.e4.ui.examples.css
+Bundle-Version: 0.9.0.qualifier
+Bundle-Activator: org.eclipse.e4.ui.examples.css.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.e4.ui.css.core,
+ org.eclipse.e4.ui.css.swt,
+ org.eclipse.swt,
+ org.w3c.css.sac,
+ org.apache.batik.css;bundle-version="1.6.0",
+ org.apache.batik.util;bundle-version="1.6.0",
+ org.apache.batik.util.gui;bundle-version="1.6.0",
+ org.apache.batik.xml;bundle-version="1.6.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.eclipse.e4.ui.examples.css.editor
+Bundle-Vendor: Eclipse.org

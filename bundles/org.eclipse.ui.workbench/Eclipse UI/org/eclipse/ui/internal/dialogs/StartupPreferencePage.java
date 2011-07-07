@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,8 +35,8 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.testing.ContributionInfo;
 import org.osgi.framework.Constants;
 
 /**
@@ -88,38 +88,35 @@ public class StartupPreferencePage extends PreferencePage implements
         pluginsList.setFont(parent.getFont());
         pluginsList.setLayoutData(data);
 		TableViewer viewer = new TableViewer(pluginsList);
-		viewer.setLabelProvider(new LabelProvider() {
+		String pluginIds[] = workbench.getEarlyActivatedPlugins();
+		final ILabelDecorator decorator = workbench.getDecoratorManager().getLabelDecorator(
+				ContributingPluginDecorator.ID);
+		viewer.setLabelProvider(new ColumnLabelProvider() {
 			public String getText(Object element) {
-				return (String) Platform.getBundle(((ContributionInfo) element).getBundleId())
-						.getHeaders().get(
+				return (String) Platform.getBundle((String) element).getHeaders().get(
 						Constants.BUNDLE_NAME);
 			}
+
+			public String getToolTipText(Object element) {
+				if (decorator == null) {
+					return null;
+				}
+				return decorator.decorateText(getText(element), element);
+			}
 		});
+		if (decorator != null) {
+			ColumnViewerToolTipSupport.enableFor(viewer);
+		}
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
-		viewer.setInput(workbench.getEarlyActivatedPlugins());
-		// Workbench plugin should not be disabled. Don't show it
-		viewer.setFilters(new ViewerFilter[] { createPlatformUIFilter() });
+		viewer.setInput(pluginIds);
 		updateCheckState();
     }
-
-	private ViewerFilter createPlatformUIFilter() {
-		return new ViewerFilter() {
-
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof ContributionInfo) {
-					ContributionInfo info = (ContributionInfo) element;
-					return !PlatformUI.PLUGIN_ID.equals(info.getBundleId());
-				}
-				return true;
-			}
-		};
-	}
 
 	private void updateCheckState() {
         HashSet disabledPlugins = new HashSet(Arrays.asList(workbench.getDisabledEarlyActivatedPlugins()));
 		for (int i = 0; i < pluginsList.getItemCount(); i++) {
 			TableItem item = pluginsList.getItem(i);
-			String pluginId = ((ContributionInfo) item.getData()).getBundleId();
+			String pluginId = (String) item.getData();
             item.setChecked(!disabledPlugins.contains(pluginId));
         }
     }
@@ -135,9 +132,10 @@ public class StartupPreferencePage extends PreferencePage implements
      * @see PreferencePage
      */
     protected void performDefaults() {
-		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
-		store.setToDefault(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
-		updateCheckState();
+        TableItem items[] = pluginsList.getItems();
+        for (int i = 0; i < items.length; i++) {
+            items[i].setChecked(true);
+        }
     }
 
     /**
@@ -148,7 +146,7 @@ public class StartupPreferencePage extends PreferencePage implements
         TableItem items[] = pluginsList.getItems();
         for (int i = 0; i < items.length; i++) {
             if (!items[i].getChecked()) {
-				preference.append(((ContributionInfo) items[i].getData()).getBundleId());
+                preference.append((String) items[i].getData());
                 preference.append(IPreferenceConstants.SEPARATOR);
             }
         }

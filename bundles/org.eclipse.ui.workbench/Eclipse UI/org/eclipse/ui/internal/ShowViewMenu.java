@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,15 @@
 
 package org.eclipse.ui.internal;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IParameter;
@@ -38,7 +39,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -53,69 +53,23 @@ import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
+import com.ibm.icu.text.Collator;
+
 /**
  * A <code>ShowViewMenu</code> is used to populate a menu manager with Show
  * View actions. The visible views are determined by user preference from the
  * Perspective Customize dialog.
  */
 public class ShowViewMenu extends ContributionItem {
-
-	static class Pair {
-		public final Object a;
-		public final Object b;
-		int hashCode = -1;
-
-		/**
-		 * @param a
-		 *            must not be <code>null</code>
-		 * @param b
-		 *            can be <code>null</code>
-		 */
-		public Pair(Object a, Object b) {
-			this.a = a;
-			this.b = b;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#hashCode()
-		 */
-		public int hashCode() {
-			if (hashCode == -1) {
-				final int prime = 31;
-				hashCode = 1;
-				hashCode = prime * hashCode + ((a == null) ? 0 : a.hashCode());
-				hashCode = prime * hashCode + ((b == null) ? 0 : b.hashCode());
-				if (hashCode == -1) {
-					hashCode = a.hashCode();
-				}
-			}
-			return hashCode;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			Pair p = (Pair) obj;
-			if (!a.equals(p.a)) {
-				return false;
-			}
-			if (b == p.b) {
-				return true;
-			}
-			if (b == null || p.b == null) {
-				return false;
-			}
-			return b.equals(p.b);
-		}
-	}
+	/**
+	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#VIEWS_SHOW_VIEW}
+	 */
+	public static final String SHOW_VIEW_ID= IWorkbenchCommandConstants.VIEWS_SHOW_VIEW;
+	/**
+	 * @deprecated As of 3.6, replaced by
+	 *             {@link IWorkbenchCommandConstants#VIEWS_SHOW_VIEW_PARM_ID}
+	 */
+	public static final String VIEW_ID_PARM = IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID;
 
 	private IWorkbenchWindow window;
 
@@ -135,6 +89,9 @@ public class ShowViewMenu extends ContributionItem {
 	private Action showDlgAction;
 
 	private Map actions = new HashMap(21);
+
+	// Maps pages to a list of opened views
+	private Map openedViews = new HashMap();
 
 	protected boolean dirty = true;
 
@@ -239,18 +196,18 @@ public class ShowViewMenu extends ContributionItem {
 		}
 
 		// Get visible actions.
-		List viewIds = getShortcuts(page);
+		List viewIds = Arrays.asList(page.getShowViewShortcuts());
 
 		// add all open views
 		viewIds = addOpenedViews(page, viewIds);
 
 		List actions = new ArrayList(viewIds.size());
 		for (Iterator i = viewIds.iterator(); i.hasNext();) {
-			Pair id = (Pair) i.next();
-			if (id.a.equals(IIntroConstants.INTRO_VIEW_ID)) {
+			String id = (String) i.next();
+			if (id.equals(IIntroConstants.INTRO_VIEW_ID)) {
 				continue;
 			}
-			CommandContributionItemParameter item = getItem((String) id.a, (String) id.b);
+			CommandContributionItemParameter item = getItem(id);
 			if (item != null) {
 				actions.add(item);
 			}
@@ -274,15 +231,6 @@ public class ShowViewMenu extends ContributionItem {
 		
 		// Add Other...
 		innerMgr.add(showDlgAction);
-	}
-
-	private List getShortcuts(IWorkbenchPage page) {
-		ArrayList list = new ArrayList();
-		String[] shortcuts = page.getShowViewShortcuts();
-		for (int i = 0; i < shortcuts.length; i++) {
-			list.add(new Pair(shortcuts[i], null));
-		}
-		return list;
 	}
 
 	static class PluginCCIP extends CommandContributionItemParameter implements
@@ -318,7 +266,7 @@ public class ShowViewMenu extends ContributionItem {
 
 	}
 
-	private CommandContributionItemParameter getItem(String viewId, String secondaryId) {
+	private CommandContributionItemParameter getItem(String viewId) {
 		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
 		IViewDescriptor desc = reg.find(viewId);
 		if (desc==null) {
@@ -333,15 +281,11 @@ public class ShowViewMenu extends ContributionItem {
 		parms.icon = desc.getImageDescriptor();
 		parms.parameters = new HashMap();
 
-		parms.parameters.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, viewId);
+		parms.parameters.put(VIEW_ID_PARM, viewId);
 		if (makeFast) {
 			parms.parameters.put(
 					IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_FASTVIEW,
 					"true"); //$NON-NLS-1$
-		}
-		if (secondaryId != null) {
-			parms.parameters.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_SECONDARY_ID,
-					secondaryId);
 		}
 		return parms;
 	}
@@ -366,10 +310,10 @@ public class ShowViewMenu extends ContributionItem {
 	}
 
 	private ArrayList getParts(IWorkbenchPage page) {
-		ArrayList parts = new ArrayList();
-		IViewReference[] refs = page.getViewReferences();
-		for (int i = 0; i < refs.length; i++) {
-			parts.add(new Pair(refs[i].getId(), refs[i].getSecondaryId()));
+		ArrayList parts = (ArrayList) openedViews.get(page);
+		if (parts == null) {
+			parts = new ArrayList();
+			openedViews.put(page, parts);
 		}
 		return parts;
 	}

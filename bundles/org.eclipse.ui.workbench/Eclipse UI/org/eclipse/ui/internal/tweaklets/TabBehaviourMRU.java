@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.tweaklets;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -18,16 +21,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.internal.EditorAreaHelper;
-import org.eclipse.ui.internal.EditorManager;
-import org.eclipse.ui.internal.EditorReference;
-import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**
@@ -48,28 +46,55 @@ public class TabBehaviourMRU extends TabBehaviour {
 		}
 
 		IEditorReference editors[] = page.getSortedEditors();
-		if (editors.length < page.getEditorReuseThreshold()) {
+		int length = editors.length;
+		if (length < page.getEditorReuseThreshold()) {
 			return null;
+		} else if (length > page.getEditorReuseThreshold()) {
+			List<IEditorReference> refs = new ArrayList<IEditorReference>();
+			List<IEditorReference> keep = new ArrayList<IEditorReference>(Arrays.asList(editors));
+			int extra = length - page.getEditorReuseThreshold();
+			// look for extra editors that should be closed
+			for (int i = 0; i < editors.length; i++) {
+				if (extra == 0) {
+					break;
+				}
+
+				if (editors[i].isPinned() || editors[i].isDirty()) {
+					continue;
+				}
+
+				refs.add(editors[i]);
+				extra--;
+			}
+
+			for (IEditorReference ref : refs) {
+				page.closeEditor(ref, false);
+				keep.remove(ref);
+			}
+
+			editors = keep.toArray(new IEditorReference[keep.size()]);
 		}
 
 		IEditorReference dirtyEditor = null;
 
-		// Find a editor to be reused
-		for (int i = 0; i < editors.length; i++) {
+		// find an editor to reuse, go in reverse due to activation order
+		for (int i = editors.length - 1; i > -1; i--) {
 			IEditorReference editor = editors[i];
-			// if(editor == activePart)
-			// continue;
 			if (editor.isPinned()) {
+				// skip pinned editors
 				continue;
 			}
 			if (editor.isDirty()) {
+				// record dirty editors
 				if (dirtyEditor == null) {
 					dirtyEditor = editor;
 				}
 				continue;
 			}
+			// an editor is neither pinned nor dirty, use this one
 			return editor;
 		}
+		// can't find anything, return null
 		if (dirtyEditor == null) {
 			return null;
 		}
@@ -81,13 +106,12 @@ public class TabBehaviourMRU extends TabBehaviour {
 			return null;
 		}
 
-		MessageDialog dialog = new MessageDialog(page.getWorkbenchWindow()
-				.getShell(),
+		MessageDialog dialog = new MessageDialog(
+				page.getWorkbenchWindow().getShell(),
 				WorkbenchMessages.EditorManager_reuseEditorDialogTitle,
 				null, // accept the default window icon
-				NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion,
-						dirtyEditor.getName()), MessageDialog.QUESTION,
-				new String[] { IDialogConstants.YES_LABEL,
+				NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, dirtyEditor.getName()),
+				MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
 						IDialogConstants.NO_LABEL,
 						WorkbenchMessages.EditorManager_openNewEditorLabel }, 0) {
 			protected int getShellStyle() {
@@ -97,7 +121,7 @@ public class TabBehaviourMRU extends TabBehaviour {
 		int result = dialog.open();
 		if (result == 0) { // YES
 			IEditorPart editor = dirtyEditor.getEditor(true);
-			if (!page.getEditorManager().savePart(editor, editor, false)) {
+			if (!page.saveEditor(editor, false)) {
 				return null;
 			}
 		} else if ((result == 2) || (result == -1)) {
@@ -107,33 +131,12 @@ public class TabBehaviourMRU extends TabBehaviour {
 	}
 
 	public IEditorReference reuseInternalEditor(WorkbenchPage page,
-			EditorManager manager, EditorAreaHelper editorPresentation,
+ Object manager,
+			Object editorPresentation,
 			EditorDescriptor desc, IEditorInput input,
 			IEditorReference reusableEditorRef) {
-		IEditorPart reusableEditor = reusableEditorRef.getEditor(false);
-		if (reusableEditor == null) {
-			IEditorReference result = new EditorReference(manager, input, desc);
-			page.closeEditor(reusableEditorRef, false);
-			return result;
-		}
-
-		EditorSite site = (EditorSite) reusableEditor.getEditorSite();
-		EditorDescriptor oldDesc = site.getEditorDescriptor();
-		if ((desc.getId().equals(oldDesc.getId()))
-				&& (reusableEditor instanceof IReusableEditor)) {
-			Workbench wb = (Workbench) page.getWorkbenchWindow().getWorkbench();
-			editorPresentation.moveEditor(reusableEditor, -1);
-			wb.getEditorHistory().add(reusableEditor.getEditorInput(),
-					site.getEditorDescriptor());
-			page.reuseEditor((IReusableEditor) reusableEditor, input);
-			return reusableEditorRef;
-		}
-		// findReusableEditor(...) checks pinned and saves editor if
-		// necessary, so it's OK to close "reusableEditor"
-		IEditorReference ref = new EditorReference(manager, input, desc);
-		reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor,
-				false);
-		return ref;
+		E4Util.unsupported("reuseInternalEditor: we reuse nothing"); //$NON-NLS-1$
+		return reusableEditorRef;
 	}
 
 }

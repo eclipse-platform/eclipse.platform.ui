@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -28,6 +28,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -88,6 +89,7 @@ import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.themes.IThemePreview;
 
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Preference page for management of system colors, gradients and fonts.
@@ -252,32 +254,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
          * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
          */
         public Object getParent(Object element) {
-			if (element instanceof ThemeElementCategory)
-				return registry;
-
-			if (element instanceof ColorDefinition) {
-				String defaultId = ((IHierarchalThemeElementDefinition) element).getDefaultsTo();
-				if (defaultId != null) {
-					ColorDefinition defaultElement = registry.findColor(defaultId);
-					if (parentIsInSameCategory(defaultElement))
-						return defaultElement;
-				}
-				String categoryId = ((ColorDefinition) element).getCategoryId();
-				return registry.findCategory(categoryId);
-			}
-
-			if (element instanceof FontDefinition) {
-				String defaultId = ((FontDefinition) element).getDefaultsTo();
-				if (defaultId != null) {
-					FontDefinition defaultElement = registry.findFont(defaultId);
-					if (parentIsInSameCategory(defaultElement))
-						return defaultElement;
-				}
-				String categoryId = ((FontDefinition) element).getCategoryId();
-				return registry.findCategory(categoryId);
-			}
-
-			return null;
+            return null;
         }
 
         /* (non-Javadoc)
@@ -533,22 +510,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
          * @since 3.2
          */
 		private boolean isDefault(IThemeElementDefinition def) {
-			if (def instanceof FontDefinition) {
-				FontDefinition fontDef = (FontDefinition) def;
-				String defaultFontID = fontDef.getDefaultsTo();
-				return defaultFontID != null
-						&& Arrays.equals(fontRegistry.getFontData(def.getId()),
-								fontRegistry.getFontData(defaultFontID));
-			}
-			if (def instanceof ColorDefinition) {
-				ColorDefinition colorDef = (ColorDefinition) def;
-				String defaultColorID = colorDef.getDefaultsTo();
-				if (defaultColorID == null)
-					return false;
-				RGB defaultRGB = colorRegistry.getRGB(defaultColorID);
-				return defaultRGB != null
-						&& defaultRGB.equals(colorRegistry.getRGB(colorDef.getId()));
-			}
+			if (def instanceof FontDefinition)
+				return ColorsAndFontsPreferencePage.this.isDefault((FontDefinition)def);
+			if (def instanceof ColorDefinition)
+				return ColorsAndFontsPreferencePage.this.isDefault((ColorDefinition)def);
 			return false;
 		}
     }
@@ -567,17 +532,18 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     private Font appliedDialogFont;
 
     /**
-	 * Map of definition id->RGB capturing the explicit changes made by
-	 * the user. These changes need to be stored into the preference store.
-	 */
+     * Map of definition id->RGB objects that map to changes expressed in this
+     * UI session.  These changes should be made in preferences and the
+     * registry.
+     */
     private Map colorPreferencesToSet = new HashMap(7);
 
     private CascadingColorRegistry colorRegistry;
 
     /**
-	 * Map of definition id->RGB capturing the temporary changes caused by a
-	 * 'defaultsTo' color change.
-	 */
+     * Map of definition id->RGB objects that map to changes expressed in this
+     * UI session.  These changes should be made in the registry.
+     */
     private Map colorValuesToSet = new HashMap(7);
 
     /**
@@ -621,23 +587,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
     private Button fontChangeButton;
 
-    /**
-     * The button to edit the default of the selected element.
-     * @since 3.7
-     */
-	private Button editDefaultButton;
-
-	/**
-	 * The button to go to the default of the selected element.
-	 * 
-	 * @since 3.7
-	 */
-	private Button goToDefaultButton;
-
-	/**
-	 * Map of definition id->FontData[] capturing the changes explicitly made by
-	 * the user. These changes need to be stored into the preference store.
-	 */
     private Map fontPreferencesToSet = new HashMap(7);
 
     private CascadingFontRegistry fontRegistry;
@@ -646,10 +595,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
     private Button fontSystemButton;
 
-	/**
-	 * Map of definition id->FontData[] capturing the temporary changes caused
-	 * by a 'defaultsTo' font change.
-	 */
+    /**
+     * Map of definition id->FontData[] objects that map to changes expressed in
+     * this UI session.  These changes should be made in preferences and the
+     * registry.
+     */
     private Map fontValuesToSet = new HashMap(7);
 
     /**
@@ -696,63 +646,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         //no-op
     }
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * Everything else except the following string patterns is ignored:
-	 * <ul>
-	 * <li><strong>selectCategory:</strong>ID - selects and expands the category
-	 * with the given ID</li>
-	 * <li><strong>selectFont:</strong>ID - selects the font with the given ID</li>
-	 * <li><strong>selectColor:</strong>ID - selects the color with the given ID
-	 * </li>
-	 * </p>
-	 * 
-	 * @param data
-	 *            the data to be applied
-	 */
-	public void applyData(Object data) {
-		if (tree == null || !(data instanceof String))
-			return;
-
-		ThemeRegistry themeRegistry = (ThemeRegistry) tree.getViewer().getInput();
-		String command = (String) data;
-		if (command.startsWith("selectCategory:")) { //$NON-NLS-1$
-			String categoryId = command.substring(15);
-			ThemeElementCategory category = themeRegistry.findCategory(categoryId);
-			if (category != null) {
-				selectAndReveal(category);
-				tree.getViewer().expandToLevel(category, 1);
-			}
-		} else if (command.startsWith("selectFont:")) { //$NON-NLS-1$
-			String id = command.substring(11);
-			FontDefinition fontDef = themeRegistry.findFont(id);
-			if (fontDef != null) {
-				selectAndReveal(fontDef);
-			}
-		} else if (command.startsWith("selectColor:")) { //$NON-NLS-1$
-			String id = command.substring(12);
-			ColorDefinition colorDef = themeRegistry.findColor(id);
-			if (colorDef != null) {
-				selectAndReveal(colorDef);
-			}
-		}
-	}
-
-	/**
-	 * Selects and reveals the given element.
-	 * 
-	 * @param selection
-	 *            the object to select and reveal
-	 * @since 3.7
-	 */
-	private void selectAndReveal(Object selection) {
-		TreeViewer viewer = tree.getViewer();
-		viewer.setSelection(new StructuredSelection(selection), false);
-		viewer.reveal(selection);
-		viewer.getTree().setFocus();
-	}
-
     private static boolean equals(String string, String string2) {
         if ((string == null && string2 == null))
 			return true;
@@ -776,19 +669,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         button.setEnabled(false);
         return button;
     }
-
-	private Label createSeparator(Composite parent) {
-		Label separator = new Label(parent, SWT.NONE);
-		separator.setFont(parent.getFont());
-		separator.setVisible(false);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.verticalAlignment = GridData.BEGINNING;
-		gd.heightHint = 4;
-		separator.setLayoutData(gd);
-		return separator;
-	}
-
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
@@ -842,9 +722,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		fontChangeButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("openChange")); //$NON-NLS-1$
         fontSystemButton = createButton(controlColumn, WorkbenchMessages.FontsPreference_useSystemFont);
         fontResetButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("reset")); //$NON-NLS-1$
-		createSeparator(controlColumn);
-		editDefaultButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("editDefault")); //$NON-NLS-1$
-		goToDefaultButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("goToDefault")); //$NON-NLS-1$
         // --- end of buttons
 
 		createDescriptionControl(mainColumn);
@@ -892,78 +769,66 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         return advancedComposite;
     }
 
-	/**
-	 * Create the <code>ListViewer</code> that will contain all color
-	 * definitions as defined in the extension point.
-	 * 
-	 * @param parent
-	 *            the parent <code>Composite</code>.
-	 */
-	private void createTree(Composite parent) {
-		labelProvider = new PresentationLabelProvider();
+    /**
+     * Create the <code>ListViewer</code> that will contain all color
+     * definitions as defined in the extension point.
+     * 
+     * @param parent the parent <code>Composite</code>.
+     */
+    private void createTree(Composite parent) {
+        labelProvider = new PresentationLabelProvider();
+        // create a new tree with a custom pattern matcher that will allow
+        // non-category elements to be returned in the event that their children
+        // do not
+        tree = new FilteredTree(parent, SWT.SINGLE | SWT.H_SCROLL
+                | SWT.V_SCROLL | SWT.BORDER, new PatternFilter() {
+            
+            protected boolean isParentMatch(Viewer viewer, Object element) {
+                Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
+                        .getContentProvider()).getChildren(element);
+                if (children.length > 0 && element instanceof ThemeElementCategory)
+					return filter(viewer, element, children).length > 0;
+                return false;
+            }
+		}, true);
 
-		// Create a custom pattern matcher that will allow
-		// non-category elements to be returned in the event that their children
-		// do not and also search the descriptions.
-		PatternFilter filter = new PatternFilter() {
-			/*
-			 * (non-Javadoc)
-			 * @see org.eclipse.ui.dialogs.PatternFilter#isLeafMatch(org.eclipse.jface.viewers.Viewer, java.lang.Object)
-			 * @since 3.7
-			 */
-			protected boolean isLeafMatch(Viewer viewer, Object element) {
-				if (super.isLeafMatch(viewer, element))
-					return true;
-
-				String text = null;
-				if (element instanceof ICategorizedThemeElementDefinition)
-					text = ((ICategorizedThemeElementDefinition) element).getDescription();
-
-				return text != null ? wordMatches(text) : false;
-			}
-		};
-		filter.setIncludeLeadingWildcard(true);
-
-		tree = new FilteredTree(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
-				filter, true);
-		GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_FILL);
+        GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_FILL);
 		data.widthHint = Math.max(285, convertWidthInCharsToPixels(30));
-		data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));
-		tree.setLayoutData(data);
-		myApplyDialogFont(tree.getViewer().getControl());
-		Text filterText = tree.getFilterControl();
-		if (filterText != null)
+        data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));
+        tree.setLayoutData(data);
+        myApplyDialogFont(tree.getViewer().getControl());
+        Text filterText = tree.getFilterControl();
+        if (filterText != null)
 			myApplyDialogFont(filterText);
 
-		tree.getViewer().setLabelProvider(labelProvider);
-		tree.getViewer().setContentProvider(new ThemeContentProvider());
-		tree.getViewer().setComparator(new ViewerComparator() {
-			public int category(Object element) {
-				if (element instanceof ThemeElementCategory)
+        tree.getViewer().setLabelProvider(labelProvider);
+        tree.getViewer().setContentProvider(new ThemeContentProvider());
+        tree.getViewer().setComparator(new ViewerComparator() {
+            public int category(Object element) {
+                if (element instanceof ThemeElementCategory)
 					return 0;
-				return 1;
-			}
-		});
-		tree.getViewer().setInput(WorkbenchPlugin.getDefault().getThemeRegistry());
-		tree.getViewer().addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection s = (IStructuredSelection) event.getSelection();
-				Object element = s.getFirstElement();
-				if (tree.getViewer().isExpandable(element))
-					tree.getViewer().setExpandedState(element,
-							!tree.getViewer().getExpandedState(element));
+                return 1;
+            }
+        });
+        tree.getViewer().setInput(WorkbenchPlugin.getDefault().getThemeRegistry());
+        tree.getViewer().addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                IStructuredSelection s = (IStructuredSelection) event.getSelection();
+                Object element = s.getFirstElement();
+                if (tree.getViewer().isExpandable(element))
+                    tree.getViewer().setExpandedState(element, !tree.getViewer().getExpandedState(element));
+                
+                if (element instanceof FontDefinition)
+                	editFont(tree.getDisplay());
+                else if (element instanceof ColorDefinition)
+                	editColor(tree.getDisplay());
+                updateControls();
+            }
+        });
 
-				if (element instanceof FontDefinition)
-					editFont(tree.getDisplay());
-				else if (element instanceof ColorDefinition)
-					editColor(tree.getDisplay());
-				updateControls();
-			}
-		});
-
-		restoreTreeExpansion();
-		restoreTreeSelection();
-	}
+        restoreTreeExpansion();
+        restoreTreeSelection();
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
@@ -973,6 +838,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         
         workbench.getThemeManager().removePropertyChangeListener(themeChangeListener);
         clearPreviews();
+        // also dispose elements used by default previewers
+		if (currentFont != null && !currentFont.isDisposed()) {
+			currentFont.dispose();
+			currentFont = null;
+		}
+		if (currentColor != null && !currentColor.isDisposed()) {
+			currentColor.dispose();
+			currentColor = null;
+		}
         colorRegistry.dispose();
         fontRegistry.dispose();
     }
@@ -1159,9 +1033,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
             public void widgetSelected(SelectionEvent e) {
             	if (isFontSelected())
-					resetFont(getSelectedFontDefinition(), false);
+                    resetFont(getSelectedFontDefinition());
             	else if (isColorSelected())
-					resetColor(getSelectedColorDefinition(), false);
+                  resetColor(getSelectedColorDefinition());
             	updateControls();
             }
         });
@@ -1173,51 +1047,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                 	return;
                 FontData[] defaultFontData = JFaceResources.getDefaultFont().getFontData();
                 setFontPreferenceValue(definition, defaultFontData);
+                setRegistryValue(definition, defaultFontData);
                 updateControls();
             }
         });
-
-		editDefaultButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				Display display = event.display;
-				FontDefinition fontDefinition = getSelectedFontDefinition();
-				if (fontDefinition != null) {
-					String defaultFontId = fontDefinition.getDefaultsTo();
-					FontDefinition defaultFontDefinition = themeRegistry.findFont(defaultFontId);
-					editFont(defaultFontDefinition, display);
-				} else {
-					ColorDefinition colorDefinition = getSelectedColorDefinition();
-					if (colorDefinition != null) {
-						String defaultColorId = colorDefinition.getDefaultsTo();
-						ColorDefinition defaultColorDefinition = themeRegistry
-								.findColor(defaultColorId);
-						editColor(defaultColorDefinition, display);
-					}
-				}
-				updateControls();
-			}
-		});
-
-		goToDefaultButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				FontDefinition fontDefinition = getSelectedFontDefinition();
-				if (fontDefinition != null) {
-					String defaultFontId = fontDefinition.getDefaultsTo();
-					FontDefinition defaultFontDefinition = themeRegistry.findFont(defaultFontId);
-					selectAndReveal(defaultFontDefinition);
-				} else {
-					ColorDefinition colorDefinition = getSelectedColorDefinition();
-					if (colorDefinition != null) {
-						String defaultColorId = colorDefinition.getDefaultsTo();
-						ColorDefinition defaultColorDefinition = themeRegistry
-								.findColor(defaultColorId);
-						selectAndReveal(defaultColorDefinition);
-					}
-				}
-				updateControls();
-			}
-		});
-
     }
 
     /* (non-Javadoc)
@@ -1228,6 +1061,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         setPreferenceStore(PrefUtil.getInternalPreferenceStore());
 
         final IThemeManager themeManager = aWorkbench.getThemeManager();
+
         themeChangeListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 if (event.getProperty().equals(
@@ -1249,6 +1083,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         if (labelProvider != null)
 			labelProvider.dispose(); // nuke the old cache
+
+        currentTheme = manager.getCurrentTheme();
 
         if (colorRegistry != null)
 			colorRegistry.dispose();
@@ -1289,14 +1125,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                 if (colorPreferencesToSet.get(id).equals(getColorAncestorValue(definition)))
 					return true;
             }
-		} else if (colorValuesToSet.containsKey(id)) {
-			if (definition.getValue() != null) { // value-based color
-				if (colorValuesToSet.get(id).equals(definition.getValue()))
-					return true;
-			} else {
-				if (colorValuesToSet.get(id).equals(getColorAncestorValue(definition)))
-					return true;
-			}
         } else {
             if (definition.getValue() != null) { // value-based color
                 if (getPreferenceStore().isDefault(ThemeElementHelper.createPreferenceKey(currentTheme, id)))
@@ -1322,16 +1150,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                 if (Arrays.equals((FontData[]) fontPreferencesToSet.get(id), ancestor))
 					return true;
             }
-		} else if (fontValuesToSet.containsKey(id)) {
-			if (definition.getValue() != null) { // value-based font
-				if (Arrays.equals((FontData[]) fontValuesToSet.get(id), definition.getValue()))
-					return true;
-			} else {
-				FontData[] ancestor = getFontAncestorValue(definition);
-				if (Arrays.equals((FontData[]) fontValuesToSet.get(id), ancestor))
-					return true;
-			}
-
         } else {
             if (definition.getValue() != null) { // value-based font
                 if (getPreferenceStore().isDefault(ThemeElementHelper.createPreferenceKey(currentTheme, id)))
@@ -1392,7 +1210,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         Arrays.sort(definitionsCopy, new IThemeRegistry.HierarchyComparator(definitions));
 
         for (int i = 0; i < definitionsCopy.length; i++) {
-			resetColor(definitionsCopy[i], true);
+			resetColor(definitionsCopy[i]);
 		}
     }
 
@@ -1419,8 +1237,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     protected void performDefaults() {
         performColorDefaults();
         performFontDefaults();
-		updateControls();
-		tree.getViewer().refresh();
+        updateControls();
     }
 
     private void performFontDefaults() {
@@ -1433,12 +1250,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         Arrays.sort(definitionsCopy, new IThemeRegistry.HierarchyComparator(definitions));
 
         for (int i = 0; i < definitionsCopy.length; i++) {
-			resetFont(definitionsCopy[i], true);
+			resetFont(definitionsCopy[i]);
 		}
     }
 
     private boolean performFontOk() {
-
         for (Iterator i = fontPreferencesToSet.keySet().iterator(); i.hasNext();) {
             String id = (String) i.next();
             String key = ThemeElementHelper.createPreferenceKey(currentTheme, id);
@@ -1481,8 +1297,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * @param definition the <code>ColorDefinition</code> to reset.
      * @return whether any change was made.
      */
-	private boolean resetColor(ColorDefinition definition, boolean force) {
-		if (force || !isDefault(definition)) {
+    private boolean resetColor(ColorDefinition definition) {
+        if (!isDefault(definition)) {
             RGB newRGB;
             if (definition.getValue() != null)
                 newRGB = definition.getValue();
@@ -1498,10 +1314,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         return false;
     }
 
-	protected boolean resetFont(FontDefinition definition, boolean force) {
-		if (force || !isDefault(definition)) {
+    protected boolean resetFont(FontDefinition definition) {
+        if (!isDefault(definition)) {
             FontData[] newFD;
-			if (!force && definition.getDefaultsTo() != null)
+            if (definition.getDefaultsTo() != null)
                 newFD = getFontAncestorValue(definition);
             else
                 newFD = PreferenceConverter.getDefaultFontDataArray(getPreferenceStore(), ThemeElementHelper
@@ -1509,6 +1325,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
             if (newFD != null) {
                 setFontPreferenceValue(definition, newFD);
+                setRegistryValue(definition, newFD);
                 return true;
             }
         }
@@ -1555,7 +1372,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                 setDescendantRegistryValues(children[i], datas);
                 setRegistryValue(children[i], datas);
                 fontValuesToSet.put(children[i].getId(), datas);
-				fontPreferencesToSet.remove(children[i].getId());
             }
         }
     }
@@ -1563,7 +1379,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     protected void setFontPreferenceValue(FontDefinition definition, FontData[] datas) {
         setDescendantRegistryValues(definition, datas);
         fontPreferencesToSet.put(definition.getId(), datas);
-		setRegistryValue(definition, datas);
     }
 
     /**
@@ -1792,40 +1607,24 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 	/**
 	 * Edit the currently selected font.
-	 * 
-	 * @param display
-	 *            the display to open the dialog on
+	 * @param display the display to open the dialog on
 	 * @since 3.2
 	 */
 	private void editFont(Display display) {
-		editFont(getSelectedFontDefinition(), display);
-	}
-
-	/**
-	 * Edit the given font.
-	 * 
-	 * @param definition
-	 *            the font definition
-	 * @param display
-	 *            the display to open the dialog on
-	 * @since 3.7
-	 */
-	private void editFont(FontDefinition definition, Display display) {
+		final FontDefinition definition = getSelectedFontDefinition();
 		if (definition != null) {
-			final FontDialog fontDialog = new FontDialog(getShell());
+			final FontDialog fontDialog = new FontDialog(fontChangeButton.getShell());
 			fontDialog.setFontList(getFontValue(definition));
 			final FontData data = fontDialog.open();
 			if (data != null) {
 				setFontPreferenceValue(definition, fontDialog.getFontList());
+				setRegistryValue(definition, fontDialog.getFontList());
 			}
 		}
 	}
 	
 	private void editColor(Display display) {
-		editColor(getSelectedColorDefinition(), display);
-	}
-
-	private void editColor(ColorDefinition definition, Display display) {
+		ColorDefinition definition = getSelectedColorDefinition();
 		if (definition == null)
 			return; 
 		RGB currentColor = colorRegistry.getRGB(definition.getId());
@@ -1843,25 +1642,17 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	protected void updateControls() {
 		FontDefinition fontDefinition = getSelectedFontDefinition();
         if (fontDefinition != null) {
-			boolean isDefault = isDefault(fontDefinition);
-			boolean hasDefault = fontDefinition.getDefaultsTo() != null;
             fontChangeButton.setEnabled(true);
             fontSystemButton.setEnabled(true);
-			fontResetButton.setEnabled(!isDefault);
-			editDefaultButton.setEnabled(hasDefault && isDefault);
-			goToDefaultButton.setEnabled(hasDefault);
+            fontResetButton.setEnabled(!isDefault(fontDefinition));
             setCurrentFont(fontDefinition);
             return;
         }
         ColorDefinition colorDefinition = getSelectedColorDefinition();
         if (colorDefinition != null) {
-			boolean isDefault = isDefault(getSelectedColorDefinition());
-			boolean hasDefault = colorDefinition.getDefaultsTo() != null;
             fontChangeButton.setEnabled(true);
             fontSystemButton.setEnabled(false);
-			fontResetButton.setEnabled(!isDefault);
-			editDefaultButton.setEnabled(hasDefault && isDefault);
-			goToDefaultButton.setEnabled(hasDefault);
+            fontResetButton.setEnabled(!isDefault(getSelectedColorDefinition()));
             setCurrentColor(colorDefinition);
             return;
         }
@@ -1869,8 +1660,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         fontChangeButton.setEnabled(false);
         fontSystemButton.setEnabled(false);
         fontResetButton.setEnabled(false);
-		editDefaultButton.setEnabled(false);
-		goToDefaultButton.setEnabled(false);
 		descriptionText.setText(""); //$NON-NLS-1$
 	}
 	
@@ -1887,8 +1676,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	}
 	
 	private void setCurrentFont(FontDefinition fontDefinition) {
-		currentFont = fontRegistry.get(fontDefinition.getId());
-		FontData[] fontData = currentFont.getFontData();
+		FontData[] fontData = getFontValue(fontDefinition);
+		if (currentFont != null && !currentFont.isDisposed())
+			currentFont.dispose();
+		currentFont = new Font(previewComposite.getDisplay(), fontData);
 
 		// recalculate sample text
 		StringBuffer tmp = new StringBuffer();
@@ -1916,7 +1707,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	}
 	
 	public void setCurrentColor(ColorDefinition colorDefinition) {
-		currentColor = colorRegistry.get(colorDefinition.getId());
+		RGB color = getColorValue(colorDefinition);
+		if (currentColor != null && !currentColor.isDisposed())
+			currentColor.dispose();
+		currentColor = new Color(previewComposite.getDisplay(), color);
 		colorSampler.redraw();
 
 		String description = colorDefinition.getDescription();

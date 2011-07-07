@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.quickaccess;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -82,5 +81,9 @@ public class PropertiesProvider extends QuickAccessProvider {
 
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_Properties;
+	}
+
+	protected void doReset() {
+		idToElement = null;
 	}
 }

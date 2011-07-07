@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tasktop Technologies - Bug 302529 [UX] [Progress] Show Eclipse IDE progress in the Eclipse icon on the Windows 7 Task Bar
  *******************************************************************************/
 package org.eclipse.ui.progress;
 
@@ -17,15 +16,10 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Constants relating to progress UI functionality of the workbench plug-in.
  * <p>
- * The constants define property keys that are used to associate UI related
- * information with Jobs (<code>org.eclipse.core.runtime.jobs.Job</code>).
- * <p>
- * In release 3.6, additional constants have been defined in
- * {@link IProgressConstants2}. Clients are encouraged to use the newer class in
- * order to get access to all of the available constants.
+ * The four constants define property keys that are used to associate
+ * UI related information with Jobs (<code>org.eclipse.core.runtime.jobs.Job</code>).
  * 
  * @see org.eclipse.core.runtime.jobs.Job#setProperty
- * @see IProgressConstants2
  * @since 3.0
  */
 public interface IProgressConstants {
@@ -85,7 +79,7 @@ public interface IProgressConstants {
 	 * </p>
 	 * <p>
 	 * Note: Only one of <code>ACTION_PROPERTY</code> or
-	 * <code>IProgressConstants2.COMMAND_PROPERTY</code> should be used
+	 * <code>COMMAND_PROPERTY</code> should be used
 	 * </p>
 	 * 
 	 * @see org.eclipse.jface.action.IAction

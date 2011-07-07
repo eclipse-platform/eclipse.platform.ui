@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,12 +60,11 @@ public class DefaultWorkbenchBrowserSupport extends
 	 */
 	public IWebBrowser createBrowser(int style, String browserId, String name,
 			String tooltip) throws PartInitException {
-		String id = browserId == null? getDefaultId():browserId;
-		IWebBrowser browser = findBrowser(id);
+		IWebBrowser browser = findBrowser(browserId == null? getDefaultId():browserId);
 		if (browser != null) {
 			return browser;
 		}
-		browser = doCreateBrowser(style, id, name, tooltip);
+		browser = doCreateBrowser(style, browserId, name, tooltip);
 		registerBrowser(browser);
 		return browser;
 	}

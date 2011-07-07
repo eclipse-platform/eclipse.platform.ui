@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
-
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -84,16 +83,16 @@ public class PlatformUIPreferenceListener implements
 
 		if (IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR
 				.equals(propertyName)) {
-			IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+			// IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 			IWorkbench workbench = PlatformUI.getWorkbench();
 			IWorkbenchWindow[] workbenchWindows = workbench
 					.getWorkbenchWindows();
 			for (int i = 0; i < workbenchWindows.length; i++) {
 				IWorkbenchWindow window = workbenchWindows[i];
 				if (window instanceof WorkbenchWindow) {
-					((WorkbenchWindow) window)
-							.setPerspectiveBarLocation(apiStore
-									.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+					// ((WorkbenchWindow) window)
+					// .setPerspectiveBarLocation(apiStore
+					// .getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 				}
 			}
 			return;
@@ -102,8 +101,8 @@ public class PlatformUIPreferenceListener implements
 		// TODO the banner apperance should have its own preference
 		if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
 				.equals(propertyName)) {
-			boolean newValue = PrefUtil.getAPIPreferenceStore().getBoolean(
-					IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+			// boolean newValue = PrefUtil.getAPIPreferenceStore().getBoolean(
+			// IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
 
 			IWorkbench workbench = PlatformUI.getWorkbench();
 			IWorkbenchWindow[] workbenchWindows = workbench
@@ -111,7 +110,7 @@ public class PlatformUIPreferenceListener implements
 			for (int i = 0; i < workbenchWindows.length; i++) {
 				IWorkbenchWindow window = workbenchWindows[i];
 				if (window instanceof WorkbenchWindow) {
-					((WorkbenchWindow) window).setBannerCurve(newValue);
+					// ((WorkbenchWindow) window).setBannerCurve(newValue);
 				}
 			}
 			return;

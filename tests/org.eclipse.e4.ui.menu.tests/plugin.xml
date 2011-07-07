@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.e4.ui.menu.tests.category"
+            id="org.eclipse.e4.ui.menu.tests.commandOne"
+            name="Command One">
+      </command>
+      <command
+            categoryId="org.eclipse.e4.ui.menu.tests.category"
+            id="org.eclipse.e4.ui.menu.tests.commandTwo"
+            name="Command Two">
+      </command>
+      <command
+            categoryId="org.eclipse.e4.ui.menu.tests.category"
+            id="org.eclipse.e4.ui.menu.tests.commandThree"
+            name="Command Three">
+      </command>
+      <command
+            categoryId="org.eclipse.e4.ui.menu.tests.category"
+            id="org.eclipse.e4.ui.menu.tests.commandFour"
+            name="Command Four">
+      </command>
+      <command
+            categoryId="org.eclipse.e4.ui.menu.tests.category"
+            id="org.eclipse.e4.ui.menu.tests.commandFive"
+            name="Command Five">
+      </command>
+      <category
+            id="org.eclipse.e4.ui.menu.tests.category"
+            name="Test Category">
+      </category>
+   </extension>
+
+
+</plugin>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardContainer2;
 import org.eclipse.swt.SWT;
@@ -48,10 +47,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -134,14 +134,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
         } else {
             needShowAll = !allActivityEnabled(wizardCategories);
         }
-
-		IWizard wizard = mainPage.getWizard();
-		if (wizard instanceof NewWizard) {
-			if (WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY.equals(((NewWizard) wizard)
-					.getCategoryId())) {
-				filter.setFilterPrimaryWizards(true);
-			}
-		}
     }
 
     /**
@@ -307,7 +299,19 @@ class NewWizardNewPage implements ISelectionChangedListener {
   	
 		final TreeViewer treeViewer = filterTree.getViewer();
 		treeViewer.setContentProvider(new WizardContentProvider());
-		treeViewer.setLabelProvider(new WorkbenchLabelProvider());
+		treeViewer.setLabelProvider(new DelegatingLabelProviderWithTooltip(
+				new WorkbenchLabelProvider(), PlatformUI.getWorkbench()
+				.getDecoratorManager().getLabelDecorator(ContributingPluginDecorator.ID)) {
+					protected Object unwrapElement(Object element) {
+						if (element instanceof WorkbenchWizardElement) {
+							element = ((WorkbenchWizardElement) element).getConfigurationElement();
+						}
+						if (element instanceof WizardCollectionElement) {
+							element = ((WizardCollectionElement) element).getConfigurationElement();
+						}
+						return element;
+					}
+				});
 		treeViewer.setComparator(NewWizardCollectionComparator.INSTANCE);
 		treeViewer.addSelectionChangedListener(this);
 
