@@ -2,17 +2,27 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="actionSetPartAssociations" name="Action Set Part Associations"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         This extension point is used to define an action set which should be added to a perspective when a part (view or editor) is opened in the perspective.
+         &lt;p&gt;
+&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br&gt;
+Do not use this extension point, it will be removed in future versions of this product.
+Instead, use the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt;
+&lt;/p&gt;
+This extension point is used to define an action set which should be added to a perspective when a part (view or editor) is opened in the perspective.
 In the case of an editor, the action set will remain visible while the editor is the current editor.
 In the case of a view, the action set will be visible when the view is the active part.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true" />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="actionSetPartAssociation" minOccurs="0" maxOccurs="unbounded"/>
@@ -36,15 +46,20 @@ In the case of a view, the action set will be visible when the view is the activ
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="actionSetPartAssociation">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="part" minOccurs="0" maxOccurs="unbounded"/>
@@ -56,15 +71,20 @@ In the case of a view, the action set will be visible when the view is the activ
 registry) which is to be associated with particular workbench
 views and/or editors.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.actionSets/actionSet/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="part">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -76,10 +96,21 @@ views and/or editors.
       </complexType>
    </element>
 
+
    <annotation>
-      <appinfo>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The user may override these associations using the customize perspective dialog.  Regardless of these associations,
+action sets which the user turns off will never appear and action sets which the user turns on will always be visible.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of an action set part association (note the subelement and the way attributes are used):
 
@@ -98,23 +129,11 @@ In the example above, a view or editor are associated with the refactoring actio
       </documentation>
    </annotation>
 
-   <annotation>
-      <appinfo>
-         <meta.section type="apiInfo"/>
-      </appinfo>
-      <documentation>
-         The user may override these associations using the customize perspective dialog.  Regardless of these associations,
-action sets which the user turns off will never appear and action sets which the user turns on will always be visible.
-      </documentation>
-   </annotation>
-
-
-
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2002, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
