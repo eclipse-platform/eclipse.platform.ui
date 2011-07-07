@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public interface IAddMemoryBlocksTarget {
 	 * 
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
+	 * @return <code>true</code> if the add memory block operation can be performed from the given part and selection, <code>false</code> otherwise
 	 * @throws CoreException if unable to perform the action 
 	 */
 	public boolean canAddMemoryBlocks(IWorkbenchPart part, ISelection selection) throws CoreException;
@@ -39,7 +40,7 @@ public interface IAddMemoryBlocksTarget {
 	/**
 	 * Returns whether this target will support adding memory block from the specified
 	 * part.
-	 * @param part
+	 * @param part the workbench part to check
 	 * @return true if the target wants to support adding memory block from the given
 	 * part, false otherwise.
 	 */

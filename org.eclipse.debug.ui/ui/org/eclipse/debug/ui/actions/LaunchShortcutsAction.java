@@ -215,6 +215,10 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	
 	/**
 	 * Add the shortcut to the context menu's launch sub-menu.
+	 * @param mode the launch mode identifier
+	 * @param ext the shortcut extension to get label and help information from
+	 * @param menu the menu to add to
+	 * @param accelerator the accelerator to use
 	 */
 	private void populateMenuItem(String mode, LaunchShortcutExtension ext, Menu menu, int accelerator) {
 		LaunchShortcutAction action = new LaunchShortcutAction(mode, ext);
@@ -242,7 +246,10 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * Evaluate the enablement logic in the contextualLaunch
 	 * element description. A true result means that we should
 	 * include this shortcut in the context menu.
+	 * @param ext the launch shortcut extension to get the enablement expression from
+	 * @param context the context to use for enablement evaluation
 	 * @return true iff shortcut should appear in context menu
+	 * @throws CoreException if an exception occurs
 	 */
 	private boolean isApplicable(LaunchShortcutExtension ext, IEvaluationContext context) throws CoreException {
 		Expression expr = ext.getContextualLaunchEnablementExpression();

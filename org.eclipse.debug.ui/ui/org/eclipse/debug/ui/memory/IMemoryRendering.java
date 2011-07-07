@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,7 @@ public interface IMemoryRendering extends IAdaptable{
      * the created control can be accessed via <code>getControl</code>
      * </p>
      * @param parent the parent composite
+     * @return the new top level control
      */
     public Control createControl(Composite parent);
 

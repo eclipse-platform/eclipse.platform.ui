@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,6 +187,10 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		
 	/**
 	 * Add the shortcut to the menu.
+	 * @param mode the launch mode identifier
+	 * @param ext the shortcut extension to get label and help information from
+	 * @param menu the menu to add to
+	 * @param menuCount the number to use as the accelerator for the new action
 	 */
 	private void populateMenu(String mode, LaunchShortcutExtension ext, Menu menu, int menuCount) {
 		LaunchShortcutAction action = new LaunchShortcutAction(mode, ext);
@@ -204,6 +208,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	/**
 	 * Return the ID of the currently active perspective, or <code>null</code>
 	 * if there is none.
+	 * @return the identifier of the currently active perspective
 	 */
 	private String getActivePerspectiveID() {
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
@@ -282,6 +287,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	/**
 	 * Set the enabled state of the underlying action based on whether there are any
 	 * registered launch shortcuts for this launch mode.
+	 * @param action the action to initialize
 	 */
 	private void initialize(IAction action) {
 		fAction = action;

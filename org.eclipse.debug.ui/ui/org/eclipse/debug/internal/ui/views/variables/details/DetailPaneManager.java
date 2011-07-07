@@ -69,6 +69,8 @@ public class DetailPaneManager {
 		/** 
 		 * Instantiates the factory and asks it to produce the IDetailPane for
 		 * the given ID
+		 * @param paneID the identifier of the detail pane to create
+		 * @return the new detail pane or <code>null</code> if the backing {@link IDetailPaneFactory} is <code>null</code>
 		 */
 		public IDetailPane createDetailPane(String paneID){
 			if (getFactory() != null){
@@ -80,6 +82,8 @@ public class DetailPaneManager {
 		/** 
 		 * Instantiates the factory and asks it for the set of detail pane
 		 * IDs that the factory can produce for the given selection.
+		 * @param selection the current view selection
+		 * @return the set of detail pane type for the given selection or an empty set, never <code>null</code>
 		 */
 		public Set getDetailPaneTypes(IStructuredSelection selection){
 			if (getFactory() != null){
@@ -91,6 +95,8 @@ public class DetailPaneManager {
 		/** 
 		 * Instantiates the factory and asks it for the detail pane ID
 		 * that the factory considers the default for the given selection.
+		 * @param selection the current view selection
+		 * @return the identifier of the default detail pane or <code>null</code> if the backing {@link IDetailPaneFactory} is <code>null</code>
 		 */
 		public String getDefaultDetailPane(IStructuredSelection selection) {
 			if (getFactory() != null){
@@ -102,6 +108,8 @@ public class DetailPaneManager {
 		/** 
 		 * Instantiates the factory and asks it to produce the name of the detail pane
 		 * for the given ID.
+		 * @param paneID the detail pane identifier
+		 * @return the name of the detail pane or <code>null</code> if the backing {@link IDetailPaneFactory} is <code>null</code>
 		 */
 		public String getDetailPaneName(String paneID) {
 			if (getFactory() != null){
@@ -113,6 +121,8 @@ public class DetailPaneManager {
 		/** 
 		 * Instantiates the factory and asks it to produce the description of the 
 		 * detail pane for the given ID.
+		 * @param paneID the detail pane identifier
+		 * @return the description of the detail pane or <code>null</code> if the backing {@link IDetailPaneFactory} is <code>null</code>
 		 */
 		public String getDetailPaneDescription(String paneID) {
 			if (getFactory() != null){
@@ -123,6 +133,7 @@ public class DetailPaneManager {
 		
 		/**
 		 * Returns the instantiated factory specified by the class property. 
+		 * @return the singleton {@link IDetailPaneFactory}
 		 */
 		private IDetailPaneFactory getFactory(){
 			if (fFactory != null) return fFactory;
@@ -143,6 +154,8 @@ public class DetailPaneManager {
 		/**
 		 * Checks if the enablement expression for the factory evaluates to true for the
 		 * given selection.
+		 * @param selection the current view selection
+		 * @return <code>true</code> if the backing {@link IDetailPaneFactory} applies to the given selection, <code>false</code> otherwise
 		 */
 		public boolean isEnabled(IStructuredSelection selection) {
 			boolean enabled = false;
@@ -235,8 +248,8 @@ public class DetailPaneManager {
 	
     /**
      * Preference key for storing the preferred detail panes map.
-     * @see {@link #storePreferredDetailsAreas()}
-     * @see {@link #loadPreferredDetailsAreas()}
+     * @see #storePreferredDetailsAreas()
+     * @see #loadPreferredDetailsAreas()
      */
     public static final String PREF_DETAIL_AREAS = "preferredDetailPanes"; //$NON-NLS-1$
 	
@@ -328,6 +341,7 @@ public class DetailPaneManager {
 	 * contributed to the extension point and are enabled for the given selection
 	 * (enabled if the factory does not have an enablement expression or if the 
 	 * enablement expression evaluates to true).
+	 * @param selection  the current view selection
 	 * 
 	 * @return The factories enabled for the selection or an empty collection.
 	 */
@@ -375,6 +389,8 @@ public class DetailPaneManager {
 	 * by storing previous choices and can be set using a context menu.
 	 * 
 	 * @param possiblePaneIDs The set of possible detail pane IDs
+	 * @param enabledFactories the complete listing of enable {@link IDetailPaneFactory}s
+	 * @param selection the current selection from the variables view
 	 * @return The preferred detail pane ID or null
 	 */
 	private String chooseDetailsAreaIDInSet(Set possiblePaneIDs, Collection enabledFactories, IStructuredSelection selection){
@@ -489,7 +505,7 @@ public class DetailPaneManager {
     /**
      * Loads the map of preferred detail pane IDs from the preference store.
      * 
-     * @see DetailPaneManager#storePreferredDetailsArea()
+     * @see #storePreferredDetailsAreas()
      */
     private void loadPreferredDetailsAreas() {
     	fPreferredDetailPanes = new HashMap();

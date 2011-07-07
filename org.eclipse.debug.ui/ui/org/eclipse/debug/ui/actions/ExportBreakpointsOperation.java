@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ import com.ibm.icu.text.MessageFormat;
  * This class may be instantiated.
  * <p>
  * @since 3.2
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class ExportBreakpointsOperation implements IRunnableWithProgress {
 
@@ -164,8 +164,8 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 	 * Collects all of the breakpoint working sets that contain the given {@link IBreakpoint}
 	 * in the given list
 	 * 
-	 * @param breakpoint
-	 * @param collector
+	 * @param breakpoint the breakpoint to get working set information about
+	 * @return the {@link IImportExportConstants#DELIMITER} delimited {@link String} for all of the work sets the given breakpoint belongs to 
 	 * @since 3.5
 	 */
 	private String getWorkingSetsAttribute(IBreakpoint breakpoint) {

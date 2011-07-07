@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public interface IConsole {
 	 * standard in, out, and error streams with the console. Keyboard input will
 	 * be written to the given proxy.
 	 * 
-	 * @param streamsProxy
+	 * @param streamsProxy the proxy to connect this console to
 	 */
 	public void connect(IStreamsProxy streamsProxy);
 	
@@ -45,8 +45,8 @@ public interface IConsole {
 	 * the given identifier. This allows for more than the standard (in, out,
 	 * error) streams to be connected to the console.
 	 * 
-	 * @param streamMonitor
-	 * @param streamIdentifer
+	 * @param streamMonitor the monitor to connect this console to
+	 * @param streamIdentifer the stream identifier to connect this console to
 	 */
 	public void connect(IStreamMonitor streamMonitor, String streamIdentifer);
 	

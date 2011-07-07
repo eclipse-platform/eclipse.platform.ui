@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,8 @@ public interface IRunToLineTarget {
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
 	 * @param target suspended element to perform the "run to line" action on
-	 * @throws CoreException if unable to perform the action 
+	 * @return if a run to line operation can be performed on the given
+	 * element that is currently selected and suspended in the Debug view
 	 */
 	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target);
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -190,8 +190,8 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	
 	/**
 	 * Returns a marker backing an existing breakpoint based on the given set of breakpoint attributes
-	 * @param attributes
-	 * @param participants
+	 * @param attributes the map of attributes to compare for marker equality
+	 * @param participants the list of participants to ask if a breakpoint matches the given map of attributes
 	 * @return the marker for an existing breakpoint or <code>null</code> if one could not be located
 	 * @since 3.5
 	 */
@@ -218,7 +218,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * <li>{@link Integer}</li>
 	 * <li>{@link Boolean}</li>
 	 * </ul>
-	 * @param memento
+	 * @param memento the memento to read breakpoint attributes from
 	 * @return a new map of all of the breakpoint attributes from the given memento.
 	 * @since 3.5
 	 */
@@ -249,8 +249,8 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	
 	/**
 	 * Collects the 'name' and 'value' key / attribute from the given memento and places it in the specified map
-	 * @param memento
-	 * @param map
+	 * @param memento the memento to read a name / value attribute from 
+	 * @param map the map to add the read attribute to
 	 */
 	private void readAttribute(IMemento memento, Map map) {
 		String name = memento.getString(IImportExportConstants.IE_NODE_NAME), 
@@ -276,9 +276,9 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	/**
 	 * restores all of the attributes back into the given marker, recreates the breakpoint in the
 	 * breakpoint manager, and optionally recreates any working set(s) the breakpoint belongs to.
-	 * @param marker
-	 * @param attributes
-	 * @param participants
+	 * @param marker the marker to create the new breakpoint on
+	 * @param attributes the attributes to set in the new breakpoint
+	 * @param participants the list of participants used to verify the restored breakpoint
 	 * @since 3.5
 	 */
 	protected void restoreBreakpoint(IMarker marker, final Map attributes, IBreakpointImportParticipant[] participants) {
@@ -322,8 +322,8 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	
 	/**
 	 * Updates the working sets the given breakpoint belongs to
-	 * @param wsnames
-	 * @param breakpoint
+	 * @param wsnames the array of working set names
+	 * @param breakpoint the breakpoint to add to the working sets
 	 * @since 3.5
 	 */
 	private void updateWorkingSets(String[] wsnames, IBreakpoint breakpoint) {
@@ -365,8 +365,8 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * Collects all of the breakpoint working sets that contain the given {@link IBreakpoint}
 	 * in the given list
 	 * 
-	 * @param breakpoint
-	 * @param collector
+	 * @param breakpoint the breakpoint to collect working set containers from 
+	 * @param collector the list to collect containing working sets in 
 	 * @since 3.5
 	 */
 	private void collectContainingWorkingsets(IBreakpoint breakpoint, List collector) {

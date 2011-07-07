@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,8 @@ public interface IAddMemoryRenderingsTarget {
 	 * 
 	 * @param part the part on which the action has been invoked
 	 * @param selection the active debug context in the active workbench window	
-	 * @throws CoreException if an error has occurred
+	 * @return <code>true</code> if a memory rendering can be added from the specified
+	 * part with the given selection, <code>false</code> otherwise
 	 */
 	public boolean canAddMemoryRenderings(IWorkbenchPart part, ISelection selection);
 	

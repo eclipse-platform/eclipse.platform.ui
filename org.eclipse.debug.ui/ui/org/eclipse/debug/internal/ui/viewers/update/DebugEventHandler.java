@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public abstract class DebugEventHandler {
 	/**
 	 * Constructs an event handler for the given model proxy.
 	 * 
-	 * @param policy
+	 * @param proxy the backing proxy
 	 */
 	public DebugEventHandler(AbstractModelProxy proxy) {
 		fModelProxy = proxy;
@@ -45,7 +45,7 @@ public abstract class DebugEventHandler {
 	 * Returns the model proxy this event handler working for,
 	 * or <code>null</code> if disposed.
 	 * 
-	 * @return
+	 * @return the backing model proxy
 	 */
 	protected synchronized AbstractModelProxy getModelProxy() {
 		return fModelProxy;
@@ -62,7 +62,7 @@ public abstract class DebugEventHandler {
 	/**
 	 * Handles a create event. 
 	 * 
-	 * @param event
+	 * @param event the event to handle
 	 */
 	protected void handleCreate(DebugEvent event) {
 		refreshRoot(event);
@@ -71,7 +71,7 @@ public abstract class DebugEventHandler {
 	/**
 	 * Handles a terminate event.
 	 * 
-	 * @param event
+	 * @param event the event to handle
 	 */
 	protected void handleTerminate(DebugEvent event) {
 		refreshRoot(event);
@@ -80,7 +80,7 @@ public abstract class DebugEventHandler {
 	/**
 	 * Handles a suspend event.
 	 * 
-	 * @param event
+	 * @param event the event to handle
 	 */	
 	protected void handleSuspend(DebugEvent event) {
 		refreshRoot(event);
@@ -89,7 +89,7 @@ public abstract class DebugEventHandler {
 	/**
 	 * Handles a resume event for which a suspend is expected shortly (<500ms).
 	 * 
-	 * @param event
+	 * @param event the event to handle
 	 */
 	protected void handleResumeExpectingSuspend(DebugEvent event) {
 		// do nothing unless the suspend times out
@@ -98,7 +98,7 @@ public abstract class DebugEventHandler {
 	/**
 	 * Handles a resume event that is not expecting an immediate suspend event
 	 * 
-	 * @param event
+	 * @param event the event to handle
 	 */
 	protected void handleResume(DebugEvent event) {
 		refreshRoot(event);
@@ -107,7 +107,7 @@ public abstract class DebugEventHandler {
 	/**
 	 * Handles a change event. 
 	 * 
-	 * @param event
+	 * @param event the event to handle
 	 */
 	protected void handleChange(DebugEvent event) {
 		refreshRoot(event);
@@ -116,7 +116,7 @@ public abstract class DebugEventHandler {
 	/**
 	 * Handles an unknown event.
 	 * 
-	 * @param event
+	 * @param event the event to handle
 	 */
 	protected void handleOther(DebugEvent event) {
 		refreshRoot(event);
@@ -126,7 +126,7 @@ public abstract class DebugEventHandler {
 	 * Notification that a pending suspend event was not received for the given
 	 * resume event within the timeout period.
 	 * 
-	 * @param resume resume event with missing suspend event
+	 * @param event the event to handle
 	 */
 	protected void handleSuspendTimeout(DebugEvent event) {
 		refreshRoot(event);
@@ -134,7 +134,7 @@ public abstract class DebugEventHandler {
 	
 	/**
 	 * Handles the given suspend event which caused a timeout. It is
-	 * parired with its original resume event.
+	 * paired with its original resume event.
 	 * 
 	 * @param suspend suspend event
 	 * @param resume resume event
@@ -158,7 +158,7 @@ public abstract class DebugEventHandler {
 	/**
 	 * Fires the given delta, unless this handler has been disposed.
 	 * 
-	 * @param delta
+	 * @param delta the delta to fire in the backing model proxy
 	 */
 	protected void fireDelta(IModelDelta delta) {
 		AbstractModelProxy modelProxy = getModelProxy();

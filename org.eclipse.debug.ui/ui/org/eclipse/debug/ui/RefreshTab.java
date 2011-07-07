@@ -236,6 +236,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	
 	/**
 	 * Updates the tab to display the refresh scope specified by the launch config
+	 * @param configuration the configuration to update scope information on
 	 */
 	private void updateScope(ILaunchConfiguration configuration) {
 		String scope = null;
@@ -278,7 +279,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	}
 	/**
 	 * Method updateRecursive.
-	 * @param configuration
+	 * @param configuration the launch configuration to update the refresh button from
 	 */
 	private void updateRecursive(ILaunchConfiguration configuration) {
 		boolean recursive= true;
@@ -291,7 +292,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	}
 	/**
 	 * Method updateRefresh.
-	 * @param configuration
+	 * @param configuration the configuration to update the refresh scope button from
 	 */
 	private void updateRefresh(ILaunchConfiguration configuration) {
 		String scope= null;
@@ -423,7 +424,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * Returns whether the refresh scope specified by the given launch
 	 * configuration is recursive.
 	 * 
-	 * @param configuration
+	 * @param configuration the configuration to check for recursive refresh being set
 	 * @return whether the refresh scope is recursive
 	 * @throws CoreException if unable to access the associated attribute
 	 */

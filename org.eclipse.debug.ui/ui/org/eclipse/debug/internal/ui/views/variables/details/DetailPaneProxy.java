@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -170,8 +170,8 @@ public class DetailPaneProxy implements ISaveablePart {
 	/**
 	 * Checks if the current pane supports the <code>IAdaptable</code> framework
 	 * and if so, calls its <code>getAdapter()</code> method.
-	 * @param required
-	 * @return
+	 * @param required the class to get the adapter for
+	 * @return the {@link IAdaptable} for the given class or <code>null</code>
 	 */
 	public Object getAdapter(Class required){
 		if (fCurrentPane != null && fCurrentPane instanceof IAdaptable){

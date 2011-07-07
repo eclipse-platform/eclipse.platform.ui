@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -216,7 +216,8 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	}
 	
 	/**
-	 * Returns the selected workspace container,or <code>null</code>
+	 * Returns the selected workspace container or <code>null</code>
+	 * @return the selected workspace container or <code>null</code> 
 	 */
 	protected IContainer getContainer() {
 		String path = getWorkingDirectoryText();
@@ -440,6 +441,7 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	
 	/**
 	 * Sets the launch configuration to be used by this working directory block.
+	 * @param config set the backing launch configuration for this block
 	 */
 	protected void setLaunchConfiguration(ILaunchConfiguration config) {
 		fLaunchConfiguration = config;

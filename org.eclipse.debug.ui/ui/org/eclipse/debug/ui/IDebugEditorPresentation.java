@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public interface IDebugEditorPresentation {
 	 * @param editorPart the editor the debugger has opened
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
+	 * @return <code>true</code> if annotations were added to the given editor part <code>false</code> otherwise
 	 */
 	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame);
 	

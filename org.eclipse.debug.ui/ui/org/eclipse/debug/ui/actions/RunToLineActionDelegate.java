@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,7 +172,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	/**
 	 * Binds this action to operate on the given part's run to line adapter.
 	 *  
-	 * @param part
+	 * @param part the workbench part to bind this delegate to
 	 */
 	private void bindTo(IWorkbenchPart part) {
 		IDebugContextManager manager = DebugUITools.getDebugContextManager();

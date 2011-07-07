@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -128,8 +128,8 @@ public class LaunchAction extends Action {
 	/**
 	 * Removes the specified <code>ILaunchConfiguration</code> from the launch histories associated
 	 * with the specified listing of <code>ILaunchGroup</code>s.
-	 * @param config
-	 * @param groups
+	 * @param config the configuration to remove from the histories from the given launch groups
+	 * @param groups the launch groups whose histories the given configuration should be removed from
 	 * 
 	 * @since 3.4
 	 */

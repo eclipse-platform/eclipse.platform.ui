@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.ui.ISharedImages;
  
 /**
  * Constant definitions for debug UI plug-in.
@@ -335,7 +336,7 @@ public interface IDebugUIConstants {
 	public static final String IMG_SKIP_BREAKPOINTS= "IMG_SKIP_BREAKPOINTS"; //$NON-NLS-1$
 	
 	/** Clear action image identifier. 
-	 * @deprecated */
+	 * @deprecated use the platform shared image for clear - {@link ISharedImages#IMG_ETOOL_CLEAR}*/
 	public static final String IMG_LCL_CLEAR= "IMG_LCL_CLEAR"; //$NON-NLS-1$
 	
 	/** Display variable type names action image identifier. */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -532,6 +532,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	 * wishing to contribute an action to this menu must use
 	 * <code>IDebugUIConstants.VARIABLE_VIEW_DETAIL_ID</code> as the
 	 * <code>targetID</code> in the extension XML.
+	 * @param menuControl the control to create the context menu on
 	 */
 	protected void createDetailContextMenu(Control menuControl) {
 		MenuManager menuMgr= new MenuManager();
@@ -699,6 +700,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	
 	/**
 	 * Lazily instantiate and return a Document for the detail pane text viewer.
+	 * @return the singleton {@link Document} for this detail pane
 	 */
 	protected IDocument getDetailDocument() {
 		if (fDetailDocument == null) {
