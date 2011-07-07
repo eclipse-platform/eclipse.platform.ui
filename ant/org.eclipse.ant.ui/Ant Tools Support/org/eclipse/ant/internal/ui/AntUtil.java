@@ -590,17 +590,46 @@ public final class AntUtil {
      * @since 3.6
      */
     public static boolean isKnownAntFile(IResource resource) {
-    	IFile file = null;
-    	if(resource.getType() == IResource.FILE) {
-    		file = (IFile) resource;
+    	if(resource != null) {
+    		//workspace file
+	    	IFile file = null;
+	    	if(resource.getType() == IResource.FILE) {
+	    		file = (IFile) resource;
+	    	}
+	    	else {
+	    		file = (IFile) resource.getAdapter(IFile.class);
+	    	}
+	    	if(file != null) {
+	    		IContentType fileType = IDE.getContentType(file);
+	    		IContentType antType = Platform.getContentTypeManager().getContentType(AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE);
+	    		return fileType.isKindOf(antType);
+	    	}
     	}
-    	else {
-    		file = (IFile) resource.getAdapter(IFile.class);
-    	}
-    	if(file != null) {
-    		IContentType fileType = IDE.getContentType(file);
-    		IContentType antType = Platform.getContentTypeManager().getContentType(AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE);
-    		return fileType.isKindOf(antType);
+    	return false;
+    }
+    
+    /**
+     * Returns if the given extension is a known extension to Ant
+     * i.e. a supported content type extension.
+     * @param file 
+     * @return true if the file extension is supported false otherwise
+     * 
+     * @since 3.8
+     */
+    public static boolean isKnownAntFile(File file) {
+    	if(file != null && !file.isDirectory()) {
+    		String filename = file.getName();
+    		IContentType type = Platform.getContentTypeManager().findContentTypeFor(filename);
+    		if(type != null) {
+    			IContentType antType = Platform.getContentTypeManager().getContentType(AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE);
+    			return type.isKindOf(antType);
+    		}
+			String[] names = getKnownBuildfileNames();
+			for (int i = 0; i < names.length; i++) {
+				if(filename.endsWith(names[i])) {
+					return true;
+				}
+			}
     	}
     	return false;
     }
