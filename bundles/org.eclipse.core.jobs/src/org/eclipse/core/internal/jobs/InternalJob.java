@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,7 +152,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/* (non-Javadoc)
 	 * @see Job#addJobListener(IJobChangeListener)
 	 */
-	protected void addJobChangeListener(IJobChangeListener listener) {
+	protected synchronized void addJobChangeListener(IJobChangeListener listener) {
 		if (listeners == null)
 			listeners = new ListenerList(ListenerList.IDENTITY);
 		listeners.add(listener);
@@ -277,7 +277,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	protected int getState() {
 		int state = flags & M_STATE;
 		switch (state) {
-			//blocked and yielding state is equivalent to waiting state for clients
+		//blocked and yielding state is equivalent to waiting state for clients
 			case YIELDING :
 			case BLOCKED :
 				return Job.WAITING;
@@ -409,9 +409,12 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/* (non-Javadoc)
 	 * @see Job#removeJobListener(IJobChangeListener)
 	 */
-	protected void removeJobChangeListener(IJobChangeListener listener) {
-		if (listeners != null)
+	protected synchronized void removeJobChangeListener(IJobChangeListener listener) {
+		if (listeners != null) {
 			listeners.remove(listener);
+			if (listeners.isEmpty())
+				listeners = null;
+		}
 	}
 
 	/* (non-Javadoc)
