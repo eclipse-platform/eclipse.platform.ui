@@ -23,7 +23,6 @@ class ThreadJob extends Job {
 	 * Set to true if this thread job is running in a thread that did
 	 * not own a rule already.  This means it needs to acquire the
 	 * rule during beginRule, and must release the rule during endRule.
-	 * @GuardedBy("JobManager.implicitJobs")
 	 */
 	protected boolean acquireRule = false;
 
@@ -31,7 +30,6 @@ class ThreadJob extends Job {
 	 * Indicates that this thread job did report to the progress manager
 	 * that it will be blocked, and therefore when it begins it must
 	 * be reported to the job manager when it is no longer blocked.
-	 * @GuardedBy("JobManager.implicitJobs")
 	 */
 	boolean isBlocked = false;
 
