@@ -69,7 +69,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 	private static final int MAX_TARGET_APPEND_LENGTH = 30;
 	private static final String DEFAULT_TARGET = "default"; //$NON-NLS-1$
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
 	 */
 	public void launch(ISelection selection, String mode) {
@@ -428,6 +428,8 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 	 * Prompts the user to choose from the list of given launch configurations
 	 * and returns the config the user choose or <code>null</code> if the user
 	 * pressed Cancel or if the given list is empty.
+	 * @param configs the list of {@link ILaunchConfiguration}s to choose from
+	 * @return the chosen {@link ILaunchConfiguration} or <code>null</code>
 	 */
 	public static ILaunchConfiguration chooseConfig(List configs) {
 		if (configs.isEmpty()) {
@@ -447,7 +449,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		return null;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
 	 */
 	public void launch(IEditorPart editor, String mode) {
@@ -463,7 +465,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				filepath = locationProvider.getPath(input);
 			}
 		}
-		if(filepath != null && AntUtil.isKnownAntFile(file)) {
+		if(filepath != null && (AntUtil.isKnownAntFile(file) || AntUtil.isKnownAntFile(filepath.toFile()))) {
 			launch(filepath, (file == null ? null : file.getProject()), mode, null);
 			return;
 		}
