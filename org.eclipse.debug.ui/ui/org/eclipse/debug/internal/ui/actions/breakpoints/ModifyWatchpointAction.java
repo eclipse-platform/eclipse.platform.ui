@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,8 +52,9 @@ public abstract class ModifyWatchpointAction implements IObjectActionDelegate, I
     /**
      * Toggles the watch point attribute to the given value.
      * 
-     * @param watchpoint
+     * @param watchpoint the watchpoint to toggle
      * @param b on or off
+     * @throws CoreException if an exception occurs
      */
     protected abstract void toggleWatchpoint(IWatchpoint watchpoint, boolean b) throws CoreException;
     
@@ -93,14 +94,14 @@ public abstract class ModifyWatchpointAction implements IObjectActionDelegate, I
      * Returns whether the action should be checke for the current selection
      * 
      * @param watchpoint selected watchpoint
-     * @return whether the action should be checke for the current selection
+     * @return whether the action should be checked for the current selection
      */
     protected abstract boolean isChecked(IWatchpoint watchpoint);
 
     /**
      * Returns whether this action is enabled for the given watchpoint.
      * 
-     * @param watchpoint
+     * @param watchpoint the watchpoint to examine
      * @return whether this action is enabled for the given watchpoint
      */
     protected abstract boolean isEnabled(IWatchpoint watchpoint);

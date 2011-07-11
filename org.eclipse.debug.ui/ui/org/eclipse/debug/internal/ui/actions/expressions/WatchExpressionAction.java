@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
 
     /**
      * Finds the currently selected context in the UI.
+     * @return the current debug context
      */
     protected IDebugElement getContext() {
         IAdaptable object = DebugUITools.getDebugContext();
@@ -85,9 +86,9 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
         return (IWatchExpression[])list.toArray(new IWatchExpression[list.size()]);
 	}
 	
-	/**
-		* @see IActionDelegate#selectionChanged(IAction, ISelection)
-		*/
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
 	public void selectionChanged(IAction action, ISelection sel) {
 	}
 
@@ -105,7 +106,7 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
 	/**
 		* Displays the given error message in the status line.
 		* 
-		* @param message
+		* @param message the message to display
 		*/
 	protected void showErrorMessage(String message) {
 		if (fPart instanceof IViewPart) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,7 +171,8 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	
 	/**
 	 * Selection has changed in the debug view
-	 * need to reapply the filters.
+	 * need to re-apply the filters.
+	 * @param debugTargets the new set of {@link IDebugTarget}s
 	 */
 	protected void reapplyFilters(List debugTargets) {
 		fDebugTargets= debugTargets;		
@@ -211,6 +212,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	/**
 	 * Adds or removes the viewer filter depending
 	 * on the value of the parameter.
+	 * @param on flag to indicate if viewer filtering should be added or removed 
 	 */
 	protected void valueChanged(boolean on) {
 		if (getViewer().getControl().isDisposed()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2008, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,7 @@ public class WatchHandler extends AbstractHandler {
     /**
      * Returns the factory adapter for the given variable or <code>null</code> if none.
      * 
-     * @param variable
+     * @param variable the variable to get the factory for
      * @return factory or <code>null</code>
      */
     static IWatchExpressionFactoryAdapter getFactory(IVariable variable) {
@@ -124,7 +124,7 @@ public class WatchHandler extends AbstractHandler {
     /**
      * Returns the factory adapter for the given variable or <code>null</code> if none.
      * 
-     * @param variable
+     * @param element the element to try and adapt
      * @return factory or <code>null</code>
      */
     static IWatchExpressionFactoryAdapter2 getFactory2(Object element) {

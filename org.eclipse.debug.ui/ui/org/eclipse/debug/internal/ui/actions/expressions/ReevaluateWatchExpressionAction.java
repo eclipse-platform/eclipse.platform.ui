@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class ReevaluateWatchExpressionAction implements IObjectActionDelegate {
     
     /**
      * Finds the currently selected context in the UI.
+     * @return the current debug context
      */
     protected IDebugElement getContext() {
         IAdaptable object = DebugUITools.getDebugContext();
@@ -78,8 +79,8 @@ public class ReevaluateWatchExpressionAction implements IObjectActionDelegate {
 		}
 	}
 	
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		IDebugElement debugElement = getContext();
