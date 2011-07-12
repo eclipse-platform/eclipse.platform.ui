@@ -216,6 +216,11 @@ public class E4Application implements IApplication {
 				appContext);
 		appModel.setContext(appContext);
 
+		String rtlMode = getArgValue(E4Workbench.RTL_MODE, applicationContext,
+				false);
+		appModel.getTransientData().put(E4Workbench.RTL_MODE,
+				"rtl".equals(rtlMode));
+
 		// for compatibility layer: set the application in the OSGi service
 		// context (see Workbench#getInstance())
 		if (!E4Workbench.getServiceContext().containsKey(
