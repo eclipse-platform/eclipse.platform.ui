@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.ui.part;
 
 import java.util.ArrayList;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -29,11 +30,14 @@ import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.KeyBindingService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.contexts.NestableContextService;
+import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.part.IMultiPageEditorSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
@@ -101,7 +105,11 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	private final ServiceLocator serviceLocator;
 
+	private NestableContextService contextService;
+
 	private IEclipseContext context;
+
+	private boolean active = false;
 
 	/**
 	 * Creates a site for the given editor nested within the given multi-page
@@ -151,6 +159,17 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 					}
 				});
 
+		context.set(IContextService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext ctxt) {
+				if (contextService == null) {
+					contextService = new NestableContextService(ctxt.getParent().get(
+							IContextService.class), new ActivePartExpression(multiPageEditor));
+				}
+				return contextService;
+			}
+		});
+
 		// create a local handler service so that when this page
 		// activates/deactivates, its handlers will also be taken into/out of
 		// consideration during handler lookups
@@ -165,8 +184,13 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * @since 3.2
 	 */
 	public final void activate() {
+		active = true;
 		context.activate();
 		serviceLocator.activate();
+
+		if (contextService != null) {
+			contextService.activate();
+		}
 	}
 
 	/**
@@ -176,6 +200,11 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * @since 3.2
 	 */
 	public final void deactivate() {
+		active = false;
+		if (contextService != null) {
+			contextService.deactivate();
+		}
+
 		serviceLocator.deactivate();
 		context.deactivate();
 	}
@@ -203,6 +232,10 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 				((KeyBindingService) service).dispose();
 			}
 			service = null;
+		}
+
+		if (contextService != null) {
+			contextService.dispose();
 		}
 
 		if (serviceLocator != null) {
@@ -396,7 +429,12 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	}
 
 	public final Object getService(final Class key) {
-		return serviceLocator.getService(key);
+		Object service = serviceLocator.getService(key);
+		if (active && service instanceof INestable) {
+			// services need to know that it is currently in an active state
+			((INestable) service).activate();
+		}
+		return service;
 	}
 
 	/**
