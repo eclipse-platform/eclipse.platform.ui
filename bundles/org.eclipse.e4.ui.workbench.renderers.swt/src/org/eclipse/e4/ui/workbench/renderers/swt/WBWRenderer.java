@@ -360,18 +360,25 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		MWindow wbwModel = (MWindow) element;
 
+		MApplication appModel = wbwModel.getContext().get(MApplication.class);
+		boolean rtlMode = (Boolean) appModel.getTransientData().get(
+				E4Workbench.RTL_MODE);
+		int rtlStyle = rtlMode ? SWT.RIGHT_TO_LEFT : 0;
+
 		Shell parentShell = parent == null ? null : ((Control) parent)
 				.getShell();
 
 		final Shell wbwShell;
 		if (parentShell == null) {
-			wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
+			wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM
+					| rtlStyle);
 			wbwModel.getTags().add("topLevel"); //$NON-NLS-1$
 		} else if (wbwModel.getTags().contains("dragHost")) { //$NON-NLS-1$
-			wbwShell = new Shell(parentShell, SWT.BORDER);
+			wbwShell = new Shell(parentShell, SWT.BORDER | rtlStyle);
 			wbwShell.setAlpha(110);
 		} else {
-			wbwShell = new Shell(parentShell, SWT.TOOL | SWT.TITLE | SWT.RESIZE);
+			wbwShell = new Shell(parentShell, SWT.TOOL | SWT.TITLE | SWT.RESIZE
+					| rtlStyle);
 		}
 
 		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
