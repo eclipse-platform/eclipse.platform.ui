@@ -17,7 +17,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -196,7 +195,7 @@ public class PerspectiveSwitcher {
 	};
 
 	@PostConstruct
-	void init(IEclipseContext context) {
+	void init() {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN), childrenHandler);
 		eventBroker.subscribe(
