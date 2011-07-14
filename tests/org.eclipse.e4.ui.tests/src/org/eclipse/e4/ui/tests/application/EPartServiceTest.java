@@ -10464,6 +10464,45 @@ public class EPartServiceTest extends TestCase {
 		assertNull("The part should no longer be reachable", ref.get());
 	}
 
+	public void testsEventWithExceptions() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+		window.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partB);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		partService.activate(partB);
+		partService.activate(partA);
+
+		partService.addPartListener(new ExceptionListener());
+		PartListener listener = new PartListener();
+		partService.addPartListener(listener);
+
+		partService.activate(partB);
+		assertEquals(1, listener.getActivated());
+		assertEquals(1, listener.getDeactivated());
+		assertEquals(1, listener.getVisible());
+		assertEquals(1, listener.getHidden());
+		assertEquals(1, listener.getBroughtToTop());
+	}
+
 	private MApplication createApplication(String partId) {
 		return createApplication(new String[] { partId });
 	}
@@ -10527,11 +10566,13 @@ public class EPartServiceTest extends TestCase {
 		private List<MPart> deactivatedParts = new ArrayList<MPart>();
 		private List<MPart> hiddenParts = new ArrayList<MPart>();
 		private List<MPart> visibleParts = new ArrayList<MPart>();
+		private List<MPart> broughtToTopParts = new ArrayList<MPart>();
 
 		private int activated = 0;
 		private int deactivated = 0;
 		private int hidden = 0;
 		private int visible = 0;
+		private int broughtToTop = 0;
 
 		private boolean valid = true;
 
@@ -10565,6 +10606,10 @@ public class EPartServiceTest extends TestCase {
 			return visible;
 		}
 
+		public int getBroughtToTop() {
+			return broughtToTop;
+		}
+
 		public boolean isValid() {
 			return valid;
 		}
@@ -10594,7 +10639,11 @@ public class EPartServiceTest extends TestCase {
 		}
 
 		public void partBroughtToTop(MPart part) {
-
+			if (valid && part == null) {
+				valid = false;
+			}
+			broughtToTop++;
+			broughtToTopParts.add(part);
 		}
 
 		public void partDeactivated(MPart part) {
@@ -10619,6 +10668,30 @@ public class EPartServiceTest extends TestCase {
 			}
 			visible++;
 			visibleParts.add(part);
+		}
+
+	}
+
+	class ExceptionListener implements IPartListener {
+
+		public void partActivated(MPart part) {
+			throw new RuntimeException();
+		}
+
+		public void partBroughtToTop(MPart part) {
+			throw new RuntimeException();
+		}
+
+		public void partDeactivated(MPart part) {
+			throw new RuntimeException();
+		}
+
+		public void partHidden(MPart part) {
+			throw new RuntimeException();
+		}
+
+		public void partVisible(MPart part) {
+			throw new RuntimeException();
 		}
 
 	}
