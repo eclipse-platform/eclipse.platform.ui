@@ -157,14 +157,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	class E4PartListener implements org.eclipse.e4.ui.workbench.modeling.IPartListener {
 
 		public void partActivated(MPart part) {
-			updateActivations(part);
-			firePartActivated(part);
-
 			// update the workbench window's current selection with the active
 			// part's selection
 			SelectionService service = (SelectionService) getWorkbenchWindow()
 					.getSelectionService();
 			service.updateSelection(getWorkbenchPart(part));
+			
+			updateActivations(part);
+			firePartActivated(part);
 		}
 
 		public void partBroughtToTop(MPart part) {
