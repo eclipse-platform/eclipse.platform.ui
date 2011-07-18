@@ -19,7 +19,9 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
@@ -182,33 +184,73 @@ public class PartServiceImpl implements EPartService {
 		partActivationHistory.clear();
 	}
 
-	private void firePartActivated(MPart part) {
-		for (Object listener : listeners.getListeners()) {
-			((IPartListener) listener).partActivated(part);
+	private void firePartActivated(final MPart part) {
+		for (final Object listener : listeners.getListeners()) {
+			SafeRunner.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partActivated(part);
+				}
+
+				public void handleException(Throwable throwable) {
+					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
+				}
+			});
 		}
 	}
 
-	private void firePartDeactivated(MPart part) {
-		for (Object listener : listeners.getListeners()) {
-			((IPartListener) listener).partDeactivated(part);
+	private void firePartDeactivated(final MPart part) {
+		for (final Object listener : listeners.getListeners()) {
+			SafeRunner.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partDeactivated(part);
+				}
+
+				public void handleException(Throwable throwable) {
+					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
+				}
+			});
 		}
 	}
 
-	private void firePartHidden(MPart part) {
-		for (Object listener : listeners.getListeners()) {
-			((IPartListener) listener).partHidden(part);
+	private void firePartHidden(final MPart part) {
+		for (final Object listener : listeners.getListeners()) {
+			SafeRunner.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partHidden(part);
+				}
+
+				public void handleException(Throwable throwable) {
+					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
+				}
+			});
 		}
 	}
 
-	private void firePartVisible(MPart part) {
-		for (Object listener : listeners.getListeners()) {
-			((IPartListener) listener).partVisible(part);
+	private void firePartVisible(final MPart part) {
+		for (final Object listener : listeners.getListeners()) {
+			SafeRunner.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partVisible(part);
+				}
+
+				public void handleException(Throwable throwable) {
+					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
+				}
+			});
 		}
 	}
 
-	private void firePartBroughtToTop(MPart part) {
-		for (Object listener : listeners.getListeners()) {
-			((IPartListener) listener).partBroughtToTop(part);
+	private void firePartBroughtToTop(final MPart part) {
+		for (final Object listener : listeners.getListeners()) {
+			SafeRunner.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partBroughtToTop(part);
+				}
+
+				public void handleException(Throwable throwable) {
+					logger.error(throwable, "An exception occurred while notifying part listeners"); //$NON-NLS-1$
+				}
+			});
 		}
 	}
 
