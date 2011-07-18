@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,12 +93,9 @@ public class ShowViewMenu extends ContributionItem {
 	// Maps pages to a list of opened views
 	private Map openedViews = new HashMap();
 
-	protected boolean dirty = true;
-
 	private IMenuListener menuListener = new IMenuListener() {
 		public void menuAboutToShow(IMenuManager manager) {
 			manager.markDirty();
-			dirty = true;
 		}
 	};
 	private boolean makeFast;
@@ -164,10 +161,6 @@ public class ShowViewMenu extends ContributionItem {
 
 		showDlgAction.setActionDefinitionId(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
 		
-	}
-
-	public boolean isDirty() {
-		return dirty;
 	}
 
 	/**
@@ -323,10 +316,6 @@ public class ShowViewMenu extends ContributionItem {
 			((MenuManager) getParent()).addMenuListener(menuListener);
 		}
 
-		if (!dirty) {
-			return;
-		}
-
 		MenuManager manager = new MenuManager();
 		fillMenu(manager);
 		IContributionItem items[] = manager.getItems();
@@ -339,7 +328,6 @@ public class ShowViewMenu extends ContributionItem {
 				items[i].fill(menu, index++);
 			}
 		}
-		dirty = false;
 	}
 
 	// for dynamic UI
