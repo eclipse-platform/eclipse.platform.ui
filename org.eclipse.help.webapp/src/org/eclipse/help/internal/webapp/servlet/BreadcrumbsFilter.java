@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,12 @@ public class BreadcrumbsFilter implements IFilter {
 		StringBuffer pathBuf = new StringBuffer();
 		ITopic topic = HelpPlugin.getTocManager().getTocs(locale)[path[0]].getTopic(null);
 		pathBuf.append(path[0]);
-		buf.append("<div class=\"help_breadcrumbs\">"); //$NON-NLS-1$
+		
+		boolean isMirrored = org.eclipse.help.internal.util.ProductPreferences.isRTL();
+		if(isMirrored)
+			buf.append("\u202B"); //$NON-NLS-1$ //append RLE marker at the beginning 
+		
+		buf.append("<div class=\"help_breadcrumbs\">"); //$NON-NLS-1$		
 		
 		for (int i=0;i<path.length-1;++i) {
 			
@@ -134,7 +139,10 @@ public class BreadcrumbsFilter implements IFilter {
 			// add separator
 			if (i < path.length - 2 || path.length == 2) {
 				// always add if there's only one link
-				buf.append(" > "); //$NON-NLS-1$
+				if(isMirrored)
+					buf.append(" \u200F> "); //$NON-NLS-1$ //append RLM marker before >
+				else
+					buf.append(" > "); //$NON-NLS-1$ 
 			}
 			
 			// move to the next topic in the path
@@ -143,6 +151,10 @@ public class BreadcrumbsFilter implements IFilter {
 			pathBuf.append(path[i + 1]);
 		}
 		buf.append("</div>"); //$NON-NLS-1$
+		
+		if(isMirrored)
+			buf.append("\u202C"); //$NON-NLS-1$ //append PDF marker at the end  
+		
 		return buf.toString();
 	}
 }
