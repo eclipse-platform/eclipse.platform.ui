@@ -98,7 +98,10 @@ public class SashRenderer extends SWTPartRenderer {
 
 	public Object createWidget(final MUIElement element, Object parent) {
 		MUIElement elementParent = element.getParent();
-		if (elementParent.getRenderer() == this) {
+		if (elementParent == null && element.getCurSharedRef() != null)
+			elementParent = element.getCurSharedRef();
+
+		if (elementParent != null && elementParent.getRenderer() == this) {
 			Rectangle newRect = new Rectangle(0, 0, 0, 0);
 
 			// If my layout's container gets disposed 'unbind' the sash elements
