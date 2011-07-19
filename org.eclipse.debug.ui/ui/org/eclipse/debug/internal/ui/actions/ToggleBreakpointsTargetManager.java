@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -76,7 +75,7 @@ public class ToggleBreakpointsTargetManager {
      */
     public static String DEFAULT_TOGGLE_TARGET_ID = "default"; //$NON-NLS-1$
     
-    private static Set DEFAULT_TOGGLE_TARGET_ID_SET = new HashSet();
+    private static Set DEFAULT_TOGGLE_TARGET_ID_SET = new TreeSet();
     static {
         DEFAULT_TOGGLE_TARGET_ID_SET.add(DEFAULT_TOGGLE_TARGET_ID);
     }
@@ -460,7 +459,7 @@ public class ToggleBreakpointsTargetManager {
         // If there are any factories contributed through the extension point, 
         // set a system property for use in enabling actions.
         System.setProperty(IDebugUIConstants.SYS_PROP_BREAKPOINT_TOGGLE_FACTORIES_USED, 
-        		fKnownFactories.size() > 1 ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+                fKnownFactories.size() > 1 ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -478,7 +477,7 @@ public class ToggleBreakpointsTargetManager {
     private Set getEnabledFactories(IWorkbenchPart part, ISelection selection) {
         if (fKnownFactories == null) initializeFactories();
 
-        Set set = new TreeSet();
+        Set set = new HashSet();
         for (Iterator itr = fKnownFactories.keySet().iterator(); itr.hasNext(); ) {
             String id = (String)itr.next();
             IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fKnownFactories.get(id);
@@ -503,7 +502,7 @@ public class ToggleBreakpointsTargetManager {
      * @return Set of toggle target IDs or an empty set
      */
     private Set getEnabledTargetIDs(Collection factoriesToQuery, IWorkbenchPart part, ISelection selection){
-        Set idsForSelection = new LinkedHashSet();
+        Set idsForSelection = new TreeSet();
         Iterator factoriesItr = factoriesToQuery.iterator();
         while (factoriesItr.hasNext()) {
             IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory) factoriesItr.next();
@@ -652,7 +651,7 @@ public class ToggleBreakpointsTargetManager {
             String token = entryTokenizer.nextToken();
             int valueStart = token.indexOf(':');
             StringTokenizer keyTokenizer = new StringTokenizer(token.substring(0,valueStart),","); //$NON-NLS-1$
-            Set keys = new LinkedHashSet();
+            Set keys = new TreeSet();
             while (keyTokenizer.hasMoreTokens()){
                 keys.add(keyTokenizer.nextToken());
             }
@@ -717,11 +716,11 @@ public class ToggleBreakpointsTargetManager {
             // If there is no preferred pane already set, check the factories to see there is a default target
             Iterator possibleIDsIterator = possibleTargetIDs.iterator();
             while (preferredID == null && possibleIDsIterator.hasNext()) {
-            	IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)
-            			fFactoriesByTargetID.get(possibleIDsIterator.next());
-            	if (factory != null) {
-            		preferredID = factory.getDefaultToggleTarget(part, selection);
-            	}
+                IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)
+                        fFactoriesByTargetID.get(possibleIDsIterator.next());
+                if (factory != null) {
+                    preferredID = factory.getDefaultToggleTarget(part, selection);
+                }
             }
             // If the factories don't have a default, just pick the first one.
             // Also make sure that the default is among the available toggle target
