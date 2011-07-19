@@ -1317,6 +1317,7 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPartSashContainer sharedSashContainer = BasicFactoryImpl.eINSTANCE
 				.createPartSashContainer();
+		window.getSharedElements().add(sharedSashContainer);
 		sharedAreaPlaceholder.setRef(sharedSashContainer);
 		sharedSashContainer.setCurSharedRef(sharedAreaPlaceholder);
 
