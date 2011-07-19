@@ -582,6 +582,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		partService.setPage(page);
 
 		getShell().setData(this);
+		workbench.getHelpSystem().setHelp(getShell(), IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
 		trackShellActivation();
 	}
 
