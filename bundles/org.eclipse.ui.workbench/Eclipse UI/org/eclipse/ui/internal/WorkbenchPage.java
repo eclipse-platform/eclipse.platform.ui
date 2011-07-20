@@ -1358,6 +1358,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 			// Remove from caches
 			sortedPerspectives.remove(desc);
+			// check if we're closing the currently active perspective
+			if (getPerspectiveStack().getSelectedElement() == persp
+					&& !sortedPerspectives.isEmpty()) {
+				// get the perspective that was last active and set it
+				IPerspectiveDescriptor lastActive = sortedPerspectives.get(sortedPerspectives
+						.size() - 1);
+				if (lastActive != null) {
+					setPerspective(lastActive);
+				}
+			}
 			modelService.removePerspectiveModel(persp, window);
 		}
 	}
