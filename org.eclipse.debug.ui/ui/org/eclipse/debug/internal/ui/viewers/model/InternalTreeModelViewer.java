@@ -2502,8 +2502,6 @@ public class InternalTreeModelViewer extends TreeViewer
         if (contentProvider instanceof TreeModelContentProvider && event.item.getData() != null) {
             TreePath path = getTreePathFromItem((TreeItem)event.item);
             ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.COLLAPSE);
-        } else {
-            System.out.println("dude");
         }
 	}
 	
