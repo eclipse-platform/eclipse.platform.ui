@@ -33,7 +33,8 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 	interface ICharsetListenerFilter {
 
 		/**
-		 * Returns the path for the node in the tree we are interested in.
+		 * Returns the path for the node in the tree we are interested in. Returns <code>null</code>
+		 * if the visitor no longer wants to visit anything.
 		 */
 		IPath getRoot();
 
@@ -72,11 +73,22 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		// avoid reacting to changes made by ourselves  
 		if (isDisabled())
 			return;
+		ResourceInfo projectInfo = ((Project)project).getResourceInfo(false, false);
+		//nothing to do if project has already been deleted
+		if (projectInfo == null)
+			return;
+		final long projectId = projectInfo.getNodeId();
 		// ensure all resources under the affected project are 
 		// reported as having encoding changes
 		ICharsetListenerFilter filter = new ICharsetListenerFilter() {
-
 			public IPath getRoot() {
+				//make sure it is still the same project - it could have been deleted and recreated
+				ResourceInfo currentInfo = ((Project)project).getResourceInfo(false, false);
+				if (currentInfo == null)
+					return null;
+				long currentId = currentInfo.getNodeId();
+				if (currentId != projectId)
+					return null;
 				// visit the project subtree
 				return project.getFullPath();
 			}
@@ -127,7 +139,9 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 			}
 		};
 		try {
-			new ElementTreeIterator(workspace.getElementTree(), filter.getRoot()).iterate(visitor);
+			IPath root = filter.getRoot();
+			if (root != null)
+				new ElementTreeIterator(workspace.getElementTree(), root).iterate(visitor);
 		} catch (WrappedRuntimeException e) {
 			throw (CoreException) e.getTargetException();
 		}
