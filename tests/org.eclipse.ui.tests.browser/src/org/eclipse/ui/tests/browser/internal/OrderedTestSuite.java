@@ -84,11 +84,4 @@ class OrderedTestSuite extends TestSuite{
 		return parameters.length == 0 && name.startsWith("test") && returnType.equals(Void.TYPE);
 	}
 
-	private Test warning(final String message) {
-		return new TestCase("warning") {
-			protected void runTest() {
-				fail(message);
-			}
-		};
-	}
 }
