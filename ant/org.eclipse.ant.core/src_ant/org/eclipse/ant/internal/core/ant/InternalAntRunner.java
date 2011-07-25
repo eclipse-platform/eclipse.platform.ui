@@ -151,6 +151,8 @@ public class InternalAntRunner {
     private boolean allowInput = true;
     
     private String fEarlyErrorMessage= null;
+
+	private boolean unknownTargetsFound = false;
     
 	/**
 	 * Adds a build listener.
@@ -535,14 +537,20 @@ public class InternalAntRunner {
 		run(AntCoreUtil.getArrayList((String[]) argArray));
 	}
 
-	/*
-	 * Note that the list passed to this method must support
-	 * List#remove(Object)
+	/**
+	 * Attempts to run the given list of command line arguments. Note that the list passed to this method must support
+	 * {@link List#remove(Object)}.
+	 * <br><br>
+	 * This method directly processes the following arguments:
+	 * <ul>
+	 * <li><b>-projecthelp</b>, <b>-p</b> - print project help information</li>
+	 * </ul>
+	 * @param argList the raw list of command line arguments
 	 */
 	private void run(List argList) {
 		setCurrentProject(new Project());
         if (isVersionCompatible("1.6.3")) { //$NON-NLS-1$
-           new ExecutorSetter().setExecutor(getCurrentProject());
+           new ExecutorSetter().setExecutor(currentProject);
         }
 		Throwable error = null;
 		PrintStream originalErr = System.err;
@@ -623,7 +631,7 @@ public class InternalAntRunner {
 			}
 
 			if(!projectHelp) {
-				getCurrentProject().log(MessageFormat.format(InternalAntMessages.InternalAntRunner_Build_file, new String[]{getBuildFileLocation()}));
+				logMessage(currentProject, MessageFormat.format(InternalAntMessages.InternalAntRunner_Build_file, new String[]{getBuildFileLocation()}), Project.MSG_INFO);
 
 				setTasks(getCurrentProject());
 				setTypes(getCurrentProject());
@@ -641,7 +649,7 @@ public class InternalAntRunner {
 					new EclipseMainHelper().runProjectHelp(getBuildFileLocation(), getCurrentProject());
 					return;
 				} 
-				getCurrentProject().log(InternalAntMessages.InternalAntRunner_ant_1_7_needed_for_help_info);
+				logMessage(currentProject, InternalAntMessages.InternalAntRunner_ant_1_7_needed_for_help_info, Project.MSG_ERR);
 				executed = false;
 				return;
 			}
@@ -654,8 +662,9 @@ public class InternalAntRunner {
 			if (targets == null) {
                 targets= new Vector(1);
             }
-            if (targets.isEmpty() && getCurrentProject().getDefaultTarget() != null) {
-                targets.add(getCurrentProject().getDefaultTarget());
+			String dtarget = currentProject.getDefaultTarget();
+            if (targets.isEmpty() && dtarget != null) {
+                targets.add(dtarget);
             }
 			if (!isVersionCompatible("1.6.3")) {  //$NON-NLS-1$
 	            getCurrentProject().addReference("eclipse.ant.targetVector", targets); //$NON-NLS-1$
@@ -663,7 +672,7 @@ public class InternalAntRunner {
 			getCurrentProject().executeTargets(targets);
 		} catch (OperationCanceledException e) {
 			executed = false;
-			logMessage(getCurrentProject(), e.getMessage(), Project.MSG_INFO);
+			logMessage(currentProject, e.getMessage(), Project.MSG_INFO);
 			throw e;
 		} catch (AntSecurityException e) {
 			//expected
@@ -708,7 +717,7 @@ public class InternalAntRunner {
 			return;
 		}
 		DemuxInputStreamSetter setter= new DemuxInputStreamSetter();
-		setter.remapSystemIn(getCurrentProject());
+		setter.remapSystemIn(currentProject);
 	}
 
 	private void processAntHome(boolean finished) {
@@ -821,7 +830,7 @@ public class InternalAntRunner {
 			return true;
 		}
 		if (buildListeners != null) {
-			Enumeration e= getCurrentProject().getBuildListeners().elements();
+			Enumeration e= currentProject.getBuildListeners().elements();
 			while (e.hasMoreElements()) {
 				BuildListener element = (BuildListener) e.nextElement();
 				if (element instanceof XmlLogger) {
@@ -866,8 +875,8 @@ public class InternalAntRunner {
 	 */
 	public void setBuildFileLocation(String buildFileLocation) {
 		this.buildFileLocation = buildFileLocation;
-		if (getCurrentProject() != null) {
-			getCurrentProject().setUserProperty("ant.file", buildFileLocation); //$NON-NLS-1$
+		if (currentProject != null) {
+			currentProject.setUserProperty("ant.file", buildFileLocation); //$NON-NLS-1$
 		}
 	}
 	
@@ -949,6 +958,18 @@ public class InternalAntRunner {
 		return version.compareTo(comparison) >= 0;
 	}
 	
+	/**
+	 * Pre-processes the raw command line to set up input handling and logging.
+	 * <br><br>
+	 * This method checks for the following command line arguments:
+	 * <ul>
+	 * <li><b>-inputhandler</b> <em>&lt;class&gt;</em> - the class which will handle input requests</li>
+	 * <li><b>-logger</b> <em>&lt;classname&gt;</em> - the class which is to perform logging</li>
+	 * <li><b>-listener</b> <em>&lt;classname&gt;</em> - add an instance of class as a project listener</li>
+	 * </ul>
+	 * @param commands the raw command line arguments passed in from the application
+	 * @return <code>true</code> if it is OK to run with the given list of arguments <code>false</code> otherwise
+	 */
 	private boolean preprocessCommandLine(List commands) {
 		
 		String arg = AntCoreUtil.getArgument(commands, "-listener"); //$NON-NLS-1$
@@ -992,17 +1013,43 @@ public class InternalAntRunner {
 		return true;
 	}
 	
-	/*
-	 * Looks for interesting command line arguments. 
-	 * Returns whether it is OK to run the script.
+	/**
+	 * Process the command line arguments.
+	 * <br><br>
+	 * The listing of supported Ant command line arguments is:
+	 * <ul>
+	 * <li><b>-buildfile</b>, <b>-file</b>, <b>-f</b> <em>&lt;file&gt;</em> - use given buildfile</li>
+	 * <li><b>-debug</b>, <b>-d</b> - print debugging information</li>
+	 * <li><b>-diagnostics</b> - print information that might be helpful diagnose or report problems</li>
+	 * <li><b>-emacs</b>, <b>-e</b> - produce logging information without adornments</li>
+	 * <li><b>-find</b>, <b>-s</b> <em>&lt;file&gt;</em> - search for buildfile towards the root of the filesystem and use it</li>
+	 * <li><b>-help</b>, <b>-h</b> - print this message</li>
+	 * <li><b>-keep-going</b>, <b>-k</b> - execute all targets that do not depend on failed target(s)</li>
+	 * <li><b>-lib</b> <em>&lt;path&gt;</em> - specifies a path to search for jars and classes</li>
+	 * <li><b>-logfile</b>, <b>-l</b> <em>&lt;file&gt;</em> - use given file for logging</li>
+	 * <li><b>-noinput</b> - do not allow interactive input</li>
+	 * <li><b>-quiet</b>, <b>-q</b> - be extra quiet</li>
+	 * <li><b>-verbose</b>, <b>-v</b> - be extra verbose</li>
+	 * <li><b>-version</b> - print the version information and exit</li>
+	 * </ul>
+	 * The list of other Ant command line arguments that we currently do not support:
+	 * <ul>
+	 * <li><b>-nice</b>  <em>&lt;number&gt;</em> - A niceness value for the main thread - 1 (lowest) to 10 (highest); 5 is the default</li>
+	 * <li><b>-nouserlib</b> - Run ant without using the jar files from ${user.home}/.ant/lib</li>
+	 * <li><b>-noclasspath</b> - Run ant without using CLASSPATH</li>
+	 * <li><b>-autoproxy</b> - Java 1.5+ : use the OS proxies</li>
+	 * <li><b>-main</b> <em>&lt;class&gt;</em> - override Ant's normal entry point</li>
+	 * </ul>
+	 * @param list the raw command line arguments passed in from the application
+	 * @return <code>true</code> if it is OK to run with the given list of arguments <code>false</code> otherwise
 	 */
 	private boolean processCommandLine(List commands) {
 		
 		if (commands.remove("-help") || commands.remove("-h")) { //$NON-NLS-1$ //$NON-NLS-2$
 			if (isVersionCompatible("1.7")) { //$NON-NLS-1$
-				new EclipseMainHelper().runUsage(getBuildFileLocation(), getCurrentProject());
+				new EclipseMainHelper().runUsage(getBuildFileLocation(), currentProject);
 			} else {
-				getCurrentProject().log(InternalAntMessages.InternalAntRunner_ant_1_7_needed_for_help_message);
+				logMessage(currentProject, InternalAntMessages.InternalAntRunner_ant_1_7_needed_for_help_message, Project.MSG_WARN);
 			}
 			return false;
 		}
@@ -1040,7 +1087,7 @@ public class InternalAntRunner {
 			try {
 				Diagnostics.doReport(System.out);
 			} catch (NullPointerException e) {
-				logMessage(getCurrentProject(), InternalAntMessages.InternalAntRunner_anthome_must_be_set_to_use_ant_diagnostics, Project.MSG_ERR);
+				logMessage(currentProject, InternalAntMessages.InternalAntRunner_anthome_must_be_set_to_use_ant_diagnostics, Project.MSG_ERR);
 			}
 			return false;
 		}
@@ -1059,12 +1106,11 @@ public class InternalAntRunner {
 				createLogFile(arg);
 			} catch (IOException e) {
 				// just log message and ignore exception
-				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.InternalAntRunner_Could_not_write_to_log_file, new String[]{arg}), Project.MSG_ERR);
+				logMessage(currentProject, MessageFormat.format(InternalAntMessages.InternalAntRunner_Could_not_write_to_log_file, new String[]{arg}), Project.MSG_ERR);
 				return false;
 			}
 		
 		}
-		
 		arg = AntCoreUtil.getArgument(commands, "-buildfile"); //$NON-NLS-1$
 		if (arg == null) {
 			arg = AntCoreUtil.getArgument(commands, "-file"); //$NON-NLS-1$
@@ -1072,7 +1118,6 @@ public class InternalAntRunner {
 				arg = AntCoreUtil.getArgument(commands, "-f"); //$NON-NLS-1$
 			}
 		}
-		
 		if (arg != null) {
 			if (arg.length() == 0) {
 				String message= InternalAntMessages.InternalAntRunner_specify_a_buildfile_using_the_buildfile_argument;
@@ -1081,7 +1126,6 @@ public class InternalAntRunner {
 			} 
 			setBuildFileLocation(arg);
 		}
-		
 		if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 			if (commands.remove("-k") || commands.remove("-keep-going")) { //$NON-NLS-1$ //$NON-NLS-2$
 				keepGoing= true;
@@ -1117,6 +1161,12 @@ public class InternalAntRunner {
 			processTargets(commands);
 		}
 		
+		if (unknownTargetsFound && (targets == null  || targets.isEmpty())) {
+			// Some targets are specified but none of them are good. Hence quit
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=352536
+			logMessage(currentProject, InternalAntMessages.InternalAntRunner_no_known_target, Project.MSG_ERR);
+			return false;
+		}
 		return true;
 	}
 	
@@ -1135,7 +1185,8 @@ public class InternalAntRunner {
 			if (!names.contains(target)) {
 				iterator.remove();
 				String message = MessageFormat.format(InternalAntMessages.InternalAntRunner_unknown_target, new Object[]{target});
-				logMessage(currentProject, message, Project.MSG_WARN); 
+				logMessage(currentProject, message, Project.MSG_WARN);
+				unknownTargetsFound = true;
 			}
 		}
 	}
@@ -1200,7 +1251,7 @@ public class InternalAntRunner {
 		//this stream is closed in the finally block of run(list)
 		out = new PrintStream(new FileOutputStream(logFile));
 		err = out;
-		logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.InternalAntRunner_Using_file_as_build_log, new String[]{logFile.getCanonicalPath()}), Project.MSG_INFO);
+		logMessage(currentProject, MessageFormat.format(InternalAntMessages.InternalAntRunner_Using_file_as_build_log, new String[]{logFile.getCanonicalPath()}), Project.MSG_INFO);
 		if (buildLogger != null) {
 			buildLogger.setErrorPrintStream(err);
 			buildLogger.setOutputPrintStream(out);
@@ -1208,13 +1259,20 @@ public class InternalAntRunner {
 	}
 
 	private File getFileRelativeToBaseDir(String fileName) {
-	    return AntCoreUtil.getFileRelativeToBaseDir(fileName, getCurrentProject().getUserProperty("basedir"), getBuildFileLocation()); //$NON-NLS-1$
+	    return AntCoreUtil.getFileRelativeToBaseDir(fileName, currentProject.getUserProperty("basedir"), getBuildFileLocation()); //$NON-NLS-1$
 	}
 
-	/*
-	 * Processes cmd line properties and adds the user properties
+	/**
+	 * Processes the command line properties and adds the user properties.
+	 * <br><br>
 	 * Any user properties that have been explicitly set are set as well.
 	 * Ensures that -D properties take precedence.
+	 * <br><br>
+	 * This command lie arguments used are:
+	 * <ul>
+	 * <li><b>-D</b> <em>&lt;property&gt;=&lt;value&gt;</em> - use value for given property</li>
+	 * <li><b>-propertyfile</b> <em>&lt;name&gt;</em> - load all properties from file with -D properties taking precedence</li>
+	 * </ul>
 	 */
 	private boolean processProperties(List commands) {
         boolean exceptionToBeThrown= false;
@@ -1269,7 +1327,7 @@ public class InternalAntRunner {
 	 * fronts.
 	 */
 	private void printVersion() {
-		logMessage(getCurrentProject(), Main.getAntVersion(), Project.MSG_INFO);
+		logMessage(currentProject, Main.getAntVersion(), Project.MSG_INFO);
 	}
 
 	
@@ -1305,7 +1363,7 @@ public class InternalAntRunner {
         	userProperties= new HashMap();
         }
         try {
-            List allProperties = AntCoreUtil.loadPropertyFiles(propertyFiles, getCurrentProject().getUserProperty("basedir"), getBuildFileLocation()); //$NON-NLS-1$
+            List allProperties = AntCoreUtil.loadPropertyFiles(propertyFiles, currentProject.getUserProperty("basedir"), getBuildFileLocation()); //$NON-NLS-1$
 	        Iterator iter= allProperties.iterator();
 	        while (iter.hasNext()) {
 	            Properties props = (Properties) iter.next();
