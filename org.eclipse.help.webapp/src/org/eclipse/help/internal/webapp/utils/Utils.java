@@ -30,6 +30,12 @@ public class Utils {
 	// returnType values: xml (default) | json
 	public static final String XML 					= "xml"; //$NON-NLS-1$
 	public static final String JSON 				= "json"; //$NON-NLS-1$
+	public static final String HTML 				= "html"; //$NON-NLS-1$
+	
+	// Constants for About service
+	public static final long AGENT			= 1L;
+	public static final long PREFERENCE		= 2L;
+	public static final long ABOUT_PLUGIN	= 3L;
 	
 	public static String convertStreamToString(InputStream is)
 			throws IOException {

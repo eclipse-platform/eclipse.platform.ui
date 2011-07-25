@@ -32,6 +32,7 @@ public final class JSonHelper {
 	public static final String NAME				= "name"; //$NON-NLS-1$
 	public static final String TITLE			= "title"; //$NON-NLS-1$
 	public static final String ID				= "id"; //$NON-NLS-1$
+	public static final String PLUGIN_ID		= "pluginId"; //$NON-NLS-1$
 	public static final String HREF				= "href"; //$NON-NLS-1$
 	public static final String TYPE				= "type"; //$NON-NLS-1$
 	public static final String CHECKED			= "checked"; //$NON-NLS-1$
@@ -45,7 +46,8 @@ public final class JSonHelper {
 	public static final String CATEGORY			= "category"; //$NON-NLS-1$
 	public static final String DESCRIPTION		= "description"; //$NON-NLS-1$
 	public static final String CATEGORY_HREF	= CATEGORY+"_"+HREF; //$NON-NLS-1$
-	public static final String PROPERTY_NAME	= "propertyName"; //$NON-NLS-1$
+	public static final String PROPERTY_NAME	= "tagName"; //$NON-NLS-1$
+	public static final String PROPERTY_VALUE	= "value"; //$NON-NLS-1$
 	public static final String INDEX			= "Index"; //$NON-NLS-1$
 	public static final String TOPIC			= "Topic"; //$NON-NLS-1$
 	public static final String NUMERIC_PATH		= "NumericPath"; //$NON-NLS-1$

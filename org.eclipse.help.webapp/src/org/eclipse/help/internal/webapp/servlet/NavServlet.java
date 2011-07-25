@@ -68,7 +68,7 @@ public class NavServlet extends HttpServlet {
 		writer.close();
 	}
 	
-	private Locale getLocale (HttpServletRequest req, HttpServletResponse resp) {
+	protected Locale getLocale (HttpServletRequest req, HttpServletResponse resp) {
 		Locale locale;
 		String nl = UrlUtil.getLocale(req, resp);
 		// break the string into tokens to get the Locale object
@@ -85,7 +85,7 @@ public class NavServlet extends HttpServlet {
 		return locale;
 	}
 	
-	private ITopic getTopic(String topicPath, Locale locale) {
+	protected ITopic getTopic(String topicPath, Locale locale) {
 		StringTokenizer tok = new StringTokenizer(topicPath, "_"); //$NON-NLS-1$
 		int index = Integer.parseInt(tok.nextToken());
 		ITopic topic = HelpPlugin.getTocManager().getTocs(locale.toString())[index].getTopic(null);

@@ -31,10 +31,16 @@ import org.osgi.service.prefs.BackingStoreException;
 public class PreferenceWriter {	
 	private StringBuffer buf;
 	private Locale locale;
+	private boolean isXML;
 	
 	public PreferenceWriter(StringBuffer buf, Locale locale) {
+		this(buf, locale, false);
+	}
+	
+	public PreferenceWriter(StringBuffer buf, Locale locale, boolean isXML) {
 		this.buf = buf;
 		this.locale = locale;
+		this.isXML = isXML;
 	}
 	
 	public void writePreferences() {
@@ -54,22 +60,43 @@ public class PreferenceWriter {
 			String[] allKeys = (String[]) keySet.toArray(new String[keySet.size()]);
 			if (allKeys.length > 0) {
 			    Arrays.sort(allKeys);
-			    buf.append("<h3>"); //$NON-NLS-1$
-			    buf.append(plugin);
-			    buf.append("</h3>"); //$NON-NLS-1$
-			    buf.append("<table>");  //$NON-NLS-1$
+			    
+			    if (!isXML) {
+			    	buf.append("\n<h3>"); //$NON-NLS-1$
+			    	buf.append(plugin);
+			    	buf.append("</h3>\n"); //$NON-NLS-1$
+			    	buf.append("<table>");  //$NON-NLS-1$
+			    } else {
+					buf.append("\n    <plugin\n          title=\""); //$NON-NLS-1$
+					buf.append(XMLGenerator.xmlEscape(plugin));
+					buf.append("\">"); //$NON-NLS-1$
+			    }
 			    for (int i = 0; i < allKeys.length; i++) {
-			    	buf.append("<tr>"); //$NON-NLS-1$
 			    	String key = allKeys[i];
-			    	buf.append("<td>"); //$NON-NLS-1$
-			    	buf.append(UrlUtil.htmlEncode(key));
-			    	buf.append("</td><td>"); //$NON-NLS-1$
 			    	String value = Platform.getPreferencesService().getString
 			    			(plugin, key, "", null); //$NON-NLS-1$
-					buf.append(UrlUtil.htmlEncode(value)); 
-					buf.append("</td></tr>"); //$NON-NLS-1$
+			    	if (!isXML) {
+				    	buf.append("\n    <tr>\n"); //$NON-NLS-1$
+				    	buf.append("        <td>"); //$NON-NLS-1$
+				    	buf.append(UrlUtil.htmlEncode(key));
+				    	buf.append("</td>\n        <td>"); //$NON-NLS-1$
+						buf.append(UrlUtil.htmlEncode(value));
+						buf.append("</td>\n    </tr>"); //$NON-NLS-1$
+			    	} else {
+				    	buf.append("\n        <"); //$NON-NLS-1$
+			    		buf.append(key);
+			    		buf.append(">"); //$NON-NLS-1$
+						buf.append(value);
+				    	buf.append("</"); //$NON-NLS-1$
+			    		buf.append(key);
+			    		buf.append(">"); //$NON-NLS-1$
+			    	}
 			    }
-			    buf.append("</table>"); //$NON-NLS-1$
+			    if (!isXML) {
+			    	buf.append("\n</table>"); //$NON-NLS-1$
+			    } else {
+			    	buf.append("\n    </plugin>"); //$NON-NLS-1$
+			    }
 			}
 		} catch (BackingStoreException e) {
 			buf.append(WebappResources.getString("badPreferences", locale)); //$NON-NLS-1$

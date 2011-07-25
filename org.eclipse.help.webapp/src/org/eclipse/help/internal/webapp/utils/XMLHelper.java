@@ -34,6 +34,9 @@ public final class XMLHelper {
 	public static final String ELEMENT_SUMMARY			= "summary"; //$NON-NLS-1$
 	public static final String ELEMENT_DESCRIPTION		= "description"; //$NON-NLS-1$
 	public static final String ELEMENT_INDEX			= "index"; //$NON-NLS-1$
+	public static final String ELEMENT_PREFERENCES		= "preferences"; //$NON-NLS-1$
+	public static final String ELEMENT_PLUGIN			= "plugin"; //$NON-NLS-1$
+	public static final String ELEMENT_ABOUT_PLUGINS		= "aboutPlugins"; //$NON-NLS-1$
 	public static final String ELEMENT_INDEX_CONTRIBUTIONS	= "indexContributions"; //$NON-NLS-1$
 	public static final String ELEMENT_TOC_CONTRIBUTIONS	= "tocContributions"; //$NON-NLS-1$
 	public static final String ELEMENT_NUMERIC_PATH			= "numeric_path"; //$NON-NLS-1$

@@ -238,6 +238,10 @@
             class="org.eclipse.help.internal.webapp.service.ExtensionService">
       </servlet>
       <servlet
+            alias="/service/about"
+            class="org.eclipse.help.internal.webapp.service.AboutService">
+      </servlet>
+      <servlet
             alias="/service/about.html"
             class="org.eclipse.help.internal.webapp.service.AboutService">
       </servlet>

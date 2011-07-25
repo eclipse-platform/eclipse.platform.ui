@@ -35,12 +35,14 @@ import com.ibm.icu.text.Collator;
 
 public class AboutServlet extends HttpServlet {
 
-	private static final int NUMBER_OF_COLUMNS = 4;
+	protected static final int NUMBER_OF_COLUMNS = 4;
 	
-	private class PluginDetails {
-		private String[] columns = new String[4];
+	protected Locale locale;
+	
+	protected class PluginDetails {
+		public String[] columns = new String[NUMBER_OF_COLUMNS];
 		
-		PluginDetails(String[] columns) {
+		public PluginDetails(String[] columns) {
 			this.columns = columns;
 			for (int i = 0 ; i < NUMBER_OF_COLUMNS; i++) {
 				if (columns[i] == null) {
@@ -50,7 +52,7 @@ public class AboutServlet extends HttpServlet {
 		}
 	}
 	
-	private class PluginComparator implements Comparator {
+	protected class PluginComparator implements Comparator {
 		
         public PluginComparator(int column) {
         	this.column = column;
@@ -80,7 +82,7 @@ public class AboutServlet extends HttpServlet {
 			throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
-		Locale locale = req.getLocale();
+		locale = UrlUtil.getLocaleObj(req, resp);
 		StringBuffer buf = new StringBuffer();
 		buf.append(XHTML_1);
 		String showParam = req.getParameter("show"); //$NON-NLS-1$
@@ -89,7 +91,7 @@ public class AboutServlet extends HttpServlet {
 			return;
 		}
 		if ("preferences".equalsIgnoreCase(showParam)) { //$NON-NLS-1$
-			getPreferences(req, resp);
+			getPreferences(resp);
 			return;
 		}
 		String sortParam = req.getParameter("sortColumn"); //$NON-NLS-1$
@@ -132,16 +134,16 @@ public class AboutServlet extends HttpServlet {
 		resp.getWriter().write(response);		
 	}
 
-	private void getPreferences(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	private void getPreferences(HttpServletResponse resp) throws IOException {
 		StringBuffer buf = new StringBuffer();
 		buf.append(XHTML_1);
-		String title = WebappResources.getString("preferences", req.getLocale()); //$NON-NLS-1$
+		String title = WebappResources.getString("preferences", locale); //$NON-NLS-1$
 		buf.append(UrlUtil.htmlEncode(title));
 		buf.append(XHTML_2);
 		buf.append("<h1>"); //$NON-NLS-1$
 		buf.append(title);
 		buf.append("</h1>"); //$NON-NLS-1$
-		PreferenceWriter writer = new PreferenceWriter(buf, req.getLocale());
+		PreferenceWriter writer = new PreferenceWriter(buf, locale);
 		writer.writePreferences();
 		buf.append(XHTML_3);
 		String response = buf.toString();
@@ -151,7 +153,7 @@ public class AboutServlet extends HttpServlet {
 	private void getAgent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		StringBuffer buf = new StringBuffer();
 		buf.append(XHTML_1);
-		String title = WebappResources.getString("userAgent", req.getLocale()); //$NON-NLS-1$
+		String title = WebappResources.getString("userAgent", locale); //$NON-NLS-1$
 		buf.append(UrlUtil.htmlEncode(title));
 		buf.append(XHTML_2);
 		buf.append("<h1>"); //$NON-NLS-1$
@@ -166,7 +168,7 @@ public class AboutServlet extends HttpServlet {
 
 	private String headerRowFor(PluginDetails details) {
 		String row = "<tr>\n"; //$NON-NLS-1$
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
 			row += ("<td><a href = \"about.html?sortColumn="); //$NON-NLS-1$
 			row += i;
 			row += "\">"; //$NON-NLS-1$
@@ -179,7 +181,7 @@ public class AboutServlet extends HttpServlet {
 	
 	private String tableRowFor(PluginDetails details) {
 		String row = "<tr>\n"; //$NON-NLS-1$
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
 			row += ("<td>"); //$NON-NLS-1$
 			row += UrlUtil.htmlEncode(details.columns[i]);
 			row += "</td>\n"; //$NON-NLS-1$
@@ -188,7 +190,7 @@ public class AboutServlet extends HttpServlet {
 		return row;
 	}
 
-	private Object pluginDetails(Bundle bundle) {
+	protected Object pluginDetails(Bundle bundle) {
 		String[] values = new String[] {
 		    getResourceString(bundle, Constants.BUNDLE_VENDOR),
 	        getResourceString(bundle, Constants.BUNDLE_NAME),

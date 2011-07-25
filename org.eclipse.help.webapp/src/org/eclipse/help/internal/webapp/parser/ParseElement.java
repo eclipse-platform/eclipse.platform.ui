@@ -127,4 +127,61 @@ public class ParseElement {
 		
 		return buff.toString();
 	}
+	
+	public String toJSON() {
+		
+		StringBuffer buff = new StringBuffer();
+		
+		if (props != null) {
+			Enumeration enumObj = props.keys();
+			while (enumObj.hasMoreElements()) {
+				
+				String key = (String) enumObj.nextElement();
+				String val = props.getProperty(key);
+				
+				buff.append(JSonHelper.NEWLINE + JSonHelper.SPACE);
+				buff.append(key);
+				buff.append(JSonHelper.COLON);
+				try {
+					val = URLEncoder.encode(val, "UTF-8"); //$NON-NLS-1$
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				buff.append(JSonHelper.getQuotes(val));
+				buff.append(JSonHelper.COMMA);
+			}
+		}
+		
+		if (children.size() <= 0) {
+			int len = buff.length();
+			char ch = buff.charAt(len - 1);
+			if (ch == ',') {
+				buff.deleteCharAt(len - 1);
+				buff.append(JSonHelper.NEWLINE);
+			}
+			
+		} else {
+			
+			buff.append(JSonHelper.NEWLINE + JSonHelper.SPACE);
+			buff.append(JSonHelper.ITEMS);
+			buff.append(JSonHelper.COLON);
+			buff.append(JSonHelper.BEGIN_BRACKET);
+			
+			for (int i = 0; i < children.size(); i++) {
+				
+				if (i > 0)
+					buff.append(JSonHelper.COMMA);
+				
+				ParseElement child = (ParseElement) children.get(i);
+				buff.append(child.toJSON(1));
+			}
+			
+			buff.append(JSonHelper.NEWLINE + JSonHelper.SPACE);
+			
+			buff.append(JSonHelper.END_BRACKET);
+			buff.append(JSonHelper.NEWLINE);
+		}
+		
+		return buff.toString();
+	}
 }

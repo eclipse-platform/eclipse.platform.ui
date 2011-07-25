@@ -25,17 +25,23 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ResultParser extends DefaultHandler {
 
-	private String label = ""; //$NON-NLS-1$
+	protected String id;
+	protected String label;
 	protected ArrayList items = new ArrayList(); //parser populates the items arrayList withe parsed data.
 
 	public ResultParser(String label) {
-		this.label = label;
+		this(label, JSonHelper.ID);
 	}
 	
-	public void parse(URL tocURL) 
+	public ResultParser(String label, String id) {
+		this.label = label;
+		this.id = id;
+	}
+	
+	public void parse(URL url) 
 		throws ParserConfigurationException, SAXException, IOException
 	{
-		parse(tocURL.openStream());
+		parse(url.openStream());
 	}
 	
 	public void parse(InputStream in) 
@@ -47,6 +53,10 @@ public class ResultParser extends DefaultHandler {
 	
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	
+	public void setIdentifier(String id) {
+		this.id = id;
 	}
 	
 	public ArrayList getItems()
@@ -68,7 +78,7 @@ public class ResultParser extends DefaultHandler {
 		
 		buf.append(JSonHelper.IDENTIFIER);
 		buf.append(JSonHelper.COLON);
-		buf.append(JSonHelper.getQuotes(JSonHelper.ID));
+		buf.append(JSonHelper.getQuotes(id));
 		buf.append(JSonHelper.COMMA);
 
 		buf.append(JSonHelper.NEWLINE + JSonHelper.SPACE);
