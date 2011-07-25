@@ -342,19 +342,19 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			fire(new DebugContextEvent(this, selection, DebugContextEvent.ACTIVATED));
 		}
 		
-		protected void possibleChange(TreePath element, int type) {
-			DebugContextEvent event = null;
-			synchronized (this) {
-				if (fContext instanceof ITreeSelection) {
-					ITreeSelection ss = (ITreeSelection) fContext;
-					if (ss.size() == 1) {
-						TreePath current = ss.getPaths()[0];
-						if (current.startsWith(element, null)) {
-							if (current.getSegmentCount() == element.getSegmentCount()) {
-								event = new DebugContextEvent(this, fContext, type);
-							} else {
-							    // if parent of the currently selected element 
-							    // changes, issue event to update STATE only
+        protected void possibleChange(TreePath element, int type) {
+            DebugContextEvent event = null;
+            synchronized (this) {
+                if (fContext instanceof ITreeSelection) {
+                    ITreeSelection ss = (ITreeSelection) fContext;
+                    TreePath[] ssPaths = ss.getPaths(); 
+                    for (int i = 0; i < ssPaths.length; i++) {
+                        if (ssPaths[i].startsWith(element, null)) {
+                            if (ssPaths[i].getSegmentCount() == element.getSegmentCount()) {
+                                event = new DebugContextEvent(this, fContext, type);
+                            } else {
+                                // if parent of the currently selected element 
+                                // changes, issue event to update STATE only
                                 event = new DebugContextEvent(this, fContext, DebugContextEvent.STATE);
 							}
 						}
