@@ -213,7 +213,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
 	 */
 	public boolean hasFocusControl(Control control) {
-		return control.getParent() == linkContainer;
+		return control != null && control.getParent() == linkContainer;
 	}
 
 	public IAction getGlobalAction(String id) {
