@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.emf.common.notify.Notifier;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -113,6 +114,10 @@ public class E4Workbench implements IWorkbench {
 	private void init(MApplication appElement) {
 		Activator.trace(Policy.DEBUG_WORKBENCH, "init() workbench", null); //$NON-NLS-1$
 
+		IEclipseContext context = appElement.getContext();
+		if (context != null) {
+			context.set(ExpressionContext.ALLOW_ACTIVATION, Boolean.TRUE);
+		}
 		// Do a top level processHierarchy for the application?
 		processHierarchy(appElement);
 	}
