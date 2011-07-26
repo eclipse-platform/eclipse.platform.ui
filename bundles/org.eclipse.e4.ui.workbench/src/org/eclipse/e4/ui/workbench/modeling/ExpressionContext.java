@@ -21,8 +21,8 @@ import org.eclipse.e4.ui.services.IServiceConstants;
  *
  */
 public class ExpressionContext implements IEvaluationContext {
+	public static final String ALLOW_ACTIVATION = "org.eclipse.e4.ui.workbench.modeling.ExpressionContext.allowActivation"; //$NON-NLS-1$
 
-	private boolean allowActivation = false;
 	public IEclipseContext eclipseContext;
 
 	public ExpressionContext(IEclipseContext eclipseContext) {
@@ -63,7 +63,7 @@ public class ExpressionContext implements IEvaluationContext {
 	 * @see org.eclipse.core.expressions.IEvaluationContext#setAllowPluginActivation(boolean)
 	 */
 	public void setAllowPluginActivation(boolean value) {
-		allowActivation = value;
+		eclipseContext.set(ALLOW_ACTIVATION, Boolean.valueOf(value));
 	}
 
 	/*
@@ -72,7 +72,8 @@ public class ExpressionContext implements IEvaluationContext {
 	 * @see org.eclipse.core.expressions.IEvaluationContext#getAllowPluginActivation()
 	 */
 	public boolean getAllowPluginActivation() {
-		return allowActivation;
+		Object obj = eclipseContext.get(ALLOW_ACTIVATION);
+		return obj instanceof Boolean ? ((Boolean) obj).booleanValue() : false;
 	}
 
 	/*
