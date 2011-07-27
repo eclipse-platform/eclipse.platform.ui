@@ -1472,7 +1472,29 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(java.lang.String,
 	 * org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
+	public IWorkbenchPage openPage(final String perspectiveId, final IAdaptable input)
+			throws WorkbenchException {
+		final Object[] result = new Object[1];
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				try {
+					result[0] = busyOpenPage(perspectiveId, input);
+				} catch (WorkbenchException e) {
+					result[0] = e;
+				}
+			}
+		});
+
+		if (result[0] instanceof IWorkbenchPage) {
+			return (IWorkbenchPage) result[0];
+		} else if (result[0] instanceof WorkbenchException) {
+			throw (WorkbenchException) result[0];
+		} else {
+			throw new WorkbenchException(WorkbenchMessages.WorkbenchWindow_exceptionMessage);
+		}
+	}
+
+	private IWorkbenchPage busyOpenPage(String perspectiveId, IAdaptable input)
 			throws WorkbenchException {
 		IPerspectiveDescriptor descriptor = workbench.getPerspectiveRegistry()
 				.findPerspectiveWithId(perspectiveId);
@@ -1494,6 +1516,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			firePageOpened();
 
 			partService.setPage(page);
+		} else {
+			IWorkbenchWindow window = getWorkbench().openWorkbenchWindow(perspectiveId, input);
+			return window.getActivePage();
 		}
 	
 		perspective = descriptor;
