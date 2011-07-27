@@ -14,11 +14,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
@@ -40,6 +43,7 @@ import org.eclipse.ui.internal.SlavePageService;
 import org.eclipse.ui.internal.SlavePartService;
 import org.eclipse.ui.internal.SlaveSelectionService;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.tests.helpers.TestFacade;
 
@@ -82,7 +86,20 @@ public class TestFacadeE4Impl extends TestFacade {
 
 	@Override
 	public boolean isFastView(IWorkbenchPage page, IViewReference ref) {
-		E4Util.unsupported("assertActionSetId");
+		MPart part = ((WorkbenchPartReference) ref).getModel();
+		MUIElement parent = part.getParent();
+		if (parent == null) {
+			MPlaceholder placeholder = part.getCurSharedRef();
+			if (placeholder != null) {
+				parent = placeholder.getParent();
+			}
+		}
+
+		if (parent != null) {
+			List<String> tags = parent.getTags();
+			return tags.contains("Minimized") //$NON-NLS-1$
+					|| tags.contains("MinimizedByZoom"); //$NON-NLS-1$
+		}
 		return false;
 	}
 
