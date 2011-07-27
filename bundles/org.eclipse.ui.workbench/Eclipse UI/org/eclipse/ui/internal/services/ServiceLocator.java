@@ -11,8 +11,9 @@
 
 package org.eclipse.ui.internal.services;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IDisposable;
@@ -77,7 +78,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 
 	private IEclipseContext e4Context;
 
-	private ArrayList servicesToDispose = new ArrayList();
+	private Map<Class<?>, Object> servicesToDispose = new HashMap<Class<?>, Object>();
 
 	/**
 	 * Constructs a service locator with no parent.
@@ -106,7 +107,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	public final void activate() {
 		activated = true;
 
-		for (Object service : servicesToDispose) {
+		for (Object service : servicesToDispose.values()) {
 			if (service instanceof INestable) {
 				((INestable) service).activate();
 			}
@@ -116,7 +117,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	public final void deactivate() {
 		activated = false;
 
-		for (Object service : servicesToDispose) {
+		for (Object service : servicesToDispose.values()) {
 			if (service instanceof INestable) {
 				((INestable) service).deactivate();
 			}
@@ -124,7 +125,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	public final void dispose() {
-		Iterator i = servicesToDispose.iterator();
+		Iterator<Object> i = servicesToDispose.values().iterator();
 		while (i.hasNext()) {
 			Object obj = i.next();
 			if (obj instanceof IDisposable) {
@@ -145,10 +146,20 @@ public final class ServiceLocator implements IDisposable, INestable,
 
 		Object service = e4Context.get(key.getName());
 		if (service == null) {
-			// if we don't have a service in our cache then:
-			// 1. check our local factory
-			// 2. go to the registry
-			// or 3. use the parent service
+			// this scenario can happen when we dispose the service locator
+			// after the window has been removed, in that case the window's
+			// context has been destroyed so we should check our own local cache
+			// of services first before checking the registry
+			service = servicesToDispose.get(key);
+		} else if (service == e4Context.get(key.getName())) {
+			// store this service retrieved from the context in the map only if
+			// it is a local service for this context, as otherwise we do not
+			// want to dispose it when this service locator gets disposed
+			registerService(key, service, false);
+		}
+
+		if (service == null) {
+			// nothing cached, check registry then parent
 			IServiceLocator factoryParent = WorkbenchServiceRegistry.GLOBAL_PARENT;
 			if (parent != null) {
 				factoryParent = new ParentLocator(parent, key);
@@ -163,7 +174,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 			if (service == null) {
 				service = factoryParent.getService(key);
 			} else {
-				registerService(key, service);
+				registerService(key, service, true);
 			}
 		}
 		return service;
@@ -189,6 +200,10 @@ public final class ServiceLocator implements IDisposable, INestable,
 	 *            <code>api</code>. This value must not be <code>null</code>.
 	 */
 	public final void registerService(final Class api, final Object service) {
+		registerService(api, service, true);
+	}
+
+	private void registerService(Class<?> api, Object service, boolean saveInContext) {
 		if (api == null) {
 			throw new NullPointerException("The service key cannot be null"); //$NON-NLS-1$
 		}
@@ -202,8 +217,11 @@ public final class ServiceLocator implements IDisposable, INestable,
 			((INestable) service).activate();
 		}
 
-		servicesToDispose.add(service);
-		e4Context.set(api.getName(), service);
+		servicesToDispose.put(api, service);
+
+		if (saveInContext) {
+			e4Context.set(api.getName(), service);
+		}
 	}
 
 	/**
