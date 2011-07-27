@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,14 +26,50 @@ public final class ServiceLocator implements IDisposable, INestable,
 		IServiceLocator {
 	boolean activated = false;
 
-	// private AbstractServiceFactory factory;
+	private static class ParentLocator implements IServiceLocator {
+		private IServiceLocator locator;
+		private Class key;
+
+		public ParentLocator(IServiceLocator parent, Class serviceInterface) {
+			locator = parent;
+			key = serviceInterface;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
+		 */
+		public Object getService(Class api) {
+			if (key.equals(api)) {
+				return locator.getService(key);
+			}
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
+		 */
+		public boolean hasService(Class api) {
+			if (key.equals(api)) {
+				return true;
+			}
+			return false;
+		}
+	}
+
+	private AbstractServiceFactory factory;
 
 	/**
 	 * The parent for this service locator. If a service can't be found in this
 	 * locator, then the parent is asked. This value may be <code>null</code> if
 	 * there is no parent.
 	 */
-	// private IServiceLocator parent;
+	private IServiceLocator parent;
 
 	private boolean disposed;
 
@@ -62,17 +98,29 @@ public final class ServiceLocator implements IDisposable, INestable,
 	 */
 	public ServiceLocator(final IServiceLocator parent,
 			AbstractServiceFactory factory, IDisposable owner) {
-		// this.parent = parent;
-		// this.factory = factory;
+		this.parent = parent;
+		this.factory = factory;
 		this.owner = owner;
 	}
 
 	public final void activate() {
 		activated = true;
+
+		for (Object service : servicesToDispose) {
+			if (service instanceof INestable) {
+				((INestable) service).activate();
+			}
+		}
 	}
 
 	public final void deactivate() {
 		activated = false;
+
+		for (Object service : servicesToDispose) {
+			if (service instanceof INestable) {
+				((INestable) service).deactivate();
+			}
+		}
 	}
 
 	public final void dispose() {
@@ -94,7 +142,31 @@ public final class ServiceLocator implements IDisposable, INestable,
 		} else if (IEclipseContext.class.equals(key)) {
 			return e4Context;
 		}
-		return e4Context.get(key.getName());
+
+		Object service = e4Context.get(key.getName());
+		if (service == null) {
+			// if we don't have a service in our cache then:
+			// 1. check our local factory
+			// 2. go to the registry
+			// or 3. use the parent service
+			IServiceLocator factoryParent = WorkbenchServiceRegistry.GLOBAL_PARENT;
+			if (parent != null) {
+				factoryParent = new ParentLocator(parent, key);
+			}
+			if (factory != null) {
+				service = factory.create(key, factoryParent, this);
+			}
+			if (service == null) {
+				service = WorkbenchServiceRegistry.getRegistry().getService(key, factoryParent,
+						this);
+			}
+			if (service == null) {
+				service = factoryParent.getService(key);
+			} else {
+				registerService(key, service);
+			}
+		}
+		return service;
 	}
 
 	public final boolean hasService(final Class key) {
@@ -125,6 +197,11 @@ public final class ServiceLocator implements IDisposable, INestable,
 			throw new IllegalArgumentException(
 					"The service does not implement the given interface"); //$NON-NLS-1$
 		}
+
+		if (service instanceof INestable && activated) {
+			((INestable) service).activate();
+		}
+
 		servicesToDispose.add(service);
 		e4Context.set(api.getName(), service);
 	}
