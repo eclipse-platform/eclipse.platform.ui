@@ -2301,12 +2301,6 @@
          </service>
       </serviceFactory>
       <serviceFactory
-            factoryClass="org.eclipse.ui.internal.handlers.HandlerServiceFactory">
-         <service
-               serviceClass="org.eclipse.ui.handlers.IHandlerService">
-         </service>
-      </serviceFactory>
-      <serviceFactory
             factoryClass="org.eclipse.ui.internal.services.EvaluationServiceFactory">
          <service
                serviceClass="org.eclipse.ui.services.IEvaluationService"></service>
@@ -2321,12 +2315,6 @@
             factoryClass="org.eclipse.ui.internal.commands.CommandServiceFactory">
          <service
                serviceClass="org.eclipse.ui.commands.ICommandService">
-         </service>
-      </serviceFactory>
-      <serviceFactory
-            factoryClass="org.eclipse.ui.internal.menus.MenuServiceFactory">
-         <service
-               serviceClass="org.eclipse.ui.menus.IMenuService">
          </service>
       </serviceFactory>
       <sourceProvider
