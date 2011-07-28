@@ -151,7 +151,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 			// context has been destroyed so we should check our own local cache
 			// of services first before checking the registry
 			service = servicesToDispose.get(key);
-		} else if (service == e4Context.get(key.getName())) {
+		} else if (service == e4Context.getLocal(key.getName())) {
 			// store this service retrieved from the context in the map only if
 			// it is a local service for this context, as otherwise we do not
 			// want to dispose it when this service locator gets disposed
