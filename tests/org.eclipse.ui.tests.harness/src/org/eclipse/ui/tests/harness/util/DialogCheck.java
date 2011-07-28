@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,7 +172,9 @@ public class DialogCheck {
     private static void verifyLabelText(Label label, Assert assertion) {
         String widget = label.toString();
         Point size = label.getSize();
-
+        String labelText = label.getText();
+        if (labelText.isEmpty())
+        	return;
         //compute the size with no line wrapping
         Point preferred = label.computeSize(SWT.DEFAULT, SWT.DEFAULT);
         //if (size.y/preferred.y) == X, then label spans X lines, so divide
