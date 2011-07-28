@@ -100,10 +100,6 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		}
 	});
     
-    /**
-     * Size of the list of most recently used working sets.
-     */
-    private static final int MRU_SIZE = 5;
     private List recentWorkingSets = new ArrayList();
 
     private BundleContext bundleContext;
@@ -323,9 +319,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			}
         recentWorkingSets.remove(workingSet);
         recentWorkingSets.add(0, workingSet);
-        if (recentWorkingSets.size() > MRU_SIZE) {
-            recentWorkingSets.remove(MRU_SIZE);
-        }
+		sizeRecentWorkingSets();
     }
 
     //---- equals and hash code -----------------------------------------------
