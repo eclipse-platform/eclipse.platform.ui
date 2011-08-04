@@ -139,7 +139,7 @@ public class PluginContentPage extends ContentPage {
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_pprovider);
-		fProviderText = createText(propertiesGroup, propertiesListener, 2);
+		fProviderCombo = createProviderCombo(propertiesGroup, propertiesListener, 2);
 
 		createExecutionEnvironmentControls(propertiesGroup);
 	}
