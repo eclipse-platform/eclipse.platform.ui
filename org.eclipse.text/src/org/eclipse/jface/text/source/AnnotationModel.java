@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer <anton.leherbauer@windriver.com> - [implementation] AnnotationModel.fModificationStamp leaks annotations - http://bugs.eclipse.org/345715
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
