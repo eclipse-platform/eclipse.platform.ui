@@ -438,30 +438,16 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
 	public abstract void initialize(IWorkbenchPart part) throws PartInitException;
 
-	private void addPropertyListeners() {
+	void addPropertyListeners() {
 		IWorkbenchPart workbenchPart = getPart(false);
 		if (workbenchPart != null) {
-			workbenchPart.addPropertyListener(new IPropertyListener() {
-				public void propertyChanged(Object source, int propId) {
-					firePropertyListeners(source, propId);
-				}
-			});
+			workbenchPart.addPropertyListener(propertyChangeListener);
 
 			if (workbenchPart instanceof IWorkbenchPart3) {
 				((IWorkbenchPart3) workbenchPart)
-						.addPartPropertyListener(new IPropertyChangeListener() {
-							public void propertyChange(PropertyChangeEvent event) {
-								firePartPropertyChange(event);
-							}
-						});
+						.addPartPropertyListener(partPropertyChangeListener);
 
 			}
-		}
-	}
-
-	private void firePropertyListeners(Object source, int propId) {
-		for (Object listener : propChangeListeners.getListeners()) {
-			((IPropertyListener) listener).propertyChanged(source, propId);
 		}
 	}
 
@@ -487,7 +473,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 				CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
 				if (compatibilityPart != null) {
 					legacyPart = compatibilityPart.getPart();
-					addPropertyListeners();
 				}
 			}
 		}
@@ -508,7 +493,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     /**
      * 
      */
-	public void doDisposePart() {
+	private void doDisposePart() {
 		if (legacyPart != null) {
             fireInternalPropertyChange(INTERNAL_PROPERTY_CLOSED);
             // Don't let exceptions in client code bring us down. Log them and continue.
@@ -518,7 +503,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 					((IWorkbenchPart3) legacyPart)
 							.removePartPropertyListener(partPropertyChangeListener);
                 }
-				legacyPart.dispose();
             } catch (Exception e) {
                 WorkbenchPlugin.log(e);
             }
@@ -662,7 +646,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	}
 
 	public void invalidate() {
-		legacyPart = null;
+		doDisposePart();
 	}
 
 	public final PartPane getPane() {

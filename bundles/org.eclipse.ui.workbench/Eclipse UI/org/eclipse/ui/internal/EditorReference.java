@@ -349,6 +349,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		}
 
 		legacyPart = part;
+		addPropertyListeners();
 	}
 
 	@Override
