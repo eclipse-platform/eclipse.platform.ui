@@ -271,10 +271,10 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartChild(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
 		 */
 		public AntHandler onStartChild(String uri, String name, String qname, Attributes attrs, AntXMLContext context) {
-			if (name.equals("target") //$NON-NLS-1$
+			if ((name.equals("target") || name.equals("extension-point"))//$NON-NLS-1$ //$NON-NLS-2$
 					&& (uri.length() == 0 || uri.equals(ANT_CORE_URI))) {
 				return ProjectHelper.targetHandler;
-			} 
+			}
 			return ProjectHelper.elementHandler;
 		}
 		/* (non-Javadoc)

@@ -16,6 +16,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tools.ant.ExtensionPoint;
 import org.apache.tools.ant.Target;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
@@ -30,11 +31,20 @@ public class AntTargetNode extends AntElementNode {
 
 	private Target fTarget= null;
 	private String fLabel= null;
+	private boolean isExtension = false;
 	
-	public AntTargetNode(Target target) {
+	// use newAntTargetNode() instead
+	private AntTargetNode(Target target) {
 		super("target"); //$NON-NLS-1$
 		fTarget= target;
-	}	
+	}
+	
+	// use newAntTargetNode() instead
+	private AntTargetNode(ExtensionPoint target) {
+		super("extension-point"); //$NON-NLS-1$
+		fTarget = target;
+		isExtension = true;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLabel()
@@ -254,5 +264,31 @@ public class AntTargetNode extends AntElementNode {
          	return false;
          }
          return checkReferenceRegion(region, textToSearch, IAntCoreConstants.NAME);
+	}
+    
+    /**
+     * @return if this node is an extension point
+     * 
+     */
+    public boolean isExtensionPoint() {
+    	return isExtension;
+    }
+    
+    /**
+     * This function should be used to construct the 
+     * AntTargetNode
+     * 
+     * @param newTarget
+     * @return newly constructed AntTargetNode
+     * 
+     */
+    public static AntTargetNode newAntTargetNode(Target newTarget) {
+    	AntTargetNode targetNode;
+    	if (newTarget instanceof ExtensionPoint) {
+    		targetNode = new AntTargetNode((ExtensionPoint)newTarget);
+    	} else {
+    		targetNode = new AntTargetNode(newTarget);
+    	}
+		return targetNode;	
 	}
 }

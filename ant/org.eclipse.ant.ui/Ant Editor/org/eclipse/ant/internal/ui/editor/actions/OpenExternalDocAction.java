@@ -89,7 +89,11 @@ public class OpenExternalDocAction extends Action implements IEditorActionDelega
 		if (node instanceof AntProjectNode) {
 			pathBuffer.append("using.html#projects"); //$NON-NLS-1$
 		} else if (node instanceof AntTargetNode) {
-			pathBuffer.append("using.html#targets"); //$NON-NLS-1$
+			if (((AntTargetNode)node).isExtensionPoint()) {
+				pathBuffer.append("targets.html#extension-points"); //$NON-NLS-1$
+			} else {
+				pathBuffer.append("using.html#targets"); //$NON-NLS-1$
+			}
 		} else if (node instanceof AntTaskNode) {
 			AntTaskNode taskNode= (AntTaskNode) node;
 			if (fEditor.getAntModel().getDefininingTaskNode(taskNode.getTask().getTaskName()) == null) {

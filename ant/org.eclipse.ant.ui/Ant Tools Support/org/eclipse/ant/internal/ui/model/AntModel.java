@@ -744,7 +744,7 @@ public class AntModel implements IAntModel {
      * @see org.eclipse.ant.internal.ui.model.IAntModel#addTarget(org.apache.tools.ant.Target, int, int)
      */
     public void addTarget(Target newTarget, int line, int column) {
-        AntTargetNode targetNode= new AntTargetNode(newTarget);
+        AntTargetNode targetNode = AntTargetNode.newAntTargetNode(newTarget);
         fProjectNode.addChildNode(targetNode);
         fCurrentTargetNode= targetNode;
         fStillOpenElements.push(targetNode);

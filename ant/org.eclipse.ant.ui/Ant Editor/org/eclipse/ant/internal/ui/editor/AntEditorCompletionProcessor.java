@@ -37,6 +37,7 @@ import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
+import org.apache.tools.ant.ExtensionPoint;
 import org.apache.tools.ant.IntrospectionHelper;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -463,7 +464,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
             case PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL:
             	String textToSearch= document.get().substring(0, cursorPosition-prefix.length());
                 String attributeString = getAttributeStringFromDocumentStringToPrefix(textToSearch);
-                if ("target".equalsIgnoreCase(currentTaskString)) { //$NON-NLS-1$
+                if ("target".equalsIgnoreCase(currentTaskString) || "extension-point".equalsIgnoreCase(currentTaskString)) { //$NON-NLS-1$ //$NON-NLS-2$
                 	proposals= getTargetAttributeValueProposals(document, textToSearch, prefix, attributeString);
                 } else if ("antcall".equalsIgnoreCase(currentTaskString)) {  //$NON-NLS-1$
                     proposals= getAntCallAttributeValueProposals(document, prefix, attributeString);
@@ -566,12 +567,38 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 			if (!textToSearch.trim().endsWith(",")) { //$NON-NLS-1$
 				return getPropertyProposals(document, prefix, cursorPosition);
 			}
+		} else if (attributeName.equalsIgnoreCase("extensionOf")) {//$NON-NLS-1$
+			return getExtensionOfValueProposals(document, prefix);
 		}
 		
 		return NO_PROPOSALS;
 	}
     
-    protected ICompletionProposal[] getAntCallAttributeValueProposals(IDocument document, String prefix, String attributeName) {
+    private ICompletionProposal[] getExtensionOfValueProposals(IDocument document, String prefix) {
+    	List extensions = new ArrayList();
+		
+		Map targets= getTargets();
+		Set targetNames= targets.keySet();
+		Iterator itr= targetNames.iterator();
+		while (itr.hasNext()) {
+			String targetName = (String) itr.next();
+			Target currentTarget= (Target)targets.get(targetName);
+			if (currentTarget instanceof ExtensionPoint) {
+				extensions.add(targetName);
+			}
+		}
+		
+		ICompletionProposal[] proposals= new ICompletionProposal[extensions.size()];
+		int i= 0;
+		for (Iterator iter = extensions.iterator(); iter.hasNext(); i++) {
+			String targetName = (String) iter.next();
+			ICompletionProposal proposal = new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, ((Target)targets.get(targetName)).getDescription(), AntCompletionProposal.TASK_PROPOSAL);
+			proposals[i]= proposal;
+		}
+		return proposals;
+	}
+
+	protected ICompletionProposal[] getAntCallAttributeValueProposals(IDocument document, String prefix, String attributeName) {
         if (attributeName.equalsIgnoreCase("target")) { //$NON-NLS-1$
             return getTargetProposals(document, prefix);
         }
@@ -1046,8 +1073,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 			Project project= antModel.getProjectNode().getProject();
 			Map tasksAndTypes= ComponentHelper.getComponentHelper(project).getAntTypeTable();
 			createProposals(document, prefix, proposals, tasksAndTypes);
-			if (parentName.equals("project") && "target".startsWith(prefix)) { //$NON-NLS-1$ //$NON-NLS-2$
-				proposals.add(newCompletionProposal(document, prefix, "target")); //$NON-NLS-1$
+			if (parentName.equals("project")) { //$NON-NLS-1$
+				if ("target".startsWith(prefix)) { //$NON-NLS-1$
+					proposals.add(newCompletionProposal(document, prefix, "target")); //$NON-NLS-1$
+				} 
+				if ("extension-point".startsWith(prefix)) { //$NON-NLS-1$
+					proposals.add(newCompletionProposal(document, prefix, "extension-point")); //$NON-NLS-1$
+				}
 			}
 		} else {
 			IElement parent = getDtd().getElement(parentName);
@@ -1101,7 +1133,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     
     private boolean areTasksOrTypesValidChildren(String parentName) {
 		return parentName == "project" || parentName == "target" || parentName == "sequential" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			|| parentName == "presetdef" || parentName == "parallel" || parentName == "daemons"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			|| parentName == "presetdef" || parentName == "parallel" || parentName == "daemons" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			|| parentName == "extension-point"; //$NON-NLS-1$
 	}
 
 	/** 
@@ -1530,7 +1563,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * Returns whether the specified element name is known
      */
     protected boolean isKnownElement(String elementName) {
-    	if (elementName.equals("target") || elementName.equals("project")) { //$NON-NLS-1$ //$NON-NLS-2$
+    	if (elementName.equals("target") || elementName.equals("project") || elementName.equals("extension-point")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     		return true;
     	} 
 		AntProjectNode node= antModel.getProjectNode();

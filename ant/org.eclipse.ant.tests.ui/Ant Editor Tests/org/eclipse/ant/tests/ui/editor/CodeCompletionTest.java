@@ -1192,4 +1192,34 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains(IAntCoreConstants.NAME, proposals);
         processor.dispose();
     }
+    
+    public void testExtensionPoint() throws BadLocationException {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("antextpoint1.xml"));
+
+		int lineNumber= 2;
+    	int columnNumber= 3;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "ext");
+    	assertTrue(proposals.length == 3);
+    	assertContains("extension-point", proposals);
+    	processor.dispose();
+    }
+
+    public void testExtensionOf() throws BadLocationException {
+    	TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("antextpoint2.xml"));
+
+		int lineNumber= 3;
+    	int columnNumber= 38;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	assertTrue(proposals.length == 1);
+    	assertContains("ep-B", proposals);
+    	processor.dispose();
+    }
 }

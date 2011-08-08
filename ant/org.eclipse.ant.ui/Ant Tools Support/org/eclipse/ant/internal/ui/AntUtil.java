@@ -250,7 +250,7 @@ public final class AntUtil {
             Hashtable antTargets= project.getProject().getTargets();
             Target implicitTarget= (Target) antTargets.get(IAntCoreConstants.EMPTY_STRING);
             if (implicitTarget != null) {
-                AntTargetNode implicitTargetNode= new AntTargetNode(implicitTarget);
+                AntTargetNode implicitTargetNode= AntTargetNode.newAntTargetNode(implicitTarget);
                 project.addChildNode(implicitTargetNode);
                 return new AntTargetNode[] {implicitTargetNode};
             }
