@@ -56,26 +56,25 @@ public class EditWatchExpressinInPlaceAction extends Action implements ISelectio
             return;
         }
 
-
         // Always edit multi-line expressions in dialog.  Otherwise try to find the expression 
         // column and activate cell editor there.
         int expressionColumn = getExpressionColumnIndex();
-        if (expressionColumn != -1 || isWatchExpressionWithNewLine()) {
+        IWatchExpression[] expressions = fEditActionDelegate.getSelectedExpressions();
+        if (expressionColumn != -1 && !isWatchExpressionWithNewLine(expressions)) {
             fViewer.editElement(selelection.getFirstElement(), expressionColumn);
-        } else {
+        } else if (expressions.length == 1) {
             fEditActionDelegate.run(this);
         }
     }
     
-    private boolean isWatchExpressionWithNewLine() {
-        IWatchExpression[] expressions = fEditActionDelegate.getSelectedExpressions();
+    private boolean isWatchExpressionWithNewLine(IWatchExpression[] expressions) {
         return expressions.length == 1 && 
-            expressions[0].getExpressionText().indexOf('\n') == -1;
+            expressions[0].getExpressionText().indexOf('\n') != -1;
     }
     
     private int getExpressionColumnIndex() {
         Object[] columnProperties = fViewer.getColumnProperties();
-        for (int i = 0; i < columnProperties.length; i++) {
+        for (int i = 0; columnProperties != null && i < columnProperties.length; i++) {
             if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnProperties[i])) {
                 return i;
             }
