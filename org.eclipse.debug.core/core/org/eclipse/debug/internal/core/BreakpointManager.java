@@ -333,9 +333,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	public void shutdown() {
 		getWorkspace().removeResourceChangeListener(this);
 		getWorkspace().removeResourceChangeListener(fPostChangeListener);
-		fBreakpointListeners = null;
-        fBreakpointsListeners = null;
-        fBreakpointManagerListeners = null;
+		fBreakpointListeners.clear();
+        fBreakpointsListeners.clear();
+        fBreakpointManagerListeners.clear();
         if(fImportParticipants != null) {
         	fImportParticipants.clear();
         	fImportParticipants = null;
