@@ -149,6 +149,7 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		}
 
 		legacyPart = part;
+		addPropertyListeners();
 	}
 
 	@Override
