@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,9 @@ public class ZipLeveledStructureProvider implements
 		}
 
 		ZipEntry parent;
-		if (pathname.segmentCount() == 1) {
+		if (pathname.segmentCount() == 0) {
+			return null;
+		} else if (pathname.segmentCount() == 1) {
 			parent = root;
 		} else {
 			parent = createContainer(pathname.removeLastSegments(1));
@@ -134,13 +136,13 @@ public class ZipLeveledStructureProvider implements
 		String pathOrig = new String(path);
 		for (int i = 0; i < stripLevel; i++) {
 			int firstSep = path.indexOf('/');
-			// If the first character was a seperator we must strip to the next
-			// seperator as well
+			// If the first character was a separator we must strip to the next
+			// separator as well
 			if (firstSep == 0) {
 				path = path.substring(1);
 				firstSep = path.indexOf('/');
 			}
-			// No seperator wasw present so we're in a higher directory right
+			// No separator was present so we're in a higher directory right
 			// now
 			if (firstSep == -1) {
 				return pathOrig;
