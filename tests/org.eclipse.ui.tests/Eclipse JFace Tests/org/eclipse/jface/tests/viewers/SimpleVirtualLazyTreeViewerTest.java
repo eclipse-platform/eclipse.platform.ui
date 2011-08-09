@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -36,6 +37,8 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	private boolean callbacksEnabled = true;
 	private boolean printCallbacks = false;
 	private int offset = 0;
+
+	private int updateElementCallCount = 0;
 
 	private class LazyTreeContentProvider implements ILazyTreeContentProvider {
 		/**
@@ -79,8 +82,6 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		}
 	}
 
-	private int updateElementCallCount = 0;
-
 	public SimpleVirtualLazyTreeViewerTest(String name) {
 		super(name);
 	}
@@ -88,7 +89,22 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	public TreeViewer getTreeViewer() {
 		return (TreeViewer) fViewer;
 	}
+	
+	/**
+	 * Checks if the virtual tree / table functionality can be tested in the current settings.
+	 * The virtual trees and tables rely on SWT.SetData event which is only sent if OS requests
+	 * information about the tree / table. If the window is not visible (obscured by another window,
+	 * outside of visible area, or OS determined that it can skip drawing), then OS request won't
+	 * be send, causing automated tests to fail. 
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=118919 .  
+	 */
+	protected boolean setDataCalled = false;
 
+	public void setUp() {
+		super.setUp();
+		processEvents(); // run events for SetData precondition test
+	}
+	
 	protected void setInput() {
 		String letterR = "R";
 		getTreeViewer().setInput(letterR);
@@ -98,12 +114,21 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		Tree tree = new Tree(fShell, SWT.VIRTUAL | SWT.MULTI);
 		TreeViewer treeViewer = new TreeViewer(tree);
 		treeViewer.setContentProvider(new LazyTreeContentProvider());
+		tree.addListener(SWT.SetData, new Listener() {
+			public void handleEvent(Event event) {
+				setDataCalled = true;
+			}
+		});
 		return treeViewer;
 	}
 
 	public void testCreation() {
 		if (disableTestsBug347491)
 			return;
+		if (!setDataCalled) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
 		processEvents();
 		assertTrue("tree should have items", getTreeViewer().getTree()
 				.getItemCount() > 0);
@@ -160,6 +185,10 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	public void testRemoveAt() {
 		if (disableTestsBug347491)
 			return;
+		if (!setDataCalled) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
 		TreeViewer treeViewer = (TreeViewer) fViewer;
 		// correct what the content provider is answering with
 		treeViewer.getTree().update();

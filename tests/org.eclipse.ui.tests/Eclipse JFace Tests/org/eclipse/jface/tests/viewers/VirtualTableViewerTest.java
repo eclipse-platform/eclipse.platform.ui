@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,16 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	Set visibleItems = new HashSet();
 
 	/**
+	 * Checks if the virtual tree / table functionality can be tested in the current settings.
+	 * The virtual trees and tables rely on SWT.SetData event which is only sent if OS requests
+	 * information about the tree / table. If the window is not visible (obscured by another window,
+	 * outside of visible area, or OS determined that it can skip drawing), then OS request won't
+	 * be send, causing automated tests to fail. 
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=118919 .  
+	 */
+	protected boolean setDataCalled = false;
+
+	/**
 	 * Create a new instance of the receiver.
 	 * 
 	 * @param name
@@ -42,7 +52,12 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	public VirtualTableViewerTest(String name) {
 		super(name);
 	}
-	
+
+	public void setUp() {
+		super.setUp();
+		processEvents(); // run events for SetData precondition test
+	}
+
 	protected int getShellStyle() {
 		return super.getShellStyle() | SWT.ON_TOP;
 	}
@@ -64,6 +79,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 			 */
 			public void handleEvent(Event event) {
+				setDataCalled = true;
 				TableItem item = (TableItem) event.item;
 				visibleItems.add(item);
 			}
@@ -106,6 +122,10 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testFilter()
 	 */
 	public void testFilter() {
+		if (!setDataCalled) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
 		ViewerFilter filter = new TestLabelFilter();
 
 		visibleItems = new HashSet();
@@ -120,6 +140,10 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	}
 
 	public void testSetFilters() {
+		if (!setDataCalled) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
 		ViewerFilter filter = new TestLabelFilter();
 
 		visibleItems = new HashSet();
@@ -209,6 +233,10 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testRenameWithFilter()
 	 */
 	public void testRenameWithFilter() {
+		if (!setDataCalled) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
 		fViewer.addFilter(new TestLabelFilter());
 		((TableViewer) fViewer).getControl().update();
         TestElement first = fRootElement.getFirstChild();
