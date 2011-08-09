@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Bug 349224 Navigator content provider "appearsBefore" creates hard reference to named id - paul.fullbright@oracle.com
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
@@ -23,6 +24,7 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -456,9 +458,12 @@ public class NavigatorContentDescriptorManager {
 			if (desc.getId().equals(id))
 				return i;
 		}
-		throw new RuntimeException("Can't find id: " + id); //$NON-NLS-1$
+		// Do not require content descriptor to exist in workspace
+		NavigatorPlugin.log(IStatus.WARNING, 0,
+				"Can't find Navigator Content Descriptor with id: " + id, null); //$NON-NLS-1$
+		return -1;
 	}
-	
+
 	private void computeSequenceNumbers() {
 		NavigatorContentDescriptor[] descs = getAllContentDescriptors();
 
@@ -474,7 +479,7 @@ public class NavigatorContentDescriptorManager {
 				NavigatorContentDescriptor desc = (NavigatorContentDescriptor) list.get(i);
 				if (desc.getAppearsBeforeId() != null) {
 					int beforeInd = findId(list, desc.getAppearsBeforeId());
-					if (beforeInd < i) {
+					if (beforeInd >= 0 && beforeInd < i) {
 						list.add(beforeInd, desc);
 						list.remove(i + 1);
 						changed = true;

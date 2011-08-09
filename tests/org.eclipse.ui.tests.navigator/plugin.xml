@@ -357,6 +357,17 @@
       </navigatorContent>
 
       <navigatorContent
+            appearsBefore="org.eclipse.ui.tests.navigator.testTHISISNOTFOUND"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestSimpleChildrenContentProvider2"
+            id="org.eclipse.ui.tests.navigator.testSimpleChildrenAppearsBeforeNotFound"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderCyan"
+            name="Test Simple Children Appears Before Not Found">
+	     <enablement>
+            <instanceof value="org.eclipse.core.resources.IProject"/>
+         </enablement>            
+      </navigatorContent>
+
+      <navigatorContent
             id="org.eclipse.ui.tests.navigator.testContent2"
             contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProvider"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
