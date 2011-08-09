@@ -121,42 +121,78 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     public void testRefreshWithAddedChildren() {
 		if (disableTestsBug347491)
 			return;
+		if (setDataCalls == 0) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
 		super.testRefreshWithAddedChildren();
     }
 
     public void testDeleteSibling() {
 		if (disableTestsBug347491)
 			return;
-    	super.testDeleteSibling();
+		if (setDataCalls == 0) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
+		super.testDeleteSibling();
+    }
+    
+    public void testExpandToLevel() {
+		if (setDataCalls == 0) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
+    	super.testExpandToLevel();
     }
     
     public void testInsertSibling() {
 		if (disableTestsBug347491)
 			return;
+		if (setDataCalls == 0) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
     	super.testInsertSibling();
     }
     
     public void testInsertSiblings() {
 		if (disableTestsBug347491)
 			return;
-    	super.testInsertSiblings();
+		if (setDataCalls == 0) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
+   	super.testInsertSiblings();
     }
     
     public void testSetInput() {
 		if (disableTestsBug347491)
 			return;
+		if (setDataCalls == 0) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
     	super.testSetInput();
     }
     
     public void testSomeChildrenChanged() {
 		if (disableTestsBug347491)
 			return;
+		if (setDataCalls == 0) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
     	super.testSomeChildrenChanged();
     }
 
 	public void testWorldChanged() {
 		if (disableTestsBug347491)
 			return;
+		if (setDataCalls == 0) {
+			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+			return;
+		}
 		super.testWorldChanged();
 	}
 }
