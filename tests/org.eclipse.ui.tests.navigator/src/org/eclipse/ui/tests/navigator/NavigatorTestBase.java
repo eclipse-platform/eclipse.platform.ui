@@ -87,6 +87,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_SIMPLE_CHILDREN1 = "org.eclipse.ui.tests.navigator.testSimpleChildrenContent1";
 	public static final String TEST_SIMPLE_CHILDREN2 = "org.eclipse.ui.tests.navigator.testSimpleChildrenContent2";
 	public static final String TEST_SIMPLE_CHILDREN3 = "org.eclipse.ui.tests.navigator.testSimpleChildrenContent3";
+	public static final String TEST_SIMPLE_CHILDREN_NOT_FOUND = "org.eclipse.ui.tests.navigator.testSimpleChildrenAppearsBeforeNotFound";
 	
 	public static final String TEST_CONTENT_M12_VIEW = "org.eclipse.ui.tests.navigator.M12View";
 	public static final String TEST_CONTENT_M12_M1_CONTENT = "org.eclipse.ui.tests.navigator.m12.M1";
