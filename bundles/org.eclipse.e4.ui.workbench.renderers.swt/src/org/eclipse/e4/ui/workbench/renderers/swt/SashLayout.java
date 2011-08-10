@@ -19,7 +19,9 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 
 public class SashLayout extends Layout {
-
+	// The minimum value (as a percentage) that a sash can be dragged to
+	int minSashPercent = 10;
+	
 	int marginLeft = 0;
 	int marginRight = 0;
 	int marginTop = 0;
@@ -159,7 +161,7 @@ public class SashLayout extends Layout {
 	protected void adjustWeights(List<SashRect> sashes, int curX, int curY) {
 		for (SashRect sr : sashes) {
 			int totalWeight = getWeight(sr.left) + getWeight(sr.right);
-			int tenPctTotal = totalWeight / 10;
+			int minSashValue = (int) (((totalWeight / 100.0) * minSashPercent) + 0.5);
 
 			Rectangle leftRect = getRectangle(sr.left);
 			Rectangle rightRect = getRectangle(sr.right);
@@ -174,20 +176,20 @@ public class SashLayout extends Layout {
 				double right = rightRect.x + rightRect.width;
 				double pct = (curX - left) / (right - left);
 				leftWeight = (int) ((totalWeight * pct) + 0.5);
-				if (leftWeight < tenPctTotal)
-					leftWeight = tenPctTotal;
-				if (leftWeight > (totalWeight - tenPctTotal))
-					leftWeight = totalWeight - tenPctTotal;
+				if (leftWeight < minSashValue)
+					leftWeight = minSashValue;
+				if (leftWeight > (totalWeight - minSashValue))
+					leftWeight = totalWeight - minSashValue;
 				rightWeight = totalWeight - leftWeight;
 			} else {
 				double top = leftRect.y;
 				double bottom = rightRect.y + rightRect.height;
 				double pct = (curY - top) / (bottom - top);
 				leftWeight = (int) ((totalWeight * pct) + 0.5);
-				if (leftWeight < tenPctTotal)
-					leftWeight = tenPctTotal;
-				if (leftWeight > (totalWeight - tenPctTotal))
-					leftWeight = totalWeight - tenPctTotal;
+				if (leftWeight < minSashValue)
+					leftWeight = minSashValue;
+				if (leftWeight > (totalWeight - minSashValue))
+					leftWeight = totalWeight - minSashValue;
 				rightWeight = totalWeight - leftWeight;
 			}
 
