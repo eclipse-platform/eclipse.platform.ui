@@ -726,7 +726,7 @@
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             platform="carbon"
-	        sequence="ALT+BS"
+	        sequence="M3+BS"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.deletePreviousWord"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
@@ -1074,8 +1074,25 @@
       <key
             commandId="org.eclipse.ui.edit.text.deletePreviousWord"
             contextId="org.eclipse.ui.textEditorScope"
-            sequence="ALT+BS"
+            sequence="M3+BS"
             schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
+	        platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.textEditorScope"
+            sequence="M3+BS"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.deleteNextWord"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        sequence="M3+DEL"
+	        schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+	  <key
+	        platform="carbon"
+	        commandId=""
+	        contextId="org.eclipse.ui.textEditorScope"
+	        sequence="M3+DEL"
+	        schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
       <key
             commandId="org.eclipse.ui.edit.text.deletePreviousWord"
             contextId="org.eclipse.ui.textEditorScope"
@@ -1084,7 +1101,7 @@
       <key
             commandId="org.eclipse.ui.edit.text.deleteNextWord"
             contextId="org.eclipse.ui.textEditorScope"
-            sequence="ALT+D"
+            sequence="M3+D"
             schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
       <key
             commandId="org.eclipse.ui.edit.text.deleteNextWord"
