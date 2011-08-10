@@ -194,8 +194,8 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	private String fTitle;
 	private ListenerList fListenerList= new ListenerList();
 	private CompareNavigator fNavigator;
-	private ContentMergeViewer fLeftDirtyViewer = null;
-	private ContentMergeViewer fRightDirtyViewer = null;
+	private boolean fLeftDirty = false;
+	private boolean fRightDirty = false;
 	private IPropertyChangeListener fDirtyStateListener;
 	
 	boolean fStructureCompareOnSingleClick= true;
@@ -1038,7 +1038,7 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected boolean isLeftSaveNeeded() {
-		return fLeftDirtyViewer != null;
+		return fLeftDirty;
 	}
 
 	/**
@@ -1048,7 +1048,7 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected boolean isRightSaveNeeded() {
-		return fRightDirtyViewer != null;
+		return fRightDirty;
 	}
 	
 	/**
@@ -1078,18 +1078,9 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	 */
 	public void setDirty(boolean dirty) {
 		boolean oldDirty = isSaveNeeded();
-		boolean newDirty = dirty;
-		if (!newDirty) {
-			fLeftDirtyViewer = null;
-			fRightDirtyViewer = null;
-		} else {
-			if (fLeftDirtyViewer == null)
-				fLeftDirtyViewer = (ContentMergeViewer) fContentInputPane
-						.getViewer();
-			if (fRightDirtyViewer == null)
-				fRightDirtyViewer = (ContentMergeViewer) fContentInputPane
-						.getViewer();
-		}
+		fLeftDirty = dirty;
+		fRightDirty = dirty;
+
 		if (oldDirty != isSaveNeeded()) {
 			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, Boolean.valueOf(oldDirty), Boolean.valueOf(isSaveNeeded()));
 		}
@@ -1113,15 +1104,8 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	 */
 	protected void setLeftDirty(boolean dirty) {
 		boolean oldDirty = isSaveNeeded();
-		boolean newDirty = dirty;
-		if (!newDirty) {
-			fLeftDirtyViewer = null;
-		} else {
-			if (fLeftDirtyViewer == null)
-				fLeftDirtyViewer = (ContentMergeViewer) fContentInputPane
-						.getViewer();
+		fLeftDirty = dirty;
 
-		}
 		if (oldDirty != isSaveNeeded()) {
 			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE,
 					Boolean.valueOf(oldDirty), Boolean.valueOf(isSaveNeeded()));
@@ -1146,14 +1130,8 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	 */
 	protected void setRightDirty(boolean dirty) {
 		boolean oldDirty = isSaveNeeded();
-		boolean newDirty = dirty;
-		if (!newDirty) {
-			fRightDirtyViewer = null;
-		} else {
-			if (fRightDirtyViewer == null)
-				fRightDirtyViewer = (ContentMergeViewer) fContentInputPane
-						.getViewer();
-		}
+		fRightDirty = dirty;
+
 		if (oldDirty != isSaveNeeded()) {
 			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE,
 					Boolean.valueOf(oldDirty), Boolean.valueOf(isSaveNeeded()));
@@ -1175,24 +1153,13 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 		Assert.isNotNull(source);
 		boolean oldDirty = isSaveNeeded();
 		ContentMergeViewer cmv = (ContentMergeViewer) source;
-		if (dirty) {
-			if (cmv.internalIsLeftDirty()) {
-				if (fLeftDirtyViewer == null) {
-					fLeftDirtyViewer = cmv;
-				}
-			}
-			if (cmv.internalIsRightDirty()) {
-				if (fRightDirtyViewer == null) {
-					fRightDirtyViewer = cmv;
-				}
-			}
-		} else {
-			if (!cmv.internalIsLeftDirty()) {
-				fLeftDirtyViewer = null;
-			}
-			if (!cmv.internalIsRightDirty()) {
-				fRightDirtyViewer = null;
-			}
+
+		if (dirty == cmv.internalIsLeftDirty()) {
+			fLeftDirty = cmv.internalIsLeftDirty();
+		}
+
+		if (dirty == cmv.internalIsRightDirty()) {
+			fRightDirty = cmv.internalIsRightDirty();
 		}
 		boolean newDirty = isSaveNeeded();
 		if (DEBUG) {
