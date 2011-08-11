@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Atsuhiko Yamanaka, JCraft,Inc. - initial API and implementation.
  *     IBM Corporation - ongoing maintenance
  *     Atsuhiko Yamanaka, JCraft,Inc. - re-implement the public key transfer by using IJSchLocation.
+ *     Atsuhiko Yamanaka, JCraft,Inc. - Bug 351094 SSH2 Key Management Comment Field stuck on RSA-1024
  *******************************************************************************/
 package org.eclipse.jsch.internal.ui.preference;
 
@@ -329,7 +330,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
           return;
         try{
           ByteArrayOutputStream out=new ByteArrayOutputStream();
-          kpair.writePublicKey(out, keyCommentText.getText());
+          kpairComment = keyCommentText.getText();
+          kpair.writePublicKey(out, kpairComment);
           out.close();
           publicKeyText.setText(out.toString());
         }
@@ -562,8 +564,45 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
           kpair=_kpair;
           String _type=(kpair.getKeyType()==KeyPair.DSA) ? IConstants.DSA
               : IConstants.RSA;
-          ByteArrayOutputStream out=new ByteArrayOutputStream();
           kpairComment=_type+"-1024"; //$NON-NLS-1$
+
+          // TODO Bug 351094 The comment should be from kpair object,
+          // but the JSch API does not provided such a method.
+          // In the version 0.1.45, JSch will support such a method,
+          // and the following code should be replaced with it at that time.
+          java.io.FileInputStream fis=null;
+          try{
+            java.io.File f=new java.io.File(pkeyab+".pub"); //$NON-NLS-1$
+            int i=0;
+            fis=new java.io.FileInputStream(f);
+            byte[] buf=new byte[(int)f.length()];
+            while(i<buf.length){
+              int j=fis.read(buf, i, buf.length-i);
+              if(j<=0)
+                break;
+              i+=j;
+            }
+            String pubkey=new String(buf);
+            if(pubkey.indexOf(' ')>0
+                &&pubkey.indexOf(' ', pubkey.indexOf(' ')+1)>0){
+              int j=pubkey.indexOf(' ', pubkey.indexOf(' ')+1)+1;
+              kpairComment=pubkey.substring(j);
+              if(kpairComment.indexOf('\n')>0){
+                kpairComment=kpairComment.substring(0,
+                    kpairComment.indexOf('\n'));
+              }
+            }
+          }
+          catch(IOException ioe){
+            // ignore if public-key does not exist.
+          }
+          finally{
+            if(fis!=null)
+              fis.close();
+          }
+
+          ByteArrayOutputStream out=new ByteArrayOutputStream();
+          
           kpair.writePublicKey(out, kpairComment);
           out.close();
           publicKeyText.setText(out.toString());
