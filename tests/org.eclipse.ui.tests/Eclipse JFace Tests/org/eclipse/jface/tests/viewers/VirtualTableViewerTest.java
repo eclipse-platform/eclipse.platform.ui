@@ -15,17 +15,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * The TableViewerTest is a test of the SWT#VIRTUAL support in TableViewers,
@@ -86,6 +85,20 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		});
 		return viewer;
 	}
+	
+	/**
+	 * Checks if update occurred. Updates for virtual items will be skipped
+	 * if, for instance, another window is in the foreground.  
+	 * @return <code>true</code> if update occurred
+	 */
+	protected boolean updateTable() {
+		setDataCalled = false;
+		((TableViewer) fViewer).getControl().update();
+		if (setDataCalled)
+			return true;
+		System.err.println("SWT.SetData is not received. Cancelled test " + getName());
+		return false;
+	}
 
 	/**
 	 * Get the collection of currently visible table items.
@@ -122,43 +135,38 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testFilter()
 	 */
 	public void testFilter() {
-		if (!setDataCalled) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
-			return;
-		}
 		ViewerFilter filter = new TestLabelFilter();
-
 		visibleItems = new HashSet();
 		fViewer.addFilter(filter);
-		((TableViewer) fViewer).getControl().update();
+		if (!updateTable())
+			return;
 		assertEquals("filtered count", 5, getItemCount());
 
 		visibleItems = new HashSet();
 		fViewer.removeFilter(filter);
-		((TableViewer) fViewer).getControl().update();
+		if (!updateTable())
+			return;
 		assertEquals("unfiltered count", 10, getItemCount());
 	}
 
 	public void testSetFilters() {
-		if (!setDataCalled) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
-			return;
-		}
 		ViewerFilter filter = new TestLabelFilter();
-
 		visibleItems = new HashSet();
 		fViewer.setFilters(new ViewerFilter[] { filter, new TestLabelFilter2() });
-		((TableViewer) fViewer).getControl().update();
+		if (!updateTable())
+			return;
 		assertEquals("2 filters count",1, getItemCount());
 
 		visibleItems = new HashSet();
 		fViewer.setFilters(new ViewerFilter[] { filter });
-		((TableViewer) fViewer).getControl().update();
+		if (!updateTable())
+			return;
 		assertEquals("1 filtered count",5, getItemCount());
 
 		visibleItems = new HashSet();
 		fViewer.setFilters(new ViewerFilter[0]);
-		((TableViewer) fViewer).getControl().update();
+		if (!updateTable())
+			return;
 		assertEquals("unfiltered count",10, getItemCount());
 	}
 	/*
@@ -238,7 +246,8 @@ public class VirtualTableViewerTest extends TableViewerTest {
 			return;
 		}
 		fViewer.addFilter(new TestLabelFilter());
-		((TableViewer) fViewer).getControl().update();
+		if (!updateTable())
+			return;
         TestElement first = fRootElement.getFirstChild();
         first.setLabel("name-1111"); // should disappear
         ((TableViewer) fViewer).getControl().update();
