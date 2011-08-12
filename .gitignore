@@ -5,6 +5,7 @@ bin/
 *.patch
 javacore.*
 heapdump.*
+core.*
 Snap.*
 target/
 
