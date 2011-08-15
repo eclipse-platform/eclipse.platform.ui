@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Holger Voormann - Fix for Bug 352434
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -154,9 +155,9 @@ public class LocalSearchManager {
 	 */
 
 	public static List asList(TopDocs topDocs, IndexSearcher searcher) {
-		List list = new ArrayList(topDocs.totalHits);
+		List list = new ArrayList(topDocs.scoreDocs.length);
 		
-		for (int i=0; i<topDocs.totalHits; ++i) {
+		for (int i=0; i<topDocs.scoreDocs.length; ++i) {
 			try {
 				Document doc = searcher.doc(topDocs.scoreDocs[i].doc); 
 				float score = topDocs.scoreDocs[i].score;
