@@ -43,8 +43,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -132,12 +130,6 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 		final ViewerFilterImpl filter = new ViewerFilterImpl();
 
 		viewer.addFilter(filter);
-		searchText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				filter.setPattern(searchText.getText());
-				viewer.refresh();
-			}
-		});
 
 		viewer.setInput(Util.loadPackages());
 

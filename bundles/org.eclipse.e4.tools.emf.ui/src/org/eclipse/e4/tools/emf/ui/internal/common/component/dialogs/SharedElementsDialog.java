@@ -17,6 +17,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -45,8 +46,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -129,12 +128,7 @@ public class SharedElementsDialog extends TitleAreaDialog {
 		};
 		viewer.addFilter(filter);
 
-		searchText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				filter.setPattern(((Text) e.widget).getText());
-				viewer.refresh();
-			}
-		});
+		ControlFactory.attachFiltering(searchText, viewer, filter);
 
 		return comp;
 	}

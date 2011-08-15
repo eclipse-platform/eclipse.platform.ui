@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -37,8 +38,6 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -121,12 +120,7 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 		};
 		viewer.addFilter(filter);
 
-		searchText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				filter.setPattern(((Text) e.widget).getText());
-				viewer.refresh();
-			}
-		});
+		ControlFactory.attachFiltering(searchText, viewer, filter);
 
 		return composite;
 	}

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -35,8 +36,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -85,13 +84,8 @@ public class ExpressionIdDialog extends TitleAreaDialog {
 				return viewer instanceof AbstractTreeViewer && super.isParentMatch(viewer, element);
 			}
 		};
-		idField.addModifyListener(new ModifyListener() {
 
-			public void modifyText(ModifyEvent e) {
-				filter.setPattern(((Text) e.widget).getText());
-				viewer.refresh();
-			}
-		});
+		ControlFactory.attachFiltering(idField, viewer, filter);
 
 		l = new Label(container, SWT.NONE);
 		viewer = new TableViewer(container);

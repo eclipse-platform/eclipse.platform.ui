@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
@@ -118,12 +120,7 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 		};
 		viewer.addFilter(filter);
 
-		searchText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				filter.setPattern(((Text) e.widget).getText());
-				viewer.refresh();
-			}
-		});
+		ControlFactory.attachFiltering(searchText, viewer, filter);
 
 		return composite;
 	}
