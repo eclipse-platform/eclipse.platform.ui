@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BindingContextSelectionDialog;
@@ -32,13 +33,11 @@ import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTransla
 import org.eclipse.e4.tools.services.IClipboardService.Handler;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -80,8 +79,12 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -622,8 +625,9 @@ public class ControlFactory {
 					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 					if (s.size() == 1) {
 						Object obj = s.getFirstElement();
-						MContext container = (MContext) editor.getMaster().getValue();
-						int idx = container.getVariables().indexOf(obj) - 1;
+						EObject container = (EObject) editor.getMaster().getValue();
+						List<?> l = (List<?>) container.eGet(feature);
+						int idx = l.indexOf(obj) - 1;
 						if (idx >= 0) {
 							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), feature, obj, idx);
 
@@ -649,9 +653,10 @@ public class ControlFactory {
 					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 					if (s.size() == 1) {
 						Object obj = s.getFirstElement();
-						MContext container = (MApplication) editor.getMaster().getValue();
-						int idx = container.getVariables().indexOf(obj) + 1;
-						if (idx < container.getVariables().size()) {
+						EObject container = (EObject) editor.getMaster().getValue();
+						List<?> l = (List<?>) container.eGet(feature);
+						int idx = l.indexOf(obj) + 1;
+						if (idx < l.size()) {
 							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), feature, obj, idx);
 
 							if (cmd.canExecute()) {
@@ -673,13 +678,13 @@ public class ControlFactory {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
-					MContext el = (MContext) editor.getMaster().getValue();
+					EObject el = (EObject) editor.getMaster().getValue();
 					List<?> ids = ((IStructuredSelection) viewer.getSelection()).toList();
 					Command cmd = RemoveCommand.create(editor.getEditingDomain(), el, feature, ids);
 					if (cmd.canExecute()) {
 						editor.getEditingDomain().getCommandStack().execute(cmd);
-						if (el.getVariables().size() > 0) {
-							viewer.setSelection(new StructuredSelection(el.getVariables().get(0)));
+						if (ids.size() > 0) {
+							viewer.setSelection(new StructuredSelection(ids.get(0)));
 						}
 					}
 				}
@@ -747,5 +752,26 @@ public class ControlFactory {
 			return translation == key ? label : translation;
 		}
 		return label;
+	}
+
+	public static void attachFiltering(Text searchText, final TableViewer viewer, final PatternFilter filter) {
+		searchText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				filter.setPattern(((Text) e.widget).getText());
+				viewer.refresh();
+				if (viewer.getTable().getItemCount() > 0) {
+					Object data = viewer.getTable().getItem(0).getData();
+					viewer.setSelection(new StructuredSelection(data));
+				}
+			}
+		});
+		searchText.addTraverseListener(new TraverseListener() {
+
+			public void keyTraversed(TraverseEvent e) {
+				if (e.keyCode == SWT.ARROW_DOWN && viewer.getTable().getItemCount() > 0) {
+					viewer.getControl().setFocus();
+				}
+			}
+		});
 	}
 }
