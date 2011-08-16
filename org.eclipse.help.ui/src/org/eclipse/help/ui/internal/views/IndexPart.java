@@ -9,6 +9,7 @@
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 163558 Dynamic content support for all UA
  *     IBM Corporation - Support for see elements
+ *     Andreas Meissner - Fix Bug 351272 
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
@@ -212,10 +213,17 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 			return new Object[0];
 		}
 
-		Object[] children = new Object[topics.length + subentries.length + sees.length];
-		System.arraycopy(topics, 0, children, 0, topics.length);
-		System.arraycopy(subentries, 0, children, topics.length, subentries.length);
-		System.arraycopy(sees, 0, children, topics.length + subentries.length, sees.length);
+		Object[] children = null;
+		if (topics.length == 1) {
+			children = new Object[subentries.length + sees.length];
+			System.arraycopy(subentries, 0, children, 0, subentries.length);
+			System.arraycopy(sees, 0, children, subentries.length, sees.length);
+		} else {
+			children = new Object[topics.length + subentries.length + sees.length];
+			System.arraycopy(topics, 0, children, 0, topics.length);
+			System.arraycopy(subentries, 0, children, topics.length, subentries.length);
+			System.arraycopy(sees, 0, children, topics.length + subentries.length, sees.length);
+		}
 
 		return children; 
 	}
