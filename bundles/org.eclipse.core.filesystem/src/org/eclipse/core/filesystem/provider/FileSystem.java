@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,11 +117,13 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	public abstract IFileStore getStore(URI uri);
 
 	/**
-	 * The default implementation of 
-	 * {@link IFileSystem#fetchFileTree(IFileStore, IProgressMonitor)}.
+	 * {@inheritDoc}
+	 * <p>
 	 * This default implementation always returns <code>null</code>.  Subclasses 
 	 * that can efficiently provide an {@link IFileTree} rooted at the given file store 
 	 * should override.
+	 * @throws CoreException if fails.
+	 * @see IFileSystem#fetchFileTree(IFileStore, IProgressMonitor)
 	 */
 	public IFileTree fetchFileTree(IFileStore root, IProgressMonitor monitor) throws CoreException {
 		return null;
