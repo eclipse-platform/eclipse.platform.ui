@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -357,22 +357,35 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified 
 	 * in the member flags, hidden resources are visited as well.
 	 * </p>
+	 * <p>
+	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended), 
+	 * the resource is checked for the existence before the visitor's <code>visit</code>
+	 * method is called. If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is specified
+	 * in the member flags, the resource is not checked for the existence before the visitor's
+	 * <code>visit</code> method is called. Children of the resource are never checked
+	 * for the existence.
+	 * </p>
 	 *
 	 * @param visitor the visitor
 	 * @param memberFlags bit-wise or of member flag constants
 	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}
 	 *   and {@link IContainer#INCLUDE_HIDDEN}) indicating which members are of interest
+	 *   and {@link IContainer#DO_NOT_CHECK_EXISTENCE} if the resource on which the method is
+	 *   called should not be checked for the existence
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
 	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
 	 *     this resource does not exist.</li>
 	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
 	 *     this resource is a project that is not open.</li>
+	 * <li> the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified and
+	 *     this resource does not exist.</li>
 	 * <li> The visitor failed with this exception.</li>
 	 * </ul>
 	 * @see IContainer#INCLUDE_PHANTOMS
 	 * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
 	 * @see IContainer#INCLUDE_HIDDEN
+	 * @see IContainer#DO_NOT_CHECK_EXISTENCE
 	 * @see IResource#isPhantom()
 	 * @see IResource#isTeamPrivateMember()
 	 * @see IResourceProxyVisitor#visit(IResourceProxy)
@@ -477,6 +490,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified 
 	 * in the member flags, hidden resources are visited as well.
 	 * </p>
+	 * <p>
+	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended), 
+	 * the resource is checked for the existence before the visitor's <code>visit</code>
+	 * method is called. If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is specified
+	 * in the member flags, the resource is not checked for the existence before the visitor's
+	 * <code>visit</code> method is called. Children of the resource are never checked
+	 * for the existence.
+	 * </p>
 	 *
 	 * @param visitor the visitor
 	 * @param depth the depth to which members of this resource should be
@@ -484,19 +505,24 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *		or {@link IResource#DEPTH_INFINITE}.
 	 * @param memberFlags bit-wise or of member flag constants
 	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}, 
-	 *   {@link IContainer#INCLUDE_HIDDEN} and {@link IContainer#EXCLUDE_DERIVED}) indicating which members are of interest
+	 *   {@link IContainer#INCLUDE_HIDDEN} and {@link IContainer#EXCLUDE_DERIVED}) indicating
+	 *   which members are of interest and {@link IContainer#DO_NOT_CHECK_EXISTENCE}
+	 *   if the resource on which the method is called should not be checked for the existence
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
 	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
 	 *     this resource does not exist.</li>
 	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
 	 *     this resource is a project that is not open.</li>
+	 * <li> the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified and
+	 *     this resource does not exist.</li>
 	 * <li> The visitor failed with this exception.</li>
 	 * </ul>
 	 * @see IContainer#INCLUDE_PHANTOMS
 	 * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
 	 * @see IContainer#INCLUDE_HIDDEN
 	 * @see IContainer#EXCLUDE_DERIVED
+	 * @see IContainer#DO_NOT_CHECK_EXISTENCE
 	 * @see IResource#isDerived()
 	 * @see IResource#isPhantom()
 	 * @see IResource#isTeamPrivateMember()

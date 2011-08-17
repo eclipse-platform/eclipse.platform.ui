@@ -617,6 +617,58 @@ public class IResourceTest extends ResourceTest {
 		}.performTest(inputs);
 	}
 
+	public void testAcceptDoNotCheckExistence() throws CoreException {
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		IFolder a = project.getFolder("a");
+		ensureExistsInWorkspace(project, true);
+
+		try {
+			// pass DEPTH_ONE to avoid using proxy visitor
+			a.accept(new IResourceVisitor() {
+				public boolean visit(IResource resource) {
+					// we should not get that far if the resource does not exist
+					fail("1.0");
+					return true;
+				}
+			}, IResource.DEPTH_ONE, IResource.NONE);
+			fail("1.1");
+		} catch (CoreException e) {
+			// expected
+		}
+
+		try {
+			a.accept(new IResourceProxyVisitor() {
+				public boolean visit(IResourceProxy proxy) {
+					// we should not get that far if the resource does not exist
+					fail("2.0");
+					return true;
+				}
+			}, IResource.NONE);
+			fail("2.1");
+		} catch (CoreException e) {
+			// expected
+		}
+
+		// pass DEPTH_ONE to avoid using proxy visitor
+		// if we don't check the existence, then no exception should be thrown
+		a.accept(new IResourceVisitor() {
+			public boolean visit(IResource resource) {
+				// we should not get that far if the resource does not exist
+				fail("3.0");
+				return true;
+			}
+		}, IResource.DEPTH_ONE, IContainer.DO_NOT_CHECK_EXISTENCE);
+
+		// if we don't check the existence, then no exception should be thrown
+		a.accept(new IResourceProxyVisitor() {
+			public boolean visit(IResourceProxy proxy) {
+				// we should not get that far if the resource does not exist
+				fail("4.0");
+				return true;
+			}
+		}, IContainer.DO_NOT_CHECK_EXISTENCE);
+	}
+
 	/**
 	 * This method tests the IResource.refreshLocal() operation */
 	public void testAddLocalProject() throws CoreException {

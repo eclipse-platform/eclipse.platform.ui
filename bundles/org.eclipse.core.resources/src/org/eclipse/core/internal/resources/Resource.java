@@ -51,7 +51,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void accept(final IResourceProxyVisitor visitor, final int memberFlags) throws CoreException {
 		// it is invalid to call accept on a phantom when INCLUDE_PHANTOMS is not specified
 		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
-		checkAccessible(getFlags(getResourceInfo(includePhantoms, false)));
+		if ((memberFlags & IContainer.DO_NOT_CHECK_EXISTENCE) == 0)
+			checkAccessible(getFlags(getResourceInfo(includePhantoms, false)));
 
 		final ResourceProxy proxy = new ResourceProxy();
 		IElementContentVisitor elementVisitor = new IElementContentVisitor() {
@@ -112,7 +113,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 		ResourceInfo info = getResourceInfo(includePhantoms, false);
 		int flags = getFlags(info);
-		checkAccessible(flags);
+		if ((memberFlags & IContainer.DO_NOT_CHECK_EXISTENCE) == 0)
+			checkAccessible(flags);
 
 		//check that this resource matches the member flags
 		if (!isMember(flags, memberFlags))
@@ -132,7 +134,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		IContainer resource = getType() != type ? (IContainer) workspace.newResource(getFullPath(), type) : (IContainer) this;
 		IResource[] members = resource.members(memberFlags);
 		for (int i = 0; i < members.length; i++)
-			members[i].accept(visitor, DEPTH_ZERO, memberFlags);
+			members[i].accept(visitor, DEPTH_ZERO, memberFlags | IContainer.DO_NOT_CHECK_EXISTENCE);
 	}
 
 	protected void assertCopyRequirements(IPath destination, int destinationType, int updateFlags) throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -72,6 +72,16 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @since 3.4
 	 */
 	public static final int INCLUDE_HIDDEN = 8;
+
+	/**
+	 * Member constant (bit mask value 16) indicating that a resource
+	 * should not be checked for the existence.
+	 * 
+	 * @see IResource#accept(IResourceProxyVisitor, int)
+	 * @see IResource#accept(IResourceVisitor, int, int)
+	 * @since 3.8
+	 */
+	public static final int DO_NOT_CHECK_EXISTENCE = 16;
 
 	/**
 	 * Returns whether a resource of some type with the given path 
