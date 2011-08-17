@@ -48,7 +48,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/* (non-Javadoc)
 	 * @see IResource#accept(IResourceProxyVisitor, int)
 	 */
-	public void accept(final IResourceProxyVisitor visitor, final int memberFlags) throws CoreException {
+	public void accept(IResourceProxyVisitor visitor, int memberFlags) throws CoreException {
+		accept(visitor, IResource.DEPTH_INFINITE, memberFlags);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#accept(IResourceProxyVisitor, int, int)
+	 */
+	public void accept(final IResourceProxyVisitor visitor, final int depth, final int memberFlags) throws CoreException {
 		// it is invalid to call accept on a phantom when INCLUDE_PHANTOMS is not specified
 		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 		if ((memberFlags & IContainer.DO_NOT_CHECK_EXISTENCE) == 0)
@@ -63,7 +70,19 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				proxy.requestor = requestor;
 				proxy.info = info;
 				try {
-					return visitor.visit(proxy);
+					boolean shouldContinue = true;
+					switch (depth) {
+						case DEPTH_ZERO :
+							shouldContinue = false;
+							break;
+						case DEPTH_ONE :
+							shouldContinue = !path.equals(requestor.requestPath().removeLastSegments(1));
+							break;
+						case DEPTH_INFINITE :
+							shouldContinue = true;
+							break;
+					}
+					return visitor.visit(proxy) && shouldContinue;
 				} catch (CoreException e) {
 					//throw an exception to bail out of the traversal
 					throw new WrappedRuntimeException(e);

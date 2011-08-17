@@ -669,6 +669,49 @@ public class IResourceTest extends ResourceTest {
 		}, IContainer.DO_NOT_CHECK_EXISTENCE);
 	}
 
+	public void testAcceptProxyVisitorWithDepth() throws CoreException {
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		IFolder a = project.getFolder("a");
+		IFile a1 = a.getFile("a1.txt");
+		IFile a2 = a.getFile("a2.txt");
+		IFolder b = a.getFolder("b");
+		IFile b1 = b.getFile("b1.txt");
+		IFile b2 = b.getFile("b2.txt");
+		IFolder c = b.getFolder("c");
+		IFile c1 = c.getFile("c1.txt");
+		IFile c2 = c.getFile("c2.txt");
+		final Set<IResource> toVisit = new HashSet<IResource>();
+		final int toVisitCount[] = new int[] {0};
+
+		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
+			public boolean visit(IResourceProxy proxy) {
+				toVisit.remove(proxy.requestResource());
+				toVisitCount[0]--;
+				return true;
+			}
+		};
+
+		ensureExistsInWorkspace(new IResource[] {project, a, a1, a2, b, b1, b2, c, c1, c2}, true);
+
+		toVisit.addAll(Arrays.asList(new IResource[] {a}));
+		toVisitCount[0] = 1;
+		a.accept(visitor, IResource.DEPTH_ZERO, IResource.NONE);
+		assertTrue("1.0", toVisit.isEmpty());
+		assertTrue("1.1", toVisitCount[0] == 0);
+
+		toVisit.addAll(Arrays.asList(new IResource[] {a, a1, a2, b}));
+		toVisitCount[0] = 4;
+		a.accept(visitor, IResource.DEPTH_ONE, IResource.NONE);
+		assertTrue("2.0", toVisit.isEmpty());
+		assertTrue("2.1", toVisitCount[0] == 0);
+
+		toVisit.addAll(Arrays.asList(new IResource[] {a, a1, a2, b, b1, b2, c, c1, c2}));
+		toVisitCount[0] = 9;
+		a.accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE);
+		assertTrue("3.0", toVisit.isEmpty());
+		assertTrue("3.1", toVisitCount[0] == 0);
+	}
+
 	/**
 	 * This method tests the IResource.refreshLocal() operation */
 	public void testAddLocalProject() throws CoreException {

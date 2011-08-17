@@ -332,6 +332,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * unless the visitor ignores a subtree by returning <code>false</code> from its
 	 * <code>visit</code> method.
 	 * </p>
+	 * <p>
+	 * This is a convenience method, fully equivalent to 
+	 * <code>accept(visitor, IResource.DEPTH_INFINITE, memberFlags)</code>.
+	 * </p>
 	 *  <p>No  guarantees are made about the behavior of this method if resources
 	 * are deleted or added during the traversal of this resource hierarchy.  If
 	 * resources are deleted during the traversal, they may still be passed to the
@@ -391,7 +395,87 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceProxyVisitor#visit(IResourceProxy)
 	 * @since 2.1
 	 */
-	public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws CoreException;
+	public void accept(IResourceProxyVisitor visitor, int memberFlags) throws CoreException;
+
+	/**
+	 * Accepts the given visitor for an optimized traversal. 
+	 * The visitor's <code>visit</code> method is called, and is provided with a
+	 * proxy to this resource.  The proxy is a transient object that can be queried
+	 * very quickly for information about the resource. If the actual resource
+	 * handle is needed, it can be obtained from the proxy. Requesting the resource
+	 * handle, or the full path of the resource, will degrade performance of the
+	 * visit.
+	 * <p>
+	 * The entire subtree under the given resource is traversed to the supplied depth,
+	 * unless the visitor ignores a subtree by returning <code>false</code> from its
+	 * <code>visit</code> method.
+	 * </p>
+	 * <p>No  guarantees are made about the behavior of this method if resources
+	 * are deleted or added during the traversal of this resource hierarchy.  If
+	 * resources are deleted during the traversal, they may still be passed to the
+	 * visitor; if resources are created, they may not be passed to the visitor.  If
+	 * resources other than the one being visited are modified during the traversal,
+	 * the resource proxy may contain stale information when that resource is
+	 * visited.
+	 * </p>
+	 * <p>
+	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified in the member 
+	 * flags (recommended), only member resources that exist will be visited.
+	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is specified, the visit will
+	 * also include any phantom member resource that the workspace is keeping track of.
+	 * </p>
+	 * <p>
+	 * If the {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is not specified
+	 * (recommended), team private members will not be visited. If the 
+	 * {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is specified in the member
+	 * flags, team private member resources are visited as well.
+	 * </p>
+	 * <p>
+	 * If the {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended), 
+	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified 
+	 * in the member flags, hidden resources are visited as well.
+	 * </p>
+	 * <p>
+	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended), 
+	 * the resource is checked for the existence before the visitor's <code>visit</code>
+	 * method is called. If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is specified
+	 * in the member flags, the resource is not checked for the existence before the visitor's
+	 * <code>visit</code> method is called. Children of the resource are never checked
+	 * for the existence.
+	 * </p>
+	 *
+	 * @param visitor the visitor
+	 * @param depth the depth to which members of this resource should be
+	 *		visited.  One of {@link IResource#DEPTH_ZERO}, {@link IResource#DEPTH_ONE},
+	 *		or {@link IResource#DEPTH_INFINITE}.
+	 * @param memberFlags bit-wise or of member flag constants
+	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}
+	 *   and {@link IContainer#INCLUDE_HIDDEN}) indicating which members are of interest
+	 *   and {@link IContainer#DO_NOT_CHECK_EXISTENCE} if the resource on which the method is
+	 *   called should not be checked for the existence
+	 * @exception CoreException if this request fails. Reasons include:
+	 * <ul>
+	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
+	 *     this resource does not exist.</li>
+	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
+	 *     this resource is a project that is not open.</li>
+	 * <li> the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified and
+	 *     this resource does not exist.</li>
+	 * <li> The visitor failed with this exception.</li>
+	 * </ul>
+	 * @see IContainer#INCLUDE_PHANTOMS
+	 * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
+	 * @see IContainer#INCLUDE_HIDDEN
+	 * @see IContainer#DO_NOT_CHECK_EXISTENCE
+	 * @see IResource#isPhantom()
+	 * @see IResource#isTeamPrivateMember()
+	 * @see IResource#DEPTH_ZERO
+	 * @see IResource#DEPTH_ONE
+	 * @see IResource#DEPTH_INFINITE
+	 * @see IResourceProxyVisitor#visit(IResourceProxy)
+	 * @since 3.8
+	 */
+	public void accept(IResourceProxyVisitor visitor, int depth, int memberFlags) throws CoreException;
 
 	/**
 	 * Accepts the given visitor.
