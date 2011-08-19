@@ -427,6 +427,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		private List terms = new ArrayList();
 		private Set termSet = new HashSet();
 		public void add(String term) {
+			if (term == null ) return;
 			String lowerCaseTerm = term.toLowerCase();
 			// Do not allow duplicates
 			if (!termSet.contains(lowerCaseTerm)) {
