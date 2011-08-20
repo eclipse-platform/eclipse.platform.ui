@@ -26,7 +26,7 @@ public abstract class AbstractWindowHandler extends AbstractHandler {
 	public boolean isEnabled() {
 		boolean enabled = false;
 		Shell activeShell = Display.getDefault().getActiveShell();
-		if(activeShell !=null) {
+		if(activeShell != null && activeShell.view != null) {
 			NSWindow window = activeShell.view.window();
 			if(window!=null)
 				enabled = !window.isMiniaturized();
