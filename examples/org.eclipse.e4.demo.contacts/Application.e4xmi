@@ -39,10 +39,10 @@
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
   </rootContext>
-  <commands xmi:id="contacts.exit" elementId="contacts.exit" commandName="Exit" description=""/>
-  <commands xmi:id="contacts.save" elementId="contacts.save" commandName="Save" description=""/>
-  <commands xmi:id="contacts.delete" elementId="contacts.delete" commandName="Delete" description=""/>
-  <commands xmi:id="contacts.switchTheme" elementId="contacts.switchTheme" commandName="Switch Theme" description="">
+  <commands xmi:id="contacts.exit" elementId="contacts.exit" commandName="%menuLabelExit" description=""/>
+  <commands xmi:id="contacts.save" elementId="contacts.save" commandName="%menuLabelSave" description=""/>
+  <commands xmi:id="contacts.delete" elementId="contacts.delete" commandName="%menuLabelDelete" description=""/>
+  <commands xmi:id="contacts.switchTheme" elementId="contacts.switchTheme" commandName="%menuLabelSwitchTheme" description="">
     <parameters xmi:id="contacts.commands.switchtheme.themeid" elementId="contacts.commands.switchtheme.themeid" name="Theme Id" typeId="" optional="false"/>
   </commands>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="platform:/plugin/org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
