@@ -26,7 +26,7 @@ public abstract class AbstractWindowHandler {
 	@CanExecute
 	public boolean canExecute(
 			@Optional @Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
-		if (shell == null) {
+		if (shell == null || shell.view == null) {
 			return false;
 		}
 		NSWindow window = shell.view.window();
