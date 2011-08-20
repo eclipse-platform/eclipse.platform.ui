@@ -24,6 +24,8 @@ import org.eclipse.emf.ecore.EObject;
 
 public class MenuThemeProcessor extends AbstractThemeProcessor {
 
+	private static final String BUNDLE_ID = "platform:/plugin/org.eclipse.e4.demo.contacts"; //$NON-NLS-1$
+	
 	@Inject
 	@Named("menu:org.eclipse.ui.main.menu")
 	private MMenu menu;
@@ -37,7 +39,8 @@ public class MenuThemeProcessor extends AbstractThemeProcessor {
 	@Override
 	protected void preprocess() {
 		themesMenu = MMenuFactory.INSTANCE.createMenu();
-		themesMenu.setLabel("Theme"); //$NON-NLS-1$
+		themesMenu.setLabel("%switchThemeMenu"); //$NON-NLS-1$
+		themesMenu.setContributorURI(BUNDLE_ID);
 	}
 
 	@Override
@@ -48,6 +51,7 @@ public class MenuThemeProcessor extends AbstractThemeProcessor {
 		menuItem.setLabel(name);
 		menuItem.setCommand(switchCommand);
 		menuItem.getParameters().add(themeId);
+		menuItem.setContributorURI(BUNDLE_ID);
 		if (iconURI != null) {
 			menuItem.setIconURI(iconURI);
 		}
