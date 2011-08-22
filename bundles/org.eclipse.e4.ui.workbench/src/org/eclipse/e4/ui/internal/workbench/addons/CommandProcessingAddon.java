@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010-2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,9 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Parameter;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
@@ -105,7 +107,8 @@ public class CommandProcessingAddon {
 	private void createCommand(MCommand cmdModel) {
 		IParameter[] parms = null;
 		String id = cmdModel.getElementId();
-		String name = cmdModel.getCommandName();
+		String name = localize(cmdModel.getCommandName(), cmdModel);
+		String desc = localize(cmdModel.getDescription(), cmdModel);
 		List<MCommandParameter> modelParms = cmdModel.getParameters();
 		if (modelParms != null && !modelParms.isEmpty()) {
 			ArrayList<Parameter> parmList = new ArrayList<Parameter>();
@@ -123,7 +126,7 @@ public class CommandProcessingAddon {
 		if (cmdModel.getCategory() != null) {
 			cat = commandService.getCategory(cmdModel.getCategory().getElementId());
 		}
-		commandService.defineCommand(id, name, null, cat, parms);
+		commandService.defineCommand(id, name, desc, cat, parms);
 	}
 
 	private void createCategories() {
@@ -135,7 +138,26 @@ public class CommandProcessingAddon {
 	private void createCategory(MCategory catModel) {
 		Category category = commandService.getCategory(catModel.getElementId());
 		if (!category.isDefined()) {
-			category.define(catModel.getName(), catModel.getDescription());
+			category.define(localize(catModel.getName(), catModel),
+					localize(catModel.getDescription(), catModel));
 		}
+	}
+
+	/**
+	 * Attempt to localize the provided key. Return the localized variant if found or the key itself
+	 * otherwise.
+	 * 
+	 * @param key
+	 *            the possible key reference
+	 * @param modelElement
+	 *            the defining model element
+	 * @return the localized variant if found, or the key
+	 */
+	private String localize(String key, MApplicationElement modelElement) {
+		if (key == null) {
+			return null;
+		}
+		String localized = LocalizationHelper.getLocalized(key, modelElement);
+		return localized == null ? key : localized;
 	}
 }
