@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Adobe Systems, Inc. and others.
+ * Copyright (c) 2008, 2010-2011 Adobe Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -341,7 +341,7 @@ public class CocoaUIHandler {
 		closeDialogCommand.setElementId(COMMAND_ID_CLOSE_DIALOG);
 		closeDialogCommand.setCommandName("%command.closeDialog.name"); //$NON-NLS-1$
 		closeDialogCommand.setDescription("%command.closeDialog.desc"); //$NON-NLS-1$
-		closeDialogCommand.setContributorURI(CocoaUIProcessor.FRAGMENT_ID);
+		closeDialogCommand.setContributorURI(CocoaUIProcessor.FRAGMENT_URI);
 		app.getCommands().add(closeDialogCommand);
 	}
 
