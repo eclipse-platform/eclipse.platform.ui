@@ -35,37 +35,6 @@ import org.osgi.service.prefs.Preferences;
  */
 public class ProjectPreferences extends EclipsePreferences {
 
-	class SortedProperties extends Properties {
-
-		private static final long serialVersionUID = 1L;
-
-		/* (non-Javadoc)
-		 * @see java.util.Hashtable#keys()
-		 */
-		public synchronized Enumeration<Object> keys() {
-			TreeSet<Object> set = new TreeSet<Object>();
-			for (Enumeration<Object> e = super.keys(); e.hasMoreElements();)
-				set.add(e.nextElement());
-			return Collections.enumeration(set);
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.Hashtable#entrySet()
-		 */
-		public Set<Map.Entry<Object, Object>> entrySet() {
-			TreeSet<Map.Entry<Object, Object>> set = new TreeSet<Map.Entry<Object, Object>>(new Comparator<Map.Entry<Object, Object>>() {
-				public int compare(Map.Entry<Object, Object> e1, Map.Entry<Object, Object> e2) {
-					String s1 = (String) e1.getKey();
-					String s2 = (String) e2.getKey();
-					return s1.compareTo(s2);
-				}
-			});
-			for (Iterator<Map.Entry<Object, Object>> i = super.entrySet().iterator(); i.hasNext();)
-				set.add(i.next());
-			return set;
-		}
-	}
-
 	static final String PREFS_REGULAR_QUALIFIER = ResourcesPlugin.PI_RESOURCES;
 	static final String PREFS_DERIVED_QUALIFIER = PREFS_REGULAR_QUALIFIER + ".derived"; //$NON-NLS-1$
 	/**
@@ -577,18 +546,9 @@ public class ProjectPreferences extends EclipsePreferences {
 				return;
 			}
 			table.put(VERSION_KEY, VERSION_VALUE);
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			try {
-				table.store(output, null);
-				output.close();
-			} catch (IOException e) {
-				String message = NLS.bind(Messages.preferences_saveProblems, absolutePath());
-				log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e));
-				throw new BackingStoreException(message);
-			} finally {
-				FileUtil.safeClose(output);
-			}
-			final InputStream input = new BufferedInputStream(new ByteArrayInputStream(output.toByteArray()));
+			// print the table to a string and remove the timestamp that Properties#store always adds
+			String s = removeTimestampFromTable(table);
+			final InputStream input = new BufferedInputStream(new ByteArrayInputStream(s.getBytes("UTF-8"))); //$NON-NLS-1$
 			final String finalQualifier = qualifier;
 			IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -630,6 +590,10 @@ public class ProjectPreferences extends EclipsePreferences {
 			} catch (OperationCanceledException e) {
 				throw new BackingStoreException(Messages.preferences_operationCanceled);
 			}
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
+			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
 		} catch (CoreException e) {
 			String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
