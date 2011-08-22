@@ -224,8 +224,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * Initialize the local services.
 	 */
 	private void initializeDefaultServices() {
-		IHandlerService handlerService = new LegacyHandlerService(e4Context,
-				new ActivePartExpression(part));
+		IHandlerService handlerService = new LegacyHandlerService(e4Context);
 		e4Context.set(IHandlerService.class.getName(), handlerService);
 
 		serviceLocator.registerService(IWorkbenchLocationService.class,
