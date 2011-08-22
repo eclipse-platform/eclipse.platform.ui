@@ -127,6 +127,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			Rectangle trim= textWidget.computeTrim(0, 0, 0, 0);
 			int topTrim= - trim.y;
 			int scrollbarHeight= trim.height - topTrim; // horizontal scroll bar is only under the client area
+			int measuredScrollbarHeight= scrollbarHeight;
 
 			int x= clArea.x;
 			int width= clArea.width;
@@ -143,7 +144,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				int verticalRulerWidth= fVerticalRuler.getWidth();
 				final Control verticalRulerControl= fVerticalRuler.getControl();
 				int oldWidth= verticalRulerControl.getBounds().width;
-				verticalRulerControl.setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, clArea.height - scrollbarHeight - topTrim);
+				verticalRulerControl.setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, clArea.height - measuredScrollbarHeight - topTrim);
 				if (flushCache && getVisualAnnotationModel() != null && oldWidth == verticalRulerWidth)
 					verticalRulerControl.redraw();
 
@@ -161,7 +162,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				fOverviewRuler.getControl().setBounds(overviewRulerX, clArea.y + arrowHeights[0], overviewRulerWidth, clArea.height - arrowHeights[0] - arrowHeights[1] - scrollbarHeight);
 				
 				Control headerControl= fOverviewRuler.getHeaderControl();
-				boolean noArrows= arrowHeights[0] == 0 && arrowHeights[1] == 0;
+				boolean noArrows= arrowHeights[0] < 6 && arrowHeights[1] < 6;
 				if (noArrows || arrowHeights[0] < arrowHeights[1] && arrowHeights[0] < scrollbarHeight && arrowHeights[1] > scrollbarHeight) {
 					// // not enough space for header at top => move to bottom
 					int headerHeight= noArrows ? scrollbarHeight : arrowHeights[1];
@@ -188,7 +189,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				return new int[] { 0, 0 };
 			
 			int[] arrowHeights= computeScrollArrowHeights(textWidget, bottomOffset);
-			if (arrowHeights[0] > 0 || arrowHeights[1] > 0) {
+			if (arrowHeights[0] >= 0 || arrowHeights[1] >= 0) {
 				fScrollArrowHeights= arrowHeights;
 			} else if (fScrollArrowHeights != null) {
 				return fScrollArrowHeights;
@@ -221,6 +222,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		private int[] computeScrollArrowHeights(StyledText textWidget, int bottomOffset) {
 			ScrollBar verticalBar= textWidget.getVerticalBar();
 			Rectangle thumbTrackBounds= verticalBar.getThumbTrackBounds();
+			if (thumbTrackBounds.height == 0) // SWT returns bogus values on Cocoa in this case, see https://bugs.eclipse.org/352990
+				return new int[] { 0, 0 };
+			
 			int topArrowHeight= thumbTrackBounds.y;
 			int bottomArrowHeight= bottomOffset - (thumbTrackBounds.y + thumbTrackBounds.height);
 			return new int[] { topArrowHeight, bottomArrowHeight };
