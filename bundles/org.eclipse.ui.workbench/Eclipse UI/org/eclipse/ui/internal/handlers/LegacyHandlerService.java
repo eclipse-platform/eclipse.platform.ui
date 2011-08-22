@@ -253,12 +253,6 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 	}
 
-	public LegacyHandlerService(IEclipseContext context, Expression defaultExpression) {
-		eclipseContext = context;
-		evalContext = new ExpressionContext(eclipseContext);
-		this.defaultExpression = defaultExpression;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
