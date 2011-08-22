@@ -329,16 +329,6 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private void insertView(String viewId, int relationship, float ratio,
 			String refId, boolean visible, boolean withStack) {
-		MUIElement refModel = findElement(perspModel, refId);
-		if (refModel instanceof MPart) {
-			refModel = refModel.getParent();
-		} else if (refModel instanceof MPlaceholder) {
-			MUIElement ref = ((MPlaceholder) refModel).getRef();
-			if (ref instanceof MPart) {
-				refModel = refModel.getParent();
-			}
-		}
-
 		MStackElement viewModel = createViewModel(application, viewId, visible, page, partService,
 				createReferences);
 		if (viewModel != null) {
@@ -347,9 +337,24 @@ public class ModeledPageLayout implements IPageLayout {
 				MPartStack stack = insertStack(stackId, relationship, ratio, refId, visible);
 				stack.getChildren().add(viewModel);
 			} else {
-				insert(viewModel, refModel, plRelToSwt(relationship), ratio);
+				insert(viewModel, findRefModel(refId), plRelToSwt(relationship), ratio);
 			}
 		}
+	}
+
+	private MUIElement findRefModel(String refId) {
+		MUIElement refModel = findElement(perspModel, refId);
+		if (refModel instanceof MPart) {
+			MUIElement parent = refModel.getParent();
+			return parent instanceof MPartStack ? parent : refModel;
+		} else if (refModel instanceof MPlaceholder) {
+			MUIElement ref = ((MPlaceholder) refModel).getRef();
+			if (ref instanceof MPart) {
+				MUIElement parent = refModel.getParent();
+				return parent instanceof MPartStack ? parent : refModel;
+			}
+		}
+		return refModel;
 	}
 
 	private MUIElement getLastElement(MUIElement element) {
