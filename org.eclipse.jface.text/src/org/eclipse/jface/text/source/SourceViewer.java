@@ -189,7 +189,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				return new int[] { 0, 0 };
 			
 			int[] arrowHeights= computeScrollArrowHeights(textWidget, bottomOffset);
-			if (arrowHeights[0] >= 0 || arrowHeights[1] >= 0) {
+			if (arrowHeights[0] > 0 || arrowHeights[1] > 0) {
 				fScrollArrowHeights= arrowHeights;
 			} else if (fScrollArrowHeights != null) {
 				return fScrollArrowHeights;
