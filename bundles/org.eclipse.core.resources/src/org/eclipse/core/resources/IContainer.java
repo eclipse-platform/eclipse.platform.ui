@@ -75,7 +75,7 @@ public interface IContainer extends IResource, IAdaptable {
 
 	/**
 	 * Member constant (bit mask value 16) indicating that a resource
-	 * should not be checked for the existence.
+	 * should not be checked for existence.
 	 * 
 	 * @see IResource#accept(IResourceProxyVisitor, int)
 	 * @see IResource#accept(IResourceVisitor, int, int)

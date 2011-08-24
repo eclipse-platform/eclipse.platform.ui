@@ -363,11 +363,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended), 
-	 * the resource is checked for the existence before the visitor's <code>visit</code>
+	 * the resource is checked for existence before the visitor's <code>visit</code>
 	 * method is called. If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is specified
-	 * in the member flags, the resource is not checked for the existence before the visitor's
+	 * in the member flags, the resource is not checked for existence before the visitor's
 	 * <code>visit</code> method is called. Children of the resource are never checked
-	 * for the existence.
+	 * for existence.
 	 * </p>
 	 *
 	 * @param visitor the visitor
@@ -375,7 +375,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}
 	 *   and {@link IContainer#INCLUDE_HIDDEN}) indicating which members are of interest
 	 *   and {@link IContainer#DO_NOT_CHECK_EXISTENCE} if the resource on which the method is
-	 *   called should not be checked for the existence
+	 *   called should not be checked for existence
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
 	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
@@ -437,11 +437,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended), 
-	 * the resource is checked for the existence before the visitor's <code>visit</code>
+	 * the resource is checked for existence before the visitor's <code>visit</code>
 	 * method is called. If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is specified
-	 * in the member flags, the resource is not checked for the existence before the visitor's
+	 * in the member flags, the resource is not checked for existence before the visitor's
 	 * <code>visit</code> method is called. Children of the resource are never checked
-	 * for the existence.
+	 * for existence.
 	 * </p>
 	 *
 	 * @param visitor the visitor
@@ -452,7 +452,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}
 	 *   and {@link IContainer#INCLUDE_HIDDEN}) indicating which members are of interest
 	 *   and {@link IContainer#DO_NOT_CHECK_EXISTENCE} if the resource on which the method is
-	 *   called should not be checked for the existence
+	 *   called should not be checked for existence
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
 	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
@@ -576,11 +576,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended), 
-	 * the resource is checked for the existence before the visitor's <code>visit</code>
+	 * the resource is checked for existence before the visitor's <code>visit</code>
 	 * method is called. If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is specified
-	 * in the member flags, the resource is not checked for the existence before the visitor's
+	 * in the member flags, the resource is not checked for existence before the visitor's
 	 * <code>visit</code> method is called. Children of the resource are never checked
-	 * for the existence.
+	 * for existence.
 	 * </p>
 	 *
 	 * @param visitor the visitor
@@ -591,7 +591,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}, 
 	 *   {@link IContainer#INCLUDE_HIDDEN} and {@link IContainer#EXCLUDE_DERIVED}) indicating
 	 *   which members are of interest and {@link IContainer#DO_NOT_CHECK_EXISTENCE}
-	 *   if the resource on which the method is called should not be checked for the existence
+	 *   if the resource on which the method is called should not be checked for existence
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
 	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and

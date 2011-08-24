@@ -650,7 +650,7 @@ public class IResourceTest extends ResourceTest {
 		}
 
 		// pass DEPTH_ONE to avoid using proxy visitor
-		// if we don't check the existence, then no exception should be thrown
+		// if we don't check for existence, then no exception should be thrown
 		a.accept(new IResourceVisitor() {
 			public boolean visit(IResource resource) {
 				// we should not get that far if the resource does not exist
@@ -659,7 +659,7 @@ public class IResourceTest extends ResourceTest {
 			}
 		}, IResource.DEPTH_ONE, IContainer.DO_NOT_CHECK_EXISTENCE);
 
-		// if we don't check the existence, then no exception should be thrown
+		// if we don't check for existence, then no exception should be thrown
 		a.accept(new IResourceProxyVisitor() {
 			public boolean visit(IResourceProxy proxy) {
 				// we should not get that far if the resource does not exist
