@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 303889
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -26,15 +25,20 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -42,7 +46,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
@@ -77,7 +80,7 @@ import org.osgi.framework.BundleListener;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.SynchronousBundleListener;
-import org.osgi.framework.Version;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -182,7 +185,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     
     private WorkbenchOperationSupport operationSupport;
 	private BundleListener bundleListener;
-        
+
+	private IEclipseContext e4Context;
+
+	private ServiceTracker debugTracker = null;
     
     /**
      * Create an instance of the WorkbenchPlugin. The workbench plugin is
@@ -202,7 +208,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         editorRegistry = null;
 
         if (decoratorManager != null) {
-			decoratorManager.shutdown();
+            decoratorManager.dispose();
             decoratorManager = null;
         }
 
@@ -234,7 +240,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         	operationSupport.dispose();
         	operationSupport = null;
         }
-		DragCursors.dispose();
 
         DEBUG = false;
          
@@ -428,10 +433,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return the workbench action set registry
      */
     public ActionSetRegistry getActionSetRegistry() {
-        if (actionSetRegistry == null) {
-            actionSetRegistry = new ActionSetRegistry();
-        }
-        return actionSetRegistry;
+		return (ActionSetRegistry) e4Context.get(ActionSetRegistry.class.getName());
     }
 
     /**
@@ -451,10 +453,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      */
 
     public IEditorRegistry getEditorRegistry() {
-        if (editorRegistry == null) {
-            editorRegistry = new EditorRegistry();
-        }
-        return editorRegistry;
+		return (IEditorRegistry) e4Context.get(IEditorRegistry.class.getName());
     }
 
     /**
@@ -581,21 +580,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return IPerspectiveRegistry. The registry for the receiver.
      */
     public IPerspectiveRegistry getPerspectiveRegistry() {
-        if (perspRegistry == null) {
-            perspRegistry = new PerspectiveRegistry();
-            // the load methods can touch on WorkbenchImages if an image is
-			// missing so we need to wrap the call in
-			// a startup block for the case where a custom descriptor exists on
-			// startup that does not have an image
-			// associated with it. See bug 196352.
-			StartupThreading.runWithoutExceptions(new StartupRunnable() {
-				public void runWithException() throws Throwable {
-					perspRegistry.load();
-				}
-			});
-            
-        }
-        return perspRegistry;
+		return (IPerspectiveRegistry) e4Context.get(IPerspectiveRegistry.class.getName());
     }
 
     /**
@@ -605,11 +590,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 2.0
      */
     public IWorkingSetManager getWorkingSetManager() {
-        if (workingSetManager == null) {
-            workingSetManager = new WorkingSetManager(bundleContext);
-            workingSetManager.restoreState();
-        }
-        return workingSetManager;
+		return (IWorkingSetManager) e4Context.get(IWorkingSetManager.class.getName());
     }
 
     /**
@@ -619,11 +600,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 2.0
      */
     public WorkingSetRegistry getWorkingSetRegistry() {
-        if (workingSetRegistry == null) {
-            workingSetRegistry = new WorkingSetRegistry();
-            workingSetRegistry.load();
-        }
-        return workingSetRegistry;
+		return (WorkingSetRegistry) e4Context.get(WorkingSetRegistry.class.getName());
     }
 
     /**
@@ -633,10 +610,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 3.0
      */
     public IIntroRegistry getIntroRegistry() {
-        if (introRegistry == null) {
-            introRegistry = new IntroRegistry();
-        }
-        return introRegistry;
+		return (IIntroRegistry) e4Context.get(IIntroRegistry.class.getName());
     }
     
     /**
@@ -646,10 +620,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
     public IWorkbenchOperationSupport getOperationSupport() {
-        if (operationSupport == null) {
-        	operationSupport = new WorkbenchOperationSupport();
-        }
-        return operationSupport;
+		return (IWorkbenchOperationSupport) e4Context.get(IWorkbenchOperationSupport.class
+				.getName());
     }
     
 
@@ -659,19 +631,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * the receiver.
      */
     public PreferenceManager getPreferenceManager() {
-        if (preferenceManager == null) {
-            preferenceManager = new WorkbenchPreferenceManager(
-                    PREFERENCE_PAGE_CATEGORY_SEPARATOR);
-
-            //Get the pages from the registry
-            PreferencePageRegistryReader registryReader = new PreferencePageRegistryReader(
-                    getWorkbench());
-            registryReader
-                    .loadFromRegistry(Platform.getExtensionRegistry());
-            preferenceManager.addPages(registryReader.getTopLevelNodes());
-           
-        }
-        return preferenceManager;
+		return (PreferenceManager) e4Context.get(PreferenceManager.class.getName());
     }
 
     /**
@@ -680,10 +640,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return the shared image manager
      */
     public ISharedImages getSharedImages() {
-        if (sharedImages == null) {
-			sharedImages = new SharedImages();
-		}
-        return sharedImages;
+		return (ISharedImages) e4Context.get(ISharedImages.class.getName());
     }
 
     /**
@@ -692,13 +649,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return the theme registry
      */
     public IThemeRegistry getThemeRegistry() {
-        if (themeRegistry == null) {
-            themeRegistry = new ThemeRegistry();
-            ThemeRegistryReader reader = new ThemeRegistryReader();
-            reader.readThemes(Platform.getExtensionRegistry(),
-                    themeRegistry);
-        }
-        return themeRegistry;
+		return (IThemeRegistry) e4Context.get(IThemeRegistry.class.getName());
     }
 
     /**
@@ -707,10 +658,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * receiver.
      */
     public IViewRegistry getViewRegistry() {
-        if (viewRegistry == null) {
-            viewRegistry = new ViewRegistry();
-        }
-        return viewRegistry;
+		return (IViewRegistry) e4Context.get(IViewRegistry.class.getName());
     }
 
     /**
@@ -868,10 +816,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * for the receiver.
      */
     public DecoratorManager getDecoratorManager() {
-        if (this.decoratorManager == null) {
-            this.decoratorManager = new DecoratorManager();
-        }
-        return decoratorManager;
+		return (DecoratorManager) e4Context.get(IDecoratorManager.class.getName());
     }
 
     /*
@@ -937,29 +882,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		return checkCommandLineLocale(); //Use the default value if there is nothing specified
 	}
 	
-    /**
-	 * Check whether the workbench messages are in a Bidi language. This method
-	 * will return <code>null</code> if it is unable to determine message
-	 * properties.
-	 */
-	private Boolean isBidiMessageText() {
-		// Check if the user installed the NLS packs for bidi
-		String message = WorkbenchMessages.Startup_Loading_Workbench;
-		if (message == null)
-			return null;
-
-		try {
-			// use qualified class name to avoid import statement
-			// and premature attempt to resolve class reference
-			boolean isBidi = com.ibm.icu.text.Bidi.requiresBidi(message.toCharArray(), 0,
-					message.length());
-			return new Boolean(isBidi);
-		} catch (NoClassDefFoundError e) {
-			// the ICU Base bundle used in place of ICU?
-			return null;
-		}
-	}
-
 	/**
 	 * Check to see if the command line parameter for -nl
 	 * has been set. If so imply the orientation from this 
@@ -977,23 +899,21 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @see SWT#RIGHT_TO_LEFT
 	 */
 	private int checkCommandLineLocale() {
-		// Check if the user property is set. If not, do not rely on the VM.
-		if (System.getProperty(NL_USER_PROPERTY) == null) {
-			Boolean needRTL = isBidiMessageText();
-			if (needRTL != null && needRTL.booleanValue())
-				return SWT.RIGHT_TO_LEFT;
-		} else {
-			String lang = Locale.getDefault().getLanguage();
-			boolean bidiLangauage = "iw".equals(lang) || "he".equals(lang) || "ar".equals(lang) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					"fa".equals(lang) || "ur".equals(lang); //$NON-NLS-1$ //$NON-NLS-2$
-			if (bidiLangauage) {
-				Boolean needRTL = isBidiMessageText();
-				if (needRTL == null)
-					return SWT.RIGHT_TO_LEFT;
-				if (needRTL.booleanValue())
-					return SWT.RIGHT_TO_LEFT;
-			}
+		
+		//Check if the user property is set. If not do not
+		//rely on the vm.
+		if(System.getProperty(NL_USER_PROPERTY) == null) {
+			return SWT.NONE;
 		}
+		
+		Locale locale = Locale.getDefault();
+		String lang = locale.getLanguage();
+
+		if ("iw".equals(lang) || "he".equals(lang) || "ar".equals(lang) ||  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"fa".equals(lang) || "ur".equals(lang)) { //$NON-NLS-1$ //$NON-NLS-2$ 
+			return SWT.RIGHT_TO_LEFT;
+		}
+			
 		return SWT.NONE;
 	}
 
@@ -1083,18 +1003,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         return getProductInfo().getAppName();
     }
 
-	/**
-	 * Return the application version, as defined by the product.
-	 * 
-	 * @return the application version, or the empty version.
-	 * @see org.eclipse.swt.widgets.Display#setAppVersion
-	 * @see Version#emptyVersion
-	 * @since 3.6
-	 */
-	public String getAppVersion() {
-		return getProductInfo().getAppVersion();
-	}
-
     /**
      * Returns the name of the product.
      * 
@@ -1136,6 +1044,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     		context.removeBundleListener(bundleListener);
     		bundleListener = null;
     	}
+		if (debugTracker != null) {
+			debugTracker.close();
+			debugTracker = null;
+		}
     	// TODO normally super.stop(*) would be the last statement in this
     	// method
         super.stop(context);     
@@ -1148,7 +1060,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 3.1
      */
     public IWizardRegistry getNewWizardRegistry() {
-    	return NewWizardRegistry.getInstance();
+		return (IWizardRegistry) e4Context.get(NewWizardRegistry.class.getName());
     }
     
     /**
@@ -1158,7 +1070,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 3.1
      */
     public IWizardRegistry getImportWizardRegistry() {
-    	return ImportWizardRegistry.getInstance();
+		return (IWizardRegistry) e4Context.get(ImportWizardRegistry.class.getName());
     }
     
     /**
@@ -1168,7 +1080,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 3.1
      */
     public IWizardRegistry getExportWizardRegistry() {
-    	return ExportWizardRegistry.getInstance();
+		return (IWizardRegistry) e4Context.get(ExportWizardRegistry.class.getName());
     }
     
     /**
@@ -1349,5 +1261,168 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			display.setData(DATA_SPLASH_SHELL, null);
 		}
 
+	}
+
+	/**
+	 * @param e4Context
+	 */
+	public void initializeContext(IEclipseContext context) {
+		e4Context = context;
+		e4Context.set(IPerspectiveRegistry.class.getName(), new ContextFunction() {
+
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (perspRegistry == null) {
+					perspRegistry = (PerspectiveRegistry) ContextInjectionFactory.make(
+							PerspectiveRegistry.class, e4Context);
+				}
+				return perspRegistry;
+			}
+		});
+		e4Context.set(IViewRegistry.class.getName(), new ContextFunction() {
+
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (viewRegistry == null) {
+					viewRegistry = (ViewRegistry) ContextInjectionFactory.make(ViewRegistry.class,
+							e4Context);
+				}
+				return viewRegistry;
+			}
+		});
+		e4Context.set(ActionSetRegistry.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (actionSetRegistry == null) {
+					actionSetRegistry = new ActionSetRegistry();
+				}
+				return actionSetRegistry;
+			}
+		});
+		context.set(IDecoratorManager.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (decoratorManager == null) {
+					decoratorManager = new DecoratorManager();
+				}
+				return decoratorManager;
+			}
+		});
+		context.set(ExportWizardRegistry.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				return ExportWizardRegistry.getInstance();
+			}
+		});
+		context.set(ImportWizardRegistry.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				return ImportWizardRegistry.getInstance();
+			}
+		});
+		context.set(IIntroRegistry.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (introRegistry == null) {
+					introRegistry = new IntroRegistry();
+				}
+				return introRegistry;
+			}
+		});
+		context.set(NewWizardRegistry.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				return NewWizardRegistry.getInstance();
+			}
+		});
+		context.set(IWorkbenchOperationSupport.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (operationSupport == null) {
+					operationSupport = new WorkbenchOperationSupport();
+				}
+				return operationSupport;
+			}
+		});
+		context.set(PreferenceManager.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (preferenceManager == null) {
+					preferenceManager = new WorkbenchPreferenceManager(
+							PREFERENCE_PAGE_CATEGORY_SEPARATOR);
+
+					// Get the pages from the registry
+					PreferencePageRegistryReader registryReader = new PreferencePageRegistryReader(
+							getWorkbench());
+					registryReader.loadFromRegistry(Platform.getExtensionRegistry());
+					preferenceManager.addPages(registryReader.getTopLevelNodes());
+
+				}
+				return preferenceManager;
+			}
+		});
+		context.set(ISharedImages.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (sharedImages == null) {
+					sharedImages = new SharedImages();
+				}
+				return sharedImages;
+			}
+		});
+
+		context.set(IThemeRegistry.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (themeRegistry == null) {
+					themeRegistry = new ThemeRegistry();
+					ThemeRegistryReader reader = new ThemeRegistryReader();
+					reader.readThemes(Platform.getExtensionRegistry(), themeRegistry);
+				}
+				return themeRegistry;
+			}
+		});
+		context.set(IWorkingSetManager.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (workingSetManager == null) {
+					workingSetManager = new WorkingSetManager(bundleContext);
+					workingSetManager.restoreState();
+				}
+				return workingSetManager;
+			}
+		});
+		context.set(WorkingSetRegistry.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (workingSetRegistry == null) {
+					workingSetRegistry = new WorkingSetRegistry();
+					workingSetRegistry.load();
+				}
+				return workingSetRegistry;
+			}
+		});
+		context.set(IEditorRegistry.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (editorRegistry == null) {
+					editorRegistry = new EditorRegistry();
+				}
+				return editorRegistry;
+			}
+		});
+	}
+
+	/*
+	 * Return the debug options service, if available.
+	 */
+	public DebugOptions getDebugOptions() {
+		if (bundleContext == null)
+			return null;
+		if (debugTracker == null) {
+			debugTracker = new ServiceTracker(bundleContext, DebugOptions.class.getName(), null);
+			debugTracker.open();
+		}
+		return (DebugOptions) debugTracker.getService();
 	}
 }

@@ -14,7 +14,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.ViewRegistry;
-import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 
@@ -47,7 +46,7 @@ public class ViewComparator extends ViewerComparator {
                     .getLabel());
             return getComparator().compare(str1, str2);
         } else if (e1 instanceof IViewCategory) {
-        	IViewCategory generalCategory = viewReg.findCategory(ViewRegistryReader.GENERAL_VIEW_ID);
+			IViewCategory generalCategory = viewReg.findCategory(""); //$NON-NLS-1$
         	if (generalCategory != null){
         		if (((IViewCategory)e1).getId().equals(generalCategory.getId())) {
 					return -1;

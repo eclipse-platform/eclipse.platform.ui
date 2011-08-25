@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.e4.demo.e4photo.Exif"
+            class="org.eclipse.e4.demo.e4photo.AdapterFactory">
+         <adapter
+               type="org.eclipse.core.resources.IFile">
+         </adapter>
+      </factory>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.e4.ui.workbench.swt.E4Application"
+            name="e4 photo demo">
+         <property
+               name="appName"
+               value="e4 photo demo">
+         </property>
+         <property
+               name="applicationXMI"
+               value="org.eclipse.e4.demo.e4photo/Application.e4xmi">
+         </property>
+         <property
+               name="applicationCSS"
+               value="platform:/plugin/org.eclipse.e4.demo.e4photo/css/e4photo.css">
+         </property>
+         <property
+               name="applicationCSSResources"
+               value="platform:/plugin/org.eclipse.e4.demo.e4photo/images/">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="PhotoDemo"
+         name="Photo Demo"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            uri="xmi/fragment.e4xmi">
+      </fragment>
+   </extension>
+
+</plugin>

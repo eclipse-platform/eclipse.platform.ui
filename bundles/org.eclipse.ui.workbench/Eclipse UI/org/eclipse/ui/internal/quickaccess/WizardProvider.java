@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -47,14 +45,12 @@ public class WizardProvider extends QuickAccessProvider {
 			collectWizards(rootCategory, result);
 			IWizardDescriptor[] wizards = (IWizardDescriptor[]) result
 					.toArray(new IWizardDescriptor[result.size()]);
+			cachedElements = new QuickAccessElement[wizards.length];
 			for (int i = 0; i < wizards.length; i++) {
-				if (!WorkbenchActivityHelper.filterItem(wizards[i])) {
-					WizardElement wizardElement = new WizardElement(wizards[i], this);
-					idToElement.put(wizardElement.getId(), wizardElement);
-				}
+				WizardElement wizardElement = new WizardElement(wizards[i], this);
+				cachedElements[i] = wizardElement;
+				idToElement.put(wizardElement.getId(), wizardElement);
 			}
-			cachedElements = (QuickAccessElement[]) idToElement.values().toArray(
-					new QuickAccessElement[idToElement.size()]);
 		}
 		return cachedElements;
 	}
@@ -78,5 +74,10 @@ public class WizardProvider extends QuickAccessProvider {
 
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_New;
+	}
+
+	protected void doReset() {
+		cachedElements = null;
+		idToElement = new HashMap();
 	}
 }

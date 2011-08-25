@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,14 +16,18 @@ import java.util.Iterator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 
@@ -34,6 +38,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
     private HashMap images;
 	private final IWorkbenchWindow window;
 	private final Color dimmedForeground;
+	private ILabelDecorator decorator;
 
     /**
 	 * @param window the workbench window
@@ -42,10 +47,15 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 	public ViewLabelProvider(IWorkbenchWindow window, Color dimmedForeground) {
 		this.window = window;
 		this.dimmedForeground = dimmedForeground;
+		this.decorator = window.getWorkbench().getDecoratorManager().getLabelDecorator(
+				ContributingPluginDecorator.ID);
 	}
 	
 	protected void initialize(ColumnViewer viewer, ViewerColumn column) {
 		super.initialize(viewer, column);
+		if (decorator != null) {
+			ColumnViewerToolTipSupport.enableFor(viewer);
+		}
 	}
 
 	Image cacheImage(ImageDescriptor desc) {
@@ -117,6 +127,17 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 					return dimmedForeground;
 				}
 			}
+		}
+		return null;
+	}
+
+	public String getToolTipText(Object element) {
+		if (decorator == null) {
+			return null;
+		}
+		if (element instanceof IPluginContribution) {
+			IPluginContribution contribution = (IPluginContribution) element;
+			return decorator.decorateText(getText(element), contribution.getPluginId());
 		}
 		return null;
 	}

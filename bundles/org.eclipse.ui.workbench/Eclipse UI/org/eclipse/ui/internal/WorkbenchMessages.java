@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -246,10 +246,6 @@ public class WorkbenchMessages extends NLS {
 	public static String ResetPerspective_title;
 	public static String RevertPerspective_note;
 
-	public static String RevertPerspective_title;
-	public static String RevertPerspective_message;
-	public static String RevertPerspective_option;
-
 	public static String ClosePerspectiveAction_text;
 	public static String ClosePerspectiveAction_toolTip;
 	public static String CloseAllPerspectivesAction_text;
@@ -387,6 +383,7 @@ public class WorkbenchMessages extends NLS {
 
 
 	public static String ICategory_other;
+	public static String ICategory_general;
 
 	// ==============================================================================
 	// Wizards
@@ -446,30 +443,31 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_RunInBackgroundToolTip;
 
 	// --- Appearance ---
-	public static String ViewsPreference_currentPresentation;
-	public static String ViewsPreference_currentPresentationFormat;
-	public static String ViewsPreference_presentationConfirm_title;
-	public static String ViewsPreference_presentationConfirm_message;
-	public static String ViewsPreference_presentationConfirm_yes;
-	public static String ViewsPreference_presentationConfirm_no;
-	public static String ViewsPreference_editors;
-	public static String ViewsPreference_editors_top;
-	public static String ViewsPreference_editors_bottom;
-	public static String ViewsPreference_views;
-	public static String ViewsPreference_views_top;
-	public static String ViewsPreference_views_bottom;
-	public static String ViewsPreference_perspectiveBar;
-	public static String ViewsPreference_perspectiveBar_topRight;
-	public static String ViewsPreference_perspectiveBar_topLeft;
-	public static String ViewsPreference_perspectiveBar_left;
-	public static String ViewsPreference_traditionalTabs;
-	public static String ViewsPreference_currentTheme;
-	public static String ViewsPreference_currentThemeDescription;
-	public static String ViewsPreference_currentThemeFormat;
-	public static String ViewsPreference_enableAnimations;
-	public static String ViewsPreference_useColoredLabels;
-	public static String ViewsPreference_override;
-	public static String ViewsPreference_restartRequestJobName;
+	public static String ViewsPreferencePage_Theme;
+	// public static String ViewsPreference_currentPresentation;
+	// public static String ViewsPreference_currentPresentationFormat;
+	// public static String ViewsPreference_presentationConfirm_title;
+	// public static String ViewsPreference_presentationConfirm_message;
+	// public static String ViewsPreference_presentationConfirm_yes;
+	// public static String ViewsPreference_presentationConfirm_no;
+	// public static String ViewsPreference_editors;
+	// public static String ViewsPreference_editors_top;
+	// public static String ViewsPreference_editors_bottom;
+	// public static String ViewsPreference_views;
+	// public static String ViewsPreference_views_top;
+	// public static String ViewsPreference_views_bottom;
+	// public static String ViewsPreference_perspectiveBar;
+	// public static String ViewsPreference_perspectiveBar_topRight;
+	// public static String ViewsPreference_perspectiveBar_topLeft;
+	// public static String ViewsPreference_perspectiveBar_left;
+	// public static String ViewsPreference_traditionalTabs;
+	// public static String ViewsPreference_currentTheme;
+	// public static String ViewsPreference_currentThemeDescription;
+	// public static String ViewsPreference_currentThemeFormat;
+	// public static String ViewsPreference_enableAnimations;
+	// public static String ViewsPreference_useColoredLabels;
+	// public static String ViewsPreference_override;
+	// public static String ViewsPreference_restartRequestJobName;
 	
 	// --- File Editors ---
 	public static String FileEditorPreference_fileTypes;
@@ -492,7 +490,6 @@ public class WorkbenchMessages extends NLS {
 
 	public static String FilteredPreferenceDialog_PreferenceSaveFailed;
 	public static String FilteredPreferenceDialog_Resize;
-	public static String FilteredPreferenceDialog_FilterToolTip;
 	
 	public static String FileExtension_fileTypeMessage;
 	public static String FileExtension_fileTypeLabel;
@@ -627,7 +624,6 @@ public class WorkbenchMessages extends NLS {
     public static String EditorManager_create_element_returned_null;
     public static String EditorManager_wrong_createElement_result;
     public static String EditorManager_backgroundSaveJobName;
-	public static String EditorManager_largeDocumentWarning;
     
 	public static String EditorPane_pinEditor;
 

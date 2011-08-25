@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<fragment>
+
+   <extension
+         id="CocoaUIProcessor"
+         name="Cocoa UI Processor"
+         point="org.eclipse.e4.workbench.model">
+      <processor
+            beforefragment="false"
+            class="org.eclipse.e4.ui.workbench.renderers.swt.cocoa.CocoaUIProcessor">
+      </processor>
+   </extension>
+   
+</fragment>

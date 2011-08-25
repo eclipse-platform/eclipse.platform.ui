@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ui.contexts;
 
 import java.util.Collection;
+
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.expressions.Expression;
@@ -42,7 +43,6 @@ public interface IContextService extends IServiceWithSources {
 	 * The identifier for the context that is active when a workbench is active.
 	 * 
 	 * @since 3.7
-	 * 
 	 */
 	public static final String CONTEXT_ID_WORKBENCH_MENU = "org.eclipse.ui.contexts.workbenchMenu"; //$NON-NLS-1$
 

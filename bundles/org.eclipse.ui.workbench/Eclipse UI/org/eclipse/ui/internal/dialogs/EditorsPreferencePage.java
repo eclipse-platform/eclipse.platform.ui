@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,6 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.tweaklets.TabBehaviour;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -47,7 +45,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
  */
 public class EditorsPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
-	private static final int REUSE_INDENT = 20;
+    private static final int REUSE_INDENT = 10;
 
     protected Composite editorReuseGroup;
 
@@ -94,7 +92,8 @@ public class EditorsPreferencePage extends PreferencePage implements
         createUseIPersistablePref(composite);
         createPromptWhenStillOpenPref(composite);
 		createEditorReuseGroup(composite);
-		((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).setPreferenceVisibility(editorReuseGroup, showMultipleEditorTabs);
+		// ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).setPreferenceVisibility(editorReuseGroup,
+		// showMultipleEditorTabs);
 
         updateValidState();
 
@@ -280,14 +279,14 @@ public class EditorsPreferencePage extends PreferencePage implements
         editorReuseIndentGroup = new Composite(editorReuseGroup, SWT.LEFT);
         GridLayout indentLayout = new GridLayout();
         indentLayout.marginLeft = REUSE_INDENT;
-        indentLayout.marginWidth = 0;
+        indentLayout.marginRight = 0;
         editorReuseIndentGroup.setLayout(indentLayout);
         editorReuseIndentGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         editorReuseThresholdGroup = new Composite(editorReuseIndentGroup,
                 SWT.LEFT);
         layout = new GridLayout();
-		layout.marginWidth = 0;
+        layout.marginWidth = 0;
         editorReuseThresholdGroup.setLayout(layout);
         editorReuseThresholdGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 

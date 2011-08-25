@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,19 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.SubActionBars2;
 import org.eclipse.ui.dnd.IDragAndDropService;
-import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**
  * An editor container manages the services for an editor.
@@ -31,7 +31,6 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
 public class EditorSite extends PartSite implements IEditorSite {
     /* package */ //static final int PROP_REUSE_EDITOR = -0x101;
 
-    private EditorDescriptor desc;
 
     //private ListenerList propChangeListeners = new ListenerList(1);
 
@@ -40,20 +39,10 @@ public class EditorSite extends PartSite implements IEditorSite {
     /**
      * Constructs an EditorSite for an editor.
      */
-    public EditorSite(IEditorReference ref, IEditorPart editor,
-            WorkbenchPage page, EditorDescriptor desc) {
-        super(ref, editor, page);
-        Assert.isNotNull(desc);
-        this.desc = desc;
+	public EditorSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref,
+			IConfigurationElement element) {
+		super(model, part, ref, element);
         
-        if (desc.getConfigurationElement() != null) {
-            setConfigurationElement(desc.getConfigurationElement());
-        } else {
-            // system external and in-place editors do not have a corresponding configuration element
-            setId(desc.getId());
-            setRegisteredName(desc.getLabel());
-        }
-
 		// Initialize the services specific to this editor site.
         initializeDefaultServices();
     }
@@ -129,10 +118,6 @@ public class EditorSite extends PartSite implements IEditorSite {
      */
     public IEditorPart getEditorPart() {
         return (IEditorPart) getPart();
-    }
-
-    public EditorDescriptor getEditorDescriptor() {
-        return desc;
     }
 
     protected String getInitialScopeId() {

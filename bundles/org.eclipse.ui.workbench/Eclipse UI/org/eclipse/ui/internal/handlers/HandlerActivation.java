@@ -11,19 +11,18 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.services.EvaluationResultCache;
-import org.eclipse.ui.services.IEvaluationReference;
+import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
 
 /**
  * <p>
@@ -43,93 +42,95 @@ import org.eclipse.ui.services.IEvaluationReference;
  * 
  * @since 3.1
  */
-final class HandlerActivation extends EvaluationResultCache implements
-		IHandlerActivation {
+final class HandlerActivation implements IHandlerActivation {
+	IEclipseContext context;
+	private String commandId;
+	private IHandler handler;
+	E4HandlerProxy proxy;
+	private Expression activeWhen;
+	private boolean active;
+	private int sourcePriority;
+	boolean participating = true;
 
-	/**
-	 * The identifier for the command which the activated handler handles. This
-	 * value is never <code>null</code>.
-	 */
-	private final String commandId;
-
-	/**
-	 * The depth of services at which this token was created. This is used as a
-	 * final tie-breaker if all other things are equivalent.
-	 */
-	private final int depth;
-
-	/**
-	 * The handler that has been activated. This value may be <code>null</code>.
-	 */
-	private final IHandler handler;
-
-	/**
-	 * The handler service from which this handler activation was request. This
-	 * value is never <code>null</code>.
-	 */
-	private final IHandlerService handlerService;
-
-	private IEvaluationReference reference = null;
-	
-	private IPropertyChangeListener listener = null;
-
-	/**
-	 * Constructs a new instance of <code>HandlerActivation</code>.
-	 * 
-	 * @param commandId
-	 *            The identifier for the command which the activated handler
-	 *            handles. This value must not be <code>null</code>.
-	 * @param handler `
-	 *            The handler that has been activated. This value may be
-	 *            <code>null</code>.
-	 * @param expression
-	 *            The expression that must evaluate to <code>true</code>
-	 *            before this handler is active. This value may be
-	 *            <code>null</code> if it is always active.</code>.
-	 * @param depth
-	 *            The depth at which this activation was created within the
-	 *            services hierarchy. This is used as the final tie-breaker if
-	 *            all other conditions are equal. This should be a positive
-	 *            integer.
-	 * @param handlerService
-	 *            The handler service from which the handler activation was
-	 *            requested; must not be <code>null</code>.
-	 * @see ISources
-	 */
-	HandlerActivation(final String commandId, final IHandler handler,
-			final Expression expression, final int depth,
-			final IHandlerService handlerService) {
-		super(expression);
-
-		if (commandId == null) {
-			throw new NullPointerException(
-					"The command identifier for a handler activation cannot be null"); //$NON-NLS-1$
-		}
-
-		if (handlerService == null) {
-			throw new NullPointerException(
-					"The handler service for an activation cannot be null"); //$NON-NLS-1$
-		}
-
-		this.commandId = commandId;
-		this.depth = depth;
+	public HandlerActivation(IEclipseContext context, String cmdId, IHandler handler,
+			E4HandlerProxy handlerProxy, Expression expr) {
+		this.context = context;
+		this.commandId = cmdId;
 		this.handler = handler;
-		this.handlerService = handlerService;
+		this.proxy = handlerProxy;
+		this.activeWhen = expr;
+		this.sourcePriority = SourcePriorityNameMapping.computeSourcePriority(activeWhen);
+		proxy.activation = this;
 	}
 
-	public final void clearActive() {
-		clearResult();
-	}
-
-	/**
-	 * Implement {@link Comparable#compareTo(Object)}.
-	 * <p>
-	 * <b>Note:</b> this class has a natural ordering that is inconsistent with
-	 * equals.
-	 * </p>
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IEvaluationResultCache#clearResult()
 	 */
-	public final int compareTo(final Object object) {
-		final IHandlerActivation activation = (IHandlerActivation) object;
+	public void clearResult() {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getExpression()
+	 */
+	public Expression getExpression() {
+		return activeWhen;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getSourcePriority
+	 * ()
+	 */
+	public int getSourcePriority() {
+		return sourcePriority;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IEvaluationResultCache#evaluate(org.
+	 * eclipse.core.expressions.IEvaluationContext)
+	 */
+	public boolean evaluate(IEvaluationContext context) {
+		if (activeWhen == null) {
+			active = true;
+		} else {
+			try {
+				active = activeWhen.evaluate(context) != EvaluationResult.FALSE;
+			} catch (CoreException e) {
+				Activator.trace(Policy.DEBUG_CMDS, "Failed to calculate active", e); //$NON-NLS-1$
+			}
+		}
+		return active;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.services.IEvaluationResultCache#setResult(boolean
+	 * )
+	 */
+	public void setResult(boolean result) {
+		active = result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object o) {
+		HandlerActivation activation = (HandlerActivation) o;
 		int difference;
 
 		// Check the priorities
@@ -166,78 +167,72 @@ final class HandlerActivation extends EvaluationResultCache implements
 		return difference;
 	}
 
-	public final String getCommandId() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.handlers.IHandlerActivation#clearActive()
+	 */
+	public void clearActive() {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.handlers.IHandlerActivation#getCommandId()
+	 */
+	public String getCommandId() {
 		return commandId;
 	}
 
-	public final int getDepth() {
-		return depth;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.handlers.IHandlerActivation#getDepth()
+	 */
+	public int getDepth() {
+		return 0;
 	}
 
-	public final IHandler getHandler() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.handlers.IHandlerActivation#getHandler()
+	 */
+	public IHandler getHandler() {
 		return handler;
 	}
 
-	public final IHandlerService getHandlerService() {
-		return handlerService;
-	}
-
-	public final boolean isActive(final IEvaluationContext context) {
-		return evaluate(context);
-	}
-
-	public final String toString() {
-		final StringWriter sw = new StringWriter();
-		final BufferedWriter buffer = new BufferedWriter(sw);
-
-		try {
-			buffer.write("HandlerActivation(commandId="); //$NON-NLS-1$
-			buffer.write(commandId);
-			buffer.write(',');
-			buffer.newLine();
-			buffer.write("\thandler="); //$NON-NLS-1$
-			buffer.write(handler == null ? "" : handler.toString()); //$NON-NLS-1$
-			buffer.write(',');
-			buffer.newLine();
-			buffer.write("\texpression="); //$NON-NLS-1$
-			Expression exp = getExpression();
-			buffer.write(exp == null ? "" : exp.toString()); //$NON-NLS-1$
-			buffer.write(",sourcePriority="); //$NON-NLS-1$
-			buffer.write(Integer.toString(getSourcePriority()));
-			buffer.write(')');
-			buffer.flush();
-		} catch (IOException e) {
-			// we're a string buffer, there should be no IO exception
-		}
-		return sw.toString();
-	}
-
-	/**
-	 * @return Returns the reference.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.handlers.IHandlerActivation#getHandlerService()
 	 */
-	public IEvaluationReference getReference() {
-		return reference;
+	public IHandlerService getHandlerService() {
+		return (IHandlerService) context.get(IHandlerService.class.getName());
 	}
 
-	/**
-	 * @param reference
-	 *            The reference to set.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.handlers.IHandlerActivation#isActive(org.eclipse.core.
+	 * expressions.IEvaluationContext)
 	 */
-	public void setReference(IEvaluationReference reference) {
-		this.reference = reference;
+	public boolean isActive(IEvaluationContext context) {
+		return active;
 	}
 
-	/**
-	 * @param listener The listener to set.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
 	 */
-	public void setListener(IPropertyChangeListener listener) {
-		this.listener = listener;
-	}
-
-	/**
-	 * @return Returns the listener.
-	 */
-	public IPropertyChangeListener getListener() {
-		return listener;
+	@Override
+	public String toString() {
+		return "EHA: " + active + ":" + sourcePriority + ":" + commandId + ": " + proxy //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				+ ": " + handler + ": " + context; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
+

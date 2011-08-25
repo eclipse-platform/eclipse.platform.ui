@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,20 +12,22 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -34,16 +36,19 @@ import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.ISizeProvider;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.util.Util;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * 
@@ -109,6 +114,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
      * used anymore)
      */
     public static int STATE_DISPOSED = 3;
+
+	static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
   
     /**
      * Current state of the reference. Used to detect recursive creation errors, disposed
@@ -116,17 +123,11 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
      */
     private int state = STATE_LAZY;
    
-    protected IWorkbenchPart part;
+	protected IWorkbenchPart legacyPart;
 
-    private String id;
-
-    protected PartPane pane;
 
     private boolean pinned = false;
     
-    private String title;
-
-    private String tooltip;
 
     /**
      * Stores the current Image for this part reference. Lazily created. Null if not allocated.
@@ -153,25 +154,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     
     private ListenerList partChangeListeners = new ListenerList();
     
-    private String partName;
-
-    private String contentDescription;
-    
     protected Map propertyCache = new HashMap();
     
-    /**
-     * Used to remember which events have been queued.
-     */
-    private BitSet queuedEvents = new BitSet();
 
-    private boolean queueEvents = false;
-
-	private DisposeListener prematureDisposeListener = new DisposeListener() {
-        public void widgetDisposed(DisposeEvent e) {
-			WorkbenchPlugin.log(new RuntimeException("Widget disposed too early for part " //$NON-NLS-1$
-					+ getId()));
-        }    
-    };
     
     private IPropertyListener propertyChangeListener = new IPropertyListener() {
         /* (non-Javadoc)
@@ -187,10 +172,52 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 			partPropertyChanged(event);
 		}
     };
+
+	private IWorkbenchPage page;
+
+	private MPart part;
+
+	private IEclipseContext windowContext;
+
+	private EventHandler contextEventHandler;
     
-    public WorkbenchPartReference() {
-        //no-op
-    }
+    public WorkbenchPartReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part) {
+    	this.windowContext = windowContext;
+		this.page = page;
+		this.part = part;
+	}
+
+	private EventHandler createContextEventHandler() {
+		if (contextEventHandler == null) {
+			contextEventHandler = new EventHandler() {
+				public void handleEvent(Event event) {
+					Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+					MPart part = getModel();
+					if (element == part) {
+						if (part.getContext() != null) {
+							part.getContext().set(getClass().getName(), this);
+							unsubscribe();
+						}
+					}
+				}
+			};
+		}
+		return contextEventHandler;
+	}
+
+	public void subscribe() {
+		IEventBroker broker = windowContext.get(IEventBroker.class);
+		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
+				createContextEventHandler());
+	}
+
+	public void unsubscribe() {
+		if (contextEventHandler != null) {
+			IEventBroker broker = windowContext.get(IEventBroker.class);
+			broker.unsubscribe(contextEventHandler);
+			contextEventHandler = null;
+		}
+	}
     
     public boolean isDisposed() {
         return state == STATE_DISPOSED;
@@ -202,53 +229,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         }
     }
     
-    /**
-     * Calling this with deferEvents(true) will queue all property change events until a subsequent
-     * call to deferEvents(false). This should be used at the beginning of a batch of related changes
-     * to prevent duplicate property change events from being sent.
-     * 
-     * @param shouldQueue
-     */
-    private void deferEvents(boolean shouldQueue) {
-        queueEvents = shouldQueue;
-
-        if (queueEvents == false) {
-        	// do not use nextSetBit, to allow compilation against JCL Foundation (bug 80053)
-        	for (int i = 0, n = queuedEvents.size(); i < n; ++i) {
-        		if (queuedEvents.get(i)) {
-        			firePropertyChange(i);
-        			queuedEvents.clear(i);
-        		}
-            }
-        }
-    }
-
-    protected void setTitle(String newTitle) {
-        if (Util.equals(title, newTitle)) {
-            return;
-        }
-
-        title = newTitle;
-        firePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
-    }
-
-    protected void setPartName(String newPartName) {
-        if (Util.equals(partName, newPartName)) {
-            return;
-        }
-
-        partName = newPartName;
-        firePropertyChange(IWorkbenchPartConstants.PROP_PART_NAME);
-    }
-
-    protected void setContentDescription(String newContentDescription) {
-        if (Util.equals(contentDescription, newContentDescription)) {
-            return;
-        }
-
-        contentDescription = newContentDescription;
-        firePropertyChange(IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
-    }
+	public MPart getModel() {
+		return part;
+	}
 
     protected void setImageDescriptor(ImageDescriptor descriptor) {
         if (Util.equals(imageDescriptor, descriptor)) {
@@ -263,12 +246,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         // Don't queue events triggered by image changes. We'll dispose the image
         // immediately after firing the event, so we need to fire it right away.
         immediateFirePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
-        if (queueEvents) {
-            // If there's a PROP_TITLE event queued, remove it from the queue because
-            // we've just fired it.
-            queuedEvents.clear(IWorkbenchPartConstants.PROP_TITLE);
-        }
-        
         // If we had allocated the old image, deallocate it now (AFTER we fire the property change 
         // -- listeners may need to clean up references to the old image)
         if (oldImage != null) {
@@ -276,28 +253,19 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         }
     }
     
-    protected void setToolTip(String newToolTip) {
-        if (Util.equals(tooltip, newToolTip)) {
-            return;
-        }
-
-        tooltip = newToolTip;
-        firePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
-    }
-
     protected void partPropertyChanged(Object source, int propId) {
 
         // We handle these properties directly (some of them may be transformed
         // before firing events to workbench listeners)
-        if (propId == IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION
-                || propId == IWorkbenchPartConstants.PROP_PART_NAME
-                || propId == IWorkbenchPartConstants.PROP_TITLE) {
-
-            refreshFromPart();
-        } else {
+		// if (propId == IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION
+		// || propId == IWorkbenchPartConstants.PROP_PART_NAME
+		// || propId == IWorkbenchPartConstants.PROP_TITLE) {
+		//
+		// refreshFromPart();
+		// } else {
             // Any other properties are just reported to listeners verbatim
             firePropertyChange(propId);
-        }
+		// }
         
         // Let the model manager know as well
         if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
@@ -313,42 +281,18 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     	firePartPropertyChange(event);
     }
 
-    /**
-     * Refreshes all cached values with the values from the real part 
-     */
-    protected void refreshFromPart() {
-        deferEvents(true);
-
-        setPartName(computePartName());
-        setTitle(computeTitle());
-        setContentDescription(computeContentDescription());
-        setToolTip(getRawToolTip());
-        setImageDescriptor(computeImageDescriptor());
-
-        deferEvents(false);
-    }
     
     protected ImageDescriptor computeImageDescriptor() {
-        if (part != null) {
-            return ImageDescriptor.createFromImage(part.getTitleImage(), Display.getCurrent());
+		if (legacyPart != null) {
+			return ImageDescriptor
+					.createFromImage(legacyPart.getTitleImage(), Display.getCurrent());
         }
         return defaultImageDescriptor;
     }
 
-    public void init(String id, String title, String tooltip,
-            ImageDescriptor desc, String paneName, String contentDescription) {
-        Assert.isNotNull(id);
-        Assert.isNotNull(title);
-        Assert.isNotNull(tooltip);
+	public void init(ImageDescriptor desc) {
         Assert.isNotNull(desc);
-        Assert.isNotNull(paneName);
-        Assert.isNotNull(contentDescription);
         
-        this.id = id;
-        this.title = title;
-        this.tooltip = tooltip;
-        this.partName = paneName;
-        this.contentDescription = contentDescription;
         this.defaultImageDescriptor = desc;
         this.imageDescriptor = computeImageDescriptor();
     }
@@ -401,99 +345,35 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         propChangeListeners.remove(listener);
     }
 
-    public final String getId() {
-        if (part != null) {
-            IWorkbenchPartSite site = part.getSite();
-            if (site != null) {
-				return site.getId();
-			}
-        }
-        return Util.safeString(id);
-    }
 
-    public String getTitleToolTip() {
-        return Util.safeString(tooltip);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPartReference#getTitle()
+	 */
+	public String getTitle() {
+		String title = legacyPart == null ? part.getLocalizedLabel() : legacyPart.getTitle();
+		return Util.safeString(title);
+	}
 
-    protected final String getRawToolTip() {
-        return Util.safeString(part.getTitleToolTip());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPartReference#getTitleToolTip()
+	 */
+	public String getTitleToolTip() {
+		String toolTip = part.getLocalizedTooltip();
+		return Util.safeString(toolTip);
+	}
 
-    /**
-     * Returns the pane name for the part
-     * 
-     * @return the pane name for the part
-     */
-    public String getPartName() {
-        return Util.safeString(partName);
-    }
-    
-    /**
-     * Gets the part name directly from the associated workbench part,
-     * or the empty string if none.
-     * 
-     * @return
-     */
-    protected final String getRawPartName() {
-        String result = ""; //$NON-NLS-1$
-
-        if (part instanceof IWorkbenchPart2) {
-            IWorkbenchPart2 part2 = (IWorkbenchPart2) part;
-
-            result = Util.safeString(part2.getPartName());
-        }
-
-        return result;
-    }
-
-    protected String computePartName() {
-        return getRawPartName();
-    }
-
-    /**
-     * Returns the content description for this part.
-     * 
-     * @return the pane name for the part
-     */
-    public String getContentDescription() {
-        return Util.safeString(contentDescription);
-    }
-
-    /**
-     * Computes a new content description for the part. Subclasses may override to change the
-     * default behavior
-     * 
-     * @return the new content description for the part
-     */
-    protected String computeContentDescription() {
-        return getRawContentDescription();
-    }
-
-    /**
-     * Returns the content description as set directly by the part, or the empty string if none
-     * 
-     * @return the unmodified content description from the part (or the empty string if none)
-     */
-    protected final String getRawContentDescription() {
-        if (part instanceof IWorkbenchPart2) {
-            IWorkbenchPart2 part2 = (IWorkbenchPart2) part;
-
-            return part2.getContentDescription();
-        }
-
-        return ""; //$NON-NLS-1$				
-    }
-
-    public boolean isDirty() {
-        if (!(part instanceof ISaveablePart)) {
-			return false;
-		}
-        return ((ISaveablePart) part).isDirty();
-    }
-
-    public String getTitle() {
-        return Util.safeString(title);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPartReference#getId()
+	 */
+	public String getId() {
+		return part.getElementId();
+	}
 
     /**
      * Computes a new title for the part. Subclasses may override to change the default behavior.
@@ -510,7 +390,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
      * @return the unmodified title, as set by the IWorkbenchPart. Returns the empty string if none.
      */
     protected final String getRawTitle() {
-        return Util.safeString(part.getTitle());
+		return Util.safeString(legacyPart.getTitle());
     }
 
     public final Image getTitleImage() {
@@ -539,28 +419,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     /* package */ void fireZoomChange() {
         fireInternalPropertyChange(INTERNAL_PROPERTY_ZOOMED);
     }
-    
-    public boolean getVisible() {
-        if (isDisposed()) {
-            return false;
-        }
-        return getPane().getVisible();
-    }
-    
-    public void setVisible(boolean isVisible) {
-        if (isDisposed()) {
-            return;
-        }
-        getPane().setVisible(isVisible);
-    }
-    
-    protected void firePropertyChange(int id) {
 
-        if (queueEvents) {
-            queuedEvents.set(id);
-            return;
-        }
-        
+	protected void firePropertyChange(int id) {
         immediateFirePropertyChange(id);
     }
     
@@ -568,177 +428,101 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         UIListenerLogging.logPartReferencePropertyChange(this, id);
         Object listeners[] = propChangeListeners.getListeners();
         for (int i = 0; i < listeners.length; i++) {
-            ((IPropertyListener) listeners[i]).propertyChanged(part, id);
+			((IPropertyListener) listeners[i]).propertyChanged(legacyPart, id);
         }
         
         fireInternalPropertyChange(id);
     }
+
+	public abstract PartSite getSite();
+
+	public abstract void initialize(IWorkbenchPart part) throws PartInitException;
+
+	private void addPropertyListeners() {
+		IWorkbenchPart workbenchPart = getPart(false);
+		if (workbenchPart != null) {
+			workbenchPart.addPropertyListener(new IPropertyListener() {
+				public void propertyChanged(Object source, int propId) {
+					firePropertyListeners(source, propId);
+				}
+			});
+
+			if (workbenchPart instanceof IWorkbenchPart3) {
+				((IWorkbenchPart3) workbenchPart)
+						.addPartPropertyListener(new IPropertyChangeListener() {
+							public void propertyChange(PropertyChangeEvent event) {
+								firePartPropertyChange(event);
+							}
+						});
+
+			}
+		}
+	}
+
+	private void firePropertyListeners(Object source, int propId) {
+		for (Object listener : propChangeListeners.getListeners()) {
+			((IPropertyListener) listener).propertyChanged(source, propId);
+		}
+	}
 
     public final IWorkbenchPart getPart(boolean restore) {
         if (isDisposed()) {
             return null;
         }
         
-        if (part == null && restore) {
-            
-            if (state == STATE_CREATION_IN_PROGRESS) {
-                IStatus result = WorkbenchPlugin.getStatus(
-                        new PartInitException(NLS.bind("Warning: Detected recursive attempt by part {0} to create itself (this is probably, but not necessarily, a bug)",  //$NON-NLS-1$
-                                getId())));
-                WorkbenchPlugin.log(result);
-                return null;
-            }
-            
-            try {
-                state = STATE_CREATION_IN_PROGRESS;
-                
-                IWorkbenchPart newPart = createPart();
-                if (newPart != null) {
-                    part = newPart;
-                    // Add a dispose listener to the part. This dispose listener does nothing but log an exception
-                    // if the part's widgets get disposed unexpectedly. The workbench part reference is the only
-                    // object that should dispose this control, and it will remove the listener before it does so.
-                    getPane().getControl().addDisposeListener(prematureDisposeListener);
-                    part.addPropertyListener(propertyChangeListener);
-                    if (part instanceof IWorkbenchPart3) {
-                    	((IWorkbenchPart3)part).addPartPropertyListener(partPropertyChangeListener);
-                    }
+        if (legacyPart == null) {
+			if (restore && part.getWidget() == null) {
+				// create the underlying client object backed by the part model
+				// with the rendering engine
+				EPartService partService = windowContext.get(EPartService.class);
+				partService.showPart(part, PartState.CREATE);
+			}
 
-                    refreshFromPart();
-                    releaseReferences();
-                    
-                    fireInternalPropertyChange(INTERNAL_PROPERTY_OPENED);
-                    
-                    ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(part, ISizeProvider.class);
-                    if (sizeProvider != null) {
-                        // If this part has a preferred size, indicate that the preferred size may have changed at this point
-                        if (sizeProvider.getSizeFlags(true) != 0 || sizeProvider.getSizeFlags(false) != 0) {
-                            fireInternalPropertyChange(IWorkbenchPartConstants.PROP_PREFERRED_SIZE);
-                        }
-                    }
-                }
-            } finally {
-                state = STATE_CREATED;
-            }
-        }        
-        
-        return part;
+			// check if we were actually created, it is insufficient to check
+			// whether the 'object' feature is valid or not because it is one of
+			// the last things to be unset during the teardown process, this
+			// means we may return a valid workbench part even if it is actually
+			// in the process of being destroyed, see bug 328944
+			if (part.getWidget() != null) {
+				CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
+				if (compatibilityPart != null) {
+					legacyPart = compatibilityPart.getPart();
+					addPropertyListeners();
+				}
+			}
+		}
+		return legacyPart;
+
     }
     
-    protected abstract IWorkbenchPart createPart();
-        
-    protected abstract PartPane createPane();
-    
-    /**
-     * Returns the part pane for this part reference. Does not return null. Should not be called
-     * if the reference has been disposed.
-     * 
-     * TODO: clean up all code that has any possibility of calling this on a disposed reference
-     * and make this method throw an exception if anyone else attempts to do so.
-     * 
-     * @return
-     */
-    public final PartPane getPane() {
-        
-        // Note: we should never call this if the reference has already been disposed, since it
-        // may cause a PartPane to be created and leaked.
-        if (pane == null) {
-            pane = createPane();
-        }
-        return pane;
-    }
+	public abstract IWorkbenchPart createPart() throws PartInitException;
 
-    public final void dispose() {
-        
-        if (isDisposed()) {
-            return;
-        }
-        
-        // Store the current title, tooltip, etc. so that anyone that they can be returned to
-        // anyone that held on to the disposed reference.
-        partName = getPartName();
-        contentDescription = getContentDescription();
-        tooltip = getTitleToolTip();
-        title = getTitle();
-        
-        if (state == STATE_CREATION_IN_PROGRESS) {
-            IStatus result = WorkbenchPlugin.getStatus(
-                    new PartInitException(NLS.bind("Warning: Blocked recursive attempt by part {0} to dispose itself during creation",  //$NON-NLS-1$
-                            getId())));
-            WorkbenchPlugin.log(result);
-            return;
-        }
-        
-        doDisposeNestedParts();
-        
-    	// Disposing the pane disposes the part's widgets. The part's widgets need to be disposed before the part itself.
-        if (pane != null) {
-            // Remove the dispose listener since this is the correct place for the widgets to get disposed
-            Control targetControl = getPane().getControl(); 
-            if (targetControl != null) {
-                targetControl.removeDisposeListener(prematureDisposeListener);
-            }
-            pane.dispose();
-        }
-        
-        doDisposePart();
-   
-        if (pane != null) {
-        	pane.removeContributions();
-        }
-        
-        clearListenerList(internalPropChangeListeners);
-        clearListenerList(partChangeListeners);
-        Image oldImage = image;
-        ImageDescriptor oldDescriptor = imageDescriptor;
-        image = null;
-        
-        state = STATE_DISPOSED;
-        imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
-        defaultImageDescriptor = ImageDescriptor.getMissingImageDescriptor();
-        immediateFirePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
-        clearListenerList(propChangeListeners);
-        
-        if (oldImage != null) {
-            JFaceResources.getResources().destroy(oldDescriptor);
-        }
-    }
+	abstract IWorkbenchPart createErrorPart();
+
+	public abstract IWorkbenchPart createErrorPart(IStatus status);
 
 	protected void doDisposeNestedParts() {
 		// To be implemented by subclasses
 	}
 
-	/**
-	 * Clears all of the listeners in a listener list. TODO Bug 117519 Remove
-	 * this method when fixed.
-	 * 
-	 * @param list
-	 *            The list to be clear; must not be <code>null</code>.
-	 */
-	private final void clearListenerList(final ListenerList list) {
-		final Object[] listeners = list.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			list.remove(listeners[i]);
-		}
-	}
-
     /**
      * 
      */
-    protected void doDisposePart() {
-        if (part != null) {
+	public void doDisposePart() {
+		if (legacyPart != null) {
             fireInternalPropertyChange(INTERNAL_PROPERTY_CLOSED);
             // Don't let exceptions in client code bring us down. Log them and continue.
             try {
-                part.removePropertyListener(propertyChangeListener);
-                if (part instanceof IWorkbenchPart3) {
-                	((IWorkbenchPart3)part).removePartPropertyListener(partPropertyChangeListener);
+				legacyPart.removePropertyListener(propertyChangeListener);
+				if (legacyPart instanceof IWorkbenchPart3) {
+					((IWorkbenchPart3) legacyPart)
+							.removePartPropertyListener(partPropertyChangeListener);
                 }
-                part.dispose();
+				legacyPart.dispose();
             } catch (Exception e) {
                 WorkbenchPlugin.log(e);
             }
-            part = null;
+			legacyPart = null;
         }
     }
 
@@ -766,9 +550,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
      * @see org.eclipse.ui.IWorkbenchPartReference#getPartProperty(java.lang.String)
      */
     public String getPartProperty(String key) {
-		if (part != null) {
-			if (part instanceof IWorkbenchPart3) {
-				return ((IWorkbenchPart3) part).getPartProperty(key);
+		if (legacyPart != null) {
+			if (legacyPart instanceof IWorkbenchPart3) {
+				return ((IWorkbenchPart3) legacyPart).getPartProperty(key);
 			}
 		} else {
 			return (String)propertyCache.get(key);
@@ -817,7 +601,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     public int computePreferredSize(boolean width, int availableParallel,
             int availablePerpendicular, int preferredResult) {
 
-        ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(part, ISizeProvider.class);
+		ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(legacyPart,
+				ISizeProvider.class);
         if (sizeProvider != null) {
             return sizeProvider.computePreferredSize(width, availableParallel, availablePerpendicular, preferredResult);
         }
@@ -829,11 +614,70 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
      * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
      */
     public int getSizeFlags(boolean width) {
-        ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(part, ISizeProvider.class);
+		ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(legacyPart,
+				ISizeProvider.class);
         if (sizeProvider != null) {
             return sizeProvider.getSizeFlags(width);
         }
         return 0;
     }
     
+	public IWorkbenchPage getPage() {
+		return page;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPartReference#getPartName()
+	 */
+	public String getPartName() {
+		return part.getLocalizedLabel();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPartReference#getContentDescription()
+	 */
+	public String getContentDescription() {
+		IWorkbenchPart workbenchPart = getPart(false);
+		if (workbenchPart instanceof IWorkbenchPart2) {
+			return ((IWorkbenchPart2) workbenchPart).getContentDescription();
+		}
+		return workbenchPart.getTitle();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPartReference#isDirty()
+	 */
+	public boolean isDirty() {
+		IWorkbenchPart part = getPart(false);
+		if (part instanceof ISaveablePart) {
+			return ((ISaveablePart) part).isDirty();
+		}
+		return false;
+	}
+
+	public void invalidate() {
+		legacyPart = null;
+	}
+
+	public final PartPane getPane() {
+		return new PartPane() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.ui.internal.WorkbenchPartReference.PartPane#getControl
+			 * ()
+			 */
+			@Override
+			public Control getControl() {
+				return part == null ? null : (Control) part.getWidget();
+			}
+		};
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -190,10 +191,10 @@ public class DecorationScheduler {
 	 * decoration and return <code>null</code>.
 	 * 
 	 * @param element
-	 *            The element to be decorated. If it is <code>null</code> return
-	 *            <code>null</code>.
+	 *            The element to be decorated. If it is <code>null</code>
+	 *            return <code>null</code>.
 	 * @param adaptedElement
-	 *            Its adapted value.
+	 *            It's adapted value.
 	 * @param context
 	 *            The deocration context
 	 * @return DecorationResult or <code>null</code>

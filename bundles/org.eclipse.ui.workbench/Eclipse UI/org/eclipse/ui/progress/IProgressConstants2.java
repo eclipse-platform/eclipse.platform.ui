@@ -13,6 +13,7 @@ package org.eclipse.ui.progress;
 
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * Constants relating to progress UI functionality of the workbench plug-in.

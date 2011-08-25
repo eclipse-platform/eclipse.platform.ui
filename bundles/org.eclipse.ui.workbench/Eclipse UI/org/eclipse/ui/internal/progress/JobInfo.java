@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,13 +30,6 @@ public class JobInfo extends JobTreeElement {
     private IStatus blockedStatus;
 
     private volatile boolean canceled = false;
-
-	/**
-	 * This flag controls whether the job result was passed to status handling in
-	 * order to display it.
-	 */
-	private volatile boolean reported = false;
-
     private List children = Collections.synchronizedList(new ArrayList());
 
     private Job job;
@@ -388,14 +381,6 @@ public class JobInfo extends JobTreeElement {
     boolean isActive() {
         return getJob().getState() != Job.NONE;
     }
-
-	boolean isReported() {
-		return reported;
-	}
-
-	void setReported(boolean errorReported) {
-		this.reported = errorReported;
-	}
 
     /**
      * Return whether or not the receiver is blocked.

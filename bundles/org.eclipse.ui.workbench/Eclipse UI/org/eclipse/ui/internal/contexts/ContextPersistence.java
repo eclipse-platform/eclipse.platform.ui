@@ -13,8 +13,6 @@ package org.eclipse.ui.internal.contexts;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -33,7 +31,7 @@ import org.eclipse.ui.internal.services.RegistryPersistence;
  * 
  * @since 3.1
  */
-final class ContextPersistence extends RegistryPersistence {
+public final class ContextPersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the context elements in the indexed array.
@@ -59,15 +57,6 @@ final class ContextPersistence extends RegistryPersistence {
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final ContextManager contextManager) {
-		// Undefine all the previous handle objects.
-		final HandleObject[] handleObjects = contextManager
-				.getDefinedContexts();
-		if (handleObjects != null) {
-			for (int i = 0; i < handleObjects.length; i++) {
-				handleObjects[i].undefine();
-			}
-		}
-
 		final List warningsToLog = new ArrayList(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -106,7 +95,9 @@ final class ContextPersistence extends RegistryPersistence {
 			}
 
 			final Context context = contextManager.getContext(contextId);
-			context.define(name, description, parentId);
+			if (!context.isDefined()) {
+				context.define(name, description, parentId);
+			}
 		}
 
 		logWarnings(
@@ -122,7 +113,7 @@ final class ContextPersistence extends RegistryPersistence {
 	/**
 	 * Constructs a new instance of <code>ContextPersistence</code>.
 	 */
-	ContextPersistence(final ContextManager contextManager) {
+	public ContextPersistence(final ContextManager contextManager) {
 		if (contextManager == null) {
 			throw new NullPointerException(
 					"The context manager must not be null"); //$NON-NLS-1$
@@ -160,6 +151,10 @@ final class ContextPersistence extends RegistryPersistence {
 	 */
 	protected final void read() {
 		super.read();
+		reRead();
+	}
+
+	public void reRead() {
 
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,6 +187,8 @@ public class CommandContributionItem extends ContributionItem {
 		contributedIcon = contributionParameters.icon;
 		contributedDisabledIcon = contributionParameters.disabledIcon;
 		contributedHoverIcon = contributionParameters.hoverIcon;
+		this.serviceLocator = contributionParameters.serviceLocator;
+
 
 		this.icon = contributionParameters.icon;
 		this.disabledIcon = contributionParameters.disabledIcon;
@@ -198,15 +200,14 @@ public class CommandContributionItem extends ContributionItem {
 		this.helpContextId = contributionParameters.helpContextId;
 		this.visibleEnabled = contributionParameters.visibleEnabled;
 		this.mode = contributionParameters.mode;
-		this.serviceLocator = contributionParameters.serviceLocator;
 
-		menuService = (IMenuService) serviceLocator
+		menuService = (IMenuService) contributionParameters.serviceLocator
 				.getService(IMenuService.class);
-		commandService = (ICommandService) serviceLocator
+		commandService = (ICommandService) contributionParameters.serviceLocator
 				.getService(ICommandService.class);
-		handlerService = (IHandlerService) serviceLocator
+		handlerService = (IHandlerService) contributionParameters.serviceLocator
 				.getService(IHandlerService.class);
-		bindingService = (IBindingService) serviceLocator
+		bindingService = (IBindingService) contributionParameters.serviceLocator
 				.getService(IBindingService.class);
 		IWorkbenchLocationService workbenchLocationService = (IWorkbenchLocationService) contributionParameters.serviceLocator.getService(IWorkbenchLocationService.class);
 		display = workbenchLocationService.getWorkbench().getDisplay();
@@ -261,7 +262,7 @@ public class CommandContributionItem extends ContributionItem {
 						// it's OK to not have a helpContextId
 					}
 				}
-				IWorkbenchLocationService wls = (IWorkbenchLocationService) serviceLocator
+				IWorkbenchLocationService wls = (IWorkbenchLocationService) contributionParameters.serviceLocator
 						.getService(IWorkbenchLocationService.class);
 				final IWorkbench workbench = wls.getWorkbench();
 				if (workbench != null && helpContextId != null) {
@@ -421,8 +422,7 @@ public class CommandContributionItem extends ContributionItem {
 	 * state.
 	 * </p>
 	 * 
-	 * @return The parameterized command for this contribution. May be
-	 *         <code>null</code>.
+	 * @return The parameterized command for this contribution.
 	 * 
 	 * @since 3.5
 	 */
@@ -636,15 +636,10 @@ public class CommandContributionItem extends ContributionItem {
 		ToolItem item = (ToolItem) widget;
 
 		String text = label;
-		String tooltip = label;
 		if (text == null) {
 			if (command != null) {
 				try {
 					text = command.getCommand().getName();
-					tooltip = command.getCommand().getDescription();
-					if (tooltip == null || tooltip.trim().length() == 0) {
-						tooltip = text;
-					}
 				} catch (NotDefinedException e) {
 					StatusManager.getManager().handle(
 							StatusUtil.newStatus(IStatus.ERROR,
@@ -659,7 +654,7 @@ public class CommandContributionItem extends ContributionItem {
 			item.setText(text);
 		}
 
-		String toolTipText = getToolTipText(tooltip);
+		String toolTipText = getToolTipText(text);
 		item.setToolTipText(toolTipText);
 
 		if (item.getSelection() != checkedState) {
@@ -1010,7 +1005,7 @@ public class CommandContributionItem extends ContributionItem {
 	 *         helpContextId, mnemonic, tooltip. The Object will never be
 	 *         <code>null</code>, although any of the fields may be
 	 *         <code>null</code>.
-	 * @since 3.7
+	 * @since 3.100
 	 */
 	public CommandContributionItemParameter getData() {
 		CommandContributionItemParameter data = new CommandContributionItemParameter(
@@ -1024,4 +1019,5 @@ public class CommandContributionItem extends ContributionItem {
 		data.tooltip = tooltip;
 		return data;
 	}
+
 }

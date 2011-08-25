@@ -35,7 +35,6 @@ import org.eclipse.ui.internal.RadioMenu;
 import org.eclipse.ui.internal.WindowTrimProxy;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.presentations.PresentationUtil;
 
 /**
  * This control provides common UI functionality for trim elements. Its
@@ -96,19 +95,6 @@ public class TrimCommonUIHandle extends Composite {
 	 * Listeners...
 	 */
     
-    /**
-     * This listener starts a drag operation when
-     * the Drag and Drop manager tells it to
-     */
-    private Listener dragListener = new Listener() {
-        public void handleEvent(Event event) {
-        	// Only allow 'left mouse' drags...
-        	if (event.button != 3) {
-	            Point position = DragUtil.getEventLoc(event);
-	            startDraggingTrim(position);
-        	}
-        }
-    };
 
     /**
      * This listener brings up the context menu
@@ -185,7 +171,7 @@ public class TrimCommonUIHandle extends Composite {
     	setDragCursor();
     	
         // Set up the dragging behaviour
-        PresentationUtil.addDragListener(cb, dragListener);
+		// PresentationUtil.addDragListener(cb, dragListener);
     	
     	// Create the docking context menu
     	dockMenuManager = new MenuManager();
@@ -303,7 +289,7 @@ public class TrimCommonUIHandle extends Composite {
 		// Clean up the previous info in case we've changed orientation
 		if (cb != null) {
 			ci.dispose();
-	        PresentationUtil.removeDragListener(cb, dragListener);
+			// PresentationUtil.removeDragListener(cb, dragListener);
 			cb.dispose();
 		}
 		

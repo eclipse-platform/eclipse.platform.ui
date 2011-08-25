@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - http://bugs.eclipse.org/326695
+ *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - Bug 326695
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 

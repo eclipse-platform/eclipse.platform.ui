@@ -1,0 +1,65 @@
+CTabItem, Label, Tree, Text {
+	font-family: "Arial";
+}
+	
+Shell {
+	font-size: 12;
+}
+
+CTabItem, ToolBar, Button, CBanner, CoolBar {
+	font-size: 9;
+	background-color: green;
+}
+
+CTabFolder, CTabItem {
+    background-color: red;
+}
+
+CTabItem:selected {
+    background-color: blue;
+}
+
+Text {
+	font-size: 11;
+	color: #666666;
+	background-color: red;
+}
+
+#navigation {
+	font-size: 8;
+	color: orange;
+	background-color: blue;
+}
+
+.messageBanner {
+    background-color: yellow;
+}
+
+.messageBanner Composite, Label, Link {
+    background-color: pink;
+}
+
+.messageSender {
+	color: #3e9cfa;
+	font-size: 11;
+}
+
+.messageDate {
+	color: #808080;
+	font-size: 9;
+}
+
+
+.messageSubjectUnRead {
+    font-size: 14;
+	font-style: italic;
+    font-weight: bold;
+	color: red;
+}
+
+.messageSubjectRead {
+    font-size: 12;
+	font-style: normal;
+    font-weight: normal;
+	color: green;
+}

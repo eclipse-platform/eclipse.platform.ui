@@ -24,11 +24,6 @@ import org.eclipse.ui.model.AdaptableList;
  * @since 3.0
  */
 public class WizardActivityFilter extends ViewerFilter {
-	private boolean filterPrimaryWizards = false;
-
-	public void setFilterPrimaryWizards(boolean filter) {
-		filterPrimaryWizards = filter;
-	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
@@ -40,7 +35,7 @@ public class WizardActivityFilter extends ViewerFilter {
 			return filter(viewer, element, children).length > 0;
 		}
 
-		if (parentElement.getClass().equals(AdaptableList.class) && !filterPrimaryWizards) {
+        if (parentElement.getClass().equals(AdaptableList.class)) {
 			return true; //top-level ("primary") wizards should always be returned
 		}
 

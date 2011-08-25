@@ -156,6 +156,11 @@ public interface IWorkbenchRegistryConstants {
 	public static String ATT_DEFINITION_ID = "definitionId";//$NON-NLS-1$
 
 	/**
+	 * Resembles a deactivated SYSTEM binding. Value <code>deleted</code>.
+	 */
+	public static String ATT_DELETED = "deleted";//$NON-NLS-1$	
+
+	/**
 	 * The name of the description attribute, which appears on named handle
 	 * objects.
 	 */

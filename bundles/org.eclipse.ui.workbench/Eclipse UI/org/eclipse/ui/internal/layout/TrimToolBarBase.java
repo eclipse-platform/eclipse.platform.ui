@@ -18,7 +18,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
@@ -34,8 +33,6 @@ import org.eclipse.ui.internal.RadioMenu;
 import org.eclipse.ui.internal.TrimFrame;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.presentations.PresentationUtil;
 
 /**
  * This control provides common UI functionality for trim elements
@@ -113,19 +110,6 @@ public abstract class TrimToolBarBase implements IWindowTrim {
         }
     };
     
-    /**
-     * This listener starts a drag operation when
-     * the Drag and Drop manager tells it to
-     */
-    private Listener dragListener = new Listener() {
-        public void handleEvent(Event event) {
-        	// Only allow 'left mouse' drags...
-        	if (event.button != 3) {
-	            Point position = DragUtil.getEventLoc(event);
-	            startDraggingTrim(position);
-        	}
-        }
-    };
 
     /**
      * Create a new trim UI handle for a particular IWindowTrim item
@@ -221,7 +205,7 @@ public abstract class TrimToolBarBase implements IWindowTrim {
     	//cb.setBackground(cb.getDisplay().getSystemColor(SWT.COLOR_RED));
     	
         // Set up the dragging behaviour
-        PresentationUtil.addDragListener(cb, dragListener);
+		// PresentationUtil.addDragListener(cb, dragListener);
     	
     	// Create the docking context menu
     	dockMenuManager = new MenuManager();
@@ -436,15 +420,6 @@ public abstract class TrimToolBarBase implements IWindowTrim {
         frame = null;
     }
 
-    /**
-     * Begins dragging the trim
-     * 
-     * @param position initial mouse position
-     */
-    private void startDraggingTrim(Point position) {
-    	Rectangle fakeBounds = new Rectangle(100000, 0,0,0);
-        DragUtil.performDrag(this, fakeBounds, position, true);
-    }
 
     /**
      * Shows the popup menu for an item in the fast view bar.

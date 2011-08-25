@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,9 @@ import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
@@ -47,6 +48,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.decorators.ContributingPluginDecorator;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 
@@ -56,15 +58,10 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
  * internal and external editors.
  * 
  * @since 3.3
- * @noextend This class is not intended to be subclassed by clients.
  */
 
-public class EditorSelectionDialog extends Dialog {
+public final class EditorSelectionDialog extends Dialog {
 	private EditorDescriptor selectedEditor;
-
-	private EditorDescriptor hiddenSelectedEditor;
-
-	private int hiddenTableTopIndex;
 
 	private Button externalButton;
 
@@ -76,13 +73,7 @@ public class EditorSelectionDialog extends Dialog {
 
 	private Button okButton;
 
-	/**
-	 * For internal use only.
-	 * 
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @since 3.7
-	 */
-	protected static final String STORE_ID_INTERNAL_EXTERNAL = "EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL";//$NON-NLS-1$
+	private static final String STORE_ID_INTERNAL_EXTERNAL = "EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL";//$NON-NLS-1$
 
 	private String message = WorkbenchMessages.EditorSelection_chooseAnEditor;
 
@@ -169,13 +160,10 @@ public class EditorSelectionDialog extends Dialog {
 		((GridLayout) contents.getLayout()).numColumns = 2;
 
 		// begin the layout
-		Label textLabel = new Label(contents, SWT.WRAP);
-
+		Label textLabel = new Label(contents, SWT.NONE);
 		textLabel.setText(message);
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
-		data.horizontalAlignment = SWT.FILL;
-		data.widthHint = TABLE_WIDTH;
 		textLabel.setLayoutData(data);
 		textLabel.setFont(font);
 
@@ -196,6 +184,9 @@ public class EditorSelectionDialog extends Dialog {
 		externalButton.setFont(font);
 
 		editorTable = new Table(contents, SWT.SINGLE | SWT.BORDER);
+		editorTable.addListener(SWT.Selection, listener);
+		editorTable.addListener(SWT.DefaultSelection, listener);
+		editorTable.addListener(SWT.MouseDoubleClick, listener);
 		data = new GridData();
 		data.widthHint = convertHorizontalDLUsToPixels(TABLE_WIDTH);
 		data.horizontalAlignment = GridData.FILL;
@@ -208,7 +199,9 @@ public class EditorSelectionDialog extends Dialog {
 		data.heightHint = editorTable.getItemHeight() * 12;
 		editorTableViewer = new TableViewer(editorTable);
 		editorTableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		editorTableViewer.setLabelProvider(new LabelProvider() {
+		final ILabelDecorator decorator = PlatformUI.getWorkbench().getDecoratorManager()
+				.getLabelDecorator(ContributingPluginDecorator.ID);
+		editorTableViewer.setLabelProvider(new ColumnLabelProvider() {
 			public String getText(Object element) {
 				IEditorDescriptor d = (IEditorDescriptor) element;
 				return TextProcessor.process(d.getLabel(), "."); //$NON-NLS-1$
@@ -218,10 +211,18 @@ public class EditorSelectionDialog extends Dialog {
 				IEditorDescriptor d = (IEditorDescriptor) element;
 				return (Image) resourceManager.get(d.getImageDescriptor());
 			}
+
+			public String getToolTipText(Object element) {
+				if (decorator == null || !(element instanceof EditorDescriptor)) {
+					return null;
+				}
+				EditorDescriptor d = (EditorDescriptor) element;
+				return decorator.decorateText(getText(element), d.getConfigurationElement());
+			}
 		});
-		editorTable.addListener(SWT.Selection, listener);
-		editorTable.addListener(SWT.DefaultSelection, listener);
-		editorTable.addListener(SWT.MouseDoubleClick, listener);
+		if (decorator != null) {
+			ColumnViewerToolTipSupport.enableFor(editorTableViewer);
+		}
 
 		browseExternalEditorsButton = new Button(contents, SWT.PUSH);
 		browseExternalEditorsButton
@@ -244,32 +245,11 @@ public class EditorSelectionDialog extends Dialog {
 	}
 
 	protected void fillEditorTable() {
-		EditorDescriptor newSelection = null;
-		int newTopIndex = 0;
-
-		boolean showInternal = internalButton.getSelection();
-		boolean isShowingInternal = editorTableViewer.getInput() == getInternalEditors();
-		if (showInternal != isShowingInternal) {
-			newSelection = hiddenSelectedEditor;
-			newTopIndex = hiddenTableTopIndex;
-			if (editorTable.getSelectionIndex() != -1) {
-				hiddenSelectedEditor = (EditorDescriptor) editorTable.getSelection()[0].getData();
-				hiddenTableTopIndex = editorTable.getTopIndex();
-			}
-		}
-
-		editorTableViewer.setInput(showInternal ? getInternalEditors() : getExternalEditors());
-
-		if (newSelection != null) {
-			editorTable.setTopIndex(newTopIndex);
-			editorTableViewer.setSelection(new StructuredSelection(newSelection), true);
+		if (internalButton.getSelection()) {
+			editorTableViewer.setInput(getInternalEditors());
 		} else {
-			// set focus to first element, but don't select it:
-			editorTable.setTopIndex(0);
-			editorTable.setSelection(0);
-			editorTable.deselectAll();
+			editorTableViewer.setInput(getExternalEditors());
 		}
-		editorTable.setFocus();
 	}
 
 	/**
@@ -383,7 +363,7 @@ public class EditorSelectionDialog extends Dialog {
 			TableItem ti = new TableItem(editorTable, SWT.NULL);
 			ti.setData(editor);
 			ti.setText(editor.getLabel());
-			Image image = (Image) resourceManager.get(editor.getImageDescriptor());
+			Image image = editor.getImageDescriptor().createImage();
 			ti.setImage(image);
 
 			// need to pass an array to setSelection -- 1FSKYVO: SWT:ALL -

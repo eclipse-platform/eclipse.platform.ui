@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,21 +13,19 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
+import org.eclipse.jface.internal.provisional.action.ToolBarContributionItem2;
+import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
@@ -36,7 +34,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -45,10 +42,8 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
-import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
-import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
 /**
  * Internal class providing special access for configuring workbench windows.
@@ -197,7 +192,7 @@ public final class WorkbenchWindowConfigurer implements
             if (proxy != null) {
                 return proxy.getStatusLineManager();
             }
-            return window.getStatusLineManager();
+			return window.getStatusLineManager();
         }
 
         /* (non-Javadoc)
@@ -207,7 +202,7 @@ public final class WorkbenchWindowConfigurer implements
             if (proxy != null) {
                 return proxy.getMenuManager();
             }
-            return window.getMenuManager();
+			return window.getMenuManager();
         }
 
         /* (non-Javadoc)
@@ -217,7 +212,7 @@ public final class WorkbenchWindowConfigurer implements
             if (proxy != null) {
                 return proxy.getCoolBarManager();
             }
-            return window.getCoolBarManager2();
+			return window.getCoolBarManager2();
         }
 
         /* (non-Javadoc)
@@ -230,11 +225,6 @@ public final class WorkbenchWindowConfigurer implements
             window.registerGlobalAction(action);
         }
 
-		private IActionBarPresentationFactory getActionBarPresentationFactory() {
-			WorkbenchWindow window = (WorkbenchWindow)getWindowConfigurer().getWindow();
-			return window.getActionBarPresentationFactory();
-		}
-
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.application.IActionBarConfigurer#createToolBarManager()
 		 */
@@ -242,7 +232,7 @@ public final class WorkbenchWindowConfigurer implements
 			if (proxy != null) {
 				return proxy.createToolBarManager();
 			}
-			return getActionBarPresentationFactory().createToolBarManager();
+			return new ToolBarManager2(SWT.WRAP | SWT.FLAT | SWT.RIGHT);
 		}
 
 		/* (non-Javadoc)
@@ -252,7 +242,7 @@ public final class WorkbenchWindowConfigurer implements
 			if (proxy != null) {
 				return proxy.createToolBarContributionItem(toolBarManager, id);
 			}
-			return getActionBarPresentationFactory().createToolBarContributionItem(toolBarManager, id);
+			return new ToolBarContributionItem2(toolBarManager, id);
 		}
     }
 
@@ -345,7 +335,7 @@ public final class WorkbenchWindowConfigurer implements
             boolean showing = shell.getMenuBar() != null;
             if (show != showing) {
                 if (show) {
-                    shell.setMenuBar(win.getMenuBarManager().getMenu());
+					shell.setMenuBar(null);
                 } else {
                     shell.setMenuBar(null);
                 }
@@ -458,21 +448,9 @@ public final class WorkbenchWindowConfigurer implements
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorAreaTransfer
      */
     public void addEditorAreaTransfer(Transfer tranfer) {
-        if (tranfer != null && !transferTypes.contains(tranfer)) {
-            transferTypes.add(tranfer);
-            Transfer[] transfers = new Transfer[transferTypes.size()];
-            transferTypes.toArray(transfers);
-            IWorkbenchPage[] pages = window.getPages();
-            for (int i = 0; i < pages.length; i++) {
-                WorkbenchPage page = (WorkbenchPage) pages[i];
-                DropTarget dropTarget = ((EditorSashContainer) page
-                        .getEditorPresentation().getLayoutPart())
-                        .getDropTarget();
-                if (dropTarget != null) {
-                    dropTarget.setTransfer(transfers);
-                }
-            }
-        }
+		if (tranfer != null && !transferTypes.contains(tranfer)) {
+			transferTypes.add(tranfer);
+		}
     }
 
     /* (non-Javadoc)
@@ -480,19 +458,7 @@ public final class WorkbenchWindowConfigurer implements
      */
     public void configureEditorAreaDropListener(
             DropTargetListener dropTargetListener) {
-        if (dropTargetListener != null) {
-            this.dropTargetListener = dropTargetListener;
-            IWorkbenchPage[] pages = window.getPages();
-            for (int i = 0; i < pages.length; i++) {
-                WorkbenchPage page = (WorkbenchPage) pages[i];
-                DropTarget dropTarget = ((EditorSashContainer) page
-                        .getEditorPresentation().getLayoutPart())
-                        .getDropTarget();
-                if (dropTarget != null) {
-                    dropTarget.addDropListener(this.dropTargetListener);
-                }
-            }
-        }
+		this.dropTargetListener = dropTargetListener;
     }
 
     /**
@@ -601,7 +567,7 @@ public final class WorkbenchWindowConfigurer implements
         PrefUtil.getAPIPreferenceStore().setValue(
 				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
 				IWorkbenchConstants.DEFAULT_PRESENTATION_ID);
-        return new WorkbenchPresentationFactory();
+		return null;
     }
 
     /* (non-Javadoc)
@@ -620,29 +586,21 @@ public final class WorkbenchWindowConfigurer implements
      * @param shell the shell
      */
     public void createDefaultContents(Shell shell) {
-        window.createDefaultContents(shell);
+
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public Menu createMenuBar() {
-        return window.getMenuManager().createMenuBar(window.getShell());
+		return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public Control createCoolBarControl(Composite parent) {
-    	ICoolBarManager coolBarManager = window.getCoolBarManager2();
-    	if (coolBarManager != null) {
-        	if (coolBarManager instanceof ICoolBarManager2) {
-				return ((ICoolBarManager2) coolBarManager).createControl2(parent);
-			}
-        	if (coolBarManager instanceof CoolBarManager) {
-				return ((CoolBarManager) coolBarManager).createControl(parent);
-			}
-        }
+
         return null;
     }
 
@@ -650,21 +608,21 @@ public final class WorkbenchWindowConfigurer implements
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public Control createStatusLineControl(Composite parent) {
-        return window.getStatusLineManager().createControl(parent);
+		return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public Control createPageComposite(Composite parent) {
-        return window.createPageComposite(parent);
+		return null;
     }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#saveState(org.eclipse.ui.IMemento)
 	 */
 	public IStatus saveState(IMemento memento) {
-		return window.saveState(memento);
+		return null;
 	}
 
 }

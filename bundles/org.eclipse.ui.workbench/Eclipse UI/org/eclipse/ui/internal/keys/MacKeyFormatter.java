@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public final class MacKeyFormatter extends AbstractKeyFormatter {
         KEY_LOOKUP
                 .put(CharacterKey.CR.toString(), "\u21A9");  //$NON-NLS-1$
         KEY_LOOKUP.put(CharacterKey.DEL.toString(), "\u2326");  //$NON-NLS-1$
+        KEY_LOOKUP.put(CharacterKey.SPACE.toString(), "\u2423");  //$NON-NLS-1$
         KEY_LOOKUP
                 .put(ModifierKey.ALT.toString(), "\u2325");  //$NON-NLS-1$
         KEY_LOOKUP.put(ModifierKey.COMMAND.toString(), "\u2318");  //$NON-NLS-1$

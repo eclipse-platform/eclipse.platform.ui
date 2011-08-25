@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,6 @@ import org.eclipse.ui.internal.SwitchToWindowMenu;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.actions.HelpSearchContributionItem;
-import org.eclipse.ui.internal.tweaklets.TabBehaviour;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 
@@ -154,7 +152,6 @@ public abstract class ContributionItemFactory {
 					WorkbenchPlugin.getDefault().getPreferenceStore()
 							.removePropertyChangeListener(perfs[0]);
 					window.getPartService().removePartListener(partListener);
-					super.dispose();
 				}
 			};
 
@@ -166,10 +163,7 @@ public abstract class ContributionItemFactory {
 							IPreferenceStore store = WorkbenchPlugin
 									.getDefault().getPreferenceStore();
 							boolean reuseEditors = store
-									.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-									|| ((TabBehaviour) Tweaklets
-											.get(TabBehaviour.KEY))
-											.alwaysShowPinAction();
+									.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
 							action.setVisible(reuseEditors);
 							action.getParent().markDirty();
 							if (window.getShell() != null
@@ -191,9 +185,8 @@ public abstract class ContributionItemFactory {
 			WorkbenchPlugin.getDefault().getPreferenceStore()
 					.addPropertyChangeListener(perfs[0]);
 			action.setVisible(WorkbenchPlugin.getDefault().getPreferenceStore()
-					.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-					|| ((TabBehaviour) Tweaklets.get(TabBehaviour.KEY))
-							.alwaysShowPinAction());
+.getBoolean(
+					IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 			return action;
 		}
 	};

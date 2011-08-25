@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import com.ibm.icu.text.MessageFormat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -18,12 +17,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
+
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.branding.IProductConstants;
 import org.osgi.framework.Bundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A class that converts the strings returned by
@@ -262,19 +264,12 @@ public class ProductProperties extends BrandingProperties implements
         if (property.indexOf('{') == -1) {
 			return property;
 		}
-
-		/*
-		 * Check if the mapping value is a system property, specified by '$' at
-		 * the beginning and end of the string. If so, update the temp mappings
-		 * array with the system property value. Note that we use a clone (copy)
-		 * of the mappings so that the cached system property value is not
-		 * stored in the per-bundle mappings for this class. This allows changes
-		 * in system property values to be reflected each time this method is
-		 * called. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=302184
-		 */
-
-		String[] tempMappings = (String[]) getMappings(product.getDefiningBundle()).clone();
-
+        String[] tempMappings = getMappings(product.getDefiningBundle());
+                /*
+    	 * Check if the mapping value is a system property, specified
+    	 * by '$' at the beginning and end of the string.  If so, update
+    	 * the mappings array with the system property value.  
+    	 */
         for (int i=0; i<tempMappings.length; i++) {
         	String nextString = tempMappings[i];
         	int length = nextString.length();

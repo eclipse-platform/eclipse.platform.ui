@@ -1,0 +1,46 @@
+body { 
+	text-decoration: none; 
+	color: navy; 
+	font-family: "arial"; 
+	font-size: 12pt; 
+	font-weight: medium; 
+} 
+.title { 
+	text-decoration: bold; 
+	color: green; 
+	font-family: "ms sans serif"; 
+	font-size: 24pt; 
+	font-weight: heavy; 
+} 
+
+.bold { 
+	text-decoration: bold; 
+	color: black; 
+	font-family: "courier, arial"; 
+	font-size: 14pt; 
+	font-weight: heavy; 
+} 
+
+a:link { 
+	text-decoration: none; 
+	color: red; 
+	font-family: 
+	"ms sans serif"; 
+	font-size: 12pt; 
+	font-weight: heavy; 
+} 
+
+.head { 
+	color: #000000; 
+	font-family: "ms sans serif"; 
+	font-size: 35px; 
+	margin-top: 35px; 
+	margin-left: 28px; 
+} 
+
+.foo { 
+	text-decoration: underline; 
+	color: #00FF00; 
+	font-family: "courier"; 
+	font-size: 14pt; 
+	font-weight: heavy; } 

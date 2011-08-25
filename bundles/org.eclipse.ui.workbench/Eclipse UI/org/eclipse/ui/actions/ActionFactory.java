@@ -12,25 +12,29 @@ package org.eclipse.ui.actions;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchCommandConstants;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.CloseAllSavedAction;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.IntroAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
+import org.eclipse.ui.internal.OpenPreferencesAction;
+import org.eclipse.ui.internal.ResetPerspectiveAction;
+import org.eclipse.ui.internal.SaveAction;
+import org.eclipse.ui.internal.SaveAllAction;
+import org.eclipse.ui.internal.SaveAsAction;
+import org.eclipse.ui.internal.SavePerspectiveAction;
 import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.actions.CommandAction;
-import org.eclipse.ui.internal.intro.IntroDescriptor;
-import org.eclipse.ui.internal.intro.IntroMessages;
-import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.internal.actions.DynamicHelpAction;
+import org.eclipse.ui.internal.actions.HelpContentsAction;
+import org.eclipse.ui.internal.actions.HelpSearchAction;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -344,19 +348,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-
-			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
-
-			action.setId(getId());
-			action.setText(IntroMessages.Intro_action_text);
-			window.getWorkbench().getHelpSystem()
-					.setHelp(action, IWorkbenchHelpContextIds.INTRO_ACTION);
-			IntroDescriptor introDescriptor = ((Workbench) window.getWorkbench())
-					.getIntroDescriptor();
-			if (introDescriptor != null)
-				action.setImageDescriptor(introDescriptor.getImageDescriptor());
-
-			return action;
+            IWorkbenchAction action = new IntroAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -629,8 +623,8 @@ public abstract class ActionFactory {
 	 * Workbench action (id: "lockToolBar"): Lock/unlock the workbench window tool bar. This action
 	 * maintains its enablement state.
 	 */
-	public static final ActionFactory LOCK_TOOL_BAR = new ActionFactory(
-			"lockToolBar", IWorkbenchCommandConstants.WINDOW_LOCK_TOOLBAR) {//$NON-NLS-1$
+    public static final ActionFactory LOCK_TOOL_BAR = new ActionFactory(
+            "lockToolBar") {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -639,12 +633,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
-			action.setId(getId());
-			action.setText(WorkbenchMessages.LockToolBarAction_text);
-			action.setToolTipText(WorkbenchMessages.LockToolBarAction_toolTip);
-			window.getWorkbench().getHelpSystem()
-					.setHelp(action, IWorkbenchHelpContextIds.LOCK_TOOLBAR_ACTION);
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					IWorkbenchCommandConstants.HELP_ABOUT, window);
+            action.setId(getId());
             return action;
         }
     };
@@ -961,14 +952,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-
-            WorkbenchCommandAction action = new WorkbenchCommandAction(
-					getCommandId(), window);
+            IWorkbenchAction action = new OpenPreferencesAction(window);
             action.setId(getId());
-            action.setText(WorkbenchMessages.OpenPreferences_text);
-			action.setToolTipText(WorkbenchMessages.OpenPreferences_toolTip);
-            window.getWorkbench().getHelpSystem().setHelp(action,
-            		IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
             return action;
         }
     };
@@ -1250,17 +1235,12 @@ public abstract class ActionFactory {
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
         public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
-
-			action.setId(getId());
-			action.setText(WorkbenchMessages.ResetPerspective_text);
-			action.setToolTipText(WorkbenchMessages.ResetPerspective_toolTip);
-			window.getWorkbench().getHelpSystem()
-					.setHelp(action, IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
-			return action;
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            IWorkbenchAction action = new ResetPerspectiveAction(window);
+            action.setId(getId());
+            return action;
         }
     };
 
@@ -1300,12 +1280,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
-			action.setText(WorkbenchMessages.SaveAction_text);
-			action.setToolTipText(WorkbenchMessages.SaveAction_toolTip);
+            IWorkbenchAction action = new SaveAction(window);
             action.setId(getId());
-			window.getWorkbench().getHelpSystem()
-					.setHelp(action, IWorkbenchHelpContextIds.SAVE_ACTION);
             return action;
         }
     };
@@ -1324,11 +1300,7 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			IWorkbenchAction action = new WorkbenchCommandAction(getCommandId(), window);
-			action.setText(WorkbenchMessages.SaveAll_text);
-			action.setToolTipText(WorkbenchMessages.SaveAll_toolTip);
-			window.getWorkbench().getHelpSystem()
-					.setHelp(action, IWorkbenchHelpContextIds.SAVE_ALL_ACTION);
+            IWorkbenchAction action = new SaveAllAction(window);
             action.setId(getId());
             return action;
         }
@@ -1348,11 +1320,7 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			IWorkbenchAction action = new WorkbenchCommandAction(getCommandId(), window);
-			action.setText(WorkbenchMessages.SaveAs_text);
-			action.setToolTipText(WorkbenchMessages.SaveAs_toolTip);
-			window.getWorkbench().getHelpSystem()
-					.setHelp(action, IWorkbenchHelpContextIds.SAVE_AS_ACTION);
+            IWorkbenchAction action = new SaveAsAction(window);
             action.setId(getId());
             return action;
         }
@@ -1368,19 +1336,14 @@ public abstract class ActionFactory {
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
-
-			action.setId(getId());
-			action.setText(WorkbenchMessages.SavePerspective_text);
-			action.setToolTipText(WorkbenchMessages.SavePerspective_toolTip);
-			window.getWorkbench().getHelpSystem()
-					.setHelp(action, IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
-			return action;
-		}
+        public IWorkbenchAction create(IWorkbenchWindow window) {
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            IWorkbenchAction action = new SavePerspectiveAction(window);
+            action.setId(getId());
+            return action;
+        }
     };
 
 	/**
@@ -1606,23 +1569,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-
-			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
-
-			// support for allowing a product to override the text for the
-			// action
-			String overrideText = PrefUtil.getAPIPreferenceStore().getString(
-					IWorkbenchPreferenceConstants.HELP_CONTENTS_ACTION_TEXT);
-			if ("".equals(overrideText)) { //$NON-NLS-1$
-				action.setText(WorkbenchMessages.HelpContentsAction_text);
-				action.setToolTipText(WorkbenchMessages.HelpContentsAction_toolTip);
-			} else {
-				action.setText(overrideText);
-				action.setToolTipText(Action.removeMnemonics(overrideText));
-			}
-			window.getWorkbench().getHelpSystem()
-					.setHelp(action, IWorkbenchHelpContextIds.HELP_CONTENTS_ACTION);
-			action.setId(getId());
+            IWorkbenchAction action = new HelpContentsAction(window);
+            action.setId(getId());
             return action;
         }
     };
@@ -1643,22 +1591,8 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
-
-			// support for allowing a product to override the text for the
-			// action
-			String overrideText = PrefUtil.getAPIPreferenceStore().getString(
-					IWorkbenchPreferenceConstants.HELP_SEARCH_ACTION_TEXT);
-			if ("".equals(overrideText)) { //$NON-NLS-1$
-				action.setText(WorkbenchMessages.HelpSearchAction_text);
-				action.setToolTipText(WorkbenchMessages.HelpSearchAction_toolTip);
-			} else {
-				action.setText(overrideText);
-				action.setToolTipText(Action.removeMnemonics(overrideText));
-			}
-			window.getWorkbench().getHelpSystem()
-					.setHelp(action, IWorkbenchHelpContextIds.HELP_SEARCH_ACTION);
-			action.setId(getId());
+            IWorkbenchAction action = new HelpSearchAction(window);
+            action.setId(getId());
             return action;
         }
     };
@@ -1679,23 +1613,7 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-
-			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
-
-			// support for allowing a product to override the text for the
-			// action
-			String overrideText = PrefUtil.getAPIPreferenceStore().getString(
-					IWorkbenchPreferenceConstants.DYNAMIC_HELP_ACTION_TEXT);
-			if ("".equals(overrideText)) { //$NON-NLS-1$
-				action.setText(WorkbenchMessages.DynamicHelpAction_text);
-				action.setToolTipText(WorkbenchMessages.DynamicHelpAction_toolTip);
-			} else {
-				action.setText(overrideText);
-				action.setToolTipText(Action.removeMnemonics(overrideText));
-			}
-			window.getWorkbench().getHelpSystem()
-					.setHelp(action, IWorkbenchHelpContextIds.DYNAMIC_HELP_ACTION);
-
+            IWorkbenchAction action = new DynamicHelpAction(window);
             action.setId(getId());
             return action;
         }

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<!-- PDE search menu -->
+	<extension point="org.eclipse.ui.actionSets">
+		<actionSet label="%pluginSearchActionSet.label"
+		           description="%pluginSearchActionSet.description"
+		           visible="false"
+		           id="org.eclipse.pde.ui.SearchActionSet">
+			<!-- see http://bugs.eclipse.org/bugs/show_bug.cgi?id=15684    -->
+			<!-- Note: The menu (re-) definition has to be here due to bug: -->
+			<!-- =================================================================== -->
+			<!-- Search Menu                                                         -->
+			<!-- =================================================================== -->
+			<menu label="%searchMenu.label" path="navigate" id="org.eclipse.search.menu">
+				<groupMarker name="internalDialogGroup" />
+				<!-- not to be used by clients  -->
+				<groupMarker name="dialogGroup" />
+				<!-- to be used by clients      -->
+				<separator name="fileSearchContextMenuActionsGroup" />
+				<!-- to be used by clients      -->
+				<separator name="contextMenuActionsGroup" />
+				<!-- to be used by clients -->
+				<separator name="occurencesActionsGroup" />
+				<!-- to be used by clients -->
+				<separator name="extraSearchGroup" />
+				<!-- to be used by clients -->
+			</menu>
+			<!-- dialog group  -->
+			<action label="%openPluginSearchPageAction.label"
+			        icon="$nl$/icons/obj16/psearch_obj.gif"
+			        helpContextId="java_search_action_context"
+			        class="org.eclipse.pde.internal.ui.search.OpenPluginSearchPageAction"
+			        menubarPath="org.eclipse.search.menu/dialogGroup"
+			        id="org.eclipse.pde.ui.actions.OpenPluginSearchPage">
+			</action>
+		</actionSet>
+	</extension>
+
+	<!-- search contributin -->
+	<!-- action sets -->
+	<extension point="org.eclipse.ui.actionSets">
+		<actionSet id="org.eclipse.search.searchActionSet" label="%search" visible="true">
+
+			<!-- =================================================================== -->
+			<!-- Search Menu                                                         -->
+			<!-- =================================================================== -->
+
+			<menu id="org.eclipse.search.menu" label="%searchMenu.label" path="navigate">
+				<groupMarker name="internalDialogGroup" />
+				<!-- not to be used by clients  -->
+				<groupMarker name="dialogGroup" />
+				<!-- to be used by clients      -->
+				<separator name="fileSearchContextMenuActionsGroup" />
+				<!-- to be used by clients      -->
+				<separator name="contextMenuActionsGroup" />
+				<!-- to be used by clients -->
+				<separator name="occurencesActionsGroup" />
+				<!-- to be used by clients -->
+				<separator name="extraSearchGroup" />
+				<!-- to be used by clients -->
+			</menu>
+
+			<!-- dialog group  -->
+			<action id="org.eclipse.search.OpenFileSearchPage"
+			        definitionId="org.eclipse.search.ui.openFileSearchPage"
+			        menubarPath="org.eclipse.search.menu/internalDialogGroup"
+			        label="%openFileSearchPageAction.label"
+			        icon="$nl$/icons/full/elcl16/tsearch_obj.gif"
+			        helpContextId="file_search_action_context"
+			        class="org.eclipse.search.internal.ui.OpenFileSearchPageAction" />
+
+			<action class="org.eclipse.search.internal.ui.OpenSearchDialogPageAction"
+			        helpContextId="open_search_dialog_action_context"
+			        icon="$nl$/icons/full/etool16/search.gif"
+			        id="org.eclipse.search.OpenSearchDialogPage"
+			        label="%openSearchDialogAction.label"
+			        tooltip="%openSearchDialogAction.tooltip"
+			        style="pulldown"
+			        toolbarPath="Normal/Search" />
+
+			<action id="org.eclipse.search.OpenSearchDialog"
+			        definitionId="org.eclipse.search.ui.openSearchDialog"
+			        menubarPath="org.eclipse.search.menu/internalDialogGroup"
+			        label="%openSearchDialogAction.label"
+			        tooltip="%openSearchDialogAction.tooltip"
+			        icon="$nl$/icons/full/etool16/search.gif"
+			        helpContextId="open_search_dialog_action_context"
+			        class="org.eclipse.search.internal.ui.OpenSearchDialogAction" />
+
+			<!-- Various actions for the text search in a sub menu -->
+			<menu id="textSearchSubMenu"
+			      label="%textSearchSubMenu.label"
+			      path="org.eclipse.search.menu/fileSearchContextMenuActionsGroup">
+				<groupMarker name="group1" />
+				<groupMarker name="additions" />
+				<groupMarker name="group2" />
+			</menu>
+
+			<action id="org.eclipse.search.TextSearchWorkingSet"
+			        definitionId="org.eclipse.search.ui.performTextSearchWorkingSet"
+			        menubarPath="org.eclipse.search.menu/textSearchSubMenu/group2"
+			        style="push"
+			        label="%action.performTextSearchWorkingSet.label"
+			        tooltip="%action.performTextSearchWorkingSet.tooltip"
+			        class="org.eclipse.search2.internal.ui.text2.FindInWorkingSetActionDelegate" />
+
+			<action id="org.eclipse.search.TextSearchFile"
+			        definitionId="org.eclipse.search.ui.performTextSearchFile"
+			        menubarPath="org.eclipse.search.menu/textSearchSubMenu/group1"
+			        style="push"
+			        label="%action.performTextSearchFile.label"
+			        tooltip="%action.performTextSearchFile.tooltip"
+			        class="org.eclipse.search2.internal.ui.text2.FindInFileActionDelegate" />
+
+			<action id="org.eclipse.search.TextSearchProject"
+			        definitionId="org.eclipse.search.ui.performTextSearchProject"
+			        menubarPath="org.eclipse.search.menu/textSearchSubMenu/group1"
+			        style="push"
+			        label="%action.performTextSearchProject.label"
+			        tooltip="%action.performTextSearchProject.tooltip"
+			        class="org.eclipse.search2.internal.ui.text2.FindInProjectActionDelegate" />
+
+			<action id="org.eclipse.search.TextSearchWorkspace"
+			        definitionId="org.eclipse.search.ui.performTextSearchWorkspace"
+			        menubarPath="org.eclipse.search.menu/textSearchSubMenu/group1"
+			        style="push"
+			        label="%action.performTextSearchWorkspace.label"
+			        tooltip="%action.performTextSearchWorkspace.tooltip"
+			        class="org.eclipse.search2.internal.ui.text2.FindInWorkspaceActionDelegate" />
+
+		</actionSet>
+	</extension>
+ <extension
+       point="org.eclipse.ui.actionSets">
+    <actionSet
+          id="org.eclipse.e4.ui.menu.tests.p3.toolSet"
+          label="ToolActionSet"
+          visible="true">
+       <action
+             class="org.eclipse.e4.ui.menu.tests.p3.TestActionDelegate"
+             id="org.eclipse.e4.ui.menu.tests.p3.toolAction1"
+             label="ToolActionOne"
+             style="push"
+             toolbarPath="org.eclipse.ui.workbench.file/save.group">
+       </action>
+    </actionSet>
+ </extension>
+</plugin>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
@@ -66,6 +67,8 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
     private EditWorkingSetAction editWorkingSetAction;
 
     private IPropertyChangeListener workingSetUpdater;
+
+    private IMenuManager menuManager;
 
 	private IWorkbenchWindow workbenchWindow;
 
@@ -137,7 +140,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
      * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
      */
     public void fillActionBars(IActionBars actionBars) {
-		IMenuManager menuManager = actionBars.getMenuManager();
+        menuManager = actionBars.getMenuManager();
         
         if(menuManager.find(IWorkbenchActionConstants.MB_ADDITIONS) != null)
         	menuManager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(WORKING_SET_ACTION_GROUP));

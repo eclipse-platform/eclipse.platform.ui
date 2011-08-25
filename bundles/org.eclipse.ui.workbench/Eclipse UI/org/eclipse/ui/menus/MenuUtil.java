@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,13 +20,11 @@ package org.eclipse.ui.menus;
  */
 public class MenuUtil {
 	/**
-	 * 
 	 * Workbench Menu. On supported platforms, this menu is shown when no
 	 * workbench windows are active
 	 * 
 	 * @since 3.7
-	 * 
-	 * */
+	 */
 	public final static String WORKBENCH_MENU = "menu:org.eclipse.ui.workbench.menu"; //$NON-NLS-1$
 	/** Main Menu */
 	public final static String MAIN_MENU = "menu:org.eclipse.ui.main.menu"; //$NON-NLS-1$

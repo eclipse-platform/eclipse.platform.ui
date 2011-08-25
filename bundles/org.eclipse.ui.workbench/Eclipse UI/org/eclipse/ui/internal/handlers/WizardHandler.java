@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.handlers;
 
-import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -29,7 +28,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LegacyResourceSupport;
@@ -37,7 +35,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.eclipse.ui.wizards.IWizardRegistry;
 
@@ -50,7 +47,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * 
  * @since 3.2
  */
-public abstract class WizardHandler extends AbstractHandler implements IElementUpdater {
+public abstract class WizardHandler extends AbstractHandler {
 
 	/**
 	 * Default handler for launching export wizards.
@@ -319,19 +316,6 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 			return (IStructuredSelection) selection;
 		}
 		return StructuredSelection.EMPTY;
-	}
-
-	public void updateElement(UIElement element, Map parameters) {
-
-		String wizardId = (String) parameters.get(getWizardIdParameterId());
-		if (wizardId == null)
-			return;
-		IWizardDescriptor wizard = getWizardRegistry().findWizard(wizardId);
-		if (wizard != null) {
-			element.setText(wizard.getLabel());
-			element.setTooltip(wizard.getDescription());
-			element.setIcon(wizard.getImageDescriptor());
-		}
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -55,7 +56,7 @@ import org.eclipse.ui.services.IEvaluationService;
  */
 public final class MutableActivityManager extends AbstractActivityManager
         implements IMutableActivityManager, Cloneable {
-	
+
     private Map activitiesById = new HashMap();
 
     private Map activityRequirementBindingsByActivityId = new HashMap();
@@ -132,7 +133,7 @@ public final class MutableActivityManager extends AbstractActivityManager
         readRegistry(true);
     }
 
-	synchronized public IActivity getActivity(String activityId) {
+    public IActivity getActivity(String activityId) {
         if (activityId == null) {
 			throw new NullPointerException();
 		}
@@ -148,7 +149,7 @@ public final class MutableActivityManager extends AbstractActivityManager
         return activity;
     }
 
-	synchronized public ICategory getCategory(String categoryId) {
+    public ICategory getCategory(String categoryId) {
         if (categoryId == null) {
 			throw new NullPointerException();
 		}
@@ -164,19 +165,19 @@ public final class MutableActivityManager extends AbstractActivityManager
         return category;
     }
 
-	synchronized public Set getDefinedActivityIds() {
+    public Set getDefinedActivityIds() {
         return Collections.unmodifiableSet(definedActivityIds);
     }
 
-	synchronized public Set getDefinedCategoryIds() {
+    public Set getDefinedCategoryIds() {
         return Collections.unmodifiableSet(definedCategoryIds);
     }
 
-	synchronized public Set getEnabledActivityIds() {
+    public Set getEnabledActivityIds() {
         return Collections.unmodifiableSet(enabledActivityIds);
     }
 
-	synchronized public IIdentifier getIdentifier(String identifierId) {
+    public IIdentifier getIdentifier(String identifierId) {
         if (identifierId == null) {
 			throw new NullPointerException();
 		}
@@ -522,7 +523,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 		}
 	}
 
-	synchronized public void setEnabledActivityIds(Set enabledActivityIds) {
+	public void setEnabledActivityIds(Set enabledActivityIds) {
         enabledActivityIds = new HashSet(enabledActivityIds);
         Set requiredActivityIds = new HashSet(enabledActivityIds);
         getRequiredActivityIds(enabledActivityIds, requiredActivityIds);
@@ -905,7 +906,7 @@ public final class MutableActivityManager extends AbstractActivityManager
     /* (non-Javadoc)
      * @see java.lang.Object#clone()
      */
-	synchronized public Object clone() {
+    public Object clone() {
         MutableActivityManager clone = new MutableActivityManager(advisor, activityRegistry);
         clone.setEnabledActivityIds(getEnabledActivityIds());
         return clone;

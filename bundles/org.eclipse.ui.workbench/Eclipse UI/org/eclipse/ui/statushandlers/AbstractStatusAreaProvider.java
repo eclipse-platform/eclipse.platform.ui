@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,9 +59,13 @@ public abstract class AbstractStatusAreaProvider extends ErrorSupportProvider {
 
 	/**
 	 * This method is called before
-	 * {@link #createSupportArea(Composite, StatusAdapter)} to check if the
-	 * {@link AbstractStatusAreaProvider} will display any significant
-	 * informations. If not, then it will not be presented at all.
+	 * {@link #createSupportArea(Composite, StatusAdapter)} to check if it will
+	 * display any significant implementation.
+	 * <p>
+	 * <b>Important</b>: This API is a part of work in progress and therefore is
+	 * suitable only for support area providers (which are presented in the
+	 * status dialog tray).
+	 * </p>
 	 * 
 	 * @param statusAdapter
 	 *            - {@link StatusAdapter} for which status are will be
@@ -72,23 +76,5 @@ public abstract class AbstractStatusAreaProvider extends ErrorSupportProvider {
 	 */
 	public boolean validFor(StatusAdapter statusAdapter) {
 		return true;
-	}
-
-	/**
-	 * This method is called before
-	 * {@link #createSupportArea(Composite, IStatus)} to check if the
-	 * {@link AbstractStatusAreaProvider} will display any significant
-	 * informations. If not, then it will not be presented at all.
-	 * 
-	 * This implementation wraps the {@link IStatus} into {@link StatusAdapter}
-	 * and calls {@link #validFor(StatusAdapter)}.
-	 * 
-	 * @param status
-	 *            - {@link IStatus} for which status are will be requested.
-	 * @return true if provider is able to process particular {@link IStatus}
-	 * @since 3.7
-	 */
-	public final boolean validFor(IStatus status) {
-		return validFor(new StatusAdapter(status));
 	}
 }

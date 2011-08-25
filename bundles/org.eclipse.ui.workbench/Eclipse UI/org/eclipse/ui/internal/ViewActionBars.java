@@ -14,21 +14,22 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * An editor container manages the services for an editor.
  */
 public class ViewActionBars extends SubActionBars {
-	private ViewPane pane;
+	// private ViewPane pane;
 
 	/**
 	 * ViewActionBars constructor comment.
 	 */
 	public ViewActionBars(IActionBars parent,
-			final IServiceLocator serviceLocator, ViewPane pane) {
+ final IServiceLocator serviceLocator) {
 		super(parent, serviceLocator);
-		this.pane = pane;
+		// this.pane = pane;
 	}
 
 	/**
@@ -38,7 +39,8 @@ public class ViewActionBars extends SubActionBars {
 	 * @return the menu manager
 	 */
 	public IMenuManager getMenuManager() {
-		return pane.getMenuManager();
+		E4Util.unsupported("ViewActionBars"); //$NON-NLS-1$
+		return null;
 	}
 
 	/**
@@ -48,7 +50,8 @@ public class ViewActionBars extends SubActionBars {
 	 * @return the tool bar manager
 	 */
 	public IToolBarManager getToolBarManager() {
-		return pane.getToolBarManager();
+		E4Util.unsupported("ViewActionBars"); //$NON-NLS-1$
+		return null;
 	}
 
 	/**
@@ -56,7 +59,7 @@ public class ViewActionBars extends SubActionBars {
 	 * subtractions have been made to a menu, status line, or toolbar.
 	 */
 	public void updateActionBars() {
-		pane.updateActionBars();
+		E4Util.unsupported("ViewActionBars"); //$NON-NLS-1$
 		getStatusLineManager().update(false);
 		fireActionHandlersChanged();
 	}

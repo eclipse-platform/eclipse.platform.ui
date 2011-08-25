@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,12 +31,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -191,28 +190,6 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 			}
 		});
 
-		table.addMouseMoveListener(new MouseMoveListener() {
-			TableItem lastItem = null;
-
-			public void mouseMove(MouseEvent e) {
-				if (table.equals(e.getSource())) {
-					Object o = table.getItem(new Point(e.x, e.y));
-					if (lastItem == null ^ o == null) {
-						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(
-								SWT.CURSOR_HAND));
-					}
-					if (o instanceof TableItem) {
-						if (!o.equals(lastItem)) {
-							lastItem = (TableItem) o;
-							table.setSelection(new TableItem[] { lastItem });
-						}
-					} else if (o == null) {
-						lastItem = null;
-					}
-				}
-			}
-		});
-
 		setDialogLocation(dialog, activePart);
 
 		final IContextService contextService = (IContextService) window
@@ -249,8 +226,9 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 
 		// the bounds of the monitor that contains the currently active part.
 		Rectangle monitorBounds = activePart == null ? display
-				.getPrimaryMonitor().getBounds() : ((PartSite) activePart
-				.getSite()).getPane().getControl().getMonitor().getBounds();
+.getPrimaryMonitor().getBounds()
+				: ((Control) ((PartSite) activePart.getSite()).getModel().getWidget()).getMonitor()
+						.getBounds();
 
 		// Place it in the center of its parent;
 		dialogBounds.x = parentBounds.x

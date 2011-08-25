@@ -84,7 +84,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 				.getContextManagerWrapper(contextManager);
 	}
 
-	public final void addEnabledSubmission(final EnabledSubmission enabledSubmission) {
+	public final void addEnabledSubmission(
+			final EnabledSubmission enabledSubmission) {
 		final IContextActivation activation = contextService.activateContext(
 				enabledSubmission.getContextId(),
 				new LegacyHandlerSubmissionExpression(enabledSubmission

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,7 @@ public class WorkbenchSiteProgressService implements
          * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
          */
         public IStatus runInUIThread(IProgressMonitor monitor) {
-            Control control = site.getPane().getControl();
+			Control control = (Control) site.getModel().getWidget();
             if (control == null || control.isDisposed()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -128,7 +128,7 @@ public class WorkbenchSiteProgressService implements
 					cursor = getWaitCursor(control.getDisplay());
 				}
                 control.setCursor(cursor);
-                site.getPane().setBusy(busy);
+				// site.getPane().setBusy(busy);
                 IWorkbenchPart part = site.getPart();
                  if (part instanceof WorkbenchPart) {
 					((WorkbenchPart) part).showBusy(busy);
@@ -332,7 +332,7 @@ public class WorkbenchSiteProgressService implements
      * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#warnOfContentChange()
      */
     public void warnOfContentChange() {
-        site.getPane().showHighlight();
+		// site.getPane().showHighlight();
     }
 
     /*

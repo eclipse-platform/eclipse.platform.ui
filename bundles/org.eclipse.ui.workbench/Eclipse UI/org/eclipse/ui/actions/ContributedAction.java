@@ -11,8 +11,9 @@
 
 package org.eclipse.ui.actions;
 
-import java.util.Collections;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
+import java.util.Collections;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandler2;
@@ -22,6 +23,8 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorSite;
@@ -34,7 +37,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
-import org.eclipse.ui.internal.handlers.HandlerService;
+import org.eclipse.ui.internal.handlers.E4HandlerProxy;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -147,8 +150,7 @@ public final class ContributedAction extends CommandAction {
 		appContext.addVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
 				window.getShell());
 
-		HandlerService realService = (HandlerService) serv;
-		partHandler = realService.findHandler(commandId, appContext);
+		partHandler = lookUpHandler((IServiceLocator) site, commandId);
 		if (partHandler == null) {
 			localHandler = true;
 			// if we can't find the handler, then at least we can
@@ -169,6 +171,16 @@ public final class ContributedAction extends CommandAction {
 					getCommandListener());
 		}
 		site.getPage().addPartListener(getPartListener());
+	}
+
+	private IHandler lookUpHandler(IServiceLocator site, String commandId) {
+		HandlerServiceImpl impl = (HandlerServiceImpl) site.getService(EHandlerService.class);
+		IEclipseContext c = impl.getContext();
+		Object h = HandlerServiceImpl.lookUpHandler(c, commandId);
+		if (h instanceof E4HandlerProxy) {
+			return ((E4HandlerProxy) h).getHandler();
+		}
+		return null;
 	}
 
 	/*

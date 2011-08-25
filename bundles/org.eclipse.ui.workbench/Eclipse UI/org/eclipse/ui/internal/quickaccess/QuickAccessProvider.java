@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.quickaccess;
 
 import java.util.Arrays;
 import java.util.Comparator;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -75,4 +74,15 @@ public abstract class QuickAccessProvider {
 	 * @return the element with the given ID, or null if not found.
 	 */
 	public abstract QuickAccessElement getElementForId(String id);
+
+	public boolean isAlwaysPresent() {
+		return false;
+	}
+
+	public void reset() {
+		sortedElements = null;
+		doReset();
+	}
+
+	protected abstract void doReset();
 }

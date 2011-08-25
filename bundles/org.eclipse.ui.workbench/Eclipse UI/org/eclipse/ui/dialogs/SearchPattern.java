@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
@@ -496,16 +497,10 @@ public class SearchPattern {
 					continue;
 				}
 
-				if (Character.isDigit(nameChar)) {
-					// nameChar is digit => break if the digit is current
-					// pattern character, otherwise consume it
-					if (patternChar == nameChar)
-						break;
-					iName++;
-				} else if (!isNameCharAllowed(nameChar)) {
+				if (!isNameCharAllowed(nameChar)) {
 					// nameChar is lowercase
 					iName++;
-				// nameChar is uppercase...
+					// nameChar is uppercase...
 				} else if (patternChar != nameChar) {
 					// .. and it does not match patternChar, so it's not a match
 					return false;
@@ -528,8 +523,8 @@ public class SearchPattern {
 	 * @return true if patternChar is in set of allowed characters for pattern
 	 */
 	protected boolean isPatternCharAllowed(char patternChar) {
-		return patternChar == END_SYMBOL || patternChar == BLANK
-			|| Character.isUpperCase(patternChar) || Character.isDigit(patternChar);
+		return Character.isUpperCase(patternChar) || patternChar == END_SYMBOL
+				|| patternChar == BLANK;
 	}
 
 	/**
@@ -682,24 +677,8 @@ public class SearchPattern {
 	 *            string to be trimmed
 	 * @return trimmed pattern
 	 */
-	private static String trimWildcardCharacters(String pattern) {
-		// 1.3-compatible replacement for:
-		// return Util.replaceAll(pattern, "\\*+", "\\*");
-		int i = pattern.indexOf("**"); //$NON-NLS-1$
-		if (i == -1)
-			return pattern;
-
-		StringBuffer buf = new StringBuffer(pattern.length());
-		int prevAsterisk = 0;
-		do {
-			if (prevAsterisk == 0 || prevAsterisk != i) {
-				buf.append(pattern.substring(prevAsterisk, i + 1));
-			}
-			prevAsterisk = i + 1;
-			i = pattern.indexOf('*', prevAsterisk);
-		} while (i != -1);
-		buf.append(pattern.substring(prevAsterisk));
-		return buf.toString();
+	private String trimWildcardCharacters(String pattern) {
+		return Util.replaceAll(pattern, "\\*+", "\\*"); //$NON-NLS-1$ //$NON-NLS-2$		}
 	}
 
 }

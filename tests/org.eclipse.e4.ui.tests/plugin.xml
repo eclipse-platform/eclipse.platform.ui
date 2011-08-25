@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id: plugin.xml,v 1.3 2010/06/12 16:20:07 tschindl Exp $
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.eclipse.org/ui/2010/Test/UIModel/test"
+            class="org.eclipse.e4.ui.tests.model.test.MTestPackage"
+            genModel="model/TestModel.genmodel"/>
+   </extension>
+   <extension
+         id="id1"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            uri="xmi/modelprocessor/ModelFragments.e4xmi">
+      </fragment>
+      <processor
+            beforefragment="true"
+            class="org.eclipse.e4.ui.tests.application.PreModelProcessorImpl">
+         <element
+               id="app.base">
+         </element>
+         <element
+               contextKey="my.customkey"
+               id="app.base.command">
+         </element>
+      </processor>
+      <processor
+            beforefragment="false"
+            class="org.eclipse.e4.ui.tests.application.PostModelProcessor">
+         <element
+               id="app.base">
+         </element>
+         <element
+               contextKey="my.customkey"
+               id="app.base.command">
+         </element>
+         <element
+               id="fragment.contributedWindow">
+         </element>
+      </processor>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.e4.ui.tests.withMmc1">
+         <with
+               variable="mmc1">
+            <equals
+                  value="true">
+            </equals>
+         </with>
+      </definition>
+   </extension>
+
+</plugin>

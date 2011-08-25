@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
@@ -45,16 +48,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.internal.EditorManager;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.SaveablesList;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
@@ -62,8 +61,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.layout.CellData;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.Row;
-
-import com.ibm.icu.text.Collator;
+import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
  * Implements a dialog showing all opened editors in the workbench
@@ -113,15 +111,12 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
     private SelectionListener headerListener = new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {
-			TableColumn column = (TableColumn) e.widget;
-			int index = editorsTable.indexOf(column);
+            int index = editorsTable.indexOf((TableColumn) e.widget);
             if (index == sortColumn) {
 				reverse = !reverse;
 			} else {
 				sortColumn = index;
 			}
-			editorsTable.setSortDirection(reverse ? SWT.DOWN : SWT.UP);
-			editorsTable.setSortColumn(column);
             updateItems();
         }
     };
@@ -435,31 +430,11 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         if (items.length == 0) {
 			return;
 		}
-        
-        // collect all instantiated editors that have been selected
-		List selectedEditors = new ArrayList();
         for (int i = 0; i < items.length; i++) {
             Adapter e = (Adapter) items[i].getData();
-			if (e.editorRef != null) {
-				IWorkbenchPart part = e.editorRef.getPart(false);
-				if (part != null) {
-					selectedEditors.add(part);
-				}
-			}
-		}
-
-		SaveablesList saveablesList = (SaveablesList) window
-				.getService(ISaveablesLifecycleListener.class);
-		// prompt for save
-		if (saveablesList.preCloseParts(selectedEditors, true, this, window) != null) {
-			// close all editors
-			for (int i = 0; i < items.length; i++) {
-				Adapter e = (Adapter) items[i].getData();
-				e.close();
-			}
-			// update the list
-			updateItems();
+            e.close();
         }
+        updateItems();
     }
 
     /**
@@ -469,21 +444,15 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         if (items.length == 0) {
 			return;
 		}
-
-		// collect all instantiated editors that have been selected
-		List selectedEditors = new ArrayList();
-		for (int i = 0; i < items.length; i++) {
-			Adapter e = (Adapter) items[i].getData();
-			if (e.editorRef != null) {
-				IWorkbenchPart part = e.editorRef.getPart(false);
-				if (part != null) {
-					selectedEditors.add(part);
-				}
-			}
-		}
-
-		EditorManager.saveAll(selectedEditors, false, false, false, window);
-		updateItems();
+        ProgressMonitorDialog pmd = new ProgressMonitorJobsDialog(getShell());
+        pmd.open();
+        for (int i = 0; i < items.length; i++) {
+            Adapter editor = (Adapter) items[i].getData();
+            editor.save(pmd.getProgressMonitor());
+            updateItem(items[i], editor);
+        }
+        pmd.close();
+        updateItems();
     }
 
     /**
@@ -626,6 +595,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
             return;
         }
 
+        saveDialogSettings();
+
         Adapter selection = (Adapter) items[0].getData();
         //It would be better to activate before closing the
         //dialog but it does not work when the editor is in other
@@ -633,11 +604,6 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         super.okPressed();
         selection.activate();
     }
-
-	public boolean close() {
-		saveDialogSettings();
-		return super.close();
-	}
 
     /**
      * Saves the dialog settings.
@@ -704,10 +670,18 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
             if (editorRef == null) {
 				return;
 			}
-            WorkbenchPage p = ((WorkbenchPartReference) editorRef).getPane()
-                    .getPage();
-            // already saved when the i
-            p.closeEditor(editorRef, false);
+			WorkbenchPage p = (WorkbenchPage) ((WorkbenchPartReference) editorRef).getPage();
+            p.closeEditor(editorRef, true);
+        }
+
+        void save(IProgressMonitor monitor) {
+            if (editorRef == null) {
+				return;
+			}
+            IEditorPart editor = (IEditorPart) editorRef.getPart(true);
+            if (editor != null) {
+				editor.doSave(monitor);
+			}
         }
 
         String[] getText() {

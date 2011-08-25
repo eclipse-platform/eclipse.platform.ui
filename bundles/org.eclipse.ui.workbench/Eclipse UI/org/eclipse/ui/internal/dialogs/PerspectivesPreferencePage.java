@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -39,18 +38,12 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.FastViewBar;
-import org.eclipse.ui.internal.FastViewManager;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
@@ -239,7 +232,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		openViewModeLabel.setLayoutData(data);
-		openViewModeLabel.setFont(font);
 
 		openEmbedButton = new Button(buttonComposite, SWT.RADIO);
 		openEmbedButton.setText(OVM_EMBED);
@@ -539,24 +531,25 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	 *         deleted.
 	 */
 	private boolean findOpenInstance(IPerspectiveDescriptor desc) {
-		IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
+		// IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
 		
 		//find all active perspectives currently
-		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchPage pages[] = windows[i].getPages();
-			for (int j = 0; j < pages.length; j++) {
-				WorkbenchPage page = (WorkbenchPage) pages[j];
-				if (page.findPerspective(desc) != null) {
-						if (!MessageDialog
-								.openQuestion(
-										getShell(),
-										WorkbenchMessages.PerspectivesPreference_perspectiveopen_title,
-										NLS.bind(WorkbenchMessages.PerspectivesPreference_perspectiveopen_message, desc.getLabel()))) {
-							return true;
-						}
-				}
-			}
-		}
+		// for (int i = 0; i < windows.length; i++) {
+		// IWorkbenchPage pages[] = windows[i].getPages();
+		// for (int j = 0; j < pages.length; j++) {
+		// WorkbenchPage page = (WorkbenchPage) pages[j];
+		// if (page.findPerspective(desc) != null) {
+		// if (!MessageDialog
+		// .openQuestion(
+		// getShell(),
+		// WorkbenchMessages.PerspectivesPreference_perspectiveopen_title,
+		// NLS.bind(WorkbenchMessages.PerspectivesPreference_perspectiveopen_message,
+		// desc.getLabel()))) {
+		// return true;
+		// }
+		// }
+		// }
+		// }
 
 		return false;
 	}
@@ -572,26 +565,27 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		
 		//Delete the perspective
 		if(perspectives.size()<perspectiveRegistry.getPerspectives().length) {
-			IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
+			// IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
 			
 			// close any perspectives that are about to be deleted
-			for (int i = 0; i < windows.length; i++) {
-				IWorkbenchPage pages[] = windows[i].getPages();
-				for (int j = 0; j < pages.length; j++) {
-					WorkbenchPage page = (WorkbenchPage) pages[j];
-					for (int k = 0; k < perspToDelete.size(); k++) {
-						IPerspectiveDescriptor desc = (IPerspectiveDescriptor) perspToDelete.get(k);
-						if (page.findPerspective(desc) != null) {
-							page.closePerspective(desc, true, true);	
-						}
-					}
-				}
-			}
+			// for (int i = 0; i < windows.length; i++) {
+			// IWorkbenchPage pages[] = windows[i].getPages();
+			// for (int j = 0; j < pages.length; j++) {
+			// WorkbenchPage page = (WorkbenchPage) pages[j];
+			// for (int k = 0; k < perspToDelete.size(); k++) {
+			// IPerspectiveDescriptor desc = (IPerspectiveDescriptor)
+			// perspToDelete.get(k);
+			// if (page.findPerspective(desc) != null) {
+			// page.closePerspective(desc, true, true);
+			// }
+			// }
+			// }
+			// }
 			perspectiveRegistry.deletePerspectives(perspToDelete);
 		}
 				
         // Revert the perspectives
-		perspectiveRegistry.revertPerspectives(perspToRevert);
+		// perspectiveRegistry.revertPerspectives(perspToRevert);
 
 		IPreferenceStore store = getPreferenceStore();
 
@@ -601,18 +595,12 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		if (isFVBConfigured) {
 			store.setValue(IPreferenceConstants.FVB_HIDE, fvbHideButton
 					.getSelection());
-			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
-			if (activeWindow != null) {
-				WorkbenchPage page = (WorkbenchPage) activeWindow.getActivePage();
-				if (page != null) {
-					Perspective activePerspective = page.getActivePerspective();
-					if (activePerspective != null) {
-						FastViewManager fvm = activePerspective.getFastViewManager();
-						if (fvm != null)
-							fvm.updateTrim(FastViewBar.FASTVIEWBAR_ID);
-					}
-				}
-			}
+			// WorkbenchPage page = (WorkbenchPage) workbench
+			// .getActiveWorkbenchWindow().getActivePage();
+			// FastViewManager fvm = page.getActivePerspective()
+			// .getFastViewManager();
+			// if (fvm != null)
+			// fvm.updateTrim(FastViewBar.FASTVIEWBAR_ID);
 		}
 
 		// store the open perspective mode setting
@@ -641,10 +629,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		// Do enable.
 		if (desc != null) {
-			revertButton.setEnabled(desc.isPredefined()
-					&& desc.hasCustomDefinition()
-					&& !perspToRevert.contains(desc));
-			deleteButton.setEnabled(!desc.isPredefined());
+			revertButton.setEnabled(!perspToRevert.contains(desc));
+			deleteButton.setEnabled(true);
 			setDefaultButton.setEnabled(true);
 		} else {
 			revertButton.setEnabled(false);
@@ -711,11 +697,11 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		// Take action.
 		if (button == revertButton) {
-			if (desc.isPredefined() && !perspToRevert.contains(desc)) {
+			if (!perspToRevert.contains(desc)) {
 				perspToRevert.add(desc);
 			}
 		} else if (button == deleteButton) {
-			if (!desc.isPredefined() && !perspToDelete.contains(desc)) {
+			if (!perspToDelete.contains(desc)) {
 				if(!findOpenInstance(desc)){
 					perspToDelete.add(desc);
 					perspToRevert.remove(desc);

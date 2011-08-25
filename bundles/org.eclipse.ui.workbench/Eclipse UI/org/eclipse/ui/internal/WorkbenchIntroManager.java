@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -186,20 +185,7 @@ public class WorkbenchIntroManager implements IIntroManager {
 			return;
 		}
 
-        ViewIntroAdapterPart viewIntroAdapterPart = getViewIntroAdapterPart();
-        if (viewIntroAdapterPart == null) {
-			return;
-		}
 
-        PartPane pane = ((PartSite) viewIntroAdapterPart.getSite()).getPane();
-        if (standby == !pane.isZoomed()) {
-            // the zoom state is already correct - just update the part's state.
-            viewIntroAdapterPart.setStandby(standby);
-            return;
-        }
-
-        viewIntroAdapterPart.getSite().getPage().toggleZoom(
-				pane.getPartReference());
     }
 
     /*
@@ -217,16 +203,7 @@ public class WorkbenchIntroManager implements IIntroManager {
 			return false;
 		}
 
-		// if the welcome view is minimized then return true
-		WorkbenchPage page = (WorkbenchPage) viewIntroAdapterPart.getSite()
-				.getPage();
-		IViewReference reference = page
-				.findViewReference(IIntroConstants.INTRO_VIEW_ID);
-		if (page.isFastView(reference))
-			return true;
-
-        return !((PartSite) viewIntroAdapterPart.getSite()).getPane()
-                .isZoomed();
+		return false;
     }
 
     /* (non-Javadoc)
@@ -241,26 +218,6 @@ public class WorkbenchIntroManager implements IIntroManager {
      * cannot be found.
      */
     /*package*/ViewIntroAdapterPart getViewIntroAdapterPart() {
-        IWorkbenchWindow[] windows = this.workbench.getWorkbenchWindows();
-        for (int i = 0; i < windows.length; i++) {
-            IWorkbenchWindow window = windows[i];
-            WorkbenchPage page = (WorkbenchPage) window.getActivePage();
-            if (page == null) {
-                continue;
-            }
-            IPerspectiveDescriptor[] perspDescs = page.getOpenPerspectives();
-            for (int j = 0; j < perspDescs.length; j++) {
-                IPerspectiveDescriptor descriptor = perspDescs[j];
-                IViewReference reference = page.findPerspective(descriptor)
-                        .findView(IIntroConstants.INTRO_VIEW_ID);
-                if (reference != null) {
-                    IViewPart part = reference.getView(false);
-                    if (part != null && part instanceof ViewIntroAdapterPart) {
-						return (ViewIntroAdapterPart) part;
-					}
-                }
-            }
-        }
         return null;
     }
 

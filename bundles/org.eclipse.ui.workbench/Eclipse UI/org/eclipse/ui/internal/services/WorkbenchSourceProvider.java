@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.DetachedWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IShowInSource;
@@ -228,6 +227,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	private IWorkbenchPartSite lastActivePartSite = null;
 
 	private Object lastShowInInput = null;
+	private ISelection lastShowInSelection = null;
 
 	private final IPartListener partListener = new IPartListener() {
 
@@ -287,9 +287,6 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 			IWorkbenchWindow window = null;
 			if (s.getData() instanceof WorkbenchWindow) {
 				window = (IWorkbenchWindow) s.getData();
-			} else if (s.getData() instanceof DetachedWindow) {
-				window = ((DetachedWindow) s.getData()).getWorkbenchPage()
-						.getWorkbenchWindow();
 			}
 			updateWindows(window);
 
@@ -342,8 +339,17 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 			sources |= ISources.ACTIVE_SITE;
 			lastShowInInput = newShowInInput;
 		}
-		if (currentState.get(ISources.SHOW_IN_SELECTION) != IEvaluationContext.UNDEFINED_VARIABLE) {
-			sources |= ISources.ACTIVE_SITE;
+		if (updateShowInSelection) {
+			final Object newShowInSelection = currentState
+					.get(ISources.SHOW_IN_SELECTION);
+			if (!Util.equals(newShowInSelection, lastShowInSelection)) {
+				sources |= ISources.ACTIVE_SITE;
+				if (newShowInSelection != IEvaluationContext.UNDEFINED_VARIABLE) {
+					lastShowInSelection = (ISelection) newShowInSelection;
+				} else {
+					lastShowInSelection = null;
+				}
+			}
 		}
 		Object newActiveEditor = currentState.get(ISources.ACTIVE_EDITOR_NAME);
 		if (!Util.equals(newActiveEditor, lastActiveEditor)) {
@@ -632,10 +638,13 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 				return;
 			}
 
-			fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE,
+			HashMap currentState = new HashMap();
+			int sources = updateSelection(currentState);
+			sources |= ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE;
+			currentState.put(
 					ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME,
 					id);
-
+			fireSourceChanged(sources, currentState);
 			lastPerspectiveId = id;
 		}
 
@@ -667,6 +676,13 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 				}
 				return;
 			}
+
+			Shell theShell = (Shell) event.widget;
+			if (theShell != null && theShell.getParent() != null)
+				return;
+
+			if (display.getActiveShell().getParent() != null)
+				return;
 
 			if (DEBUG) {
 				logDebuggingInfo("\tWSP:lastActiveShell: " + lastActiveShell); //$NON-NLS-1$
@@ -904,6 +920,10 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 		 */
 		final IContextService contextService = (IContextService) workbench
 				.getService(IContextService.class);
+		if (contextService == null) {
+			return;
+		}
+
 		final int shellType = contextService.getShellType(newActiveShell);
 		if (shellType == IContextService.TYPE_DIALOG)
 			return;

@@ -13,63 +13,39 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandEvent;
-import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
-import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ExpressionInfo;
-import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.LegacyActionTools;
-import org.eclipse.jface.bindings.Binding;
-import org.eclipse.jface.bindings.Scheme;
-import org.eclipse.jface.bindings.keys.IKeyLookup;
-import org.eclipse.jface.bindings.keys.KeyBinding;
-import org.eclipse.jface.bindings.keys.KeyLookupFactory;
-import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.commands.RadioState;
 import org.eclipse.jface.commands.ToggleState;
-import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.menus.IMenuStateIds;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.expressions.LegacyActionExpressionWrapper;
 import org.eclipse.ui.internal.expressions.LegacyActionSetExpression;
 import org.eclipse.ui.internal.expressions.LegacyEditorContributionExpression;
 import org.eclipse.ui.internal.expressions.LegacySelectionEnablerWrapper;
 import org.eclipse.ui.internal.expressions.LegacyViewContributionExpression;
-import org.eclipse.ui.internal.expressions.LegacyViewerContributionExpression;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
-import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
-import org.eclipse.ui.keys.IBindingService;
 
 /**
  * <p>
@@ -98,74 +74,14 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * 
 	 * @see LegacyActionPersistence#read()
 	 */
-	private static final int INDEX_EDITOR_CONTRIBUTIONS = 1;
-
-	/**
-	 * The index of the object contribution elements in the indexed array.
-	 * 
-	 * @see LegacyActionPersistence#read()
-	 */
-	private static final int INDEX_OBJECT_CONTRIBUTIONS = 2;
+	private static final int INDEX_EDITOR_CONTRIBUTIONS = INDEX_ACTION_SETS + 1;
 
 	/**
 	 * The index of the view contribution elements in the indexed array.
 	 * 
 	 * @see LegacyActionPersistence#read()
 	 */
-	private static final int INDEX_VIEW_CONTRIBUTIONS = 3;
-
-	/**
-	 * The index of the viewer contribution elements in the indexed array.
-	 * 
-	 * @see LegacyActionPersistence#read()
-	 */
-	private static final int INDEX_VIEWER_CONTRIBUTIONS = 4;
-
-
-	/**
-	 * Reads the visibility element for a contribution from the
-	 * <code>org.eclipse.ui.popupMenus</code> extension point.
-	 * 
-	 * @param parentElement
-	 *            The contribution element which contains a visibility
-	 *            expression; must not be <code>null</code>.
-	 * @param parentId
-	 *            The identifier of the parent contribution; may be
-	 *            <code>null</code>.
-	 * @param warningsToLog
-	 *            The list of warnings to be logged; must not be
-	 *            <code>null</code>.
-	 * @return An expression representing the visibility element; may be
-	 *         <code>null</code>.
-	 */
-	private static final Expression readVisibility(
-			final IConfigurationElement parentElement, final String parentId,
-			final List warningsToLog) {
-		final IConfigurationElement[] visibilityElements = parentElement
-				.getChildren(TAG_VISIBILITY);
-		if ((visibilityElements == null) || (visibilityElements.length == 0)) {
-			return null;
-		}
-
-		if (visibilityElements.length != 1) {
-			addWarning(warningsToLog,
-					"There can only be one visibility element", parentElement, //$NON-NLS-1$
-					parentId);
-		}
-
-		final IConfigurationElement visibilityElement = visibilityElements[0];
-		final ActionExpression visibilityActionExpression = new ActionExpression(
-				visibilityElement);
-		final LegacyActionExpressionWrapper wrapper = new LegacyActionExpressionWrapper(
-				visibilityActionExpression, null);
-		return wrapper;
-	}
-
-	/**
-	 * The binding manager which should be populated with bindings from actions;
-	 * must not be <code>null</code>.
-	 */
-	private final BindingService bindingService;
+	private static final int INDEX_VIEW_CONTRIBUTIONS = INDEX_EDITOR_CONTRIBUTIONS + 1;
 
 
 
@@ -194,38 +110,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * must not be <code>null</code>.
 	 */
 	private final IWorkbenchWindow window;
-	
-	/**
-	 * Help action sets with enable/disable.
-	 */
-	private ICommandListener actionSetListener = new ICommandListener() {
-		public void commandChanged(CommandEvent commandEvent) {
-			Command cmd = commandEvent.getCommand();
-			String commandId = cmd.getId();
-			Binding binding = (Binding) commandIdToBinding.get(commandId);
-			if (binding != null) {
-				if (cmd.isEnabled()) {
-					if (!actionSetActiveBindings.contains(binding)) {
-						bindingService.addBinding(binding);
-						actionSetActiveBindings.add(binding);
-					}
-				} else if (actionSetActiveBindings.contains(binding)) {
-					bindingService.removeBinding(binding);
-					actionSetActiveBindings.remove(binding);
-				}
-			}
-		}
-	};
-	
-	/**
-	 * Map every commandId to its binding.
-	 */
-	private HashMap commandIdToBinding = new HashMap();
-	
-	/**
-	 * Which bindings do we currently have outstanding.
-	 */
-	private HashSet actionSetActiveBindings = new HashSet();
 
 	/**
 	 * Constructs a new instance of {@link LegacyActionPersistence}.
@@ -236,9 +120,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	public LegacyActionPersistence(final IWorkbenchWindow window) {
 		// TODO Blind casts are bad.
-		this.bindingService = (BindingService) window
-				.getService(IBindingService.class);
-
 		this.commandService = (ICommandService) window
 				.getService(ICommandService.class);
 		this.window = window;
@@ -251,6 +132,10 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	private final void clearActivations() {
 		final IHandlerService service = (IHandlerService) window
 				.getService(IHandlerService.class);
+		if (service == null) {
+			handlerActivations.clear();
+			return;
+		}
 		service.deactivateHandlers(handlerActivations);
 		final Iterator activationItr = handlerActivations.iterator();
 		while (activationItr.hasNext()) {
@@ -262,25 +147,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			}
 		}
 		handlerActivations.clear();
-	}
-
-	/**
-	 * Removes all of the bindings made by this class, and then clears the
-	 * collection. This should be called before every read.
-	 */
-	private final void clearBindings() {
-		Iterator i = commandIdToBinding.entrySet().iterator();
-		while (i.hasNext()) {
-			Map.Entry entry = (Map.Entry) i.next();
-			String commandId = (String) entry.getKey();
-			Binding binding = (Binding) entry.getValue();
-			commandService.getCommand(commandId).removeCommandListener(actionSetListener);
-			if (binding!=null && actionSetActiveBindings.contains(binding)) {
-				bindingService.removeBinding(binding);
-			}
-		}
-		commandIdToBinding.clear();
-		actionSetActiveBindings.clear();
 	}
 
 	/**
@@ -298,65 +164,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	private final void clearMenus() {
 		menuContributions.clear();
-	}
-
-	/**
-	 * Extracts any key bindings from the action. If such a binding exists, it
-	 * is added to the binding manager.
-	 * 
-	 * @param element
-	 *            The action from which the binding should be read; must not be
-	 *            <code>null</code>.
-	 * @param command
-	 *            The fully-parameterized command for which a binding should be
-	 *            made; must not be <code>null</code>.
-	 */
-	private final void convertActionToBinding(
-			final IConfigurationElement element,
-			final ParameterizedCommand command, final List warningsToLog) {
-		// Figure out which accelerator text to use.
-		String acceleratorText = readOptional(element, ATT_ACCELERATOR);
-		if (acceleratorText == null) {
-			final String label = readOptional(element, ATT_LABEL);
-			if (label != null) {
-				acceleratorText = LegacyActionTools
-						.extractAcceleratorText(label);
-			}
-		}
-
-		// If there is some accelerator text, generate a key sequence from it.
-		if (acceleratorText != null) {
-			final IKeyLookup lookup = KeyLookupFactory.getSWTKeyLookup();
-			final int acceleratorInt = LegacyActionTools
-					.convertAccelerator(acceleratorText);
-			final int modifierMask = lookup.getAlt() | lookup.getCommand()
-					| lookup.getCtrl() | lookup.getShift();
-			final int modifierKeys = acceleratorInt & modifierMask;
-			final int naturalKey = acceleratorInt & ~modifierMask;
-			final KeyStroke keyStroke = KeyStroke.getInstance(modifierKeys,
-					naturalKey);
-			final KeySequence keySequence = KeySequence.getInstance(keyStroke);
-
-			final Scheme activeScheme = bindingService.getActiveScheme();
-
-			try {
-				final Binding binding = new KeyBinding(keySequence, command,
-						activeScheme.getId(), IContextIds.CONTEXT_ID_WINDOW,
-						null, null, null, Binding.SYSTEM);
-				commandIdToBinding.put(command.getCommand().getId(), binding);
-
-				if (command.getCommand().isEnabled()) {
-					bindingService.addBinding(binding);
-					actionSetActiveBindings.add(binding);
-				}
-
-				command.getCommand().addCommandListener(actionSetListener);
-			} catch (IllegalArgumentException e) {
-				addWarning(warningsToLog,
-						"invalid keybinding: " + e.getMessage(), element, //$NON-NLS-1$
-						command.getCommand().getId());
-			}
-		}
 	}
 
 	/**
@@ -581,7 +388,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 	private void clear() {
 		clearActivations();
-		clearBindings();
 		clearImages();
 		clearMenus();
 	}
@@ -616,9 +422,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int actionSetCount = 0;
 		int editorContributionCount = 0;
-		int objectContributionCount = 0;
 		int viewContributionCount = 0;
-		int viewerContributionCount = 0;
 		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[5][];
 
 		// Sort the actionSets extension point.
@@ -645,21 +449,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			}
 		}
 
-		// Sort the popupMenus extension point.
-		final IConfigurationElement[] popupMenusExtensionPoint = registry
-				.getConfigurationElementsFor(EXTENSION_POPUP_MENUS);
-		for (int i = 0; i < popupMenusExtensionPoint.length; i++) {
-			final IConfigurationElement element = popupMenusExtensionPoint[i];
-			final String name = element.getName();
-			if (TAG_OBJECT_CONTRIBUTION.equals(name)) {
-				addElementToIndexedArray(element, indexedConfigurationElements,
-						INDEX_OBJECT_CONTRIBUTIONS, objectContributionCount++);
-			} else if (TAG_VIEWER_CONTRIBUTION.equals(name)) {
-				addElementToIndexedArray(element, indexedConfigurationElements,
-						INDEX_VIEWER_CONTRIBUTIONS, viewerContributionCount++);
-			}
-		}
-
 		// Sort the viewActions extension point.
 		final IConfigurationElement[] viewActionsExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_VIEW_ACTIONS);
@@ -677,15 +466,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		readEditorContributions(
 				indexedConfigurationElements[INDEX_EDITOR_CONTRIBUTIONS],
 				editorContributionCount);
-		readObjectContributions(
-				indexedConfigurationElements[INDEX_OBJECT_CONTRIBUTIONS],
-				objectContributionCount);
 		readViewContributions(
 				indexedConfigurationElements[INDEX_VIEW_CONTRIBUTIONS],
 				viewContributionCount);
-		readViewerContributions(
-				indexedConfigurationElements[INDEX_VIEWER_CONTRIBUTIONS],
-				viewerContributionCount);
 		
 	}
 
@@ -740,9 +523,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			convertActionToHandler(element, id, command, visibleWhenExpression,
 					viewId, warningsToLog);
 			// TODO Read the overrideActionId attribute
-
-			convertActionToBinding(element, command, warningsToLog);
-
 		}
 	}
 
@@ -893,124 +673,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 				"Warnings while parsing the editor contributions from the 'org.eclipse.ui.editorActions' extension point"); //$NON-NLS-1$
 	}
 
-
-
-
-	/**
-	 * Reads the deprecated object contributions from an array of elements from
-	 * the popup menus extension point.
-	 * 
-	 * @param configurationElements
-	 *            The configuration elements in the extension point; must not be
-	 *            <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 */
-	private final void readObjectContributions(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount) {
-		final List warningsToLog = new ArrayList(1);
-
-		for (int i = 0; i < configurationElementCount; i++) {
-			final IConfigurationElement element = configurationElements[i];
-
-			// Read the object contribution identifier.
-			final String id = readRequired(element, ATT_ID, warningsToLog,
-					"Object contributions need an id"); //$NON-NLS-1$
-			if (id == null) {
-				continue;
-			}
-
-			// Read the object class. This influences the visibility.
-			final String objectClass = readRequired(element, ATT_OBJECTCLASS,
-					warningsToLog,
-					"Object contributions need an object class", id); //$NON-NLS-1$
-			if (objectClass == null) {
-				continue;
-			}
-
-			// TODO Read the name filter. This influences the visibility.
-			// final String nameFilter = readOptional(element,
-			// ATT_NAME_FILTER);
-
-			// TODO Read the object class. This influences the visibility.
-			final boolean adaptable = readBoolean(element, ATT_ADAPTABLE, false);
-
-			// TODO Read the filter elements.
-			// TODO Read the enablement elements.
-
-			// TODO Figure out an appropriate visibility expression.
-			// Read the visibility element, if any.
-			Expression visibleWhenExpression = readVisibility(element,
-					id, warningsToLog);
-			if (visibleWhenExpression == null) {
-				visibleWhenExpression = new ObjectClassExpression(objectClass, adaptable);
-			}
-
-			// Read all of the child elements from the registry.
-			readActionsAndMenus(element, id, warningsToLog,
-					visibleWhenExpression, null);
-		}
-
-		logWarnings(
-				warningsToLog,
-				"Warnings while parsing the object contributions from the 'org.eclipse.ui.popupMenus' extension point"); //$NON-NLS-1$
-	}
-
-	private static class ObjectClassExpression extends Expression {
-		String objectClass;
-		boolean adapt = false;
-
-		public ObjectClassExpression(String objectClass, boolean adapt) {
-			this.objectClass = objectClass;
-			this.adapt = adapt;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.core.expressions.Expression#collectExpressionInfo(org
-		 * .eclipse.core.expressions.ExpressionInfo)
-		 */
-		public void collectExpressionInfo(ExpressionInfo info) {
-			info.addVariableNameAccess(ISources.ACTIVE_MENU_SELECTION_NAME);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.core.expressions.Expression#evaluate(org.eclipse.core
-		 * .expressions.IEvaluationContext)
-		 */
-		public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
-			Object s = context.getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
-			if (s == null || s == IEvaluationContext.UNDEFINED_VARIABLE) {
-				return EvaluationResult.FALSE;
-			}
-			if (adapt) {
-				int status = Platform.getAdapterManager().queryAdapter(s, objectClass);
-				switch (status) {
-				case IAdapterManager.LOADED:
-					return EvaluationResult.TRUE;
-				case IAdapterManager.NOT_LOADED:
-					return EvaluationResult.NOT_LOADED;
-
-				default:
-					break;
-				}
-			} else {
-				if (objectClass.equals(s.getClass().getName())) {
-					return EvaluationResult.TRUE;
-				}
-			}
-			return EvaluationResult.FALSE;
-		}
-
-	}
-
 	/**
 	 * Reads the deprecated view contributions from an array of elements from
 	 * the view actions extension point.
@@ -1057,57 +719,5 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		logWarnings(
 				warningsToLog,
 				"Warnings while parsing the view contributions from the 'org.eclipse.ui.viewActions' extension point"); //$NON-NLS-1$
-	}
-
-	/**
-	 * Reads the deprecated viewer contributions from an array of elements from
-	 * the popup menus extension point.
-	 * 
-	 * @param configurationElements
-	 *            The configuration elements in the extension point; must not be
-	 *            <code>null</code>, but may be empty.
-	 * @param configurationElementCount
-	 *            The number of configuration elements that are really in the
-	 *            array.
-	 */
-	private final void readViewerContributions(
-			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount) {
-		final List warningsToLog = new ArrayList(1);
-
-		for (int i = 0; i < configurationElementCount; i++) {
-			final IConfigurationElement element = configurationElements[i];
-
-			// Read the viewer contribution identifier.
-			final String id = readRequired(element, ATT_ID, warningsToLog,
-					"Viewer contributions need an id"); //$NON-NLS-1$
-			if (id == null) {
-				continue;
-			}
-
-			/*
-			 * Read the target id. This is the identifier of the view with which
-			 * these contributions are associated.
-			 */
-			final String targetId = readRequired(element, ATT_TARGET_ID,
-					warningsToLog, "Viewer contributions need a target id", id); //$NON-NLS-1$
-			if (targetId == null) {
-				continue;
-			}
-
-			// Read the visibility element, if any.
-			final Expression visibleWhenExpression = readVisibility(element,
-					id, warningsToLog);
-			final Expression menuVisibleWhenExpression = new LegacyViewerContributionExpression(
-					targetId, window, visibleWhenExpression);
-
-			// Read all of the child elements from the registry.
-			readActionsAndMenus(element, id, warningsToLog,
-					menuVisibleWhenExpression, targetId);
-		}
-
-		logWarnings(
-				warningsToLog,
-				"Warnings while parsing the viewer contributions from the 'org.eclipse.ui.popupMenus' extension point"); //$NON-NLS-1$
 	}
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ASCII"?>
+<org.eclipse.e4.ui.model.application:MApplication xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:org.eclipse.e4.ui.model.application="http://www.eclipse.org/ui/2008/Application" xsi:schemaLocation="http://www.eclipse.org/ui/2008/Application ../org.eclipse.e4.ui.model.workbench/model/Application.ecore">
+  <windows x="100" y="100" width="800" height="600">
+    <menu>
+      <items xsi:type="org.eclipse.e4.ui.model.application:MMenuItem" name="File">
+        <menu>
+          <items xsi:type="org.eclipse.e4.ui.model.application:MMenuItem" id="" name="Do Nothing"/>
+          <items xsi:type="org.eclipse.e4.ui.model.application:MMenuItem" iconURI="" name="---" separator="true"/>
+          <items xsi:type="org.eclipse.e4.ui.model.application:MHandledMenuItem" iconURI="" name="Exit" command="//@command.0"/>
+        </menu>
+      </items>
+      <items xsi:type="org.eclipse.e4.ui.model.application:MMenuItem" name="Edit">
+        <menu>
+          <items xsi:type="org.eclipse.e4.ui.model.application:MHandledMenuItem" iconURI="" name="Exit" command="//@command.0"/>
+        </menu>
+      </items>
+      <items xsi:type="org.eclipse.e4.ui.model.application:MMenuItem" name="Help">
+        <menu>
+          <items xsi:type="org.eclipse.e4.ui.model.application:MHandledMenuItem" iconURI="" name="Exit" command="//@command.0"/>
+        </menu>
+      </items>
+    </menu>
+    <children policy="VerticalComposite">
+      <toolBar>
+        <items xsi:type="org.eclipse.e4.ui.model.application:MToolBarItem" name="You Are Seeing The Default Application.xmi"/>
+      </toolBar>
+      <children xsi:type="org.eclipse.e4.ui.model.application:MSashForm" policy="HorizontalSash">
+        <children xsi:type="org.eclipse.e4.ui.model.application:MSashForm" policy="VerticalSash">
+          <children xsi:type="org.eclipse.e4.ui.model.application:MStack">
+            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Library" tooltip="" URI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
+          </children>
+        </children>
+        <children xsi:type="org.eclipse.e4.ui.model.application:MSashForm" policy="VerticalSash">
+          <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Preview" URI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
+          <children xsi:type="org.eclipse.e4.ui.model.application:MStack">
+            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Thumbnails" URI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
+            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Exif" tooltip="" URI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
+          </children>
+          <weights>70</weights>
+          <weights>30</weights>
+        </children>
+        <weights>30</weights>
+        <weights>70</weights>
+      </children>
+    </children>
+    <handlers URI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.ExitHandler" command="//@command.0"/>
+  </windows>
+  <command id="org.eclipse.e4.ui.tests.exit" name="Exit"/>
+</org.eclipse.e4.ui.model.application:MApplication>
