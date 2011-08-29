@@ -131,6 +131,9 @@ public abstract class CompatibilityPart {
 				logger.error(ex);
 			}
 
+			// dispose the site that was originally initialized for this part
+			disposeSite();
+
 			// create a new error part notifying the user of the failure
 			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
 					"Failed to create the part's controls", e); //$NON-NLS-1$
