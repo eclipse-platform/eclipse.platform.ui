@@ -594,6 +594,7 @@ public class MenuHelper {
 					IWorkbenchWindow window = context.get(IWorkbenchWindow.class);
 					return window == null ? null : new ActionDescriptor(element, type, window);
 				case ActionDescriptor.T_EDITOR:
+					return new ActionDescriptor(element, type, null);
 				case ActionDescriptor.T_VIEW:
 					MPart part = context.get(MPart.class);
 					if (part != null) {

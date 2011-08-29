@@ -121,6 +121,9 @@ public class ToolBarContributionRecord {
 		for (MToolBarElement item : toolbarContribution.getChildren()) {
 			MToolBarElement copy = (MToolBarElement) EcoreUtil
 					.copy((EObject) item);
+			// if a visibleWhen clause is defined, the item should not be
+			// visible until the clause has been evaluated and returned 'true'
+			copy.setVisible(!anyVisibleWhen());
 			if (copy instanceof MToolBarSeparator) {
 				MToolBarSeparator shared = findExistingSeparator(copy
 						.getElementId());
