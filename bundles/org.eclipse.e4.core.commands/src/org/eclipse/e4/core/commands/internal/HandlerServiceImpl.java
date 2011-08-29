@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.e4.core.commands.internal;
 import java.util.Iterator;
 import java.util.Map;
 import javax.inject.Inject;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -21,6 +22,8 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.log.Logger;
 
 /**
  *
@@ -44,6 +47,10 @@ public class HandlerServiceImpl implements EHandlerService {
 	}
 
 	private IEclipseContext context;
+
+	@Inject
+	@Optional
+	private Logger logger;
 
 	/*
 	 * (non-Javadoc)
@@ -96,9 +103,21 @@ public class HandlerServiceImpl implements EHandlerService {
 
 		final IEclipseContext executionContext = getExecutionContext();
 		addParms(command, staticContext);
-		Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
-				executionContext, staticContext, Boolean.TRUE));
-		return result.booleanValue();
+
+		try {
+			Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
+					executionContext, staticContext, Boolean.TRUE));
+			return result.booleanValue();
+		} catch (Exception e) {
+			if (Command.DEBUG_HANDLERS && logger != null) {
+				StringBuilder message = new StringBuilder();
+				message.append("Handler (").append(handler).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
+				message.append(" for command (").append(commandId).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
+				message.append("threw unexpected exception"); //$NON-NLS-1$
+				logger.trace(e, message.toString());
+			}
+			return false;
+		}
 	}
 
 	/*
