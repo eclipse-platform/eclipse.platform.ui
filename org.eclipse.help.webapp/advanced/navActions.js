@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,15 +93,21 @@ function printToc(errorMsg) {
 		var h = topRect.height;
 		var x = topRect.x + (topRect.width - w)/2;
 		var y = topRect.y;
-		var indexAnchor=topic.indexOf('#');
-	    var parameters;			
+	    var parameters;	
+	    // The topic could be followed by a parameter, an anchor or both
+	    var anchor = "";
+	    var query = "";		    
+		var indexAnchor=topic.indexOf('#');	
 	    if (indexAnchor!=-1) {
-		    var anchor=topic.substr(indexAnchor+1);
+		    anchor= '&anchor=' + topic.substr(indexAnchor+1)		    
 		    topic=topic.substr(0,indexAnchor);
-		    parameters = "?topic="+topic+"&anchor="+anchor;	
-	     } else {
-		    parameters = "?topic="+topic;
-	     }
+		}
+		var indexQuery = topic.indexOf("?");
+		if (indexQuery != -1) {
+		    query = '&' + topic.substr(indexQuery+1)
+		    topic= topic.substr(0,indexQuery);
+	    }
+	    parameters = "?topic="+topic + query + anchor;
 
 		var printWindow = window.open("print.jsp" + parameters, "printWindow", "directories=yes,location=no,menubar=yes,resizable=yes,scrollbars=yes,status=yes,titlebar=yes,toolbar=yes,width=" + w + ",height=" + h + ",left=" + x + ",top=" + y);
 	}
