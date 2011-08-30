@@ -38,7 +38,7 @@ public interface MOpaqueMenuSeparator extends MMenuSeparator {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Opaque Item</em>' attribute.
 	 * @see #setOpaqueItem(Object)
-	 * @model transient="true"
+	 * @model transient="true" derived="true"
 	 * @generated
 	 */
 	Object getOpaqueItem();

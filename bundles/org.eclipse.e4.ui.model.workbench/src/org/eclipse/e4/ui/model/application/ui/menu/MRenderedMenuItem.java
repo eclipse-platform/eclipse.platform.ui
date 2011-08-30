@@ -37,7 +37,7 @@ public interface MRenderedMenuItem extends MMenuItem {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Contribution Item</em>' attribute.
 	 * @see #setContributionItem(Object)
-	 * @model transient="true"
+	 * @model transient="true" derived="true"
 	 * @generated
 	 */
 	Object getContributionItem();

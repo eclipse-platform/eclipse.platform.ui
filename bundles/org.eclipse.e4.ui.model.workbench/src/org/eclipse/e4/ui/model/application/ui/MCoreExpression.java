@@ -64,7 +64,7 @@ public interface MCoreExpression extends MExpression {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Core Expression</em>' attribute.
 	 * @see #setCoreExpression(Object)
-	 * @model transient="true"
+	 * @model transient="true" derived="true"
 	 * @generated
 	 */
 	Object getCoreExpression();
