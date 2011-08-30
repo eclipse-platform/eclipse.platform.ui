@@ -496,7 +496,20 @@ public class ModeledPageLayout implements IPageLayout {
 				break;
 			}
 
-			psc.setToBeRendered(relTo.isToBeRendered() || toInsert.isToBeRendered());
+			if (relTo.isToBeRendered() || toInsert.isToBeRendered()) {
+				// one of the items to be inserted should be rendered, render
+				// all parent elements as well
+				MUIElement parent = psc.getParent();
+				while (parent != null && !(parent instanceof MPerspective)) {
+					parent.setToBeRendered(true);
+					parent = parent.getParent();
+				}
+				psc.setToBeRendered(true);
+			} else {
+				// no child elements need to be rendered, the parent part sash
+				// container does not need to be rendered either then
+				psc.setToBeRendered(false);
+			}
 			return;
 		}
 
