@@ -35,12 +35,12 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="clonableSnippets" upperBound="-1"
         eType="#//ApplicationElement" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="transientData" upperBound="-1"
-        eType="#//StringToObjectMap" transient="true" derived="true" containment="true"/>
+        eType="#//StringToObjectMap" transient="true" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Contribution" abstract="true" eSuperTypes="#//ApplicationElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="object" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-        transient="true" derived="true"/>
+        transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="persistedState" upperBound="-1"
         eType="#//StringToStringMap" containment="true"/>
   </eClassifiers>
@@ -127,7 +127,7 @@
       nsPrefix="ui">
     <eClassifiers xsi:type="ecore:EClass" name="Context" abstract="true" interface="true">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//IEclipseContext"
-          transient="true" derived="true"/>
+          transient="true"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="variables" ordered="false"
           upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
@@ -135,7 +135,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Dirtyable" abstract="true" interface="true">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirty" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
-          transient="true" derived="true"/>
+          transient="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Input" abstract="true" interface="true">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -143,9 +143,9 @@
     <eClassifiers xsi:type="ecore:EClass" name="UIElement" abstract="true" eSuperTypes="#//ApplicationElement">
       <eOperations name="getLocalizedAccessibilityPhrase" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="widget" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-          transient="true" derived="true"/>
+          transient="true"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="renderer" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-          transient="true" derived="true"/>
+          transient="true"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="toBeRendered" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="true"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="onTop" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -158,7 +158,7 @@
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="containerData" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="curSharedRef" eType="#//ui/advanced/Placeholder"
-          transient="true" derived="true"/>
+          transient="true"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="visibleWhen" eType="#//ui/Expression"
           containment="true"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="accessibilityPhrase"
@@ -222,7 +222,7 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="coreExpressionId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
           defaultValueLiteral=""/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="coreExpression" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-          transient="true" derived="true"/>
+          transient="true"/>
     </eClassifiers>
     <eSubpackages name="menu" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu"
         nsPrefix="menu">
@@ -241,7 +241,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="HandledItem" abstract="true" eSuperTypes="#//ui/menu/Item">
         <eStructuralFeatures xsi:type="ecore:EReference" name="command" eType="#//commands/Command"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="wbCommand" eType="#//commands/ParameterizedCommand"
-            transient="true" derived="true"/>
+            transient="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
             eType="#//commands/Parameter" containment="true"/>
       </eClassifiers>
@@ -295,12 +295,12 @@
       <eClassifiers xsi:type="ecore:EClass" name="RenderedMenu" eSuperTypes="#//ui/menu/Menu">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionManager"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true" derived="true"/>
+            transient="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="RenderedToolBar" eSuperTypes="#//ui/menu/ToolBar">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionManager"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true" derived="true"/>
+            transient="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContribution">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -328,19 +328,19 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="RenderedMenuItem" eSuperTypes="#//ui/menu/MenuItem">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true" derived="true"/>
+            transient="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueToolItem" eSuperTypes="#//ui/menu/ToolItem">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true" derived="true"/>
+            transient="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenuItem" eSuperTypes="#//ui/menu/MenuItem">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true" derived="true"/>
+            transient="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenuSeparator" eSuperTypes="#//ui/menu/MenuSeparator">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
-            transient="true" derived="true"/>
+            transient="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenu" eSuperTypes="#//ui/menu/Menu"/>
     </eSubpackages>

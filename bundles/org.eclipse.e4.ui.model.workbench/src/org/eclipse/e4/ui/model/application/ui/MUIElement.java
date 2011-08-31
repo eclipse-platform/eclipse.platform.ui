@@ -48,7 +48,7 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Widget</em>' attribute.
 	 * @see #setWidget(Object)
-	 * @model transient="true" derived="true"
+	 * @model transient="true"
 	 * @generated
 	 */
 	Object getWidget();
@@ -73,7 +73,7 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Renderer</em>' attribute.
 	 * @see #setRenderer(Object)
-	 * @model transient="true" derived="true"
+	 * @model transient="true"
 	 * @generated
 	 */
 	Object getRenderer();
@@ -227,7 +227,7 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Cur Shared Ref</em>' reference.
 	 * @see #setCurSharedRef(MPlaceholder)
-	 * @model transient="true" derived="true"
+	 * @model transient="true"
 	 * @generated
 	 */
 	MPlaceholder getCurSharedRef();

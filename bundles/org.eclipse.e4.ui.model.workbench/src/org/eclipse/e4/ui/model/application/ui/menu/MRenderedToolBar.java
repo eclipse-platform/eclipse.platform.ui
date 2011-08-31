@@ -37,7 +37,7 @@ public interface MRenderedToolBar extends MToolBar {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Contribution Manager</em>' attribute.
 	 * @see #setContributionManager(Object)
-	 * @model transient="true" derived="true"
+	 * @model transient="true"
 	 * @generated
 	 */
 	Object getContributionManager();

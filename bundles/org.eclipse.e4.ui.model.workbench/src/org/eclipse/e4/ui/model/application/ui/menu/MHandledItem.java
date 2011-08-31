@@ -68,7 +68,7 @@ public interface MHandledItem extends MItem {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Wb Command</em>' attribute.
 	 * @see #setWbCommand(ParameterizedCommand)
-	 * @model dataType="org.eclipse.e4.ui.model.application.commands.ParameterizedCommand" transient="true" derived="true"
+	 * @model dataType="org.eclipse.e4.ui.model.application.commands.ParameterizedCommand" transient="true"
 	 * @generated
 	 */
 	ParameterizedCommand getWbCommand();
