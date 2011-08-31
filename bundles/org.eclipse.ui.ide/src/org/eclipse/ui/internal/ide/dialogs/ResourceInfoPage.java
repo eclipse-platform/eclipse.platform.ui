@@ -13,6 +13,11 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -23,15 +28,24 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -57,6 +71,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.LineDelimiterEditor;
 
@@ -65,6 +80,11 @@ import org.eclipse.ui.internal.ide.LineDelimiterEditor;
  * resource.
  */
 public class ResourceInfoPage extends PropertyPage {
+	private interface IResourceChange {
+		public String getMessage();
+
+		public void performChange(IResource resource) throws CoreException;
+	}
 
 	private Button editableBox;
 
@@ -915,6 +935,177 @@ public class ResourceInfoPage extends PropertyPage {
 
 	}
 
+	private String getSimpleChangeName(boolean isSet, String name) {
+		String message = "\t"; //$NON-NLS-1$
+		message += isSet ? IDEWorkbenchMessages.ResourceInfo_recursiveChangesSet
+				: IDEWorkbenchMessages.ResourceInfo_recursiveChangesUnset;
+		message += " " + name + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+		return message;
+	}
+
+	private IResourceChange getAttributesChange(final boolean changedAttrs[],
+			final boolean finalAttrs[]) {
+		return new IResourceChange() {
+			public String getMessage() {
+				String message = ""; //$NON-NLS-1$
+				if (changedAttrs[0])
+					message += getSimpleChangeName(finalAttrs[0],
+							IDEWorkbenchMessages.ResourceInfo_readOnly);
+				if (changedAttrs[1])
+					message += getSimpleChangeName(finalAttrs[1],
+							IDEWorkbenchMessages.ResourceInfo_executable);
+				if (changedAttrs[2])
+					message += getSimpleChangeName(finalAttrs[2],
+							IDEWorkbenchMessages.ResourceInfo_archive);
+				return message;
+			}
+
+			public void performChange(IResource resource) throws CoreException {
+				ResourceAttributes attrs = resource.getResourceAttributes();
+				if (attrs != null) {
+					if (changedAttrs[0])
+						attrs.setReadOnly(finalAttrs[0]);
+					if (changedAttrs[1])
+						attrs.setExecutable(finalAttrs[1]);
+					if (changedAttrs[2])
+						attrs.setArchive(finalAttrs[2]);
+					resource.setResourceAttributes(attrs);
+				}
+			}
+		};
+	}
+
+	private IResourceChange getPermissionsChange(final int changedPermissions,
+			final int finalPermissions) {
+		return new IResourceChange() {
+			public String getMessage() {
+				// iterated with [j][i]
+				int permissionMasks[][] = new int[][] {
+						{ EFS.ATTRIBUTE_OWNER_READ, EFS.ATTRIBUTE_OWNER_WRITE,
+								EFS.ATTRIBUTE_OWNER_EXECUTE },
+						{ EFS.ATTRIBUTE_GROUP_READ, EFS.ATTRIBUTE_GROUP_WRITE,
+								EFS.ATTRIBUTE_GROUP_EXECUTE },
+						{ EFS.ATTRIBUTE_OTHER_READ, EFS.ATTRIBUTE_OTHER_WRITE,
+								EFS.ATTRIBUTE_OTHER_EXECUTE } };
+				// iterated with [j]
+				String groupNames[] = new String[] {
+						IDEWorkbenchMessages.ResourceInfo_owner,
+						IDEWorkbenchMessages.ResourceInfo_group,
+						IDEWorkbenchMessages.ResourceInfo_other };
+				// iterated with [i]
+				String permissionNames[] = new String[] {
+						IDEWorkbenchMessages.ResourceInfo_read,
+						IDEWorkbenchMessages.ResourceInfo_write,
+						IDEWorkbenchMessages.ResourceInfo_execute };
+
+				String message = ""; //$NON-NLS-1$
+				if ((changedPermissions & EFS.ATTRIBUTE_IMMUTABLE) != 0)
+					message += getSimpleChangeName(
+							(finalPermissions & EFS.ATTRIBUTE_IMMUTABLE) != 0,
+							IDEWorkbenchMessages.ResourceInfo_locked);
+
+				for (int j = 0; j < 3; j++) {
+					for (int i = 0; i < 3; i++) {
+						if ((changedPermissions & permissionMasks[j][i]) != 0)
+							message += getSimpleChangeName(
+									(finalPermissions & permissionMasks[j][i]) != 0,
+									groupNames[j] + " " + permissionNames[i]); //$NON-NLS-1$
+					}
+				}
+				return message;
+			}
+
+			public void performChange(IResource resource) {
+				int permissions = fetchPermissions(resource);
+				// add permissions
+				permissions |= changedPermissions & finalPermissions;
+				// remove permissions
+				permissions &= ~changedPermissions | finalPermissions;
+				putPermissions(resource, permissions);
+			}
+		};
+	}
+
+	private List/*<IResource>*/ getResourcesToVisit(IResource resource) throws CoreException {
+		// use set for fast lookup
+		final Set/*<URI>*/ visited = new HashSet/*<URI>*/();
+		// use list to preserve the order of visited resources
+		final List/*<IResource>*/ toVisit = new ArrayList/*<IResource>*/();
+		visited.add(resource.getLocationURI());
+		resource.accept(new IResourceProxyVisitor() {
+			public boolean visit(IResourceProxy proxy) {
+				IResource childResource = proxy.requestResource();
+				URI uri = childResource.getLocationURI();
+				if (!visited.contains(uri)) {
+					visited.add(uri);
+					toVisit.add(childResource);
+				}
+				return true;
+			}
+		}, IResource.NONE);
+		return toVisit;
+	}
+
+	private boolean shouldPerformRecursiveChanges(List/*<IResourceChange>*/ changes) {
+		if (!changes.isEmpty()) {
+			String message = IDEWorkbenchMessages.ResourceInfo_recursiveChangesSummary
+					+ "\n"; //$NON-NLS-1$
+			for (int i = 0; i < changes.size(); i++) {
+				message += ((IResourceChange) changes.get(i)).getMessage();
+			}
+			message += IDEWorkbenchMessages.ResourceInfo_recursiveChangesQuestion;
+
+			MessageDialog dialog = new MessageDialog(getShell(),
+					IDEWorkbenchMessages.ResourceInfo_recursiveChangesTitle,
+					null, message, MessageDialog.QUESTION, new String[] {
+							IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL }, 1);
+
+			return dialog.open() == 0;
+		}
+		return false;
+	}
+
+	private void scheduleRecursiveChangesJob(final IResource resource, final List/*<IResourceChange>*/ changes) {
+		new Job(IDEWorkbenchMessages.ResourceInfo_recursiveChangesJobName) {
+			protected IStatus run(final IProgressMonitor monitor) {
+				try {
+					List/*<IResource>*/ toVisit = getResourcesToVisit(resource);
+
+					// Prepare the monitor for the given amount of work
+					monitor.beginTask(
+							IDEWorkbenchMessages.ResourceInfo_recursiveChangesJobName,
+							toVisit.size());
+
+					// Apply changes recursively
+					for (Iterator/*<IResource>*/ it = toVisit.iterator(); it.hasNext();) {
+						if (monitor.isCanceled())
+							throw new OperationCanceledException();
+						IResource childResource = (IResource) it.next();
+						monitor.subTask(NLS
+								.bind(IDEWorkbenchMessages.ResourceInfo_recursiveChangesSubTaskName,
+										childResource.getFullPath()));
+						for (int i = 0; i < changes.size(); i++) {
+							((IResourceChange) changes.get(i))
+									.performChange(childResource);
+						}
+						monitor.worked(1);
+					}
+				} catch (CoreException e) {
+					IDEWorkbenchPlugin
+							.log(IDEWorkbenchMessages.ResourceInfo_recursiveChangesError,
+									e.getStatus());
+					return e.getStatus();
+				} catch (OperationCanceledException e) {
+					return Status.CANCEL_STATUS;
+				} finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		}.schedule();
+	}
+
 	/**
 	 * Apply the read only state and the encoding to the resource.
 	 */
@@ -940,26 +1131,32 @@ public class ResourceInfoPage extends PropertyPage {
 							new NullProgressMonitor());
 			}
 
+			List/*<IResourceChange>*/ changes = new ArrayList/*<IResourceChange>*/();
+
 			ResourceAttributes attrs = resource.getResourceAttributes();
 			if (attrs != null) {
-				boolean hasChange = false;
+				boolean finalValues[] = new boolean[] { false, false, false };
+				boolean changedAttrs[] = new boolean[] { false, false, false };
 				// Nothing to update if we never made the box
 				if (editableBox != null
 						&& editableBox.getSelection() != previousReadOnlyValue) {
 					attrs.setReadOnly(editableBox.getSelection());
-					hasChange = true;
+					finalValues[0] = editableBox.getSelection();
+					changedAttrs[0] = true;
 				}
 				if (executableBox != null
 						&& executableBox.getSelection() != previousExecutableValue) {
 					attrs.setExecutable(executableBox.getSelection());
-					hasChange = true;
+					finalValues[1] = executableBox.getSelection();
+					changedAttrs[1] = true;
 				}
 				if (archiveBox != null
 						&& archiveBox.getSelection() != previousArchiveValue) {
 					attrs.setArchive(archiveBox.getSelection());
-					hasChange = true;
+					finalValues[2] = archiveBox.getSelection();
+					changedAttrs[2] = true;
 				}
-				if (hasChange) {
+				if (changedAttrs[0] || changedAttrs[1] || changedAttrs[2]) {
 					resource.setResourceAttributes(attrs);
 					attrs = resource.getResourceAttributes();
 					if (attrs != null) {
@@ -975,6 +1172,10 @@ public class ResourceInfoPage extends PropertyPage {
 						if (archiveBox != null) {
 							archiveBox.setSelection(attrs.isArchive());
 						}
+						if (resource.getType() == IResource.FOLDER) {
+							changes.add(getAttributesChange(changedAttrs,
+									finalValues));
+						}
 					}
 				}
 			}
@@ -982,14 +1183,22 @@ public class ResourceInfoPage extends PropertyPage {
 			if (permissionBoxes != null) {
 				int permissionValues = getPermissionsSelection();
 				if (previousPermissionsValue != permissionValues) {
+					int changedPermissions = previousPermissionsValue ^ permissionValues;
 					putPermissions(resource, permissionValues);
 					previousPermissionsValue = fetchPermissions(resource);
 					if (previousPermissionsValue != permissionValues) {
 						// We failed to set some of the permissions
 						setPermissionsSelection(previousPermissionsValue);
 					}
+					if (resource.getType() == IResource.FOLDER) {
+						changes.add(getPermissionsChange(changedPermissions,
+								permissionValues));
+					}
 				}
 			}
+
+			if (shouldPerformRecursiveChanges(changes))
+				scheduleRecursiveChangesJob(resource, changes);
 
 			// Nothing to update if we never made the box
 			if (this.derivedBox != null) {
