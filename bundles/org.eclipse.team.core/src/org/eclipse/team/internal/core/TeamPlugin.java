@@ -49,7 +49,7 @@ final public class TeamPlugin extends Plugin {
 	public static final String PROJECT_SET_EXTENSION = "projectSets"; //$NON-NLS-1$
 	// The id of the repository extension point
 	public static final String REPOSITORY_EXTENSION = "repository"; //$NON-NLS-1$
-	// The id of the default file modification vaidator extension point
+	// The id of the default file modification validator extension point
 	public static final String DEFAULT_FILE_MODIFICATION_VALIDATOR_EXTENSION = "defaultFileModificationValidator"; //$NON-NLS-1$
 
     // The id used to associate a provider with a project
