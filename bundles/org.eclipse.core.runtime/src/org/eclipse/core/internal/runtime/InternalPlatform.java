@@ -213,17 +213,6 @@ public final class InternalPlatform {
 	}
 
 	public IBundleGroupProvider[] getBundleGroupProviders() {
-		if (groupProviderTracker == null) {
-			// acquire the service and get the list of services
-			Filter filter = null;
-			try {
-				filter = getBundleContext().createFilter("(objectClass=" + IBundleGroupProvider.class.getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (InvalidSyntaxException e) {
-				// ignore this, it should never happen
-			}
-			groupProviderTracker = new ServiceTracker(getBundleContext(), filter, null);
-			groupProviderTracker.open();
-		}
 		Object[] objectArray = groupProviderTracker.getServices();
 		if (objectArray == null) // getServices may return null; but we can not.
 			return new IBundleGroupProvider[0];
@@ -286,16 +275,6 @@ public final class InternalPlatform {
 
 	public Location getConfigurationLocation() {
 		assertInitialized();
-		if (configurationLocation == null) {
-			Filter filter = null;
-			try {
-				filter = context.createFilter(Location.CONFIGURATION_FILTER);
-			} catch (InvalidSyntaxException e) {
-				// ignore this.  It should never happen as we have tested the above format.
-			}
-			configurationLocation = new ServiceTracker(context, filter, null);
-			configurationLocation.open();
-		}
 		return (Location) configurationLocation.getService();
 	}
 
@@ -303,23 +282,11 @@ public final class InternalPlatform {
 	 * Lazy initialize ContentTypeManager - it can only be used after the registry is up and running
 	 */
 	public IContentTypeManager getContentTypeManager() {
-		if (contentTracker == null) {
-			if (context == null)
-				return null;
-			contentTracker = new ServiceTracker(context, IContentTypeManager.class.getName(), null);
-			contentTracker.open();
-		}
-		return (IContentTypeManager) contentTracker.getService();
+		return contentTracker == null ? null : (IContentTypeManager) contentTracker.getService();
 	}
 
 	public EnvironmentInfo getEnvironmentInfoService() {
-		if (environmentTracker == null) {
-			if (context == null)
-				return null;
-			environmentTracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
-			environmentTracker.open();
-		}
-		return (EnvironmentInfo) environmentTracker.getService();
+		return  environmentTracker == null ? null : (EnvironmentInfo) environmentTracker.getService();
 	}
 
 	public Bundle[] getFragments(Bundle bundle) {
@@ -330,13 +297,7 @@ public final class InternalPlatform {
 	}
 
 	public FrameworkLog getFrameworkLog() {
-		if (logTracker == null) {
-			if (context == null)
-				return null;
-			logTracker = new ServiceTracker(context, FrameworkLog.class.getName(), null);
-			logTracker.open();
-		}
-		return (FrameworkLog) logTracker.getService();
+		return logTracker == null ? null : (FrameworkLog) logTracker.getService();
 	}
 
 	public Bundle[] getHosts(Bundle bundle) {
@@ -348,16 +309,6 @@ public final class InternalPlatform {
 
 	public Location getInstallLocation() {
 		assertInitialized();
-		Filter filter = null;
-		if (installLocation == null) {
-			try {
-				filter = context.createFilter(Location.INSTALL_FILTER);
-			} catch (InvalidSyntaxException e) {
-				// ignore this.  It should never happen as we have tested the above format.
-			}
-			installLocation = new ServiceTracker(context, filter, null);
-			installLocation.open();
-		}
 		return (Location) installLocation.getService();
 	}
 
@@ -372,16 +323,6 @@ public final class InternalPlatform {
 
 	public Location getInstanceLocation() {
 		assertInitialized();
-		if (instanceLocation == null) {
-			Filter filter = null;
-			try {
-				filter = context.createFilter(Location.INSTANCE_FILTER);
-			} catch (InvalidSyntaxException e) {
-				// ignore this.  It should never happen as we have tested the above format.
-			}
-			instanceLocation = new ServiceTracker(context, filter, null);
-			instanceLocation.open();
-		}
 		return (Location) instanceLocation.getService();
 	}
 
@@ -524,13 +465,7 @@ public final class InternalPlatform {
 	 * 
 	 */
 	public IPreferencesService getPreferencesService() {
-		if (preferencesTracker == null) {
-			if (context == null)
-				return null;
-			preferencesTracker = new ServiceTracker(context, IPreferencesService.class.getName(), null);
-			preferencesTracker.open();
-		}
-		return (IPreferencesService) preferencesTracker.getService();
+		return preferencesTracker == null ? null : (IPreferencesService) preferencesTracker.getService();
 	}
 
 	/*
@@ -622,16 +557,6 @@ public final class InternalPlatform {
 
 	public Location getUserLocation() {
 		assertInitialized();
-		if (userLocation == null) {
-			Filter filter = null;
-			try {
-				filter = context.createFilter(Location.USER_FILTER);
-			} catch (InvalidSyntaxException e) {
-				// ignore this.  It should never happen as we have tested the above format.
-			}
-			userLocation = new ServiceTracker(context, filter, null);
-			userLocation.open();
-		}
 		return (Location) userLocation.getService();
 	}
 
@@ -788,7 +713,13 @@ public final class InternalPlatform {
 		extendedLogTracker = new ServiceTracker(context, ExtendedLogService.class.getName(), null);
 		extendedLogTracker.open();
 		splashEnded = false;
+		// get the environment tracker here rather than in startServices because we use it right away
+		environmentTracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
+		environmentTracker.open();
 		processCommandLine(getEnvironmentInfoService().getNonFrameworkArgs());
+		// get the debug tracker here rather than in startServices because we use it right away
+		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
+		debugTracker.open();
 		initializeDebugFlags();
 		initialized = true;
 		getMetaArea();
@@ -822,12 +753,73 @@ public final class InternalPlatform {
 	private void startServices() {
 		// The check for getProduct() is relatively expensive (about 3% of the headless startup),
 		// so we don't want to enforce it here. 
-		customPreferencesService = getBundleContext().registerService(IProductPreferencesService.class.getName(), new ProductPreferencesService(), new Hashtable());
+		customPreferencesService = context.registerService(IProductPreferencesService.class.getName(), new ProductPreferencesService(), new Hashtable());
 
 		// Only register this interface if compatibility is installed - the check for a bundle presence
 		// is a quick test that doesn't consume much.
 		if (getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
-			legacyPreferencesService = getBundleContext().registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
+			legacyPreferencesService = context.registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
+		
+		Filter filter = null;
+		try {
+			filter = context.createFilter(Location.INSTANCE_FILTER);
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		instanceLocation = new ServiceTracker(context, filter, null);
+		instanceLocation.open();
+
+		try {
+			filter = context.createFilter(Location.USER_FILTER);
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		userLocation = new ServiceTracker(context, filter, null);
+		userLocation.open();
+
+		try {
+			filter = context.createFilter(Location.CONFIGURATION_FILTER);
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		configurationLocation = new ServiceTracker(context, filter, null);
+		configurationLocation.open();
+
+		try {
+			filter = context.createFilter(Location.INSTALL_FILTER);
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		installLocation = new ServiceTracker(context, filter, null);
+		installLocation.open();
+
+		if (context != null) {
+			logTracker = new ServiceTracker(context, FrameworkLog.class.getName(), null);
+			logTracker.open();
+		}
+
+		if (context != null) {
+			bundleTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
+			bundleTracker.open();
+		}
+
+		if (context != null) {
+			contentTracker = new ServiceTracker(context, IContentTypeManager.class.getName(), null);
+			contentTracker.open();
+		}
+
+		if (context != null) {
+			preferencesTracker = new ServiceTracker(context, IPreferencesService.class.getName(), null);
+			preferencesTracker.open();
+		}
+		
+		try {
+			filter = context.createFilter("(objectClass=" + IBundleGroupProvider.class.getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (InvalidSyntaxException e) {
+			// ignore this, it should never happen
+		}
+		groupProviderTracker = new ServiceTracker(context, filter, null);
+		groupProviderTracker.open();
 	}
 
 	private void stopServices() {
@@ -842,23 +834,11 @@ public final class InternalPlatform {
 	}
 
 	private PackageAdmin getBundleAdmin() {
-		if (bundleTracker == null) {
-			if (context == null)
-				return null;
-			bundleTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
-			bundleTracker.open();
-		}
-		return (PackageAdmin) bundleTracker.getService();
+		return bundleTracker == null ? null : (PackageAdmin) bundleTracker.getService();
 	}
 
 	private DebugOptions getDebugOptions() {
-		if (debugTracker == null) {
-			if (context == null)
-				return null;
-			debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
-			debugTracker.open();
-		}
-		return (DebugOptions) debugTracker.getService();
+		return debugTracker == null ? null : (DebugOptions) debugTracker.getService();
 	}
 
 	private void closeOSGITrackers() {
@@ -897,6 +877,22 @@ public final class InternalPlatform {
 		if (extendedLogTracker != null) {
 			extendedLogTracker.close();
 			extendedLogTracker = null;
+		}
+		if (installLocation != null) {
+			installLocation.close();
+			installLocation = null;
+		}
+		if (userLocation != null) {
+			userLocation.close();
+			userLocation = null;
+		}
+		if (configurationLocation != null) {
+			configurationLocation.close();
+			configurationLocation = null;
+		}
+		if (instanceLocation != null) {
+			instanceLocation.close();
+			instanceLocation = null;
 		}
 	}
 
