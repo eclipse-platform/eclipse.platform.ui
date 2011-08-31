@@ -1156,10 +1156,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 
 	private void bundleChanged(BundleEvent event) {
+		int eventType = event.getType();
 		// a bundle in the STARTING state generates 2 events, LAZY_ACTIVATION
 		// when it enters STARTING and STARTING when it exists STARTING :-)
 		synchronized (startingBundles) {
-			switch (event.getType()) {
+			switch (eventType) {
 				case BundleEvent.STARTING :
 					startingBundles.add(event.getBundle());
 					break;
