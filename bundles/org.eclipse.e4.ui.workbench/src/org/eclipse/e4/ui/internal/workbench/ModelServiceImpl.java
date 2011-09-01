@@ -247,18 +247,12 @@ public class ModelServiceImpl implements EModelService {
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneElement(org.eclipse.e4.ui.model.
 	 * application.ui.MUIElement, java.lang.String)
 	 */
-	public MUIElement cloneElement(MUIElement element, String cloneId, boolean saveAsSnippet) {
+	public MUIElement cloneElement(MUIElement element, MUIElement snippetContainer) {
 		EObject eObj = (EObject) element;
 		MUIElement clone = (MUIElement) EcoreUtil.copy(eObj);
-		clone.setElementId(cloneId);
 
-		if (saveAsSnippet) {
-			MUIElement topWin = getTopLevelWindowFor(element);
-			if (topWin != null) {
-				MUIElement appElement = topWin.getParent();
-				MApplication app = (MApplication) appElement;
-				app.getClonableSnippets().add(clone);
-			}
+		if (snippetContainer != null) {
+			snippetContainer.getClonableSnippets().add(clone);
 		}
 
 		return clone;
@@ -270,21 +264,21 @@ public class ModelServiceImpl implements EModelService {
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneSnippet(org.eclipse.e4.ui.model.
 	 * application.MApplication, java.lang.String)
 	 */
-	public MUIElement cloneSnippet(MApplication app, String snippetId) {
-		if (snippetId == null || snippetId.length() == 0)
+	public MUIElement cloneSnippet(MUIElement snippetContainer, String snippetId) {
+		if (snippetContainer == null || snippetId == null || snippetId.length() == 0)
 			return null;
 
-		MApplicationElement appElement = null;
-		for (MApplicationElement snippet : app.getClonableSnippets()) {
+		MApplicationElement elementToClone = null;
+		for (MApplicationElement snippet : snippetContainer.getClonableSnippets()) {
 			if (snippetId.equals(snippet.getElementId())) {
-				appElement = snippet;
+				elementToClone = snippet;
 				break;
 			}
 		}
-		if (appElement == null)
+		if (elementToClone == null)
 			return null;
 
-		EObject eObj = (EObject) appElement;
+		EObject eObj = (EObject) elementToClone;
 		MUIElement element = (MUIElement) EcoreUtil.copy(eObj);
 		return element;
 	}
