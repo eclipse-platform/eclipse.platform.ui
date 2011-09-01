@@ -60,6 +60,12 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	private MApplication application;
 	private MTrimmedWindow window;
 
+	/**
+	 * Field to indicate whether the trim bars have been added to the window's
+	 * model or not. They should only ever be added once.
+	 */
+	private boolean trimBarsAdded = false;
+
 	public CoolBarToTrimManager(MApplication app, MTrimmedWindow window,
 			List<MTrimElement> workbenchTrimElements, IRendererFactory rf) {
 		application = app;
@@ -586,9 +592,10 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			}
 		}
 		// and now add it to the model, start the rendering
-		List<MTrimBar> trimBars = window.getTrimBars();
-		if (trimBars.size() == 0 || trimBars.get(0) != trimBar) {
+		if (!trimBarsAdded) {
+			List<MTrimBar> trimBars = window.getTrimBars();
 			trimBars.add(0, trimBar);
+			trimBarsAdded = true;
 		}
 	}
 
