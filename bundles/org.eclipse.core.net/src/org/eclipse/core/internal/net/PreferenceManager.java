@@ -46,7 +46,7 @@ public class PreferenceManager {
 	private IEclipsePreferences currentScope;
 
 	private PreferenceManager(String id) {
-		this.defaultScope = new DefaultScope().getNode(id);
+		this.defaultScope = DefaultScope.INSTANCE.getNode(id);
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class PreferenceManager {
 	 */
 	public static PreferenceManager createConfigurationManager(String id) {
 		PreferenceManager manager = new PreferenceManager(id);
-		manager.currentScope = new ConfigurationScope().getNode(id);
+		manager.currentScope = ConfigurationScope.INSTANCE.getNode(id);
 		return manager;
 	}
 	
@@ -257,7 +257,7 @@ public class PreferenceManager {
 			return;
 		}
 		currentScope.putBoolean(PREF_HAS_MIGRATED, true);
-		migrateInstanceScopePreferences(new InstanceScope().getNode(Activator.ID), currentScope, proxies, true);
+		migrateInstanceScopePreferences(InstanceScope.INSTANCE.getNode(Activator.ID), currentScope, proxies, true);
 	}
 
 	void migrateInstanceScopePreferences(Preferences instanceScope, Preferences configuration, ProxyType[] proxies, boolean isInitialize) {

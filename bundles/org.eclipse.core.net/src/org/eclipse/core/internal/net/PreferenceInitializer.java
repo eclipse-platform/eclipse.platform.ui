@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	}
 
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences node = new DefaultScope().getNode(Activator.ID);
+		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(Activator.ID);
 		node.put(ProxyManager.PREF_NON_PROXIED_HOSTS, DEFAULT_PREF_NON_PROXIED_HOSTS);
 		node.putBoolean(ProxyManager.PREF_ENABLED, DEFAULT_PREF_ENABLED);
 		node.putBoolean(ProxyManager.PREF_OS, DEFAULT_PREF_OS);

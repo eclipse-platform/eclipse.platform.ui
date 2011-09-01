@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,12 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
-import com.jcraft.jsch.*;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Proxy;
+import com.jcraft.jsch.ProxyHTTP;
+import com.jcraft.jsch.ProxySOCKS5;
+import com.jcraft.jsch.Session;
 
 /**
  * 
@@ -183,7 +188,7 @@ public class Utils{
     Preferences preferences = JSchCorePlugin.getPlugin().getPluginPreferences();
     if(!preferences.getBoolean(IConstants.PREF_HAS_MIGRATED_SSH2_PREFS)){
       preferences.setValue(IConstants.PREF_HAS_MIGRATED_SSH2_PREFS, true);
-      migrateSSH2Preferences(new InstanceScope().getNode("")); //$NON-NLS-1$
+      migrateSSH2Preferences(InstanceScope.INSTANCE.getNode("")); //$NON-NLS-1$
     }
   }
   
