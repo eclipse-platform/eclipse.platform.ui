@@ -37,7 +37,7 @@ public interface MDirtyable {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Dirty</em>' attribute.
 	 * @see #setDirty(boolean)
-	 * @model transient="true"
+	 * @model transient="true" derived="true"
 	 * @generated
 	 */
 	boolean isDirty();
