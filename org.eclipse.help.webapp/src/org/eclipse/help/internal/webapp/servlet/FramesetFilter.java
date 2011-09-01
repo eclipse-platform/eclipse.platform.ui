@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,10 @@ import org.eclipse.help.webapp.IFilter;
  * frameset when bookmarked.
  */
 public class FramesetFilter implements IFilter {
-	private static final String scriptPart1 = "<script type=\"text/javascript\">if( self == top ){ window.location.replace( \""; //$NON-NLS-1$
-	private static final String scriptPart3 = "\");}</script>"; //$NON-NLS-1$
+	private static final String scriptPart1 = "<script type=\"text/javascript\">\nif( self == top ){" //$NON-NLS-1$
+		    + "\n  var  anchorParam = location.hash.length > 0 ? '&anchor=' + location.hash.substr(1) : '';" //$NON-NLS-1$
+			+ "\n  window.location.replace( \""; //$NON-NLS-1$
+	private static final String scriptPart3 = "\" + anchorParam);\n}\n</script>"; //$NON-NLS-1$
 
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
@@ -33,6 +35,7 @@ public class FramesetFilter implements IFilter {
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
 		String url = req.getPathInfo();
+		String query = req.getQueryString();
 		if (uri == null) {
 			return out;
 		}
@@ -70,6 +73,9 @@ public class FramesetFilter implements IFilter {
 		try{
 			// Bug 317055 -  [webapp] URLEncode url requests from local users
 			url = URLEncoder.encode(url, "UTF-8"); //$NON-NLS-1$
+			if ( query != null ) {
+				url = url + '&' + query; 
+			}
 			script.append(url);
 		} catch (UnsupportedEncodingException uee){
 			return out;
