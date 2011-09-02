@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -60,8 +60,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 			descriptors.put(id, new PerspectiveDescriptor(id, label, element));
 		}
 		
-		List<MApplicationElement> snippets = application.getClonableSnippets();
-		for (MApplicationElement snippet : snippets) {
+		List<MUIElement> snippets = application.getSnippets();
+		for (MUIElement snippet : snippets) {
 			if (snippet instanceof MPerspective) {
 				MPerspective perspective = (MPerspective) snippet;
 				String id = perspective.getElementId();

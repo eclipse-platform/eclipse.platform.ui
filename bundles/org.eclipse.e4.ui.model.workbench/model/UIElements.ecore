@@ -27,13 +27,12 @@
     <eGenericSuperTypes eClassifier="#//ui/menu/MenuContributions"/>
     <eGenericSuperTypes eClassifier="#//ui/menu/ToolBarContributions"/>
     <eGenericSuperTypes eClassifier="#//ui/menu/TrimContributions"/>
+    <eGenericSuperTypes eClassifier="#//ui/SnippetContainer"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tags" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributorURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="clonableSnippets" upperBound="-1"
-        eType="#//ApplicationElement" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="transientData" upperBound="-1"
         eType="#//StringToObjectMap" transient="true" containment="true"/>
   </eClassifiers>
@@ -164,13 +163,6 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="accessibilityPhrase"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="UILabel" abstract="true" interface="true">
-      <eOperations name="getLocalizedLabel" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eOperations name="getLocalizedTooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="iconURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="tooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ElementContainer" abstract="true"
         eSuperTypes="#//ui/UIElement">
       <eTypeParameters name="T">
@@ -183,6 +175,13 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="selectedElement">
         <eGenericType eTypeParameter="#//ui/ElementContainer/T"/>
       </eStructuralFeatures>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="UILabel" abstract="true" interface="true">
+      <eOperations name="getLocalizedLabel" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eOperations name="getLocalizedTooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="iconURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="tooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="GenericStack" abstract="true">
       <eTypeParameters name="T">
@@ -223,6 +222,10 @@
           defaultValueLiteral=""/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="coreExpression" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
           transient="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SnippetContainer">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="snippets" upperBound="-1"
+          eType="#//ui/UIElement" containment="true"/>
     </eClassifiers>
     <eSubpackages name="menu" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu"
         nsPrefix="menu">
@@ -389,6 +392,7 @@
         <eGenericSuperTypes eClassifier="#//ui/Context"/>
         <eGenericSuperTypes eClassifier="#//commands/HandlerContainer"/>
         <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
+        <eGenericSuperTypes eClassifier="#//ui/SnippetContainer"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimmedWindow" eSuperTypes="#//ui/basic/Window">
         <eStructuralFeatures xsi:type="ecore:EReference" name="trimBars" upperBound="-1"

@@ -100,6 +100,29 @@ public class UiItemProviderAdapterFactory extends UiAdapterFactory implements Co
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.MSnippetContainer} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected SnippetContainerItemProvider snippetContainerItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.MSnippetContainer}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createSnippetContainerAdapter() {
+		if (snippetContainerItemProvider == null) {
+			snippetContainerItemProvider = new SnippetContainerItemProvider(this);
+		}
+
+		return snippetContainerItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -199,6 +222,7 @@ public class UiItemProviderAdapterFactory extends UiAdapterFactory implements Co
 	 */
 	public void dispose() {
 		if (coreExpressionItemProvider != null) coreExpressionItemProvider.dispose();
+		if (snippetContainerItemProvider != null) snippetContainerItemProvider.dispose();
 	}
 
 }

@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -40,7 +41,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
  * @model
  * @generated
  */
-public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MContext, MHandlerContainer, MBindings {
+public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MContext, MHandlerContainer, MBindings, MSnippetContainer {
 	/**
 	 * Returns the value of the '<em><b>Main Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->

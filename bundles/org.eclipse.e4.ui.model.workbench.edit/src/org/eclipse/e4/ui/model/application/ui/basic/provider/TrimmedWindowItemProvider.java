@@ -166,13 +166,11 @@ public class TrimmedWindowItemProvider extends WindowItemProvider implements
 		Object childObject = child;
 
 		boolean qualify =
-			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__CLONABLE_SNIPPETS ||
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
+			childFeature == UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__WINDOWS ||
 			childFeature == BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS ||
-			childFeature == CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS ||
-			childFeature == UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__MAIN_MENU;
 
 		if (qualify) {

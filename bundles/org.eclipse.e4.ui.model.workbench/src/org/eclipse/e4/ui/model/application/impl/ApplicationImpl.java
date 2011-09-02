@@ -29,6 +29,8 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -71,6 +73,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getMenuContributions <em>Menu Contributions</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getToolBarContributions <em>Tool Bar Contributions</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getTrimContributions <em>Trim Contributions</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getSnippets <em>Snippets</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getAddons <em>Addons</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCategories <em>Categories</em>}</li>
@@ -199,6 +202,16 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * @ordered
 	 */
 	protected EList<MTrimContribution> trimContributions;
+
+	/**
+	 * The cached value of the '{@link #getSnippets() <em>Snippets</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSnippets()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MUIElement> snippets;
 
 	/**
 	 * The cached value of the '{@link #getCommands() <em>Commands</em>}' containment reference list.
@@ -395,6 +408,18 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<MUIElement> getSnippets() {
+		if (snippets == null) {
+			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this, ApplicationPackageImpl.APPLICATION__SNIPPETS);
+		}
+		return snippets;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public List<MCommand> getCommands() {
 		if (commands == null) {
 			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this, ApplicationPackageImpl.APPLICATION__COMMANDS);
@@ -450,6 +475,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return ((InternalEList<?>)getToolBarContributions()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
 				return ((InternalEList<?>)getTrimContributions()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+				return ((InternalEList<?>)getSnippets()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
@@ -491,6 +518,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return getToolBarContributions();
 			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
 				return getTrimContributions();
+			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+				return getSnippets();
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return getCommands();
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
@@ -552,6 +581,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				getTrimContributions().clear();
 				getTrimContributions().addAll((Collection<? extends MTrimContribution>)newValue);
 				return;
+			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+				getSnippets().clear();
+				getSnippets().addAll((Collection<? extends MUIElement>)newValue);
+				return;
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				getCommands().clear();
 				getCommands().addAll((Collection<? extends MCommand>)newValue);
@@ -609,6 +642,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
 				getTrimContributions().clear();
 				return;
+			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+				getSnippets().clear();
+				return;
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				getCommands().clear();
 				return;
@@ -652,6 +688,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return toolBarContributions != null && !toolBarContributions.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
 				return trimContributions != null && !trimContributions.isEmpty();
+			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
+				return snippets != null && !snippets.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return commands != null && !commands.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
@@ -720,6 +758,12 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				default: return -1;
 			}
 		}
+		if (baseClass == MSnippetContainer.class) {
+			switch (derivedFeatureID) {
+				case ApplicationPackageImpl.APPLICATION__SNIPPETS: return UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -778,6 +822,12 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		if (baseClass == MTrimContributions.class) {
 			switch (baseFeatureID) {
 				case MenuPackageImpl.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS: return ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MSnippetContainer.class) {
+			switch (baseFeatureID) {
+				case UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS: return ApplicationPackageImpl.APPLICATION__SNIPPETS;
 				default: return -1;
 			}
 		}

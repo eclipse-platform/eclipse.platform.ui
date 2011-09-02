@@ -24,7 +24,6 @@ import java.util.Map;
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getContributorURI <em>Contributor URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getClonableSnippets <em>Clonable Snippets</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}</li>
  * </ul>
  * </p>
@@ -113,20 +112,5 @@ public interface MApplicationElement {
 	 * @generated
 	 */
 	Map<String, Object> getTransientData();
-
-	/**
-	 * Returns the value of the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MApplicationElement}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Clonable Snippets</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Clonable Snippets</em>' containment reference list.
-	 * @model containment="true"
-	 * @generated
-	 */
-	List<MApplicationElement> getClonableSnippets();
 
 } // MApplicationElement

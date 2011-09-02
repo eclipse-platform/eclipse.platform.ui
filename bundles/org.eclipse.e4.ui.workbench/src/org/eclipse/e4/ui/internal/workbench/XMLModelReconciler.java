@@ -1882,14 +1882,14 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static boolean isChainedReference(String featureName) {
 		// an ElementContainer has multiple children
 		return featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME) ||
-				// a BindingContainer has multiple bindings
+		// a BindingContainer has multiple bindings
 				featureName.equals(BINDINGTABLE_BINDINGS_ATTNAME) ||
 				// a Part has multiple menus
 				featureName.equals(PART_MENUS_ATTNAME) ||
 				// an Application has multiple commands
 				featureName.equals(APPLICATION_COMMANDS_ATTNAME) ||
-				// an ApplicationElement has multiple clonable snippets
-				featureName.equals(APPLICATIONELEMENT_CLONABLE_SNIPPETS_ATTNAME) ||
+				// a SnippetContainer has multiple snippets
+				featureName.equals(SNIPPETCONTAINER_SNIPPETS_ATTNAME) ||
 				// a HandlerContainer has multiple handlers
 				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME) ||
 				// a BindingContainer has multiple binding tables

@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.workbench.modeling;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -166,7 +167,7 @@ public interface EModelService {
 	 *            need not be saved
 	 * @return The newly cloned element
 	 */
-	public MUIElement cloneElement(MUIElement element, MUIElement snippetContainer);
+	public MUIElement cloneElement(MUIElement element, MSnippetContainer snippetContainer);
 
 	/**
 	 * If a snippet with the given id exists a clone is created and returned. returns
@@ -178,7 +179,18 @@ public interface EModelService {
 	 *            The element id of the snippet to clone
 	 * @return The cloned snippet or <code>null</code> if no snippet with the given id can be found
 	 */
-	public MUIElement cloneSnippet(MUIElement snippetContainer, String snippetId);
+	public MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId);
+
+	/**
+	 * Convenience method to find a snippet by id in a particular container
+	 * 
+	 * @param snippetContainer
+	 *            The container to look in
+	 * @param id
+	 *            The id of the root element of the snippet
+	 * @return The root element of the snippet or <code>null</code> if none is found
+	 */
+	public MUIElement findSnippet(MSnippetContainer snippetContainer, String id);
 
 	/**
 	 * Return the count of the children whose 'toBeRendered' flag is true

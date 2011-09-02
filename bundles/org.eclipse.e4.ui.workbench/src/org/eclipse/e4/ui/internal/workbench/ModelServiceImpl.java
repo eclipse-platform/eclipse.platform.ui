@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
@@ -247,12 +248,12 @@ public class ModelServiceImpl implements EModelService {
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneElement(org.eclipse.e4.ui.model.
 	 * application.ui.MUIElement, java.lang.String)
 	 */
-	public MUIElement cloneElement(MUIElement element, MUIElement snippetContainer) {
+	public MUIElement cloneElement(MUIElement element, MSnippetContainer snippetContainer) {
 		EObject eObj = (EObject) element;
 		MUIElement clone = (MUIElement) EcoreUtil.copy(eObj);
 
 		if (snippetContainer != null) {
-			snippetContainer.getClonableSnippets().add(clone);
+			snippetContainer.getSnippets().add(clone);
 		}
 
 		return clone;
@@ -264,12 +265,12 @@ public class ModelServiceImpl implements EModelService {
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneSnippet(org.eclipse.e4.ui.model.
 	 * application.MApplication, java.lang.String)
 	 */
-	public MUIElement cloneSnippet(MUIElement snippetContainer, String snippetId) {
+	public MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId) {
 		if (snippetContainer == null || snippetId == null || snippetId.length() == 0)
 			return null;
 
 		MApplicationElement elementToClone = null;
-		for (MApplicationElement snippet : snippetContainer.getClonableSnippets()) {
+		for (MApplicationElement snippet : snippetContainer.getSnippets()) {
 			if (snippetId.equals(snippet.getElementId())) {
 				elementToClone = snippet;
 				break;
@@ -281,6 +282,25 @@ public class ModelServiceImpl implements EModelService {
 		EObject eObj = (EObject) elementToClone;
 		MUIElement element = (MUIElement) EcoreUtil.copy(eObj);
 		return element;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#findSnippet(org.eclipse.e4.ui.model.
+	 * application.ui.MSnippetContainer, java.lang.String)
+	 */
+	public MUIElement findSnippet(MSnippetContainer snippetContainer, String id) {
+		if (snippetContainer == null || id == null || id.length() == 0)
+			return null;
+
+		List<MUIElement> snippets = snippetContainer.getSnippets();
+		for (MUIElement snippet : snippets) {
+			if (id.equals(snippet.getElementId()))
+				return snippet;
+		}
+
+		return null;
 	}
 
 	/*
