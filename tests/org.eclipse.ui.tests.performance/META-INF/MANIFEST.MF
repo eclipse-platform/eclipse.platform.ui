@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Performance Plug-in
 Bundle-ClassPath: uiperformance.jar
 Bundle-SymbolicName: org.eclipse.ui.tests.performance;singleton:=true
-Bundle-Version: 1.1.200.qualifier
+Bundle-Version: 1.1.300.qualifier
 Bundle-Activator: org.eclipse.ui.tests.performance.UIPerformancePlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -17,6 +17,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text,
  org.eclipse.ui.editors,
  org.eclipse.ui.workbench.texteditor,
+ org.eclipse.e4.ui.model.workbench,
  org.eclipse.ui.views
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
