@@ -21,11 +21,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
-import org.eclipse.ui.tests.performance.layout.PresentationWidgetFactory;
-import org.eclipse.ui.tests.performance.layout.ResizeTest;
 
 /**
  * @since 3.1
@@ -53,43 +50,45 @@ public class PresentationPerformanceTestSuite extends TestSuite {
         }
     }
 
+    // TBD Does it make sense to keep those in 4.x? They should be replaced 
+    // by CSS styling performance tests in SWT
     private void addTests(String presentationId) {
         AbstractPresentationFactory factory = WorkbenchPlugin.getDefault().getPresentationFactory(presentationId);
         
         boolean r21Presentation = "org.eclipse.ui.internal.r21presentationFactory".equals(presentationId);
 
-        addTest(new PresentationInactivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
-        addTest(new PresentationInactivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
-        
-        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5, false));
-        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5, false));
-        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1, false));
-        if(r21Presentation)
-        	addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1, false));
-
-        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 100, "large folder creation"));
-        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 100, "large folder creation"));
-        
-        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
-        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
-        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1));
-        if (r21Presentation)
-        	addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1));
-        
-        addTest(new PresentationSelectTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 100));
-        addTest(new PresentationSelectTest(factory, PresentationFactoryUtil.ROLE_VIEW, 100));
-        
-        addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
-        addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
-        addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1));
-        if(r21Presentation)
-        	addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1));
-        
-        addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_EDITOR, 5)));
-        addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_VIEW, 5)));
-        addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1)));
-        if (r21Presentation)
-        	addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1)));
+//        addTest(new PresentationInactivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
+//        addTest(new PresentationInactivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
+//        
+//        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5, false));
+//        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5, false));
+//        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1, false));
+//        if(r21Presentation)
+//        	addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1, false));
+//
+//        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 100, "large folder creation"));
+//        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 100, "large folder creation"));
+//        
+//        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
+//        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
+//        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1));
+//        if (r21Presentation)
+//        	addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1));
+//        
+//        addTest(new PresentationSelectTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 100));
+//        addTest(new PresentationSelectTest(factory, PresentationFactoryUtil.ROLE_VIEW, 100));
+//        
+//        addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
+//        addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
+//        addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1));
+//        if(r21Presentation)
+//        	addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1));
+//        
+//        addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_EDITOR, 5)));
+//        addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_VIEW, 5)));
+//        addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1)));
+//        if (r21Presentation)
+//        	addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1)));
         
     }
     
