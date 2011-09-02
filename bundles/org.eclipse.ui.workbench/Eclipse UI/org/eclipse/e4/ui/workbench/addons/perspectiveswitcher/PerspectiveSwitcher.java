@@ -484,11 +484,13 @@ public class PerspectiveSwitcher {
 	private void openMenuFor(ToolItem item, MPerspective persp) {
 		final Menu menu = new Menu(psTB);
 		menu.setData(persp);
+		if (persp.getParent().getSelectedElement() == persp) {
+			addSaveAsItem(menu);
+			addResetItem(menu);
+		}
+
 		if (persp.isVisible()) {
 			addCloseItem(menu);
-		}
-		if (persp.getParent().getSelectedElement() == persp) {
-			addResetItem(menu);
 		}
 
 		new MenuItem(menu, SWT.SEPARATOR);
@@ -538,6 +540,37 @@ public class PerspectiveSwitcher {
 		page.closePerspective(desc, perspectiveId, true, false);
 
 		// removePerspectiveItem(persp);
+	}
+
+	private void addSaveAsItem(final Menu menu) {
+		final MenuItem saveAsMenuItem = new MenuItem(menu, SWT.Activate);
+		saveAsMenuItem.setText(WorkbenchMessages.PerspectiveBar_saveAs);
+		final IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
+		workbenchWindow.getWorkbench().getHelpSystem()
+				.setHelp(saveAsMenuItem, IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
+		saveAsMenuItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				if (psTB.isDisposed())
+					return;
+				IHandlerService handlerService = (IHandlerService) workbenchWindow
+						.getService(IHandlerService.class);
+				IStatus status = Status.OK_STATUS;
+				try {
+					handlerService.executeCommand(
+							IWorkbenchCommandConstants.WINDOW_SAVE_PERSPECTIVE_AS, null);
+				} catch (ExecutionException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotDefinedException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotEnabledException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotHandledException e) {
+				}
+				if (!status.isOK())
+					StatusManager.getManager().handle(status,
+							StatusManager.SHOW | StatusManager.LOG);
+			}
+		});
 	}
 
 	private void addResetItem(final Menu menu) {
