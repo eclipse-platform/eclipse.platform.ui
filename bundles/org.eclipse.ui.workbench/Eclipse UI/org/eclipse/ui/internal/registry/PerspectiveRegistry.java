@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -56,7 +57,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		for (IConfigurationElement element : point.getConfigurationElements()) {
 			String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 			String label = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-
 			descriptors.put(id, new PerspectiveDescriptor(id, label, element));
 		}
 		
@@ -107,11 +107,24 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 * org.eclipse.ui.IPerspectiveRegistry#deletePerspective(org.eclipse.ui.
 	 * IPerspectiveDescriptor)
 	 */
-	public void deletePerspective(IPerspectiveDescriptor persp) {
-		// FIXME: compat deletePerspective
-		E4Util.unsupported("deletePerspective"); //$NON-NLS-1$
+	public void deletePerspective(IPerspectiveDescriptor toDelete) {
+		PerspectiveDescriptor perspective = (PerspectiveDescriptor) toDelete;
+		if (perspective.isPredefined())
+			return;
+
+		descriptors.remove(perspective.getId());
+		removeSnippet(application, perspective.getId());
 	}
 
+	private MUIElement removeSnippet(MSnippetContainer snippetContainer, String id) {
+		List<MUIElement> snippets = snippetContainer.getSnippets();
+		for (int i = 0; i < snippets.size(); i++) {
+			if (snippets.get(i).getElementId().equals(id)) {
+				return snippets.remove(i);
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Deletes a list of perspectives
@@ -211,9 +224,12 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 * IPerspectiveDescriptor)
 	 */
 	public void revertPerspective(IPerspectiveDescriptor perspToRevert) {
-		if (perspToRevert instanceof PerspectiveDescriptor) {
-			((PerspectiveDescriptor) perspToRevert).setHasCustomDefinition(false);
-		}
+		PerspectiveDescriptor perspective = (PerspectiveDescriptor) perspToRevert;
+		if (!perspective.isPredefined())
+			return;
+		
+		perspective.setHasCustomDefinition(false);
+		removeSnippet(application, perspective.getId());
 	}
 
 	/**

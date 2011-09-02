@@ -1274,9 +1274,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
 	/**
-	 * Closes the specified perspective. This method is purely intended to
-	 * manipulate the model and will not perform other actions such as the
-	 * saving of parts.
+	 * Closes the specified perspective.
 	 * 
 	 * @param desc
 	 *            the perspective to close
@@ -1384,11 +1382,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	public void closePerspective(IPerspectiveDescriptor desc, String perspectiveId,
 			boolean saveParts, boolean closePage) {
-		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
-				MPerspectiveStack.class, null).get(0);
 		MPerspective persp = (MPerspective) modelService.find(perspectiveId, window);
 		// check to ensure this perspective actually exists in this window
 		if (persp != null) {
+			MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
+					MPerspectiveStack.class, null).get(0);
 			if (perspectiveStack.getChildren().size() == 1) {
 				closeAllPerspectives(saveParts, closePage);
 			} else {
