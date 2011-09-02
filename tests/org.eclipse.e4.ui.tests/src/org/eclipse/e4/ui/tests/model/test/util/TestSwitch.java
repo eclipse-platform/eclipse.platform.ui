@@ -14,6 +14,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MInput;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.tests.model.test.MTestHarness;
@@ -97,6 +98,8 @@ public class TestSwitch<T1> extends Switch<T1> {
 				result = caseUILabel(testHarness);
 			if (result == null)
 				result = caseDirtyable(testHarness);
+			if (result == null)
+				result = caseSnippetContainer(testHarness);
 			if (result == null)
 				result = caseUIElement(testHarness);
 			if (result == null)
@@ -295,6 +298,23 @@ public class TestSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseDirtyable(MDirtyable object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '
+	 * <em>Snippet Container</em>'. <!-- begin-user-doc --> This implementation
+	 * returns null; returning a non-null result will terminate the switch. <!--
+	 * end-user-doc -->
+	 * 
+	 * @param object
+	 *            the target of the switch.
+	 * @return the result of interpreting the object as an instance of '
+	 *         <em>Snippet Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseSnippetContainer(MSnippetContainer object) {
 		return null;
 	}
 
