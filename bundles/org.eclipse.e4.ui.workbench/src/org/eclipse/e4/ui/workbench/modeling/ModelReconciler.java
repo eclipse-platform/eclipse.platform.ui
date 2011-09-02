@@ -34,6 +34,12 @@ public abstract class ModelReconciler {
 			.getApplicationElement_Tags().getName();
 
 	/**
+	 * Attribute defined by MApplicationElements (value is <code>clonableSnippets</code>).
+	 */
+	public static final String APPLICATIONELEMENT_CLONABLE_SNIPPETS_ATTNAME = ApplicationPackageImpl.eINSTANCE
+			.getApplicationElement_ClonableSnippets().getName();
+
+	/**
 	 * Attribute defined by MApplications (value is <code>commands</code>).
 	 */
 	public static final String APPLICATION_COMMANDS_ATTNAME = ApplicationPackageImpl.eINSTANCE

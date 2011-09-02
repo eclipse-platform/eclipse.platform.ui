@@ -1888,6 +1888,8 @@ public class XMLModelReconciler extends ModelReconciler {
 				featureName.equals(PART_MENUS_ATTNAME) ||
 				// an Application has multiple commands
 				featureName.equals(APPLICATION_COMMANDS_ATTNAME) ||
+				// an ApplicationElement has multiple clonable snippets
+				featureName.equals(APPLICATIONELEMENT_CLONABLE_SNIPPETS_ATTNAME) ||
 				// a HandlerContainer has multiple handlers
 				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME) ||
 				// a BindingContainer has multiple binding tables
