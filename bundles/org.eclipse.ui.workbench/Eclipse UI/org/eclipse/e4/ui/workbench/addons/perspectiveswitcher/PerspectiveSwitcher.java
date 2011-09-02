@@ -15,6 +15,10 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -25,7 +29,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -57,13 +60,16 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -152,6 +158,49 @@ public class PerspectiveSwitcher {
 		}
 	};
 
+	private EventHandler labelHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			if (psTB.isDisposed()) {
+				return;
+			}
+
+			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+
+			if (psME == null || !(changedElement instanceof MPerspective))
+				return;
+
+			String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
+			Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+
+			// TODO: Do we need this check?
+			MWindow perspWin = modelService.getTopLevelWindowFor(changedElement);
+			MWindow switcherWin = modelService.getTopLevelWindowFor(psME);
+			if (perspWin != switcherWin)
+				return;
+
+			MPerspective perspective = (MPerspective) changedElement;
+			if (!perspective.isToBeRendered())
+				return;
+
+			for (ToolItem ti : psTB.getItems()) {
+				if (ti.getData() == perspective) {
+					updateToolItem(ti, attName, newValue);
+				}
+			}
+
+		}
+
+		private void updateToolItem(ToolItem ti, String attName, Object newValue) {
+			if (UIEvents.UILabel.LABEL.equals(attName)) {
+				String newName = (String) newValue;
+				ti.setText(newName);
+			} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
+				String newTTip = (String) newValue;
+				ti.setToolTipText(newTTip);
+			}
+		}
+	};
+
 	private EventHandler childrenHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			if (psTB.isDisposed()) {
@@ -203,6 +252,9 @@ public class PerspectiveSwitcher {
 				toBeRenderedHandler);
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
+				labelHandler);
+
 	}
 
 	@PreDestroy
@@ -215,6 +267,7 @@ public class PerspectiveSwitcher {
 		eventBroker.unsubscribe(toBeRenderedHandler);
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(selectionHandler);
+		eventBroker.unsubscribe(labelHandler);
 	}
 
 	@PostConstruct
@@ -488,20 +541,32 @@ public class PerspectiveSwitcher {
 	}
 
 	private void addResetItem(final Menu menu) {
-		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-		menuItem.setText(WorkbenchMessages.PerspectiveBar_reset);
-		menuItem.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				final MPerspective persp = (MPerspective) menu.getData();
-				if (persp == null)
+		final MenuItem resetMenuItem = new MenuItem(menu, SWT.Activate);
+		resetMenuItem.setText(WorkbenchMessages.PerspectiveBar_reset);
+		final IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
+		workbenchWindow.getWorkbench().getHelpSystem()
+				.setHelp(resetMenuItem, IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
+		resetMenuItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				if (psTB.isDisposed())
 					return;
-				IWorkbenchPage page = persp.getContext().get(IWorkbenchPage.class);
-				String message = NLS.bind(WorkbenchMessages.ResetPerspective_message,
-						persp.getLocalizedLabel());
-				if (MessageDialog.openConfirm(page.getWorkbenchWindow().getShell(),
-						WorkbenchMessages.ResetPerspective_title, message)) {
-					page.resetPerspective();
+				IHandlerService handlerService = (IHandlerService) workbenchWindow
+						.getService(IHandlerService.class);
+				IStatus status = Status.OK_STATUS;
+				try {
+					handlerService.executeCommand(
+							IWorkbenchCommandConstants.WINDOW_RESET_PERSPECTIVE, null);
+				} catch (ExecutionException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotDefinedException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotEnabledException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotHandledException e) {
 				}
+				if (!status.isOK())
+					StatusManager.getManager().handle(status,
+							StatusManager.SHOW | StatusManager.LOG);
 			}
 		});
 	}

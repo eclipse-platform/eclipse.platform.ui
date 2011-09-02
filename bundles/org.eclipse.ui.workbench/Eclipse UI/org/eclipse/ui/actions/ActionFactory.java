@@ -23,11 +23,9 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IntroAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.internal.OpenPreferencesAction;
-import org.eclipse.ui.internal.ResetPerspectiveAction;
 import org.eclipse.ui.internal.SaveAction;
 import org.eclipse.ui.internal.SaveAllAction;
 import org.eclipse.ui.internal.SaveAsAction;
-import org.eclipse.ui.internal.SavePerspectiveAction;
 import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -1235,12 +1233,17 @@ public abstract class ActionFactory {
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
         public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null) {
-                throw new IllegalArgumentException();
-            }
-            IWorkbenchAction action = new ResetPerspectiveAction(window);
-            action.setId(getId());
-            return action;
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
+
+			action.setId(getId());
+			action.setText(WorkbenchMessages.ResetPerspective_text);
+			action.setToolTipText(WorkbenchMessages.ResetPerspective_toolTip);
+			window.getWorkbench().getHelpSystem()
+					.setHelp(action, IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
+			return action;
         }
     };
 
@@ -1337,13 +1340,18 @@ public abstract class ActionFactory {
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
         public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null) {
-                throw new IllegalArgumentException();
-            }
-            IWorkbenchAction action = new SavePerspectiveAction(window);
-            action.setId(getId());
-            return action;
-        }
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
+
+			action.setId(getId());
+			action.setText(WorkbenchMessages.SavePerspective_text);
+			action.setToolTipText(WorkbenchMessages.SavePerspective_toolTip);
+			window.getWorkbench().getHelpSystem()
+					.setHelp(action, IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
+			return action;
+		}
     };
 
 	/**

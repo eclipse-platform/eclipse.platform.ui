@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -22,6 +23,10 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -37,16 +42,38 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	@Inject
 	private IExtensionRegistry extensionRegistry;
 
+	@Inject
+	EModelService modelService;
+
+	@Inject
+	MApplication application;
+
 	private Map<String, IPerspectiveDescriptor> descriptors = new HashMap<String, IPerspectiveDescriptor>();
 
 	@PostConstruct
-	void postConstruct() {
+	void postConstruct(MApplication application) {
 		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.perspectives"); //$NON-NLS-1$
 		for (IConfigurationElement element : point.getConfigurationElements()) {
 			String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 			String label = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 
 			descriptors.put(id, new PerspectiveDescriptor(id, label, element));
+		}
+		
+		List<MApplicationElement> snippets = application.getClonableSnippets();
+		for (MApplicationElement snippet : snippets) {
+			if (snippet instanceof MPerspective) {
+				MPerspective perspective = (MPerspective) snippet;
+				String id = perspective.getElementId();
+				PerspectiveDescriptor existingDescriptor = (PerspectiveDescriptor) descriptors
+						.get(id);
+				if (existingDescriptor == null) {
+					String label = perspective.getLabel();
+					descriptors.put(id, new PerspectiveDescriptor(id, label, true));
+				} else {
+					existingDescriptor.setHasCustomDefinition(true);
+				}
+			}
 		}
 	}
 
@@ -68,7 +95,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 */
 	public IPerspectiveDescriptor clonePerspective(String id, String label,
 			IPerspectiveDescriptor desc) throws IllegalArgumentException {
-		// FIXME: compat clonePerspective
+		// FIXME: compat clonePerspective. Not called in 3.8
 		E4Util.unsupported("clonePerspective"); //$NON-NLS-1$
 		return null;
 	}
@@ -184,8 +211,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 * IPerspectiveDescriptor)
 	 */
 	public void revertPerspective(IPerspectiveDescriptor perspToRevert) {
-		// FIXME: compat revertPerspective
-		E4Util.unsupported("revertPerspective"); //$NON-NLS-1$
+		if (perspToRevert instanceof PerspectiveDescriptor) {
+			((PerspectiveDescriptor) perspToRevert).setHasCustomDefinition(false);
+		}
 	}
 
 	/**
@@ -218,5 +246,24 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 */
 	public void addExtension(IExtensionTracker tracker, IExtension addedExtension) {
 		// TODO compat: what do we do about appeaering extensions
+	}
+
+	/**
+	 * Create a new perspective.
+	 * 
+	 * @param label
+	 *            the name of the new descriptor
+	 * @param originalDescriptor
+	 *            the descriptor on which to base the new descriptor
+	 * @return a new perspective descriptor or <code>null</code> if the creation
+	 *         failed.
+	 */
+	public PerspectiveDescriptor createPerspective(String label,
+			PerspectiveDescriptor originalDescriptor) {
+
+		PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(originalDescriptor.getId()
+				+ "." + label, label, false); //$NON-NLS-1$
+		descriptors.put(newDescriptor.getId(), newDescriptor);
+		return newDescriptor;
 	}
 }

@@ -246,6 +246,10 @@ public class WorkbenchMessages extends NLS {
 	public static String ResetPerspective_title;
 	public static String RevertPerspective_note;
 
+	public static String RevertPerspective_title;
+	public static String RevertPerspective_message;
+	public static String RevertPerspective_option;
+
 	public static String ClosePerspectiveAction_text;
 	public static String ClosePerspectiveAction_toolTip;
 	public static String CloseAllPerspectivesAction_text;

@@ -869,8 +869,7 @@ public class MenuHelper {
 			}
 		} else if (id != null) {
 			// wire these off because we're out of time, see bug 317203
-			if (id.equals(IWorkbenchCommandConstants.WINDOW_SAVE_PERSPECTIVE_AS)
-					|| id.equals(IWorkbenchCommandConstants.WINDOW_CUSTOMIZE_PERSPECTIVE)) {
+			if (id.equals(IWorkbenchCommandConstants.WINDOW_CUSTOMIZE_PERSPECTIVE)) {
 				return null;
 			}
 
