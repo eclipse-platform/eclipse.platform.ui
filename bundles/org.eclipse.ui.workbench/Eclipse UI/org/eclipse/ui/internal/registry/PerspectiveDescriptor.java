@@ -43,9 +43,12 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	private String label;
 	private ImageDescriptor image;
 	private IConfigurationElement element;
+	private boolean hasCustomDefinition;
 
-	public PerspectiveDescriptor(String id, String label) {
-		this(id, label, null);
+	public PerspectiveDescriptor(String id, String label, boolean hasCustomDefinition) {
+		this.id = id;
+		this.label = label;
+		this.hasCustomDefinition = hasCustomDefinition;
 	}
 
 	PerspectiveDescriptor(String id, String label, IConfigurationElement element) {
@@ -79,6 +82,10 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	 * @see org.eclipse.ui.IPerspectiveDescriptor#getId()
 	 */
 	public String getId() {
+		return id;
+	}
+
+	public String getOriginalId() {
 		return id;
 	}
 
@@ -125,13 +132,38 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
-		return element.getNamespaceIdentifier();
+		return element == null ? null : element.getNamespaceIdentifier();
 	}
 
 	/**
-	 * @return
+	 * Returns <code>true</code> if this perspective has a custom definition.
+	 * 
+	 * @return whether this perspective has a custom definition
 	 */
-	public String getOriginalId() {
-		return id;
+	public boolean hasCustomDefinition() {
+		return hasCustomDefinition;
+	}
+
+	public void setHasCustomDefinition(boolean value) {
+		hasCustomDefinition = value;
+	}
+
+	/**
+	 * Returns <code>true</code> if this perspective is predefined by an
+	 * extension.
+	 * 
+	 * @return boolean whether this perspective is predefined by an extension
+	 */
+	public boolean isPredefined() {
+		return element != null;
+	}
+
+	/**
+	 * Returns <code>true</code> if this perspective is a singleton.
+	 * 
+	 * @return whether this perspective is a singleton
+	 */
+	public boolean isSingleton() {
+		return false;
 	}
 }

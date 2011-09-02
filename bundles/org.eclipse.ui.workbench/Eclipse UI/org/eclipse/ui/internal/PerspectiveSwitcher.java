@@ -23,6 +23,8 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -59,6 +61,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PerspectiveAdapter;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
@@ -73,6 +76,7 @@ import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.Row;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * A utility class to manage the perspective switcher.  At some point, it might be nice to
@@ -1156,14 +1160,28 @@ public class PerspectiveSwitcher implements IWindowTrim {
         window.getWorkbench().getHelpSystem().setHelp(saveasMenuItem,
         		IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
         saveasMenuItem.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                if (perspectiveBar == null) {
+			public void widgetSelected(SelectionEvent event) {
+				if (perspectiveBar == null) {
 					return;
 				}
-                SavePerspectiveAction saveAction=new SavePerspectiveAction(window);
-                saveAction.setEnabled(true);
-                saveAction.run();
-            }
+				IHandlerService handlerService = (IHandlerService) window
+						.getService(IHandlerService.class);
+				IStatus status = Status.OK_STATUS;
+				try {
+					handlerService.executeCommand(
+							IWorkbenchCommandConstants.WINDOW_SAVE_PERSPECTIVE_AS, null);
+				} catch (ExecutionException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotDefinedException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotEnabledException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotHandledException e) {
+				}
+				if (!status.isOK())
+					StatusManager.getManager().handle(status,
+							StatusManager.SHOW | StatusManager.LOG);
+			}
         });
     }
     
@@ -1173,14 +1191,28 @@ public class PerspectiveSwitcher implements IWindowTrim {
         window.getWorkbench().getHelpSystem().setHelp(resetMenuItem,
         		IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
         resetMenuItem.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                if (perspectiveBar == null) {
+			public void widgetSelected(SelectionEvent event) {
+				if (perspectiveBar == null) {
 					return;
 				}
-                ResetPerspectiveAction resetAction=new ResetPerspectiveAction(window);
-                resetAction.setEnabled(true);
-                resetAction.run();
-             }
+				IHandlerService handlerService = (IHandlerService) window
+						.getService(IHandlerService.class);
+				IStatus status = Status.OK_STATUS;
+				try {
+					handlerService.executeCommand(
+							IWorkbenchCommandConstants.WINDOW_RESET_PERSPECTIVE, null);
+				} catch (ExecutionException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotDefinedException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotEnabledException e) {
+					status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
+				} catch (NotHandledException e) {
+				}
+				if (!status.isOK())
+					StatusManager.getManager().handle(status,
+							StatusManager.SHOW | StatusManager.LOG);
+			}
         });
     }
     
