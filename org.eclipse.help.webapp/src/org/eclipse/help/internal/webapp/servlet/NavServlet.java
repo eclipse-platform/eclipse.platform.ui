@@ -114,9 +114,9 @@ public class NavServlet extends HttpServlet {
 				String href = subtopics[i].getHref();
 				if (href == null) {
 					href = path + '_' + i;
-				}
-				else {
+				} else {
 					href = XMLGenerator.xmlEscape(UrlUtil.getHelpURL(href));
+					href = TocFragmentServlet.fixupHref(href, path + '_' + i);
 				}
 				writer.write(href);
 				writer.write("\">" + subtopics[i].getLabel() + "</a></li>\n");  //$NON-NLS-1$//$NON-NLS-2$

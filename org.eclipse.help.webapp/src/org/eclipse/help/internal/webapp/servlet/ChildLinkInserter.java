@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.webapp.data.RequestScope;
+import org.eclipse.help.internal.webapp.data.TocData;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 public class ChildLinkInserter {
@@ -42,6 +43,7 @@ public class ChildLinkInserter {
 	}
 	
 	public void addContents(String encoding) throws IOException {	
+		String path = req.getParameter(TocData.COMPLETE_PATH_PARAM);
 	    ITopic[] subtopics = getSubtopics();
 	    if (subtopics.length == 0) {
 	    	return;
@@ -52,10 +54,17 @@ public class ChildLinkInserter {
 				links.append("\n<li><a href=\""); //$NON-NLS-1$
 				String href = subtopics[i].getHref();
 				if (href == null) {
-					href = "nav.html";   // TODO, handle nav topics as children //$NON-NLS-1$
+					if (path != null && path.length() > 0) {
+						href = "/../nav/" + path + '_' + i; //$NON-NLS-1$
+					} else {
+						href = "nav.html"; //$NON-NLS-1$
+					}
 				}
 				else {
 					href = XMLGenerator.xmlEscape(href);
+					if (path != null && path.length() > 0) {
+					    href = TocFragmentServlet.fixupHref(href, path + '_' + i);
+					}
 				}
 				links.append(getBackpath(req.getPathInfo()));
 				links.append(href);

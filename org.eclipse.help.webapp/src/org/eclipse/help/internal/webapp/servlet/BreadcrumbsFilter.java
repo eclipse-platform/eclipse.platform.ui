@@ -21,6 +21,7 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
+import org.eclipse.help.internal.webapp.data.TocData;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.webapp.IFilter;
 
@@ -64,7 +65,7 @@ public class BreadcrumbsFilter implements IFilter {
 		// Use pathInfo to get the topic path because the uri could have escaped spaces
 		// or other characters, Bug 75360
 		String locale = UrlUtil.getLocale(req, null);
-		String pathParam = req.getParameter("path"); //$NON-NLS-1$
+		String pathParam = req.getParameter(TocData.COMPLETE_PATH_PARAM); 
 		
 		String breadcrumbPath;
 		if (pathParam != null && pathParam.length() > 0) {

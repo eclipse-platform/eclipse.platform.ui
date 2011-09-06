@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,12 @@ public class FragmentServletTest extends TestCase {
 
 	public void testFixHrefNormal() {
 		String href = TocFragmentServlet.fixupHref(DOC_HTML, PATH);
-		assertEquals(DOC_HTML, href);
+		assertEquals(DOC_HTML + "?cp=1_2", href);
+	}
+	
+	public void testFixHrefWithParameter() {
+		String href = TocFragmentServlet.fixupHref(DOC_HTML + "?a=b", PATH);
+		assertEquals(DOC_HTML + "?a=b&cp=1_2", href);
 	}
 
 	public void testFixHrefNull() {
@@ -35,12 +40,12 @@ public class FragmentServletTest extends TestCase {
 
 	public void testFixHrefWithAnchor() {
 		String href = TocFragmentServlet.fixupHref(DOC_HTML + "#A", PATH);
-		assertEquals(DOC_HTML + "?path=1_2#A" , href);
+		assertEquals(DOC_HTML + "?cp=1_2#A" , href);
 	}
 	
 	public void testFixHrefWithAnchorAndParams() {
 		String href = TocFragmentServlet.fixupHref(DOC_HTML + "?a=b#A", PATH);
-		assertEquals(DOC_HTML + "?a=b&path=1_2#A" , href);
+		assertEquals(DOC_HTML + "?a=b&cp=1_2#A" , href);
 	}
 	
 }

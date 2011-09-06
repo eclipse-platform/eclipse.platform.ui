@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,20 +31,23 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.internal.base.scope.ScopeUtils;
+import org.eclipse.help.internal.webapp.servlet.TocFragmentServlet;
 
 /**
  * Helper class for tocView.jsp initialization
  */
 public class TocData extends ActivitiesData {
+	public static final String COMPLETE_PATH_PARAM = "cp"; //$NON-NLS-1$
 	// Request parameters
 	private String tocParameter;
 	private String topicHref;
 	private String expandPathParam;
+	private String completePath;
 
 	// help form of selected topic href
 	private String topicHelpHref;
 	// Selected TOC
-	private int selectedToc;
+	private int selectedToc = -1;
 	// path from TOC to the root topic of the TOC fragment
 	private int[] rootPath = null;
 	// path from TOC to the selected topic, excluding TOC;
@@ -74,6 +77,7 @@ public class TocData extends ActivitiesData {
 
 		this.tocParameter = request.getParameter("toc"); //$NON-NLS-1$
 		this.topicHref = request.getParameter("topic"); //$NON-NLS-1$
+		this.completePath = request.getParameter(COMPLETE_PATH_PARAM); 
 		this.expandPathParam = request.getParameter("expandPath"); //$NON-NLS-1$
 		this.scope = RequestScope.getScope(request, response, false);
 		
@@ -83,7 +87,9 @@ public class TocData extends ActivitiesData {
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
 		if (expandPathParam != null && expandPathParam.length() == 0)
-				expandPathParam = null;
+			expandPathParam = null;
+		if (completePath != null && completePath.length() == 0)
+			completePath = null;
 		
 		String anchor = request.getParameter("anchor"); //$NON-NLS-1$
 		if (topicHref != null && anchor != null) {
@@ -170,6 +176,21 @@ public class TocData extends ActivitiesData {
 			return UrlUtil.getHelpURL(tocDescription.getHref());
 		return UrlUtil.getHelpURL(null);
 	}
+	
+	/**
+	 * Returns the topic to display. If there is a TOC, return its topic
+	 * description. Return null if no topic is specified and there is no toc
+	 * description.
+	 * 
+	 * @return String
+	 */
+	public String getSelectedTopicWithPath() {
+		String href = getSelectedTopic();
+		if ( completePath != null ) {
+			href = TocFragmentServlet.fixupHref(href, completePath);
+		}
+		return href;
+	}
 
 	/**
 	 * Returns a list of all the TOC's as xml elements. Individual TOC's are not
@@ -217,7 +238,14 @@ public class TocData extends ActivitiesData {
 					selectedToc = i;
 				}
 			}
+		} else if ( completePath != null ) {
+			// obtain the TOC from the complete path
+			TopicFinder finder = new TopicFinder("/nav/" + completePath, tocs, scope); //$NON-NLS-1$
+			topicPath = finder.getTopicPath();
+			selectedToc = finder.getSelectedToc();
+		    numericPath = finder.getNumericPath();
 		} else {
+			// toc not specified as parameter
 			// try obtaining the TOC from the topic
 			TopicFinder finder = new TopicFinder(topicHref, tocs, scope);
 			topicPath = finder.getTopicPath();

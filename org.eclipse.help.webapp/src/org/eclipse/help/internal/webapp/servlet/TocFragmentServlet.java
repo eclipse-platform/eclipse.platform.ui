@@ -334,23 +334,30 @@ public class TocFragmentServlet extends HttpServlet {
 	}
 	
 	/*
-	 * If the href contains an anchor add a parameter containing the anchor value
-	 * href cannot be null. Static for testing purposes
+	 * Add an extra parameter which represents the path within the tree. This enables show
+	 * in Toc, print selected topic and search selected topic and all subtopics to work
+	 * correctly even if the same page appears more than once in the table of contents, Bug 330868
+	 * Static for testing purposes
 	 */
 	public static String  fixupHref(String href, String path) {
 		if (href == null) {
 			return "/../nav/" + path; //$NON-NLS-1$
 		}
 		int aIndex = href.indexOf('#');
+		String anchorPart = ""; //$NON-NLS-1$
+		String hrefPart = href;
 		if (aIndex > 0) {
-			int questionIndex = href.indexOf('?');
-			if (questionIndex > 0 && questionIndex < aIndex) {
-				return href.substring(0, aIndex) + "&path=" + path + href.substring(aIndex); //$NON-NLS-1$			
-			} else {
-				return href.substring(0, aIndex) + "?path=" + path + href.substring(aIndex); //$NON-NLS-1$
-			}
+			anchorPart = href.substring(aIndex);
+			hrefPart = href.substring(0, aIndex);
 		}
-		return href;
+
+		int questionIndex = href.indexOf('?');
+		if  (questionIndex > 0 ) {
+			return hrefPart + "&" + TocData.COMPLETE_PATH_PARAM + '=' + path + anchorPart; //$NON-NLS-1$			
+		} else {
+			return hrefPart + "?" + TocData.COMPLETE_PATH_PARAM + '=' + path + anchorPart; //$NON-NLS-1$
+		}
+
 	}
 
 }

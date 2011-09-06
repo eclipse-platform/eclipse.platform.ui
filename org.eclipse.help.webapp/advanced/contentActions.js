@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,13 +112,9 @@ function bookmarkInfocenterPage(button, param)
 	}
 }
 
+// Return the topic including any parameters
 function getCurrentTopic() {
     var topic = parent.ContentViewFrame.window.location.href;
-	// remove the query, if any
-	var i = topic.indexOf('?');
-	if (i != -1) {
-		topic = topic.substring(0, i);
-	}
 	return topic;
 }
 

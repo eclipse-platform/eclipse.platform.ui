@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2010 IBM Corporation and others.
+ Copyright (c) 2000, 2011 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ function onloadHandler()
 	var tocTopic = "<%=UrlUtil.JavaScriptEncode(data.getTocDescriptionTopic(data.getSelectedToc()))%>";
 	var topicSelected=false;
 	// select specified topic, or else the book
-	var topic = "<%=UrlUtil.JavaScriptEncode(data.getSelectedTopic())%>";
+	var topic = "<%=UrlUtil.JavaScriptEncode(data.getSelectedTopicWithPath())%>";
 	if (topic != "about:blank" && topic != tocTopic) {
 		if (topic.indexOf(window.location.protocol) != 0 && topic.length > 2) {
 			// remove the .. from topic

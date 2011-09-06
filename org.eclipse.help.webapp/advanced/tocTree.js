@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,33 +57,49 @@ function selectTopic(topic, isAutosynch)
     }
 
     // Is the highlighted node the same as the href? In that case no need to call the server.
-    if (oldActive && sameTopic(topic, stripParams(oldActive.href))) {
+    if (oldActive && sameTopic(stripParams(topic), stripParams(oldActive.href))) {
            focusOnItem(getTreeItem(oldActive), true);
            return;
     }
     pendingSynchTopic = null;
     var indexAnchor=topic.indexOf('#');
-	var parameters;			
+	var parameters;	
+	var anchorParam = "";
 	if (indexAnchor!=-1) {
-		var anchor=topic.substr(indexAnchor+1);
+		anchorParam="&anchor=" + topic.substr(indexAnchor+1);
 		topic=topic.substr(0,indexAnchor);
-		parameters = "?topic="+topic+"&anchor="+anchor;	
-	} else {
-		parameters = "?topic="+topic;
 	}
+	
+	var indexQuery = topic.indexOf('?');
+	if ( indexQuery > 0 ) {
+	    parameters = "?topic="+topic.substr(0, indexQuery) + '&' + topic.substr(indexQuery + 1);	    
+	} else {
+	  parameters = "?topic="+topic;	
+	}
+	
+	parameters = parameters + anchorParam;
+	
 	if (isAutosynch) {
 	    parameters += "&errorSuppress=true";
 	}
+	
 	makeShowInTocRequest(parameters);	
     return true;
 }
 
+/*
+Strip off any parameters and any anchor
+*/
 function stripParams(href) {
     var qMark = href.indexOf('?');
-    if (qMark < 0) {
-        return href;
+    if (qMark >= 0 ) {
+        return href.substring(0, qMark);
     }
-    return href.substring(0, qMark);
+    var anchor = href.indexOf('#');
+    if (anchor >= 0 ) {
+        return href.substring(0, anchor);
+    }
+    return href;
 }
 
 function sameTopic(topicHref, oldActiveHref) {

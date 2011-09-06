@@ -66,11 +66,11 @@ public class TocFragmentServiceTest extends TestCase {
 		assertEquals(1, UARoot.length);
 		Element[] filterNode = findNodeById(UARoot[0], "2");
 		assertEquals(1, filterNode.length);
-		Element[] results = findChildren(filterNode[0], "node", "href", 
+		Element[] results = findHref(filterNode[0], "node", 
 				"../topic/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html");
 		assertEquals(24, results.length);
 		
-		results = findChildren(filterNode[0], "node", "href", 
+		results = findHref(filterNode[0], "node", 
 		"../topic/org.eclipse.ua.tests/data/help/toc/filteredToc/helpInstalled.html");
 		assertEquals(1, results.length);
 	}
@@ -87,10 +87,10 @@ public class TocFragmentServiceTest extends TestCase {
 		assertEquals(1, UARoot.length);
 		Element[] searchNode = findChildren(UARoot[0], "node", "title", "search");
 		assertEquals(1, searchNode.length);
-		Element[] topicEn = findChildren(searchNode[0], "node", "href", 
+		Element[] topicEn = findHref(searchNode[0], "node", 
 				"../topic/org.eclipse.ua.tests/data/help/search/test_en.html");
 		assertEquals(1, topicEn.length);
-		Element[] topicDe = findChildren(searchNode[0], "node", "href", 
+		Element[] topicDe = findHref(searchNode[0], "node", 
 				"../topic/org.eclipse.ua.tests/data/help/search/test_de.html");
 		assertEquals(0, topicDe.length);
 	}
@@ -124,10 +124,10 @@ public class TocFragmentServiceTest extends TestCase {
 				"/org.eclipse.ua.tests/data/help/toc/root.xml");
 		assertEquals(1, UARoot.length);
 		Element[] searchNode = findChildren(UARoot[0], "node", "title", "search");
-		Element[] topicEn = findChildren(searchNode[0], "node", "href", 
+		Element[] topicEn = findHref(searchNode[0], "node", 
 				"../topic/org.eclipse.ua.tests/data/help/search/test_en.html");
 		assertEquals(0, topicEn.length);
-		Element[] topicDe = findChildren(searchNode[0], "node", "href", 
+		Element[] topicDe = findHref(searchNode[0], "node", 
 				"../topic/org.eclipse.ua.tests/data/help/search/test_de.html");
 		assertEquals(1, topicDe.length);
 		BaseHelpSystem.setMode(helpMode);
@@ -136,7 +136,7 @@ public class TocFragmentServiceTest extends TestCase {
 	private Element[] findNodeById(Node root, String id) {
 		return findChildren(root, "node", "id", id);
 	}
-	
+
 	private Element[] findChildren(Node parent, String childKind, 
 			String attributeName, String attributeValue) {
 		NodeList nodes = parent.getChildNodes();
@@ -149,6 +149,34 @@ public class TocFragmentServiceTest extends TestCase {
 						&& attributeValue.equals(nextElement.getAttribute(attributeName))) {
 		
 				    results.add(next);	
+				}
+			}
+		}
+		return (Element[]) results.toArray(new Element[results.size()]);
+	}
+	
+	/*
+	 * Look for a matching href, the query part of the href is not compared
+	 */
+	private Element[] findHref(Node parent, String childKind, 
+			 String attributeValue) {
+		NodeList nodes = parent.getChildNodes();
+		List<Node> results = new ArrayList<Node>();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node next = nodes.item(i);
+			if (next instanceof Element) {
+				Element nextElement = (Element)next;
+				if ( childKind.equals(nextElement.getTagName()) ) {
+					String href = nextElement.getAttribute("href");
+					if (href != null) {
+                        int query = href.indexOf('?');
+                        if (query >= 0) {
+                        	href = href.substring(0, query);
+                        }
+	                    if (href.equals (attributeValue)) {			
+					        results.add(next);	
+	                    }
+					}
 				}
 			}
 		}
