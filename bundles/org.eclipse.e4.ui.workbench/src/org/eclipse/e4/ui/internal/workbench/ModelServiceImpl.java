@@ -966,6 +966,9 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 		parent.setToBeRendered(false);
+		// continue modifying the visibility as the parent's parent may also
+		// need to be hidden from the user
+		setStackVisibility(parent.getParent());
 	}
 
 	/*
