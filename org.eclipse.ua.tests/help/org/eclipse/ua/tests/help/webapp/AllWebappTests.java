@@ -40,6 +40,7 @@ public class AllWebappTests extends TestSuite {
 		suite.addTestSuite(ParallelServerAccessTest.class);
 		suite.addTestSuite(HelpServerBinding.class);
 		suite.addTestSuite(HtmlCoderTest.class);
+		suite.addTestSuite(TocZipTest.class);
 		//$JUnit-END$
 		return suite;
 	}

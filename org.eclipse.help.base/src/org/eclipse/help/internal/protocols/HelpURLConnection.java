@@ -159,11 +159,11 @@ public class HelpURLConnection extends URLConnection {
 				getLocale());
 
 		if (in == null) {
-			in = ResourceLocator.openFromZip(plugin, "doc.zip", //$NON-NLS-1$
-					getFile(), getLocale());
+			in = ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
 		}
 		if (in == null) {
-			in = ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
+			in = ResourceLocator.openFromZip(plugin, "doc.zip", //$NON-NLS-1$
+					getFile(), getLocale());
 		}
 		return in;
 	}
