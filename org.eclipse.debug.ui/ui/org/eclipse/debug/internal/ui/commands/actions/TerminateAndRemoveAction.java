@@ -22,6 +22,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.actions.DebugCommandAction;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -81,6 +82,37 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
 		return ITerminateHandler.class;
 	}
 
+    public void debugContextChanged(DebugContextEvent event) {
+        boolean isAllTerminated = true;
+        ISelection context = event.getContext();
+        if (context instanceof IStructuredSelection) {
+            Object[] elements = ((IStructuredSelection)context).toArray();
+            for (int i = 0; i < elements.length; i++) {
+                if (!isTerminated(elements[i])) {
+                    isAllTerminated = false;
+                    break;
+                }
+            } 
+        }
+        // IF all elements are terminated, we don't need to query the terminate handler, just 
+        // enable the action, which whill just remove the terminated launches (bug 324959).
+        fCanTerminate = !isAllTerminated; 
+        if (isAllTerminated) {
+            setEnabled(true);
+        } else {
+            super.debugContextChanged(event);
+        }
+    }
+
+    protected boolean isTerminated(Object element) {
+        ILaunch launch = DebugUIPlugin.getLaunch(element);
+        if (launch != null) {
+            return launch.isTerminated();
+        }
+        return false; 
+    }
+
+    
     protected void postExecute(IRequest request, Object[] targets) {
         IStatus status = request.getStatus();
         if(status == null || status.isOK()) {
@@ -90,17 +122,6 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
                     DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);                   
             }
         }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.actions.DebugCommandAction#setEnabled(boolean)
-     */
-    public void setEnabled(boolean enabled) {
-    	synchronized (this) {
-    		fCanTerminate = enabled;
-		}
-    	// action is always enabled... just depends whether terminate is required first.
-    	super.setEnabled(true);
     }
     
     /* (non-Javadoc)
