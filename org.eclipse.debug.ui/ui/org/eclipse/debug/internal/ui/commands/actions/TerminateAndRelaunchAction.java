@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IRequest;
@@ -25,6 +29,7 @@ import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * Action which terminates a launch and then re-launches it.
@@ -48,6 +53,24 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
         }
     }
 
+    protected ISelection getContext() {
+        // Convert action context to contain only launch objects (bug 356651).
+        ISelection context = super.getContext();
+        if (context instanceof IStructuredSelection && !context.isEmpty()) {
+            IStructuredSelection ss = (IStructuredSelection)context;
+            Set launches = new HashSet(ss.size());
+            for (Iterator itr = ss.iterator(); itr.hasNext();) {
+                
+                ILaunch launch = DebugUIPlugin.getLaunch(itr.next());
+                if (launch != null) {
+                    launches.add(launch);
+                }
+            }
+            return new StructuredSelection(launches.toArray());
+        }
+        return super.getContext();
+    }
+    
 
 	protected Class getCommandType() {
 		return ITerminateHandler.class;
