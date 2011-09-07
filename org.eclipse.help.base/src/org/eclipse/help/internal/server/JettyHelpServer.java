@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.http.jetty.JettyConfigurator;
+import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.server.HelpServer;
@@ -58,12 +59,14 @@ public class JettyHelpServer extends HelpServer {
 		public void run() {
 			try {
 				final Dictionary d = new Hashtable();
+				final int SESSION_TIMEOUT_INTERVAL_IN_SECONDS = 30*60;  // 30 minutes
 				configurePort();
 				d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$
 
 				// set the base URL
 				d.put("context.path", getContextPath()); //$NON-NLS-1$ 
 				d.put("other.info", getOtherInfo()); //$NON-NLS-1$ 
+				d.put(JettyConstants.CONTEXT_SESSIONINACTIVEINTERVAL, new Integer(SESSION_TIMEOUT_INTERVAL_IN_SECONDS));
 
 				// suppress Jetty INFO/DEBUG messages to stderr
 				Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$	
