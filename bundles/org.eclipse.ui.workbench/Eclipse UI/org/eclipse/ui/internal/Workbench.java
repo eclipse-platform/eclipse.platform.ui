@@ -1159,7 +1159,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 
 		return createWorkbenchWindow(getDefaultPageInput(), getPerspectiveRegistry()
-				.findPerspectiveWithId(getDefaultPerspectiveId()),
+				.findPerspectiveWithId(getPerspectiveRegistry().getDefaultPerspective()),
 				activeWindow, false);
 	}
 
