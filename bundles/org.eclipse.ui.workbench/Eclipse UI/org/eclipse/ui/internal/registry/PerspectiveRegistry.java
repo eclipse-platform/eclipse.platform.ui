@@ -32,6 +32,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -175,7 +176,12 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 				IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 		// empty string may be returned but we want to return null if nothing
 		// found
-		return defaultId.length() == 0 ? null : defaultId;
+		if (defaultId.length() == 0 || findPerspectiveWithId(defaultId) == null) {
+			Workbench instance = Workbench.getInstance();
+			return instance == null ? null : instance.getDefaultPerspectiveId();
+		}
+
+		return defaultId;
 	}
 
 	/*

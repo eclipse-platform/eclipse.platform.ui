@@ -2673,8 +2673,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @return the default perspective id, or <code>null</code>
 	 */
 	public String getDefaultPerspectiveId() {
-		String defaultId = getPerspectiveRegistry().getDefaultPerspective();
-		return defaultId == null ? getAdvisor().getInitialWindowPerspectiveId() : defaultId;
+		return getAdvisor().getInitialWindowPerspectiveId();
 	}
 
 	/**
