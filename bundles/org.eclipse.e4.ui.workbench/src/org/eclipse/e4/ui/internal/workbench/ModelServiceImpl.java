@@ -740,6 +740,11 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	public void resetPerspectiveModel(MPerspective persp, MWindow window) {
+		resetPerspectiveModel(persp, window, true);
+	}
+
+	private void resetPerspectiveModel(MPerspective persp, MWindow window,
+			boolean removeSharedPlaceholders) {
 		if (persp == null)
 			return;
 
@@ -749,24 +754,26 @@ public class ModelServiceImpl implements EModelService {
 		}
 		persp.getWindows().clear();
 
-		// Remove any views (Placeholders) from the shared area
-		EPartService ps = window.getContext().get(EPartService.class);
-		List<MArea> areas = findElements(window, null, MArea.class, null);
-		if (areas.size() == 1) {
-			MArea area = areas.get(0);
+		if (removeSharedPlaceholders) {
+			// Remove any views (Placeholders) from the shared area
+			EPartService ps = window.getContext().get(EPartService.class);
+			List<MArea> areas = findElements(window, null, MArea.class, null);
+			if (areas.size() == 1) {
+				MArea area = areas.get(0);
 
-			// Strip out the placeholders in visible stacks
-			List<MPlaceholder> phList = findElements(area, null, MPlaceholder.class, null);
-			for (MPlaceholder ph : phList) {
-				ps.hidePart((MPart) ph.getRef());
-				ph.getParent().getChildren().remove(ph);
-			}
+				// Strip out the placeholders in visible stacks
+				List<MPlaceholder> phList = findElements(area, null, MPlaceholder.class, null);
+				for (MPlaceholder ph : phList) {
+					ps.hidePart((MPart) ph.getRef());
+					ph.getParent().getChildren().remove(ph);
+				}
 
-			// Prevent shared stacks ids from clashing with the ones in the perspective
-			List<MPartStack> stacks = findElements(area, null, MPartStack.class, null);
-			for (MPartStack stack : stacks) {
-				String generatedId = "PartStack@" + Integer.toHexString(stack.hashCode()); //$NON-NLS-1$
-				stack.setElementId(generatedId);
+				// Prevent shared stacks ids from clashing with the ones in the perspective
+				List<MPartStack> stacks = findElements(area, null, MPartStack.class, null);
+				for (MPartStack stack : stacks) {
+					String generatedId = "PartStack@" + Integer.toHexString(stack.hashCode()); //$NON-NLS-1$
+					stack.setElementId(generatedId);
+				}
 			}
 		}
 
@@ -819,7 +826,7 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		// Remove transient elements (minimized stacks, detached windows)
-		resetPerspectiveModel(persp, window);
+		resetPerspectiveModel(persp, window, false);
 
 		// unrender the perspective and remove it
 		persp.setToBeRendered(false);
