@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,9 +37,9 @@ import org.eclipse.jface.text.Region;
  * if one gets edited, all other positions in a group are edited the same way.
  * All linked positions in a group have the same content.
  * <p>
- * Normally, new positions are given a tab stop weight which can be used by
- * clients, e.g. the UI. If no weight is given, a position will not be visited.
- * If no weights are used at all, the first position in a document is taken as
+ * Normally, new positions are given a {@link LinkedPosition#getSequenceNumber() sequence number} which can be used by
+ * clients, e.g. in the UI as tab stop weight. If {@link #NO_STOP} is used as weight, a position will not be visited.
+ * If {@link #NO_STOP} is used for all positions, the first position in a document is taken as
  * the only stop as to comply with the behavior of the old linked position
  * infrastructure.
  * </p>
@@ -52,7 +52,7 @@ import org.eclipse.jface.text.Region;
  */
 public class LinkedPositionGroup {
 
-	/** Sequence constant declaring that a position should not be stopped by. */
+	/** {@link LinkedPosition#getSequenceNumber() Sequence number} constant declaring that a position should not be stopped by. */
 	public static final int NO_STOP= -1;
 
 	/* members */
