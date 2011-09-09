@@ -118,7 +118,11 @@ public class CompatibilityView extends CompatibilityPart {
 		}
 		AbstractPartRenderer apr = rendererFactory.getRenderer(menu, parent);
 		if (apr instanceof MenuManagerRenderer) {
-			((MenuManagerRenderer) apr).linkModelToManager(menu, mm);
+			MenuManagerRenderer renderer = (MenuManagerRenderer) apr;
+			renderer.linkModelToManager(menu, mm);
+			// create opaque items for any contribution items that were added
+			// directly to the manager
+			renderer.reconcileManagerToModel(mm, menu);
 		}
 
 		// Construct the toolbar (if necessary)
