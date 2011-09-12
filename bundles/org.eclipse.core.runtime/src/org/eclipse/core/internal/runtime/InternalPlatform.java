@@ -708,18 +708,9 @@ public final class InternalPlatform {
 	 */
 	public void start(BundleContext runtimeContext) {
 		this.context = runtimeContext;
-		logReaderTracker = new ServiceTracker(context, ExtendedLogReaderService.class.getName(), null);
-		logReaderTracker.open();
-		extendedLogTracker = new ServiceTracker(context, ExtendedLogService.class.getName(), null);
-		extendedLogTracker.open();
+		openOSGiTrackers();
 		splashEnded = false;
-		// get the environment tracker here rather than in startServices because we use it right away
-		environmentTracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
-		environmentTracker.open();
 		processCommandLine(getEnvironmentInfoService().getNonFrameworkArgs());
-		// get the debug tracker here rather than in startServices because we use it right away
-		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
-		debugTracker.open();
 		initializeDebugFlags();
 		initialized = true;
 		getMetaArea();
@@ -750,16 +741,7 @@ public final class InternalPlatform {
 		context = null;
 	}
 
-	private void startServices() {
-		// The check for getProduct() is relatively expensive (about 3% of the headless startup),
-		// so we don't want to enforce it here. 
-		customPreferencesService = context.registerService(IProductPreferencesService.class.getName(), new ProductPreferencesService(), new Hashtable());
-
-		// Only register this interface if compatibility is installed - the check for a bundle presence
-		// is a quick test that doesn't consume much.
-		if (getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
-			legacyPreferencesService = context.registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
-		
+	private void openOSGiTrackers() {
 		Filter filter = null;
 		try {
 			filter = context.createFilter(Location.INSTANCE_FILTER);
@@ -768,7 +750,7 @@ public final class InternalPlatform {
 		}
 		instanceLocation = new ServiceTracker(context, filter, null);
 		instanceLocation.open();
-
+		
 		try {
 			filter = context.createFilter(Location.USER_FILTER);
 		} catch (InvalidSyntaxException e) {
@@ -776,7 +758,7 @@ public final class InternalPlatform {
 		}
 		userLocation = new ServiceTracker(context, filter, null);
 		userLocation.open();
-
+		
 		try {
 			filter = context.createFilter(Location.CONFIGURATION_FILTER);
 		} catch (InvalidSyntaxException e) {
@@ -784,7 +766,7 @@ public final class InternalPlatform {
 		}
 		configurationLocation = new ServiceTracker(context, filter, null);
 		configurationLocation.open();
-
+		
 		try {
 			filter = context.createFilter(Location.INSTALL_FILTER);
 		} catch (InvalidSyntaxException e) {
@@ -792,22 +774,22 @@ public final class InternalPlatform {
 		}
 		installLocation = new ServiceTracker(context, filter, null);
 		installLocation.open();
-
+		
 		if (context != null) {
 			logTracker = new ServiceTracker(context, FrameworkLog.class.getName(), null);
 			logTracker.open();
 		}
-
+		
 		if (context != null) {
 			bundleTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
 			bundleTracker.open();
 		}
-
+		
 		if (context != null) {
 			contentTracker = new ServiceTracker(context, IContentTypeManager.class.getName(), null);
 			contentTracker.open();
 		}
-
+		
 		if (context != null) {
 			preferencesTracker = new ServiceTracker(context, IPreferencesService.class.getName(), null);
 			preferencesTracker.open();
@@ -820,6 +802,29 @@ public final class InternalPlatform {
 		}
 		groupProviderTracker = new ServiceTracker(context, filter, null);
 		groupProviderTracker.open();
+		
+		logReaderTracker = new ServiceTracker(context, ExtendedLogReaderService.class.getName(), null);
+		logReaderTracker.open();
+		
+		extendedLogTracker = new ServiceTracker(context, ExtendedLogService.class.getName(), null);
+		extendedLogTracker.open();
+		
+		environmentTracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
+		environmentTracker.open();
+
+		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
+		debugTracker.open();
+	}
+
+	private void startServices() {
+		// The check for getProduct() is relatively expensive (about 3% of the headless startup),
+		// so we don't want to enforce it here. 
+		customPreferencesService = context.registerService(IProductPreferencesService.class.getName(), new ProductPreferencesService(), new Hashtable());
+
+		// Only register this interface if compatibility is installed - the check for a bundle presence
+		// is a quick test that doesn't consume much.
+		if (getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
+			legacyPreferencesService = context.registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
 	}
 
 	private void stopServices() {
