@@ -43,6 +43,8 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.AnimationEngine;
+import org.eclipse.ui.internal.FaderAnimationFeedback;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -423,6 +425,11 @@ public class MinMaxAddon {
 		MWindow win = getWindowFor(element);
 		MPerspective persp = modelService.getActivePerspective(win);
 
+		Shell hostShell = (Shell) modelService.getTopLevelWindowFor(element).getWidget();
+		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
+		AnimationEngine engine = new AnimationEngine(fader, 300);
+		engine.schedule();
+
 		List<String> maxTag = new ArrayList<String>();
 		maxTag.add(MAXIMIZED);
 		List<MUIElement> curMax = modelService.findElements(persp == null ? win : persp, null,
@@ -495,6 +502,11 @@ public class MinMaxAddon {
 	void unzoom(final MUIElement element) {
 		MWindow win = modelService.getTopLevelWindowFor(element);
 		MPerspective persp = modelService.getActivePerspective(win);
+
+		Shell hostShell = (Shell) win.getWidget();
+		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
+		AnimationEngine engine = new AnimationEngine(fader, 300);
+		engine.schedule();
 
 		List<MPartStack> stacks = modelService.findElements(win, null, MPartStack.class, null,
 				EModelService.PRESENTATION);

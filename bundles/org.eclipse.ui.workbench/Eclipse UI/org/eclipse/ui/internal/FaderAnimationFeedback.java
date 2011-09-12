@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -29,7 +30,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class FaderAnimationFeedback extends	AnimationFeedbackBase {
 	private Image backingStore;
-	static boolean useCopy = true;
 
 	public FaderAnimationFeedback(Shell parentShell) {
 		super(parentShell);
@@ -42,45 +42,17 @@ public class FaderAnimationFeedback extends	AnimationFeedbackBase {
 			backingStore.dispose();
 	}
 
-//	private static Image printImage(Control control) {
-//		Rectangle r = control.getBounds();
-//		final Image image = new Image(control.getDisplay(), r.width, r.height);
-//		GC gc = new GC(image);
-//		int hDC = gc.handle;
-//		int hwnd = control.handle;
-//		int bits = OS.GetWindowLong (hwnd, OS.GWL_STYLE);
-//		if ((bits & OS.WS_VISIBLE) == 0) {
-//			OS.DefWindowProc(hwnd, OS.WM_SETREDRAW, 1, 0);
-//		} 
-//		OS.RedrawWindow (hwnd, null, 0, OS.RDW_UPDATENOW | OS.RDW_ALLCHILDREN);
-//		final long t0 = System.currentTimeMillis();
-//		OS.PrintWindow (hwnd, hDC, 0);
-//		final long t1 = System.currentTimeMillis();
-//		System.out.println("Time: " + (t1 - t0) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-//		if ((bits & OS.WS_VISIBLE) == 0) {
-//			OS.DefWindowProc(hwnd, OS.WM_SETREDRAW, 0, 0);
-//		}
-//		gc.dispose();
-//		
-//		return image;
-//	}
-
 	public void initialize(AnimationEngine engine) {
 		Rectangle psRect = getBaseShell().getBounds();
 		getAnimationShell().setBounds(psRect);
 
 		// Capture the background image
-		if (useCopy) {
-			backingStore = new Image(getAnimationShell().getDisplay(), psRect);
-			GC gc = new GC(getAnimationShell());
-			// gc.copyArea(backingStore, psRect.x, psRect.y);
-			gc.copyArea(backingStore, 0, 0);
-			gc.dispose();
-		}
-		else {
-			System.out.println("use printImage"); //$NON-NLS-1$
-			//backingStore = printImage(getAnimationShell());
-		}
+		Display display = getBaseShell().getDisplay();
+		backingStore = new Image(display, psRect);
+		GC gc = new GC(display);
+		// gc.copyArea(backingStore, psRect.x, psRect.y);
+		gc.copyArea(backingStore, psRect.x, psRect.y);
+		gc.dispose();
 		
 		getAnimationShell().setAlpha(254);
 		getAnimationShell().setBackgroundImage(backingStore);
