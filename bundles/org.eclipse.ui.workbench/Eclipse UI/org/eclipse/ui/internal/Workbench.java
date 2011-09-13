@@ -533,10 +533,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 					// create the workbench instance
 					Workbench workbench = new Workbench(display, advisor, e4Workbench
 							.getApplication(), e4Workbench.getContext());
-					AbstractSplashHandler handler = getSplash();
+
 					// prime the splash nice and early
 					if (createSplash)
 						workbench.createSplashWrapper();
+
+					AbstractSplashHandler handler = getSplash();
 
 					IProgressMonitor progressMonitor = null;
 					if (handler != null) {
