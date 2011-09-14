@@ -98,11 +98,19 @@ public class NewModelFilePage extends WizardPage {
 				dialogChanged();
 			}
 		});
+		
+		new Label(container, SWT.NONE);
+		
+		createAdditionalControls(container);
 		initialize();
 		dialogChanged();
 		setControl(container);
 	}
 
+	protected void createAdditionalControls(Composite parent) {
+		
+	}
+	
 	/**
 	 * Tests if the current workbench selection is a suitable container to use.
 	 */

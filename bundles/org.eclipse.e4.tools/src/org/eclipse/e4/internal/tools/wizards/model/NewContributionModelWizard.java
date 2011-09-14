@@ -12,6 +12,7 @@ package org.eclipse.e4.internal.tools.wizards.model;
 
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.viewers.ISelection;
 
 
 public class NewContributionModelWizard extends BaseApplicationModelWizard {
@@ -23,5 +24,10 @@ public class NewContributionModelWizard extends BaseApplicationModelWizard {
 	
 	protected EObject createInitialModel() {
 		return (EObject) MFragmentFactory.INSTANCE.createModelFragments();
+	}
+	
+	@Override
+	protected NewModelFilePage createWizardPage(ISelection selection) {
+		return new NewModelFilePage(selection,getDefaultFileName());
 	}
 }
