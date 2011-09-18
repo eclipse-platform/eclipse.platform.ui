@@ -66,13 +66,17 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -207,13 +211,40 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 			this.createApplicationResources(fProjectProvider.getProject(),
 					new NullProgressMonitor());
-
+			// Add the product sources
+			adjustBuildPropertiesFile(fProjectProvider.getProject());
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 		} catch (InterruptedException e) {
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 		return false;
+	}
+	
+	private void adjustBuildPropertiesFile(IProject project) throws CoreException {
+		IFile file = PDEProject.getBuildProperties(project);
+		if (file.exists()) {
+			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
+			IBuildEntry e = model.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);
+			
+			e.addToken("plugin.xml");
+			
+			Map<String, String> map = fApplicationPage.getData();
+			String cssEntry = map.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
+			if( cssEntry != null ) {
+				e.addToken(cssEntry);	
+			}
+			
+			String xmiPath = map
+					.get(NewApplicationWizardPage.APPLICATION_XMI_PROPERTY);
+			if( xmiPath != null ) {
+				e.addToken(xmiPath);	
+			}
+			
+			model.save();
+		}
 	}
 
 	/**
