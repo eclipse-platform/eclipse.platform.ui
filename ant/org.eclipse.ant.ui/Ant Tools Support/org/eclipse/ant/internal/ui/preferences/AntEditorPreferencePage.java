@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
 
@@ -758,5 +759,12 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		});
 		String linktooltip= AntPreferencesMessages.AntEditorPreferencePage_3;
 		link.setToolTipText(linktooltip);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.preferences.AbstractAntEditorPreferencePage#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IAntUIHelpContextIds.ANT_EDITOR_PREFERENCE_PAGE;
 	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.editor.templates;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
@@ -28,6 +29,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 
 /**
@@ -104,5 +106,13 @@ public class AntTemplatePreferencePage extends TemplatePreferencePage {
 	 */
 	protected boolean isShowFormatterSetting() {
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_EDITOR_TEMPLATE_PREFERENCE_PAGE);
 	}
 }

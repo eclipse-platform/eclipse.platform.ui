@@ -12,6 +12,7 @@ package org.eclipse.ant.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -110,8 +111,6 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		initialize();
 		
 		applyDialogFont(control);
-		//TODO set help context
-		//WorkbenchHelp.setHelp(control, IAntUIHelpContextIds.ANT_CONTENTASSIST_PREFERENCE_PAGE);
 		return control;
 	}
 	
@@ -124,5 +123,12 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 	 */
 	protected void handleDefaults() {
 		updateAutoactivationControls();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.preferences.AbstractAntEditorPreferencePage#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IAntUIHelpContextIds.ANT_EDITOR_CONTENTASSIST_PREFERENCE_PAGE;
 	}
 }

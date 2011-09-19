@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
@@ -55,15 +56,6 @@ public class AntCodeFormatterPreferencePage extends AbstractAntEditorPreferenceP
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
 	}
 	
-	/*
-	 * @see PreferencePage#createControl(Composite)
-	 */
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		//TODO set help
-		//WorkbenchHelp.setHelp(getControl(), "ANT_FORMATTER_PREFERENCE_PAGE");
-	}
-
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
 		getOverlayStore().load();
@@ -170,5 +162,12 @@ public class AntCodeFormatterPreferencePage extends AbstractAntEditorPreferenceP
 		if (fPreviewerUpdater != null) {
 			fPreviewerUpdater.dispose();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.preferences.AbstractAntEditorPreferencePage#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IAntUIHelpContextIds.ANT_EDITOR_FORMATTER_PREFERENCE_PAGE;
 	}
 }

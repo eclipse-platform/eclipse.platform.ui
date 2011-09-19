@@ -24,7 +24,6 @@ import java.util.Set;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -103,8 +102,10 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_EDITOR_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
 	}
+
+	abstract protected String getHelpContextId();
 
 	protected void initializeFields() {
 		Map checkBoxes= getCheckBoxes();
