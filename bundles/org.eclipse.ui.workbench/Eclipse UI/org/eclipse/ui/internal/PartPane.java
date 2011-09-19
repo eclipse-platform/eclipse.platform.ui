@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
  *     Nikolay Botev - bug 240651
+ *     Mohamed Tarief - bug 203849
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -16,6 +17,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -493,11 +495,14 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener,
      * Add the Left,Right,Up,Botton menu items to the Size menu.
      */
     protected void addSizeItems(Menu sizeMenu) {
-        Sashes sashes = findSashes();
-        addSizeItem(sizeMenu,
-                WorkbenchMessages.PartPane_sizeLeft, sashes.left);
-        addSizeItem(sizeMenu,
-                WorkbenchMessages.PartPane_sizeRight, sashes.right); 
+		Sashes sashes = findSashes();
+		if (Window.getDefaultOrientation() == SWT.RIGHT_TO_LEFT) {
+			addSizeItem(sizeMenu, WorkbenchMessages.PartPane_sizeLeft, sashes.right);
+			addSizeItem(sizeMenu, WorkbenchMessages.PartPane_sizeRight, sashes.left);
+		} else {
+			addSizeItem(sizeMenu, WorkbenchMessages.PartPane_sizeLeft, sashes.left);
+			addSizeItem(sizeMenu, WorkbenchMessages.PartPane_sizeRight, sashes.right);
+		}
         addSizeItem(sizeMenu,
                 WorkbenchMessages.PartPane_sizeTop, sashes.top); 
         addSizeItem(sizeMenu, WorkbenchMessages.PartPane_sizeBottom, sashes.bottom);
