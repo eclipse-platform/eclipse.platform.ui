@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.Vector;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -73,7 +72,50 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
-	private Map<String, Vector<WeakReference<Computation>>> listeners = Collections.synchronizedMap(new HashMap<String, Vector<WeakReference<Computation>>>());
+	static class ComputationReference {
+
+		final private WeakReference<Computation> ref;
+
+		public ComputationReference(Computation computation) {
+			ref = new WeakReference<Computation>(computation);
+		}
+
+		public Computation get() {
+			Computation computation = ref.get();
+			if (computation == null)
+				return null;
+			if (computation.isValid())
+				return computation;
+			return null;
+		}
+
+		@Override
+		public int hashCode() {
+			Computation computation = get();
+			if (computation == null)
+				return 0;
+			return computation.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Computation c1 = get();
+			Computation c2 = ((ComputationReference) obj).get();
+			if ((c1 == null) && (c2 == null))
+				return true;
+			if ((c1 == null) || (c2 == null))
+				return false;
+			return c1.equals(c2);
+		}
+	}
+
+	private Map<String, HashSet<ComputationReference>> listeners = Collections.synchronizedMap(new HashMap<String, HashSet<ComputationReference>>());
 	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
 	private Set<Computation> activeRATs = new HashSet<Computation>();
 
@@ -272,10 +314,10 @@ public class EclipseContext implements IEclipseContext {
 		if (computation != null && computation.isValid()) {
 			computation.handleInvalid(event, scheduled);
 		}
-		Vector<WeakReference<Computation>> namedComputations = listeners.get(name);
+		Set<ComputationReference> namedComputations = listeners.get(name);
 		if (namedComputations != null) {
 			int invalidListenersCount = 0;
-			for (WeakReference<Computation> listenerRef : namedComputations) {
+			for (ComputationReference listenerRef : namedComputations) {
 				Computation listener = listenerRef.get();
 				if (listener != null && listener.isValid())
 					listener.handleInvalid(event, scheduled);
@@ -284,8 +326,8 @@ public class EclipseContext implements IEclipseContext {
 			}
 			// more than half of listeners are invalid, clean the listener list
 			if ((invalidListenersCount << 2) > namedComputations.size()) {
-				Vector<WeakReference<Computation>> tmp = new Vector<WeakReference<Computation>>(namedComputations.size() - invalidListenersCount);
-				for (WeakReference<Computation> listenerRef : namedComputations) {
+				HashSet<ComputationReference> tmp = new HashSet<ComputationReference>(namedComputations.size() - invalidListenersCount);
+				for (ComputationReference listenerRef : namedComputations) {
 					Computation listener = listenerRef.get();
 					if (listener != null && listener.isValid())
 						tmp.add(listenerRef);
@@ -410,12 +452,12 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public void addDependency(String name, Computation computation) {
-		Vector<WeakReference<Computation>> nameListeners = listeners.get(name);
+		HashSet<ComputationReference> nameListeners = listeners.get(name);
 		if (nameListeners == null) {
-			nameListeners = new Vector<WeakReference<Computation>>();
+			nameListeners = new HashSet<ComputationReference>();
 			listeners.put(name, nameListeners);
 		}
-		nameListeners.add(new WeakReference<Computation>(computation));
+		nameListeners.add(new ComputationReference(computation));
 	}
 
 	public void declareModifiable(String name) {
@@ -452,11 +494,11 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public Set<Computation> getListeners() {
-		Collection<Vector<WeakReference<Computation>>> collection = listeners.values();
+		Collection<HashSet<ComputationReference>> collection = listeners.values();
 		Set<Computation> comps = new HashSet<Computation>();
 
-		for (Vector<WeakReference<Computation>> set : collection) {
-			for (WeakReference<Computation> ref : set) {
+		for (Set<ComputationReference> set : collection) {
+			for (ComputationReference ref : set) {
 				Computation comp = ref.get();
 				if (comp != null && comp.isValid())
 					comps.add(comp);
@@ -679,11 +721,11 @@ public class EclipseContext implements IEclipseContext {
 
 	// This method is for debug only, do not use externally
 	public Set<Computation> getListeners(String name) {
-		Vector<WeakReference<Computation>> tmp = listeners.get(name);
+		HashSet<ComputationReference> tmp = listeners.get(name);
 		if (tmp == null)
 			return null;
 		Set<Computation> result = new HashSet<Computation>(tmp.size());
-		for (WeakReference<Computation> ref : tmp) {
+		for (ComputationReference ref : tmp) {
 			Computation listener = ref.get();
 			if (listener != null && listener.isValid())
 				result.add(listener);

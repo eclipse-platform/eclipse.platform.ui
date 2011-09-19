@@ -18,15 +18,21 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 public class TrackableComputationExt extends Computation {
 
 	final private IEclipseContext originatingContext;
-	private RunAndTrack runnable;
+	final private RunAndTrack runnable;
+
 	private ContextChangeEvent cachedEvent;
 
 	public TrackableComputationExt(RunAndTrack runnable, IEclipseContext originatingContext) {
 		this.runnable = runnable;
 		this.originatingContext = originatingContext;
+		init();
 	}
 
 	public int hashCode() {
+		return hashCode;
+	}
+
+	protected int calcHashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((originatingContext == null) ? 0 : originatingContext.hashCode());

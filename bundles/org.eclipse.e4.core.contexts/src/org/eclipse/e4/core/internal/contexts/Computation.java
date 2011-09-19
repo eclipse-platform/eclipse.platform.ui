@@ -14,7 +14,11 @@ import java.util.Set;
 import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 
 abstract public class Computation {
+	
+	abstract protected int calcHashCode();
+	abstract public boolean equals(Object obj);
 
+	/* final */ protected int hashCode;
 	protected boolean validComputation = true;
 
 	public void handleInvalid(ContextChangeEvent event, Set<Scheduled> scheduled) {
@@ -28,5 +32,15 @@ abstract public class Computation {
 	public void invalidateComputation() {
 		validComputation = false;
 	}
+
+	@Override
+	public int hashCode() {
+		return hashCode;
+	}
+
+	protected void init() {
+		hashCode = calcHashCode();
+	}
+
 
 }

@@ -19,16 +19,18 @@ public class ValueComputation extends Computation {
 
 	final static private Object NotAValue = new Object();
 
+	final private IContextFunction function;
+	final private EclipseContext originatingContext;
+	final private String name;
+
 	private Object cachedValue = NotAValue;
-	private IContextFunction function;
-	private EclipseContext originatingContext;
 	private boolean computing; // cycle detection
-	private String name;
 
 	public ValueComputation(String name, IEclipseContext originatingContext, IContextFunction computedValue) {
 		this.originatingContext = (EclipseContext) originatingContext;
 		this.function = computedValue;
 		this.name = name;
+		init();
 	}
 
 	public void handleInvalid(ContextChangeEvent event, Set<Scheduled> scheduled) {
@@ -66,4 +68,41 @@ public class ValueComputation extends Computation {
 			return super.toString();
 		return function.toString();
 	}
+
+	protected int calcHashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((function == null) ? 0 : function.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((originatingContext == null) ? 0 : originatingContext.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ValueComputation other = (ValueComputation) obj;
+		if (function == null) {
+			if (other.function != null)
+				return false;
+		} else if (!function.equals(other.function))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (originatingContext == null) {
+			if (other.originatingContext != null)
+				return false;
+		} else if (!originatingContext.equals(other.originatingContext))
+			return false;
+		return true;
+	}
+
 }
