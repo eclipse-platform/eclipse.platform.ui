@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.swt.widgets.Composite;
@@ -115,19 +116,12 @@ public class ViewSashContainer extends PartSashContainer {
 			} else {
                 ViewStack folder = new ViewStack(page);
                 folder.setID(partID);
-
-				result.add(folder.restoreState(childMem.getChild(IWorkbenchConstants.TAG_FOLDER)));
-
-				// 'Durable' folders don't need placeholder containers
-				if (page.window.getWindowAdvisor().isDurableFolder(page.getPerspective().getId(),
-						partID)) {
-					folder.setDurable(true);
-					part = folder;
-				} else {
-					ContainerPlaceholder placeholder = new ContainerPlaceholder(partID);
-					placeholder.setRealContainer(folder);
-					part = placeholder;
-				}
+                result.add(folder.restoreState(childMem
+                        .getChild(IWorkbenchConstants.TAG_FOLDER)));
+                ContainerPlaceholder placeholder = new ContainerPlaceholder(
+                        partID);
+                placeholder.setRealContainer(folder);
+                part = placeholder;
             }
             // 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
             part.setContainer(this);
