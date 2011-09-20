@@ -253,9 +253,11 @@ public class ModelServiceImpl implements EModelService {
 		MUIElement clone = (MUIElement) EcoreUtil.copy(eObj);
 
 		if (snippetContainer != null) {
+			MUIElement snippet = findSnippet(snippetContainer, element.getElementId());
+			if (snippet != null)
+				snippetContainer.getSnippets().remove(snippet);
 			snippetContainer.getSnippets().add(clone);
 		}
-
 		return clone;
 	}
 

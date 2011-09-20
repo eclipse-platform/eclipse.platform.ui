@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,13 +118,10 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	}
 
 	private MUIElement removeSnippet(MSnippetContainer snippetContainer, String id) {
-		List<MUIElement> snippets = snippetContainer.getSnippets();
-		for (int i = 0; i < snippets.size(); i++) {
-			if (snippets.get(i).getElementId().equals(id)) {
-				return snippets.remove(i);
-			}
-		}
-		return null;
+		MUIElement snippet = modelService.findSnippet(snippetContainer, id);
+		if (snippet != null)
+			snippetContainer.getSnippets().remove(snippet);
+		return snippet;
 	}
 
 	/**
