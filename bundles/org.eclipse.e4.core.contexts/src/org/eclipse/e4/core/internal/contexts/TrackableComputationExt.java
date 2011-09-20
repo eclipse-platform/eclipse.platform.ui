@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
-import java.util.List;
+import java.util.Set;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
@@ -18,16 +18,26 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 public class TrackableComputationExt extends Computation {
 
 	final private IEclipseContext originatingContext;
-	private RunAndTrack runnable;
+	final private RunAndTrack runnable;
+
 	private ContextChangeEvent cachedEvent;
 
 	public TrackableComputationExt(RunAndTrack runnable, IEclipseContext originatingContext) {
 		this.runnable = runnable;
 		this.originatingContext = originatingContext;
+		init();
 	}
 
 	public int hashCode() {
-		return 31 + ((runnable == null) ? 0 : runnable.hashCode());
+		return hashCode;
+	}
+
+	protected int calcHashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((originatingContext == null) ? 0 : originatingContext.hashCode());
+		result = prime * result + ((runnable == null) ? 0 : runnable.hashCode());
+		return result;
 	}
 
 	public boolean equals(Object obj) {
@@ -38,6 +48,11 @@ public class TrackableComputationExt extends Computation {
 		if (getClass() != obj.getClass())
 			return false;
 		TrackableComputationExt other = (TrackableComputationExt) obj;
+		if (originatingContext == null) {
+			if (other.originatingContext != null)
+				return false;
+		} else if (!originatingContext.equals(other.originatingContext))
+			return false;
 		if (runnable == null) {
 			if (other.runnable != null)
 				return false;
@@ -46,7 +61,8 @@ public class TrackableComputationExt extends Computation {
 		return true;
 	}
 
-	protected void doHandleInvalid(ContextChangeEvent event, List<Scheduled> scheduledList) {
+	public void handleInvalid(ContextChangeEvent event, Set<Scheduled> scheduledList) {
+		//	don't call super - we keep the link unless uninjected / disposed
 		int eventType = event.getEventType();
 		if (eventType == ContextChangeEvent.INITIAL || eventType == ContextChangeEvent.DISPOSE) {
 			// process right away
@@ -70,8 +86,7 @@ public class TrackableComputationExt extends Computation {
 			}
 		}
 
-		Computation oldComputation = EclipseContext.localComputation().get();
-		EclipseContext.localComputation().set(this);
+		((EclipseContext) originatingContext).pushComputation(this);
 		boolean result = true;
 		try {
 			if (cachedEvent != null) {
@@ -81,7 +96,7 @@ public class TrackableComputationExt extends Computation {
 						cachedEvent = null;
 				} else {
 					if (eventType != ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED) {
-						result = runnable.changed(cachedEvent.getContext());
+						result = runnable.changed(originatingContext);
 						cachedEvent = null;
 					}
 				}
@@ -91,24 +106,25 @@ public class TrackableComputationExt extends Computation {
 					result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments());
 				else {
 					if (eventType != ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED)
-						result = runnable.changed(event.getContext());
+						result = runnable.changed(originatingContext);
 				}
 			}
 		} finally {
-			EclipseContext.localComputation().set(oldComputation);
+			((EclipseContext) originatingContext).popComputation(this);
 		}
 		EclipseContext eventsContext = (EclipseContext) event.getContext();
 
 		if (eventType == ContextChangeEvent.DISPOSE) {
 			if (originatingContext.equals(eventsContext)) {
-				removeAll();
+				((EclipseContext) originatingContext).removeRAT(this);
+				invalidateComputation();
 				return false;
 			}
 		}
-		if (result)
-			startListening();
-		else
-			removeAll();
+		if (!result) {
+			((EclipseContext) originatingContext).removeRAT(this);
+			invalidateComputation();
+		}
 		return result;
 	}
 
@@ -116,11 +132,4 @@ public class TrackableComputationExt extends Computation {
 		return runnable.toString();
 	}
 
-	public void startAccessRecording() {
-		EclipseContext.localComputation().set(this);
-	}
-
-	public void stopAccessRecording() {
-		EclipseContext.localComputation().set(null);
-	}
 }

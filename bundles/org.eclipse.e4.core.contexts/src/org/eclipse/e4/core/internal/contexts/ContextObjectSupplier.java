@@ -12,6 +12,7 @@ package org.eclipse.e4.core.internal.contexts;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Stack;
 import javax.inject.Named;
 import org.eclipse.e4.core.contexts.Active;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -122,9 +123,6 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 
 	final private IEclipseContext context;
 
-	private Computation outerComputation;
-	private int paused = 0;
-
 	public ContextObjectSupplier(IEclipseContext context, IInjector injector) {
 		this.context = context;
 	}
@@ -205,16 +203,15 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 	}
 
 	synchronized public void pauseRecording() {
-		if (paused == 0)
-			outerComputation = EclipseContext.localComputation().get();
-		EclipseContext.localComputation().set(null);
-		paused++;
+		Stack<Computation> current = EclipseContext.getCalculatedComputations();
+		current.push(null);
 	}
 
 	synchronized public void resumeRecoding() {
-		paused--;
-		if (paused == 0)
-			EclipseContext.localComputation().set(outerComputation);
+		Stack<Computation> current = EclipseContext.getCalculatedComputations();
+		Computation plug = current.pop();
+		if (plug != null)
+			throw new IllegalArgumentException("Internal error in nested computation processing");
 	}
 
 	static public ContextObjectSupplier getObjectSupplier(IEclipseContext context, IInjector injector) {

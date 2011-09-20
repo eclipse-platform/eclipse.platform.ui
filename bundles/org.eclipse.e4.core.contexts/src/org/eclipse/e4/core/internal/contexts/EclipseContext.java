@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,16 @@ package org.eclipse.e4.core.internal.contexts;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -69,11 +72,53 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
-	static ThreadLocal<Computation> currentComputation = new ThreadLocal<Computation>();
+	static class ComputationReference {
 
-	private Map<String, Set<Computation>> listeners = Collections.synchronizedMap(new HashMap<String, Set<Computation>>());
+		final private WeakReference<Computation> ref;
 
-	final Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
+		public ComputationReference(Computation computation) {
+			ref = new WeakReference<Computation>(computation);
+		}
+
+		public Computation get() {
+			Computation computation = ref.get();
+			if (computation == null)
+				return null;
+			if (computation.isValid())
+				return computation;
+			return null;
+		}
+
+		@Override
+		public int hashCode() {
+			Computation computation = get();
+			if (computation == null)
+				return 0;
+			return computation.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Computation c1 = get();
+			Computation c2 = ((ComputationReference) obj).get();
+			if ((c1 == null) && (c2 == null))
+				return true;
+			if ((c1 == null) || (c2 == null))
+				return false;
+			return c1.equals(c2);
+		}
+	}
+
+	private Map<String, HashSet<ComputationReference>> listeners = Collections.synchronizedMap(new HashMap<String, HashSet<ComputationReference>>());
+	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
+	private Set<Computation> activeRATs = new HashSet<Computation>();
+
 	final Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
 
 	private final ILookupStrategy strategy;
@@ -85,6 +130,8 @@ public class EclipseContext implements IEclipseContext {
 	private Set<WeakReference<EclipseContext>> children = new HashSet<WeakReference<EclipseContext>>();
 
 	private Set<IContextDisposalListener> notifyOnDisposal = new HashSet<IContextDisposalListener>();
+
+	static private ThreadLocal<Stack<Computation>> currentComputation = new ThreadLocal<Stack<Computation>>();
 
 	/**
 	 * A context key (value "activeChildContext") that identifies another {@link IEclipseContext}
@@ -167,11 +214,8 @@ public class EclipseContext implements IEclipseContext {
 		}
 
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
-		List<Scheduled> scheduled = new ArrayList<Scheduled>();
-		Set<Computation> allComputations = new HashSet<Computation>();
-		for (Set<Computation> computations : listeners.values()) {
-			allComputations.addAll(computations);
-		}
+		Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
+		Set<Computation> allComputations = getListeners();
 		listeners.clear();
 		for (Computation computation : allComputations) {
 			computation.handleInvalid(event, scheduled);
@@ -216,9 +260,8 @@ public class EclipseContext implements IEclipseContext {
 		trackAccess(name);
 		if (this == originatingContext) {
 			ValueComputation valueComputation = localValueComputations.get(name);
-			if (valueComputation != null) {
+			if (valueComputation != null && valueComputation.isValid())
 				return valueComputation.get();
-			}
 		}
 
 		Object result = null;
@@ -233,18 +276,21 @@ public class EclipseContext implements IEclipseContext {
 		// if we found something, compute the concrete value and return
 		if (result != null) {
 			if (result instanceof IContextFunction) {
-				ValueComputation valueComputation = new ValueComputation(this, originatingContext, name, ((IContextFunction) result));
+				ValueComputation valueComputation = new ValueComputation(name, originatingContext, ((IContextFunction) result));
+
+				// do calculations before adding listeners
+				result = valueComputation.get();
+
 				originatingContext.localValueComputations.put(name, valueComputation);
 
-				// the cached value depends on all entries with this name and all parent relationships
-				// between the originating context and this context, inclusive
+				// need to manually add dependency as the computation haven't being created yet at the time 
+				// we walked context hierarchy to find its definition
 				for (EclipseContext step = originatingContext; step != null; step = step.getParent()) {
-					valueComputation.addDependency(step, name);
+					step.addDependency(name, valueComputation);
 					if (step == this)
 						break;
-					valueComputation.addDependency(step, PARENT);
+					step.addDependency(PARENT, valueComputation);
 				}
-				result = valueComputation.get();
 			}
 			return result;
 		}
@@ -262,25 +308,32 @@ public class EclipseContext implements IEclipseContext {
 	 * The given name has been modified or removed in this context. Invalidate all local value
 	 * computations and listeners that depend on this name.
 	 */
-	public void invalidate(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
-		if (DebugHelper.DEBUG_NAMES)
-			System.out.println("[context] invalidating \"" + name + "\" on " + toString()); //$NON-NLS-1$ //$NON-NLS-2$
-		removeLocalValueComputations(name);
-		handleInvalid(name, eventType, oldValue, scheduled);
-	}
-
-	/**
-	 * The value of the given name has changed in this context. This either means the value has been
-	 * changed directly, or the value is a function that has been invalidated (one of the function's
-	 * dependencies has changed).
-	 */
-	void handleInvalid(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
-		Set<Computation> computations = listeners.remove(name);
-		if (computations == null)
-			return;
-		ContextChangeEvent event = new ContextChangeEvent(this, eventType, null, name, oldValue);
-		for (Computation computation : computations) {
+	public void invalidate(String name, int eventType, Object oldValue, Set<Scheduled> scheduled) {
+		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.ADDED, null, name, oldValue);
+		ValueComputation computation = localValueComputations.get(name);
+		if (computation != null && computation.isValid()) {
 			computation.handleInvalid(event, scheduled);
+		}
+		Set<ComputationReference> namedComputations = listeners.get(name);
+		if (namedComputations != null) {
+			int invalidListenersCount = 0;
+			for (ComputationReference listenerRef : namedComputations) {
+				Computation listener = listenerRef.get();
+				if (listener != null && listener.isValid())
+					listener.handleInvalid(event, scheduled);
+				else
+					invalidListenersCount++;
+			}
+			// more than half of listeners are invalid, clean the listener list
+			if ((invalidListenersCount << 2) > namedComputations.size()) {
+				HashSet<ComputationReference> tmp = new HashSet<ComputationReference>(namedComputations.size() - invalidListenersCount);
+				for (ComputationReference listenerRef : namedComputations) {
+					Computation listener = listenerRef.get();
+					if (listener != null && listener.isValid())
+						tmp.add(listenerRef);
+				}
+				listeners.put(name, tmp);
+			}
 		}
 	}
 
@@ -292,37 +345,27 @@ public class EclipseContext implements IEclipseContext {
 	public void remove(String name) {
 		if (isSetLocally(name)) {
 			Object oldValue = localValues.remove(name);
-			List<Scheduled> scheduled = new ArrayList<Scheduled>();
+			Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
 			invalidate(name, ContextChangeEvent.REMOVED, oldValue, scheduled);
 			processScheduled(scheduled);
 		}
 	}
 
-	/**
-	 * Removes all local value computations associated with the given name.
-	 * @param name The name to remove
-	 */
-	public void removeLocalValueComputations(String name) {
-		synchronized (localValueComputations) {
-			ValueComputation removed = localValueComputations.remove(name);
-			if (removed != null)
-				removed.stopListening(null, name);
-		}
-	}
-
 	public void runAndTrack(final RunAndTrack runnable) {
-		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.INITIAL, null, null, null);
 		TrackableComputationExt computation = new TrackableComputationExt(runnable, this);
-		computation.update(event);
+		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.INITIAL, null, null, null);
+		boolean result = computation.update(event);
+		if (result)
+			activeRATs.add(computation);
 	}
 
-	protected void processScheduled(List<Scheduled> scheduledList) {
-		HashSet<Scheduled> sent = new HashSet<Scheduled>(scheduledList.size());
+	public void removeRAT(Computation computation) {
+		activeRATs.remove(computation);
+	}
+
+	protected void processScheduled(Set<Scheduled> scheduledList) {
 		for (Iterator<Scheduled> i = scheduledList.iterator(); i.hasNext();) {
 			Scheduled scheduled = i.next();
-			// don't send the same event twice
-			if (!sent.add(scheduled))
-				continue;
 			scheduled.runnable.update(scheduled.event);
 		}
 	}
@@ -338,20 +381,20 @@ public class EclipseContext implements IEclipseContext {
 		boolean containsKey = localValues.containsKey(name);
 		Object oldValue = localValues.put(name, value);
 		if (!containsKey || value != oldValue) {
-			List<Scheduled> scheduled = new ArrayList<Scheduled>();
+			Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
 			invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
 			processScheduled(scheduled);
 		}
 	}
 
 	public void modify(String name, Object value) {
-		List<Scheduled> scheduled = new ArrayList<Scheduled>();
+		Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
 		if (!internalModify(name, value, scheduled))
 			set(name, value);
 		processScheduled(scheduled);
 	}
 
-	public boolean internalModify(String name, Object value, List<Scheduled> scheduled) {
+	public boolean internalModify(String name, Object value, Set<Scheduled> scheduled) {
 		boolean containsKey = localValues.containsKey(name);
 		if (containsKey) {
 			if (!checkModifiable(name)) {
@@ -381,7 +424,7 @@ public class EclipseContext implements IEclipseContext {
 			return; // no-op
 		if (parentContext != null)
 			parentContext.removeChild(this);
-		List<Scheduled> scheduled = new ArrayList<Scheduled>();
+		Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
 		handleReparent((EclipseContext) parent, scheduled);
 		localValues.put(PARENT, parent);
 		if (parent != null)
@@ -399,10 +442,22 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	private void trackAccess(String name) {
-		Computation computation = currentComputation.get();
-		if (computation != null) {
-			computation.addDependency(this, name);
+		Stack<Computation> current = getCalculatedComputations();
+		if (current.isEmpty())
+			return;
+		Computation computation = current.peek(); // only track in the top-most one
+		if (computation == null)
+			return;
+		addDependency(name, computation);
+	}
+
+	public void addDependency(String name, Computation computation) {
+		HashSet<ComputationReference> nameListeners = listeners.get(name);
+		if (nameListeners == null) {
+			nameListeners = new HashSet<ComputationReference>();
+			listeners.put(name, nameListeners);
 		}
+		nameListeners.add(new ComputationReference(computation));
 	}
 
 	public void declareModifiable(String name) {
@@ -431,16 +486,28 @@ public class EclipseContext implements IEclipseContext {
 		if (object == null)
 			return;
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.UNINJECTED, new Object[] {object}, null, null);
-		// TBD computation here removes listeners. We should do that inside this method instead
-		Set<Computation> computations = getListeners();
-		Computation[] ls = computations.toArray(new Computation[computations.size()]);
-		for (Computation computation : ls) {
+		Set<Computation> comps = getListeners();
+		for (Computation computation : comps) {
 			if (computation instanceof TrackableComputationExt)
 				((TrackableComputationExt) computation).update(event);
 		}
 	}
 
-	private void handleReparent(EclipseContext newParent, List<Scheduled> scheduled) {
+	public Set<Computation> getListeners() {
+		Collection<HashSet<ComputationReference>> collection = listeners.values();
+		Set<Computation> comps = new HashSet<Computation>();
+
+		for (Set<ComputationReference> set : collection) {
+			for (ComputationReference ref : set) {
+				Computation comp = ref.get();
+				if (comp != null && comp.isValid())
+					comps.add(comp);
+			}
+		}
+		return comps;
+	}
+
+	private void handleReparent(EclipseContext newParent, Set<Scheduled> scheduled) {
 		// TBD should we lock waiting list while doing reparent?
 		// Add "boolean inReparent" on the root context and process right away?
 		processWaiting();
@@ -460,6 +527,7 @@ public class EclipseContext implements IEclipseContext {
 				invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
 		}
 		localValueComputations.clear();
+		// XXX localValueComputations -> all invalidate
 	}
 
 	public void processWaiting() {
@@ -569,10 +637,6 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
-	static public ThreadLocal<Computation> localComputation() {
-		return currentComputation;
-	}
-
 	public IEclipseContext getActiveChild() {
 		return (EclipseContext) internalGet(this, ACTIVE_CHILD, true);
 	}
@@ -638,7 +702,11 @@ public class EclipseContext implements IEclipseContext {
 	public Map<String, Object> cachedCachedContextFunctions() {
 		Map<String, Object> result = new HashMap<String, Object>(localValueComputations.size());
 		for (String string : localValueComputations.keySet()) {
-			result.put(string, localValueComputations.get(string).get());
+			ValueComputation vc = localValueComputations.get(string);
+			if (vc == null)
+				continue;
+			if (vc.isValid())
+				result.put(string, localValueComputations.get(string).get());
 		}
 		return result;
 	}
@@ -653,38 +721,37 @@ public class EclipseContext implements IEclipseContext {
 
 	// This method is for debug only, do not use externally
 	public Set<Computation> getListeners(String name) {
-		Set<Computation> tmp = listeners.get(name);
+		HashSet<ComputationReference> tmp = listeners.get(name);
+		if (tmp == null)
+			return null;
 		Set<Computation> result = new HashSet<Computation>(tmp.size());
-		result.addAll(tmp);
+		for (ComputationReference ref : tmp) {
+			Computation listener = ref.get();
+			if (listener != null && listener.isValid())
+				result.add(listener);
+		}
 		return result;
 	}
 
-	public void addListener(Computation computation, Set<String> names) {
-		for (String name : names) {
-			if (listeners.containsKey(name)) {
-				Set<Computation> existingDependencies = listeners.get(name);
-				existingDependencies.add(computation);
-			} else {
-				Set<Computation> computations = new HashSet<Computation>();
-				computations.add(computation);
-				listeners.put(name, computations);
-			}
+	static public Stack<Computation> getCalculatedComputations() {
+		Stack<Computation> current = currentComputation.get();
+		if (current == null) {
+			current = new Stack<Computation>();
+			currentComputation.set(current);
 		}
+		return current;
 	}
 
-	public void removeListener(Computation computation) {
-		for (Map.Entry<String, Set<Computation>> entry : listeners.entrySet()) {
-			Set<Computation> computations = entry.getValue();
-			computations.remove(computation);
-		}
+	public void pushComputation(Computation comp) {
+		Stack<Computation> current = getCalculatedComputations();
+		current.push(comp);
 	}
 
-	public Set<Computation> getListeners() {
-		Set<Computation> computations = new HashSet<Computation>();
-		for (Map.Entry<String, Set<Computation>> entry : listeners.entrySet()) {
-			computations.addAll(entry.getValue());
-		}
-		return computations;
+	public void popComputation(Computation comp) {
+		Stack<Computation> current = getCalculatedComputations();
+		Computation ended = current.pop();
+		if (ended != comp)
+			throw new IllegalArgumentException("Internal error: Invalid nested computation processing"); //$NON-NLS-1$
 	}
 
 }

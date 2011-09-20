@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,91 +10,37 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 
 abstract public class Computation {
+	
+	abstract protected int calcHashCode();
+	abstract public boolean equals(Object obj);
 
-	/**
-	 * Computations must define equals because they are stored in a set.
-	 */
-	public abstract boolean equals(Object arg0);
+	/* final */ protected int hashCode;
+	protected boolean validComputation = true;
 
-	/**
-	 * Computations must define hashCode because they are stored in a set.
-	 */
-	public abstract int hashCode();
-
-	protected Map<EclipseContext, Set<String>> dependencies = new HashMap<EclipseContext, Set<String>>();
-
-	public void addDependency(EclipseContext context, String name) {
-		Set<String> properties = dependencies.get(context);
-		if (properties == null) {
-			properties = new HashSet<String>(4);
-			dependencies.put(context, properties);
-		}
-		properties.add(name);
+	public void handleInvalid(ContextChangeEvent event, Set<Scheduled> scheduled) {
+		invalidateComputation();
 	}
 
-	protected void doHandleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
-		// nothing to do in default computation
+	public boolean isValid() {
+		return validComputation;
 	}
 
-	public void handleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
-		String name = event.getName();
-		EclipseContext context = (EclipseContext) event.getContext();
-
-		stopListening(context, name);
-		doHandleInvalid(event, scheduled);
+	public void invalidateComputation() {
+		validComputation = false;
 	}
 
-	/**
-	 * Remove this computation from all contexts that are tracking it
-	 */
-	protected void removeAll() {
-		for (EclipseContext c : dependencies.keySet()) {
-			c.removeListener(this);
-		}
-		dependencies.clear();
+	@Override
+	public int hashCode() {
+		return hashCode;
 	}
 
-	public void startListening() {
-		for (EclipseContext c : dependencies.keySet()) {
-			c.addListener(this, dependencies.get(c));
-		}
+	protected void init() {
+		hashCode = calcHashCode();
 	}
 
-	public void stopListening(EclipseContext context, String name) {
-		if (context == null) {
-			Set<EclipseContext> dependentContexts = dependencies.keySet();
-			for (EclipseContext dependentContext : dependentContexts) {
-				dependentContext.removeListener(this);
-			}
-			return;
-		}
-		if (name == null) {
-			dependencies.remove(context);
-			context.removeListener(this);
-			return;
-		}
-		Set<String> properties = dependencies.get(context);
-		if (properties != null) {
-			properties.remove(name);
-			// if we no longer track any values in the context, remove dependency
-			if (properties.isEmpty()) {
-				dependencies.remove(context);
-				context.removeListener(this);
-			}
-		}
-	}
-
-	public Set<String> dependsOnNames(IEclipseContext context) {
-		return dependencies.get(context);
-	}
 
 }
