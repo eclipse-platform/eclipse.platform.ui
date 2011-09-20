@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;
 
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -18,9 +19,12 @@ import javax.inject.Inject;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -30,8 +34,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -65,19 +67,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
-import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.service.event.Event;
@@ -90,6 +87,12 @@ public class PerspectiveSwitcher {
 
 	@Inject
 	EModelService modelService;
+
+	@Inject
+	private EHandlerService handlerService;
+
+	@Inject
+	private ECommandService commandService;
 
 	@Inject
 	private MWindow window;
@@ -425,60 +428,11 @@ public class PerspectiveSwitcher {
 		return PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id);
 	}
 
-	private MPerspective getPerspectiveFor(IPerspectiveDescriptor desc) {
-		MPerspectiveStack stack = getPerspectiveStack();
-		if (stack != null) {
-			// Create an item for each perspective that should show up
-			for (MPerspective persp : stack.getChildren()) {
-				if (persp.getElementId().equals(desc.getId())) {
-					return persp;
-				}
-			}
-		}
-		return null;
-	}
-
-	// FIXME singletons, singletons, everywhere!!
-	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=313771
-	private void openPerspective(PerspectiveDescriptor desc) {
-		IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
-		IWorkbenchPage page = workbenchWindow.getActivePage();
-		if (page == null) {
-			try {
-				// don't have a page, need to open one
-				workbenchWindow.openPage(desc.getId(),
-						((Workbench) workbenchWindow.getWorkbench()).getDefaultPageInput());
-			} catch (WorkbenchException e) {
-				IStatus errorStatus = new Status(
-						IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH,
-						NLS.bind(WorkbenchMessages.Workbench_showPerspectiveError, desc.getLabel()),
-						e);
-				StatusManager.getManager().handle(errorStatus, StatusManager.SHOW);
-			}
-		} else {
-			page.setPerspective(desc);
-		}
-	}
-
 	private void selectPerspective() {
-		SelectPerspectiveDialog dialog = new SelectPerspectiveDialog(psTB.getShell(), PlatformUI
-				.getWorkbench().getPerspectiveRegistry());
-		dialog.open();
-		if (dialog.getReturnCode() == Window.CANCEL) {
-			return;
-		}
-		IPerspectiveDescriptor descriptor = dialog.getSelection();
-		if (descriptor != null) {
-			MPerspective persp = getPerspectiveFor(descriptor);
-			if (persp != null) {
-				if (!persp.isToBeRendered())
-					persp.setToBeRendered(true);
-				persp.getParent().setSelectedElement(persp);
-			} else {
-				openPerspective((PerspectiveDescriptor) descriptor);
-			}
-		}
+		// let the handler perform the work to consolidate all the code
+		ParameterizedCommand command = commandService.createCommand(
+				IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE, Collections.EMPTY_MAP);
+		handlerService.executeHandler(command);
 	}
 
 	private void openMenuFor(ToolItem item, MPerspective persp) {
