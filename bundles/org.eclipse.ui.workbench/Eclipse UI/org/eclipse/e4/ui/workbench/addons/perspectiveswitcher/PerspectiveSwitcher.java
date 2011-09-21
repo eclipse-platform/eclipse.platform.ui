@@ -175,7 +175,6 @@ public class PerspectiveSwitcher {
 			String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
 			Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
 
-			// TODO: Do we need this check?
 			MWindow perspWin = modelService.getTopLevelWindowFor(changedElement);
 			MWindow switcherWin = modelService.getTopLevelWindowFor(psME);
 			if (perspWin != switcherWin)
@@ -191,6 +190,9 @@ public class PerspectiveSwitcher {
 				}
 			}
 
+			// update the layout
+			psTB.pack();
+			psTB.getShell().layout(new Control[] { psTB }, SWT.DEFER);
 		}
 
 		private void updateToolItem(ToolItem ti, String attName, Object newValue) {
