@@ -992,7 +992,7 @@ public class PartServiceImpl implements EPartService {
 			if (candidate != null) {
 				activate(candidate);
 			}
-		} else if (!getParts().contains(activePart)) {
+		} else if (!partActivationHistory.isValid(activePart) || !getParts().contains(activePart)) {
 			MPart candidate = partActivationHistory.getNextActivationCandidate(getParts(),
 					activePart);
 			if (candidate != null) {
@@ -1206,5 +1206,4 @@ public class PartServiceImpl implements EPartService {
 		}
 		return (MElementContainer<MUIElement>) outerContainer;
 	}
-
 }

@@ -89,7 +89,7 @@ class PartActivationHistory {
 	/**
 	 * Checks to see if this element and its parents are actually being rendered.
 	 */
-	private boolean isValid(MUIElement element) {
+	boolean isValid(MUIElement element) {
 		if (element == null || !element.isToBeRendered() || !element.isVisible()) {
 			return false;
 		}
@@ -217,7 +217,7 @@ class PartActivationHistory {
 				validCandidates.add(validPart);
 			}
 		}
-		
+
 		MPart candidate = findActivationCandidate(validCandidates);
 		if (candidate == null) {
 			validParts.removeAll(validCandidates);
