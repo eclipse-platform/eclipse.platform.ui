@@ -73,7 +73,8 @@ public interface IHelpUIConstants {
 	public static final String HV_BROWSER_PAGE = "browser-page"; //$NON-NLS-1$
 	public static final String HV_RELATED_TOPICS = "related-topics"; //$NON-NLS-1$
 	public static final String HV_CONTEXT_HELP_PAGE = "context-help-page"; //$NON-NLS-1$
-
+	public static final String HV_MISSING_CONTENT = "missing-content"; //$NON-NLS-1$
+	
 	public static final String HV_INDEX = "index"; //$NON-NLS-1$
 	public static final String HV_INDEX_TYPEIN = "index-typein"; //$NON-NLS-1$
 	public static final String HV_INDEX_PAGE = "index-page"; //$NON-NLS-1$

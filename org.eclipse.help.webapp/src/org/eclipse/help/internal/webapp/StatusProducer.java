@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import java.util.Locale;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpContentProducer;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.MissingContentManager;
 import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.util.ProductPreferences;
@@ -31,12 +32,6 @@ import org.eclipse.help.internal.webapp.data.WebappPreferences;
 
 public class StatusProducer implements IHelpContentProducer {
 
-	// Remote Status 'page' href
-	public static final String REMOTE_STATUS_HREF = "NetworkHelpStatus.html"; //$NON-NLS-1$
-	// Remote Status from bad topic 'page' href
-	public static final String MISSING_TOPIC_HREF = "MissingTopicStatus.html"; //$NON-NLS-1$
-	// Remote Status from bad topic 'page' href
-	public static final String SEARCH_REMOTE_STATUS_HREF = "SearchNetworkHelpStatus.html"; //$NON-NLS-1$
 	// Default TAB size
 	private static final String TAB = "  "; //$NON-NLS-1$
 	// index.jsp
@@ -58,9 +53,25 @@ public class StatusProducer implements IHelpContentProducer {
 
 		// Only accept requests for our pages.  Otherwise
 		// return null so Eclipse tries to find the right help
-		if (!href.equalsIgnoreCase(REMOTE_STATUS_HREF) && 
-			!href.equalsIgnoreCase(MISSING_TOPIC_HREF) &&
-			!href.equalsIgnoreCase(SEARCH_REMOTE_STATUS_HREF))
+		
+
+		// If this is called because of unresolved placeholders create a list of
+		// the placeholders
+		if (href.equalsIgnoreCase(MissingContentManager.MISSING_BOOKS_HREF)) {
+			return getMissingBooksPage(locale, false);
+		}
+		if (href.equalsIgnoreCase(MissingContentManager.MISSING_BOOKS_HELP_VIEW_HREF)) {
+			return getMissingBooksPage(locale, true);
+		}
+		
+		if (href.startsWith(MissingContentManager.MISSING_TOPIC_PATH)) {
+			String topicPath = href.substring(MissingContentManager.MISSING_TOPIC_PATH.length());
+			return getMissingTopicPage(topicPath, locale);
+		}
+		
+		if (!href.equalsIgnoreCase(MissingContentManager.REMOTE_STATUS_HREF) && 
+			!href.equalsIgnoreCase(MissingContentManager.MISSING_TOPIC_HREF) &&
+			!href.equalsIgnoreCase(MissingContentManager.REMOTE_STATUS_HELP_VIEW_HREF))
 			return null;
 		
 		StringBuffer pageBuffer = new StringBuffer();
@@ -72,16 +83,22 @@ public class StatusProducer implements IHelpContentProducer {
 		RemoteStatusData.clearCache();
 
 		// Check to see if there are any enabled remote sites.
-		// If not, return null - default topic not found will display
 		if (remoteSites.isEmpty())
 		{
-			return null;
+			if ( href.equalsIgnoreCase(MissingContentManager.MISSING_TOPIC_HREF) ) {
+				// Return null - default topic not found will display
+				return null;
+			} else {
+				// The help unavailable page has been refreshed after fixing a network connection, report
+				// that everything is OK
+				return getNetworkOKPage(locale);
+			}
 		}
-		
+			
 		// If this is a call from an invalid topic,
 		// check to see if a predefined error page exists
 		// in the preferences
-		if (href.equalsIgnoreCase(MISSING_TOPIC_HREF)){
+		if (href.equalsIgnoreCase(MissingContentManager.MISSING_TOPIC_HREF)){
             String errorPage = Platform.getPreferencesService().getString(
             		HelpBasePlugin.PLUGIN_ID, 
             		"page_not_found",  //$NON-NLS-1$
@@ -106,11 +123,11 @@ public class StatusProducer implements IHelpContentProducer {
 		
 
 		// Write HTML header and body beginning.
-		pageBuffer.append(getHtmlHead(locale));
-		pageBuffer.append(getBeginHtmlBody());
+		String title = WebappResources.getString("remoteStatusTitle", locale); //$NON-NLS-1$
+		pageBuffer.append(getHtmlHead(locale, title));
+		pageBuffer.append(getBeginHtmlBody(true));
 		
-		
-
+	
 		// Check to see if all remote sites failed,
 		// or just a subset
 		boolean allFailed;
@@ -127,19 +144,12 @@ public class StatusProducer implements IHelpContentProducer {
 		
 
 		// Add a close link to top
-		if (href.equalsIgnoreCase(REMOTE_STATUS_HREF))
+		if (href.equalsIgnoreCase(MissingContentManager.REMOTE_STATUS_HREF))
 		{
-			WebappPreferences prefs = new WebappPreferences();
-			String homepage = "/help/topic"+prefs.getHelpHome(); //$NON-NLS-1$
-			
-			pageBuffer.append(tab(3)+"<div style=\"position:absolute;right:4px;top:4px;\">\n"); //$NON-NLS-1$
-			pageBuffer.append(tab(4)+"<table>\n"+tab(5)+"<tr>\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			pageBuffer.append(tab(6)+"<td style=\"background-color:white;border-width:1px;border-style:solid;border-color:grey;\">"+makeAnchor(homepage,WebappResources.getString("Close", locale),"style=\"font-size:.8em;\"",false)+"</td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			pageBuffer.append(tab(5)+"</tr>\n"+tab(4)+"</table>\n"+tab(3)+"</div>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$		
-		}
+			addCloseLink(locale, pageBuffer);
+		}	
 		
-		
-		if (href.equalsIgnoreCase(MISSING_TOPIC_HREF))
+		if (href.equalsIgnoreCase(MissingContentManager.MISSING_TOPIC_HREF))
 			pageBuffer.append(tab(3)+"<p>"+WebappResources.getString("topicUnavailable",locale)+"</p>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		// Write potential causes, based on some or
@@ -187,28 +197,148 @@ public class StatusProducer implements IHelpContentProducer {
 					new String[]{getActiveLink(locale)});
 
 		pageBuffer.append(tab(3)+activeLink);
-
-		pageBuffer.append(END_BODY_HTML);
 		
-		
-//		String tmp = pluginID+" , "+href; //$NON-NLS-1$
-//		System.out.println(tmp);
-		
+		if (href.equalsIgnoreCase(MissingContentManager.REMOTE_STATUS_HELP_VIEW_HREF)) {
+			// Add link to retest
+			pageBuffer.append(tab(3)+"<h2>"+WebappResources.getString("RemoteHelpRetestTitle", locale)+"</h2>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			pageBuffer.append(tab(3)+"<p>\n"); //$NON-NLS-1$
+			pageBuffer.append(tab(4)+ "<a href=helpview:checkremote>"+ //$NON-NLS-1$
+					WebappResources.getString("RemoteHelpRetestLink", locale) + "</a>\n"); //$NON-NLS-1$ //$NON-NLS-2$			
+			pageBuffer.append(tab(3)+ "</p>\n"); //$NON-NLS-1$
+	
+			pageBuffer.append(END_BODY_HTML);	
+		}		
 		ByteArrayInputStream bais = new ByteArrayInputStream(pageBuffer.toString().getBytes());
-		
 		return bais;
 	}
 
+	public void addCloseLink(Locale locale, StringBuffer pageBuffer) {
+		WebappPreferences prefs = new WebappPreferences();
+		String homepage = "/help/topic"+prefs.getHelpHome(); //$NON-NLS-1$		
+		pageBuffer.append(tab(3)+"<div style=\"position:absolute;right:4px;top:4px;\">\n"); //$NON-NLS-1$
+		pageBuffer.append(tab(4)+"<table>\n"+tab(5)+"<tr>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		pageBuffer.append(tab(6)+"<td style=\"background-color:white;border-width:1px;border-style:solid;border-color:grey;\">"+makeAnchor(homepage,WebappResources.getString("Close", locale),"style=\"font-size:.8em;\"",false)+"</td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		pageBuffer.append(tab(5)+"</tr>\n"+tab(4)+"</table>\n"+tab(3)+"</div>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$		
+	}
 	
+	private InputStream getNetworkOKPage(Locale locale) {
+		StringBuffer pageBuffer = new StringBuffer();
+		// Write HTML header and body beginning.
+		String title = WebappResources.getString("networkHelpAvailable", locale); //$NON-NLS-1$
+		pageBuffer.append(getHtmlHead(locale, title));
+		pageBuffer.append(getBeginHtmlBody(false));
+		pageBuffer.append(tab(3)+"<h1>"+title+"</h1>\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		pageBuffer.append(tab(3) + "<p>\n"); //$NON-NLS-1$
+		pageBuffer.append(WebappResources.getString("networkHelpAvailableDetails", locale)); //$NON-NLS-1$
+		pageBuffer.append("</p>\n"); //$NON-NLS-1$
+		pageBuffer.append(END_BODY_HTML);
+        ByteArrayInputStream bais = new ByteArrayInputStream(pageBuffer.toString().getBytes());	
+		return bais;
+	}
+
+	private InputStream getMissingTopicPage(String topicPath, Locale locale) {
+		StringBuffer pageBuffer = new StringBuffer();
+		// Write HTML header and body beginning.
+		String title = WebappResources.getString("someBooksUninstalled", locale); //$NON-NLS-1$
+		pageBuffer.append(getHtmlHead(locale, title));
+		pageBuffer.append(getBeginHtmlBody(false));
+		pageBuffer.append(tab(3)+"<h1>"+title+"</h1>\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		pageBuffer.append(tab(3) + "<p>\n"); //$NON-NLS-1$
+		pageBuffer.append(WebappResources.getString("linkToUninstalledDetails", locale)); //$NON-NLS-1$
+		pageBuffer.append("</p>\n"); //$NON-NLS-1$
+		pageBuffer.append(tab(3) + "<p>\n"); //$NON-NLS-1$
+		String href = "PLUGINS_ROOT/" + MissingContentManager.getInstance().getPageNotFoundPage("help:" + topicPath, true); //$NON-NLS-1$ //$NON-NLS-2$
+		pageBuffer.append(tab(4));
+		pageBuffer.append("<a href=\"" + href + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+		pageBuffer.append(WebappResources.getString("linkToUninstalledClick", locale)); //$NON-NLS-1$
+		pageBuffer.append("</a>\n"); //$NON-NLS-1$ 
+		pageBuffer.append(tab(3) + "</p>\n"); //$NON-NLS-1$
+		pageBuffer.append(END_BODY_HTML);
+        ByteArrayInputStream bais = new ByteArrayInputStream(pageBuffer.toString().getBytes());	
+		return bais; 
+	}
+
+	/*
+	 * Return the page used to display place holder information about missing books
+	 */
+	private InputStream getMissingBooksPage(Locale locale, boolean isHelpView) {
+		MissingContentManager.Placeholder[] unresolved = MissingContentManager.getInstance().getUnresolvedPlaceholders();
+		if (unresolved.length == 0) {
+			return getNoBooksMissingPage(locale, isHelpView);
+		}
+		StringBuffer pageBuffer = new StringBuffer();
+		// Write HTML header and body beginning.
+		String title = WebappResources.getString("someBooksUninstalled", locale); //$NON-NLS-1$
+		pageBuffer.append(getHtmlHead(locale, title));
+		pageBuffer.append(getBeginHtmlBody(!isHelpView));
+		pageBuffer.append(tab(3)+"<h1>"+title+"</h1>\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		// Add a close link to top
+		if (!isHelpView)
+		{
+			addCloseLink(locale, pageBuffer);
+		}
+		
+		pageBuffer.append(tab(3) + "<p>"); //$NON-NLS-1$
+		pageBuffer.append(WebappResources.getString("installInstructions", locale)); //$NON-NLS-1$
+		pageBuffer.append("</p>\n"); //$NON-NLS-1$
+		pageBuffer.append(tab(3)+"<ul>\n"); //$NON-NLS-1$
+		for (int i = 0; i < unresolved.length; i++ ) {
+			pageBuffer.append(tab(4) + "<li>\n"); //$NON-NLS-1$
+			pageBuffer.append(tab(5) + "<a href = \".."); //$NON-NLS-1$
+			pageBuffer.append(unresolved[i].placeholderPage);
+			pageBuffer.append("\">"); //$NON-NLS-1$
+			pageBuffer.append(unresolved[i].bundle);
+			pageBuffer.append("</a>\n"); //$NON-NLS-1$
+			pageBuffer.append(tab(4) + "</li>\n"); //$NON-NLS-1$
+		}
+		pageBuffer.append(tab(3)+ "</ul>\n"); //$NON-NLS-1$
+		if (isHelpView) {
+            pageBuffer.append(tab(3)+"<br/><p>\n"); //$NON-NLS-1$
+			pageBuffer.append(tab(4)+ "<a href=helpview:ignoreMissingBooks>"+ //$NON-NLS-1$
+					WebappResources.getString("ignoreMissingBooks", locale) + "</a>\n"); //$NON-NLS-1$ //$NON-NLS-2$			
+			pageBuffer.append(tab(3)+ "</p>\n"); //$NON-NLS-1$
+		}	else {
+			pageBuffer.append(tab(3)+"<br/><p>\n"); //$NON-NLS-1$	
+			//pageBuffer.append("<img src=\"PLUGINS_ROOT/org.eclipse.help/command_link.png\"/>");  //$NON-NLS-1$
+			pageBuffer.append("<a class=\"command-link\""  //$NON-NLS-1$
+			   + " href='javascript:executeCommand(\"org.eclipse.help.ui.ignoreMissingPlaceholders\")'>" //$NON-NLS-1$
+			   +  WebappResources.getString("ignoreMissingBooks", locale)+"</a>"); //$NON-NLS-1$ //$NON-NLS-2$			
+			pageBuffer.append(tab(3)+ "</p>\n"); //$NON-NLS-1$
+		}
+		pageBuffer.append(END_BODY_HTML);
+        ByteArrayInputStream bais = new ByteArrayInputStream(pageBuffer.toString().getBytes());	
+		return bais; 
+	}
+
+
+	private InputStream getNoBooksMissingPage(Locale locale, boolean isHelpView) {
+		StringBuffer pageBuffer = new StringBuffer();
+		// Write HTML header and body beginning.
+		String title = WebappResources.getString("allBooksInstalledTitle", locale); //$NON-NLS-1$
+		pageBuffer.append(getHtmlHead(locale, title));
+		pageBuffer.append(getBeginHtmlBody(!isHelpView));
+		pageBuffer.append(tab(3)+"<h2>"+title+"</h2>\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		// Add a close link to top
+		if (!isHelpView)
+		{
+			addCloseLink(locale, pageBuffer);
+		}
+		pageBuffer.append(tab(3) + "<p>\n"); //$NON-NLS-1$
+		pageBuffer.append(WebappResources.getString("allBooksInstalled", locale)); //$NON-NLS-1$
+		pageBuffer.append("</p>\n"); //$NON-NLS-1$
+		pageBuffer.append(END_BODY_HTML);
+        ByteArrayInputStream bais = new ByteArrayInputStream(pageBuffer.toString().getBytes());	
+		return bais; 
+	}
 
 	/*
 	 * Build the HTML header
 	 */
-	private String getHtmlHead(Locale locale)
+	private String getHtmlHead(Locale locale, String title)
 	{
 		return BEGIN_HEAD_HTML + '\n'
 			+ tab(2) + "<meta name=\"copyright\" content=\"Copyright (c) IBM Corporation and others 2000, 2009. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.\" >\n" //$NON-NLS-1$
-			+ tab(2) + "<title>"+WebappResources.getString("remoteStatusTitle", locale)+"</title>\n" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ tab(2) + "<title>"+ title +"</title>\n" //$NON-NLS-1$ //$NON-NLS-2$ 
 			+ tab(2) + "<link rel=\"stylesheet\" href=\"PLUGINS_ROOT/org.eclipse.help.base/doc/book.css\" charset=\"utf-8\" type=\"text/css\">\n" //$NON-NLS-1$
 			+ tab(2) + "<script language=\"JavaScript\" src=\"PLUGINS_ROOT/org.eclipse.help/livehelp.js\"> </script>\n" //$NON-NLS-1$
 			+ tab(2) + "<script type=\"text/javascript\" src=\"../../../content/org.eclipse.help/livehelp.js\"></script>\n" //$NON-NLS-1$
@@ -218,7 +348,7 @@ public class StatusProducer implements IHelpContentProducer {
 	/*
 	 * Build the beginning of the HTML body
 	 */
-	private String getBeginHtmlBody()
+	private String getBeginHtmlBody(boolean addBanner)
 	{
 		String body = tab(1);
 		
@@ -226,11 +356,12 @@ public class StatusProducer implements IHelpContentProducer {
 			body += "<body dir=\"rtl\">"; //$NON-NLS-1$
 		else
 			body += "<body>"; //$NON-NLS-1$
+		body += '\n';
+		if (addBanner) {
+			body += tab(2) + "<div id=\"banner\"><img src=\"PLUGINS_ROOT/org.eclipse.help.base/doc/help_banner.jpg\" alt=\"Help banner\" width=\"1600\" height=\"36\"></div>\n"; //$NON-NLS-1$				
+		}
 		
-		
-		return body + '\n'
-			+ tab(2) + "<div id=\"banner\"><img src=\"PLUGINS_ROOT/org.eclipse.help.base/doc/help_banner.jpg\" alt=\"Help banner\" width=\"1600\" height=\"36\"></div>\n" //$NON-NLS-1$
-			+ tab(2) + "<div id=\"content\">\n"; //$NON-NLS-1$
+		return body + tab(2) + "<div id=\"content\">\n"; //$NON-NLS-1$
 	}
 	
 	/*

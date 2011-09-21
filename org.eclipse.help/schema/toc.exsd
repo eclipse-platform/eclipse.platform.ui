@@ -36,6 +36,7 @@ point and specify TOC file(s).&lt;/li&gt;
             <element ref="tocProvider"/>
             <element ref="index"/>
             <element ref="tocIcon"/>
+            <element ref="placeholder"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -292,6 +293,32 @@ or not primary and intended to be integrated into another table of contents.
                <appInfo>
                   <meta.attribute translatable="true"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="placeholder">
+      <annotation>
+         <documentation>
+            A placeholder is used for products where the documentation is installed as an additional step. The placeholder specifies a help page which will be presented to the user if help is opened and a documentation bundle is not installed. Typically this help page would contain information about how to install the documentation.
+
+ Each placeholder specifies a bundle or list of bundles and a help page which will be displayed if one or more of the bundles in the list is not installed
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="plugin" type="string">
+            <annotation>
+               <documentation>
+                  The name of a help plug-in for which this is a placeholder.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="placeholderPage" type="string">
+            <annotation>
+               <documentation>
+                  The page to show when the plug-in is not installed.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

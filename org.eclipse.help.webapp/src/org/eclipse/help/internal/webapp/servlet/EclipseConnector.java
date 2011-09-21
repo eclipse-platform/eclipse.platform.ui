@@ -28,10 +28,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.MissingContentManager;
 import org.eclipse.help.internal.base.remote.RemoteHelpInputStream;
 import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
@@ -128,14 +127,13 @@ public class EclipseConnector {
 			    
 			    if (requiresErrorPage(lowerCaseuRL) && !isRTopicPath) { 
 					
-			    	String errorPage;
-			    	
-					if (RemoteStatusData.isAnyRemoteHelpUnavailable())
-			            errorPage = '/'+HelpWebappPlugin.PLUGIN_ID+'/'+StatusProducer.MISSING_TOPIC_HREF;
-					else // Try to load the error page if defined
-			            errorPage = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, "page_not_found", null, null); //$NON-NLS-1$
-					
-					if (errorPage != null && errorPage.length() > 0) {				
+			    	String errorPage = null;
+			    	if (RemoteStatusData.isAnyRemoteHelpUnavailable()) {
+			            errorPage = '/'+HelpWebappPlugin.PLUGIN_ID+'/'+ MissingContentManager.MISSING_TOPIC_HREF;
+			    	} else if ( MissingContentManager.getInstance().isUnresolvedPlaceholders()) {
+				        errorPage = MissingContentManager.getInstance().getPageNotFoundPage(url, false);
+			    	}
+			        if (errorPage != null && errorPage.length() > 0) {				
 						con = createConnection(req, resp, "help:" + errorPage); //$NON-NLS-1$
 						resp.setContentType("text/html"); //$NON-NLS-1$
 						try {

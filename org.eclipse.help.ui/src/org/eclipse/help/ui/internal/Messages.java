@@ -43,6 +43,7 @@ public final class Messages extends NLS {
 	public static String ReusableHelpPart_bookmarkAction_label;
 	public static String ReusableHelpPart_status;
 	public static String ReusableHelpPart_indexPage_name;
+	public static String ReusableHelpPart_missingContent;
 	public static String HelpView_defaultText;
 	public static String expression;
 	public static String expression_label;

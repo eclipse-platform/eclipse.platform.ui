@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.search.federated.FederatedSearchEntry;
 import org.eclipse.help.internal.search.federated.FederatedSearchJob;
 import org.eclipse.help.internal.search.federated.LocalHelp;
@@ -35,10 +34,8 @@ import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -47,7 +44,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -65,7 +61,6 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
@@ -93,10 +88,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	private static final String HREF_SEARCH_HELP = "/org.eclipse.platform.doc.user/tasks/help_search.htm"; //$NON-NLS-1$
 
 	private static boolean SEARCH_HELP_AVAILABLE = false;
-	
-	
-	private ImageHyperlink remoteStatusLink;
-	private boolean wasHelpUnavailable = false;
 
 	static {
 		InputStream is = HelpSystem.getHelpContent(HREF_SEARCH_HELP);
@@ -268,26 +259,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		
 		createScopeSection(toolkit);
 		
-		createRemoteStatusLink(toolkit);
-		
 //		createAlternateQueriesSection(toolkit);
 		
 		toolkit.paintBordersFor(container);
 		jobListener = new JobListener();
 		Job.getJobManager().addJobChangeListener(jobListener);
-	}
-	
-	public boolean isStale()
-	{
-		boolean currentAvailability = RemoteStatusData.isAnyRemoteHelpUnavailable();
-		
-		if (wasHelpUnavailable!=currentAvailability)
-		{
-			wasHelpUnavailable=currentAvailability;
-			return true;
-		}
-		
-		return false;
 	}
 
 	private void createScopeSection(FormToolkit toolkit) {
@@ -336,37 +312,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		updateSearchWordText();
 		toolkit.paintBordersFor(detailGroup);
 	}
-	
-	private void createRemoteStatusLink(FormToolkit toolkit){
-		TableWrapData td;
-		
-		Image warningImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING);
-		
-		remoteStatusLink = toolkit.createImageHyperlink(container, SWT.NULL);
-		remoteStatusLink.setText(Messages.remoteHelpUnavailable);
-		remoteStatusLink.setImage(warningImage);
-		remoteStatusLink.addHyperlinkListener(new HyperlinkAdapter() {
-
-			public void linkActivated(HyperlinkEvent e) {
-				doRemoteStatus();
-			}
-		});
-
-		td = new TableWrapData();
-		td.colspan = 2;
-		td.align = TableWrapData.FILL;
-		remoteStatusLink.setLayoutData(td);
-
-		if (wasHelpUnavailable = RemoteStatusData.isAnyRemoteHelpUnavailable())
-		{
-			remoteStatusLink.setVisible(true);
-		}
-		else
-		{
-			remoteStatusLink.dispose();
-		}
-		
-	}	
 	
 	private void createAlternateQueriesSection(FormToolkit toolkit){
 
@@ -706,10 +651,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		updateMasters(set);
 	}
 
-	private void doRemoteStatus() {
-        SearchPart.this.parent.showURL("org.eclipse.help.webapp/SearchNetworkHelpStatus.html",true); //$NON-NLS-1$
-	}
-	
 	private void doChangeScopeSet() {
 		ScopeSetDialog dialog = new ScopeSetDialog(container.getShell(), scopeSetManager, parent
 				.getEngineManager(), false);
@@ -790,10 +731,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			doSearch(searchWordCombo.getText());
 		}
 		
-		if(RemoteStatusData.isAnyRemoteHelpUnavailable())
-			createRemoteStatusLink(toolkit);
-		else
-			remoteStatusLink.dispose();
 	}
 
 	public String getId() {

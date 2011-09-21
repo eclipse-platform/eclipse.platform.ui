@@ -149,6 +149,13 @@
             id="org.eclipse.help.ui.indexcommand"
             name="%command.index.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.help"
+            defaultHandler="org.eclipse.help.ui.internal.views.IgnoreMissingPlaceholderHandler"
+            description="%command.ignoreMissingPlaceholders.description"
+            id="org.eclipse.help.ui.ignoreMissingPlaceholders"
+            name="%command.ignoreMissingPlaceholders.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.commandImages">

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -246,7 +247,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		
 		highlightAction = new Action() {
 			public void run() {
-				InstanceScope instanceScope = new InstanceScope();
+				IScopeContext instanceScope = InstanceScope.INSTANCE; 
 				IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
 				prefs.putBoolean(HIGHLIGHT_ON, highlightAction.isChecked());
 				if (browser.getUrl().indexOf("resultof")!=-1) browser.execute("setHighlight(" +highlightAction.isChecked()+");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -409,12 +410,13 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private boolean redirectLink(final String url) {
 		if (url.indexOf("/topic/") != -1) { //$NON-NLS-1$
 			if (url.indexOf("noframes") == -1) { //$NON-NLS-1$
-				// char sep = url.lastIndexOf('?') != -1 ? '&' : '?';
-				// String newURL = url + sep + "noframes=true"; //$NON-NLS-1$
 				return true;
 			}
 		} else if (url.indexOf("livehelp/?pluginID=")>0) { //$NON-NLS-1$
 			processLiveAction(url);
+			return true;
+		} else if (url.indexOf("helpview:") == 0) { //$NON-NLS-1$
+			HelpviewProtocol.handleProtocolCall(url, parent);
 			return true;
 		}
 		return false;
@@ -482,7 +484,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 
 	private void doMagnify(int percent) {
 		fontScalePercentage += percent;
-		InstanceScope instanceScope = new InstanceScope();
+		IScopeContext instanceScope = InstanceScope.INSTANCE; 
 		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.putInt(HELP_VIEW_SCALE, fontScalePercentage);
 		try {

@@ -33,6 +33,7 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.internal.base.MissingContentManager;
 import org.eclipse.help.internal.base.util.LinkUtil;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.search.federated.IndexerJob;
@@ -547,10 +548,11 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		}
 
 		public void setFocus() {
-			// Focus on the first part that is not the see also links
+			// Focus on the first part that is not the see also links or missing content link
 			for (int focusPart = 0; focusPart < partRecs.size(); focusPart++) {
 				PartRec rec = (PartRec) partRecs.get(focusPart);
-				if ( rec.part.getId() != IHelpUIConstants.HV_SEE_ALSO ) { 
+				String partId = rec.part.getId();
+				if ( partId != IHelpUIConstants.HV_SEE_ALSO && partId != IHelpUIConstants.HV_MISSING_CONTENT) { 
 				    rec.part.setFocus();
 				    return;
 				}
@@ -747,6 +749,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				IHelpUIConstants.IMAGE_HELP_SEARCH);
 		page.setVerticalSpacing(0);
 		page.addPart(HV_SEE_ALSO, false);
+		page.addPart(HV_MISSING_CONTENT, false);
 		page.addPart(HV_FSEARCH, false);
 		page.addPart(HV_FSEARCH_RESULT, true);
 		pages.add(page);
@@ -758,6 +761,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_SEE_ALSO, false);
+		page.addPart(HV_MISSING_CONTENT, false);
 		page.addPart(HV_SCOPE_SELECT, false);
 		page.addPart(HV_TOPIC_TREE, true);
 		pages.add(page);
@@ -788,6 +792,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_SEE_ALSO, false);
+		page.addPart(HV_MISSING_CONTENT, false);
 		page.addPart(HV_RELATED_TOPICS, true);
 		pages.add(page);
 
@@ -797,6 +802,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				IHelpUIConstants.IMAGE_INDEX); 
 		page.setVerticalSpacing(0);
 		page.addPart(HV_SEE_ALSO, false);
+		page.addPart(HV_MISSING_CONTENT, false);
 		page.addPart(HV_SCOPE_SELECT, false);
 		page.addPart(HV_INDEX_TYPEIN, false);
 		page.addPart(HV_INDEX, true);
@@ -1190,6 +1196,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			part = new IndexPart(parent, mform.getToolkit(), tbm);
 		} else if (id.equals(HV_INDEX_TYPEIN)) {
 			part = new IndexTypeinPart(parent, mform.getToolkit(), tbm);
+		} else if (id.equals(HV_MISSING_CONTENT)) {
+			part = new MissingContentPart(parent, mform.getToolkit());
 		}
 		if (part != null) {
 			mform.addPart(part);			
@@ -1722,6 +1730,37 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			style |= BOOKMARKS;
 		}
 		return style;
+	}
+
+	public void checkRemoteStatus() {
+		clearBrowser();
+		showURL("/org.eclipse.help.webapp/" + MissingContentManager.REMOTE_STATUS_HELP_VIEW_HREF); //$NON-NLS-1$
+		updateStatusLinks();
+	}
+
+	public void checkPlaceholderStatus() {
+		clearBrowser();
+		showURL("/org.eclipse.help.webapp/" + MissingContentManager.MISSING_BOOKS_HELP_VIEW_HREF); //$NON-NLS-1$
+		updateStatusLinks();
+		
+	}
+	
+	private void clearBrowser() {
+		IHelpPart part = findPart(HV_BROWSER);
+		if ( part == null ) {
+			return;
+		}
+		BrowserPart browserPart = (BrowserPart) part;
+		browserPart.clearBrowser();
+	}
+
+	private void updateStatusLinks() {
+		IHelpPart part = findPart(HV_MISSING_CONTENT);
+		if ( part == null ) {
+			return;
+		}
+		MissingContentPart mcPart = (MissingContentPart) part;
+		mcPart.updateStatus();
 	}
 }
 
