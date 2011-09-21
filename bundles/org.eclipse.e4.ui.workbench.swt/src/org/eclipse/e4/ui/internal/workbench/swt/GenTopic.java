@@ -92,7 +92,8 @@ public class GenTopic implements IApplication {
 						+ "\npublic class UIEvents {" //$NON-NLS-1$						
 						+ "\n\tpublic static final String TOPIC_SEP = \"/\"; //$NON-NLS-1$" //$NON-NLS-1$
 						+ "\n\tpublic static final String ALL_SUB_TOPICS = \"*\"; //$NON-NLS-1$" //$NON-NLS-1$
-						+ "\n\tpublic static final String UITopicBase = \"org/eclipse/e4/ui/model\"; //$NON-NLS-1$" //$NON-NLS-1$
+						+ "\n\tpublic static final String UITopicBase = \"org/eclipse/e4/ui\"; //$NON-NLS-1$" //$NON-NLS-1$
+						+ "\n\tpublic static final String UIModelTopicBase = UITopicBase + \"/model\"; //$NON-NLS-1$" //$NON-NLS-1$
 						+ "\n\tpublic static interface EventTypes {" //$NON-NLS-1$
 						+ "\n\t\tpublic static final String CREATE = \"CREATE\"; //$NON-NLS-1$" //$NON-NLS-1$
 						+ "\n\t\tpublic static final String SET = \"SET\"; //$NON-NLS-1$" //$NON-NLS-1$
@@ -116,9 +117,10 @@ public class GenTopic implements IApplication {
 		}
 		String pkgName = eClass.getEPackage().getName();
 		String className = eClass.getName();
-		System.out.print("\n\tpublic static interface " + className + " {" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "\n\t\tpublic static final String TOPIC = UITopicBase + \"/" //$NON-NLS-1$
-				+ pkgName + '/' + className + "\"; //$NON-NLS-1$"); //$NON-NLS-1$
+		System.out
+				.print("\n\tpublic static interface " + className + " {" //$NON-NLS-1$ //$NON-NLS-2$
+						+ "\n\t\tpublic static final String TOPIC = UIModelTopicBase + \"/" //$NON-NLS-1$
+						+ pkgName + '/' + className + "\"; //$NON-NLS-1$"); //$NON-NLS-1$
 		Set<String> names = new TreeSet<String>();
 		for (EStructuralFeature feature : features) {
 			names.add(feature.getName());
