@@ -38,6 +38,7 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Rectangle;
@@ -48,9 +49,6 @@ import org.eclipse.ui.internal.FaderAnimationFeedback;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-/**
- * Addon supporting standard drag and drop management
- */
 public class MinMaxAddon {
 
 	/**
@@ -76,6 +74,9 @@ public class MinMaxAddon {
 
 	@Inject
 	private IEclipseContext context;
+
+	@Inject
+	private EPartService partService;
 
 	// Allow 'local' changes to the tags
 	private boolean ignoreTagChanges = false;
@@ -408,6 +409,7 @@ public class MinMaxAddon {
 		createTrim(element);
 		element.setVisible(false);
 		adjustCTFButtons(element);
+		partService.requestActivation();
 	}
 
 	void restore(MUIElement element) {

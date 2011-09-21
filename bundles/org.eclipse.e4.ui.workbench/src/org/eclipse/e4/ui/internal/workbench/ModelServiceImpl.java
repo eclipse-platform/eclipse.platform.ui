@@ -16,10 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -334,20 +331,6 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	private void showElementInWindow(MWindow window, MUIElement element) {
-		if (element instanceof MPartStack && !element.isVisible()) {
-			String trimId = element.getElementId() + "(minimized)"; //$NON-NLS-1$
-			MPerspective persp = getPerspectiveFor(element);
-			if (persp != null)
-				trimId = element.getElementId() + '(' + persp.getElementId() + ')';
-			MToolControl trimCtrl = (MToolControl) find(trimId, window);
-			if (trimCtrl != null && trimCtrl.getObject() != null) {
-				IEclipseContext ctxt = EclipseContextFactory.create();
-				ctxt.set("show", true); //$NON-NLS-1$
-				ContextInjectionFactory.invoke(trimCtrl.getObject(), Execute.class, ctxt);
-				ctxt.dispose();
-			}
-		}
-
 		MUIElement parent = element.getParent();
 		if (parent == null) {
 			MPlaceholder ph = findPlaceholderFor(window, element);
@@ -798,19 +781,11 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 
-		IEclipseContext ctxt = EclipseContextFactory.create();
-		ctxt.set("show", false); //$NON-NLS-1$
 		for (MToolControl toolControl : toRemove) {
 			// Close any open fast view
-			if (toolControl.getObject() != null
-					&& toolControl.getObject().getClass().getName().contains("TrimStack")) { //$NON-NLS-1$
-				ContextInjectionFactory.invoke(toolControl.getObject(), Execute.class, ctxt);
-			}
-
 			toolControl.setToBeRendered(false);
 			toolControl.getParent().getChildren().remove(toolControl);
 		}
-		ctxt.dispose();
 	}
 
 	public void removePerspectiveModel(MPerspective persp, MWindow window) {
