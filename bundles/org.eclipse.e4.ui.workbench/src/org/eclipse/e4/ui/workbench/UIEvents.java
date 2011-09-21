@@ -352,6 +352,12 @@ public class UIEvents {
 		public static final String TRIMCONTRIBUTIONS = "trimContributions"; //$NON-NLS-1$
 	}
 
+	public static interface UILifeCycle {
+		public static final String TOPIC = UITopicBase + "/LifeCycle"; //$NON-NLS-1$
+		public static final String BRINGTOTOP = "bringToTop"; //$NON-NLS-1$
+		public static final String ACTIVATE = "activate"; //$NON-NLS-1$
+	}
+
 	public static String buildTopic(String topic) {
 		return topic + TOPIC_SEP + ALL_SUB_TOPICS;
 	}

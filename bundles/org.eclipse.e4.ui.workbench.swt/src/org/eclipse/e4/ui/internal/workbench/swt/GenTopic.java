@@ -40,6 +40,7 @@ public class GenTopic implements IApplication {
 			processLiterals(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.Literals.class);
 			processLiterals(UiPackageImpl.Literals.class);
 			processLiterals(MenuPackageImpl.Literals.class);
+			processNonModelEvents();
 			processFooter();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,6 +61,15 @@ public class GenTopic implements IApplication {
 		for (EClass ec : classes.values()) {
 			processEClass(ec);
 		}
+	}
+
+	private void processNonModelEvents() {
+		System.out
+				.println("\n\tpublic static interface UILifeCycle {" //$NON-NLS-1$
+						+ "\n\t\tpublic static final String TOPIC = UITopicBase + \"/LifeCycle\"; //$NON-NLS-1$" //$NON-NLS-1$
+						+ "\n\t\tpublic static final String BRINGTOTOP = \"bringToTop\"; //$NON-NLS-1$" //$NON-NLS-1$
+						+ "\n\t\tpublic static final String ACTIVATE = \"activate\"; //$NON-NLS-1$" //$NON-NLS-1$
+						+ "\n\t}"); //$NON-NLS-1$
 	}
 
 	/**
