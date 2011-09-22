@@ -48,6 +48,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
@@ -63,6 +64,7 @@ import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
@@ -156,6 +158,8 @@ import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceScopes;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -1373,6 +1377,46 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return PlatformUI.getWorkbench();
 	}
 
+	private void hideNonRestorablePlaceholder(MPlaceholder placeholder) {
+		MElementContainer<MUIElement> parent = placeholder.getParent();
+		// if this placeholder is currently the selected element, its parent
+		// needs to select something else
+		if (parent.getSelectedElement() == placeholder) {
+			// if nothing found just set it to null
+			MUIElement candidate = null;
+			// search for a valid candidate from the list of children
+			for (MUIElement element : parent.getChildren()) {
+				if (element.isVisible() && element.isToBeRendered() && element != placeholder) {
+					candidate = element;
+					break;
+				}
+			}
+
+			parent.setSelectedElement(candidate);
+		}
+
+		// this tag is only applied to editors technically speaking, but better
+		// safe than sorry
+		MUIElement ref = placeholder.getRef();
+		if (ref != null && ref.getTags().contains(EPartService.REMOVE_ON_HIDE_TAG)) {
+			parent.getChildren().remove(placeholder);
+		}
+
+		placeholder.setToBeRendered(false);
+	}
+
+	private void hideNonRestorableViews() {
+		List<MPlaceholder> placeholders = modelService.findElements(model, null,
+				MPlaceholder.class, null);
+		IViewRegistry registry = getWorkbench().getViewRegistry();
+		for (MPlaceholder placeholder : placeholders) {
+			IViewDescriptor descriptor = registry.find(placeholder.getElementId());
+			if (descriptor != null && !descriptor.isRestorable()) {
+				hideNonRestorablePlaceholder(placeholder);
+			}
+		}
+	}
+
 	/**
 	 * Unconditionally close this window. Assumes the proper flags have been set
 	 * correctly (e.i. closing and updateDisabled)
@@ -1381,6 +1425,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	private boolean hardClose(boolean remove) {
 		try {
+			if (!remove) {
+				// we're in a shutdown case so we need to hide views that should
+				// not be restored
+				hideNonRestorableViews();
+			}
+
 			// clear some lables
 			// Remove the handler submissions. Bug 64024.
 			final IWorkbench workbench = getWorkbench();
