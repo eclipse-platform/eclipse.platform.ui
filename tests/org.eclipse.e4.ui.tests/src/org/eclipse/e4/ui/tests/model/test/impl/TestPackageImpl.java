@@ -184,6 +184,8 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theUiPackage.getDirtyable());
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theUiPackage.getSnippetContainer());
+		testHarnessEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(testHarnessEClass, MTestHarness.class, "TestHarness", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

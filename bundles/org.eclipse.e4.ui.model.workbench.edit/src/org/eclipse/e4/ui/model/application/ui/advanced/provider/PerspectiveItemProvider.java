@@ -312,9 +312,7 @@ public class PerspectiveItemProvider
 		Object childObject = child;
 
 		boolean qualify =
-			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__CLONABLE_SNIPPETS ||
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
-			childFeature == UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN ||
 			childFeature == AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS;
 
 		if (qualify) {

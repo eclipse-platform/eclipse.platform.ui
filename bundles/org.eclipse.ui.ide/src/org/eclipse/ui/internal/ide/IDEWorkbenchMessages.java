@@ -642,6 +642,14 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_read;
 	public static String ResourceInfo_write;
 	public static String ResourceInfo_execute;
+	public static String ResourceInfo_recursiveChangesTitle;
+	public static String ResourceInfo_recursiveChangesSummary;
+	public static String ResourceInfo_recursiveChangesSet;
+	public static String ResourceInfo_recursiveChangesUnset;
+	public static String ResourceInfo_recursiveChangesQuestion;
+	public static String ResourceInfo_recursiveChangesJobName;
+	public static String ResourceInfo_recursiveChangesSubTaskName;
+	public static String ResourceInfo_recursiveChangesError;
 
 	// --- Project References ---
 	public static String ProjectReferencesPage_label;

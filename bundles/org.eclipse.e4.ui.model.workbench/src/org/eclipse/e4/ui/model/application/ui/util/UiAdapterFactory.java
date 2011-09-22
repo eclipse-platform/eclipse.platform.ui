@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui.util;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.*;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
@@ -101,12 +102,12 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 				return createUIElementAdapter();
 			}
 			@Override
-			public Adapter caseUILabel(MUILabel object) {
-				return createUILabelAdapter();
-			}
-			@Override
 			public <T extends MUIElement> Adapter caseElementContainer(MElementContainer<T> object) {
 				return createElementContainerAdapter();
+			}
+			@Override
+			public Adapter caseUILabel(MUILabel object) {
+				return createUILabelAdapter();
 			}
 			@Override
 			public <T extends MUIElement> Adapter caseGenericStack(MGenericStack<T> object) {
@@ -127,6 +128,10 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseCoreExpression(MCoreExpression object) {
 				return createCoreExpressionAdapter();
+			}
+			@Override
+			public Adapter caseSnippetContainer(MSnippetContainer object) {
+				return createSnippetContainerAdapter();
 			}
 			@Override
 			public Adapter caseApplicationElement(MApplicationElement object) {
@@ -303,6 +308,20 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createCoreExpressionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MSnippetContainer <em>Snippet Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer
+	 * @generated
+	 */
+	public Adapter createSnippetContainerAdapter() {
 		return null;
 	}
 

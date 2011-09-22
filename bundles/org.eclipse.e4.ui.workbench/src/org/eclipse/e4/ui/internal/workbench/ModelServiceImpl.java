@@ -12,16 +12,17 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
@@ -41,6 +42,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.emf.ecore.EObject;
@@ -247,20 +249,16 @@ public class ModelServiceImpl implements EModelService {
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneElement(org.eclipse.e4.ui.model.
 	 * application.ui.MUIElement, java.lang.String)
 	 */
-	public MUIElement cloneElement(MUIElement element, String cloneId, boolean saveAsSnippet) {
+	public MUIElement cloneElement(MUIElement element, MSnippetContainer snippetContainer) {
 		EObject eObj = (EObject) element;
 		MUIElement clone = (MUIElement) EcoreUtil.copy(eObj);
-		clone.setElementId(cloneId);
 
-		if (saveAsSnippet) {
-			MUIElement topWin = getTopLevelWindowFor(element);
-			if (topWin != null) {
-				MUIElement appElement = topWin.getParent();
-				MApplication app = (MApplication) appElement;
-				app.getClonableSnippets().add(clone);
-			}
+		if (snippetContainer != null) {
+			MUIElement snippet = findSnippet(snippetContainer, element.getElementId());
+			if (snippet != null)
+				snippetContainer.getSnippets().remove(snippet);
+			snippetContainer.getSnippets().add(clone);
 		}
-
 		return clone;
 	}
 
@@ -270,23 +268,42 @@ public class ModelServiceImpl implements EModelService {
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneSnippet(org.eclipse.e4.ui.model.
 	 * application.MApplication, java.lang.String)
 	 */
-	public MUIElement cloneSnippet(MApplication app, String snippetId) {
-		if (snippetId == null || snippetId.length() == 0)
+	public MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId) {
+		if (snippetContainer == null || snippetId == null || snippetId.length() == 0)
 			return null;
 
-		MApplicationElement appElement = null;
-		for (MApplicationElement snippet : app.getClonableSnippets()) {
+		MApplicationElement elementToClone = null;
+		for (MApplicationElement snippet : snippetContainer.getSnippets()) {
 			if (snippetId.equals(snippet.getElementId())) {
-				appElement = snippet;
+				elementToClone = snippet;
 				break;
 			}
 		}
-		if (appElement == null)
+		if (elementToClone == null)
 			return null;
 
-		EObject eObj = (EObject) appElement;
+		EObject eObj = (EObject) elementToClone;
 		MUIElement element = (MUIElement) EcoreUtil.copy(eObj);
 		return element;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#findSnippet(org.eclipse.e4.ui.model.
+	 * application.ui.MSnippetContainer, java.lang.String)
+	 */
+	public MUIElement findSnippet(MSnippetContainer snippetContainer, String id) {
+		if (snippetContainer == null || id == null || id.length() == 0)
+			return null;
+
+		List<MUIElement> snippets = snippetContainer.getSnippets();
+		for (MUIElement snippet : snippets) {
+			if (id.equals(snippet.getElementId()))
+				return snippet;
+		}
+
+		return null;
 	}
 
 	/*
@@ -310,23 +327,10 @@ public class ModelServiceImpl implements EModelService {
 		} else {
 			showElementInWindow(window, element);
 		}
+		publishEvent(UIEvents.UILifeCycle.BRINGTOTOP, element);
 	}
 
 	private void showElementInWindow(MWindow window, MUIElement element) {
-		if (element instanceof MPartStack && !element.isVisible()) {
-			String trimId = element.getElementId() + "(minimized)"; //$NON-NLS-1$
-			MPerspective persp = getPerspectiveFor(element);
-			if (persp != null)
-				trimId = element.getElementId() + '(' + persp.getElementId() + ')';
-			MToolControl trimCtrl = (MToolControl) find(trimId, window);
-			if (trimCtrl != null && trimCtrl.getObject() != null) {
-				IEclipseContext ctxt = EclipseContextFactory.create();
-				ctxt.set("show", true); //$NON-NLS-1$
-				ContextInjectionFactory.invoke(trimCtrl.getObject(), Execute.class, ctxt);
-				ctxt.dispose();
-			}
-		}
-
 		MUIElement parent = element.getParent();
 		if (parent == null) {
 			MPlaceholder ph = findPlaceholderFor(window, element);
@@ -726,6 +730,11 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	public void resetPerspectiveModel(MPerspective persp, MWindow window) {
+		resetPerspectiveModel(persp, window, true);
+	}
+
+	private void resetPerspectiveModel(MPerspective persp, MWindow window,
+			boolean removeSharedPlaceholders) {
 		if (persp == null)
 			return;
 
@@ -735,24 +744,26 @@ public class ModelServiceImpl implements EModelService {
 		}
 		persp.getWindows().clear();
 
-		// Remove any views (Placeholders) from the shared area
-		EPartService ps = window.getContext().get(EPartService.class);
-		List<MArea> areas = findElements(window, null, MArea.class, null);
-		if (areas.size() == 1) {
-			MArea area = areas.get(0);
+		if (removeSharedPlaceholders) {
+			// Remove any views (Placeholders) from the shared area
+			EPartService ps = window.getContext().get(EPartService.class);
+			List<MArea> areas = findElements(window, null, MArea.class, null);
+			if (areas.size() == 1) {
+				MArea area = areas.get(0);
 
-			// Strip out the placeholders in visible stacks
-			List<MPlaceholder> phList = findElements(area, null, MPlaceholder.class, null);
-			for (MPlaceholder ph : phList) {
-				ps.hidePart((MPart) ph.getRef());
-				ph.getParent().getChildren().remove(ph);
-			}
+				// Strip out the placeholders in visible stacks
+				List<MPlaceholder> phList = findElements(area, null, MPlaceholder.class, null);
+				for (MPlaceholder ph : phList) {
+					ps.hidePart((MPart) ph.getRef());
+					ph.getParent().getChildren().remove(ph);
+				}
 
-			// Prevent shared stacks ids from clashing with the ones in the perspective
-			List<MPartStack> stacks = findElements(area, null, MPartStack.class, null);
-			for (MPartStack stack : stacks) {
-				String generatedId = "PartStack@" + Integer.toHexString(stack.hashCode()); //$NON-NLS-1$
-				stack.setElementId(generatedId);
+				// Prevent shared stacks ids from clashing with the ones in the perspective
+				List<MPartStack> stacks = findElements(area, null, MPartStack.class, null);
+				for (MPartStack stack : stacks) {
+					String generatedId = "PartStack@" + Integer.toHexString(stack.hashCode()); //$NON-NLS-1$
+					stack.setElementId(generatedId);
+				}
 			}
 		}
 
@@ -770,19 +781,11 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 
-		IEclipseContext ctxt = EclipseContextFactory.create();
-		ctxt.set("show", false); //$NON-NLS-1$
 		for (MToolControl toolControl : toRemove) {
 			// Close any open fast view
-			if (toolControl.getObject() != null
-					&& toolControl.getObject().getClass().getName().contains("TrimStack")) { //$NON-NLS-1$
-				ContextInjectionFactory.invoke(toolControl.getObject(), Execute.class, ctxt);
-			}
-
 			toolControl.setToBeRendered(false);
 			toolControl.getParent().getChildren().remove(toolControl);
 		}
-		ctxt.dispose();
 	}
 
 	public void removePerspectiveModel(MPerspective persp, MWindow window) {
@@ -805,7 +808,7 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		// Remove transient elements (minimized stacks, detached windows)
-		resetPerspectiveModel(persp, window);
+		resetPerspectiveModel(persp, window, false);
 
 		// unrender the perspective and remove it
 		persp.setToBeRendered(false);
@@ -952,6 +955,9 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 		parent.setToBeRendered(false);
+		// continue modifying the visibility as the parent's parent may also
+		// need to be hidden from the user
+		setStackVisibility(parent.getParent());
 	}
 
 	/*
@@ -981,5 +987,13 @@ public class ModelServiceImpl implements EModelService {
 				count++;
 		}
 		return count < 2 && stack.isToBeRendered();
+	}
+
+	private boolean publishEvent(String topic, MUIElement element) {
+		Map<String, Object> args = new HashMap<String, Object>();
+		args.put(UIEvents.EventTags.ELEMENT, element);
+		IEventBroker eventBroker = (IEventBroker) getContainingContext(element).get(
+				IEventBroker.class.getName());
+		return eventBroker.send(topic, args);
 	}
 }

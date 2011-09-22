@@ -555,6 +555,8 @@ public class PartServiceImpl implements EPartService {
 		modelService.bringToTop(part);
 		window.getParent().setSelectedElement(window);
 
+		partActivationHistory.activate(part, activateBranch);
+
 		Object object = part.getObject();
 		if (object != null && requiresFocus) {
 			try {
@@ -567,8 +569,6 @@ public class PartServiceImpl implements EPartService {
 						"Failed to grant focus via DI to part ({0})", part.getElementId(), e); //$NON-NLS-1$
 			}
 		}
-
-		partActivationHistory.activate(part, activateBranch);
 	}
 
 	/**
@@ -992,7 +992,7 @@ public class PartServiceImpl implements EPartService {
 			if (candidate != null) {
 				activate(candidate);
 			}
-		} else if (!getParts().contains(activePart)) {
+		} else if (!partActivationHistory.isValid(activePart) || !getParts().contains(activePart)) {
 			MPart candidate = partActivationHistory.getNextActivationCandidate(getParts(),
 					activePart);
 			if (candidate != null) {
@@ -1206,5 +1206,4 @@ public class PartServiceImpl implements EPartService {
 		}
 		return (MElementContainer<MUIElement>) outerContainer;
 	}
-
 }

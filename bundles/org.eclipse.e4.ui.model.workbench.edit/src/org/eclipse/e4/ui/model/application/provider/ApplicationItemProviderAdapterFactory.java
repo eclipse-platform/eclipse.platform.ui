@@ -146,6 +146,29 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link java.util.Map.Entry} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected StringToObjectMapItemProvider stringToObjectMapItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link java.util.Map.Entry}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createStringToObjectMapAdapter() {
+		if (stringToObjectMapItemProvider == null) {
+			stringToObjectMapItemProvider = new StringToObjectMapItemProvider(this);
+		}
+
+		return stringToObjectMapItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -247,6 +270,7 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 		if (stringToStringMapItemProvider != null) stringToStringMapItemProvider.dispose();
 		if (applicationItemProvider != null) applicationItemProvider.dispose();
 		if (addonItemProvider != null) addonItemProvider.dispose();
+		if (stringToObjectMapItemProvider != null) stringToObjectMapItemProvider.dispose();
 	}
 
 }

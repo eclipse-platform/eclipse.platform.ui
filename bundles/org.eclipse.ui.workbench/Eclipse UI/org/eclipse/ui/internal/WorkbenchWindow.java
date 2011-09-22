@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -48,6 +49,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
@@ -63,6 +65,7 @@ import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
@@ -156,6 +159,8 @@ import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceScopes;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -196,8 +201,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private ActionBarAdvisor actionBarAdvisor;
 
-	private int number;
-
 	private PageListenerList pageListeners = new PageListenerList();
 
 	private PerspectiveListenerList perspectiveListeners = new PerspectiveListenerList();
@@ -221,10 +224,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public IConfigurationElement getICEFor(MToolControl mtc) {
 		return iceMap.get(mtc);
 	}
+
 	/**
 	 * The map of services maintained by the workbench window. These services
-	 * are initialized during workbench window during the
-	 * {@link #configureShell(Shell)}.
+	 * are initialized when the workbench window is being constructed by
+	 * dependency injection.
 	 */
 	private ServiceLocator serviceLocator;
 
@@ -385,8 +389,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	/**
 	 * Creates and initializes a new workbench window.
 	 * 
-	 * @param number
-	 *            the number for the window
+	 * @param input
+	 *            the input for this workbench window
+	 * @param pers
+	 *            the perspective to initialize this workbench window with
 	 */
 	public WorkbenchWindow(IAdaptable input, IPerspectiveDescriptor pers) {
 		this.input = input;
@@ -938,13 +944,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * <code>ActionHandler</code>. This map is never <code>null</code>, and is
 	 * never empty as long as at least one global action has been registered.
 	 */
-	private Map globalActionHandlersByCommandId = new HashMap();
+	private Map<String, ActionHandler> globalActionHandlersByCommandId = new HashMap<String, ActionHandler>();
 
 	/**
 	 * The list of handler submissions submitted to the workbench command
 	 * support. This list may be empty, but it is never <code>null</code>.
 	 */
-	private List handlerActivations = new ArrayList();
+	private List<IHandlerActivation> handlerActivations = new ArrayList<IHandlerActivation>();
 
 	/**
 	 * The number of large updates that are currently going on. If this is
@@ -1016,14 +1022,15 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		 * Mash the action sets and global actions together, with global actions
 		 * taking priority.
 		 */
-		Map handlersByCommandId = new HashMap();
+		Map<String, ActionHandler> handlersByCommandId = new HashMap<String, ActionHandler>();
 		handlersByCommandId.putAll(globalActionHandlersByCommandId);
 
-		List newHandlers = new ArrayList(handlersByCommandId.size());
+		List<IHandlerActivation> newHandlers = new ArrayList<IHandlerActivation>(
+				handlersByCommandId.size());
 
-		Iterator existingIter = handlerActivations.iterator();
+		Iterator<IHandlerActivation> existingIter = handlerActivations.iterator();
 		while (existingIter.hasNext()) {
-			IHandlerActivation next = (IHandlerActivation) existingIter.next();
+			IHandlerActivation next = existingIter.next();
 
 			String cmdId = next.getCommandId();
 
@@ -1039,10 +1046,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		final Shell shell = getShell();
 		if (shell != null) {
 			final Expression expression = new ActiveShellExpression(shell);
-			for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				String commandId = (String) entry.getKey();
-				IHandler handler = (IHandler) entry.getValue();
+			for (Iterator<Entry<String, ActionHandler>> iterator = handlersByCommandId.entrySet()
+					.iterator(); iterator.hasNext();) {
+				Entry<String, ActionHandler> entry = iterator.next();
+				String commandId = entry.getKey();
+				IHandler handler = entry.getValue();
 				newHandlers.add(handlerService.activateHandler(commandId, handler, expression));
 			}
 		}
@@ -1242,6 +1250,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	/**
 	 * Fires perspective changed
+	 * 
+	 * @param page
+	 * @param perspective
+	 * @param changeId
 	 */
 	public void firePerspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective,
 			String changeId) {
@@ -1255,6 +1267,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	/**
 	 * Fires perspective changed for an affected part
+	 * 
+	 * @param page
+	 * @param perspective
+	 * @param partRef
+	 * @param changeId
 	 */
 	public void firePerspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective,
 			IWorkbenchPartReference partRef, String changeId) {
@@ -1298,6 +1315,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	/**
 	 * Returns the action bars for this window.
+	 * 
+	 * @return this window's action bars
 	 */
 	public WWinActionBars getActionBars() {
 		if (actionBars == null) {
@@ -1313,14 +1332,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public IWorkbenchPage getActivePage() {
 		return page;
-	}
-
-	/**
-	 * Returns the number. This corresponds to a page number in a window or a
-	 * window number in the workbench.
-	 */
-	public int getNumber() {
-		return number;
 	}
 
 	/**
@@ -1373,6 +1384,46 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return PlatformUI.getWorkbench();
 	}
 
+	private void hideNonRestorablePlaceholder(MPlaceholder placeholder) {
+		MElementContainer<MUIElement> parent = placeholder.getParent();
+		// if this placeholder is currently the selected element, its parent
+		// needs to select something else
+		if (parent.getSelectedElement() == placeholder) {
+			// if nothing found just set it to null
+			MUIElement candidate = null;
+			// search for a valid candidate from the list of children
+			for (MUIElement element : parent.getChildren()) {
+				if (element.isVisible() && element.isToBeRendered() && element != placeholder) {
+					candidate = element;
+					break;
+				}
+			}
+
+			parent.setSelectedElement(candidate);
+		}
+
+		// this tag is only applied to editors technically speaking, but better
+		// safe than sorry
+		MUIElement ref = placeholder.getRef();
+		if (ref != null && ref.getTags().contains(EPartService.REMOVE_ON_HIDE_TAG)) {
+			parent.getChildren().remove(placeholder);
+		}
+
+		placeholder.setToBeRendered(false);
+	}
+
+	private void hideNonRestorableViews() {
+		List<MPlaceholder> placeholders = modelService.findElements(model, null,
+				MPlaceholder.class, null);
+		IViewRegistry registry = getWorkbench().getViewRegistry();
+		for (MPlaceholder placeholder : placeholders) {
+			IViewDescriptor descriptor = registry.find(placeholder.getElementId());
+			if (descriptor != null && !descriptor.isRestorable()) {
+				hideNonRestorablePlaceholder(placeholder);
+			}
+		}
+	}
+
 	/**
 	 * Unconditionally close this window. Assumes the proper flags have been set
 	 * correctly (e.i. closing and updateDisabled)
@@ -1381,15 +1432,21 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	private boolean hardClose(boolean remove) {
 		try {
+			if (!remove) {
+				// we're in a shutdown case so we need to hide views that should
+				// not be restored
+				hideNonRestorableViews();
+			}
+
 			// clear some lables
 			// Remove the handler submissions. Bug 64024.
 			final IWorkbench workbench = getWorkbench();
 			final IHandlerService handlerService = (IHandlerService) workbench
 					.getService(IHandlerService.class);
 			handlerService.deactivateHandlers(handlerActivations);
-			final Iterator activationItr = handlerActivations.iterator();
+			final Iterator<IHandlerActivation> activationItr = handlerActivations.iterator();
 			while (activationItr.hasNext()) {
-				final IHandlerActivation activation = (IHandlerActivation) activationItr.next();
+				final IHandlerActivation activation = activationItr.next();
 				activation.getHandler().dispose();
 			}
 			handlerActivations.clear();
@@ -1617,13 +1674,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 	}
 
-	private Set menuRestrictions = new HashSet();
+	private Set<?> menuRestrictions = new HashSet<Object>();
 
 	private Boolean valueOf(boolean result) {
 		return result ? Boolean.TRUE : Boolean.FALSE;
 	}
 
-	public Set getMenuRestrictions() {
+	public Set<?> getMenuRestrictions() {
 		return menuRestrictions;
 	}
 
@@ -1631,7 +1688,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		if (menuRestrictions.isEmpty()) {
 			return;
 		}
-		EvaluationReference[] refs = (EvaluationReference[]) menuRestrictions
+		EvaluationReference[] refs = menuRestrictions
 				.toArray(new EvaluationReference[menuRestrictions.size()]);
 		IEvaluationService es = (IEvaluationService) serviceLocator
 				.getService(IEvaluationService.class);
@@ -1660,7 +1717,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	void imposeRestrictions() {
-		Iterator i = menuRestrictions.iterator();
+		Iterator<?> i = menuRestrictions.iterator();
 		while (i.hasNext()) {
 			EvaluationReference ref = (EvaluationReference) i.next();
 			ref.setPostingChanges(false);

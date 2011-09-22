@@ -38,17 +38,17 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.AnimationEngine;
+import org.eclipse.ui.internal.FaderAnimationFeedback;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-/**
- * Addon supporting standard drag and drop management
- */
 public class MinMaxAddon {
 
 	/**
@@ -74,6 +74,9 @@ public class MinMaxAddon {
 
 	@Inject
 	private IEclipseContext context;
+
+	@Inject
+	private EPartService partService;
 
 	// Allow 'local' changes to the tags
 	private boolean ignoreTagChanges = false;
@@ -406,6 +409,7 @@ public class MinMaxAddon {
 		createTrim(element);
 		element.setVisible(false);
 		adjustCTFButtons(element);
+		partService.requestActivation();
 	}
 
 	void restore(MUIElement element) {
@@ -422,6 +426,11 @@ public class MinMaxAddon {
 	void maximize(final MUIElement element) {
 		MWindow win = getWindowFor(element);
 		MPerspective persp = modelService.getActivePerspective(win);
+
+		Shell hostShell = (Shell) modelService.getTopLevelWindowFor(element).getWidget();
+		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
+		AnimationEngine engine = new AnimationEngine(fader, 300);
+		engine.schedule();
 
 		List<String> maxTag = new ArrayList<String>();
 		maxTag.add(MAXIMIZED);
@@ -495,6 +504,11 @@ public class MinMaxAddon {
 	void unzoom(final MUIElement element) {
 		MWindow win = modelService.getTopLevelWindowFor(element);
 		MPerspective persp = modelService.getActivePerspective(win);
+
+		Shell hostShell = (Shell) win.getWidget();
+		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
+		AnimationEngine engine = new AnimationEngine(fader, 300);
+		engine.schedule();
 
 		List<MPartStack> stacks = modelService.findElements(win, null, MPartStack.class, null,
 				EModelService.PRESENTATION);

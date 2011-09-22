@@ -15,5 +15,6 @@
     <eGenericSuperTypes eClassifier="ecore:EClass ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ui/Input"/>
     <eGenericSuperTypes eClassifier="ecore:EClass ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ui/UILabel"/>
     <eGenericSuperTypes eClassifier="ecore:EClass ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ui/Dirtyable"/>
+    <eGenericSuperTypes eClassifier="ecore:EClass ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ui/SnippetContainer"/>
   </eClassifiers>
 </ecore:EPackage>

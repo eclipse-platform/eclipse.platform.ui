@@ -15,17 +15,21 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -172,13 +176,41 @@ public class MenuHelper {
 		return checkEnabled != null && checkEnabled.equalsIgnoreCase("true"); //$NON-NLS-1$
 	}
 
-	static MExpression getVisibleWhen(IConfigurationElement commandAddition) {
+	static MExpression getVisibleWhen(final IConfigurationElement commandAddition) {
 		try {
 			IConfigurationElement[] visibleConfig = commandAddition
 					.getChildren(IWorkbenchRegistryConstants.TAG_VISIBLE_WHEN);
 			if (visibleConfig.length > 0 && visibleConfig.length < 2) {
 				IConfigurationElement[] visibleChild = visibleConfig[0].getChildren();
-				if (visibleChild.length > 0) {
+				if (visibleChild.length == 0) {
+					String checkEnabled = visibleConfig[0]
+							.getAttribute(IWorkbenchRegistryConstants.ATT_CHECK_ENABLED);
+					if (Boolean.parseBoolean(checkEnabled)) {
+						final String commandId = getCommandId(commandAddition);
+						if (commandId == null) {
+							return null;
+						}
+
+						Expression visWhen = new Expression() {
+							@Override
+							public EvaluationResult evaluate(IEvaluationContext context) {
+								EHandlerService service = (EHandlerService) context
+										.getVariable(EHandlerService.class.getName());
+								ICommandService commandService = (ICommandService) context
+										.getVariable(ICommandService.class.getName());
+								Command c = commandService.getCommand(commandId);
+								ParameterizedCommand generateCommand = ParameterizedCommand
+										.generateCommand(c, Collections.EMPTY_MAP);
+								return EvaluationResult
+										.valueOf(service.canExecute(generateCommand));
+							}
+						};
+						MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
+						exp.setCoreExpressionId("programmatic.value"); //$NON-NLS-1$
+						exp.setCoreExpression(visWhen);
+						return exp;
+					}
+				} else if (visibleChild.length > 0) {
 					Expression visWhen = ExpressionConverter.getDefault().perform(visibleChild[0]);
 					MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
 					exp.setCoreExpressionId("programmatic.value"); //$NON-NLS-1$
@@ -837,8 +869,7 @@ public class MenuHelper {
 			}
 		} else if (id != null) {
 			// wire these off because we're out of time, see bug 317203
-			if (id.equals(IWorkbenchCommandConstants.WINDOW_SAVE_PERSPECTIVE_AS)
-					|| id.equals(IWorkbenchCommandConstants.WINDOW_CUSTOMIZE_PERSPECTIVE)) {
+			if (id.equals(IWorkbenchCommandConstants.WINDOW_CUSTOMIZE_PERSPECTIVE)) {
 				return null;
 			}
 

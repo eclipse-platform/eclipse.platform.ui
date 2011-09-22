@@ -533,6 +533,26 @@ public final class Workbench extends EventManager implements IWorkbench {
 					// create the workbench instance
 					Workbench workbench = new Workbench(display, advisor, e4Workbench
 							.getApplication(), e4Workbench.getContext());
+
+					// prime the splash nice and early
+					if (createSplash)
+						workbench.createSplashWrapper();
+
+					AbstractSplashHandler handler = getSplash();
+
+					IProgressMonitor progressMonitor = null;
+					if (handler != null) {
+						progressMonitor = handler.getBundleProgressMonitor();
+						if (progressMonitor != null) {
+							double cutoff = 0.95;
+							int expectedProgressCount = Math.max(1, WorkbenchPlugin.getDefault()
+									.getBundleCount() / 10);
+							progressMonitor.beginTask("", expectedProgressCount); //$NON-NLS-1$
+							SynchronousBundleListener bundleListener = workbench.new StartupProgressBundleListener(
+									progressMonitor, (int) (expectedProgressCount * cutoff));
+							WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
+						}
+					}
 					// run the legacy workbench once
 					returnCode[0] = workbench.runUI();
 					// run the e4 event loop and instantiate ... well, stuff
@@ -675,7 +695,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				StartupMonitor startupMonitor = new StartupMonitor() {
 
 					public void applicationRunning() {
-						splash.dispose();
+						// splash.dispose();
 						if (background != null)
 							background.dispose();
 						registration[0].unregister(); // unregister ourself
@@ -1159,7 +1179,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 
 		return createWorkbenchWindow(getDefaultPageInput(), getPerspectiveRegistry()
-				.findPerspectiveWithId(getDefaultPerspectiveId()),
+				.findPerspectiveWithId(getPerspectiveRegistry().getDefaultPerspective()),
 				activeWindow, false);
 	}
 
@@ -2345,9 +2365,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		} else
 			synchronizer = null;
 
-		// prime the splash nice and early
-		if (createSplash)
-			createSplashWrapper();
+		// // prime the splash nice and early
+		// if (createSplash)
+		// createSplashWrapper();
 
 		// ModalContext should not spin the event loop (there is no UI yet to
 		// block)
@@ -2673,8 +2693,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @return the default perspective id, or <code>null</code>
 	 */
 	public String getDefaultPerspectiveId() {
-		String defaultId = getPerspectiveRegistry().getDefaultPerspective();
-		return defaultId == null ? getAdvisor().getInitialWindowPerspectiveId() : defaultId;
+		return getAdvisor().getInitialWindowPerspectiveId();
 	}
 
 	/**

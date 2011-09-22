@@ -496,7 +496,20 @@ public class ModeledPageLayout implements IPageLayout {
 				break;
 			}
 
-			psc.setToBeRendered(relTo.isToBeRendered() || toInsert.isToBeRendered());
+			if (relTo.isToBeRendered() || toInsert.isToBeRendered()) {
+				// one of the items to be inserted should be rendered, render
+				// all parent elements as well
+				MUIElement parent = psc.getParent();
+				while (parent != null && !(parent instanceof MPerspective)) {
+					parent.setToBeRendered(true);
+					parent = parent.getParent();
+				}
+				psc.setToBeRendered(true);
+			} else {
+				// no child elements need to be rendered, the parent part sash
+				// container does not need to be rendered either then
+				psc.setToBeRendered(false);
+			}
 			return;
 		}
 
@@ -580,9 +593,13 @@ public class ModeledPageLayout implements IPageLayout {
 			E4Util.unsupported("removePlaceholder: failed to find " + id + ": " + refModel); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		MElementContainer<MUIElement> parent = refModel.getParent();
-		if (parent != null) {
-			parent.getChildren().remove(refModel);
+
+		// placeholders in the shared area should be ignored
+		if (modelService.getElementLocation(refModel) != EModelService.IN_SHARED_AREA) {
+			MElementContainer<MUIElement> parent = refModel.getParent();
+			if (parent != null) {
+				parent.getChildren().remove(refModel);
+			}
 		}
 	}
 

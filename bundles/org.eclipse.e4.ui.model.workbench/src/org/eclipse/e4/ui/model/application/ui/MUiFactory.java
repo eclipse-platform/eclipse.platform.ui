@@ -36,4 +36,13 @@ public interface MUiFactory {
 	 */
 	MCoreExpression createCoreExpression();
 
+	/**
+	 * Returns a new object of class '<em>Snippet Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Snippet Container</em>'.
+	 * @generated
+	 */
+	MSnippetContainer createSnippetContainer();
+
 } //MUiFactory

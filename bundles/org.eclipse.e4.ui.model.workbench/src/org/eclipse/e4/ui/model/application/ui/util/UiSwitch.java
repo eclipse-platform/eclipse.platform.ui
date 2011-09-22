@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui.util;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.*;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
@@ -109,17 +110,17 @@ public class UiSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case UiPackageImpl.UI_LABEL: {
-				MUILabel uiLabel = (MUILabel)theEObject;
-				T1 result = caseUILabel(uiLabel);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case UiPackageImpl.ELEMENT_CONTAINER: {
 				MElementContainer<?> elementContainer = (MElementContainer<?>)theEObject;
 				T1 result = caseElementContainer(elementContainer);
 				if (result == null) result = caseUIElement(elementContainer);
 				if (result == null) result = caseApplicationElement(elementContainer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case UiPackageImpl.UI_LABEL: {
+				MUILabel uiLabel = (MUILabel)theEObject;
+				T1 result = caseUILabel(uiLabel);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -162,6 +163,12 @@ public class UiSwitch<T1> extends Switch<T1> {
 				T1 result = caseCoreExpression(coreExpression);
 				if (result == null) result = caseExpression(coreExpression);
 				if (result == null) result = caseApplicationElement(coreExpression);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case UiPackageImpl.SNIPPET_CONTAINER: {
+				MSnippetContainer snippetContainer = (MSnippetContainer)theEObject;
+				T1 result = caseSnippetContainer(snippetContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -331,6 +338,21 @@ public class UiSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseCoreExpression(MCoreExpression object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Snippet Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Snippet Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseSnippetContainer(MSnippetContainer object) {
 		return null;
 	}
 

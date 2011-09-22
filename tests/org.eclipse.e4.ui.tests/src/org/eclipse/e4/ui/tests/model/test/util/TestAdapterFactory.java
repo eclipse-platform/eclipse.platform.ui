@@ -14,6 +14,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MInput;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.tests.model.test.MTestHarness;
@@ -132,6 +133,11 @@ public class TestAdapterFactory extends AdapterFactoryImpl {
 		@Override
 		public Adapter caseDirtyable(MDirtyable object) {
 			return createDirtyableAdapter();
+		}
+
+		@Override
+		public Adapter caseSnippetContainer(MSnippetContainer object) {
+			return createSnippetContainerAdapter();
 		}
 
 		@Override
@@ -323,6 +329,22 @@ public class TestAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createDirtyableAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '
+	 * {@link org.eclipse.e4.ui.model.application.ui.MSnippetContainer
+	 * <em>Snippet Container</em>}'. <!-- begin-user-doc --> This default
+	 * implementation returns null so that we can easily ignore cases; it's
+	 * useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * 
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer
+	 * @generated
+	 */
+	public Adapter createSnippetContainerAdapter() {
 		return null;
 	}
 

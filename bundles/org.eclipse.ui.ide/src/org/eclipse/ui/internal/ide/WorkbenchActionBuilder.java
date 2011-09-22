@@ -106,10 +106,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     private IWorkbenchAction hideShowEditorAction;
 
-    private IWorkbenchAction savePerspectiveAction;
-
-    private IWorkbenchAction resetPerspectiveAction;
-
     private IWorkbenchAction editActionSetAction;
 
     private IWorkbenchAction closePerspAction;
@@ -677,8 +673,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         }
         menu.add(new Separator());
         menu.add(editActionSetAction);
-        menu.add(savePerspectiveAction);
-        menu.add(resetPerspectiveAction);
+        menu.add(getSavePerspectiveItem());
+        menu.add(getResetPerspectiveItem());
         menu.add(closePerspAction);
         menu.add(closeAllPerspsAction);
     }
@@ -835,8 +831,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         openPreferencesAction = null;
         saveAsAction = null;
         hideShowEditorAction = null;
-        savePerspectiveAction = null;
-        resetPerspectiveAction = null;
         editActionSetAction = null;
         closePerspAction = null;
         lockToolBarAction = null;
@@ -1077,17 +1071,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(window);
         register(hideShowEditorAction);
-        savePerspectiveAction = ActionFactory.SAVE_PERSPECTIVE
-                .create(window);
-        register(savePerspectiveAction);
         editActionSetAction = ActionFactory.EDIT_ACTION_SETS
                 .create(window);
         register(editActionSetAction);
         lockToolBarAction = ActionFactory.LOCK_TOOL_BAR.create(window);
         register(lockToolBarAction);
-        resetPerspectiveAction = ActionFactory.RESET_PERSPECTIVE
-                .create(window);
-        register(resetPerspectiveAction);
         closePerspAction = ActionFactory.CLOSE_PERSPECTIVE.create(window);
         register(closePerspAction);
         closeAllPerspsAction = ActionFactory.CLOSE_ALL_PERSPECTIVES
@@ -1408,6 +1396,28 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 				WorkbenchMessages.Workbench_copy,
 				WorkbenchMessages.Workbench_copyToolTip, null);
 	}
+    
+    private IContributionItem getResetPerspectiveItem() {
+		return getItem(
+				ActionFactory.RESET_PERSPECTIVE.getId(),
+				ActionFactory.RESET_PERSPECTIVE.getCommandId(),
+				null,
+				null,
+				WorkbenchMessages.ResetPerspective_text,
+				WorkbenchMessages.ResetPerspective_toolTip, 
+				IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
+    }
+    
+    private IContributionItem getSavePerspectiveItem() {
+		return getItem(
+				ActionFactory.SAVE_PERSPECTIVE.getId(),
+				ActionFactory.SAVE_PERSPECTIVE.getCommandId(),
+				null,
+				null,
+				WorkbenchMessages.SavePerspective_text,
+				WorkbenchMessages.SavePerspective_toolTip, 
+				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
+    }
     
     private IContributionItem getPasteItem() {
 		return getItem(

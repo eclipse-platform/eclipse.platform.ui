@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
@@ -162,6 +163,7 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			childrenFeatures.add(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
 			childrenFeatures.add(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
 			childrenFeatures.add(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
+			childrenFeatures.add(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES);
@@ -230,6 +232,7 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
 			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
 			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+			case ApplicationPackageImpl.APPLICATION__SNIPPETS:
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
 			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
@@ -293,6 +296,166 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MApplicationFactory.INSTANCE.createApplication()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createMenuSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createMenuContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createPopupMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createDirectMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createHandledMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createToolControl()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createHandledToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createDirectToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createToolBarSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createRenderedMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createRenderedToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createToolBarContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createTrimContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createRenderedMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createOpaqueToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createOpaqueMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createOpaqueMenuSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createOpaqueMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory.INSTANCE.createPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory.INSTANCE.createInputPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory.INSTANCE.createPartStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory.INSTANCE.createPartSashContainer()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory.INSTANCE.createWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory.INSTANCE.createTrimmedWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory.INSTANCE.createTrimBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MAdvancedFactory.INSTANCE.createPlaceholder()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MAdvancedFactory.INSTANCE.createPerspective()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MAdvancedFactory.INSTANCE.createArea()));
+
+		newChildDescriptors.add
+			(createChildParameter
 				(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS,
 				 MCommandsFactory.INSTANCE.createCommand()));
 
@@ -319,19 +482,11 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 		Object childObject = child;
 
 		boolean qualify =
-			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__CLONABLE_SNIPPETS ||
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
-			childFeature == ApplicationPackageImpl.Literals.APPLICATION__ADDONS ||
-			childFeature == CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT ||
-			childFeature == CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES ||
-			childFeature == ApplicationPackageImpl.Literals.APPLICATION__COMMANDS ||
-			childFeature == CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS ||
-			childFeature == ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES ||
-			childFeature == UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN ||
+			childFeature == UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS ||
 			childFeature == MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS ||
 			childFeature == MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS ||
-			childFeature == MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS ||
-			childFeature == BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS;
+			childFeature == MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS;
 
 		if (qualify) {
 			return getString

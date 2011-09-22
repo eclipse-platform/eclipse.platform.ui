@@ -112,15 +112,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_DESCRIPTOR__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__CLONABLE_SNIPPETS = ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS;
-
-	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

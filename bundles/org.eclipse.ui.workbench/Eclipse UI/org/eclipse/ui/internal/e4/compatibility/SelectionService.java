@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
@@ -160,14 +161,18 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 
 	private void notifyListeners(String id, IWorkbenchPart workbenchPart, ISelection selection) {
 		for (Object listener : listeners.getListeners()) {
-			((ISelectionListener) listener).selectionChanged(workbenchPart, selection);
+			if (selection != null || listener instanceof INullSelectionListener) {
+				((ISelectionListener) listener).selectionChanged(workbenchPart, selection);
+			}
 		}
 
 		if (id != null) {
 			Set<ISelectionListener> listeners = targetedListeners.get(id);
 			if (listeners != null) {
 				for (ISelectionListener listener : listeners) {
-					listener.selectionChanged(workbenchPart, selection);
+					if (selection != null || listener instanceof INullSelectionListener) {
+						listener.selectionChanged(workbenchPart, selection);
+					}
 				}
 			}
 		}

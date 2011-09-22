@@ -65,7 +65,7 @@ public interface MContribution extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Object</em>' attribute.
 	 * @see #setObject(Object)
-	 * @model transient="true"
+	 * @model transient="true" derived="true"
 	 * @generated
 	 */
 	Object getObject();

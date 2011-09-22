@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -277,7 +277,10 @@ final public class MenuPersistence extends RegistryPersistence {
 		Collections.sort(configElements, comparer);
 
 		for (IConfigurationElement element : configElements) {
-			for (IConfigurationElement child : element.getChildren()) {
+			IConfigurationElement[] children = element.getChildren();
+			// go in reverse order
+			for (int i = children.length - 1; i >= 0; i--) {
+				IConfigurationElement child = children[i];
 				if (child.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION)) {
 					ViewAction viewAction = new ViewAction(application, appContext, element, child,
 							false);

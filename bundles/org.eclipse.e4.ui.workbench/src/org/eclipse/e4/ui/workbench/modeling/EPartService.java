@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public interface EPartService {
 	public void activate(MPart part, boolean requiresFocus);
 
 	/**
-	 * Ask the service to assign activation to a valid part.
+	 * Ask the service to assign activation to a valid part in the currently active presentation.
 	 */
 	public void requestActivation();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -25,7 +26,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
@@ -52,10 +52,8 @@ public class EditorWidgetFactory extends TestWidgetFactory {
     
     public static Composite getControl(IEditorPart part) {
 		EditorSite site = (EditorSite)part.getSite();
-		
-		PartPane pane = site.getPane();
-        
-		return (Composite)pane.getControl();
+		MPart modelPart = site.getModel();
+		return (Composite) modelPart.getWidget();
     }
     
     /* (non-Javadoc)

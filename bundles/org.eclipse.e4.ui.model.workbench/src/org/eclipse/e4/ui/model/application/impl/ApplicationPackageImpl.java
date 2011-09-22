@@ -163,22 +163,13 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION_ELEMENT__CONTRIBUTOR_URI = 2;
 
 	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int APPLICATION_ELEMENT__CLONABLE_SNIPPETS = 3;
-
-	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_ELEMENT__TRANSIENT_DATA = 4;
+	public static final int APPLICATION_ELEMENT__TRANSIENT_DATA = 3;
 
 	/**
 	 * The number of structural features of the '<em>Element</em>' class.
@@ -187,7 +178,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_ELEMENT_FEATURE_COUNT = 5;
+	public static final int APPLICATION_ELEMENT_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Element</em>' class.
@@ -234,15 +225,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int APPLICATION__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int APPLICATION__CLONABLE_SNIPPETS = UiPackageImpl.ELEMENT_CONTAINER__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -461,13 +443,22 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__TRIM_CONTRIBUTIONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
 
 	/**
+	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION__SNIPPETS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
+
+	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION__COMMANDS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
+	public static final int APPLICATION__COMMANDS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Addons</b></em>' containment reference list.
@@ -476,7 +467,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION__ADDONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 12;
+	public static final int APPLICATION__ADDONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Categories</b></em>' containment reference list.
@@ -485,7 +476,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION__CATEGORIES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
+	public static final int APPLICATION__CATEGORIES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 14;
 
 	/**
 	 * The number of structural features of the '<em>Application</em>' class.
@@ -494,7 +485,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 14;
+	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 15;
 
 	/**
 	 * The operation id for the '<em>Get Localized Accessibility Phrase</em>' operation.
@@ -550,15 +541,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int CONTRIBUTION__CONTRIBUTOR_URI = APPLICATION_ELEMENT__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTRIBUTION__CLONABLE_SNIPPETS = APPLICATION_ELEMENT__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -650,15 +632,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int ADDON__CONTRIBUTOR_URI = CONTRIBUTION__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int ADDON__CLONABLE_SNIPPETS = CONTRIBUTION__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -1055,20 +1028,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getApplicationElement_TransientData() {
-		return (EReference)applicationElementEClass.getEStructuralFeatures().get(4);
-	}
-
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getClonableSnippets <em>Clonable Snippets</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Clonable Snippets</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getClonableSnippets()
-	 * @see #getApplicationElement()
-	 * @generated
-	 */
-	public EReference getApplicationElement_ClonableSnippets() {
 		return (EReference)applicationElementEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -1235,7 +1194,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ELEMENT_ID);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__TAGS);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__CONTRIBUTOR_URI);
-		createEReference(applicationElementEClass, APPLICATION_ELEMENT__CLONABLE_SNIPPETS);
 		createEReference(applicationElementEClass, APPLICATION_ELEMENT__TRANSIENT_DATA);
 
 		contributionEClass = createEClass(CONTRIBUTION);
@@ -1313,6 +1271,8 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theMenuPackage.getTrimContributions());
 		applicationEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theUiPackage.getSnippetContainer());
+		applicationEClass.getEGenericSuperTypes().add(g1);
 		contributionEClass.getESuperTypes().add(this.getApplicationElement());
 		addonEClass.getESuperTypes().add(this.getContribution());
 
@@ -1330,12 +1290,11 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		initEAttribute(getApplicationElement_ElementId(), ecorePackage.getEString(), "elementId", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_Tags(), ecorePackage.getEString(), "tags", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_ContributorURI(), ecorePackage.getEString(), "contributorURI", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getApplicationElement_ClonableSnippets(), this.getApplicationElement(), null, "clonableSnippets", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getApplicationElement_TransientData(), this.getStringToObjectMap(), null, "transientData", null, 0, -1, MApplicationElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(contributionEClass, MContribution.class, "Contribution", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getContribution_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getContribution_Object(), ecorePackage.getEJavaObject(), "object", null, 0, 1, MContribution.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getContribution_Object(), ecorePackage.getEJavaObject(), "object", null, 0, 1, MContribution.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getContribution_PersistedState(), this.getStringToStringMap(), null, "persistedState", null, 0, -1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(addonEClass, MAddon.class, "Addon", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1465,14 +1424,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference APPLICATION_ELEMENT__TRANSIENT_DATA = eINSTANCE.getApplicationElement_TransientData();
-
-		/**
-		 * The meta object literal for the '<em><b>Clonable Snippets</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference APPLICATION_ELEMENT__CLONABLE_SNIPPETS = eINSTANCE.getApplicationElement_ClonableSnippets();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.

@@ -21,8 +21,10 @@ import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MInput;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.basic.*;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
@@ -164,6 +166,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseContext(window);
 				if (result == null) result = caseHandlerContainer(window);
 				if (result == null) result = caseBindings(window);
+				if (result == null) result = caseSnippetContainer(window);
 				if (result == null) result = caseUIElement(window);
 				if (result == null) result = caseApplicationElement(window);
 				if (result == null) result = defaultCase(theEObject);
@@ -178,6 +181,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseContext(trimmedWindow);
 				if (result == null) result = caseHandlerContainer(trimmedWindow);
 				if (result == null) result = caseBindings(trimmedWindow);
+				if (result == null) result = caseSnippetContainer(trimmedWindow);
 				if (result == null) result = caseUIElement(trimmedWindow);
 				if (result == null) result = caseApplicationElement(trimmedWindow);
 				if (result == null) result = defaultCase(theEObject);
@@ -571,6 +575,21 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseGenericTile(MGenericTile<T> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Snippet Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Snippet Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseSnippetContainer(MSnippetContainer object) {
 		return null;
 	}
 

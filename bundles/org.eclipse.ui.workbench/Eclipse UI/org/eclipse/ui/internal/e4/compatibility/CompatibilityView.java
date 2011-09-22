@@ -34,6 +34,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.ViewReference;
 import org.eclipse.ui.internal.WorkbenchPartReference;
@@ -117,7 +118,11 @@ public class CompatibilityView extends CompatibilityPart {
 		}
 		AbstractPartRenderer apr = rendererFactory.getRenderer(menu, parent);
 		if (apr instanceof MenuManagerRenderer) {
-			((MenuManagerRenderer) apr).linkModelToManager(menu, mm);
+			MenuManagerRenderer renderer = (MenuManagerRenderer) apr;
+			renderer.linkModelToManager(menu, mm);
+			// create opaque items for any contribution items that were added
+			// directly to the manager
+			renderer.reconcileManagerToModel(mm, menu);
 		}
 
 		// Construct the toolbar (if necessary)
@@ -131,5 +136,34 @@ public class CompatibilityView extends CompatibilityPart {
 		if (apr instanceof ToolBarManagerRenderer) {
 			((ToolBarManagerRenderer) apr).linkModelToManager(toolbar, tbm);
 		}
+	}
+
+	@Override
+	void disposeSite() {
+		IEclipseContext context = getModel().getContext();
+		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
+		IActionBars actionBars = ((IViewSite) getReference().getSite()).getActionBars();
+
+		for (MMenu menu : part.getMenus()) {
+			if (menu.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
+				AbstractPartRenderer apr = rendererFactory.getRenderer(menu, null);
+				if (apr instanceof MenuManagerRenderer) {
+					MenuManager mm = (MenuManager) actionBars.getMenuManager();
+					((MenuManagerRenderer) apr).clearModelToManager(menu, mm);
+				}
+				break;
+			}
+		}
+
+		MToolBar toolbar = part.getToolbar();
+		if (toolbar != null) {
+			AbstractPartRenderer apr = rendererFactory.getRenderer(toolbar, null);
+			if (apr instanceof ToolBarManagerRenderer) {
+				ToolBarManager tbm = (ToolBarManager) actionBars.getToolBarManager();
+				((ToolBarManagerRenderer) apr).clearModelToManager(toolbar, tbm);
+			}
+		}
+
+		super.disposeSite();
 	}
 }

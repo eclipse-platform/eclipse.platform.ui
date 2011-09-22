@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,11 @@ import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -38,11 +42,14 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -61,13 +68,14 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 	private PerspectiveRegistry perspectiveRegistry;
 
-	private ArrayList perspectives;
+	// List of perspectives to populate preference page
+	private ArrayList<IPerspectiveDescriptor> perspectives;
 
 	private String defaultPerspectiveId;
 
-	private ArrayList perspToDelete = new ArrayList();
+	private ArrayList<IPerspectiveDescriptor> perspToDelete = new ArrayList<IPerspectiveDescriptor>();
 
-	private ArrayList perspToRevert = new ArrayList();
+	private ArrayList<IPerspectiveDescriptor> perspToRevert = new ArrayList<IPerspectiveDescriptor>();
 
 	private Table perspectivesTable;
 	
@@ -117,12 +125,12 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	/**
 	 * <code>Comparator</code> to compare two perspective descriptors
 	 */
-    private Comparator comparator = new Comparator() {
+	private Comparator<IPerspectiveDescriptor> comparator = new Comparator<IPerspectiveDescriptor>() {
         private Collator collator = Collator.getInstance();
 
-        public int compare(Object ob1, Object ob2) {
-            IPerspectiveDescriptor d1 = (IPerspectiveDescriptor) ob1;
-            IPerspectiveDescriptor d2 = (IPerspectiveDescriptor) ob2;
+		public int compare(IPerspectiveDescriptor ob1, IPerspectiveDescriptor ob2) {
+			IPerspectiveDescriptor d1 = ob1;
+			IPerspectiveDescriptor d2 = ob2;
             return collator.compare(d1.getLabel(), d2.getLabel());
         }
     };
@@ -327,7 +335,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		// Populate the perspectivesTable
 		IPerspectiveDescriptor[] persps = perspectiveRegistry.getPerspectives();
-		perspectives = new ArrayList(persps.length);
+		perspectives = new ArrayList<IPerspectiveDescriptor>(persps.length);
 		for (int i = 0; i < persps.length; i++) {
 			perspectives.add(i, persps[i]);
 		}
@@ -524,34 +532,28 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Deletes the perspectives selected by the user if there is no opened
-	 * instance of that perspective.
+	 * Return true if there are no open instances of the perspective.  If there are open
+	 * instances of the perspective prompt the user and return true if the user answers "yes"
+	 * to the delete prompt.
 	 * 
-	 * @return boolean <code>true</code> if all of the perspectives could be
-	 *         deleted.
+	 * @return boolean <code>true</code> if it is OK to delete the perspective
+	 *         either because there are no open instances or the user has
+	 *         confirmed the deletion.
 	 */
-	private boolean findOpenInstance(IPerspectiveDescriptor desc) {
-		// IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
-		
-		//find all active perspectives currently
-		// for (int i = 0; i < windows.length; i++) {
-		// IWorkbenchPage pages[] = windows[i].getPages();
-		// for (int j = 0; j < pages.length; j++) {
-		// WorkbenchPage page = (WorkbenchPage) pages[j];
-		// if (page.findPerspective(desc) != null) {
-		// if (!MessageDialog
-		// .openQuestion(
-		// getShell(),
-		// WorkbenchMessages.PerspectivesPreference_perspectiveopen_title,
-		// NLS.bind(WorkbenchMessages.PerspectivesPreference_perspectiveopen_message,
-		// desc.getLabel()))) {
-		// return true;
-		// }
-		// }
-		// }
-		// }
+	private boolean canDeletePerspective(IPerspectiveDescriptor desc) {
 
-		return false;
+		MApplication application = ((Workbench) workbench).getApplication();
+		EModelService modelService = application.getContext().get(EModelService.class);
+		
+		if (modelService.findElements(application, desc.getId(), MPerspective.class, null)
+				.isEmpty())
+			return true;
+
+		return MessageDialog.openQuestion(
+				getShell(),
+				WorkbenchMessages.PerspectivesPreference_perspectiveopen_title,
+				NLS.bind(WorkbenchMessages.PerspectivesPreference_perspectiveopen_message,
+						desc.getLabel()));
 	}
 
 	/**
@@ -562,30 +564,25 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		if (!Util.equals(defaultPerspectiveId, perspectiveRegistry.getDefaultPerspective())) {
 			perspectiveRegistry.setDefaultPerspective(defaultPerspectiveId);
 		}
+
+		// Don't bother figuring out which window a perspective may be open in,
+		// the number of windows will be small.
 		
-		//Delete the perspective
-		if(perspectives.size()<perspectiveRegistry.getPerspectives().length) {
-			// IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
-			
-			// close any perspectives that are about to be deleted
-			// for (int i = 0; i < windows.length; i++) {
-			// IWorkbenchPage pages[] = windows[i].getPages();
-			// for (int j = 0; j < pages.length; j++) {
-			// WorkbenchPage page = (WorkbenchPage) pages[j];
-			// for (int k = 0; k < perspToDelete.size(); k++) {
-			// IPerspectiveDescriptor desc = (IPerspectiveDescriptor)
-			// perspToDelete.get(k);
-			// if (page.findPerspective(desc) != null) {
-			// page.closePerspective(desc, true, true);
-			// }
-			// }
-			// }
-			// }
+		for (IPerspectiveDescriptor perspective : perspToDelete) {
+			IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+			for (IWorkbenchWindow window : windows) {
+				IWorkbenchPage[] pages = window.getPages();
+				for (IWorkbenchPage page : pages) {
+					page.closePerspective(perspective, true, false);
+				}
+			}
 			perspectiveRegistry.deletePerspectives(perspToDelete);
 		}
-				
-        // Revert the perspectives
-		// perspectiveRegistry.revertPerspectives(perspToRevert);
+
+        // Revert perspectives
+		for (IPerspectiveDescriptor perspective : perspToRevert) {
+			perspectiveRegistry.revertPerspective(perspective);
+		}
 
 		IPreferenceStore store = getPreferenceStore();
 
@@ -629,8 +626,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		// Do enable.
 		if (desc != null) {
-			revertButton.setEnabled(!perspToRevert.contains(desc));
-			deleteButton.setEnabled(true);
+			revertButton.setEnabled(desc.isPredefined() && desc.hasCustomDefinition()
+					&& !perspToRevert.contains(desc));
+			deleteButton.setEnabled(!desc.isPredefined());
 			setDefaultButton.setEnabled(true);
 		} else {
 			revertButton.setEnabled(false);
@@ -702,7 +700,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 			}
 		} else if (button == deleteButton) {
 			if (!perspToDelete.contains(desc)) {
-				if(!findOpenInstance(desc)){
+				if (canDeletePerspective(desc)) {
 					perspToDelete.add(desc);
 					perspToRevert.remove(desc);
 					perspectives.remove(desc);				

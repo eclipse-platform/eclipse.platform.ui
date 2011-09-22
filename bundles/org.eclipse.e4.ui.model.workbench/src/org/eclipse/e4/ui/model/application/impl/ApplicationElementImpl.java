@@ -38,7 +38,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getContributorURI <em>Contributor URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getClonableSnippets <em>Clonable Snippets</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTransientData <em>Transient Data</em>}</li>
  * </ul>
  * </p>
@@ -95,16 +94,6 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * @ordered
 	 */
 	protected String contributorURI = CONTRIBUTOR_URI_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getClonableSnippets() <em>Clonable Snippets</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getClonableSnippets()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<MApplicationElement> clonableSnippets;
 
 	/**
 	 * The cached value of the '{@link #getTransientData() <em>Transient Data</em>}' map.
@@ -205,23 +194,9 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<MApplicationElement> getClonableSnippets() {
-		if (clonableSnippets == null) {
-			clonableSnippets = new EObjectContainmentEList<MApplicationElement>(MApplicationElement.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS);
-		}
-		return clonableSnippets;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
-				return ((InternalEList<?>)getClonableSnippets()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
 				return ((InternalEList<?>)((EMap.InternalMapView<String, Object>)getTransientData()).eMap()).basicRemove(otherEnd, msgs);
 		}
@@ -242,8 +217,6 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				return getTags();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				return getContributorURI();
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
-				return getClonableSnippets();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
 				if (coreType) return ((EMap.InternalMapView<String, Object>)getTransientData()).eMap();
 				else return getTransientData();
@@ -270,10 +243,6 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				setContributorURI((String)newValue);
 				return;
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
-				getClonableSnippets().clear();
-				getClonableSnippets().addAll((Collection<? extends MApplicationElement>)newValue);
-				return;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
 				((EStructuralFeature.Setting)((EMap.InternalMapView<String, Object>)getTransientData()).eMap()).set(newValue);
 				return;
@@ -298,9 +267,6 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				setContributorURI(CONTRIBUTOR_URI_EDEFAULT);
 				return;
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
-				getClonableSnippets().clear();
-				return;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
 				getTransientData().clear();
 				return;
@@ -322,8 +288,6 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				return tags != null && !tags.isEmpty();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				return CONTRIBUTOR_URI_EDEFAULT == null ? contributorURI != null : !CONTRIBUTOR_URI_EDEFAULT.equals(contributorURI);
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
-				return clonableSnippets != null && !clonableSnippets.isEmpty();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
 				return transientData != null && !transientData.isEmpty();
 		}

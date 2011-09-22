@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.MInput;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -82,6 +83,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#isDirty <em>Dirty</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getSnippets <em>Snippets</em>}</li>
  * </ul>
  * </p>
  *
@@ -477,6 +479,16 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	 * @ordered
 	 */
 	protected boolean dirty = DIRTY_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getSnippets() <em>Snippets</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSnippets()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MUIElement> snippets;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1102,6 +1114,18 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<MUIElement> getSnippets() {
+		if (snippets == null) {
+			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this, MTestPackage.TEST_HARNESS__SNIPPETS);
+		}
+		return snippets;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getLocalizedLabel() {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
@@ -1191,6 +1215,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return basicSetVisibleWhen(null, msgs);
 			case MTestPackage.TEST_HARNESS__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+			case MTestPackage.TEST_HARNESS__SNIPPETS:
+				return ((InternalEList<?>)getSnippets()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -1279,6 +1305,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return getTooltip();
 			case MTestPackage.TEST_HARNESS__DIRTY:
 				return isDirty();
+			case MTestPackage.TEST_HARNESS__SNIPPETS:
+				return getSnippets();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -1381,6 +1409,10 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__DIRTY:
 				setDirty((Boolean)newValue);
 				return;
+			case MTestPackage.TEST_HARNESS__SNIPPETS:
+				getSnippets().clear();
+				getSnippets().addAll((Collection<? extends MUIElement>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -1479,6 +1511,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__DIRTY:
 				setDirty(DIRTY_EDEFAULT);
 				return;
+			case MTestPackage.TEST_HARNESS__SNIPPETS:
+				getSnippets().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1548,6 +1583,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
 			case MTestPackage.TEST_HARNESS__DIRTY:
 				return dirty != DIRTY_EDEFAULT;
+			case MTestPackage.TEST_HARNESS__SNIPPETS:
+				return snippets != null && !snippets.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1629,6 +1666,12 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 		if (baseClass == MDirtyable.class) {
 			switch (derivedFeatureID) {
 				case MTestPackage.TEST_HARNESS__DIRTY: return UiPackageImpl.DIRTYABLE__DIRTY;
+				default: return -1;
+			}
+		}
+		if (baseClass == MSnippetContainer.class) {
+			switch (derivedFeatureID) {
+				case MTestPackage.TEST_HARNESS__SNIPPETS: return UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS;
 				default: return -1;
 			}
 		}
@@ -1715,6 +1758,12 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				default: return -1;
 			}
 		}
+		if (baseClass == MSnippetContainer.class) {
+			switch (baseFeatureID) {
+				case UiPackageImpl.SNIPPET_CONTAINER__SNIPPETS: return MTestPackage.TEST_HARNESS__SNIPPETS;
+				default: return -1;
+			}
+		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
@@ -1771,6 +1820,11 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			}
 		}
 		if (baseClass == MDirtyable.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MSnippetContainer.class) {
 			switch (baseOperationID) {
 				default: return -1;
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.tests.performance.UIPerformancePlugin;
 import org.eclipse.ui.tests.performance.presentations.PresentationTestbed;
@@ -79,10 +78,10 @@ public class PresentationWidgetFactory extends TestWidgetFactory {
         String typeDesc = "unknown";
         
         switch(type) {
-        case PresentationFactoryUtil.ROLE_EDITOR: typeDesc = "editor"; break;
-        case PresentationFactoryUtil.ROLE_STANDALONE: typeDesc = "standalone with title"; break;
-        case PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE: typeDesc = "standalone without title"; break;
-        case PresentationFactoryUtil.ROLE_VIEW: typeDesc = "view"; break;
+//        case PresentationFactoryUtil.ROLE_EDITOR: typeDesc = "editor"; break;
+//        case PresentationFactoryUtil.ROLE_STANDALONE: typeDesc = "standalone with title"; break;
+//        case PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE: typeDesc = "standalone without title"; break;
+//        case PresentationFactoryUtil.ROLE_VIEW: typeDesc = "view"; break;
         }
         
         return "Presentation " + factory.getId() + " " + typeDesc;

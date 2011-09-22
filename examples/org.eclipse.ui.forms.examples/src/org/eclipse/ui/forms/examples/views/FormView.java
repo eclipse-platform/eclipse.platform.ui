@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.ui.forms.examples.views;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -37,6 +39,9 @@ import org.eclipse.ui.part.ViewPart;
 public class FormView extends ViewPart {
 	private FormToolkit toolkit;
 	private ScrolledForm form;
+	private ImageHyperlink ih;
+	private Button enableHyperlink;
+	private Button clearHyperlinkImage;
 	/**
 	 * The constructor.
 	 */
@@ -75,11 +80,48 @@ public class FormView extends ViewPart {
 		td.colspan = 2;
 		button.setLayoutData(td);
 		
-		ImageHyperlink ih = toolkit.createImageHyperlink(form.getBody(), SWT.NULL);
-		ih.setText("Image link with no image");
 		ih = toolkit.createImageHyperlink(form.getBody(), SWT.NULL);
 		ih.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));
-		ih.setText("Link with image and text");
+		ih.setText("Image Hyperlink with image and text");
+		td = new TableWrapData();
+		td.colspan = 2;
+		ih.setLayoutData(td);
+				
+		enableHyperlink = toolkit.createButton(form.getBody(), "Hyperlink Enabled", SWT.CHECK);
+		enableHyperlink.setSelection(true);
+		enableHyperlink.addSelectionListener(new SelectionListener() {		
+			public void widgetSelected(SelectionEvent e) {
+				ih.setEnabled(enableHyperlink.getSelection());					
+				form.reflow(true);
+			}
+			
+			public void widgetDefaultSelected(SelectionEvent e) {	
+			}
+		});		
+		
+		td = new TableWrapData();
+		td.colspan = 2;
+		enableHyperlink.setLayoutData(td);
+		
+		clearHyperlinkImage = toolkit.createButton(form.getBody(), "Hyperlink has image", SWT.CHECK);
+		clearHyperlinkImage.setSelection(true);
+		clearHyperlinkImage.addSelectionListener(new SelectionListener() {
+			
+			public void widgetSelected(SelectionEvent e) {
+				if (clearHyperlinkImage.getSelection()) {
+					ih.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));	
+				} else {
+					ih.setImage(null);		
+				}
+				form.reflow(true);
+			}
+			
+			public void widgetDefaultSelected(SelectionEvent e) {	
+			}
+		});		
+		td = new TableWrapData();
+		td.colspan = 2;
+		clearHyperlinkImage.setLayoutData(td);
 		
 		ExpandableComposite ec = toolkit.createExpandableComposite(form.getBody(), ExpandableComposite.TREE_NODE|ExpandableComposite.CLIENT_INDENT);
 		ImageHyperlink eci = toolkit.createImageHyperlink(ec, SWT.NULL);

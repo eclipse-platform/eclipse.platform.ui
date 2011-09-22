@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.impl;
 
+import org.eclipse.e4.ui.model.application.ui.*;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MUiFactory;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -73,6 +74,7 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case UiPackageImpl.CORE_EXPRESSION: return (EObject)createCoreExpression();
+			case UiPackageImpl.SNIPPET_CONTAINER: return (EObject)createSnippetContainer();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -116,6 +118,16 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	public MCoreExpression createCoreExpression() {
 		CoreExpressionImpl coreExpression = new CoreExpressionImpl();
 		return coreExpression;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MSnippetContainer createSnippetContainer() {
+		SnippetContainerImpl snippetContainer = new SnippetContainerImpl();
+		return snippetContainer;
 	}
 
 	/**

@@ -346,6 +346,7 @@ public class WindowItemProvider
 			super.getChildrenFeatures(object);
 			childrenFeatures.add(UiPackageImpl.Literals.CONTEXT__PROPERTIES);
 			childrenFeatures.add(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
+			childrenFeatures.add(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS);
 			childrenFeatures.add(BasicPackageImpl.Literals.WINDOW__MAIN_MENU);
 			childrenFeatures.add(BasicPackageImpl.Literals.WINDOW__WINDOWS);
 			childrenFeatures.add(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
@@ -417,6 +418,7 @@ public class WindowItemProvider
 				return;
 			case BasicPackageImpl.WINDOW__PROPERTIES:
 			case BasicPackageImpl.WINDOW__HANDLERS:
+			case BasicPackageImpl.WINDOW__SNIPPETS:
 			case BasicPackageImpl.WINDOW__MAIN_MENU:
 			case BasicPackageImpl.WINDOW__WINDOWS:
 			case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
@@ -446,6 +448,166 @@ public class WindowItemProvider
 			(createChildParameter
 				(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS,
 				 MCommandsFactory.INSTANCE.createHandler()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MBasicFactory.INSTANCE.createPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MBasicFactory.INSTANCE.createInputPart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MBasicFactory.INSTANCE.createPartStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MBasicFactory.INSTANCE.createPartSashContainer()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MBasicFactory.INSTANCE.createWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MBasicFactory.INSTANCE.createTrimmedWindow()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MBasicFactory.INSTANCE.createTrimBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MApplicationFactory.INSTANCE.createApplication()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createMenuSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createMenuContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createPopupMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createDirectMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createHandledMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createToolControl()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createHandledToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createDirectToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createToolBarSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createRenderedMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createRenderedToolBar()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createToolBarContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createTrimContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createRenderedMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createOpaqueToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createOpaqueMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createOpaqueMenuSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createOpaqueMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MAdvancedFactory.INSTANCE.createPlaceholder()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MAdvancedFactory.INSTANCE.createPerspective()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MAdvancedFactory.INSTANCE.createArea()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -650,12 +812,10 @@ public class WindowItemProvider
 		Object childObject = child;
 
 		boolean qualify =
-			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__CLONABLE_SNIPPETS ||
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
+			childFeature == UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__WINDOWS ||
-			childFeature == CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS ||
-			childFeature == UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__MAIN_MENU;
 
 		if (qualify) {

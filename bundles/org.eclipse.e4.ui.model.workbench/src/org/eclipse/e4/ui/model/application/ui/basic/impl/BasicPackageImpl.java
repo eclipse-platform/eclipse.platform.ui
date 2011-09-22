@@ -222,15 +222,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
-
-	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -553,15 +544,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int INPUT_PART__CONTRIBUTOR_URI = PART__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int INPUT_PART__CLONABLE_SNIPPETS = PART__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -897,15 +879,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_STACK__CONTRIBUTOR_URI = UiPackageImpl.GENERIC_STACK__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_STACK__CLONABLE_SNIPPETS = UiPackageImpl.GENERIC_STACK__CLONABLE_SNIPPETS;
-
-	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1075,15 +1048,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER__CONTRIBUTOR_URI = UiPackageImpl.GENERIC_TILE__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER__CLONABLE_SNIPPETS = UiPackageImpl.GENERIC_TILE__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -1264,15 +1228,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int WINDOW__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW__CLONABLE_SNIPPETS = UiPackageImpl.ELEMENT_CONTAINER__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -1464,13 +1419,22 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW__BINDING_CONTEXTS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
+	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW__SNIPPETS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
+
+	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__MAIN_MENU = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
+	public static final int WINDOW__MAIN_MENU = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>X</b></em>' attribute.
@@ -1479,7 +1443,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__X = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
+	public static final int WINDOW__X = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Y</b></em>' attribute.
@@ -1488,7 +1452,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__Y = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
+	public static final int WINDOW__Y = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Width</b></em>' attribute.
@@ -1497,7 +1461,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__WIDTH = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
+	public static final int WINDOW__WIDTH = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Height</b></em>' attribute.
@@ -1506,7 +1470,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__HEIGHT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 12;
+	public static final int WINDOW__HEIGHT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Windows</b></em>' containment reference list.
@@ -1515,7 +1479,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
+	public static final int WINDOW__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Shared Elements</b></em>' containment reference list.
@@ -1524,7 +1488,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__SHARED_ELEMENTS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 14;
+	public static final int WINDOW__SHARED_ELEMENTS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 15;
 
 	/**
 	 * The number of structural features of the '<em>Window</em>' class.
@@ -1533,7 +1497,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 15;
+	public static final int WINDOW_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 16;
 
 	/**
 	 * The operation id for the '<em>Get Localized Accessibility Phrase</em>' operation.
@@ -1597,15 +1561,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIMMED_WINDOW__CONTRIBUTOR_URI = WINDOW__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIMMED_WINDOW__CLONABLE_SNIPPETS = WINDOW__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -1797,6 +1752,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIMMED_WINDOW__BINDING_CONTEXTS = WINDOW__BINDING_CONTEXTS;
 
 	/**
+	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMMED_WINDOW__SNIPPETS = WINDOW__SNIPPETS;
+
+	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1939,15 +1903,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIM_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_ELEMENT__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -2103,15 +2058,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_SASH_CONTAINER_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
-
-	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2265,15 +2211,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_ELEMENT__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
-
-	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2425,15 +2362,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIM_BAR__CONTRIBUTOR_URI = UiPackageImpl.GENERIC_TRIM_CONTAINER__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_BAR__CLONABLE_SNIPPETS = UiPackageImpl.GENERIC_TRIM_CONTAINER__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -2614,15 +2542,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int STACK_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int STACK_ELEMENT__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
@@ -3352,6 +3271,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		g1 = createEGenericType(theCommandsPackage.getHandlerContainer());
 		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theCommandsPackage.getBindings());
+		windowEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theUiPackage.getSnippetContainer());
 		windowEClass.getEGenericSuperTypes().add(g1);
 		trimmedWindowEClass.getESuperTypes().add(this.getWindow());
 		trimElementEClass.getESuperTypes().add(theUiPackage.getUIElement());

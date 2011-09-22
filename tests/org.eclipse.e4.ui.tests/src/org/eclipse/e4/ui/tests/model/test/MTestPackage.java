@@ -91,22 +91,13 @@ public interface MTestPackage extends EPackage {
 	int TEST_HARNESS__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
 	int TEST_HARNESS__TRANSIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA;
-
-	/**
-	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS__CLONABLE_SNIPPETS = ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Command Name</b></em>' attribute. <!--
@@ -368,13 +359,22 @@ public interface MTestPackage extends EPackage {
 	int TEST_HARNESS__DIRTY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 28;
 
 	/**
+	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__SNIPPETS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 29;
+
+	/**
 	 * The number of structural features of the '<em>Harness</em>' class. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 29;
+	int TEST_HARNESS_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 30;
 
 	/**
 	 * The operation id for the '<em>Get Localized Command Name</em>' operation.

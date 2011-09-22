@@ -14,6 +14,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MInput;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
@@ -26,7 +27,5 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
  * @model
  * @generated
  */
-public interface MTestHarness extends MApplicationElement, MCommand, MContext,
-		MContribution, MElementContainer<MUIElement>, MParameter, MInput,
-		MUILabel, MDirtyable {
+public interface MTestHarness extends MApplicationElement, MCommand, MContext, MContribution, MElementContainer<MUIElement>, MParameter, MInput, MUILabel, MDirtyable, MSnippetContainer {
 } // MTestHarness

@@ -42,7 +42,7 @@ public interface MContext {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Context</em>' attribute.
 	 * @see #setContext(IEclipseContext)
-	 * @model dataType="org.eclipse.e4.ui.model.application.IEclipseContext" transient="true"
+	 * @model dataType="org.eclipse.e4.ui.model.application.IEclipseContext" transient="true" derived="true"
 	 * @generated
 	 */
 	IEclipseContext getContext();

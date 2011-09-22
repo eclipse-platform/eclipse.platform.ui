@@ -32,10 +32,7 @@ public class UIEventPublisher extends EContentAdapter {
 	private IEclipseContext context;
 
 	/**
-	 * Constructor.
-	 * 
 	 * @param e4Context
-	 * @param partList
 	 */
 	public UIEventPublisher(IEclipseContext e4Context) {
 		this.context = e4Context;
@@ -61,11 +58,6 @@ public class UIEventPublisher extends EContentAdapter {
 		}
 	}
 
-	/**
-	 * @param notification
-	 * @param argMap
-	 * @return
-	 */
 	private String formatData(Notification notification, Map<String, Object> argMap) {
 		// The unchecked casts below represent 'asserts'
 		MApplicationElement appElement = (MApplicationElement) notification.getNotifier();
@@ -109,8 +101,9 @@ public class UIEventPublisher extends EContentAdapter {
 	 */
 	private String getTopic(EStructuralFeature eFeature, String type) {
 		EClass eContainingClass = eFeature.getEContainingClass();
-		return UIEvents.UITopicBase + UIEvents.TOPIC_SEP + eContainingClass.getEPackage().getName()
-				+ UIEvents.TOPIC_SEP + eContainingClass.getName() + UIEvents.TOPIC_SEP
-				+ eFeature.getName() + UIEvents.TOPIC_SEP + type;
+		return UIEvents.UIModelTopicBase + UIEvents.TOPIC_SEP
+				+ eContainingClass.getEPackage().getName() + UIEvents.TOPIC_SEP
+				+ eContainingClass.getName() + UIEvents.TOPIC_SEP + eFeature.getName()
+				+ UIEvents.TOPIC_SEP + type;
 	}
 }

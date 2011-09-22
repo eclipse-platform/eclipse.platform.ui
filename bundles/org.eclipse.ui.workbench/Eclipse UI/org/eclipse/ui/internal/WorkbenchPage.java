@@ -1274,9 +1274,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
 	/**
-	 * Closes the specified perspective. This method is purely intended to
-	 * manipulate the model and will not perform other actions such as the
-	 * saving of parts.
+	 * Closes the specified perspective.
 	 * 
 	 * @param desc
 	 *            the perspective to close
@@ -1384,11 +1382,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	public void closePerspective(IPerspectiveDescriptor desc, String perspectiveId,
 			boolean saveParts, boolean closePage) {
-		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
-				MPerspectiveStack.class, null).get(0);
 		MPerspective persp = (MPerspective) modelService.find(perspectiveId, window);
 		// check to ensure this perspective actually exists in this window
 		if (persp != null) {
+			MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
+					MPerspectiveStack.class, null).get(0);
 			if (perspectiveStack.getChildren().size() == 1) {
 				closeAllPerspectives(saveParts, closePage);
 			} else {
@@ -2932,16 +2930,34 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		modelService.resetPerspectiveModel(persp, window);
 
-		// instantiate a dummy perspective perspective
-		MPerspective dummyPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+		boolean revert = false;
+		// TODO: Do we really need these instanceof checks or can we assume implementation class?
+		if (desc instanceof PerspectiveDescriptor) {
+			PerspectiveDescriptor perspectiveDescriptor = (PerspectiveDescriptor) desc;
+			revert = perspectiveDescriptor.isPredefined()
+					&& !perspectiveDescriptor.hasCustomDefinition();
+		}
+		
+		MPerspective dummyPerspective = null;
+		if (!revert) {
+			dummyPerspective = (MPerspective) modelService.cloneSnippet(application,
+					desc.getId());
+		}
 
-		IPerspectiveFactory factory = ((PerspectiveDescriptor) desc).createFactory();
-		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService,
-				dummyPerspective, desc, this, true);
-		factory.createInitialLayout(modelLayout);
+		if (dummyPerspective == null) {
+			// instantiate a dummy perspective perspective
+			dummyPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+
+			IPerspectiveFactory factory = ((PerspectiveDescriptor) desc).createFactory();
+			ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService,
+					partService, dummyPerspective, desc, this, true);
+			factory.createInitialLayout(modelLayout);
+
 		PerspectiveTagger.tagPerspective(dummyPerspective, modelService);
 		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 		reader.extendLayout(getExtensionTracker(), desc.getId(), modelLayout);
+
+		}
 
 		// Hide placeholders for parts that exist in the 'global' areas
 		modelService.hideLocalPlaceholders(window, dummyPerspective);
@@ -3118,9 +3134,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * IPerspectiveDescriptor)
 	 */
 	public void savePerspectiveAs(IPerspectiveDescriptor perspective) {
-		// FIXME compat savePerspectiveAs
-		E4Util.unsupported("savePerspectiveAs"); //$NON-NLS-1$
-
+		MPerspective visiblePerspective = getPerspectiveStack().getSelectedElement();
+		visiblePerspective.setLabel(perspective.getLabel());
+		visiblePerspective.setElementId(perspective.getId());
+		modelService.cloneElement(visiblePerspective, application);
+		if (perspective instanceof PerspectiveDescriptor) {
+			((PerspectiveDescriptor) perspective).setHasCustomDefinition(true);
+		}
 	}
 
 	/*
@@ -3176,21 +3196,28 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		// couldn't find the perspective, create a new one
-		MPerspective modelPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
-		// tag it with the same id
-		modelPerspective.setElementId(perspective.getId());
-		modelPerspective.setLabel(perspective.getLabel());
+		MPerspective modelPerspective = (MPerspective) modelService.cloneSnippet(application,
+				perspective.getId());
 
-		// instantiate the perspective
-		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
-		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService,
-				modelPerspective,
-				perspective, this, true);
-		factory.createInitialLayout(modelLayout);
-		PerspectiveTagger.tagPerspective(modelPerspective, modelService);
-		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
-		reader.extendLayout(getExtensionTracker(), perspective.getId(), modelLayout);
+		if (modelPerspective == null) {
+
+			// couldn't find the perspective, create a new one
+			modelPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+
+			// tag it with the same id
+			modelPerspective.setElementId(perspective.getId());
+
+			// instantiate the perspective
+			IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
+			ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService,
+					partService, modelPerspective, perspective, this, true);
+			factory.createInitialLayout(modelLayout);
+			PerspectiveTagger.tagPerspective(modelPerspective, modelService);
+			PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
+			reader.extendLayout(getExtensionTracker(), perspective.getId(), modelLayout);
+		}
+
+		modelPerspective.setLabel(perspective.getLabel());
 
 		if (lastPerspective != null) {
 			legacyWindow.firePerspectiveDeactivated(this, lastPerspective);
@@ -3491,10 +3518,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		for (MPerspective persp : perspectiveStack.getChildren()) {
 			String perspectiveId = persp.getElementId();
 			IPerspectiveDescriptor desc = registry.findPerspectiveWithId(perspectiveId);
-			if (desc == null) {
-				desc = new PerspectiveDescriptor(perspectiveId, persp.getLabel());
+			if (desc != null) {
+				descs[count++] = desc;
 			}
-			descs[count++] = desc;
 		}
 		return descs;
 	}

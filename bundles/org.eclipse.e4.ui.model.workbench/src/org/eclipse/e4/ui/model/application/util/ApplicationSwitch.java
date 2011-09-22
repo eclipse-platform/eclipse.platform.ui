@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.model.application.util;
 
 import java.util.Map;
+import org.eclipse.e4.ui.model.application.*;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -22,6 +23,7 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorConta
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
@@ -105,6 +107,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseMenuContributions(application);
 				if (result == null) result = caseToolBarContributions(application);
 				if (result == null) result = caseTrimContributions(application);
+				if (result == null) result = caseSnippetContainer(application);
 				if (result == null) result = caseUIElement(application);
 				if (result == null) result = caseApplicationElement(application);
 				if (result == null) result = defaultCase(theEObject);
@@ -378,6 +381,21 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseTrimContributions(MTrimContributions object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Snippet Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Snippet Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseSnippetContainer(MSnippetContainer object) {
 		return null;
 	}
 

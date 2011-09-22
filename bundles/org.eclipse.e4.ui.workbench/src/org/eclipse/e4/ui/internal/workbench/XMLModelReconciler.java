@@ -1607,20 +1607,10 @@ public class XMLModelReconciler extends ModelReconciler {
 			appendOriginalReferenceElements(document, featureElement,
 					(List<?>) featureChange.getValue());
 		} else if (isUnorderedChainedAttribute(featureName)) {
-			List<?> attributes = (List<?>) value;
-			for (Object attribute : attributes) {
-				Element attributeElement = document.createElement(featureName);
-				attributeElement.setAttribute(featureName, String.valueOf(attribute));
-				featureElement.appendChild(attributeElement);
-			}
+			appendUnorderedChainedAttributeElements(document, (List<?>) value, featureName,
+					featureElement);
 		} else if (isStringToStringMap(featureName)) {
-			EMap<?, ?> map = (EMap<?, ?>) object.eGet(feature);
-			for (Entry<?, ?> entry : map.entrySet()) {
-				Element entryElement = document.createElement(featureName);
-				entryElement.setAttribute(ENTRY_ATTVALUE_KEY, (String) entry.getKey());
-				entryElement.setAttribute(ENTRY_ATTVALUE_VALUE, (String) entry.getValue());
-				featureElement.appendChild(entryElement);
-			}
+			appendStringToStringMapElements(document, featureElement, object, feature, featureName);
 		} else {
 			featureElement.setAttribute(featureName, String.valueOf(value));
 		}
@@ -1773,20 +1763,11 @@ public class XMLModelReconciler extends ModelReconciler {
 				List<?> references = (List<?>) object.eGet(feature);
 				appendReferenceElements(document, referenceAttributeElement, references);
 			} else if (isUnorderedChainedAttribute(featureName)) {
-				List<?> attributes = (List<?>) object.eGet(feature);
-				for (Object attribute : attributes) {
-					Element attributeElement = document.createElement(featureName);
-					attributeElement.setAttribute(featureName, String.valueOf(attribute));
-					referenceAttributeElement.appendChild(attributeElement);
-				}
+				appendUnorderedChainedAttributeElements(document, (List<?>) object.eGet(feature),
+						featureName, referenceAttributeElement);
 			} else if (isStringToStringMap(featureName)) {
-				EMap<?, ?> map = (EMap<?, ?>) object.eGet(feature);
-				for (Entry<?, ?> entry : map.entrySet()) {
-					Element entryElement = document.createElement(featureName);
-					entryElement.setAttribute(ENTRY_ATTVALUE_KEY, (String) entry.getKey());
-					entryElement.setAttribute(ENTRY_ATTVALUE_VALUE, (String) entry.getValue());
-					referenceAttributeElement.appendChild(entryElement);
-				}
+				appendStringToStringMapElements(document, referenceAttributeElement, object,
+						feature, featureName);
 			} else {
 				referenceAttributeElement.setAttribute(featureName,
 						String.valueOf(object.eGet(feature)));
@@ -1795,6 +1776,34 @@ public class XMLModelReconciler extends ModelReconciler {
 			referenceAttributeElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
 		}
 		return referenceAttributeElement;
+	}
+
+	private void appendUnorderedChainedAttributeElements(Document document, List<?> attributes,
+			String featureName, Element referenceAttributeElement) {
+		// iterate over all the attributes
+		for (Object attribute : attributes) {
+			// create a new element for each attribute
+			Element attributeElement = document.createElement(featureName);
+			// set the attribute's value into the element
+			attributeElement.setAttribute(featureName, String.valueOf(attribute));
+			// append the element to the parent
+			referenceAttributeElement.appendChild(attributeElement);
+		}
+	}
+
+	private void appendStringToStringMapElements(Document document, Element parentElement,
+			EObject object, EStructuralFeature feature, String featureName) {
+		EMap<?, ?> map = (EMap<?, ?>) object.eGet(feature);
+		// iterate over the map
+		for (Entry<?, ?> entry : map.entrySet()) {
+			// create a new element for each entry in the map
+			Element entryElement = document.createElement(featureName);
+			// set the string keys and values into the element
+			entryElement.setAttribute(ENTRY_ATTVALUE_KEY, (String) entry.getKey());
+			entryElement.setAttribute(ENTRY_ATTVALUE_VALUE, (String) entry.getValue());
+			// append the element to the parent
+			parentElement.appendChild(entryElement);
+		}
 	}
 
 	private static boolean isStringToStringMap(String featureName) {
@@ -1882,12 +1891,14 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static boolean isChainedReference(String featureName) {
 		// an ElementContainer has multiple children
 		return featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME) ||
-				// a BindingContainer has multiple bindings
+		// a BindingContainer has multiple bindings
 				featureName.equals(BINDINGTABLE_BINDINGS_ATTNAME) ||
 				// a Part has multiple menus
 				featureName.equals(PART_MENUS_ATTNAME) ||
 				// an Application has multiple commands
 				featureName.equals(APPLICATION_COMMANDS_ATTNAME) ||
+				// a SnippetContainer has multiple snippets
+				featureName.equals(SNIPPETCONTAINER_SNIPPETS_ATTNAME) ||
 				// a HandlerContainer has multiple handlers
 				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME) ||
 				// a BindingContainer has multiple binding tables

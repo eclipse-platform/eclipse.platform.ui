@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -27,12 +28,15 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * The ViewsPreferencePage is the page used to set preferences for the
@@ -45,6 +49,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private ComboViewer themeIdCombo;
 	private ITheme currentTheme;
 	private String defaultTheme;
+
+	private Button enableAnimations;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -71,7 +77,23 @@ public class ViewsPreferencePage extends PreferencePage implements
 			}
 		});
 
+		createEnableAnimationsPref(comp);
+
 		return comp;
+	}
+
+	private Button createCheckButton(Composite composite, String text, boolean selection) {
+		Button button = new Button(composite, SWT.CHECK);
+		button.setText(text);
+		button.setSelection(selection);
+		return button;
+	}
+
+	protected void createEnableAnimationsPref(Composite composite) {
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+
+		enableAnimations = createCheckButton(composite, "Enable Animations", //WorkbenchMessages.ViewsPreference_enableAnimations, //$NON-NLS-1$
+				apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
 	}
 
 	private ITheme getSelection() {
@@ -93,6 +115,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 	@Override
 	public boolean performOk() {
 		engine.setTheme(getSelection(), true);
+
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
+				enableAnimations.getSelection());
 		return super.performOk();
 	}
 
@@ -100,6 +126,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 	protected void performDefaults() {
 		engine.setTheme(defaultTheme, true);
 		themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
+
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+		enableAnimations.setSelection(apiStore
+				.getDefaultBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
 		super.performDefaults();
 	}
 
