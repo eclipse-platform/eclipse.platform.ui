@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.net.URI;
 import java.util.zip.GZIPOutputStream;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
@@ -95,6 +96,23 @@ public class TarFileExporter implements IFileExporter {
     	outputStream.closeEntry();    	
     }
 
+    public void write(IContainer container, String destinationPath)
+            throws IOException {
+        TarEntry newEntry = new TarEntry(destinationPath);
+        if(container.getLocalTimeStamp() != IResource.NULL_STAMP) {
+        	newEntry.setTime(container.getLocalTimeStamp() / 1000);
+        }
+        ResourceAttributes attributes = container.getResourceAttributes();
+        if (attributes != null && attributes.isExecutable()) {
+        	newEntry.setMode(newEntry.getMode() | 0111);
+        }
+        if (attributes != null && attributes.isReadOnly()) {
+        	newEntry.setMode(newEntry.getMode() & ~0222);
+        }
+        newEntry.setFileType(TarEntry.DIRECTORY);
+        outputStream.putNextEntry(newEntry);
+    }
+    
     /**
      *  Write the passed resource to the current archive.
      *

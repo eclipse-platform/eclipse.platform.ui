@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,6 +162,20 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
             throws InterruptedException {
         exportResource(exportResource, 1);
     }
+    
+    /**
+     * Creates and returns the string that should be used as the name of the entry in the archive.
+     * @param exportResource the resource to export
+     * @param leadupDepth the number of resource levels to be included in the path including the resourse itself.
+     */
+    private String createDestinationName(int leadupDepth, IResource exportResource) {
+        IPath fullPath = exportResource.getFullPath();
+        if (createLeadupStructure) {
+        	return fullPath.makeRelative().toString();
+        }
+		return fullPath.removeFirstSegments(
+                fullPath.segmentCount() - leadupDepth).toString();
+    }
 
     /**
      *  Export the passed resource to the destination .zip
@@ -177,14 +191,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 		}
 
         if (exportResource.getType() == IResource.FILE) {
-            String destinationName;
-            IPath fullPath = exportResource.getFullPath();
-            if (createLeadupStructure) {
-				destinationName = fullPath.makeRelative().toString();
-			} else {
-				destinationName = fullPath.removeFirstSegments(
-                        fullPath.segmentCount() - leadupDepth).toString();
-			}
+        	String destinationName = createDestinationName(leadupDepth, exportResource);
             monitor.subTask(destinationName);
 
             try {
@@ -205,6 +212,15 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
             } catch (CoreException e) {
                 // this should never happen because an #isAccessible check is done before #members is invoked
                 addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath()), e);
+            }
+            
+            if (children.length == 0) { // create an entry for empty containers, see bug 278402
+            	String destinationName = createDestinationName(leadupDepth, exportResource);
+                try {
+            		exporter.write((IContainer) exportResource, destinationName + IPath.SEPARATOR);
+                } catch (IOException e) {
+                    addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
+                }
             }
 
             for (int i = 0; i < children.length; i++) {
