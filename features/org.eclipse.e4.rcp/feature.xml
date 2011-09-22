@@ -20,13 +20,10 @@
       %license
    </license>
 
-   <includes
-         id="org.eclipse.emf.ecore"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.emf.common"
-         version="0.0.0"/>
+   <requires>
+      <import feature="org.eclipse.emf.common" version="2.7.0" match="compatible"/>
+      <import feature="org.eclipse.emf.ecore" version="2.7.0" match="compatible"/>
+   </requires>
 
    <plugin
          id="org.eclipse.e4.core.services"
