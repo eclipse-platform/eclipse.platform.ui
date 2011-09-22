@@ -1,33 +1,28 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.jface.action.IAction;
+import org.eclipse.debug.core.commands.IResumeHandler;
+import org.eclipse.debug.ui.actions.DebugCommandHandler;
 
 /**
- * Step over action delegate.
+ * Default handler for command.  It ensures that the keyboard accelerator works even
+ * if the menu action set is not enabled.
  * 
- * @since 3.3
+ * @since 3.8
  */
-public class StepOverCommandActionDelegate extends DebugCommandActionDelegate {
+public class ResumeCommandHandler extends DebugCommandHandler {
 
-    public StepOverCommandActionDelegate() {
-        super();
-        setAction(new StepOverCommandAction());
+    protected Class getCommandType() {
+        return IResumeHandler.class;
     }
-
-    public void init(IAction action) {
-        super.init(action);
-    }
-    
     
 }

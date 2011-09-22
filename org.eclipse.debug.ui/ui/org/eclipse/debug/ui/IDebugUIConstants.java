@@ -612,7 +612,23 @@ public interface IDebugUIConstants {
 	 */
 	public static final String DEBUG_ACTION_SET= PLUGIN_ID + ".debugActionSet"; //$NON-NLS-1$
 
-	
+    /**
+     * Debug Toolbar action set identifier (value <code>"org.eclipse.debug.ui.debugToolbarActionSet"</code>).
+     * 
+     * @since 3.8
+     */
+    public static final String DEBUG_TOOLBAR_ACTION_SET= PLUGIN_ID + ".debugToolbarActionSet"; //$NON-NLS-1$
+
+    /**
+     * System property which indicates whether the common debugging actions 
+     * should be shown in the Debug view, as opposed to the top level 
+     * toolbar.  Actions contributing to the debug view can use this property
+     * to control their visibility.
+     * 
+     * @since 3.8
+     */
+    public static final String DEBUG_VIEW_TOOBAR_VISIBLE = PLUGIN_ID + ".debugViewToolbarVisible"; //$NON-NLS-1$
+        
 	/**
 	 * Launch action set identifier (value <code>"org.eclipse.debug.ui.launchActionSet"</code>).
 	 */

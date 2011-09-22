@@ -10,6 +10,7 @@
      Contributors:
          IBM Corporation - initial API and implementation
          Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
+         Patrick Chuong (Texas Instruments) - Move debug toolbar actions to main window (Bug 332784) 
  -->
 
 <plugin>
@@ -329,7 +330,6 @@
                id="org.eclipse.debug.ui.actions.StepOver"
                hoverIcon="$nl$/icons/full/elcl16/stepover_co.gif"
                class="org.eclipse.debug.internal.ui.commands.actions.StepOverCommandActionDelegate"
-               definitionId="org.eclipse.debug.ui.commands.StepOver"
                disabledIcon="$nl$/icons/full/dlcl16/stepover_co.gif"
                icon="$nl$/icons/full/elcl16/stepover_co.gif"
                helpContextId="step_over_action_context"
@@ -379,6 +379,111 @@
                helpContextId="resume_action_context"
                label="%ResumeAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup">
+         </action>
+      </actionSet>
+      <actionSet
+            label="%DebugToolbarActionSet.label"
+            visible="false"
+            id="org.eclipse.debug.ui.debugToolbarActionSet">
+         <action
+               id="org.eclipse.debug.ui.actions.toolbar.ToggleStepFilters"
+               hoverIcon="$nl$/icons/full/elcl16/stepbystep_co.gif"
+               class="org.eclipse.debug.internal.ui.commands.actions.ToggleStepFiltersCommandActionDelegate"
+               disabledIcon="$nl$/icons/full/dlcl16/stepbystep_co.gif"
+               icon="$nl$/icons/full/elcl16/stepbystep_co.gif"
+               helpContextId="step_with_filters_action_context"
+               label="%StepWithFiltersAction.label"
+               style="toggle"
+               state="false"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/renderGroup">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.actions.toolbar.DropToFrame"
+               hoverIcon="$nl$/icons/full/elcl16/drop_to_frame.gif"
+               class="org.eclipse.debug.internal.ui.commands.actions.DropToFrameCommandActionDelegate"
+               helpContextId="drop_to_frame_action_context"
+               icon="$nl$/icons/full/elcl16/drop_to_frame.gif"
+               label="%DropToFrame.label"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/emptyStepGroup">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.actions.toolbar.RunToLine"
+               class="org.eclipse.debug.internal.ui.actions.RetargetRunToLineAction"
+               helpContextId="run_to_line_action_context"
+               disabledIcon="$nl$/icons/full/dlcl16/runtoline_co.gif"
+               icon="$nl$/icons/full/elcl16/runtoline_co.gif"
+               label="%RunToLine.label"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/emptyStepGroup">
+         </action>                  
+         <action
+               id="org.eclipse.debug.ui.actions.toolbar.StepReturn"
+               hoverIcon="$nl$/icons/full/elcl16/stepreturn_co.gif"
+               class="org.eclipse.debug.internal.ui.commands.actions.StepReturnCommandActionDelegate"
+               disabledIcon="$nl$/icons/full/dlcl16/stepreturn_co.gif"
+               icon="$nl$/icons/full/elcl16/stepreturn_co.gif"
+               helpContextId="step_return_action_context"
+               label="%StepReturnAction.label"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/stepReturnGroup">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.actions.toolbar.StepOver"
+               hoverIcon="$nl$/icons/full/elcl16/stepover_co.gif"
+               class="org.eclipse.debug.internal.ui.commands.actions.StepOverCommandActionDelegate"
+               disabledIcon="$nl$/icons/full/dlcl16/stepover_co.gif"
+               icon="$nl$/icons/full/elcl16/stepover_co.gif"
+               helpContextId="step_over_action_context"
+               label="%StepOverAction.label"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/stepOverGroup">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.actions.toolbar.StepInto"
+               hoverIcon="$nl$/icons/full/elcl16/stepinto_co.gif"
+               class="org.eclipse.debug.internal.ui.commands.actions.StepIntoCommandActionDelegate"
+               disabledIcon="$nl$/icons/full/dlcl16/stepinto_co.gif"
+               icon="$nl$/icons/full/elcl16/stepinto_co.gif"
+               helpContextId="step_into_action_context"
+               label="%StepIntoAction.label"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/stepIntoGroup">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.actions.toolbar.Disconnect"
+               hoverIcon="$nl$/icons/full/elcl16/disconnect_co.gif"
+               class="org.eclipse.debug.internal.ui.commands.actions.DisconnectCommandActionDelegate"
+               disabledIcon="$nl$/icons/full/dlcl16/disconnect_co.gif"
+               icon="$nl$/icons/full/elcl16/disconnect_co.gif"
+               helpContextId="disconnect_action_context"
+               label="%Disconnect.label"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/threadGroup">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.actions.toolbar.Terminate"
+               hoverIcon="$nl$/icons/full/elcl16/terminate_co.gif"
+               class="org.eclipse.debug.internal.ui.commands.actions.TerminateCommandActionDelegate"
+               disabledIcon="$nl$/icons/full/dlcl16/terminate_co.gif"
+               icon="$nl$/icons/full/elcl16/terminate_co.gif"
+               helpContextId="terminate_action_context"
+               label="%TerminateAction.label"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/threadGroup">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.actions.toolbar.Suspend"
+               hoverIcon="$nl$/icons/full/elcl16/suspend_co.gif"
+               class="org.eclipse.debug.internal.ui.commands.actions.SuspendCommandActionDelegate"
+               disabledIcon="$nl$/icons/full/dlcl16/suspend_co.gif"
+               icon="$nl$/icons/full/elcl16/suspend_co.gif"
+               helpContextId="suspend_action_context"
+               label="%SuspendAction.label"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/threadGroup">
+         </action>
+         <action
+               id="org.eclipse.debug.ui.actions.toolbar.Resume"
+               hoverIcon="$nl$/icons/full/elcl16/resume_co.gif"
+               class="org.eclipse.debug.internal.ui.commands.actions.ResumeCommandActionDelegate"
+               disabledIcon="$nl$/icons/full/dlcl16/resume_co.gif"
+               icon="$nl$/icons/full/elcl16/resume_co.gif"
+               helpContextId="resume_action_context"
+               label="%ResumeAction.label"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/threadGroup">
          </action>
       </actionSet>
       <actionSet
@@ -612,6 +717,41 @@
 	               class="org.eclipse.debug.internal.ui.actions.breakpoints.BreakpointTypesContribution">
 	           </dynamic>
             </menu>         
+       </menuContribution>
+       <menuContribution
+             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+          <toolbar
+                id="org.eclipse.debug.ui.main.toolbar"
+                label="%DebugActionSet.label">
+             <separator
+                   name="threadGroup"
+                   visible="true">
+             </separator>
+             <separator
+                   name="stepGroup"
+                   visible="true">
+             </separator>
+             <separator
+                   name="stepIntoGroup"
+                   visible="false">
+             </separator>
+             <separator
+                   name="stepOverGroup"
+                   visible="false">
+             </separator>
+             <separator
+                   name="stepReturnGroup"
+                   visible="false">
+             </separator>
+             <separator
+                   name="emptyStepGroup"
+                   visible="false">
+             </separator>
+             <separator
+                   name="renderGroup"
+                   visible="true">
+             </separator>
+          </toolbar>
        </menuContribution>
    </extension>  
    
@@ -1622,37 +1762,57 @@ M4 = Platform-specific fourth key
             name="%ActionDefinition.toggleStepFilters.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.toggleStepFilters.description"
-            id="org.eclipse.debug.ui.commands.ToggleStepFilters">
+            id="org.eclipse.debug.ui.commands.ToggleStepFilters"
+            defaultHandler="org.eclipse.debug.internal.ui.commands.actions.ToggleStepFiltersCommandHandler">
+      </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.dropToFrame.description"
+            id="org.eclipse.debug.ui.commands.DropToFrame"
+            defaultHandler="org.eclipse.debug.internal.ui.commands.actions.DropToFrameCommandHandler"
+            name="%ActionDefinition.dropToFrame.name">
+      </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.disconnect.discrption"
+            id="org.eclipse.debug.ui.commands.Disconnect"
+            defaultHandler="org.eclipse.debug.internal.ui.commands.actions.DisconnectCommandHandler"
+            name="%ActionDefinition.disconnect.name">
       </command>
       <command
             name="%ActionDefinition.stepInto.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.stepInto.description"
-            id="org.eclipse.debug.ui.commands.StepInto">
+            id="org.eclipse.debug.ui.commands.StepInto"
+            defaultHandler="org.eclipse.debug.internal.ui.commands.actions.StepIntoCommandHandler">
       </command>
       <command
-            name="%ActionDefinition.stepOver.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.stepOver.description"
-            id="org.eclipse.debug.ui.commands.StepOver">
+            id="org.eclipse.debug.ui.commands.StepOver"
+            name="%ActionDefinition.stepOver.name"
+            defaultHandler="org.eclipse.debug.internal.ui.commands.actions.StepOverCommandHandler">
       </command>
       <command
             name="%ActionDefinition.stepReturn.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.stepReturn.description"
-            id="org.eclipse.debug.ui.commands.StepReturn">
+            id="org.eclipse.debug.ui.commands.StepReturn"
+            defaultHandler="org.eclipse.debug.internal.ui.commands.actions.StepReturnCommandHandler">
       </command>
       <command
             name="%ActionDefinition.resume.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.resume.description"
-            id="org.eclipse.debug.ui.commands.Resume">
+            id="org.eclipse.debug.ui.commands.Resume"
+            defaultHandler="org.eclipse.debug.internal.ui.commands.actions.ResumeCommandHandler">
       </command>
       <command
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.terminate.description"
             helpContextId="terminate_action_context"
             id="org.eclipse.debug.ui.commands.Terminate"
+            defaultHandler="org.eclipse.debug.internal.ui.commands.actions.TerminateCommandHandler"
             name="%ActionDefinition.terminate.name">
       </command>
       <command
@@ -1675,7 +1835,8 @@ M4 = Platform-specific fourth key
             name="%ActionDefinition.suspend.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.suspend.description"
-            id="org.eclipse.debug.ui.commands.Suspend">
+            id="org.eclipse.debug.ui.commands.Suspend"
+            defaultHandler="org.eclipse.debug.internal.ui.commands.actions.SuspendCommandHandler">
       </command>
       <command
             name="%ActionDefinition.openProfile.name"

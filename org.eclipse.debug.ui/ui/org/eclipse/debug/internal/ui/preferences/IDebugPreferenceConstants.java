@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,6 +295,13 @@ public interface IDebugPreferenceConstants {
      * @since 3.5
      */
     public static final String DEBUG_VIEW_BREADCRUMB_AUTO_EXPAND_DROP_DOWN = "org.eclispe.debug.ui.Debug_view.Breadcrumb.dropDownAutoexpand"; //$NON-NLS-1$
+    
+    /**
+     * Perspectives in which the debug toolbar is hidden.
+     * 
+     * @since 3.8
+     */
+    public static final String DEBUG_VIEW_TOOLBAR_HIDDEN_PERSPECTIVES = "org.eclispe.debug.ui.Debug_view.debug_toolbar_hidden_perspectives"; //$NON-NLS-1$
 }
 
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,17 @@ public class LaunchViewMessages extends NLS {
     public static String BreadcrumbDropDownAutoExpandAction_label;
     public static String BreadcrumbDropDownAutoExpandAction_tooltip;
     public static String BreadcrumbDropDownAutoExpandAction_description;
+
+    public static String LaunchView_ToolBarMenu_label;
+    public static String DebugToolBarAction_View_label;
+    public static String DebugToolBarAction_View_tooltip;
+    public static String DebugToolBarAction_View_description;
+    public static String DebugToolBarAction_Window_label;
+    public static String DebugToolBarAction_Window_tooltip;
+    public static String DebugToolBarAction_Window_description;
+    public static String DebugToolBarAction_Both_label;
+    public static String DebugToolBarAction_Both_tooltip;
+    public static String DebugToolBarAction_Both_description;
 
 	static {
 		// load message values from bundle file

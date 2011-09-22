@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,9 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      */
     public void init(IAction action) {
         fDebugAction.setActionProxy(action);
+
+        // Ensure that the key accelerator is shown in tool-tip
+        action.setActionDefinitionId(fDebugAction.getActionDefinitionId());
     }
     
     /*

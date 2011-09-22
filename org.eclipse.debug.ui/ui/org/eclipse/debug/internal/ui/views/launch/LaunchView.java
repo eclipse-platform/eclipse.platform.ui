@@ -22,8 +22,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.commands.IHandler2;
+import org.eclipse.core.commands.contexts.ContextManagerEvent;
+import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -67,6 +71,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
+import org.eclipse.debug.internal.ui.views.ViewContextService;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -76,6 +81,7 @@ import org.eclipse.debug.ui.contexts.AbstractDebugContextProvider;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextProvider;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -115,6 +121,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
@@ -126,7 +133,10 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 
-public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2, IViewerUpdateListener {
+public class LaunchView extends AbstractDebugView 
+    implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IShowInTarget, IShowInSource, 
+    IShowInTargetList, IPartListener2, IViewerUpdateListener, IContextManagerListener 
+{
 	
 	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings"; //$NON-NLS-1$
 
@@ -194,11 +204,23 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
     private DebugViewModeAction[] fDebugViewModeActions;
 
     /**
+     */
+    private DebugToolBarAction[] fDebugToolBarActions;
+    
+    /**
      * Action that controls the breadcrumb drop-down auto-expand behavior.
      * 
      * @since 3.5
      */
     private BreadcrumbDropDownAutoExpandAction fBreadcrumbDropDownAutoExpandAction;
+    
+    /**
+     * Context service for this view.  Used to track whether debug toolbar
+     * action set is active.
+     * 
+     * @since 3.8
+     */
+    private IContextService fContextService;
     
     /**
      * Preference name for the view's memento.
@@ -214,7 +236,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
      * @since 3.5
      */
     private static final String BREADCRUMB_DROPDOWN_AUTO_EXPAND = DebugUIPlugin.getUniqueIdentifier() + ".BREADCRUMB_DROPDOWN_AUTO_EXPAND"; //$NON-NLS-1$
-    
+
     /**
      * Preference for whether the elements in breadcrumb's
      * drop-down viewer should be automatically expanded.
@@ -229,6 +251,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
      * @since 3.6
      */
     private Map fHandlers = new HashMap();
+    
+    private boolean fDebugToolbarInView = true;
+    
+    private Set fDebugToolbarHiddenPerspectives = new TreeSet();
     
 	/**
 	 * Page-book page for the breadcrumb viewer.  This page is activated in 
@@ -604,6 +630,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
             fDebugViewModeActions[i].setChecked(fDebugViewModeActions[i].getMode().equals(mode));
         }
         
+        createDebugToolBarInViewActions(parent);
+        
         // Add a resize listener for the view to activate breadcrumb as needed. 
         parent.addControlListener(new ControlListener() {
             public void controlMoved(ControlEvent e) {
@@ -617,6 +645,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
                 }
             }
         });
+        
+        fContextService.addContextManagerListener(this);        
 	}
 
 	/**
@@ -705,7 +735,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         modeSubmenu.add(new Separator());
         modeSubmenu.add(fBreadcrumbDropDownAutoExpandAction);
         viewMenu.add(modeSubmenu);
-        viewMenu.add(new Separator());
         
         modeSubmenu.addMenuListener(new IMenuListener() {
             public void menuAboutToShow(IMenuManager manager) {
@@ -716,10 +745,42 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
                 modeSubmenu.add(fBreadcrumbDropDownAutoExpandAction);
            }
         });
-        
     }
 
- 
+    /**
+     * Creates actions for controlling view mode.
+     * 
+     * @param parent The view's parent control used to calculate view size
+     * in auto mode.
+     */
+    private void createDebugToolBarInViewActions(final Composite parent) {
+        IActionBars actionBars = getViewSite().getActionBars();
+        IMenuManager viewMenu = actionBars.getMenuManager();
+        
+        fDebugToolBarActions = new DebugToolBarAction[3];
+        fDebugToolBarActions[0] = new DebugToolBarAction(this, true, false);
+        fDebugToolBarActions[1] = new DebugToolBarAction(this, false, true);
+        fDebugToolBarActions[2] = new DebugToolBarAction(this, true, true);
+        
+        final MenuManager modeSubmenu = new MenuManager(LaunchViewMessages.LaunchView_ToolBarMenu_label);
+        modeSubmenu.setRemoveAllWhenShown(true);
+        modeSubmenu.add(fDebugToolBarActions[0]);
+        modeSubmenu.add(fDebugToolBarActions[1]);
+        modeSubmenu.add(fDebugToolBarActions[2]);
+        viewMenu.add(modeSubmenu);
+        
+        modeSubmenu.addMenuListener(new IMenuListener() {
+            public void menuAboutToShow(IMenuManager manager) {
+                modeSubmenu.add(fDebugToolBarActions[0]);
+                modeSubmenu.add(fDebugToolBarActions[1]);
+                modeSubmenu.add(fDebugToolBarActions[2]);
+           }
+        });
+        
+        updateCheckedDebugToolBarAction();
+    }
+
+    
     /**
      * Sets the current view mode.  If needed, the active view page is changed. 
      * 
@@ -858,6 +919,14 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
                 setBreadcrumbDropDownAutoExpand(auto.booleanValue());
             } 
         }
+
+        String preference = DebugUIPlugin.getDefault().getPreferenceStore().getString(
+            IDebugPreferenceConstants.DEBUG_VIEW_TOOLBAR_HIDDEN_PERSPECTIVES);
+        if (preference != null) {
+            fDebugToolbarHiddenPerspectives = ViewContextService.parseList(preference);
+        }
+        IPerspectiveDescriptor perspective = getSite().getPage().getPerspective();
+        fDebugToolbarInView = perspective == null || !fDebugToolbarHiddenPerspectives.contains(perspective.getId());
 	}
 	
 	/* (non-Javadoc)
@@ -867,6 +936,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		super.init(site);
 		commonInit(site);
 		preferenceInit(site);
+		fContextService = (IContextService)site.getService(IContextService.class);
 	}
 
 	/* (non-Javadoc)
@@ -876,6 +946,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		super.init(site, memento);
 		commonInit(site);
         preferenceInit(site);
+        fContextService = (IContextService)site.getService(IContextService.class);
 	}
 
     /* (non-Javadoc)
@@ -904,6 +975,13 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
                 }
             }
         }
+        
+        StringBuffer buffer= new StringBuffer();
+        for (Iterator itr = fDebugToolbarHiddenPerspectives.iterator(); itr.hasNext();) {
+            buffer.append(itr.next()).append(',');          
+        } 
+        getPreferenceStore().setValue(IDebugPreferenceConstants.DEBUG_VIEW_TOOLBAR_HIDDEN_PERSPECTIVES, buffer.toString());
+
         super.partDeactivated(part);
     }
 
@@ -926,7 +1004,13 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		tbm.add(new GroupMarker(IDebugUIConstants.STEP_RETURN_GROUP));
 		tbm.add(new GroupMarker(IDebugUIConstants.EMPTY_STEP_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-        
+
+		if (fDebugToolbarInView) {
+		    addDebugToolbarActions(tbm);
+		}
+	}	
+
+   protected void addDebugToolbarActions(IToolBarManager tbm) {
         tbm.appendToGroup(IDebugUIConstants.THREAD_GROUP, getAction(RESUME));
         tbm.appendToGroup(IDebugUIConstants.THREAD_GROUP, getAction(SUSPEND));
         tbm.appendToGroup(IDebugUIConstants.THREAD_GROUP, getAction(TERMINATE));
@@ -935,16 +1019,75 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         tbm.appendToGroup(IDebugUIConstants.STEP_INTO_GROUP, getAction(STEP_INTO));
         tbm.appendToGroup(IDebugUIConstants.STEP_OVER_GROUP, getAction(STEP_OVER));
         tbm.appendToGroup(IDebugUIConstants.STEP_RETURN_GROUP, getAction(STEP_RETURN));
-        
+
         tbm.appendToGroup(IDebugUIConstants.EMPTY_STEP_GROUP, getAction(DROP_TO_FRAME));
         
         tbm.appendToGroup(IDebugUIConstants.RENDER_GROUP, getAction(TOGGLE_STEP_FILTERS));
-	}	
-
+   }   
+	
+   /**
+    * Removes the toolbar actions contributed by this view from the toolbar 
+    * manager.
+    * @param tbm
+    */
+   protected void removeDebugToolbarActions(IToolBarManager tbm) {
+       tbm.remove(new ActionContributionItem(getAction(RESUME)));
+       tbm.remove(new ActionContributionItem(getAction(SUSPEND)));
+       tbm.remove(new ActionContributionItem(getAction(TERMINATE)));
+       tbm.remove(new ActionContributionItem(getAction(DISCONNECT)));
+       
+       tbm.remove(new ActionContributionItem(getAction(STEP_INTO)));
+       tbm.remove(new ActionContributionItem(getAction(STEP_OVER)));
+       tbm.remove(new ActionContributionItem(getAction(STEP_RETURN)));
+       
+       tbm.remove(new ActionContributionItem(getAction(DROP_TO_FRAME)));
+       
+       tbm.remove(new ActionContributionItem(getAction(TOGGLE_STEP_FILTERS)));
+   }
+	   
+   public boolean isDebugToolbarInView() {
+       return fDebugToolbarInView;
+   }
+   
+   public boolean isDebugToolbarInViewInPerspective(IPerspectiveDescriptor perspective) {
+       return perspective == null || !fDebugToolbarHiddenPerspectives.contains(perspective.getId());
+   }
+   
+   public void setDebugToolbarInView(boolean show) {
+       if (show == isDebugToolbarInView()) {
+           return;
+       }
+       fDebugToolbarInView = show;
+       
+       // Update the perspectives set.
+       IPerspectiveDescriptor perspective = getSite().getPage().getPerspective();
+       if (perspective != null) {
+           if (show) {
+               fDebugToolbarHiddenPerspectives.remove(perspective.getId());
+           } else {
+               fDebugToolbarHiddenPerspectives.add(perspective.getId());
+           }
+       }
+       
+       // Update the toolbar manager.
+       IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+       if (show) {
+           addDebugToolbarActions(tbm);
+       } else {
+           removeDebugToolbarActions(tbm);
+       }
+       getViewSite().getActionBars().updateActionBars();
+       
+       // Update system property used by contributed actions.
+       System.setProperty(IDebugUIConstants.DEBUG_VIEW_TOOBAR_VISIBLE, Boolean.toString(show));
+   }
+   
+   
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+	    fContextService.removeContextManagerListener(this);
 	    getSite().getSelectionProvider().removeSelectionChangedListener(this);
 		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextProvider(fContextProviderProxy);
         fContextProviderProxy.dispose();
@@ -1024,6 +1167,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		setActive(page.findView(getSite().getId()) != null);
 		updateObjects();
+		setDebugToolbarInView( isDebugToolbarInViewInPerspective(getSite().getPage().getPerspective()) );
+        updateCheckedDebugToolBarAction();
 	}
 
 	/* (non-Javadoc)
@@ -1124,6 +1269,28 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         
         menu.appendToGroup(IDebugUIConstants.RENDER_GROUP, getAction(TOGGLE_STEP_FILTERS));
     }
+	
+	public void contextManagerChanged(ContextManagerEvent event) {
+	    if (event.isActiveContextsChanged()) {
+	        Set oldContexts = event.getPreviouslyActiveContextIds();
+	        Set newContexts = event.getContextManager().getActiveContextIds();
+	        if (oldContexts.contains(IDebugUIConstants.DEBUG_TOOLBAR_ACTION_SET) != 
+	            newContexts.contains(IDebugUIConstants.DEBUG_TOOLBAR_ACTION_SET)) 
+	        {
+	            updateCheckedDebugToolBarAction();
+	        }
+	    }
+	}
+	
+	private void updateCheckedDebugToolBarAction() {
+	    boolean debugToolBarInView = isDebugToolbarInView();
+        boolean toolbarActionSetActive = fContextService.getActiveContextIds().contains(IDebugUIConstants.DEBUG_TOOLBAR_ACTION_SET); 
+        for (int i = 0; i < fDebugToolBarActions.length; i++) {
+            fDebugToolBarActions[i].setChecked(
+                fDebugToolBarActions[i].getDebugViewToolbar() == debugToolBarInView &&
+                fDebugToolBarActions[i].getDebugToolbarActionSet() == toolbarActionSetActive);
+        }
+	}
 	
 	/**
 	 * Updates the enabled state of the given action based on the selection
