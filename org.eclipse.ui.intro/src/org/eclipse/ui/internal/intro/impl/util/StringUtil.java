@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.intro.impl.util;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,24 +66,13 @@ public class StringUtil {
     	}
     }
 
-    /*
-     * Helper method for URLDecoder#decode to handle the case where we
-     * might be running on Foundation class libraries instead of 1.4.
-     */
 	public static String decode(String s, String enc) throws UnsupportedEncodingException {
 		try {
 			return URLDecoder.decode(s, enc);
-		} catch (NoSuchMethodError e) {
-			// not running 1.4 so try the old method without an encoding
-			try {
-				// use reflection to avoid deprecation warning
-				Method m = URLDecoder.class.getMethod("decode", new Class[] { String.class }); //$NON-NLS-1$
-				return (String)m.invoke(null, new Object[] {s});
-			}
-			catch (Exception ex) {
-				// fall back to original string
-				return s;
-			}
+		} 
+		catch (Exception ex) {
+			// fall back to original string
+			return s;
 		}
 	}
 	
