@@ -57,8 +57,6 @@ public class MinMaxAddon {
 	 */
 	private static final String ID_EDITOR_AREA = "org.eclipse.ui.editorss"; //$NON-NLS-1$
 
-	private static String trimURI = "platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack"; //$NON-NLS-1$
-
 	static String ID_SUFFIX = "(minimized)"; //$NON-NLS-1$
 
 	// tags representing the min/max state
@@ -240,6 +238,45 @@ public class MinMaxAddon {
 		}
 	};
 
+	/**
+	 * If a perspective ID changes fix any TrimStacks that reference the old id to point at the new
+	 * id.
+	 * 
+	 * This keeps trim stacks attached to the correct perspective when a perspective is saved with a
+	 * new name.
+	 */
+	private EventHandler idChangeListener = new EventHandler() {
+		public void handleEvent(Event event) {
+			Object changedObject = event.getProperty(EventTags.ELEMENT);
+
+			// Only care about MPerspective id changes
+			if (!(changedObject instanceof MPerspective))
+				return;
+
+			MPerspective perspective = (MPerspective) changedObject;
+
+			String newID = (String) event.getProperty(UIEvents.EventTags.NEW_VALUE);
+			String oldID = (String) event.getProperty(UIEvents.EventTags.OLD_VALUE);
+
+			// pattern is trimStackID(perspectiveID)
+			newID = '(' + newID + ')';
+			oldID = '(' + oldID + ')';
+
+			// Search the trim for the window containing the perspective
+			MWindow perspWin = modelService.getTopLevelWindowFor(perspective);
+			if (perspWin == null)
+				return;
+
+			List<MToolControl> trimStacks = modelService.findElements(perspWin, null,
+					MToolControl.class, null);
+			for (MToolControl trimStack : trimStacks) {
+				// Only care about MToolControls that are TrimStacks
+				if (TrimStack.CONTRIBUTION_URI.equals(trimStack.getContributionURI()))
+					trimStack.setElementId(trimStack.getElementId().replace(oldID, newID));
+			}
+		}
+	};
+
 	private EventHandler tagChangeListener = new EventHandler() {
 		public void handleEvent(Event event) {
 			if (ignoreTagChanges)
@@ -305,16 +342,20 @@ public class MinMaxAddon {
 	@PostConstruct
 	void hookListeners() {
 		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET);
-		eventBroker.subscribe(topic, null, widgetListener, false);
+		eventBroker.subscribe(topic, widgetListener);
 		topic = UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN);
-		eventBroker.subscribe(topic, null, perspectiveRemovedListener, false);
+		eventBroker.subscribe(topic, perspectiveRemovedListener);
 		topic = UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT);
-		eventBroker.subscribe(topic, null, perspectiveChangeListener, false);
+		eventBroker.subscribe(topic, perspectiveChangeListener);
 		topic = UIEvents.buildTopic(UIEvents.ApplicationElement.TOPIC,
 				UIEvents.ApplicationElement.TAGS);
-		eventBroker.subscribe(topic, null, tagChangeListener, false);
+		eventBroker.subscribe(topic, tagChangeListener);
+		topic = UIEvents.buildTopic(UIEvents.ApplicationElement.TOPIC,
+				UIEvents.ApplicationElement.ELEMENTID);
+		eventBroker.subscribe(topic, idChangeListener);
+
 	}
 
 	@PreDestroy
@@ -323,6 +364,7 @@ public class MinMaxAddon {
 		eventBroker.unsubscribe(perspectiveRemovedListener);
 		eventBroker.unsubscribe(perspectiveChangeListener);
 		eventBroker.unsubscribe(tagChangeListener);
+		eventBroker.unsubscribe(idChangeListener);
 	}
 
 	private MArea getAreaFor(MPartStack stack) {
@@ -409,6 +451,8 @@ public class MinMaxAddon {
 		createTrim(element);
 		element.setVisible(false);
 		adjustCTFButtons(element);
+		// Activate a part other than the trimStack so that if the tool item is pressed
+		// immediately it will still open the stack.
 		partService.requestActivation();
 	}
 
@@ -540,7 +584,7 @@ public class MinMaxAddon {
 		if (trimStack == null) {
 			trimStack = MenuFactoryImpl.eINSTANCE.createToolControl();
 			trimStack.setElementId(trimId);
-			trimStack.setContributionURI(trimURI);
+			trimStack.setContributionURI(TrimStack.CONTRIBUTION_URI);
 
 			Rectangle winBounds = winShell.getBounds();
 			int winCenterX = winBounds.width / 2;
