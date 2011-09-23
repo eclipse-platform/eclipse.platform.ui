@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Matthew Hall and others.
+ * Copyright (c) 2009, 2011 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 262946)
- *     Matthew Hall - bug 213893
+ *     Matthew Hall - bugs 213893, 306203
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.swt;
@@ -18,9 +18,11 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
@@ -33,6 +35,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tray;
@@ -286,5 +289,46 @@ public class WidgetPropertiesTest extends AbstractSWTTestCase {
 
 		observable.setValue(Boolean.FALSE);
 		assertEquals(false, item.getEnabled());
+	}
+
+	public void testEditable_ObserveText() {
+		Text text = new Text(shell, SWT.NONE);
+		IObservableValue observable = WidgetProperties.editable().observe(text);
+
+		assertEquals(boolean.class, observable.getValueType());
+
+		text.setEditable(false);
+		assertEquals(Boolean.FALSE, observable.getValue());
+
+		observable.setValue(Boolean.TRUE);
+		assertEquals(true, text.getEditable());
+	}
+
+	public void testEditable_ObserveCCombo() {
+		CCombo combo = new CCombo(shell, SWT.NONE);
+		IObservableValue observable = WidgetProperties.editable()
+				.observe(combo);
+
+		assertEquals(boolean.class, observable.getValueType());
+
+		combo.setEditable(false);
+		assertEquals(Boolean.FALSE, observable.getValue());
+
+		observable.setValue(Boolean.TRUE);
+		assertEquals(true, combo.getEditable());
+	}
+
+	public void testEditable_ObserveStyledText() {
+		StyledText styledText = new StyledText(shell, SWT.NONE);
+		IObservableValue observable = WidgetProperties.editable().observe(
+				styledText);
+
+		assertEquals(boolean.class, observable.getValueType());
+
+		styledText.setEditable(false);
+		assertEquals(Boolean.FALSE, observable.getValue());
+
+		observable.setValue(Boolean.TRUE);
+		assertEquals(true, styledText.getEditable());
 	}
 }
