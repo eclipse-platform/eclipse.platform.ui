@@ -36,7 +36,6 @@ import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
-import org.eclipse.help.internal.webapp.StatusProducer;
 import org.eclipse.help.internal.webapp.data.ServletResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.webapp.IFilter;

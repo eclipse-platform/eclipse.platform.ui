@@ -173,8 +173,7 @@ public class PreferenceFileHandler {
 
 		// Save new strings to preferences
 
-		InstanceScope instanceScope = new InstanceScope();
-		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, name);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, host);

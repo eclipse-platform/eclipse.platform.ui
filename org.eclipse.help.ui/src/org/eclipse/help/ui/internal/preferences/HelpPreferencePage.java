@@ -228,8 +228,7 @@ public class HelpPreferencePage extends PreferencePage implements
 	 * </p>
 	 */
 	protected void performDefaults() {
-		DefaultScope defaultScope = new DefaultScope();
-		IEclipsePreferences defaults = defaultScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		IEclipsePreferences defaults = DefaultScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		if (useExternalCombo != null) {
 			boolean useExternal = defaults.getBoolean(
 							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER, false);
@@ -258,8 +257,7 @@ public class HelpPreferencePage extends PreferencePage implements
 	 * @see IPreferencePage
 	 */
 	public boolean performOk() {
-		InstanceScope instanceScope = new InstanceScope();
-		IEclipsePreferences pref = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		if (useExternalCombo != null) {
 			boolean isExternalBrowser = useExternalCombo.getText().equals(Messages.HelpPreferencePage_externalBrowser);		
 			pref.putBoolean(IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ public class DefaultPreferenceFileHandler extends PreferenceFileHandler {
 	 */
 	public DefaultPreferenceFileHandler() {
 
-		IEclipsePreferences prefs = new DefaultScope().getNode(HelpBasePlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 
 		namePreference = prefs.get(IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, ""); //$NON-NLS-1$
 		hostPreference = prefs.get(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, ""); //$NON-NLS-1$
