@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008, 2009 IBM Corporation and others.
+ *  Copyright (c) 2008, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -71,8 +71,7 @@ public class FontSelection {
 	}
 
 	public static void setScalePercentage(int i) {
-		InstanceScope instanceScope = new InstanceScope();
-		IEclipsePreferences prefs = instanceScope.getNode(IntroPlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(IntroPlugin.PLUGIN_ID);
 		prefs.putInt(SCALE_FACTOR, i); 
 		try {
 			prefs.flush();
@@ -82,10 +81,8 @@ public class FontSelection {
 	
 	// Set the scale factor to it's default
 	public static void resetScalePercentage() {
-		InstanceScope instanceScope = new InstanceScope();
-		IEclipsePreferences iprefs = instanceScope.getNode(IntroPlugin.PLUGIN_ID);
-		DefaultScope defaultScope = new DefaultScope();
-		IEclipsePreferences dprefs = defaultScope.getNode(IntroPlugin.PLUGIN_ID);
+		IEclipsePreferences iprefs = InstanceScope.INSTANCE.getNode(IntroPlugin.PLUGIN_ID);
+		IEclipsePreferences dprefs = DefaultScope.INSTANCE.getNode(IntroPlugin.PLUGIN_ID);
 		String defaultScale = dprefs.get(SCALE_FACTOR, "0"); //$NON-NLS-1$
 		iprefs.put(SCALE_FACTOR, defaultScale);
 	}
