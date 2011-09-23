@@ -41,6 +41,7 @@ import org.eclipse.core.tests.databinding.beans.BeanPropertiesTest;
 import org.eclipse.core.tests.databinding.beans.BeansObservablesTest;
 import org.eclipse.core.tests.databinding.beans.PojoObservablesTest;
 import org.eclipse.core.tests.databinding.beans.PojoPropertiesTest;
+import org.eclipse.core.tests.databinding.beans.SetOnlyJavaBeanTest;
 import org.eclipse.core.tests.databinding.conversion.NumberToStringConverterTest;
 import org.eclipse.core.tests.databinding.conversion.StringToNumberConverterTest;
 import org.eclipse.core.tests.databinding.observable.AbstractObservableTest;
@@ -262,6 +263,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(BeansObservablesTest.class);
 		addTestSuite(PojoObservablesTest.class);
 		addTestSuite(PojoPropertiesTest.class);
+		addTestSuite(SetOnlyJavaBeanTest.class);
 
 		// org.eclipse.core.tests.databinding.conversion
 		addTestSuite(NumberToStringConverterTest.class);
