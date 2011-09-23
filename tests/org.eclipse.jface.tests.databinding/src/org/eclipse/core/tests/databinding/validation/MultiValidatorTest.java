@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
- *     Matthew Hall - bug 237884, 251003
+ *     Matthew Hall - bugs 237884, 251003, 332504
  *     Ovidio Mallo - bugs 240590, 238909, 251003, 247741, 235859
  ******************************************************************************/
 
@@ -389,6 +389,30 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 		// emptyListDependency should be included in the dependency set.
 		assertTrue(validator.getTargets().contains(emptyListDependency));
+	}
+
+	public void testBug357568_MultiValidatorTargetAsDependency() {
+		validator = new MultiValidator() {
+			protected IStatus validate() {
+				ObservableTracker.getterCalled(dependency);
+				ObservableTracker.getterCalled(new DependencyObservable());
+				ObservableTracker.getterCalled(validator.getTargets());
+				return null;
+			}
+		};
+
+		validator.getValidationStatus().getValue();
+		dependency.setValue(ValidationStatus.info("foo"));
+	}
+
+	public void testBug357568_ValidationStatusAsDependency() {
+		validator = new MultiValidator() {
+			protected IStatus validate() {
+				return (IStatus) validator.getValidationStatus().getValue();
+			}
+		};
+
+		validator.getValidationStatus();
 	}
 
 	private static class DependencyObservableValue extends WritableValue {

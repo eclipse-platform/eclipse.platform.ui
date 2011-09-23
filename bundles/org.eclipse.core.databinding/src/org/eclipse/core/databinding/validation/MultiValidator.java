@@ -8,8 +8,9 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 237884, 240590, 251003, 251424, 278550
+ *     Matthew Hall - bug 237884, 240590, 251003, 251424, 278550, 332504
  *     Ovidio Mallo - bug 238909, 235859
+ *     Stefan R�ck - bug 332504 
  ******************************************************************************/
 
 package org.eclipse.core.databinding.validation;
@@ -209,7 +210,6 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	 */
 	public IObservableValue getValidationStatus() {
 		if (unmodifiableValidationStatus == null) {
-			revalidate();
 			ObservableTracker.setIgnore(true);
 			try {
 				unmodifiableValidationStatus = Observables
@@ -217,6 +217,7 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 			} finally {
 				ObservableTracker.setIgnore(false);
 			}
+			revalidate();
 		}
 		return unmodifiableValidationStatus;
 	}
@@ -263,6 +264,19 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 		try {
 			List newTargets = new ArrayList(Arrays.asList(dependencies));
 
+			// Internal observables should not be dependencies
+			// (prevent dependency loop)
+			for (Iterator itNew = newTargets.iterator(); itNew.hasNext();) {
+				Object newDependency = itNew.next();
+				if (newDependency == validationStatus
+						|| newDependency == unmodifiableValidationStatus
+						|| newDependency == targets
+						|| newDependency == unmodifiableTargets
+						|| newDependency == models) {
+					itNew.remove();
+				}
+			}
+
 			// This loop is roughly equivalent to:
 			// targets.retainAll(newTargets);
 			// newTargets.removeAll(targets);
@@ -277,14 +291,6 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 						// new dependencies
 						itNew.remove();
 						continue outer;
-					} else if (newDependency == validationStatus
-							|| newDependency == unmodifiableValidationStatus
-							|| newDependency == targets
-							|| newDependency == unmodifiableTargets
-							|| newDependency == models) {
-						// Internal observables should not be dependencies
-						// (prevent dependency loop)
-						itNew.remove();
 					}
 				}
 				// Old dependency is no longer a dependency--remove from
