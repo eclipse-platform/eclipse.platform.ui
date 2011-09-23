@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Brad Reynolds and others.
+ * Copyright (c) 2007, 2009, 2011 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Chris Aniszczyk <zx@code9.com> - bug 131435
- *     Matthew Hall - bugs 248621, 213893, 262320, 169876
+ *     Matthew Hall - bugs 248621, 213893, 262320, 169876, 306203
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.swt;
@@ -25,6 +25,7 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.internal.databinding.swt.ButtonImageProperty;
 import org.eclipse.jface.internal.databinding.swt.ButtonSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.ButtonTextProperty;
+import org.eclipse.jface.internal.databinding.swt.CComboEditableProperty;
 import org.eclipse.jface.internal.databinding.swt.CComboItemsProperty;
 import org.eclipse.jface.internal.databinding.swt.CComboSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.CComboTextProperty;
@@ -54,6 +55,7 @@ import org.eclipse.jface.internal.databinding.swt.ScrollBarEnabledProperty;
 import org.eclipse.jface.internal.databinding.swt.SpinnerMaximumProperty;
 import org.eclipse.jface.internal.databinding.swt.SpinnerMinimumProperty;
 import org.eclipse.jface.internal.databinding.swt.SpinnerSelectionProperty;
+import org.eclipse.jface.internal.databinding.swt.StyledTextEditableProperty;
 import org.eclipse.jface.internal.databinding.swt.StyledTextTextProperty;
 import org.eclipse.jface.internal.databinding.swt.TableSingleSelectionIndexProperty;
 import org.eclipse.jface.internal.databinding.swt.TextEditableProperty;
@@ -544,6 +546,19 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		Text text = new Text(shell, SWT.NONE);
 		ISWTObservableValue value = SWTObservables.observeEditable(text);
 		assertWidgetObservable(value, text, TextEditableProperty.class);
+	}
+
+	public void testObserveEditableOfCCombo() throws Exception {
+		CCombo combo = new CCombo(shell, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeEditable(combo);
+		assertWidgetObservable(value, combo, CComboEditableProperty.class);
+	}
+
+	public void testObserveEditableOfStyledText() throws Exception {
+		StyledText styledText = new StyledText(shell, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeEditable(styledText);
+		assertWidgetObservable(value, styledText,
+				StyledTextEditableProperty.class);
 	}
 
 	public void testObserveEnabledOfMenu() throws Exception {

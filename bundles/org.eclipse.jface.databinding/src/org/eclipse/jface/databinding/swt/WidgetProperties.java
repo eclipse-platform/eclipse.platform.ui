@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Matthew Hall and others.
+ * Copyright (c) 2008, 2009, 2011 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 256543, 213893, 262320, 262946, 264286, 266563,
- *                    169876
+ *                    169876, 306203
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -91,10 +91,11 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the editable state of a
+	 * {@link CCombo} (since 1.6), {@link StyledText} (since 1.6), or
 	 * {@link Text}.
 	 * 
 	 * @return a value property for observing the editable state of a
-	 *         {@link Text}.
+	 *         {@link CCombo}, {@link StyledText}, or {@link Text}.
 	 */
 	public static IWidgetValueProperty editable() {
 		return new WidgetEditableProperty();

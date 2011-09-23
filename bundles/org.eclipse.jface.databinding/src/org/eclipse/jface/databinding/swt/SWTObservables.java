@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
  *     Matthew Hall - bugs 180746, 207844, 245647, 248621, 232917, 194734,
- *                    195222, 256543, 213893, 262320, 264286, 266563
+ *                    195222, 256543, 213893, 262320, 264286, 266563, 306203
  *     Michael Krauter - bug 180223
  *     Boris Bokowski - bug 245647
  *     Tom Schindl - bug 246462
@@ -517,6 +517,8 @@ public class SWTObservables {
 	 * Returns an observable observing the editable attribute of the provided
 	 * <code>control</code>. The supported types are:
 	 * <ul>
+	 * <li>org.eclipse.swt.custom.CCombo (since 1.6)</li>
+	 * <li>org.eclipse.swt.custom.StyledText (since 1.6)</li>
 	 * <li>org.eclipse.swt.widgets.Text</li>
 	 * </ul>
 	 * 
