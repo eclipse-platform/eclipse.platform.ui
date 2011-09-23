@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 167204
- *     Matthew Hall - bugs 208858, 213145, 247367
+ *     Matthew Hall - bugs 208858, 213145, 247367, 349038
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.list;
@@ -23,7 +23,9 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.DisposeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.IStaleListener;
@@ -174,6 +176,29 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
+	public void testAddDisposeListener_AfterDispose() {
+		list.dispose();
+		list.addDisposeListener(new IDisposeListener() {
+			public void handleDispose(DisposeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testRemoveDisposeListener_AfterDispose() {
+		list.dispose();
+		list.removeDisposeListener(new IDisposeListener() {
+			public void handleDispose(DisposeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testHasListeners_AfterDispose() {
+		list.dispose();
+		list.hasListeners();
+	}
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AbstractObservableListTest.class.getName());
 		suite.addTestSuite(AbstractObservableListTest.class);
@@ -244,6 +269,10 @@ public class AbstractObservableListTest extends TestCase {
 
 		protected void fireListChange(ListDiff diff) {
 			super.fireListChange(diff);
+		}
+
+		protected synchronized boolean hasListeners() {
+			return super.hasListeners();
 		}
 	}
 
