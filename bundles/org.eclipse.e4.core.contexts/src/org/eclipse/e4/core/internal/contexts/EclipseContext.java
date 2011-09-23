@@ -115,7 +115,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
-	private Map<String, HashSet<ComputationReference>> listeners = Collections.synchronizedMap(new HashMap<String, HashSet<ComputationReference>>());
+	private Map<String, HashSet<ComputationReference>> listeners = Collections.synchronizedMap(new HashMap<String, HashSet<ComputationReference>>(10, 0.8f));
 	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
 	private Set<Computation> activeRATs = new HashSet<Computation>();
 
@@ -324,9 +324,12 @@ public class EclipseContext implements IEclipseContext {
 				else
 					invalidListenersCount++;
 			}
-			// more than half of listeners are invalid, clean the listener list
-			if ((invalidListenersCount << 2) > namedComputations.size()) {
-				HashSet<ComputationReference> tmp = new HashSet<ComputationReference>(namedComputations.size() - invalidListenersCount);
+			if (invalidListenersCount == namedComputations.size()) {
+				// all the listeners are invalid for this name
+				listeners.remove(name);
+			} else if (invalidListenersCount > 10 && (invalidListenersCount << 1) > namedComputations.size()) {
+				// more than half of listeners are invalid, clean the listener list
+				HashSet<ComputationReference> tmp = new HashSet<ComputationReference>(namedComputations.size() - invalidListenersCount, 0.75f);
 				for (ComputationReference listenerRef : namedComputations) {
 					Computation listener = listenerRef.get();
 					if (listener != null && listener.isValid())
@@ -454,7 +457,7 @@ public class EclipseContext implements IEclipseContext {
 	public void addDependency(String name, Computation computation) {
 		HashSet<ComputationReference> nameListeners = listeners.get(name);
 		if (nameListeners == null) {
-			nameListeners = new HashSet<ComputationReference>();
+			nameListeners = new HashSet<ComputationReference>(30, 0.75f);
 			listeners.put(name, nameListeners);
 		}
 		nameListeners.add(new ComputationReference(computation));
