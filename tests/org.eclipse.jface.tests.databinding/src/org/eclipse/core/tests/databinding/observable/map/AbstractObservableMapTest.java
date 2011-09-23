@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 349038
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.map;
@@ -15,7 +16,15 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.DisposeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IDisposeListener;
+import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.map.AbstractObservableMap;
+import org.eclipse.core.databinding.observable.map.IMapChangeListener;
+import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
@@ -74,7 +83,84 @@ public class AbstractObservableMapTest extends TestCase {
 			}
 		});
 	}
-	
+
+	public void testAddListChangeListener_AfterDispose() {
+		map.dispose();
+		map.addMapChangeListener(new IMapChangeListener() {
+			public void handleMapChange(MapChangeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testRemoveListChangeListener_AfterDispose() {
+		map.dispose();
+		map.removeMapChangeListener(new IMapChangeListener() {
+			public void handleMapChange(MapChangeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testAddChangeListener_AfterDispose() {
+		map.dispose();
+		map.addChangeListener(new IChangeListener() {
+			public void handleChange(ChangeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testRemoveChangeListener_AfterDispose() {
+		map.dispose();
+		map.removeChangeListener(new IChangeListener() {
+			public void handleChange(ChangeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testAddStaleListener_AfterDispose() {
+		map.dispose();
+		map.addStaleListener(new IStaleListener() {
+			public void handleStale(StaleEvent staleEvent) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testRemoveStaleListener_AfterDispose() {
+		map.dispose();
+		map.removeStaleListener(new IStaleListener() {
+			public void handleStale(StaleEvent staleEvent) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testAddDisposeListener_AfterDispose() {
+		map.dispose();
+		map.addDisposeListener(new IDisposeListener() {
+			public void handleDispose(DisposeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testRemoveDisposeListener_AfterDispose() {
+		map.dispose();
+		map.removeDisposeListener(new IDisposeListener() {
+			public void handleDispose(DisposeEvent event) {
+				// do nothing
+			}
+		});
+	}
+
+	public void testHasListeners_AfterDispose() {
+		map.dispose();
+		map.hasListeners();
+	}
+
 	static class AbstractObservableMapStub extends AbstractObservableMap {
 		public Set entrySet() {
 			return null;
@@ -90,6 +176,10 @@ public class AbstractObservableMapTest extends TestCase {
 		
 		protected void fireStale() {
 			super.fireStale();
+		}
+
+		protected synchronized boolean hasListeners() {
+			return super.hasListeners();
 		}
 	}
 }

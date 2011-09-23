@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bugs 118516, 146397, 226289, 246103, 249526, 264307
+ *     Matthew Hall - bugs 118516, 146397, 226289, 246103, 249526, 264307,
+ *                    349038
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -60,7 +61,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 
 	private final Realm realm;
 	private PrivateChangeSupport changeSupport;
-	private boolean disposed = false;
+	private volatile boolean disposed = false;
 
 	private boolean stale;
 
@@ -93,23 +94,27 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	public synchronized void addMapChangeListener(IMapChangeListener listener) {
-		if (!disposed)
+		if (!disposed) {
 			changeSupport.addListener(MapChangeEvent.TYPE, listener);
+		}
 	}
 
 	public synchronized void removeMapChangeListener(IMapChangeListener listener) {
-		if (!disposed)
+		if (!disposed) {
 			changeSupport.removeListener(MapChangeEvent.TYPE, listener);
+		}
 	}
 
 	public synchronized void addChangeListener(IChangeListener listener) {
-		if (!disposed)
+		if (!disposed) {
 			changeSupport.addChangeListener(listener);
+		}
 	}
 
 	public synchronized void addStaleListener(IStaleListener listener) {
-		if (!disposed)
+		if (!disposed) {
 			changeSupport.addStaleListener(listener);
+		}
 	}
 
 	/**
@@ -123,17 +128,19 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	/**
 	 * @since 1.2
 	 */
-	public void addDisposeListener(IDisposeListener listener) {
-		if (!disposed)
+	public synchronized void addDisposeListener(IDisposeListener listener) {
+		if (!disposed) {
 			changeSupport.addDisposeListener(listener);
+		}
 	}
 
 	/**
 	 * @since 1.2
 	 */
-	public void removeDisposeListener(IDisposeListener listener) {
-		if (!disposed)
+	public synchronized void removeDisposeListener(IDisposeListener listener) {
+		if (!disposed) {
 			changeSupport.removeDisposeListener(listener);
+		}
 	}
 
 	/**
@@ -176,11 +183,15 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	public synchronized void removeChangeListener(IChangeListener listener) {
-		changeSupport.removeChangeListener(listener);
+		if (!disposed) {
+			changeSupport.removeChangeListener(listener);
+		}
 	}
 
 	public synchronized void removeStaleListener(IStaleListener listener) {
-		changeSupport.removeStaleListener(listener);
+		if (!disposed) {
+			changeSupport.removeStaleListener(listener);
+		}
 	}
 
 	/**

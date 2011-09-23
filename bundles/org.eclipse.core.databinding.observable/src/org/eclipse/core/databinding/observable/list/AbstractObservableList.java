@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164653, 167204
- *     Matthew Hall - bugs 118516, 208858, 208332, 247367, 146397, 249526
+ *     Matthew Hall - bugs 118516, 208858, 208332, 247367, 146397, 249526,
+ *                    349038
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -63,7 +64,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 	private final Realm realm;
 	private PrivateChangeSupport changeSupport;
-	private boolean disposed = false;
+	private volatile boolean disposed = false;
 
 	/**
 	 * @param realm 
@@ -89,8 +90,8 @@ public abstract class AbstractObservableList extends AbstractList implements
 	 * @return whether this observable list has any registered listeners.
 	 * @since 1.2
 	 */
-	protected boolean hasListeners() {
-		return changeSupport.hasListeners();
+	protected synchronized boolean hasListeners() {
+		return !disposed && changeSupport.hasListeners();
 	}
 
 	public boolean isStale() {
@@ -99,13 +100,15 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	public synchronized void addListChangeListener(IListChangeListener listener) {
-		if (!disposed)
+		if (!disposed) {
 			changeSupport.addListener(ListChangeEvent.TYPE, listener);
+		}
 	}
 
 	public synchronized void removeListChangeListener(IListChangeListener listener) {
-		if (!disposed)
+		if (!disposed) {
 			changeSupport.removeListener(ListChangeEvent.TYPE, listener);
+		}
 	}
 
 	protected void fireListChange(ListDiff diff) {
@@ -115,30 +118,34 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	public synchronized void addChangeListener(IChangeListener listener) {
-		if (!disposed)
+		if (!disposed) {
 			changeSupport.addChangeListener(listener);
+		}
 	}
 
 	public synchronized void removeChangeListener(IChangeListener listener) {
-		if (!disposed)
+		if (!disposed) {
 			changeSupport.removeChangeListener(listener);
+		}
 	}
 
 	public synchronized void addStaleListener(IStaleListener listener) {
-		if (!disposed)
+		if (!disposed) {
 			changeSupport.addStaleListener(listener);
+		}
 	}
 
 	public synchronized void removeStaleListener(IStaleListener listener) {
-		if (!disposed)
+		if (!disposed) {
 			changeSupport.removeStaleListener(listener);
+		}
 	}
 
 	/**
 	 * @since 1.2
 	 */
 	public synchronized void addDisposeListener(IDisposeListener listener) {
-		if (changeSupport != null) {
+		if (!disposed) {
 			changeSupport.addDisposeListener(listener);
 		}
 	}
@@ -147,7 +154,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	 * @since 1.2
 	 */
 	public synchronized void removeDisposeListener(IDisposeListener listener) {
-		if (changeSupport != null) {
+		if (!disposed) {
 			changeSupport.removeDisposeListener(listener);
 		}
 	}
