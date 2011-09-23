@@ -70,20 +70,17 @@ public class HelpDataTest extends TestCase {
 	}
 
 	private void setBaseTocs(String value) {
-		InstanceScope instanceScope = new InstanceScope();
-	    IEclipsePreferences pref = instanceScope.getNode(HelpPlugin.PLUGIN_ID);
+	    IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpPlugin.PLUGIN_ID);
 	    pref.put(HelpPlugin.BASE_TOCS_KEY, value);
 	}
 	
 	private void setIgnoredTocs(String value) {
-		InstanceScope instanceScope = new InstanceScope();
-	    IEclipsePreferences pref = instanceScope.getNode(HelpPlugin.PLUGIN_ID);
+	    IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpPlugin.PLUGIN_ID);
 	    pref.put(HelpPlugin.IGNORED_TOCS_KEY, value);
 	}
 	
 	private void setIgnoredIndexes(String value) {
-		InstanceScope instanceScope = new InstanceScope();
-	    IEclipsePreferences pref = instanceScope.getNode(HelpPlugin.PLUGIN_ID);
+	    IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpPlugin.PLUGIN_ID);
 	    pref.put(HelpPlugin.IGNORED_INDEXES_KEY, value);
 	}
 
