@@ -181,7 +181,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (changedElement.getWidget() instanceof Control) {
 					Control ctrl = (Control) changedElement.getWidget();
 					ctrl.setParent(getLimboShell());
-					ctrl.setSize(0, 0);
+
+					if (!(ctrl instanceof Shell))
+						ctrl.setSize(0, 0);
 				}
 
 				if (parent instanceof MElementContainer<?>) {
