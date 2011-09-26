@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextFunction;
@@ -80,6 +81,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.OpenPreferencesAction;
 import org.eclipse.ui.internal.PluginAction;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
@@ -99,6 +101,20 @@ public class MenuHelper {
 
 	public static final String MAIN_MENU_ID = "org.eclipse.ui.main.menu"; //$NON-NLS-1$
 	private static Field urlField;
+
+	/**
+	 * The private 'location' field that is defined in the FileImageDescriptor.
+	 * 
+	 * @see #getLocation(ImageDescriptor)
+	 */
+	private static Field locationField;
+
+	/**
+	 * The private 'name' field that is defined in the FileImageDescriptor.
+	 * 
+	 * @see #getName(ImageDescriptor)
+	 */
+	private static Field nameField;
 
 	public static String getActionSetCommandId(IConfigurationElement element) {
 		String id = MenuHelper.getDefinitionId(element);
@@ -155,6 +171,40 @@ public class MenuHelper {
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static Class<?> getLocation(ImageDescriptor imageDescriptor) {
+		try {
+			if (locationField == null) {
+				locationField = imageDescriptor.getClass().getDeclaredField("location"); //$NON-NLS-1$
+				locationField.setAccessible(true);
+			}
+			return (Class<?>) locationField.get(imageDescriptor);
+		} catch (SecurityException e) {
+			WorkbenchPlugin.log(e);
+		} catch (NoSuchFieldException e) {
+			WorkbenchPlugin.log(e);
+		} catch (IllegalAccessException e) {
+			WorkbenchPlugin.log(e);
+		}
+		return null;
+	}
+
+	private static String getName(ImageDescriptor imageDescriptor) {
+		try {
+			if (nameField == null) {
+				nameField = imageDescriptor.getClass().getDeclaredField("name"); //$NON-NLS-1$
+				nameField.setAccessible(true);
+			}
+			return (String) nameField.get(imageDescriptor);
+		} catch (SecurityException e) {
+			WorkbenchPlugin.log(e);
+		} catch (NoSuchFieldException e) {
+			WorkbenchPlugin.log(e);
+		} catch (IllegalAccessException e) {
+			WorkbenchPlugin.log(e);
 		}
 		return null;
 	}
@@ -973,6 +1023,28 @@ public class MenuHelper {
 			} catch (URISyntaxException e) {
 				// ignored
 			}
+		} else if (descriptor.getClass().toString().endsWith("FileImageDescriptor")) { //$NON-NLS-1$
+			Class<?> sourceClass = getLocation(descriptor);
+			if (sourceClass == null) {
+				return null;
+			}
+
+			String path = getName(descriptor);
+			if (path == null) {
+				return null;
+			}
+
+			Bundle bundle = FrameworkUtil.getBundle(sourceClass);
+			// get the fully qualified class name
+			String parentPath = sourceClass.getName();
+			// remove the class's name
+			parentPath = parentPath.substring(0, parentPath.lastIndexOf('.'));
+			// swap '.' with '/' so that it becomes a path
+			parentPath = parentPath.replace('.', '/');
+			
+			// construct the URL
+			URL url = FileLocator.find(bundle, new Path(parentPath).append(path), null);
+			return url == null ? null : url.toString();
 		}
 		return null;
 	}
