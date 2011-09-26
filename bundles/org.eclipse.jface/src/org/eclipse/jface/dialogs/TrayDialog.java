@@ -208,9 +208,9 @@ public abstract class TrayDialog extends Dialog {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#close()
+	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
 	 */
-	public boolean close() {
+	protected void handleShellCloseEvent() {
 		/*
 		 * Close the tray to ensure that those dialogs that remember their
 		 * size do not store the tray size.
@@ -218,7 +218,8 @@ public abstract class TrayDialog extends Dialog {
 		if (getTray() != null) {
 			closeTray();
 		}
-		return super.close();
+
+		super.handleShellCloseEvent();
 	}
 	
     /* (non-Javadoc)
