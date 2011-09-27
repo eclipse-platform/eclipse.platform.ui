@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jface.action;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -145,10 +146,10 @@ public class StatusLineManager extends ContributionManager implements
      * Method declared on IStatusLineManager
      */
     public IProgressMonitor getProgressMonitor() {
+		final IProgressMonitor progressDelegate = statusLineExist() ? getProgressMonitorDelegate()
+				: new NullProgressMonitor();
 
         return new IProgressMonitorWithBlocking() {
-
-            IProgressMonitor progressDelegate = getProgressMonitorDelegate();
 
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
