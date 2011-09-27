@@ -16,6 +16,7 @@
 package org.eclipse.ui.internal;
 
 import com.ibm.icu.util.ULocale;
+import com.ibm.icu.util.ULocale.Category;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -666,8 +667,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 		final int[] returnCode = new int[1];
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
-				ULocale.setDefault(new ULocale(Platform.getNL()
-						+ Platform.getNLExtensions()));
+				final String nlExtensions = Platform.getNLExtensions();
+				if (nlExtensions.length() > 0) {
+					ULocale.setDefault(Category.FORMAT,
+								new ULocale(ULocale.getDefault(Category.FORMAT).getBaseName()
+										+ nlExtensions));
+				}
 				// create the workbench instance
 				Workbench workbench = new Workbench(display, advisor);
 				// run the workbench event loop
