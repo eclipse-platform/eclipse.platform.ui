@@ -51,7 +51,7 @@ public class UIEventPublisher extends EContentAdapter {
 
 		if (topic != null) {
 			//System.out.println("UI Model Event: " + topic + " args: " + argMap); //$NON-NLS-1$ //$NON-NLS-2$
-			IEventBroker eventManager = (IEventBroker) context.get(IEventBroker.class.getName());
+			IEventBroker eventManager = context.get(IEventBroker.class);
 			eventManager.send(topic, argMap);
 		} else {
 			System.out.println("Event of unknown type received from the model"); //$NON-NLS-1$

@@ -543,6 +543,7 @@ public class PartServiceImpl implements EPartService {
 			// insert it in the beginning of the activation history, it may not have been inserted
 			// pending when this service was instantiated
 			partActivationHistory.prepend(part);
+			UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
 			return;
 		}
 
@@ -561,6 +562,7 @@ public class PartServiceImpl implements EPartService {
 		if (object != null && requiresFocus) {
 			try {
 				ContextInjectionFactory.invoke(object, Focus.class, part.getContext(), null);
+				UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
 			} catch (InjectionException e) {
 				log("Failed to grant focus to part", "Failed to grant focus to part ({0})", //$NON-NLS-1$ //$NON-NLS-2$
 						part.getElementId(), e);

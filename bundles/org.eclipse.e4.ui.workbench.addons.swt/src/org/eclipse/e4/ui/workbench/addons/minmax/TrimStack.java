@@ -62,11 +62,13 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.osgi.service.event.EventHandler;
 
 /**
- *
+ * Class for representing window trim containing minimized views and shared areas
  */
 public class TrimStack {
 
-	// Contribution URI for this class
+	/**
+	 * Contribution URI for this class
+	 */
 	public static String CONTRIBUTION_URI = "platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack"; //$NON-NLS-1$
 
 	private static final String LAYOUT_ICON_URI = "platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/icons/full/obj16/layout_co.gif"; //$NON-NLS-1$
@@ -323,7 +325,7 @@ public class TrimStack {
 				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
 				widgetHandler);
 		eventBroker.subscribe(UIEvents.UILifeCycle.BRINGTOTOP, openHandler);
-		eventBroker.subscribe(UIEvents.UILifeCycle.BRINGTOTOP, closeHandler);
+		eventBroker.subscribe(UIEvents.UILifeCycle.ACTIVATE, closeHandler);
 	}
 
 	@PreDestroy

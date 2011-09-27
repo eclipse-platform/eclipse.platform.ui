@@ -10,6 +10,13 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.internal.ModelUtils;
+
 /**
  * E4 UI events and event topic definitions.
  * 
@@ -108,12 +115,12 @@ public class UIEvents {
 		/**
 		 * Sent when a UIElement is brought to top
 		 */
-		public static final String BRINGTOTOP = "bringToTop"; //$NON-NLS-1$
+		public static final String BRINGTOTOP = TOPIC + TOPIC_SEP + "bringToTop"; //$NON-NLS-1$
 
 		/**
 		 * Sent when an MPart is activated
 		 */
-		public static final String ACTIVATE = "activate"; //$NON-NLS-1$
+		public static final String ACTIVATE = TOPIC + TOPIC_SEP + "activate"; //$NON-NLS-1$
 	}
 
 	/**
@@ -149,6 +156,55 @@ public class UIEvents {
 	 */
 	public static String buildTopic(String topic, String attributeName, String eventType) {
 		return topic + TOPIC_SEP + attributeName + TOPIC_SEP + eventType;
+	}
+
+	/**
+	 * Publish the topic to the changedElements global event bus. The changedElement is added the
+	 * the EventTags.ELEMENT tag.
+	 * 
+	 * @param topic
+	 *            to broadcast
+	 * @param changedElement
+	 *            the element that changed
+	 * @return true if the event is published correctly, false otherwise
+	 */
+	public static boolean publishEvent(String topic, MUIElement changedElement) {
+		if (topic == null || topic.isEmpty() || changedElement == null)
+			return false;
+
+		Map<String, Object> argMap = new HashMap<String, Object>(1);
+		argMap.put(EventTags.ELEMENT, changedElement);
+		return publishEvent(topic, argMap);
+	}
+
+	/**
+	 * Publish the topic with the provided arguments to the global event bus. argMap MUST contain an
+	 * EventTags.ELEMENT argument that is an MUIElement. the contained MUIElement will be used to
+	 * determine the event bus to publish to.
+	 * 
+	 * @param topic
+	 *            to broadcast
+	 * @param argMap
+	 *            arguments map with a minimum of a changedElement
+	 * @return true if the event is published correctly, false otherwise
+	 */
+	public static boolean publishEvent(String topic, Map<String, Object> argMap) {
+		if (topic == null || topic.isEmpty() || argMap == null)
+			return false;
+
+		Object uiElement = argMap.get(EventTags.ELEMENT);
+		if (uiElement == null || !(uiElement instanceof MUIElement))
+			return false;
+
+		IEclipseContext context = ModelUtils.getContainingContext((MUIElement) uiElement);
+		if (context == null)
+			return false;
+
+		IEventBroker eventBroker = context.get(IEventBroker.class);
+		if (eventBroker == null)
+			return false;
+
+		return eventBroker.send(topic, argMap);
 	}
 
 	/*************************************************************************************

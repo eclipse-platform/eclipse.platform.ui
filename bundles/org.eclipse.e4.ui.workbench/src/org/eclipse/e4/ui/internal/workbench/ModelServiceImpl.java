@@ -12,12 +12,9 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -327,7 +324,7 @@ public class ModelServiceImpl implements EModelService {
 		} else {
 			showElementInWindow(window, element);
 		}
-		publishEvent(UIEvents.UILifeCycle.BRINGTOTOP, element);
+		UIEvents.publishEvent(UIEvents.UILifeCycle.BRINGTOTOP, element);
 	}
 
 	private void showElementInWindow(MWindow window, MUIElement element) {
@@ -987,13 +984,5 @@ public class ModelServiceImpl implements EModelService {
 				count++;
 		}
 		return count < 2 && stack.isToBeRendered();
-	}
-
-	private boolean publishEvent(String topic, MUIElement element) {
-		Map<String, Object> args = new HashMap<String, Object>();
-		args.put(UIEvents.EventTags.ELEMENT, element);
-		IEventBroker eventBroker = (IEventBroker) getContainingContext(element).get(
-				IEventBroker.class.getName());
-		return eventBroker.send(topic, args);
 	}
 }
