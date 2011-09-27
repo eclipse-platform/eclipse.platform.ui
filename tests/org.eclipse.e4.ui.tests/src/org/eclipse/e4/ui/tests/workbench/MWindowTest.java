@@ -292,6 +292,9 @@ public class MWindowTest extends TestCase {
 	public void testWindow_X() {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setX(200);
+		window.setY(200);
+		window.setWidth(200);
+		window.setHeight(200);
 
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
@@ -325,7 +328,10 @@ public class MWindowTest extends TestCase {
 
 	public void testWindow_Y() {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.setX(200);
 		window.setY(200);
+		window.setWidth(200);
+		window.setHeight(200);
 
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
@@ -359,7 +365,10 @@ public class MWindowTest extends TestCase {
 
 	public void testWindow_Width() {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.setX(200);
+		window.setY(200);
 		window.setWidth(200);
+		window.setHeight(200);
 
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
@@ -390,6 +399,9 @@ public class MWindowTest extends TestCase {
 
 	public void testWindow_Height() {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.setX(200);
+		window.setY(200);
+		window.setWidth(200);
 		window.setHeight(200);
 
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
