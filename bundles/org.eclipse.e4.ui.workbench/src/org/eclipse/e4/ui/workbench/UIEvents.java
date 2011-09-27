@@ -169,7 +169,7 @@ public class UIEvents {
 	 * @return true if the event is published correctly, false otherwise
 	 */
 	public static boolean publishEvent(String topic, MUIElement changedElement) {
-		if (topic == null || topic.isEmpty() || changedElement == null)
+		if (topic == null || topic.length() == 0 || changedElement == null)
 			return false;
 
 		Map<String, Object> argMap = new HashMap<String, Object>(1);
@@ -189,7 +189,7 @@ public class UIEvents {
 	 * @return true if the event is published correctly, false otherwise
 	 */
 	public static boolean publishEvent(String topic, Map<String, Object> argMap) {
-		if (topic == null || topic.isEmpty() || argMap == null)
+		if (topic == null || topic.length() == 0 || argMap == null)
 			return false;
 
 		Object uiElement = argMap.get(EventTags.ELEMENT);
