@@ -57,6 +57,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -383,8 +384,18 @@ public class WBWRenderer extends SWTPartRenderer {
 		}
 
 		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		wbwShell.setBounds(wbwModel.getX(), wbwModel.getY(),
+
+		// Force the shell onto the display if it would be invisible otherwise
+		Rectangle modelBounds = new Rectangle(wbwModel.getX(), wbwModel.getY(),
 				wbwModel.getWidth(), wbwModel.getHeight());
+		Rectangle displayBounds = Display.getCurrent().getBounds();
+		if (!modelBounds.intersects(displayBounds)) {
+			Rectangle clientArea = Display.getCurrent().getClientArea();
+			modelBounds.x = clientArea.x;
+			modelBounds.y = clientArea.y;
+		}
+
+		wbwShell.setBounds(modelBounds);
 		setCSSInfo(wbwModel, wbwShell);
 
 		// set up context
