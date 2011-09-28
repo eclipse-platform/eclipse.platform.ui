@@ -261,11 +261,15 @@ public class FilterTransform {
 						// trim
 						if (i == 0) {
 							filteredIndexes = null;
+							filteredElements = null;
 							return;
 						} else {
 							int[] temp = new int[i + 1];
 							System.arraycopy(filteredIndexes, 0, temp, 0, temp.length);
 							filteredIndexes = temp;
+							Object[] temp2 = new Object[i + 1];
+							System.arraycopy(filteredElements, 0, temp2, 0, temp2.length);
+							filteredElements = temp2;
 						}
 					}
 				}

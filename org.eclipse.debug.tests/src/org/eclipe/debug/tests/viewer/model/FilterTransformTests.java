@@ -133,4 +133,20 @@ public class FilterTransformTests extends TestCase {
 		boolean added = transform.addFilteredIndex(TreePath.EMPTY, 0, element0);
 		assertFalse("Filter should not be added - should already have been there", added);
 	}
+	
+	
+	/**
+	 * Test to make sure that setModelChildCount() updates internal arrays appropriately.
+	 * See bug 200325.
+	 */
+	public void testRegression200325() {
+		transform.setModelChildCount(TreePath.EMPTY, 2);
+		try {
+			transform.addFilteredIndex(TreePath.EMPTY, 3, new Object());
+		} catch (ArrayIndexOutOfBoundsException e) {
+			fail("AIOOBE Exception should not be thrown here, " +
+					"setModelChildCount should leave " +
+					"FilterTransform$Node in a consistent state");
+		}
+	}
 }
