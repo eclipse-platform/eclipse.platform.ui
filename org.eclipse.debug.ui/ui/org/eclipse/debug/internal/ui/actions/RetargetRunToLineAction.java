@@ -48,7 +48,7 @@ public class RetargetRunToLineAction extends RetargetAction {
 			}
 			IAction action = getAction();
 			if (action != null) {
-				action.setEnabled(fTargetElement != null && hasTargetAdapter());
+				action.setEnabled(fTargetElement != null && isTargetEnabled());
 			}
 		}
 

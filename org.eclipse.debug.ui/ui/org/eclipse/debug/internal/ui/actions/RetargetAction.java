@@ -146,12 +146,8 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 					fTargetAdapter = getAdapter((IAdaptable) object);
 				}
 			}
+	        action.setEnabled(fTargetAdapter != null && isTargetEnabled());
 		}
-		boolean enabled = fTargetAdapter != null;
-		if (selection instanceof IStructuredSelection) {
-			enabled = isTargetEnabled();
-		}
-		action.setEnabled(enabled);
 	}
 	
 	/* (non-Javadoc)
@@ -170,7 +166,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 			fTargetAdapter = getAdapter(part);
 		}
 		if (fAction != null) {
-			fAction.setEnabled(fTargetAdapter != null);
+			fAction.setEnabled(fTargetAdapter != null && isTargetEnabled());
 		}
 	}
 	
