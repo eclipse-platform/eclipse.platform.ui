@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,9 +46,15 @@ public interface IRequestor {
 
 	/**
 	 * The injected object that initiated this request
-	 * @return the object that initiated this request
+	 * @return the object that initiated this request, may return <code>null</code>
 	 */
 	public Object getRequestingObject();
+
+	/**
+	 * Class of the injected object
+	 * @return class of the injected object, may return <code>null</code>
+	 */
+	public Class<?> getRequestingObjectClass();
 
 	/**
 	 * Determines if this requestor is still valid. Once requestor becomes invalid, it

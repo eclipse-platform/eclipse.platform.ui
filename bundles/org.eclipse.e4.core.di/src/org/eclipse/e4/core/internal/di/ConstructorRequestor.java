@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,12 +81,18 @@ public class ConstructorRequestor extends Requestor {
 		return descriptors;
 	}
 
+	public Class<?> getRequestingObjectClass() {
+		return constructor.getDeclaringClass();
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer tmp = new StringBuffer();
 		Object object = getRequestingObject();
 		if (object != null)
 			tmp.append(object.getClass().getSimpleName());
+		else
+			tmp.append(constructor.getDeclaringClass().getSimpleName());
 		tmp.append('(');
 		tmp.append(')');
 		return tmp.toString();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,13 @@ abstract public class Requestor implements IRequestor {
 		if (objectRef == null)
 			return null;
 		return objectRef.get();
+	}
+
+	public Class<?> getRequestingObjectClass() {
+		Object object = getRequestingObject();
+		if (object == null)
+			return null;
+		return object.getClass();
 	}
 
 	/**
