@@ -407,15 +407,6 @@
                toolbarPath="org.eclipse.debug.ui.main.toolbar/emptyStepGroup">
          </action>
          <action
-               id="org.eclipse.debug.ui.actions.toolbar.RunToLine"
-               class="org.eclipse.debug.internal.ui.actions.RetargetRunToLineAction"
-               helpContextId="run_to_line_action_context"
-               disabledIcon="$nl$/icons/full/dlcl16/runtoline_co.gif"
-               icon="$nl$/icons/full/elcl16/runtoline_co.gif"
-               label="%RunToLine.label"
-               toolbarPath="org.eclipse.debug.ui.main.toolbar/emptyStepGroup">
-         </action>                  
-         <action
                id="org.eclipse.debug.ui.actions.toolbar.StepReturn"
                hoverIcon="$nl$/icons/full/elcl16/stepreturn_co.gif"
                class="org.eclipse.debug.internal.ui.commands.actions.StepReturnCommandActionDelegate"
