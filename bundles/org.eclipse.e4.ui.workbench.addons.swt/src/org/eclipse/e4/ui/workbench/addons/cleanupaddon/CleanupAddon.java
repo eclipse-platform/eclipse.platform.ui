@@ -250,9 +250,10 @@ public class CleanupAddon {
 			if (containerElement instanceof MWindow && containerElement.getParent() != null) {
 				return;
 			}
-			// Don't mess with editor stacks (for now)
-			if (isLastEditorStack(containerElement)
-					|| containerElement instanceof MPerspectiveStack) //$NON-NLS-1$
+
+			// These elements should neither be shown nor hidden based on their containment state
+			if (isLastEditorStack(containerElement) || containerElement instanceof MPerspective
+					|| containerElement instanceof MPerspectiveStack)
 				return;
 
 			Boolean toBeRendered = (Boolean) event.getProperty(UIEvents.EventTags.NEW_VALUE);
