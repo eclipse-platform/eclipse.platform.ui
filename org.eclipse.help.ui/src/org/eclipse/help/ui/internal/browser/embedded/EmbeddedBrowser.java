@@ -108,8 +108,7 @@ public class EmbeddedBrowser {
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				// save position
-				InstanceScope instanceScope = new InstanceScope();
-				IEclipsePreferences prefs = instanceScope.getNode(HelpUIPlugin.PLUGIN_ID);
+				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpUIPlugin.PLUGIN_ID);
 				prefs.putInt(BROWSER_X, x);
 				prefs.putInt(BROWSER_Y, y);
 				prefs.putInt(BROWSER_WIDTH, w);

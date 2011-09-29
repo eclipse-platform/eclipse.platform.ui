@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,7 @@ public class HelpBasePreferenceInitializer extends
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		DefaultScope defaultScope = new DefaultScope();
-		IEclipsePreferences prefs = defaultScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 
 		String os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH); //$NON-NLS-1$
 

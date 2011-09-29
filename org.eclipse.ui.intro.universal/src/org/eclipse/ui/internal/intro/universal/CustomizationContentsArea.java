@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -631,15 +631,13 @@ public class CustomizationContentsArea {
 		String pidKey = pid + "_" + key; //$NON-NLS-1$
 		String value;
 		if (!fromDefault) {
-		     InstanceScope instanceScope = new InstanceScope();	
-		     prefs = instanceScope.getNode(pluginId);
+		     prefs = InstanceScope.INSTANCE.getNode(pluginId);
 		     value = getPreference(key, prefs, pidKey, null);
 		     if (value != null) {
 		    	 return value;
 		     }
 		}
-		DefaultScope defaultScope = new DefaultScope();
-		prefs = defaultScope.getNode(pluginId);
+		prefs = DefaultScope.INSTANCE.getNode(pluginId);
 		return getPreference(key, prefs, pidKey, ""); //$NON-NLS-1$
 	}
 
@@ -761,9 +759,8 @@ public class CustomizationContentsArea {
 	}
 
 	private void saveData() {
-		InstanceScope instanceScope = new InstanceScope();
-		IEclipsePreferences iprefs = instanceScope.getNode(IntroPlugin.PLUGIN_ID);
-		IEclipsePreferences uprefs = instanceScope.getNode(UniversalIntroPlugin.PLUGIN_ID);
+		IEclipsePreferences iprefs = InstanceScope.INSTANCE.getNode(IntroPlugin.PLUGIN_ID);
+		IEclipsePreferences uprefs = InstanceScope.INSTANCE.getNode(UniversalIntroPlugin.PLUGIN_ID);
 		boolean toAll = applyToAll.getSelection();
 		IProduct product = Platform.getProduct();
 		if (product == null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.help.internal.util.ProductPreferences;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Preferences for availiable to webapp
+ * Preferences for webapp
  */
 public class WebappPreferences {
 	/**
@@ -165,8 +165,7 @@ public class WebappPreferences {
 	}
 	
 	private void setBooleanPreference(String key, boolean value) {
-		InstanceScope instanceScope = new InstanceScope();
-		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.putBoolean(key, value);
 		try {
 			prefs.flush();

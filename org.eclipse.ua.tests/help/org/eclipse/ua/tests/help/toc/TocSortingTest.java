@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2009 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -137,14 +137,12 @@ public class TocSortingTest extends TestCase {
 	}
 
 	private void setHelpData(String value) {
-		InstanceScope instanceScope = new InstanceScope();
-		IEclipsePreferences prefs = instanceScope.getNode(HelpPlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpPlugin.PLUGIN_ID);
 		prefs.put(HelpPlugin.HELP_DATA_KEY, value);
 	}
 	
 	private void setBaseTocs(String value) {
-		InstanceScope instanceScope = new InstanceScope();
-	    IEclipsePreferences prefs = instanceScope.getNode(HelpPlugin.PLUGIN_ID);
+	    IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpPlugin.PLUGIN_ID);
 	    prefs.put(BASE_TOCS, value);
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,8 +83,7 @@ public class BrowserManager {
 		// Find all available browsers
 		browsersDescriptors = createBrowserDescriptors();
 		// 1. set default browser from preferences
-		DefaultScope defaultScope = new DefaultScope();
-		IEclipsePreferences defaultPreferences = defaultScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		String defBrowserID = defaultPreferences.get(DEFAULT_BROWSER_ID_KEY, null);
 		if (defBrowserID != null && (!"".equals(defBrowserID))) { //$NON-NLS-1$
 			setDefaultBrowserID(defBrowserID);

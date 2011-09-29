@@ -72,7 +72,7 @@ public class ResourceFinder {
 				}
 				else {
 					try {
-						URL url = files[i].toURL();
+						URL url = files[i].toURI().toURL();
 						if (url.toString().endsWith(suffix)) {
 							list.add(url);
 						}

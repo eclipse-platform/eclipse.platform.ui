@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,7 @@ import org.eclipse.help.internal.base.remote.RemoteIC;
 public class RemotePreferenceTest extends TestCase {
 
 	public static void setPreference(String name, String value) {
-		InstanceScope instanceScope = new InstanceScope();
-		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.put(name, value);
 	}
 
@@ -37,8 +36,7 @@ public class RemotePreferenceTest extends TestCase {
 	}
 	
 	private void setToDefault(String preference) {
-		InstanceScope instanceScope = new InstanceScope();
-		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.remove(preference);
 	}
 	
