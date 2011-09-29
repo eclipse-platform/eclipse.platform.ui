@@ -673,8 +673,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         }
         menu.add(new Separator());
         menu.add(editActionSetAction);
-		menu.add(getSavePerspectiveItem());
-		menu.add(getResetPerspectiveItem());
+        menu.add(getSavePerspectiveItem());
+        menu.add(getResetPerspectiveItem());
         menu.add(closePerspAction);
         menu.add(closeAllPerspsAction);
     }
@@ -1397,16 +1397,28 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 				WorkbenchMessages.Workbench_copyToolTip, null);
 	}
     
-	private IContributionItem getResetPerspectiveItem() {
-		return getItem(ActionFactory.RESET_PERSPECTIVE.getId(), ActionFactory.RESET_PERSPECTIVE.getCommandId(), null, null, WorkbenchMessages.ResetPerspective_text,
-				WorkbenchMessages.ResetPerspective_toolTip, IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
-	}
-
-	private IContributionItem getSavePerspectiveItem() {
-		return getItem(ActionFactory.SAVE_PERSPECTIVE.getId(), ActionFactory.SAVE_PERSPECTIVE.getCommandId(), null, null, WorkbenchMessages.SavePerspective_text,
-				WorkbenchMessages.SavePerspective_toolTip, IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
-	}
-
+    private IContributionItem getResetPerspectiveItem() {
+		return getItem(
+				ActionFactory.RESET_PERSPECTIVE.getId(),
+				ActionFactory.RESET_PERSPECTIVE.getCommandId(),
+				null,
+				null,
+				WorkbenchMessages.ResetPerspective_text,
+				WorkbenchMessages.ResetPerspective_toolTip, 
+				IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
+    }
+    
+    private IContributionItem getSavePerspectiveItem() {
+		return getItem(
+				ActionFactory.SAVE_PERSPECTIVE.getId(),
+				ActionFactory.SAVE_PERSPECTIVE.getCommandId(),
+				null,
+				null,
+				WorkbenchMessages.SavePerspective_text,
+				WorkbenchMessages.SavePerspective_toolTip, 
+				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
+    }
+    
     private IContributionItem getPasteItem() {
 		return getItem(
 				ActionFactory.PASTE.getId(),
