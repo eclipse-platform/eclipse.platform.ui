@@ -492,6 +492,9 @@
       <contentExtension file="data/help/dynamic/shared/extension.xml"/>
       <contentExtension file="data/help/search/extension.xml"/>
       <contentExtension file="data/help/search/extension2.xml"/>
+      <contentExtensionProvider
+            class="org.eclipse.ua.tests.help.search.UATestContentExtensionProvider">
+      </contentExtensionProvider>
    </extension>
    <extension
          point="org.eclipse.help.index">
