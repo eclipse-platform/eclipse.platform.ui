@@ -1,11 +1,10 @@
-bin/
+*/bin/
+*/bin2/
 *~
 *.rej
 *.bak
-*.patch
 javacore.*
 heapdump.*
 core.*
 Snap.*
-target/
 
