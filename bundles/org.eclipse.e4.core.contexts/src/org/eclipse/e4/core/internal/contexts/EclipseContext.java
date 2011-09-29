@@ -309,7 +309,7 @@ public class EclipseContext implements IEclipseContext {
 	 * computations and listeners that depend on this name.
 	 */
 	public void invalidate(String name, int eventType, Object oldValue, Set<Scheduled> scheduled) {
-		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.ADDED, null, name, oldValue);
+		ContextChangeEvent event = new ContextChangeEvent(this, eventType, null, name, oldValue);
 		ValueComputation computation = localValueComputations.get(name);
 		if (computation != null && computation.isValid()) {
 			computation.handleInvalid(event, scheduled);

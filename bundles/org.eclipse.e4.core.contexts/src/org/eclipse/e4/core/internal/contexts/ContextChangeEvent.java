@@ -67,6 +67,12 @@ public final class ContextChangeEvent {
 	 */
 	public static final int UPDATE = 5;
 
+	/**
+	 * A change event type (value "6"), indicating that stored computations depending
+	 * on a given name might need to be updated.
+	 */
+	public static final int RECALC = 6;
+
 	private Object[] args;
 	private IEclipseContext context;
 	private int eventType;

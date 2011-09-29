@@ -34,13 +34,15 @@ public class ValueComputation extends Computation {
 	}
 
 	public void handleInvalid(ContextChangeEvent event, Set<Scheduled> scheduled) {
-		cachedValue = NotAValue;
-
-		if (name.equals(event.getName()))
+		int eventType = event.getEventType();
+		if (eventType != ContextChangeEvent.RECALC && name.equals(event.getName()))
 			invalidateComputation();
 
-		int eventType = event.getEventType();
-		originatingContext.invalidate(name, eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType, event.getOldValue(), scheduled);
+		if (cachedValue == NotAValue) // already invalidated
+			return;
+
+		cachedValue = NotAValue;
+		originatingContext.invalidate(name, eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : ContextChangeEvent.RECALC, event.getOldValue(), scheduled);
 	}
 
 	public Object get() {
