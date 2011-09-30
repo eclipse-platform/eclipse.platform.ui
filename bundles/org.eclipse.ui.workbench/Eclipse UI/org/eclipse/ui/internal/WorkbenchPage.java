@@ -524,11 +524,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					}
             		
             		// room for optimization here
-            		List newList = new ArrayList(Arrays.asList(workingSets));
-            		if (newList.remove(event.getOldValue())) {
-						setWorkingSets((IWorkingSet []) newList
-								.toArray(new IWorkingSet [newList.size()]));
-					}
+				List<IWorkingSet> newList = new ArrayList<IWorkingSet>(Arrays.asList(workingSets));
+				if (newList.remove(event.getOldValue())) {
+					setWorkingSets(newList.toArray(new IWorkingSet[newList.size()]));
+				}
             }
         }
     };
@@ -1000,9 +999,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return ret[0];
     }
 
-    /**
-     * See IWorkbenchPage
-     */
     public boolean closeAllSavedEditors() {
         // get the Saved editors
         IEditorReference editors[] = getEditorReferences();
@@ -1091,7 +1087,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
 
 		// notify the model manager before the close
-		List partsToClose = new ArrayList();
+		List<IEditorPart> partsToClose = new ArrayList<IEditorPart>();
 		for (IEditorReference ref : editorRefs) {
 			IEditorPart refPart = ref.getEditor(false);
 			if (refPart != null) {
@@ -1255,9 +1251,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// TODO compat: do we handler defered events
     }
     
-    /**
-     * See IWorkbenchPage#closeEditor
-     */
     public boolean closeEditor(IEditorReference editorRef, boolean save) {
         return closeEditors(new IEditorReference[] {editorRef}, save);
     }
@@ -1587,9 +1580,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return navigationHistory;
     }
 
-    /**
-     * Edits the action sets.
-     */
     public boolean editActionSets() {
 		// Perspective persp = getActivePerspective();
 		// if (persp == null) {
@@ -1707,14 +1697,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return actionBars;
     }
 
-    /**
-     * Returns an array of the visible action sets.
-     */
-    public IActionSetDescriptor[] getActionSets() {
-        Collection collection = actionSets.getVisibleItems();
-        
-        return (IActionSetDescriptor[]) collection.toArray(new IActionSetDescriptor[collection.size()]);
-    }
+	/**
+	 * Returns an array of the visible action sets.
+	 * 
+	 * @return an array of the currently visible action sets
+	 */
+	public IActionSetDescriptor[] getActionSets() {
+		Collection<?> collection = actionSets.getVisibleItems();
+		return collection.toArray(new IActionSetDescriptor[collection.size()]);
+	}
 
     /**
      * @see IWorkbenchPage
@@ -1896,14 +1887,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return part == null ? null : getReference(part);
 	}
 
-
-    /**
-     * Returns the client composite.
-     */
-    public Composite getClientComposite() {
-        return composite;
-    }
-
+	public Composite getClientComposite() {
+		return composite;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -2147,31 +2133,39 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return getWorkbenchWindow().getSelectionService().getSelection(partId);
     }
 
-    /**
-     * Returns the ids of the parts to list in the Show In... prompter. This is
-     * a List of Strings.
-     */
-    public ArrayList getShowInPartIds() {
+	/**
+	 * Returns the ids of the parts to list in the Show In... prompter. This is
+	 * a List of Strings.
+	 * 
+	 * @return the ids of the parts that should be available in the 'Show In...'
+	 *         prompt
+	 */
+	public ArrayList<?> getShowInPartIds() {
 		MPerspective perspective = getPerspectiveStack().getSelectedElement();
-		return new ArrayList(ModeledPageLayout.getIds(perspective,
+		return new ArrayList<String>(ModeledPageLayout.getIds(perspective,
 				ModeledPageLayout.SHOW_IN_PART_TAG));
-    }
+	}
 
-    /**
-     * The user successfully performed a Show In... action on the specified
-     * part. Update the list of Show In items accordingly.
-     */
-    public void performedShowIn(String partId) {
+	/**
+	 * The user successfully performed a Show In... action on the specified
+	 * part. Update the list of Show In items accordingly.
+	 * 
+	 * @param partId
+	 *            the id of the part that the action was performed on
+	 */
+	public void performedShowIn(String partId) {
 		// TODO compat: show in
-    }
+	}
 
-    /**
-     * Sorts the given collection of show in target part ids in MRU order.
-     */
-    public void sortShowInPartIds(ArrayList partIds) {
+	/**
+	 * Sorts the given collection of show in target part ids in MRU order.
+	 * 
+	 * @param partIds
+	 *            the collection of part ids to rearrange
+	 */
+	public void sortShowInPartIds(ArrayList<?> partIds) {
 		// TODO compat: can't sort what we don't have
-    }
-
+	}
 
     /**
      * See IWorkbenchPage.
@@ -2285,9 +2279,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @param openExtras
      *            whether to process the perspective extras preference
      */
-    private void init(WorkbenchWindow w, String layoutID, IAdaptable input, boolean openExtras)
-            throws WorkbenchException {
-        // Save args.
+	private void init(WorkbenchWindow w, String layoutID, IAdaptable input, boolean openExtras) {
+		// Save args.
 		this.legacyWindow = w;
         this.input = input;
         actionSets = new ActionSetManager(w);
@@ -2624,10 +2617,31 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			final boolean activate, final int matchFlags, boolean notify) throws PartInitException {
 		return openEditor(input, editorID, activate, matchFlags, null, notify);
 	}
-	
-    /**
-     * This is not public API but for use internally.  editorState can be <code>null</code>.
-     */
+
+	/**
+	 * This is not public API but for use internally. editorState can be
+	 * <code>null</code>.
+	 * 
+	 * @param input
+	 *            the input to open the editor with
+	 * @param editorID
+	 *            the id of the editor to open
+	 * @param activate
+	 *            <tt>true</tt> if the editor should be activated,
+	 *            <tt>false</tt> otherwise
+	 * @param matchFlags
+	 *            a bit mask consisting of zero or more of the MATCH_* constants
+	 *            OR-ed together
+	 * @param editorState
+	 *            the previously saved state of the editor as a memento, this
+	 *            may be <tt>null</tt>
+	 * @param notify
+	 *            <tt>true</tt> if the perspective should fire off events about
+	 *            the editors being opened, <tt>false</tt> otherwise
+	 * @return the opened editor
+	 * @exception PartInitException
+	 *                if the editor could not be created or initialized
+	 */
 	public IEditorPart openEditor(final IEditorInput input, final String editorID,
 			final boolean activate, final int matchFlags, final IMemento editorState,
 			final boolean notify) throws PartInitException {
@@ -2931,7 +2945,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		modelService.resetPerspectiveModel(persp, window);
 
 		boolean revert = false;
-		// TODO: Do we really need these instanceof checks or can we assume implementation class?
 		if (desc instanceof PerspectiveDescriptor) {
 			PerspectiveDescriptor perspectiveDescriptor = (PerspectiveDescriptor) desc;
 			revert = perspectiveDescriptor.isPredefined()
@@ -3714,15 +3727,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		
 		// filter out any duplicates if necessary
 		if (newWorkingSets.length > 1) {	
-			Set setOfSets = new HashSet();
+			Set<IWorkingSet> setOfSets = new HashSet<IWorkingSet>();
 			for (int i = 0; i < newWorkingSets.length; i++) {
 				if (newWorkingSets[i] == null) {
 					throw new IllegalArgumentException();
 				}
 				setOfSets.add(newWorkingSets[i]);
 			}
-			newWorkingSets = (IWorkingSet[]) setOfSets
-					.toArray(new IWorkingSet[setOfSets.size()]);
+			newWorkingSets = setOfSets.toArray(new IWorkingSet[setOfSets.size()]);
 		}
 
 		workingSets = newWorkingSets;
@@ -4084,10 +4096,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	/**
+	 * Opens an editor represented by the descriptor with the given input.
+	 * 
 	 * @param fileEditorInput
+	 *            the input that the editor should open
 	 * @param editorDescriptor
-	 * @param b
-	 * @param object
+	 *            the descriptor of the editor to open
+	 * @param activate
+	 *            <tt>true</tt> if the editor should be activated,
+	 *            <tt>false</tt> otherwise
+	 * @param editorState
+	 *            the previously saved state of the editor as a memento, this
+	 *            may be <tt>null</tt>
+	 * @return the opened editor
+	 * @exception PartInitException
+	 *                if the editor could not be created or initialized
 	 */
 	public IEditorPart openEditorFromDescriptor(IEditorInput fileEditorInput,
 			IEditorDescriptor editorDescriptor, final boolean activate, final IMemento editorState)
