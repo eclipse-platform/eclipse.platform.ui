@@ -2974,6 +2974,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			persp.getChildren().remove(0);
 		}
 
+		List<MWindow> existingDetachedWindows = new ArrayList<MWindow>();
+		existingDetachedWindows.addAll(persp.getWindows());
+
+		// Move any detached windows from template to perspective
+		while (dummyPerspective.getWindows().size() > 0) {
+			MWindow detachedWindow = dummyPerspective.getWindows().remove(0);
+			persp.getWindows().add(detachedWindow);
+		}
+		
+		// Remove original windows.  Can't remove them first or the MParts will be disposed
+		for (MWindow detachedWindow : existingDetachedWindows) {
+			detachedWindow.setToBeRendered(false);
+			persp.getWindows().remove(detachedWindow);
+		}
+
 		// deactivate and activate other action sets as
 		updatePerspectiveActionSets(persp, dummyPerspective);
 

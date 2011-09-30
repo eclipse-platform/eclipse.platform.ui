@@ -735,12 +735,6 @@ public class ModelServiceImpl implements EModelService {
 		if (persp == null)
 			return;
 
-		// close and remove any detached windows
-		for (MWindow win : persp.getWindows()) {
-			win.setToBeRendered(false);
-		}
-		persp.getWindows().clear();
-
 		if (removeSharedPlaceholders) {
 			// Remove any views (Placeholders) from the shared area
 			EPartService ps = window.getContext().get(EPartService.class);
