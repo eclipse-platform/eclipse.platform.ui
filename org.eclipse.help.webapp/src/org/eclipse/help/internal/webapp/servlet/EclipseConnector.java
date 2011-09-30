@@ -129,7 +129,7 @@ public class EclipseConnector {
 			    	String errorPage = null;
 			    	if (RemoteStatusData.isAnyRemoteHelpUnavailable()) {
 			            errorPage = '/'+HelpWebappPlugin.PLUGIN_ID+'/'+ MissingContentManager.MISSING_TOPIC_HREF;
-			    	} else if ( MissingContentManager.getInstance().isUnresolvedPlaceholders()) {
+			    	} else {
 				        errorPage = MissingContentManager.getInstance().getPageNotFoundPage(url, false);
 			    	}
 			        if (errorPage != null && errorPage.length() > 0) {				
