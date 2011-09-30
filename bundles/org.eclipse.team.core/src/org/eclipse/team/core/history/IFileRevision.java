@@ -35,7 +35,7 @@ public interface IFileRevision {
 	 * the returned <code>IFile</code>.
 	 * @param monitor a progress monitor
 	 * @return IStorage containing file storage 
-	 * @throws CoreException 
+	 * @throws CoreException if an error occurs
 	 */
 	public IStorage getStorage(IProgressMonitor monitor) throws CoreException;
 
@@ -126,7 +126,7 @@ public interface IFileRevision {
 	 * Returns an {@link IFileRevision} with all supported properties present.
 	 * @param monitor a monitor
 	 * @return a complete version of this file revision or null
-	 * @throws CoreException
+	 * @throws CoreException if an error occurs
 	 */
 	public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException;
 }
