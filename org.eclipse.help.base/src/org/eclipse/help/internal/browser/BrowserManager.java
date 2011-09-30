@@ -65,7 +65,7 @@ public class BrowserManager {
 
 	private BrowserDescriptor internalBrowserDesc;
 
-	private Collection browsers = new ArrayList();
+	private Collection<IBrowser> browsers = new ArrayList<IBrowser>();
 
 	private boolean alwaysUseExternal = false;
 
@@ -201,7 +201,7 @@ public class BrowserManager {
 	private BrowserDescriptor[] createBrowserDescriptors() {
 		if (this.browsersDescriptors != null)
 			return this.browsersDescriptors;
-		Collection bDescriptors = new ArrayList();
+		Collection<BrowserDescriptor> bDescriptors = new ArrayList<BrowserDescriptor>();
 		IConfigurationElement configElements[] = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
 						HelpBasePlugin.PLUGIN_ID, "browser"); //$NON-NLS-1$
@@ -231,7 +231,7 @@ public class BrowserManager {
 			} catch (CoreException ce) {
 			}
 		}
-		this.browsersDescriptors = (BrowserDescriptor[]) bDescriptors
+		this.browsersDescriptors = bDescriptors
 				.toArray(new BrowserDescriptor[bDescriptors.size()]);
 		return this.browsersDescriptors;
 	}
@@ -378,8 +378,8 @@ public class BrowserManager {
 			// nothing to do, do not initialize
 			return;
 		}
-		for (Iterator it = browsers.iterator(); it.hasNext();) {
-			IBrowser browser = (IBrowser) it.next();
+		for (Iterator<IBrowser> it = browsers.iterator(); it.hasNext();) {
+			IBrowser browser = it.next();
 			browser.close();
 		}
 	}

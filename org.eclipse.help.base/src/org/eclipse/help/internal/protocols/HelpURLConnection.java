@@ -50,7 +50,7 @@ public class HelpURLConnection extends URLConnection {
 	private final static String PATH_RTOPIC = "/rtopic"; //$NON-NLS-1$
 	private static final String PROTOCOL_HTTP = "http://"; //$NON-NLS-1$
 	
-	private static Hashtable templates = new Hashtable();
+	private static Hashtable<String, String[]> templates = new Hashtable<String, String[]>();
 	
 	// document caching - disabled if running in dev mode
 	protected static boolean cachingEnabled = true;
@@ -66,7 +66,7 @@ public class HelpURLConnection extends URLConnection {
 
 	protected String pluginAndFile; // plugin/file
 	protected String query; // after ?
-	protected HashMap arguments;
+	protected HashMap<String, Object> arguments;
 	protected Bundle plugin;
 	// file in a plug-in
 	protected String file;
@@ -172,7 +172,7 @@ public class HelpURLConnection extends URLConnection {
 		return isCacheable() ? new Date().getTime() + 10000 : 0;
 	}
 
-	public static void parseQuery(String query, HashMap arguments) {
+	public static void parseQuery(String query, HashMap<String, Object> arguments) {
 		StringTokenizer stok = new StringTokenizer(query, "&"); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String aQuery = stok.nextToken();
@@ -184,10 +184,10 @@ public class HelpURLConnection extends URLConnection {
 				if (existing == null)
 					arguments.put(arg, val);
 				else if (existing instanceof Vector) {
-					((Vector) existing).add(val);
+					((Vector<String>) existing).add(val);
 					arguments.put(arg, existing);
 				} else {
-					Vector v = new Vector(2);
+					Vector<Object> v = new Vector<Object>(2);
 					v.add(existing);
 					v.add(val);
 					arguments.put(arg, v);
@@ -203,7 +203,7 @@ public class HelpURLConnection extends URLConnection {
 	protected void parseQuery() {
 		if (query != null && !"".equals(query)) { //$NON-NLS-1$
 			if (arguments == null) {
-				arguments = new HashMap(5);
+				arguments = new HashMap<String, Object>(5);
 			}
 			parseQuery(query, arguments);
 		}
@@ -427,7 +427,7 @@ public class HelpURLConnection extends URLConnection {
 	private InputStream openRemoteStream(String remoteURL, String pathSuffix)  {
 		InputStream in = getUnverifiedStream(remoteURL,pathSuffix);	
 
-		String errPage[] = (String[])templates.get(remoteURL);
+		String errPage[] = templates.get(remoteURL);
 		if (errPage==null)
 		{
 			String error = getPageText(getUnverifiedStream(remoteURL,"/rtopic/fakeurltogetatestpage/_ACEGIKMOQ246.html")); //$NON-NLS-1$

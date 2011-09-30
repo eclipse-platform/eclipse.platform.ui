@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,15 +35,15 @@ import org.xml.sax.helpers.DefaultHandler;
 public class RemoteSearchParser extends DefaultHandler {
 
 	private SAXParser parser;
-	private Stack stack;
-	private List hits;
+	private Stack<SearchHit> stack;
+	private List<SearchHit> hits;
 	private StringBuffer summary;
 
 	/*
 	 * Parses the given serialized search hits and returns generated model
 	 * objects (SearchHit objects).
 	 */
-	public List parse(InputStream in, IProgressMonitor monitor) throws ParserConfigurationException, SAXException, IOException {
+	public List<SearchHit> parse(InputStream in, IProgressMonitor monitor) throws ParserConfigurationException, SAXException, IOException {
 		monitor.beginTask("", 1); //$NON-NLS-1$
 		init();
 		parser.parse(in, this);
@@ -58,13 +58,13 @@ public class RemoteSearchParser extends DefaultHandler {
 	 */
 	private void init() throws ParserConfigurationException, SAXException {
 		if (hits == null) {
-			hits = new ArrayList();
+			hits = new ArrayList<SearchHit>();
 		}
 		else if (!hits.isEmpty()) {
 			hits.clear();
 		}
 		if (stack == null) {
-			stack = new Stack();
+			stack = new Stack<SearchHit>();
 		}
 		else if (!stack.isEmpty()) {
 			stack.clear();
@@ -96,7 +96,7 @@ public class RemoteSearchParser extends DefaultHandler {
 		}
 		else if (qName.equals("summary") && summary != null) { //$NON-NLS-1$
 			// collect the summary from the buffer
-			SearchHit hit = (SearchHit)stack.peek();
+			SearchHit hit = stack.peek();
 			hit.setSummary(summary.toString());
 			summary = null;
 		}

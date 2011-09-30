@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,9 +42,9 @@ public class PluginVersionInfo extends HelpProperties {
 
 	boolean ignoreSavedVersions;
 
-	Collection added = new ArrayList();
+	Collection<String> added = new ArrayList<String>();
 
-	Collection removed = new ArrayList();
+	Collection<String> removed = new ArrayList<String>();
 
 	/**
 	 * Creates table of current contributing plugins and their fragments with
@@ -121,7 +121,7 @@ public class PluginVersionInfo extends HelpProperties {
 		}
 		// check if contributions changed
 		hasChanged = false;
-		for (Enumeration keysEnum = this.keys(); keysEnum.hasMoreElements();) {
+		for (Enumeration<Object> keysEnum = this.keys(); keysEnum.hasMoreElements();) {
 			String oneContr = (String) keysEnum.nextElement();
 			if (!oldContrs.containsKey(oneContr)) {
 				// plugin has been added
@@ -153,7 +153,7 @@ public class PluginVersionInfo extends HelpProperties {
 	 * @return String - Collection of IDs of contributions that were added or
 	 *         upgraded
 	 */
-	public Collection getAdded() {
+	public Collection<String> getAdded() {
 		if (doComparison)
 			detectChange();
 		return added;
@@ -163,7 +163,7 @@ public class PluginVersionInfo extends HelpProperties {
 	 * @return String - Collection of IDs of contributions that were removed or
 	 *         upgraded
 	 */
-	public Collection getRemoved() {
+	public Collection<String> getRemoved() {
 		if (doComparison)
 			detectChange();
 		return removed;
@@ -180,8 +180,8 @@ public class PluginVersionInfo extends HelpProperties {
 			doComparison = false;
 			hasChanged = false;
 			ignoreSavedVersions = false;
-			added = new ArrayList();
-			removed = new ArrayList();
+			added = new ArrayList<String>();
+			removed = new ArrayList<String>();
 			return true;
 		}
 		return false;
@@ -195,7 +195,7 @@ public class PluginVersionInfo extends HelpProperties {
 	 * @return true if plugins and versions match
 	 */
 	private boolean compare(String versions, String oldVersions) {
-		Map versionMap = new HashMap();
+		Map<String, String> versionMap = new HashMap<String, String>();
 		for (StringTokenizer t = new StringTokenizer(versions, SEPARATOR, false); t
 				.hasMoreTokens();) {
 			String pluginOrFragment = t.nextToken();
@@ -203,7 +203,7 @@ public class PluginVersionInfo extends HelpProperties {
 				versionMap.put(pluginOrFragment, t.nextToken());
 			}
 		}
-		Map oldVersionMap = new HashMap();
+		Map<String, String> oldVersionMap = new HashMap<String, String>();
 		for (StringTokenizer t = new StringTokenizer(oldVersions, SEPARATOR,
 				false); t.hasMoreTokens();) {
 			String pluginOrFragment = t.nextToken();

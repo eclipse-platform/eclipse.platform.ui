@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class ScopeRegistry {
 	public static final String SCOPE_AND = "^"; //$NON-NLS-1$
 	public static final String SCOPE_OR = "|"; //$NON-NLS-1$
 
-	private static List scopes = null;
+	private static List<IScopeHandle> scopes = null;
 	
 	private static ScopeRegistry instance;
 
@@ -57,8 +57,8 @@ public class ScopeRegistry {
 		
 		
 		// Lookup in scope registry
-		for (Iterator iter = scopes.iterator(); iter.hasNext();) {
-			IScopeHandle handle = (IScopeHandle) iter.next();
+		for (Iterator<IScopeHandle> iter = scopes.iterator(); iter.hasNext();) {
+			IScopeHandle handle = iter.next();
 			if (id.equals(handle.getId())) {
 				return handle.getScope();
 			}
@@ -70,7 +70,7 @@ public class ScopeRegistry {
 		if (initialized ) {
 			return;
 		}	
-		scopes = new ArrayList();
+		scopes = new ArrayList<IScopeHandle>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(SCOPE_XP_NAME);
@@ -100,7 +100,7 @@ public class ScopeRegistry {
 	
 	public IScopeHandle[] getScopes() {
 		readScopes();
-		return (IScopeHandle[]) scopes.toArray(new IScopeHandle[scopes.size()]);
+		return scopes.toArray(new IScopeHandle[scopes.size()]);
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class ScopeRegistry {
 	 */
 	public AbstractHelpScope parseScopePhrases(String phrases[])
 	{
-		ArrayList scopes = new ArrayList();
+		ArrayList<AbstractHelpScope> scopes = new ArrayList<AbstractHelpScope>();
 		
 		for (int p=0;p<phrases.length;p++)
 		{
@@ -124,9 +124,9 @@ public class ScopeRegistry {
 		if (scopes.size()==0)
 			return null;
 		if (scopes.size()==1)
-			return (AbstractHelpScope)scopes.get(0);
+			return scopes.get(0);
 		return new IntersectionScope(
-				(AbstractHelpScope[])scopes.toArray(
+				scopes.toArray(
 						new AbstractHelpScope[scopes.size()]));
 	}
 	
@@ -142,7 +142,7 @@ public class ScopeRegistry {
 		if (!(phrase.startsWith("(") && !phrase.startsWith("("))) //$NON-NLS-1$ //$NON-NLS-2$
 			phrase = '('+phrase+')';
 		
-		Stack scopeStack = new Stack();
+		Stack<TempScope> scopeStack = new Stack<TempScope>();
 		ScopePhrase scopePhrase = new ScopePhrase(phrase);
 		
 		String elem;
@@ -157,27 +157,27 @@ public class ScopeRegistry {
 			}
 			else if (elem.equals(")")) //$NON-NLS-1$
 			{
-				TempScope scope = (TempScope)scopeStack.pop();
+				TempScope scope = scopeStack.pop();
 				if (scopeStack.isEmpty())
 					return scope.getScope();
 				else{
-					TempScope parent = (TempScope)scopeStack.peek();
+					TempScope parent = scopeStack.peek();
 					parent.add(scope.getScope());
 				}
 			}
 			else if (elem.equals(SCOPE_AND))
 			{
-				TempScope scope = (TempScope)scopeStack.peek();
+				TempScope scope = scopeStack.peek();
 				scope.setType(TempScope.INTERSECTION);
 			}
 			else if (elem.equals(SCOPE_OR))
 			{
-				TempScope scope = (TempScope)scopeStack.peek();
+				TempScope scope = scopeStack.peek();
 				scope.setType(TempScope.UNION);
 			}
 			else
 			{
-				TempScope scope = (TempScope)scopeStack.peek();
+				TempScope scope = scopeStack.peek();
 				AbstractHelpScope helpScope = getScope(elem);
 				if (helpScope!=null)
 					scope.add(helpScope);
@@ -247,7 +247,7 @@ public class ScopeRegistry {
 		public final static int UNION=1;
 		public final static int INTERSECTION=2;
 		
-		private ArrayList kids = new ArrayList();
+		private ArrayList<AbstractHelpScope> kids = new ArrayList<AbstractHelpScope>();
 		private int type;
 		
 		public void setType(int type)
@@ -265,15 +265,15 @@ public class ScopeRegistry {
 			switch (type){
 			case UNION:
 				return new UnionScope(
-						(AbstractHelpScope[])kids.toArray(
+						kids.toArray(
 								new AbstractHelpScope[kids.size()]));
 			case INTERSECTION:
 				return new IntersectionScope(
-						(AbstractHelpScope[])kids.toArray(
+						kids.toArray(
 								new AbstractHelpScope[kids.size()]));
 			default:
 				if (kids.size()>=1)
-					return (AbstractHelpScope)kids.get(0);
+					return kids.get(0);
 				else
 					return null;
 			}

@@ -125,7 +125,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 	private boolean closed = false;
 
 	// Collection of searches occuring now
-	private Collection searches = new ArrayList();
+	private Collection<Thread> searches = new ArrayList<Thread>();
 
 	private FileLock lock;
 
@@ -443,9 +443,9 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 	 * @return Map. Keys are /pluginid/href of all merged Docs. Values are null for added document,
 	 *         or String[] of indexIds with duplicates of the document
 	 */
-	public Map merge(PluginIndex[] pluginIndexes, IProgressMonitor monitor) {
-		ArrayList dirList = new ArrayList(pluginIndexes.length);
-		Map mergedDocs = new HashMap();
+	public Map<String, String[]> merge(PluginIndex[] pluginIndexes, IProgressMonitor monitor) {
+		ArrayList<NIOFSDirectory> dirList = new ArrayList<NIOFSDirectory>(pluginIndexes.length);
+		Map<String, String[]> mergedDocs = new HashMap<String, String[]>();
 		// Create directories to merge and calculate all documents added
 		// and which are duplicates (to delete later)
 		for (int p = 0; p < pluginIndexes.length; p++) {
@@ -478,7 +478,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 					} else {
 						if (mergedDocs.containsKey(href)) {
 							// this is duplicate
-							String[] dups = (String[]) mergedDocs.get(href);
+							String[] dups = mergedDocs.get(href);
 							if (dups == null) {
 								// first duplicate
 								mergedDocs.put(href, new String[] { indexId });
@@ -500,16 +500,16 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 			}
 		}
 		// perform actual merging
-		for (Iterator it = mergedDocs.keySet().iterator(); it.hasNext();) {
+		for (Iterator<String> it = mergedDocs.keySet().iterator(); it.hasNext();) {
 			indexedDocs.put(it.next(), "0"); //$NON-NLS-1$
 		}
-		Directory[] luceneDirs = (Directory[]) dirList.toArray(new Directory[dirList.size()]);
+		Directory[] luceneDirs = dirList.toArray(new Directory[dirList.size()]);
 		try {
 			iw.addIndexesNoOptimize(luceneDirs);
 			iw.optimize();
 		} catch (IOException ioe) {
 			HelpBasePlugin.logError("Merging search indexes failed.", ioe); //$NON-NLS-1$
-			return new HashMap();
+			return new HashMap<String, String[]>();
 		}
 		return mergedDocs;
 	}
@@ -648,7 +648,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 	 */
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
-			Set totalIds = new HashSet();
+			Set<String> totalIds = new HashSet<String>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint extensionPoint = registry.getExtensionPoint(TocFileProvider.EXTENSION_POINT_ID_TOC);
 			IExtension[] extensions = extensionPoint.getExtensions();
@@ -660,7 +660,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 					// ignore this extension and move on
 				}
 			}
-			Collection additionalPluginIds = BaseHelpSystem.getLocalSearchManager()
+			Collection<String> additionalPluginIds = BaseHelpSystem.getLocalSearchManager()
 					.getPluginsWithSearchParticipants();
 			totalIds.addAll(additionalPluginIds);
 			docPlugins = new PluginVersionInfo(INDEXED_CONTRIBUTION_INFO_FILE, totalIds, indexDir, !exists());

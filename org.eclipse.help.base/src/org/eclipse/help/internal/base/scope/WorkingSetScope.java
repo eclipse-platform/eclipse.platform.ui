@@ -24,6 +24,7 @@ import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.IUAElement;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.UAElement;
@@ -98,18 +99,18 @@ public class WorkingSetScope extends AbstractHelpScope {
 		if(null ==criteria){
 			return true;
 		}
-		Map ownCriteria = getCriteriaInfo(criteriaOfTopic);
-		Map scope = getCriteriaInfo(criteria);
-		outer: for (Iterator keyIterator = scope.keySet().iterator(); keyIterator.hasNext();) {
+		Map<String, Set> ownCriteria = getCriteriaInfo(criteriaOfTopic);
+		Map<String, Set> scope = getCriteriaInfo(criteria);
+		outer: for (Iterator<String> keyIterator = scope.keySet().iterator(); keyIterator.hasNext();) {
 			String key = String.valueOf(keyIterator.next());
-			for (Iterator valueIterator = ((Set)scope.get(key)).iterator(); valueIterator.hasNext();) {
+			for (Iterator valueIterator = scope.get(key).iterator(); valueIterator.hasNext();) {
 				String value = String.valueOf(valueIterator.next());
 				if (value.equals(UNCATEGORIZED)) {
 					if (!ownCriteria.containsKey(key)) {
 						continue outer;						
 					}
 				} else {
-					if (null != ownCriteria.get(key) && ((Set)ownCriteria.get(key)).contains(value))
+					if (null != ownCriteria.get(key) && ownCriteria.get(key).contains(value))
 						continue outer;					
 				}
 			}
@@ -118,14 +119,14 @@ public class WorkingSetScope extends AbstractHelpScope {
 		return true;
 	}
 	
-	private Map getCriteriaInfo(CriterionResource[] criteria) {
-		Map criteriaMap = new HashMap();
+	private Map<String, Set> getCriteriaInfo(CriterionResource[] criteria) {
+		Map<String, Set> criteriaMap = new HashMap<String, Set>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		return criteriaMap;
 	}
 	
-	private Map getCriteriaInfo(ICriteria[] criteria) {
-		Map criteriaMap = new HashMap();
+	private Map<String, Set> getCriteriaInfo(ICriteria[] criteria) {
+		Map<String, Set> criteriaMap = new HashMap<String, Set>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 	    return criteriaMap;
 	}
@@ -139,7 +140,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 	}
 	
 	private boolean inContentScope(ITopic topic) {
-		Set topics = new HashSet();
+		Set<IUAElement> topics = new HashSet<IUAElement>();
 		IToc toc = null;
 		topics.add(topic);
 		if (topic instanceof UAElement) {

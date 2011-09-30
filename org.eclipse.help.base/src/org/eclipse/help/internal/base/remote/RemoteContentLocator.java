@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base.remote;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class RemoteContentLocator {
 
-	private static Map InfoCenterMap = null; // hash table
+	private static Map<String, String> InfoCenterMap = null; // hash table
 
 	public RemoteContentLocator() {
 		
@@ -25,8 +24,7 @@ public class RemoteContentLocator {
 	public static void addContentPage(String contributorID, String InfoCenterUrl) {
 		
 		if (InfoCenterMap == null){
-			InfoCenterMap = new HashMap();
-			InfoCenterMap = new TreeMap(); // sorted map
+			InfoCenterMap = new TreeMap<String, String>(); // sorted map
 		}
 		
 		InfoCenterMap.put(contributorID, InfoCenterUrl);
@@ -41,7 +39,7 @@ public class RemoteContentLocator {
 		return (String)key;
 	}
 
-	public static Map getInfoCenterMap() {
+	public static Map<String, String> getInfoCenterMap() {
 		return InfoCenterMap;
 	}
 

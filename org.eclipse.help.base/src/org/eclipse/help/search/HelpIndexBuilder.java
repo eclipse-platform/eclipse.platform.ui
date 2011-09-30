@@ -101,9 +101,9 @@ public class HelpIndexBuilder {
 
 	private File destination;
 	
-	private ArrayList tocFiles = new ArrayList();
+	private ArrayList<TocFile> tocFiles = new ArrayList<TocFile>();
 
-	private ArrayList localeDirs = new ArrayList();
+	private ArrayList<LocaleDir> localeDirs = new ArrayList<LocaleDir>();
 
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 			.newInstance();
@@ -111,8 +111,8 @@ public class HelpIndexBuilder {
 	private DocumentBuilder parser;
 	
 	private static Locale[] legalLocales = Locale.getAvailableLocales();
-	private static HashSet legalLanguages = null;
-	private static HashSet legalCountries = null;
+	private static HashSet<String> legalLanguages = null;
+	private static HashSet<String> legalCountries = null;
 
 	class PluginIdentifier {
 		String id;
@@ -128,7 +128,7 @@ public class HelpIndexBuilder {
 	class LocaleDir {
 		String locale;
 		String relativePath;
-		ArrayList dirs = new ArrayList();
+		ArrayList<File> dirs = new ArrayList<File>();
 
 		public LocaleDir(String locale, String relativePath) {
 			this.locale = locale;
@@ -137,7 +137,7 @@ public class HelpIndexBuilder {
 		
 		public File findFile(String file) {
 			for (int i=0; i<dirs.size(); i++) {
-				File dir = (File)dirs.get(i);
+				File dir = dirs.get(i);
 				File absoluteFile = new File(dir, file);
 				if (absoluteFile.exists())
 					return absoluteFile;
@@ -309,7 +309,7 @@ public class HelpIndexBuilder {
 
 		for (int i=0; i<localeDirs.size(); i++) {
 			// process locale dir
-			LocaleDir localeDir = (LocaleDir) localeDirs.get(i);
+			LocaleDir localeDir = localeDirs.get(i);
 			MultiStatus localeStatus = processLocaleDir(pid, fid,
 					localeDir, new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			if (localeStatus != null) {
@@ -368,7 +368,7 @@ public class HelpIndexBuilder {
 		if (!nl.exists() || !nl.isDirectory())
 			return;
 		File [] languages = nl.listFiles();
-		HashSet locales = new HashSet();
+		HashSet<String> locales = new HashSet<String>();
 		for (int i=0; i<languages.length; i++) {
 			File language = languages[i];
 			if (!language.isDirectory())
@@ -442,7 +442,7 @@ public class HelpIndexBuilder {
 	
 	private boolean isValidLanguage(String language) {
 		if (legalLanguages==null) {
-			legalLanguages = new HashSet();
+			legalLanguages = new HashSet<String>();
 			String [] choices = Locale.getISOLanguages();
 			for (int i=0; i<choices.length; i++) {
 				legalLanguages.add(choices[i]);
@@ -453,7 +453,7 @@ public class HelpIndexBuilder {
 	
 	private boolean isValidCountry(String country) {
 		if (legalCountries==null) {
-			legalCountries = new HashSet();
+			legalCountries = new HashSet<String>();
 			String [] choices = Locale.getISOCountries();
 			for (int i=0; i<choices.length; i++) {
 				legalCountries.add(choices[i]);
@@ -471,12 +471,12 @@ public class HelpIndexBuilder {
 			PluginIdentifier fid, LocaleDir localeDir, IProgressMonitor monitor)
 			throws CoreException {
 		// build an index for each locale directory
-		String message = NLS.bind(HelpBaseResources.HelpIndexBuilder_indexFor, ((File)localeDir.dirs.get(0)).getName());
+		String message = NLS.bind(HelpBaseResources.HelpIndexBuilder_indexFor, localeDir.dirs.get(0).getName());
 		monitor.beginTask(message, 5);		
-		File directory = (File)localeDir.dirs.get(0);
+		File directory = localeDir.dirs.get(0);
 		File indexDirectory = new File(directory, indexPath);
 		prepareDirectory(indexDirectory);
-		Collection docs = collectDocs(localeDir);
+		Collection<String> docs = collectDocs(localeDir);
 		MultiStatus status = null;
 		if (docs.size()>0) {
 			String locale = localeDir.locale!=null?localeDir.locale:Platform.getNL();
@@ -499,11 +499,11 @@ public class HelpIndexBuilder {
 	 * collect hrefs for the topics.
 	 */
 
-	private Collection collectDocs(LocaleDir localeDir)
+	private Collection<String> collectDocs(LocaleDir localeDir)
 			throws CoreException {
-		HashSet docs = new HashSet();
+		HashSet<String> docs = new HashSet<String>();
 		for (int i = 0; i < tocFiles.size(); i++) {
-			TocFile tocFile = (TocFile) tocFiles.get(i);
+			TocFile tocFile = tocFiles.get(i);
 			collectDocs(docs, getTocFile(localeDir, tocFile.href));
 			if (tocFile.extraDir!=null) {
 				//TODO also include all the indexable documents
@@ -532,7 +532,7 @@ public class HelpIndexBuilder {
 	/*
 	 * Collect hrefs starting from the 'toc' element.
 	 */
-	private void collectDocs(Set docs, File tocFile)
+	private void collectDocs(Set<String> docs, File tocFile)
 			throws CoreException {
 		if (!tocFile.exists())
 			return;
@@ -543,7 +543,7 @@ public class HelpIndexBuilder {
 	/*
 	 * Recursive collection of hrefs from topics.
 	 */
-	private void add(Element topic, Set hrefs) {
+	private void add(Element topic, Set<String> hrefs) {
 		String href = getAttribute(topic, "href"); //$NON-NLS-1$
 		if (topic.getTagName().equals("toc")) { //$NON-NLS-1$
 			// toc element has 'topic' attribute. Don't ask why :-)
@@ -574,7 +574,7 @@ public class HelpIndexBuilder {
 	 */
 
 	private MultiStatus createIndex(String pluginId, boolean fragment, LocaleDir localeDir,
-			SearchIndex index, Collection addedDocs, IProgressMonitor monitor)
+			SearchIndex index, Collection<String> addedDocs, IProgressMonitor monitor)
 			throws CoreException {
 		monitor.beginTask(HelpBaseResources.UpdatingIndex, addedDocs.size());		
 		if (!index.beginAddBatch(true)) {
@@ -583,8 +583,8 @@ public class HelpIndexBuilder {
 		checkCancelled(monitor);
 		MultiStatus multiStatus = null;
 
-		for (Iterator it = addedDocs.iterator(); it.hasNext();) {
-			String href = (String) it.next();
+		for (Iterator<String> it = addedDocs.iterator(); it.hasNext();) {
+			String href = it.next();
 			URL url = localeDir.findURL(href);
 			if (url != null) {
 				IStatus status = index
@@ -755,7 +755,7 @@ public class HelpIndexBuilder {
 	}
 
 	private Element[] getTocExtensions(Document doc) {
-		ArrayList list = new ArrayList();
+		ArrayList<Node> list = new ArrayList<Node>();
 		//Node root = doc.getDocumentElement();
 		NodeList children = doc.getElementsByTagName("extension"); //$NON-NLS-1$
 		for (int i = 0; i < children.getLength(); i++) {
@@ -764,7 +764,7 @@ public class HelpIndexBuilder {
 			if (point.equals(POINT_TOC))
 				list.add(child);
 		}
-		return (Element[]) list.toArray(new Element[list.size()]);
+		return list.toArray(new Element[list.size()]);
 	}
 
 	private Properties manifestToProperties(Attributes d) {

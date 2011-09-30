@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class ProgressDistributor implements IProgressMonitor {
 	/**
 	 * Map work indexed by montitor
 	 */
-	private Collection monitors = new ArrayList();
+	private Collection<IProgressMonitor> monitors = new ArrayList<IProgressMonitor>();
 
 	/**
 	 * @see IProgressMonitor#beginTask(String, int)
@@ -37,8 +37,8 @@ public class ProgressDistributor implements IProgressMonitor {
 		this.totalWork = totalWork;
 		this.worked = 0;
 		this.done = false;
-		for (Iterator it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = (IProgressMonitor) it.next();
+		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
+			IProgressMonitor m = it.next();
 			m.beginTask(name, totalWork);
 		}
 	}
@@ -48,8 +48,8 @@ public class ProgressDistributor implements IProgressMonitor {
 	 */
 	public synchronized void done() {
 		done = true;
-		for (Iterator it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = (IProgressMonitor) it.next();
+		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
+			IProgressMonitor m = it.next();
 			m.done();
 		}
 	}
@@ -59,8 +59,8 @@ public class ProgressDistributor implements IProgressMonitor {
 	 */
 	public void internalWorked(double work) {
 		worked += work;
-		for (Iterator it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = (IProgressMonitor) it.next();
+		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
+			IProgressMonitor m = it.next();
 			m.internalWorked(work);
 		}
 	}
@@ -69,8 +69,8 @@ public class ProgressDistributor implements IProgressMonitor {
 	 * @see IProgressMonitor#isCanceled()
 	 */
 	public synchronized boolean isCanceled() {
-		for (Iterator it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = (IProgressMonitor) it.next();
+		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
+			IProgressMonitor m = it.next();
 			if (m.isCanceled()) {
 				return true;
 			}
@@ -89,8 +89,8 @@ public class ProgressDistributor implements IProgressMonitor {
 	 */
 	public synchronized void setTaskName(String name) {
 		taskName = name;
-		for (Iterator it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = (IProgressMonitor) it.next();
+		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
+			IProgressMonitor m = it.next();
 			m.setTaskName(name);
 		}
 	}
@@ -100,8 +100,8 @@ public class ProgressDistributor implements IProgressMonitor {
 	 */
 	public synchronized void subTask(String name) {
 		subTaskName = name;
-		for (Iterator it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = (IProgressMonitor) it.next();
+		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
+			IProgressMonitor m = it.next();
 			m.subTask(name);
 		}
 	}

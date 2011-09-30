@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,9 +72,9 @@ public class Help {
 	public Help(String pluginsDir) {
 		File plugins = new File(pluginsDir);
 		String install = plugins.getParent();
-		ArrayList options = new ArrayList(2);
+		ArrayList<String> options = new ArrayList<String>(2);
 		if (install != null) {
-			options = new ArrayList(2);
+			options = new ArrayList<String>(2);
 			options.add("-eclipseHome"); //$NON-NLS-1$
 			options.add(install);
 		}
