@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,7 +34,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
- * A class to handle editing of the Line delimiter preferences in core.
+ * A class to handle editing of the line delimiter preferences in core.
  * 
  * @since 3.1
  */
@@ -45,17 +46,17 @@ public class LineDelimiterEditor {
 
 	private Combo choiceCombo;
 
-	/*
+	/**
 	 * The project whose preferences should be set. In some cases this class
-	 * will be used to edit project preferences.
+	 * will be used to edit project preferences. If project is null, then we
+	 * are editing workspace preferences.
 	 */
 	private IProject project;
 
 	private Group group;
 
 	/**
-	 * Creates a new encoding field editor with the given preference name, label
-	 * and parent.
+	 * Creates a new line delimiter editor for workspace.
 	 * 
 	 * @param composite
 	 *            the parent of the field editor's control
@@ -65,14 +66,12 @@ public class LineDelimiterEditor {
 	}
 
 	/**
-	 * Creates a new encoding field editor with the given preference name, label
-	 * and parent.
+	 * Creates a new line delimiter editor for the given project.
 	 * 
 	 * @param composite
 	 *            the parent of the field editor's control
 	 * @param project
 	 *            the project to set preferences on
-	 * 
 	 */
 	public LineDelimiterEditor(Composite composite, IProject project) {
 		this.project = project;
@@ -86,7 +85,7 @@ public class LineDelimiterEditor {
 	 * @param parent
 	 *            the parent control
 	 */
-	protected void createControl(Composite parent) {
+	private void createControl(Composite parent) {
 		Font font = parent.getFont();
 		group = new Group(parent, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -108,12 +107,13 @@ public class LineDelimiterEditor {
 		};
 
 		defaultButton = new Button(group, SWT.RADIO);
+		String key = getKeyForValue(getDefaultValue());
 		if (project == null) {
-			defaultButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_defaultLineDelim);
+			defaultButton.setText(NLS.bind(IDEWorkbenchMessages.IDEWorkspacePreference_defaultLineDelim, key));
 		} else {
-			defaultButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_defaultLineDelimProj);
+			defaultButton.setText(NLS.bind(IDEWorkbenchMessages.IDEWorkspacePreference_defaultLineDelimProj, key));
 		}
-		
+
 		data = new GridData();
 		data.horizontalSpan = 2;
 		defaultButton.setLayoutData(data);
@@ -121,8 +121,7 @@ public class LineDelimiterEditor {
 		defaultButton.setFont(font);
 
 		otherButton = new Button(group, SWT.RADIO);
-		otherButton
-				.setText(IDEWorkbenchMessages.IDEWorkspacePreference_otherLineDelim);
+		otherButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_otherLineDelim);
 		otherButton.addSelectionListener(buttonListener);
 		otherButton.setFont(font);
 
@@ -130,7 +129,6 @@ public class LineDelimiterEditor {
 		data = new GridData();
 		choiceCombo.setFont(font);
 		choiceCombo.setLayoutData(data);
-		populateChoiceCombo(getChoices());
 	}
 
 	/**
@@ -139,34 +137,54 @@ public class LineDelimiterEditor {
 	 */
 	public void doLoad() {
 		if (choiceCombo != null) {
-			populateChoiceCombo(getChoices());
-			String resourcePreference = getStoredValue();
+			choiceCombo.setItems(getChoices());
+			String resourcePreference = getStoredValue(getPreferences(project));
+			selectChoice(getKeyForValue(resourcePreference));
 			updateState(resourcePreference == null);
 		}
 	}
 
 	/**
-	 * Initializes this field editor with the preference value from the
-	 * preference store.
+	 * Initializes this field editor with the preference default value.
 	 */
 	public void loadDefault() {
-		if(choiceCombo != null) {
+		if (choiceCombo != null) {
 			updateState(true);
 		}
 	}
 
+	private String getDefaultValue() {
+		String value = null;
+		if (project != null) {
+			value = getStoredValue(getPreferences(null));
+		}
+		return value != null ? value : System.getProperty(Platform.PREF_LINE_SEPARATOR);
+	}
+
+	private String getKeyForValue(String value) {
+		Map knownValues = Platform.knownPlatformLineSeparators();
+		Set keys = knownValues.keySet();
+		for (Iterator iter = keys.iterator(); iter.hasNext();) {
+			String key = (String) iter.next();
+			if (knownValues.get(key).equals(value)) {
+				return key;
+			}
+		}
+		return null;
+	}
+
 	/**
-	 * Returns the value that is currently stored for the encoding.
+	 * Returns the value that is currently stored for the line delimiter.
 	 * 
-	 * @return the currently stored encoding
+	 * @param node
+	 *            preferences node from which the value should be read
+	 * @return the currently stored line delimiter
 	 */
-	public String getStoredValue() {
-		Preferences node = getPreferences();
+	private String getStoredValue(Preferences node) {
 		try {
 			// be careful looking up for our node so not to create any nodes as side effect
 			if (node.nodeExists(Platform.PI_RUNTIME))
-				return node.node(Platform.PI_RUNTIME).get(
-						Platform.PREF_LINE_SEPARATOR, null);
+				return node.node(Platform.PI_RUNTIME).get(Platform.PREF_LINE_SEPARATOR, null);
 		} catch (BackingStoreException e) {
 			// ignore
 		}
@@ -175,12 +193,14 @@ public class LineDelimiterEditor {
 
 	/**
 	 * Answer the <code>Preferences</code> for the receiver, this will be a
-	 * project preferences if the receiver is editing project preferences, otherwise
-	 * instance preferences.
+	 * project preferences if the receiver is editing project preferences,
+	 * otherwise instance preferences.
 	 * 
+	 * @param project
+	 *            the project for which the line editor will be modified
 	 * @return the preferences
 	 */
-	private Preferences getPreferences() {
+	private Preferences getPreferences(IProject project) {
 		if (project != null) {
 			return Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE).node(project.getName());
 		}
@@ -193,24 +213,11 @@ public class LineDelimiterEditor {
 	 * 
 	 * @return the default setting for the object being shown
 	 */
-	protected String[] getChoices() {
+	private String[] getChoices() {
 		Set keys = Platform.knownPlatformLineSeparators().keySet();
 		String[] keyArray = new String[keys.size()];
 		keys.toArray(keyArray);
 		return keyArray;
-	}
-
-	/**
-	 * Populates the list of choices combo.
-	 */
-	private void populateChoiceCombo(String[] items) {
-		choiceCombo.setItems(items);
-
-		if (getStoredValue() == null) {
-			choiceCombo.setText(""); //$NON-NLS-1$
-		} else {
-			selectChoice();
-		}
 	}
 
 	private void updateState(boolean useDefault) {
@@ -218,11 +225,11 @@ public class LineDelimiterEditor {
 			defaultButton.setSelection(true);
 			otherButton.setSelection(false);
 			choiceCombo.setEnabled(false);
+			selectChoice(getKeyForValue(getDefaultValue()));
 		} else {
 			defaultButton.setSelection(false);
 			otherButton.setSelection(true);
 			choiceCombo.setEnabled(true);
-			selectChoice();
 		}
 	}
 
@@ -233,20 +240,7 @@ public class LineDelimiterEditor {
 	 * the key will be modified to represent that. E.g. a key might be Mac OS
 	 * 10/Linux if the same value is required for two platforms.
 	 */
-	private void selectChoice() {
-		String selection = null;
-		Map knownValues = Platform.knownPlatformLineSeparators();
-		Set keys = knownValues.keySet();
-		String current = getStoredValue();
-		if (current != null) {
-			for (Iterator iter = keys.iterator(); iter.hasNext();) {
-				String element = (String) iter.next();
-				if (knownValues.get(element).equals(current)) {
-					selection = element;
-					break;
-				}
-			}
-		}
+	private void selectChoice(String selection) {
 		String[] items = choiceCombo.getItems();
 		for (int i = 0; i < items.length; i++) {
 			String item = items[i];
@@ -270,7 +264,7 @@ public class LineDelimiterEditor {
 			val = (String) lineSeparators.get(choiceCombo.getText());
 		}
 
-		Preferences node = getPreferences().node(Platform.PI_RUNTIME);
+		Preferences node = getPreferences(project).node(Platform.PI_RUNTIME);
 		if (val == null) {
 			node.remove(Platform.PREF_LINE_SEPARATOR);
 		} else {
@@ -281,21 +275,19 @@ public class LineDelimiterEditor {
 		} catch (BackingStoreException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
-
 	}
 
-	 /**
-     * Set whether or not the controls in the field editor
-     * are enabled.
-     * @param enabled The enabled state.
-     */
-    public void setEnabled(boolean enabled) {
-        group.setEnabled(enabled);
-        Control [] children = group.getChildren();
-        for (int i = 0; i < children.length; i++) {
+	/**
+	 * Set whether or not the controls in the field editor are enabled.
+	 * 
+	 * @param enabled
+	 *            The enabled state.
+	 */
+	public void setEnabled(boolean enabled) {
+		group.setEnabled(enabled);
+		Control[] children = group.getChildren();
+		for (int i = 0; i < children.length; i++) {
 			children[i].setEnabled(enabled);
-			
 		}
-    }
-
+	}
 }
