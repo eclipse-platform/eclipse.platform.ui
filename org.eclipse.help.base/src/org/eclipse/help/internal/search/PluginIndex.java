@@ -42,13 +42,13 @@ public class PluginIndex {
 	/**
 	 * path prefixes where index is found e.g. "", "nl/en/US", "ws/gtk"
 	 */
-	private List<String> indexIDs;
+	private List indexIDs;
 
 	/**
 	 * resolved directory paths (Strings) corresponding to indexes at given
 	 * prefixes, e.g. //d/eclipse/...../os/linux/index,
 	 */
-	private List<String> resolvedPaths;
+	private List resolvedPaths;
 
 	public PluginIndex(String pluginId, String path, SearchIndex targetIndex) {
 		super();
@@ -62,8 +62,8 @@ public class PluginIndex {
 			// resolved
 			return;
 		}
-		indexIDs = new ArrayList<String>();
-		resolvedPaths = new ArrayList<String>();
+		indexIDs = new ArrayList();
+		resolvedPaths = new ArrayList();
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null) {
 			return;
@@ -218,7 +218,7 @@ public class PluginIndex {
 		return ret.toString();
 	}
 
-	public List<String> getIDs() {
+	public List getIDs() {
 		resolve();
 		return indexIDs;
 	}
@@ -227,7 +227,7 @@ public class PluginIndex {
 	 * @return list of paths (string) to an index directory. Paths are ordered
 	 *         from
 	 */
-	public List<String> getPaths() {
+	public List getPaths() {
 		resolve();
 		return resolvedPaths;
 	}

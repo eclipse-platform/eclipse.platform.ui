@@ -54,11 +54,11 @@ public class LocalSearchManager {
 	private static final String SEARCH_PARTICIPANT_XP_NAME = "searchParticipant"; //$NON-NLS-1$
 	private static final String BINDING_XP_NAME = "binding"; //$NON-NLS-1$
 	private static final Object PARTICIPANTS_NOT_FOUND = new Object();
-	private Map<String, Object> indexes = new HashMap<String, Object>();
-	private Map<String, AnalyzerDescriptor> analyzerDescriptors = new HashMap<String, AnalyzerDescriptor>();
-	private Map<String, ParticipantDescriptor> searchParticipantsById = new HashMap<String, ParticipantDescriptor>();
-	private Map<String, Object> searchParticipantsByPlugin = new HashMap<String, Object>();
-	private ArrayList<ParticipantDescriptor> globalSearchParticipants;
+	private Map indexes = new HashMap();
+	private Map analyzerDescriptors = new HashMap();
+	private Map searchParticipantsById = new HashMap();
+	private Map searchParticipantsByPlugin = new HashMap();
+	private ArrayList globalSearchParticipants;
 
 	private static class ParticipantDescriptor implements IHelpResource {
 
@@ -154,8 +154,8 @@ public class LocalSearchManager {
 	 * @return a List of raw SearchHits
 	 */
 
-	public static List<SearchHit> asList(TopDocs topDocs, IndexSearcher searcher) {
-		List<SearchHit> list = new ArrayList<SearchHit>(topDocs.scoreDocs.length);
+	public static List asList(TopDocs topDocs, IndexSearcher searcher) {
+		List list = new ArrayList(topDocs.scoreDocs.length);
 		
 		for (int i=0; i<topDocs.scoreDocs.length; ++i) {
 			try {
@@ -200,7 +200,7 @@ public class LocalSearchManager {
 	 */
 	private AnalyzerDescriptor getAnalyzer(String locale) {
 		// get an analyzer from cache
-		AnalyzerDescriptor analyzerDesc = analyzerDescriptors.get(locale);
+		AnalyzerDescriptor analyzerDesc = (AnalyzerDescriptor) analyzerDescriptors.get(locale);
 		if (analyzerDesc != null)
 			return analyzerDesc;
 
@@ -290,7 +290,7 @@ public class LocalSearchManager {
 			createGlobalSearchParticipants();
 		}
 		for (int i = 0; i < globalSearchParticipants.size(); i++) {
-			ParticipantDescriptor desc = globalSearchParticipants.get(i);
+			ParticipantDescriptor desc = (ParticipantDescriptor) globalSearchParticipants.get(i);
 			if (desc.getId().equals(participantId)) {
 				return desc;
 			}
@@ -306,7 +306,7 @@ public class LocalSearchManager {
 	 * @return the participant with the given id
 	 */
 	public SearchParticipant getParticipant(String participantId) {
-		ParticipantDescriptor desc = searchParticipantsById.get(participantId);
+		ParticipantDescriptor desc = (ParticipantDescriptor)searchParticipantsById.get(participantId);
 		if (desc != null) {
 			return desc.getParticipant();
 		}
@@ -363,14 +363,14 @@ public class LocalSearchManager {
 	 * @return a set of plug-in Ids
 	 */
 
-	public Set<String> getPluginsWithSearchParticipants() {
-		HashSet<String> set = new HashSet<String>();
+	public Set getPluginsWithSearchParticipants() {
+		HashSet set = new HashSet();
 		addSearchBindings(set);
 		addLuceneSearchBindings(set);
 		// must ask global search participants directly
 	    SearchParticipant[] gps = getGlobalParticipants();
 		for (int i = 0; i < gps.length; i++) {
-			Set<String> ids;
+			Set ids;
 			try {
 				ids = gps[i].getContributingPlugins();
 			}
@@ -383,7 +383,7 @@ public class LocalSearchManager {
 		return set;
 	}
 
-	private void addSearchBindings(HashSet<String> set) {
+	private void addSearchBindings(HashSet set) {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
 				SEARCH_PARTICIPANT_XP_FULLNAME);
 
@@ -394,7 +394,7 @@ public class LocalSearchManager {
 		}
 	}
 	
-	private void addLuceneSearchBindings(HashSet<String> set) {
+	private void addLuceneSearchBindings(HashSet set) {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
 				LUCENE_SEARCH_PARTICIPANT_XP_FULLNAME);
 
@@ -410,24 +410,24 @@ public class LocalSearchManager {
 	 * cached data to reduce runtime memory footprint.
 	 */
 	public void clearSearchParticipants() {
-		Iterator<ParticipantDescriptor> iter = searchParticipantsById.values().iterator();
+		Iterator iter = searchParticipantsById.values().iterator();
 		while (iter.hasNext()) {
-			ParticipantDescriptor desc = iter.next();
+			ParticipantDescriptor desc = (ParticipantDescriptor)iter.next();
 			desc.clear();
 		}
 	}
 
-	private ArrayList<ParticipantDescriptor> createSearchParticipants(String pluginId) {
-		ArrayList<ParticipantDescriptor> list = null;
+	private ArrayList createSearchParticipants(String pluginId) {
+		ArrayList list = null;
 		list = getBindingsForPlugin(pluginId, list, SEARCH_PARTICIPANT_XP_FULLNAME);
 		list = getBindingsForPlugin(pluginId, list, LUCENE_SEARCH_PARTICIPANT_XP_FULLNAME);
 		return list;
 	}
 
-	private ArrayList<ParticipantDescriptor> getBindingsForPlugin(String pluginId, ArrayList<ParticipantDescriptor> list, String extensionPointName) {
+	private ArrayList getBindingsForPlugin(String pluginId, ArrayList list, String extensionPointName) {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
 				extensionPointName);
-		ArrayList<IConfigurationElement> binding = null;
+		ArrayList binding = null;
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (!element.getContributor().getName().equals(pluginId)) {
@@ -447,7 +447,7 @@ public class LocalSearchManager {
 					if (id != null && id.equals(refId)) {
 						// match
 						if (binding == null)
-							binding = new ArrayList<IConfigurationElement>();
+							binding = new ArrayList();
 						binding.add(rel);
 						break;
 					}
@@ -459,7 +459,7 @@ public class LocalSearchManager {
 				if (!isParticipantEnabled(String.valueOf(true).equals(element.getAttribute("headless")))) //$NON-NLS-1$
 					continue;
 				if (list == null)
-					list = new ArrayList<ParticipantDescriptor>();
+					list = new ArrayList();
 				ParticipantDescriptor desc = new ParticipantDescriptor(element); 
 				list.add(desc);
 				searchParticipantsById.put(desc.getId(), desc);
@@ -478,12 +478,12 @@ public class LocalSearchManager {
 	 * @return
 	 */
 
-	private ArrayList<ParticipantDescriptor> addBoundDescriptors(ArrayList<ParticipantDescriptor> list, ArrayList<IConfigurationElement> binding) {
+	private ArrayList addBoundDescriptors(ArrayList list, ArrayList binding) {
 		for (int i = 0; i < binding.size(); i++) {
-			IConfigurationElement refEl = binding.get(i);
-			Collection<Object> collection = searchParticipantsByPlugin.values();
+			IConfigurationElement refEl = (IConfigurationElement) binding.get(i);
+			Collection collection = searchParticipantsByPlugin.values();
 			boolean found = false;
-			for (Iterator<Object> iter = collection.iterator(); iter.hasNext();) {
+			for (Iterator iter = collection.iterator(); iter.hasNext();) {
 				if (found)
 					break;
 				Object entry = iter.next();
@@ -495,7 +495,7 @@ public class LocalSearchManager {
 					if (desc.contains(refEl)) {
 						// found the matching descriptor - add it to the list
 						if (list == null)
-							list = new ArrayList<ParticipantDescriptor>();
+							list = new ArrayList();
 						list.add(desc);
 						found = true;
 						break;
@@ -504,7 +504,7 @@ public class LocalSearchManager {
 			}
 			if (!found) {
 				if (list == null)
-					list = new ArrayList<ParticipantDescriptor>();
+					list = new ArrayList();
 				ParticipantDescriptor d = new ParticipantDescriptor(refEl);
 				list.add(d);
 				searchParticipantsById.put(d.getId(), d);
@@ -523,18 +523,18 @@ public class LocalSearchManager {
 		if (globalSearchParticipants == null) {
 			createGlobalSearchParticipants();
 		}
-		ArrayList<SearchParticipant> result = new ArrayList<SearchParticipant>();
+		ArrayList result = new ArrayList();
 		for (int i = 0; i < globalSearchParticipants.size(); i++) {
-			ParticipantDescriptor desc = globalSearchParticipants.get(i);
+			ParticipantDescriptor desc = (ParticipantDescriptor) globalSearchParticipants.get(i);
 			SearchParticipant p = desc.getParticipant();
 			if (p != null)
 				result.add(p);
 		}
-		return result.toArray(new SearchParticipant[result.size()]);
+		return (SearchParticipant[]) result.toArray(new SearchParticipant[result.size()]);
 	}
 
 	private void createGlobalSearchParticipants() {
-		globalSearchParticipants = new ArrayList<ParticipantDescriptor>();
+		globalSearchParticipants = new ArrayList();
 		addSearchParticipants();
 		addLuceneSearchParticipants();
 	}
@@ -686,18 +686,18 @@ public class LocalSearchManager {
 	 */
 	public void close() {
 		synchronized (indexes) {
-			for (Iterator<Object> it = indexes.values().iterator(); it.hasNext();) {
+			for (Iterator it = indexes.values().iterator(); it.hasNext();) {
 				((SearchIndex) it.next()).close();
 			}
 		}
 	}
 
 	public synchronized void tocsChanged() {
-		Collection<Object> activeIndexes = new ArrayList<Object>();
+		Collection activeIndexes = new ArrayList();
 		synchronized (indexes) {
 			activeIndexes.addAll(indexes.values());
 		}
-		for (Iterator<Object> it = activeIndexes.iterator(); it.hasNext();) {
+		for (Iterator it = activeIndexes.iterator(); it.hasNext();) {
 			SearchIndexWithIndexingProgress ix = (SearchIndexWithIndexingProgress) it.next();
 			ix.close();
 			synchronized (indexes) {

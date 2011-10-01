@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,8 @@ import org.eclipse.help.internal.criteria.CriterionResource;
 
 public class CriteriaUtilities {
 	
-    public static List<String> getCriteriaValues(String rawValues) {
-    	List<String> result = new ArrayList<String>();
+    public static List getCriteriaValues(String rawValues) {
+    	List result = new ArrayList();
     	if (rawValues != null) {
     		String[] values = rawValues.split(","); //$NON-NLS-1$
     		for(int j = 0; j < values.length; ++j){
@@ -36,16 +36,16 @@ public class CriteriaUtilities {
 		return result;
     }
     
-    public static void addCriteriaToMap(Map<String, Set> map, ICriteria[] criteria) {
+    public static void addCriteriaToMap(Map map, ICriteria[] criteria) {
     	for (int i = 0; i < criteria.length; ++i) {
 			ICriteria criterion = criteria[i];
 			String name = criterion.getName();
-			List<String> values = CriteriaUtilities.getCriteriaValues(criterion.getValue());
+			List values = CriteriaUtilities.getCriteriaValues(criterion.getValue());
 			if (name != null && name.length() > 0 && values.size() > 0) {
 				name = name.toLowerCase();
-				Set<String> existingValueSet = map.get(name);
+				Set existingValueSet = (Set) map.get(name);
 				if (null == existingValueSet) {
-					existingValueSet = new HashSet<String>();
+					existingValueSet = new HashSet();
 				}
 				existingValueSet.addAll(values);
 				map.put(name, existingValueSet);
@@ -53,13 +53,13 @@ public class CriteriaUtilities {
 		}
     }
     
-    public static void addCriteriaToMap(Map<String, Set> map, CriterionResource[] criteria) {
+    public static void addCriteriaToMap(Map map, CriterionResource[] criteria) {
     	for(int i = 0; i < criteria.length; ++ i){
 			CriterionResource criterion = criteria[i];
 			String criterionName = criterion.getCriterionName();
 			List criterionValues = criterion.getCriterionValues();
 			
-			Set existedValueSet = map.get(criterionName);
+			Set existedValueSet = (Set)map.get(criterionName);
 			if (null == existedValueSet)
 				existedValueSet = new HashSet();
 			existedValueSet.addAll(criterionValues);

@@ -20,7 +20,7 @@ import org.eclipse.help.internal.toc.TocFileParser;
 import org.xml.sax.SAXException;
 
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class TocValidator {
 
 	private static final boolean DEBUG = false;
 	
-	private HashMap<String, Object> processedTocs;
+	private HashMap processedTocs;
 	private TocFileParser parser;
 	
 	public static class BrokenLink {
@@ -72,27 +72,27 @@ public class TocValidator {
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
 	 */
-	public static ArrayList<BrokenLink> validate(String[] hrefs) throws IOException, SAXException, ParserConfigurationException{
+	public static ArrayList validate(String[] hrefs) throws IOException, SAXException, ParserConfigurationException{
 		return filteredValidate(hrefs, new PassThroughFilter());
 	}
 	
-	public static ArrayList<BrokenLink> filteredValidate (String[] hrefs, Filter filter) throws IOException, SAXException, ParserConfigurationException{
+	public static ArrayList filteredValidate (String[] hrefs, Filter filter) throws IOException, SAXException, ParserConfigurationException{
 		TocValidator v = new TocValidator();
-		ArrayList<BrokenLink> result = new ArrayList<BrokenLink>();
+		ArrayList result = new ArrayList();
 		for (int i = 0; i < hrefs.length; i++)
 			v.processToc(hrefs[i], null, result, filter);
 		return result;
 	}
 	
 	private TocValidator() {
-		processedTocs = new HashMap<String, Object>();
+		processedTocs = new HashMap();
 		parser = new TocFileParser();
 	}
 	
 	/* Checks validity of all links in a given toc. If all links are valid, an empty ArrayList is returned.
 	 * Otherwise an ArrayList of BrokenLink objects is returned.
 	 */
-	private void processToc(String href, String plugin, ArrayList<BrokenLink> result, Filter filter) 
+	private void processToc(String href, String plugin, ArrayList result, Filter filter) 
 	               throws IOException, SAXException, ParserConfigurationException {
 		String path;
 		if (href.startsWith("/")) { //$NON-NLS-1$
@@ -124,7 +124,7 @@ public class TocValidator {
 	 * If there are any links to other tocs, calls the processToc method to validate them. If any broken links
 	 * are found, an appropriate BrokenLink object will be added to the result ArrayList.
 	 */
-	private void process(IUAElement element, String plugin, String path, ArrayList<BrokenLink> result, Filter filter) throws SAXException, ParserConfigurationException {
+	private void process(IUAElement element, String plugin, String path, ArrayList result, Filter filter) throws SAXException, ParserConfigurationException {
 		String href;
 		if (element instanceof ILink) {
 			href = ((ILink)element).getToc();

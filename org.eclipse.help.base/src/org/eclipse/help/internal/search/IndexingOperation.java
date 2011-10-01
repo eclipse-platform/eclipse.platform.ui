@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,9 +83,9 @@ class IndexingOperation {
 	protected void execute(IProgressMonitor pm)
 			throws OperationCanceledException, IndexingException {
 		checkCancelled(pm);
-		Collection<URL> staleDocs = getRemovedDocuments(index);
+		Collection staleDocs = getRemovedDocuments(index);
 		numRemoved = staleDocs.size();
-		Collection<URL> newDocs = getAddedDocuments(index);
+		Collection newDocs = getAddedDocuments(index);
 		numAdded = newDocs.size();
 
 		// if collection is empty, we may return right away
@@ -110,7 +110,7 @@ class IndexingOperation {
 		BaseHelpSystem.getLocalSearchManager().clearSearchParticipants();
 	}
 
-	private Map calculateNewToRemove(Collection<URL> newDocs, Map prebuiltDocs) {
+	private Map calculateNewToRemove(Collection newDocs, Map prebuiltDocs) {
 		// Calculate document that were in prebuilt indexes, but are not in
 		// TOCs. (prebuiltDocs - newDocs)
 		/*
@@ -119,9 +119,9 @@ class IndexingOperation {
 		 * document
 		 */
 		Map docsToDelete = prebuiltDocs;
-		ArrayList<String> prebuiltHrefs = new ArrayList<String>(prebuiltDocs.keySet());
+		ArrayList prebuiltHrefs = new ArrayList(prebuiltDocs.keySet());
 		for (int i = 0; i < prebuiltHrefs.size(); i++) {
-			String href = prebuiltHrefs.get(i);
+			String href = (String) prebuiltHrefs.get(i);
 			URL u = SearchIndex.getIndexableURL(index.getLocale(), href);
 			if (u == null) {
 				// should never be here
@@ -147,11 +147,11 @@ class IndexingOperation {
 	/**
 	 * Returns documents that must be deleted
 	 */
-	private Map addNewDocuments(IProgressMonitor pm, Collection<URL> newDocs,
+	private Map addNewDocuments(IProgressMonitor pm, Collection newDocs,
 			boolean opened) throws IndexingException {
 		Map prebuiltDocs = mergeIndexes(pm, opened);
 		checkCancelled(pm);
-		Collection<URL> docsToIndex = calculateDocsToAdd(newDocs, prebuiltDocs);
+		Collection docsToIndex = calculateDocsToAdd(newDocs, prebuiltDocs);
 		checkCancelled(pm);
 		Map docsToDelete = calculateNewToRemove(newDocs, prebuiltDocs);
 		pm.beginTask("", 10 * docsToIndex.size() + docsToDelete.size()); //$NON-NLS-1$
@@ -165,16 +165,16 @@ class IndexingOperation {
 		return docsToDelete;
 	}
 
-	private Collection<URL> calculateDocsToAdd(Collection<URL> newDocs, Map prebuiltDocs) {
+	private Collection calculateDocsToAdd(Collection newDocs, Map prebuiltDocs) {
 		// Calculate documents that were not in prebuilt indexes, and still need
 		// to be added
 		// (newDocs minus prebuiltDocs)
-		Collection<URL> docsToIndex = null;
+		Collection docsToIndex = null;
 		int newDocSize = newDocs.size();
 		if (prebuiltDocs.size() > 0) {
-			docsToIndex = new HashSet<URL>(newDocs);
-			for (Iterator<String> it = prebuiltDocs.keySet().iterator(); it.hasNext();) {
-				String href = it.next();
+			docsToIndex = new HashSet(newDocs);
+			for (Iterator it = prebuiltDocs.keySet().iterator(); it.hasNext();) {
+				String href = (String) it.next();
 				URL u = SearchIndex.getIndexableURL(index.getLocale(), href);
 				if (u != null) {
 					docsToIndex.remove(u);
@@ -201,14 +201,14 @@ class IndexingOperation {
 		pm = new LazyProgressMonitor(pm);
 		pm.beginTask("", docsToDelete.size()); //$NON-NLS-1$
 		checkCancelled(pm);
-		Set<String> keysToDelete = docsToDelete.keySet();
+		Set keysToDelete = docsToDelete.keySet();
 		if (keysToDelete.size() > 0) {
 			if (!index.beginRemoveDuplicatesBatch()) {
 				throw new IndexingException();
 			}
 			MultiStatus multiStatus = null;
-			for (Iterator<String> it = keysToDelete.iterator(); it.hasNext();) {
-				String href = it.next();
+			for (Iterator it = keysToDelete.iterator(); it.hasNext();) {
+				String href = (String) it.next();
 				String[] indexIds = (String[]) docsToDelete.get(href);
 				if (indexIds == null) {
 					// delete all copies
@@ -239,7 +239,7 @@ class IndexingOperation {
 		pm.done();
 	}
 
-	private void addDocuments(IProgressMonitor pm, Collection<URL> addedDocs,
+	private void addDocuments(IProgressMonitor pm, Collection addedDocs,
 			boolean lastOperation) throws IndexingException {
 		pm = new LazyProgressMonitor(pm);
 		// beginAddBatch()) called when processing prebuilt indexes
@@ -247,8 +247,8 @@ class IndexingOperation {
 		checkCancelled(pm);
 		pm.subTask(HelpBaseResources.UpdatingIndex);
 		MultiStatus multiStatus = null;
-		for (Iterator<URL> it = addedDocs.iterator(); it.hasNext();) {
-			URL doc = it.next();
+		for (Iterator it = addedDocs.iterator(); it.hasNext();) {
+			URL doc = (URL) it.next();
 			IStatus status = index.addDocument(getName(doc), doc);
 			if (status.getCode() != IStatus.OK) {
 				if (multiStatus == null) {
@@ -273,7 +273,7 @@ class IndexingOperation {
 	}
 
 	private void removeStaleDocuments(IProgressMonitor pm,
-			Collection<URL> removedDocs) throws IndexingException {
+			Collection removedDocs) throws IndexingException {
 		pm = new LazyProgressMonitor(pm);
 		pm.beginTask("", removedDocs.size()); //$NON-NLS-1$
 		pm.subTask(HelpBaseResources.Preparing_for_indexing);
@@ -286,8 +286,8 @@ class IndexingOperation {
 			checkCancelled(pm);
 			pm.subTask(HelpBaseResources.UpdatingIndex);
 			MultiStatus multiStatus = null;
-			for (Iterator<URL> it = removedDocs.iterator(); it.hasNext();) {
-				URL doc = it.next();
+			for (Iterator it = removedDocs.iterator(); it.hasNext();) {
+				URL doc = (URL) it.next();
 				IStatus status = index.removeDocument(getName(doc));
 				if (status.getCode() != IStatus.OK) {
 					if (multiStatus == null) {
@@ -345,17 +345,17 @@ class IndexingOperation {
 	 * Returns the documents to be added to index. The collection consists of
 	 * the associated PluginURL objects.
 	 */
-	private Collection<URL> getAddedDocuments(SearchIndex index) {
+	private Collection getAddedDocuments(SearchIndex index) {
 		// Get the list of added plugins
 		Collection addedPlugins = getAddedPlugins(index);
 		if (HelpPlugin.DEBUG_SEARCH) {
 			traceAddedContributors(addedPlugins);
 		}
 		// get the list of all navigation urls.
-		Set<String> urls = getAllDocuments(index.getLocale());
-		Set<URL> addedDocs = new HashSet<URL>(urls.size());
-		for (Iterator<String> docs = urls.iterator(); docs.hasNext();) {
-			String doc = docs.next();
+		Set urls = getAllDocuments(index.getLocale());
+		Set addedDocs = new HashSet(urls.size());
+		for (Iterator docs = urls.iterator(); docs.hasNext();) {
+			String doc = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
 			if (doc.startsWith("//")) { //$NON-NLS-1$  Bug 225592
 				doc = doc.substring(1);
@@ -400,7 +400,7 @@ class IndexingOperation {
 				if (qloc!= -1) {
 					String query = doc.substring(qloc+1);
 					doc = doc.substring(0, qloc);
-					HashMap<String, Object> arguments = new HashMap<String, Object>();
+					HashMap arguments = new HashMap();
 					HelpURLConnection.parseQuery(query, arguments);
 					id = (String)arguments.get("id"); //$NON-NLS-1$
 				}
@@ -431,14 +431,14 @@ class IndexingOperation {
 	 * Returns the documents to be removed from index. The collection consists
 	 * of the associated PluginURL objects.
 	 */
-	private Collection<URL> getRemovedDocuments(SearchIndex index) {
+	private Collection getRemovedDocuments(SearchIndex index) {
 		// Get the list of removed plugins
 		Collection removedPlugins = index.getDocPlugins().getRemoved();
 		if (removedPlugins == null || removedPlugins.isEmpty())
-			return new ArrayList<URL>(0);
+			return new ArrayList(0);
 		// get the list of indexed docs. This is a hashtable (url, plugin)
 		HelpProperties indexedDocs = index.getIndexedDocs();
-		Set<URL> removedDocs = new HashSet<URL>(indexedDocs.size());
+		Set removedDocs = new HashSet(indexedDocs.size());
 		for (Iterator docs = indexedDocs.keySet().iterator(); docs.hasNext();) {
 			String doc = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
@@ -459,7 +459,7 @@ class IndexingOperation {
 	/**
 	 * Adds the topic and its subtopics to the list of documents
 	 */
-	private void add(ITopic topic, Set<String> hrefs) {
+	private void add(ITopic topic, Set hrefs) {
 		String href = topic.getHref();
 		add(href, hrefs);
 		ITopic[] subtopics = topic.getSubtopics();
@@ -467,7 +467,7 @@ class IndexingOperation {
 			add(subtopics[i], hrefs);
 	}
 	
-	private void add(String href, Set<String> hrefs) {
+	private void add(String href, Set hrefs) {
 		if (href != null
 				&& !href.equals("") && !href.startsWith("http://") && !href.startsWith("https://")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			hrefs.add(href);
@@ -476,9 +476,9 @@ class IndexingOperation {
 	/**
 	 * Returns the collection of href's for all the help topics.
 	 */
-	private Set<String> getAllDocuments(String locale) {
+	private Set getAllDocuments(String locale) {
 		// Add documents from TOCs
-		HashSet<String> hrefs = new HashSet<String>();
+		HashSet hrefs = new HashSet();
 		Toc[] tocs = index.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			ITopic[] topics = tocs[i].getTopics();

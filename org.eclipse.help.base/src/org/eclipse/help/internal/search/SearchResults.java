@@ -35,7 +35,7 @@ import org.eclipse.help.internal.workingset.WorkingSet;
  */
 public class SearchResults implements ISearchHitCollector {
 	// Collection of AdaptableHelpResource[]
-	private ArrayList<AdaptableHelpResource> scopes;
+	private ArrayList scopes;
 	private int maxHits;
 	private String locale;
 	private AbstractHelpScope filter;
@@ -71,7 +71,7 @@ public class SearchResults implements ISearchHitCollector {
 	 */
 	public void addHits(List hits, String highlightTerms) {	
 		String urlEncodedWords = URLCoder.encode(highlightTerms);
-		List<SearchHit> searchHitList = new ArrayList<SearchHit>();
+		List searchHitList = new ArrayList();
 		float scoreScale = 1.0f;
 		boolean scoreScaleSet = false;
 		
@@ -135,7 +135,7 @@ public class SearchResults implements ISearchHitCollector {
 			filteredHits ++;
 			searchHitList.add(new SearchHit(href, label, rawHit.getSummary(), score, toc, rawHit.getRawId(), rawHit.getParticipantId(), rawHit.isPotentialHit()));
 		}
-		searchHits = searchHitList
+		searchHits = (SearchHit[]) searchHitList
 				.toArray(new SearchHit[searchHitList.size()]);
 
 	}
@@ -150,7 +150,7 @@ public class SearchResults implements ISearchHitCollector {
 	private AdaptableHelpResource getScopeForTopic(String href) {
 		boolean enabled = HelpPlugin.getCriteriaManager().isCriteriaEnabled();
 		for (int i = 0; i < scopes.size(); i++) {
-			AdaptableHelpResource scope = scopes.get(i);
+			AdaptableHelpResource scope = (AdaptableHelpResource) scopes.get(i);
 			ITopic inScopeTopic = scope.getTopic(href);
 			if (inScopeTopic != null){
 				if (filter == null || filter.inScope(inScopeTopic)) {
@@ -266,11 +266,11 @@ public class SearchResults implements ISearchHitCollector {
 	 * 
 	 * @return Collection
 	 */
-	private ArrayList<AdaptableHelpResource> getScopes(WorkingSet[] wSets) {
+	private ArrayList getScopes(WorkingSet[] wSets) {
 		if (wSets == null)
 			return null;
 
-		scopes = new ArrayList<AdaptableHelpResource>(wSets.length);
+		scopes = new ArrayList(wSets.length);
 		for (int w = 0; w < wSets.length; w++) {
 			AdaptableHelpResource[] elements = wSets[w].getElements();
 			for (int i = 0; i < elements.length; i++)
@@ -279,11 +279,11 @@ public class SearchResults implements ISearchHitCollector {
 		return scopes;
 	}
 	
-	private ArrayList<CriterionResource> getCriteriaScopes(WorkingSet[] wSets){
+	private ArrayList getCriteriaScopes(WorkingSet[] wSets){
 		if (wSets == null)
 			return null;
 		
-		ArrayList<CriterionResource> criteriaScopes = new ArrayList<CriterionResource>(wSets.length);
+		ArrayList criteriaScopes = new ArrayList(wSets.length);
 		for (int w = 0; w < wSets.length; w++) {
 			CriterionResource[] elements = wSets[w].getCriteria();
 			for (int i = 0; i < elements.length; i++)

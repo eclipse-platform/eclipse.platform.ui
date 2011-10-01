@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,12 +34,12 @@ public class RemoteStatusData {
 	 */
 	public static boolean isAnyRemoteHelpUnavailable()
 	{
-		ArrayList<URL> sites = getRemoteSites();
+		ArrayList sites = getRemoteSites();
 		if (sites.isEmpty())
 			return false;
 
 		for (int s=0;s<sites.size();s++)
-			if (!isConnected(sites.get(s)))
+			if (!isConnected((URL)sites.get(s)))
 				return true;
 		
 		return false;
@@ -85,9 +85,9 @@ public class RemoteStatusData {
 	 * 
 	 * Returns the ArrayList with sites in URL form
 	 */
-	public static ArrayList<URL> getRemoteSites()
+	public static ArrayList getRemoteSites()
 	{
-		ArrayList<URL> sites = new ArrayList<URL>();
+		ArrayList sites = new ArrayList();
 		
 		boolean remoteHelpEnabled = 
 			Platform.getPreferencesService().getBoolean(
@@ -132,12 +132,12 @@ public class RemoteStatusData {
 	{
 		private static ConnectionCache instance;
 		
-		private Hashtable<URL, Boolean> cache;
+		private Hashtable cache;
 		private long start;
 		
 		private ConnectionCache(){
 		
-			cache = new Hashtable<URL, Boolean>();
+			cache = new Hashtable();
 			resetTimer();
 		}
 		
@@ -169,7 +169,7 @@ public class RemoteStatusData {
 		
 		public boolean isConnected(URL url) throws CoreException
 		{
-			Boolean b = cache.get(url);
+			Boolean b = (Boolean)cache.get(url);
 			if (b==null)
 				throw new CoreException(new Status(IStatus.ERROR,HelpBasePlugin.PLUGIN_ID,"Cache Unavailable")); //$NON-NLS-1$
 			

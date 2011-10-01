@@ -175,7 +175,7 @@ public class SearchManager {
 		IConfigurationElement[] configs = 
 			Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.help.base.searchProcessor"); //$NON-NLS-1$
 		
-		ArrayList<Object> processors = new ArrayList<Object>();
+		ArrayList processors = new ArrayList();
 		
 		for (int c=0;c<configs.length;c++)
 		{
@@ -185,7 +185,7 @@ public class SearchManager {
 			} catch (CoreException e) {} 
 		}
 		
-		return processors.toArray(new AbstractSearchProcessor[processors.size()]);
+		return (AbstractSearchProcessor[])processors.toArray(new AbstractSearchProcessor[processors.size()]);
 	}
 	
 	/*

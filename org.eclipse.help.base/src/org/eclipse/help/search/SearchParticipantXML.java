@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 3.5
  */
 public abstract class SearchParticipantXML extends SearchParticipant {
-	private Stack<String> stack = new Stack<String>();
+	private Stack stack = new Stack();
 	private SAXParser parser;
 	private XMLProcessor processor;
 	private boolean hasFilters;
@@ -157,7 +157,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			handleEndElement(qName, data);
-			String top = stack.peek();
+			String top = (String) stack.peek();
 			if (top != null && top.equals(qName))
 				stack.pop();
 		}
@@ -329,7 +329,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 	 */
 
 	protected String getTopElement() {
-		return stack.peek();
+		return (String) stack.peek();
 	}
 
 	/**
@@ -342,7 +342,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 		for (int i = 0; i < stack.size(); i++) {
 			if (i > 0)
 				buf.append("/"); //$NON-NLS-1$
-			buf.append(stack.get(i));
+			buf.append((String) stack.get(i));
 		}
 		return buf.toString();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ import org.xml.sax.*;
  */
 
 public final class InfoCenter implements ISearchEngine {
-	private Hashtable<String, IHelpResource> tocs;
+	private Hashtable tocs;
 
 	public static class Scope implements ISearchScope {
 		String url;
@@ -79,7 +79,7 @@ public final class InfoCenter implements ISearchEngine {
 			final String href = node.getAttribute("toc"); //$NON-NLS-1$
 			final String label = node.getAttribute("toclabel"); //$NON-NLS-1$
 			if (href != null && label != null) {
-				category = tocs.get(href);
+				category = (IHelpResource) tocs.get(href);
 				if (category == null) {
 					category = new IHelpResource() {
 						public String getLabel() {
@@ -140,7 +140,7 @@ public final class InfoCenter implements ISearchEngine {
 	 * The default constructor.
 	 */
 	public InfoCenter() {
-		tocs = new Hashtable<String, IHelpResource>();
+		tocs = new Hashtable();
 	}
 
 	/*

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,13 +52,13 @@ public class Options {
 	private static String vm;
 
 	// arguments to pass to Eclipse
-	private static List<String> vmArgs;
+	private static List vmArgs;
 
 	// arguments to pass to VM
-	private static List<String> eclipseArgs;
+	private static List eclipseArgs;
 
 	// help command to execute
-	private static List<String> helpCommand;
+	private static List helpCommand;
 
 	// host to override appserver preferences
 	private static String host;
@@ -97,7 +97,7 @@ public class Options {
 	 */
 	public static void init(String appId, String[] args) {
 		// convert array of arguments to a list
-		List<String> list = new ArrayList<String>();
+		List list = new ArrayList();
 		for (int i = 0; i < args.length; i++) {
 			list.add(args[i]);
 		}
@@ -117,39 +117,39 @@ public class Options {
 	 *            the same as Eclipse installation directory. Additionally, most
 	 *            options accepted by Eclipse execuable are supported.
 	 */
-	public static void init(String appId, List<String> options) {
+	public static void init(String appId, List options) {
 		// Initialize eclipseArgs with all passed options
-		eclipseArgs = new ArrayList<String>();
+		eclipseArgs = new ArrayList();
 		eclipseArgs.addAll(options);
 
 		// consume -command option
 		helpCommand = extractOption(eclipseArgs, "-command"); //$NON-NLS-1$
 		if (helpCommand == null) {
-			helpCommand = new ArrayList<String>(0);
+			helpCommand = new ArrayList(0);
 		}
 		// consume update commands' parameters
-		List<String> parameters = new ArrayList<String>();
-		List<String> param = extractOption(eclipseArgs, "-" + PARAM_FEATUREID); //$NON-NLS-1$
+		List parameters = new ArrayList();
+		List param = extractOption(eclipseArgs, "-" + PARAM_FEATUREID); //$NON-NLS-1$
 		if (param != null) {
-			parameters.add(PARAM_FEATUREID + "=" + param.get(0)); //$NON-NLS-1$
+			parameters.add(PARAM_FEATUREID + "=" + (String) param.get(0)); //$NON-NLS-1$
 		}
 		param = extractOption(eclipseArgs, "-" + PARAM_VERSION); //$NON-NLS-1$
 		if (param != null) {
-			parameters.add(PARAM_VERSION + "=" + param.get(0)); //$NON-NLS-1$
+			parameters.add(PARAM_VERSION + "=" + (String) param.get(0)); //$NON-NLS-1$
 		}
 		param = extractOption(eclipseArgs, "-" + PARAM_FROM); //$NON-NLS-1$
 		if (param != null) {
-			parameters.add(PARAM_FROM + "=" + param.get(0)); //$NON-NLS-1$
+			parameters.add(PARAM_FROM + "=" + (String) param.get(0)); //$NON-NLS-1$
 		}
 		param = extractOption(eclipseArgs, "-" + PARAM_TO); //$NON-NLS-1$
 		if (param != null) {
-			parameters.add(PARAM_TO + "=" + param.get(0)); //$NON-NLS-1$
+			parameters.add(PARAM_TO + "=" + (String) param.get(0)); //$NON-NLS-1$
 		}
 		param = extractOption(eclipseArgs, "-" + PARAM_VERIFYONLY); //$NON-NLS-1$
 		if (param != null) {
-			parameters.add(PARAM_VERIFYONLY + "=" + param.get(0)); //$NON-NLS-1$
+			parameters.add(PARAM_VERIFYONLY + "=" + (String) param.get(0)); //$NON-NLS-1$
 		}
-		updateParameters = parameters.toArray(new String[parameters
+		updateParameters = (String[]) parameters.toArray(new String[parameters
 				.size()]);
 
 		// read -debug option
@@ -162,20 +162,20 @@ public class Options {
 			useExe = false;
 		}
 		// consume -eclipsehome (accept eclipse_home too) option
-		List<String> homes = extractOption(eclipseArgs, "-eclipseHome"); //$NON-NLS-1$
+		List homes = extractOption(eclipseArgs, "-eclipseHome"); //$NON-NLS-1$
 		if (homes == null || homes.isEmpty()) {
 			homes = extractOption(eclipseArgs, "-eclipse_Home"); //$NON-NLS-1$
 		}
 		if (homes != null && !homes.isEmpty()) {
-			eclipseHome = new File(homes.get(0));
+			eclipseHome = new File((String) homes.get(0));
 		} else {
 			eclipseHome = new File(System.getProperty("user.dir")); //$NON-NLS-1$
 		}
 
 		// read -data option
-		List<String> workspaces = extractOption(eclipseArgs, "-data"); //$NON-NLS-1$
+		List workspaces = extractOption(eclipseArgs, "-data"); //$NON-NLS-1$
 		if (workspaces != null && !workspaces.isEmpty()) {
-			String workspacePath = workspaces.get(0);
+			String workspacePath = (String) workspaces.get(0);
 			workspace = new File(workspacePath);
 			if (!workspace.isAbsolute()) {
 				workspace = new File(eclipseHome, workspacePath);
@@ -187,45 +187,45 @@ public class Options {
 		hostPortFile = new File(workspace, "/.metadata/.connection"); //$NON-NLS-1$
 
 		// consume -host option
-		List<String> hosts = extractOption(eclipseArgs, "-host"); //$NON-NLS-1$
+		List hosts = extractOption(eclipseArgs, "-host"); //$NON-NLS-1$
 		if (hosts != null && hosts.size() > 0) {
-			host = hosts.get(0);
+			host = (String) hosts.get(0);
 		}
 
 		// consume -port option
-		List<String> ports = extractOption(eclipseArgs, "-port"); //$NON-NLS-1$
+		List ports = extractOption(eclipseArgs, "-port"); //$NON-NLS-1$
 		if (ports != null && ports.size() > 0) {
-			port = ports.get(0);
+			port = (String) ports.get(0);
 		}
 		
 		// consume - adminId option
-		List<String> adminIds = extractOption(eclipseArgs, "-adminId"); //$NON-NLS-1$
+		List adminIds = extractOption(eclipseArgs, "-adminId"); //$NON-NLS-1$
 		if (adminIds != null && adminIds.size() > 0) {
-			adminId = adminIds.get(0);
+			adminId = (String) adminIds.get(0);
 		}
 		
 		// consume - admin option
-		List<String> adminPasswords = extractOption(eclipseArgs, "-adminPassword"); //$NON-NLS-1$
+		List adminPasswords = extractOption(eclipseArgs, "-adminPassword"); //$NON-NLS-1$
 		if (adminPasswords != null && adminPasswords.size() > 0) {
-			adminPassword = adminPasswords.get(0);
+			adminPassword = (String) adminPasswords.get(0);
 		}
 		
 		// consume - trustStoreLocation option
-		List<String> trustStoreLocations = extractOption(eclipseArgs, "-trustStoreLocation"); //$NON-NLS-1$
+		List trustStoreLocations = extractOption(eclipseArgs, "-trustStoreLocation"); //$NON-NLS-1$
 		if (trustStoreLocations != null && trustStoreLocations.size() > 0) {
-			trustStoreLocation = trustStoreLocations.get(0);
+			trustStoreLocation = (String) trustStoreLocations.get(0);
 		}
 		
 		// consume - trustStoreLocation option
-		List<String> trustStorePasswords = extractOption(eclipseArgs, "-trustStorePassword"); //$NON-NLS-1$
+		List trustStorePasswords = extractOption(eclipseArgs, "-trustStorePassword"); //$NON-NLS-1$
 		if (trustStorePasswords != null && trustStorePasswords.size() > 0) {
-			trustStorePassword = trustStorePasswords.get(0);
+			trustStorePassword = (String) trustStorePasswords.get(0);
 		}
 
 		// consume -vm option
-		List<String> vms = extractOption(eclipseArgs, "-vm"); //$NON-NLS-1$
+		List vms = extractOption(eclipseArgs, "-vm"); //$NON-NLS-1$
 		if (vms != null && !vms.isEmpty()) {
-			vm = vms.get(0);
+			vm = (String) vms.get(0);
 		} else {
 			String vmName = System.getProperty("java.vm.name"); //$NON-NLS-1$
 			String executable = "J9".equals(vmName) ? "j9" : "java"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -242,8 +242,8 @@ public class Options {
 		}
 
 		// consume -vmargs option
-		vmArgs = new ArrayList<String>(0);
-		List<String> passedVmArgs = extractOption(eclipseArgs, "-vmargs"); //$NON-NLS-1$
+		vmArgs = new ArrayList(0);
+		List passedVmArgs = extractOption(eclipseArgs, "-vmargs"); //$NON-NLS-1$
 		if (passedVmArgs != null && passedVmArgs.size() > 0) {
 			vmArgs = passedVmArgs;
 		}
@@ -313,7 +313,7 @@ public class Options {
 		return workspace;
 	}
 
-	public static List<String> getHelpCommand() {
+	public static List getHelpCommand() {
 		return helpCommand;
 	}
 
@@ -321,7 +321,7 @@ public class Options {
 		return updateParameters;
 	}
 
-	public static List<String> getEclipseArgs() {
+	public static List getEclipseArgs() {
 		return eclipseArgs;
 	}
 
@@ -333,18 +333,18 @@ public class Options {
 	 * @return List of String values of the specified option, or null if option
 	 *         is not present
 	 */
-	private static List<String> extractOption(List<String> options, String optionName) {
-		List<String> values = null;
+	private static List extractOption(List options, String optionName) {
+		List values = null;
 		for (int i = 0; i < options.size();) {
-			if (optionName.equalsIgnoreCase(options.get(i))) {
+			if (optionName.equalsIgnoreCase((String) options.get(i))) {
 				if (values == null) {
-					values = new ArrayList<String>(1);
+					values = new ArrayList(1);
 				}
 				// found the option, remove option
 				options.remove(i);
 				// remove option parameters
 				while (i < options.size()) {
-					if (options.get(i).startsWith("-") //$NON-NLS-1$
+					if (((String) options.get(i)).startsWith("-") //$NON-NLS-1$
 							&& !optionName.equals("-vmargs")) { //$NON-NLS-1$
 						// start of next option
 						break;
@@ -370,16 +370,16 @@ public class Options {
 	 * @return List of String values of the specified option, or null if option
 	 *         is not present
 	 */
-	private static List<String> getOption(List<String> options, String optionName) {
-		List<String> values = null;
+	private static List getOption(List options, String optionName) {
+		List values = null;
 		for (int i = 0; i < options.size(); i++) {
-			if (optionName.equalsIgnoreCase(options.get(i))) {
+			if (optionName.equalsIgnoreCase((String) options.get(i))) {
 				if (values == null) {
-					values = new ArrayList<String>(1);
+					values = new ArrayList(1);
 				}
 				// read option parameters
 				for (int j = i + 1; j < options.size(); j++) {
-					if (options.get(j).startsWith("-") //$NON-NLS-1$
+					if (((String) options.get(j)).startsWith("-") //$NON-NLS-1$
 							&& !optionName.equals("-vmargs")) { //$NON-NLS-1$
 						// start of next option
 						i = j;
@@ -396,7 +396,7 @@ public class Options {
 		return vm;
 	}
 
-	public static List<String> getVmArgs() {
+	public static List getVmArgs() {
 		return vmArgs;
 	}
 

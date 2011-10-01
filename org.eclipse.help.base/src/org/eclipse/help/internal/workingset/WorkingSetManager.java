@@ -64,7 +64,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	private static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
 	
-	private SortedSet<WorkingSet> workingSets = new TreeSet<WorkingSet>(new WorkingSetComparator());
+	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
 
 	private AdaptableTocsArray root;
 	
@@ -141,9 +141,9 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		if (name == null || workingSets == null)
 			return null;
 
-		Iterator<WorkingSet> iter = workingSets.iterator();
+		Iterator iter = workingSets.iterator();
 		while (iter.hasNext()) {
-			WorkingSet workingSet = iter.next();
+			WorkingSet workingSet = (WorkingSet) iter.next();
 			if (name.equals(workingSet.getName()))
 				return workingSet;
 		}
@@ -165,7 +165,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 * @see org.eclipse.ui.IWorkingSetManager#getWorkingSets()
 	 */
 	public WorkingSet[] getWorkingSets() {
-		return workingSets.toArray(new WorkingSet[workingSets
+		return (WorkingSet[]) workingSets.toArray(new WorkingSet[workingSets
 				.size()]);
 	}
 
@@ -262,7 +262,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		String name = workingSetNode.getAttribute("name"); //$NON-NLS-1$
 
 		// scope
-		List<AdaptableHelpResource> helpResources = new ArrayList<AdaptableHelpResource>();
+		List helpResources = new ArrayList();
 		NodeList contents = workingSetNode.getElementsByTagName("contents"); //$NON-NLS-1$
 		for (int i = 0; i < contents.getLength(); i++) {
 			Element content = (Element) contents.item(i);
@@ -303,14 +303,14 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 				
 		//criteria
 		
-		List<CriterionResource> criteriaResource = new ArrayList<CriterionResource>();
+		List criteriaResource = new ArrayList();
 		NodeList criteriaContents = workingSetNode.getElementsByTagName("criterion"); //$NON-NLS-1$
 		for (int i = 0; i < criteriaContents.getLength(); ++i) {
 			Element criterion = (Element) criteriaContents.item(i);
 			String criterionName = criterion.getAttribute("name"); //$NON-NLS-1$
 			if(null != name && 0 != name.length()){
 				NodeList items = criterion.getElementsByTagName("item"); //$NON-NLS-1$
-				List<String> criterionValues = new ArrayList<String>();
+				List criterionValues = new ArrayList();
 				for(int j = 0; j < items.getLength(); ++j){
 					String value = ((Element) items.item(j)).getAttribute("value"); //$NON-NLS-1$
 					if(null != value && 0 != value.length()){
@@ -380,10 +380,10 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 *            the xml node to save to
 	 */
 	private void saveWorkingSetState(Element parent) {
-		Iterator<WorkingSet> iterator = workingSets.iterator();
+		Iterator iterator = workingSets.iterator();
 
 		while (iterator.hasNext()) {
-			WorkingSet workingSet = iterator.next();
+			WorkingSet workingSet = (WorkingSet) iterator.next();
 			workingSet.saveState(parent);
 		}
 	}
@@ -452,7 +452,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	public void tocsChanged() {
 		saveState();
 		root = null;
-		workingSets = new TreeSet<WorkingSet>(new WorkingSetComparator());
+		workingSets = new TreeSet(new WorkingSetComparator());
 		restoreState();
 	}
 	
@@ -471,7 +471,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
 		}
-		List<String> criterionIds = new ArrayList<String>();
+		List criterionIds = new ArrayList();
 		if(null != allCriteriaValues){
 			for(Iterator iter = allCriteriaValues.keySet().iterator(); iter.hasNext();){
 				String criterion = (String) iter.next();
@@ -490,9 +490,9 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
 		}
-		List<String> valueIds = new ArrayList<String>();
+		List valueIds = new ArrayList();
 		if(null != criterionName && null != allCriteriaValues) {
-			Set<String> criterionValues = (Set<String>)allCriteriaValues.get(criterionName);
+			Set criterionValues = (Set)allCriteriaValues.get(criterionName);
 			if(null != criterionValues && !criterionValues.isEmpty()) {
 				valueIds.addAll(criterionValues);
 				Collections.sort(valueIds);
