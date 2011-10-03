@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class ParseTocWithCriteria extends TestCase {
 
 	public void testTocWithCriteria() throws Exception {
 		IToc2 toc = parseToc("data/help/criteria/c1.xml");
-		Map criteria = new HashMap();
+		Map<String, Set> criteria = new HashMap<String, Set>();
 		CriteriaUtilities.addCriteriaToMap(criteria, toc.getCriteria());
 	    assertEquals(2, criteria.size());
 	    Object  versions = criteria.get("version");
@@ -83,7 +83,7 @@ public class ParseTocWithCriteria extends TestCase {
 	public void testCopyTocWithCriteria() throws Exception {
 		IToc toc0 = parseToc("data/help/criteria/c1.xml");
 		Toc toc = new Toc(toc0);
-		Map criteria = new HashMap();
+		Map<String, Set> criteria = new HashMap<String, Set>();
 		CriteriaUtilities.addCriteriaToMap(criteria, toc.getCriteria());
 	    assertEquals(2, criteria.size());
 	    Object  versions = criteria.get("version");
@@ -106,7 +106,7 @@ public class ParseTocWithCriteria extends TestCase {
 		ITopic[] topics = (ITopic[]) toc.getTopics();
 		assertEquals(topics.length, 2);
 		// First topic
-		Map criteria = new HashMap();
+		Map<String, Set> criteria = new HashMap<String, Set>();
 		assertTrue(topics[0] instanceof ITopic2);
 		CriteriaUtilities.addCriteriaToMap(criteria, ((ITopic2)topics[0]).getCriteria());
 	    assertEquals(2, criteria.size());
@@ -119,7 +119,7 @@ public class ParseTocWithCriteria extends TestCase {
 
 		// Second topic
 
-		criteria = new HashMap();
+		criteria = new HashMap<String, Set>();
 		assertTrue(topics[1] instanceof ITopic2);
 		CriteriaUtilities.addCriteriaToMap(criteria, ((ITopic2)topics[1]).getCriteria());	   
 	    versions = criteria.get("version");
