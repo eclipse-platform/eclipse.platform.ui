@@ -19,9 +19,13 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * @since 3.3
@@ -32,10 +36,12 @@ public class ViewProvider extends QuickAccessProvider {
 	private MApplication application;
 	private MWindow window;
 	private Map<String, QuickAccessElement> idToElement = new HashMap<String, QuickAccessElement>();
+	private IViewRegistry viewRegistry;
 
 	public ViewProvider(MApplication application, MWindow window) {
 		this.application = application;
 		this.window = window;
+		this.viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
 	}
 
 	@Override
@@ -65,7 +71,11 @@ public class ViewProvider extends QuickAccessProvider {
 					String id = descriptor.getElementId();
 					if (id != null) {
 						ViewElement element = new ViewElement(this, window, descriptors.get(i));
-						idToElement.put(element.getId(), element);
+						IViewDescriptor viewDescriptor = viewRegistry.find(element.getId());
+						// filterItem() can accept a null argument
+						if (!WorkbenchActivityHelper.filterItem(viewDescriptor)) {
+							idToElement.put(element.getId(), element);
+						}
 					}
 				}
 			}

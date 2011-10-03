@@ -42,28 +42,36 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	private String id;
 	private String label;
 	private ImageDescriptor image;
-	private IConfigurationElement element;
+	private IConfigurationElement configElement;
 	private boolean hasCustomDefinition;
+	private String pluginId;
+	private String originalId; // ID of ancestor that was based on a config
+								// element
 
-	public PerspectiveDescriptor(String id, String label, boolean hasCustomDefinition) {
+	public PerspectiveDescriptor(String id, String label, PerspectiveDescriptor originalDescriptor) {
 		this.id = id;
 		this.label = label;
-		this.hasCustomDefinition = hasCustomDefinition;
+		if (originalDescriptor != null) {
+			this.originalId = originalDescriptor.getOriginalId();
+			// Direct member access by design
+			this.image = originalDescriptor.image;
+			this.pluginId = originalDescriptor.getPluginId();
+			this.hasCustomDefinition = true;
+		}
 	}
 
-	PerspectiveDescriptor(String id, String label, IConfigurationElement element) {
+	PerspectiveDescriptor(String id, IConfigurationElement element) {
 		this.id = id;
-		this.label = label;
-		this.element = element;
+		this.configElement = element;
 	}
 
 	public IConfigurationElement getConfigElement() {
-		return element;
+		return configElement;
 	}
 
 	public IPerspectiveFactory createFactory() {
 		try {
-			return (IPerspectiveFactory) element
+			return (IPerspectiveFactory) configElement
 					.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
@@ -73,7 +81,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	}
 
 	public String getDescription() {
-		return RegistryReader.getDescription(element);
+		return RegistryReader.getDescription(configElement);
 	}
 
 	/*
@@ -86,7 +94,11 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	}
 
 	public String getOriginalId() {
-		return id;
+		if (originalId == null) {
+			originalId = getId();
+		}
+
+		return originalId;
 	}
 
 	/*
@@ -95,16 +107,22 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	 * @see org.eclipse.ui.IPerspectiveDescriptor#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		if (image == null) {
-			image = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
-			if (element != null) {
-				String icon = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-				if (icon != null) {
-					image = AbstractUIPlugin.imageDescriptorFromPlugin(
-							element.getNamespaceIdentifier(), icon);
-				}
+		if (image != null)
+			return image;
+
+		// Try and get an image from the IConfigElement
+		if (configElement != null) {
+			String icon = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+			if (icon != null) {
+				image = AbstractUIPlugin.imageDescriptorFromPlugin(
+						configElement.getNamespaceIdentifier(), icon);
 			}
 		}
+
+		// Get a default image
+		if (image == null)
+			image = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
+
 		return image;
 	}
 
@@ -114,7 +132,8 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	 * @see org.eclipse.ui.IPerspectiveDescriptor#getLabel()
 	 */
 	public String getLabel() {
-		return label;
+		return configElement == null ? label : configElement
+				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
 	/*
@@ -132,7 +151,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
-		return element == null ? null : element.getNamespaceIdentifier();
+		return configElement == null ? pluginId : configElement.getNamespaceIdentifier();
 	}
 
 	/**
@@ -155,7 +174,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	 * @return boolean whether this perspective is predefined by an extension
 	 */
 	public boolean isPredefined() {
-		return element != null;
+		return configElement != null;
 	}
 
 	/**
@@ -165,5 +184,9 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	 */
 	public boolean isSingleton() {
 		return false;
+	}
+
+	public String toString() {
+		return this.getClass().getName() + " {id=" + getId() + "}"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

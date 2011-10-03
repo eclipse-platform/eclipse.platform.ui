@@ -15,16 +15,22 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.ui.IPlaceholderFolderLayout;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout {
 
 	protected MApplication application;
 	protected MPartStack folderModel;
 	protected ModeledPageLayout layout;
+	protected IViewRegistry viewRegistry;
 
 	public ModeledPlaceholderFolderLayout(ModeledPageLayout l, MApplication application,
 			MPartStack stackModel) {
 		this.application = application;
+		this.viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
 		folderModel = stackModel;
 		layout = l;
 	}
@@ -50,6 +56,12 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 
 	public void setProperty(String id, String value) {
 		// folderModel.setProperty(id, value);
+	}
+
+	protected boolean isViewVisible(String viewID) {
+		IViewDescriptor viewDescriptor = viewRegistry.find(viewID);
+		// .filterItem() can accept null as an argument
+		return !WorkbenchActivityHelper.filterItem(viewDescriptor);
 	}
 
 }

@@ -38,11 +38,15 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.IViewLayout;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.views.IViewRegistry;
 
 public class ModeledPageLayout implements IPageLayout {
 
@@ -54,7 +58,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public static List<String> getIds(MPerspective model, String tagPrefix) {
 		if (model == null) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		ArrayList<String> result = new ArrayList<String>();
 		for (String tag : model.getTags()) {
@@ -80,6 +84,8 @@ public class ModeledPageLayout implements IPageLayout {
 
 	boolean createReferences;
 
+	private IViewRegistry viewRegistry;
+
 	public ModeledPageLayout(MWindow window, EModelService modelService,
 			EPartService partService,
 			MPerspective perspModel, IPerspectiveDescriptor descriptor, WorkbenchPage page,
@@ -89,6 +95,7 @@ public class ModeledPageLayout implements IPageLayout {
 		this.application = (MApplication) winParent;
 		this.modelService = modelService;
 		this.partService = partService;
+		this.viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
 		this.page = page;
 		// Create the editor area stack
 		this.perspModel = perspModel;
@@ -190,9 +197,9 @@ public class ModeledPageLayout implements IPageLayout {
 				false);
 	}
 
-	public void addView(String viewId, int relationship, float ratio,
-			String refId) {
-		insertView(viewId, relationship, ratio, refId, true, true);
+	public void addView(String viewId, int relationship, float ratio, String refId) {
+		boolean isVisible = isViewVisible(viewId);
+		insertView(viewId, relationship, ratio, refId, isVisible, true);
 	}
 
 	public void addView(String viewId, int relationship, float ratio, String refId,
@@ -200,7 +207,13 @@ public class ModeledPageLayout implements IPageLayout {
 		if (minimized) {
 			E4Util.unsupported("addView: use of minimized for " + viewId + " ref " + refId); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		insertView(viewId, relationship, ratio, refId, true, true);
+		addView(viewId, relationship, ratio, refId);
+	}
+
+	private boolean isViewVisible(String viewID) {
+		IViewDescriptor viewDescriptor = viewRegistry.find(viewID);
+		// .filterItem() can accept null as an argument
+		return !WorkbenchActivityHelper.filterItem(viewDescriptor);
 	}
 
 	public IFolderLayout createFolder(String folderId, int relationship,
@@ -430,7 +443,7 @@ public class ModeledPageLayout implements IPageLayout {
 		if (parent == null)
 			return;
 
-		List kids = parent.getChildren();
+		List<MUIElement> kids = parent.getChildren();
 		if (kids == null)
 			return;
 
@@ -513,9 +526,17 @@ public class ModeledPageLayout implements IPageLayout {
 			return;
 		}
 
+		/**
+		 * I will be back later to delete the code below this point because we
+		 * have statically verified it can never run. This was pointed to by the
+		 * dead code warning below.
+		 * 
+		 * Bugzilla 359438
+		 */
 		boolean isStack = true;
 
 		// Create the new sash if we're going to need one
+		// But neither if clause runs because isStack is true
 		MPartSashContainer newSash = null;
 		if ((swtSide == SWT.TOP || swtSide == SWT.BOTTOM) && !isStack) {
 			newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
@@ -530,9 +551,16 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 
 		List parts;
+		// At this point relParent is ALLWAYS null because there is a return in
+		// the != null case above
+		// And we know newSash is always null since the code above to set it is
+		// never run.
 		if (newSash == null && relParent != null) {
+			// So this code would never run
 			parts = relParent.getChildren();
 		} else {
+			// And if this code did run it could only thrown an NPE because
+			// newSash is null
 			MUIElement vscElement = newSash;
 			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) vscElement;
 			insertParent(container, relTo);
@@ -542,6 +570,9 @@ public class ModeledPageLayout implements IPageLayout {
 			// weights.add(ratio);
 			// weights.add(100 - ratio);
 		}
+
+		// And this code would never be reached because the above code, if we
+		// got there would thrown an NPE.
 
 		// Insert the part in the correct location
 		int index = parts.indexOf(relTo);

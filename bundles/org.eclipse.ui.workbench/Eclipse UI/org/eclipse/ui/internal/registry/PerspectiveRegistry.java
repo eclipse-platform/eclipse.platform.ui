@@ -50,15 +50,14 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	@Inject
 	MApplication application;
 
-	private Map<String, IPerspectiveDescriptor> descriptors = new HashMap<String, IPerspectiveDescriptor>();
+	private Map<String, PerspectiveDescriptor> descriptors = new HashMap<String, PerspectiveDescriptor>();
 
 	@PostConstruct
 	void postConstruct(MApplication application) {
 		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.perspectives"); //$NON-NLS-1$
 		for (IConfigurationElement element : point.getConfigurationElements()) {
 			String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-			String label = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-			descriptors.put(id, new PerspectiveDescriptor(id, label, element));
+			descriptors.put(id, new PerspectiveDescriptor(id, element));
 		}
 		
 		List<MUIElement> snippets = application.getSnippets();
@@ -66,12 +65,20 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 			if (snippet instanceof MPerspective) {
 				MPerspective perspective = (MPerspective) snippet;
 				String id = perspective.getElementId();
-				PerspectiveDescriptor existingDescriptor = (PerspectiveDescriptor) descriptors
-						.get(id);
+				
+				// See if the clone is customizing an a predefined perspective without changing its name
+				PerspectiveDescriptor existingDescriptor = descriptors.get(id);
+				
 				if (existingDescriptor == null) {
+					// A custom perspective with its own name.
 					String label = perspective.getLabel();
-					descriptors.put(id, new PerspectiveDescriptor(id, label, true));
+					String originalId = getOriginalId(perspective.getElementId());
+					PerspectiveDescriptor originalDescriptor = descriptors.get(originalId);
+					PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(id, label,
+							originalDescriptor);
+					descriptors.put(id, newDescriptor);
 				} else {
+					// A custom perspecitve with a name of a pre-defined perspective
 					existingDescriptor.setHasCustomDefinition(true);
 				}
 			}
@@ -129,9 +136,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 * 
 	 * @param perspToDelete
 	 */
-	public void deletePerspectives(ArrayList perspToDelete) {
+	public void deletePerspectives(ArrayList<IPerspectiveDescriptor> perspToDelete) {
 		for (int i = 0; i < perspToDelete.size(); i++) {
-			deletePerspective((IPerspectiveDescriptor) perspToDelete.get(i));
+			deletePerspective(perspToDelete.get(i));
 		}
 	}
 
@@ -280,9 +287,30 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	public PerspectiveDescriptor createPerspective(String label,
 			PerspectiveDescriptor originalDescriptor) {
 
-		PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(originalDescriptor.getId()
-				+ "." + label, label, false); //$NON-NLS-1$
+		String newID = createNewId(label, originalDescriptor);
+		PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(newID, label,
+				originalDescriptor);
 		descriptors.put(newDescriptor.getId(), newDescriptor);
 		return newDescriptor;
+	}
+
+	/**
+	 * Return an id for the new descriptor.
+	 * 
+	 * The id must encode the original id. id is of the form <originalId>.label
+	 * 
+	 * @param label
+	 * @param originalDescriptor
+	 * @return the new id
+	 */
+	private String createNewId(String label, PerspectiveDescriptor originalDescriptor) {
+		return originalDescriptor.getOriginalId() + '.' + label;
+	}
+
+	private String getOriginalId(String id) {
+		int index = id.lastIndexOf('.');
+		if (index == -1)
+			return id;
+		return id.substring(0, index);
 	}
 }

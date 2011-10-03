@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 
@@ -28,7 +29,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 public class PreferenceProvider extends QuickAccessProvider {
 
 	private QuickAccessElement[] cachedElements;
-	private Map idToElement = new HashMap();
+	private Map<String, PreferenceElement> idToElement = new HashMap<String, PreferenceElement>();
 
 	public String getId() {
 		return "org.eclipse.ui.preferences"; //$NON-NLS-1$
@@ -36,16 +37,16 @@ public class PreferenceProvider extends QuickAccessProvider {
 
 	public QuickAccessElement getElementForId(String id) {
 		getElements();
-		return (PreferenceElement) idToElement.get(id);
+		return idToElement.get(id);
 	}
 
 	public QuickAccessElement[] getElements() {
 		if (cachedElements == null) {
-			List list = new ArrayList(); 
+			List<PreferenceElement> list = new ArrayList<PreferenceElement>();
 			collectElements("", PlatformUI.getWorkbench().getPreferenceManager().getRootSubNodes(), list); //$NON-NLS-1$
 			cachedElements = new PreferenceElement[list.size()];
 			for (int i = 0; i < list.size(); i++) {
-				PreferenceElement preferenceElement = (PreferenceElement) list.get(i);
+				PreferenceElement preferenceElement = list.get(i);
 				cachedElements[i] = preferenceElement;
 				idToElement.put(preferenceElement.getId(), preferenceElement);
 			}
@@ -53,17 +54,17 @@ public class PreferenceProvider extends QuickAccessProvider {
 		return cachedElements;
 	}
 
-	/**
-	 * @param subNodes
-	 * @return
-	 */
-	private void collectElements(String prefix, IPreferenceNode[] subNodes, List result) {
+	private void collectElements(String prefix, IPreferenceNode[] subNodes,
+			List<PreferenceElement> result) {
 		for (int i = 0; i < subNodes.length; i++) {
-			PreferenceElement preferenceElement = new PreferenceElement(
-					subNodes[i], prefix, this);
-			result.add(preferenceElement);
-			String nestedPrefix = prefix.length() == 0 ? subNodes[i].getLabelText() : (prefix + "/" + subNodes[i].getLabelText());  //$NON-NLS-1$
-			collectElements(nestedPrefix, subNodes[i].getSubNodes(), result);
+			if (!WorkbenchActivityHelper.filterItem(subNodes[i])) {
+				PreferenceElement preferenceElement = new PreferenceElement(subNodes[i], prefix,
+						this);
+				result.add(preferenceElement);
+				String nestedPrefix = prefix.length() == 0 ? subNodes[i].getLabelText() : (prefix
+						+ "/" + subNodes[i].getLabelText()); //$NON-NLS-1$
+				collectElements(nestedPrefix, subNodes[i].getSubNodes(), result);
+			}
 		}
 	}
 
@@ -78,6 +79,6 @@ public class PreferenceProvider extends QuickAccessProvider {
 
 	protected void doReset() {
 		cachedElements = null;
-		idToElement = new HashMap();
+		idToElement.clear();
 	}
 }

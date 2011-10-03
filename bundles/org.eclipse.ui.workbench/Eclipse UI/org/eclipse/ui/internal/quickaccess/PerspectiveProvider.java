@@ -17,6 +17,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
@@ -26,7 +27,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 public class PerspectiveProvider extends QuickAccessProvider {
 
 	private QuickAccessElement[] cachedElements;
-	private Map idToElement = new HashMap();
+	private Map<String, PerspectiveElement> idToElement = new HashMap<String, PerspectiveElement>();
 
 	public String getId() {
 		return "org.eclipse.ui.perspectives"; //$NON-NLS-1$
@@ -34,7 +35,7 @@ public class PerspectiveProvider extends QuickAccessProvider {
 
 	public QuickAccessElement getElementForId(String id) {
 		getElements();
-		return (PerspectiveElement) idToElement.get(id);
+		return idToElement.get(id);
 	}
 
 	public QuickAccessElement[] getElements() {
@@ -43,11 +44,14 @@ public class PerspectiveProvider extends QuickAccessProvider {
 					.getPerspectiveRegistry().getPerspectives();
 			cachedElements = new QuickAccessElement[perspectives.length];
 			for (int i = 0; i < perspectives.length; i++) {
-				PerspectiveElement perspectiveElement = new PerspectiveElement(
-						perspectives[i], this);
-				cachedElements[i] = perspectiveElement;
-				idToElement.put(perspectiveElement.getId(), perspectiveElement);
+				if (!WorkbenchActivityHelper.filterItem(perspectives[i])) {
+					PerspectiveElement perspectiveElement = new PerspectiveElement(perspectives[i],
+							this);
+					idToElement.put(perspectiveElement.getId(), perspectiveElement);
+				}
 			}
+			cachedElements = idToElement.values().toArray(
+					new QuickAccessElement[idToElement.size()]);
 		}
 		return cachedElements;
 	}
@@ -63,6 +67,6 @@ public class PerspectiveProvider extends QuickAccessProvider {
 
 	protected void doReset() {
 		cachedElements = null;
-		idToElement = new HashMap();
+		idToElement.clear();
 	}
 }
