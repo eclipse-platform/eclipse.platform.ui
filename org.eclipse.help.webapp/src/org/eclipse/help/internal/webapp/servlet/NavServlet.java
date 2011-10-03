@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.MissingContentManager;
 import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.RequestScope;
@@ -54,8 +55,15 @@ public class NavServlet extends HttpServlet {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
 		
-		String path = req.getPathInfo().substring(1);
-		ITopic topic = getTopic(path, locale);
+		String path;
+		ITopic topic;
+		try {
+			path = req.getPathInfo().substring(1);
+			topic = getTopic(path, locale);
+		} catch (Exception e) {
+			showPageNotFoundPage(req, resp);
+			return;
+		}
 
 		OutputStream out = resp.getOutputStream();
 		for (int i = 0; i < filters.length; i++) {
@@ -68,6 +76,30 @@ public class NavServlet extends HttpServlet {
 		writer.close();
 	}
 	
+	private void showPageNotFoundPage(HttpServletRequest req,
+			HttpServletResponse resp) {
+		String errorPage = MissingContentManager.getInstance().getPageNotFoundPage(req.getServletPath(), false);
+        if (errorPage != null && errorPage.length() > 0) {	
+        	String href = req.getRequestURL().toString();
+        	int navIndex = href.indexOf("/nav"); //$NON-NLS-1$
+        	if (navIndex >= 0 ) {
+        		href = href.substring(0, navIndex);
+        		href += "/nftopic"; //$NON-NLS-1$
+        		if (errorPage.charAt(0) != '/') {
+        			href += '/';
+        		}
+        		href += errorPage;
+        		try {
+					resp.sendRedirect(href);
+					return;
+				} catch (IOException e) {
+					// Fall through
+				}
+        	}    	 
+	    } 
+	    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	}
+
 	protected Locale getLocale (HttpServletRequest req, HttpServletResponse resp) {
 		Locale locale;
 		String nl = UrlUtil.getLocale(req, resp);
