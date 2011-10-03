@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,18 +72,18 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 		if(null == criteriaScope){
 			return true;
 		}
-		Map ownCriteria = getCriteriaInfo(criteriaOfTopic);
-		Map scope = getCriteriaInfo(criteriaScope);
-		outer: for (Iterator keyIterator = scope.keySet().iterator(); keyIterator.hasNext();) {
+		Map<String, Set> ownCriteria = getCriteriaInfo(criteriaOfTopic);
+		Map<String, Set> scope = getCriteriaInfo(criteriaScope);
+		outer: for (Iterator<String> keyIterator = scope.keySet().iterator(); keyIterator.hasNext();) {
 			String key = String.valueOf(keyIterator.next());
-			for (Iterator valueIterator = ((Set)scope.get(key)).iterator(); valueIterator.hasNext();) {
+			for (Iterator valueIterator = scope.get(key).iterator(); valueIterator.hasNext();) {
 				String value = String.valueOf(valueIterator.next());
 				if (value.equals(UNCATEGORIZED)) {
 					if (!ownCriteria.containsKey(key)) {
 						continue outer;						
 					}
 				} else {
-					if (null != ownCriteria.get(key) && ((Set)ownCriteria.get(key)).contains(value))
+					if (null != ownCriteria.get(key) && ownCriteria.get(key).contains(value))
 						continue outer;					
 				}
 			}
@@ -92,14 +92,14 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 		return true;
 	}
 
-	private Map getCriteriaInfo(CriterionResource[] criteria) {
-		Map criteriaMap = new HashMap();
+	private Map<String, Set> getCriteriaInfo(CriterionResource[] criteria) {
+		Map<String, Set> criteriaMap = new HashMap<String, Set>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		return criteriaMap;
 	}
 	
-	private Map getCriteriaInfo(ICriteria[] criteria) {
-		Map criteriaMap = new HashMap();
+	private Map<String, Set> getCriteriaInfo(ICriteria[] criteria) {
+		Map<String, Set> criteriaMap = new HashMap<String, Set>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 	    return criteriaMap;
 	}

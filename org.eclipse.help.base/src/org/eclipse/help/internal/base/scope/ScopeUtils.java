@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,13 +179,13 @@ public class ScopeUtils {
 	public static IIndexEntry[] inScopeEntries(IIndexEntry[] entries, AbstractHelpScope scope) {
 		for (int i=0;i<entries.length;++i) {
 			if (!scope.inScope(entries[i])) {
-				List list = new ArrayList(entries.length);
+				List<IIndexEntry> list = new ArrayList<IIndexEntry>(entries.length);
 				for (int j=0;j<entries.length;++j) {
 					if (j < i || scope.inScope(entries[j])) {
 						list.add(entries[j]);
 					}
 				}
-				return (IIndexEntry[])list.toArray(new IIndexEntry[list.size()]);
+				return list.toArray(new IIndexEntry[list.size()]);
 			}
 		}
 		return entries;
@@ -200,13 +200,13 @@ public class ScopeUtils {
 	public static ITopic[] inScopeTopics(ITopic[] topics, AbstractHelpScope scope) {
 		for (int i=0;i<topics.length;++i) {
 			if (!scope.inScope(topics[i])) {
-				List list = new ArrayList(topics.length);
+				List<ITopic> list = new ArrayList<ITopic>(topics.length);
 				for (int j=0;j<topics.length;++j) {
 					if (j < i || scope.inScope(topics[j])) {
 						list.add(topics[j]);
 					}
 				}
-				return (ITopic[])list.toArray(new ITopic[list.size()]);
+				return list.toArray(new ITopic[list.size()]);
 			}
 		}
 		return topics;

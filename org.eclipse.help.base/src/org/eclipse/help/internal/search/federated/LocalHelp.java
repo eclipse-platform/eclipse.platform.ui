@@ -28,7 +28,7 @@ import org.eclipse.help.search.*;
 public class LocalHelp implements ISearchEngine2 {
 	private static final int MAX_HITS = 500;
 
-	private List altList;
+	private List<String> altList;
 	
 	/*
 	 * (non-Javadoc)
@@ -43,7 +43,7 @@ public class LocalHelp implements ISearchEngine2 {
 			IProgressMonitor monitor) throws CoreException {
 
 		AbstractSearchProcessor processors[] = SearchManager.getSearchProcessors();
-		altList = new ArrayList();
+		altList = new ArrayList<String>();
 		for (int p=0;p<processors.length;p++)
 		{
 			SearchProcessorInfo result = 
@@ -120,7 +120,7 @@ public class LocalHelp implements ISearchEngine2 {
 			return;
 		}
 		// Filtering of results by activities
-		ArrayList enabledHits = new ArrayList();
+		ArrayList<SearchHit> enabledHits = new ArrayList<SearchHit>();
 		for (int i = 0; i < searchHits.length; i++) {
 			SearchHit hit = searchHits[i];
 			if (hit.getParticipantId()!=null) {
@@ -133,7 +133,7 @@ public class LocalHelp implements ISearchEngine2 {
 				enabledHits.add(hit);
 			}
 		}
-		collector.accept((SearchHit[]) enabledHits
+		collector.accept(enabledHits
 				.toArray(new SearchHit[enabledHits.size()]));
 	}
 
@@ -141,7 +141,7 @@ public class LocalHelp implements ISearchEngine2 {
 		return null;
 	}
 	
-	public List getAlternates()
+	public List<String> getAlternates()
 	{
 		return altList;
 	}

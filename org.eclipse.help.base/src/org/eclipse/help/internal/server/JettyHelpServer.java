@@ -58,7 +58,7 @@ public class JettyHelpServer extends HelpServer {
 
 		public void run() {
 			try {
-				final Dictionary d = new Hashtable();
+				final Dictionary<String, Comparable> d = new Hashtable<String, Comparable>();
 				final int SESSION_TIMEOUT_INTERVAL_IN_SECONDS = 30*60;  // 30 minutes
 				configurePort();
 				d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$

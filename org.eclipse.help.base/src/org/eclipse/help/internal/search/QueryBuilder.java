@@ -40,9 +40,9 @@ public class QueryBuilder {
 	// Analyzer to process the query words
 	private Analyzer analyzer;
 	// List of QueryWordsToken
-	private List analyzedTokens;
+	private List<QueryWordsToken> analyzedTokens;
 	// List of words to highlight
-	private List highlightWords = new ArrayList();
+	private List<String> highlightWords = new ArrayList<String>();
 	private Locale locale;
 	/**
 	 * Creates a query builder for the search word. The search word is processed
@@ -63,8 +63,8 @@ public class QueryBuilder {
 	/**
 	 * Splits user query into tokens and returns a list of QueryWordsToken's.
 	 */
-	private List tokenizeUserQuery(String searchWords) {
-	    List tokenList = new ArrayList();
+	private List<QueryWordsToken> tokenizeUserQuery(String searchWords) {
+	    List<QueryWordsToken> tokenList = new ArrayList<QueryWordsToken>();
 		//Divide along quotation marks
 		//StringTokenizer qTokenizer = new StringTokenizer(searchWords.trim(),
 		//		"\"", true); //$NON-NLS-1$
@@ -137,12 +137,12 @@ public class QueryBuilder {
 	 * Apply the Analyzer to the search tokens and return the list of processed
 	 * QueryWordsToken's.
 	 */
-	private List analyzeTokens(List tokens) {
+	private List<QueryWordsToken> analyzeTokens(List<QueryWordsToken> tokens) {
 		boolean isTokenAfterNot = false;
-		List newTokens = new ArrayList();
+		List<QueryWordsToken> newTokens = new ArrayList<QueryWordsToken>();
 		int wildCardTermCount = 0;
 		for (int i = 0; i < tokens.size(); i++) {
-			QueryWordsToken token = (QueryWordsToken) tokens.get(i);
+			QueryWordsToken token = tokens.get(i);
 			if (token.type == QueryWordsToken.WORD) {
 				int questionMIndex = token.value.indexOf('?');
 				int starIndex = token.value.indexOf('*');
@@ -158,7 +158,7 @@ public class QueryBuilder {
 						highlightWords.add(token.value);
 					}
 				} else {
-					List wordList = analyzeText(analyzer, "contents", //$NON-NLS-1$
+					List<String> wordList = analyzeText(analyzer, "contents", //$NON-NLS-1$
 							token.value);
 					if (wordList.size() > 0) {
 						if (!isTokenAfterNot && !highlightWords.contains(token.value)) {
@@ -167,7 +167,7 @@ public class QueryBuilder {
 							highlightWords.add(token.value);
 						}
 						if (wordList.size() == 1) {
-							String word = (String) wordList.get(0);
+							String word = wordList.get(0);
 							newTokens.add(QueryWordsToken.word(word));
 							// add analyzed word to the list of words to
 							// highlight
@@ -177,9 +177,9 @@ public class QueryBuilder {
 							}
 						} else {
 							QueryWordsPhrase phrase = QueryWordsToken.phrase();
-							for (Iterator it = wordList.iterator(); it
+							for (Iterator<String> it = wordList.iterator(); it
 									.hasNext();) {
-								String word = (String) it.next();
+								String word = it.next();
 								phrase.addWord(word);
 								// add each analyzed word to the list of words
 								// to highlight
@@ -210,7 +210,7 @@ public class QueryBuilder {
 					|| token.type == QueryWordsToken.NOT)
 				newTokens.add(token);
 			else if (token.type == QueryWordsToken.EXACT_PHRASE) {
-				List wordList = analyzeText(analyzer, "exact_contents", //$NON-NLS-1$
+				List<String> wordList = analyzeText(analyzer, "exact_contents", //$NON-NLS-1$
 						token.value);
 				if (wordList.size() > 0) {
 					if (!isTokenAfterNot && !highlightWords.contains(token.value)) {
@@ -219,8 +219,8 @@ public class QueryBuilder {
 					}
 				}
 				QueryWordsExactPhrase phrase = QueryWordsToken.exactPhrase();
-				for (Iterator it = wordList.iterator(); it.hasNext();) {
-					String word = (String) it.next();
+				for (Iterator<String> it = wordList.iterator(); it.hasNext();) {
+					String word = it.next();
 					phrase.addWord(word);
 					// add analyzed word to the list of words to highlight
 					// if (!highlightWords.contains(word))
@@ -240,8 +240,8 @@ public class QueryBuilder {
 	 * 
 	 * @return List of String
 	 */
-	private List analyzeText(Analyzer analyzer, String fieldName, String text) {
-		List words = new ArrayList(1);
+	private List<String> analyzeText(Analyzer analyzer, String fieldName, String text) {
+		List<String> words = new ArrayList<String>(1);
 		Reader reader = new StringReader(text);
 		TokenStream tStream = analyzer.tokenStream(fieldName, reader);
 		
@@ -263,15 +263,15 @@ public class QueryBuilder {
 	 * 
 	 * @return Query or null if no query could be created
 	 */
-	private Query createLuceneQuery(List searchTokens, String[] fieldNames,
+	private Query createLuceneQuery(List<QueryWordsToken> searchTokens, String[] fieldNames,
 			float[] boosts) {
 		// Get queries for parts separated by OR
-		List requiredQueries = getRequiredQueries(searchTokens, fieldNames,
+		List<Query> requiredQueries = getRequiredQueries(searchTokens, fieldNames,
 				boosts);
 		if (requiredQueries.size() == 0)
 			return null;
 		else if (requiredQueries.size() <= 1)
-			return (Query) requiredQueries.get(0);
+			return requiredQueries.get(0);
 		else
 			/* if (requiredQueries.size() > 1) */
 			// OR queries
@@ -282,12 +282,12 @@ public class QueryBuilder {
 	 * 
 	 * @return List of Query (could be empty)
 	 */
-	private List getRequiredQueries(List tokens, String[] fieldNames,
+	private List<Query> getRequiredQueries(List<QueryWordsToken> tokens, String[] fieldNames,
 			float[] boosts) {
-		List oredQueries = new ArrayList();
-		ArrayList requiredQueryTokens = new ArrayList();
+		List<Query> oredQueries = new ArrayList<Query>();
+		ArrayList<QueryWordsToken> requiredQueryTokens = new ArrayList<QueryWordsToken>();
 		for (int i = 0; i < tokens.size(); i++) {
-			QueryWordsToken token = (QueryWordsToken) tokens.get(i);
+			QueryWordsToken token = tokens.get(i);
 			if (token.type != QueryWordsToken.OR) {
 				requiredQueryTokens.add(token);
 			} else {
@@ -295,7 +295,7 @@ public class QueryBuilder {
 						fieldNames, boosts);
 				if (reqQuery != null)
 					oredQueries.add(reqQuery);
-				requiredQueryTokens = new ArrayList();
+				requiredQueryTokens = new ArrayList<QueryWordsToken>();
 			}
 		}
 		Query reqQuery = getRequiredQuery(requiredQueryTokens, fieldNames,
@@ -304,10 +304,10 @@ public class QueryBuilder {
 			oredQueries.add(reqQuery);
 		return oredQueries;
 	}
-	private Query orQueries(Collection queries) {
+	private Query orQueries(Collection<Query> queries) {
 		BooleanQuery bq = new BooleanQuery();
-		for (Iterator it = queries.iterator(); it.hasNext();) {
-			Query q = (Query) it.next();
+		for (Iterator<Query> it = queries.iterator(); it.hasNext();) {
+			Query q = it.next();
 			bq.add(q, BooleanClause.Occur.SHOULD);
 		}
 		return bq;
@@ -317,14 +317,14 @@ public class QueryBuilder {
 	 * 
 	 * @return BooleanQuery or null if no query could be created from the tokens
 	 */
-	private Query getRequiredQuery(List requiredTokens, String[] fieldNames,
+	private Query getRequiredQuery(List<QueryWordsToken> requiredTokens, String[] fieldNames,
 			float[] boosts) {
 		BooleanQuery retQuery = new BooleanQuery();
 		boolean requiredTermExist = false;
 		// Parse tokens left to right
 		QueryWordsToken operator = null;
 		for (int i = 0; i < requiredTokens.size(); i++) {
-			QueryWordsToken token = (QueryWordsToken) requiredTokens.get(i);
+			QueryWordsToken token = requiredTokens.get(i);
 			if (token.type == QueryWordsToken.AND
 					|| token.type == QueryWordsToken.NOT) {
 				operator = token;
@@ -372,7 +372,7 @@ public class QueryBuilder {
 	public Query getLuceneQuery(Collection fieldNames, boolean fieldSearchOnly)
 			throws QueryTooComplexException {
 		// split search query into tokens
-		List userTokens = tokenizeUserQuery(searchWords);
+		List<QueryWordsToken> userTokens = tokenizeUserQuery(searchWords);
 		analyzedTokens = analyzeTokens(userTokens);
 		return buildLuceneQuery(fieldNames, fieldSearchOnly);
 	}
@@ -425,7 +425,7 @@ public class QueryBuilder {
 			return query;
 		// check if all tokens are words
 		for (int i = 0; i < analyzedTokens.size(); i++)
-			if (((QueryWordsToken) analyzedTokens.get(i)).type != QueryWordsToken.WORD)
+			if (analyzedTokens.get(i).type != QueryWordsToken.WORD)
 				return query;
 		// Create phrase query for all tokens and OR with original query
 		BooleanQuery booleanQuery = new BooleanQuery();
@@ -434,8 +434,8 @@ public class QueryBuilder {
 		for (int f = 0; f < fields.length; f++) {
 			phraseQueries[f] = new PhraseQuery();
 			for (int i = 0; i < analyzedTokens.size(); i++) {
-				Term t = new Term(fields[f], ((QueryWordsToken) analyzedTokens
-						.get(i)).value);
+				Term t = new Term(fields[f], analyzedTokens
+						.get(i).value);
 				phraseQueries[f].add(t);
 			}
 			phraseQueries[f].setBoost(10 * boosts[f]);
@@ -450,7 +450,7 @@ public class QueryBuilder {
 	 */
 	public String gethighlightTerms() {
 		StringBuffer buf = new StringBuffer();
-		for (Iterator it = highlightWords.iterator(); it.hasNext();) {
+		for (Iterator<String> it = highlightWords.iterator(); it.hasNext();) {
 			buf.append('"');
 			buf.append(it.next());
 			buf.append("\" "); //$NON-NLS-1$

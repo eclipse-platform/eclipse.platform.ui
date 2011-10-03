@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,8 @@ import org.w3c.dom.Element;
 
 public class WorkingSet {
 	private String name;
-	private List elements;
-	private List criteria;
+	private List<AdaptableHelpResource> elements;
+	private List<CriterionResource> criteria;
 
 	public WorkingSet(String name) {
 		this(name, (List) null, (List) null);
@@ -31,17 +31,17 @@ public class WorkingSet {
 		this(name, elements, null);
 	}
 	
-	public WorkingSet(String name, List elements, List criteria) {
+	public WorkingSet(String name, List<AdaptableHelpResource> elements, List<CriterionResource> criteria) {
 		this.name = name;
 		
 		if (elements == null)
-			elements = new ArrayList();
+			elements = new ArrayList<AdaptableHelpResource>();
 		this.elements = elements;
 		
 		if (criteria != null) {
 			this.criteria = criteria;
 		} else {
-			this.criteria = new ArrayList();
+			this.criteria = new ArrayList<CriterionResource>();
 		}		
 	}
 
@@ -55,7 +55,7 @@ public class WorkingSet {
 		if (elements == null)
 			elements = new AdaptableHelpResource[0];
 
-		this.elements = new ArrayList(elements.length);
+		this.elements = new ArrayList<AdaptableHelpResource>(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			this.elements.add(elements[i]);
 		}
@@ -63,7 +63,7 @@ public class WorkingSet {
 		if (criteria == null)
 			criteria = new CriterionResource[0];
 
-		this.criteria = new ArrayList(criteria.length);
+		this.criteria = new ArrayList<CriterionResource>(criteria.length);
 		for (int j = 0; j < criteria.length; j++) {
 			this.criteria.add(criteria[j]);
 		}
@@ -93,14 +93,14 @@ public class WorkingSet {
 	}
 
 	public void setElements(AdaptableHelpResource[] elements) {
-		this.elements = new ArrayList(elements.length);
+		this.elements = new ArrayList<AdaptableHelpResource>(elements.length);
 		for (int i = 0; i < elements.length; i++)
 			this.elements.add(elements[i]);
 	}
 	
 	
 	public void setCriteria(CriterionResource[] criteria) {
-		this.criteria = new ArrayList(criteria.length);
+		this.criteria = new ArrayList<CriterionResource>(criteria.length);
 		for(int i = 0; i < criteria.length; i++) {
 			this.criteria.add(criteria[i]);
 		}
@@ -120,9 +120,9 @@ public class WorkingSet {
 		
 		Element contents = doc.createElement("contents"); //$NON-NLS-1$
 		ws.appendChild(contents);
-		for (Iterator it = elements.iterator(); it.hasNext();) {
+		for (Iterator<AdaptableHelpResource> it = elements.iterator(); it.hasNext();) {
 			Element child = doc.createElement("item"); //$NON-NLS-1$
-			AdaptableHelpResource helpResource = (AdaptableHelpResource) it.next();
+			AdaptableHelpResource helpResource = it.next();
 			helpResource.saveState(child);
 			contents.appendChild(child);
 		}
@@ -131,10 +131,10 @@ public class WorkingSet {
 			Element criteriaElement = doc.createElement("criteria"); //$NON-NLS-1$
 			ws.appendChild(criteriaElement);
 			
-			for(Iterator iterator = criteria.iterator(); iterator.hasNext();){
+			for(Iterator<CriterionResource> iterator = criteria.iterator(); iterator.hasNext();){
 				Element criterionItem = doc.createElement("criterion"); //$NON-NLS-1$
 				criteriaElement.appendChild(criterionItem);
-				CriterionResource criterion = (CriterionResource)iterator.next();
+				CriterionResource criterion = iterator.next();
 				String criterionName = criterion.getCriterionName();
 				criterionItem.setAttribute("name", criterionName);//$NON-NLS-1$
 				List criterionValues = criterion.getCriterionValues();

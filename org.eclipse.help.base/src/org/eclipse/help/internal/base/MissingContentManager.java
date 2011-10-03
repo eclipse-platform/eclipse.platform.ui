@@ -54,7 +54,7 @@ public class MissingContentManager {
 	 * A place holder defines a page to be shown when a documentation page
 	 * which matches the specified path not installed
 	 */
-	public static class Placeholder implements Comparable {
+	public static class Placeholder implements Comparable<Placeholder> {
 		public String path;
 		public String bundle;
 		public String placeholderPage;
@@ -65,19 +65,14 @@ public class MissingContentManager {
 			this.placeholderPage = placeholderPage;
 		}
 
-		public int compareTo(Object arg0) {
-			// Sort in reverse order so more qualified strings appear before
-			// less qualified substrings
-			if (arg0 instanceof Placeholder) {
-				return((Placeholder)arg0).path.compareTo(path);
-			}
-			return 0;
+		public int compareTo(Placeholder o) {
+			return o.path.compareTo(path);
 		}
 	}
 	
 	private static MissingContentManager instance;
-	private List placeholders;
-    private Set bundlesToIgnore; // A set of bundles the user does not want to see reference to
+	private List<Placeholder> placeholders;
+    private Set<String> bundlesToIgnore; // A set of bundles the user does not want to see reference to
 	
 	public static MissingContentManager getInstance() {
 		if ( instance == null ) {
@@ -91,8 +86,8 @@ public class MissingContentManager {
 	 */
 	private MissingContentManager() {
         IExtensionRegistry registry = Platform.getExtensionRegistry();
-        placeholders = new ArrayList();
-        bundlesToIgnore = new HashSet();
+        placeholders = new ArrayList<Placeholder>();
+        bundlesToIgnore = new HashSet<String>();
         if ( BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER ) {
         	return; // Placeholders are not shown for infocenters
         }
@@ -133,8 +128,8 @@ public class MissingContentManager {
 	 * @return a place holder page if defined, otherwise an error page
 	 */
 	public String getPageNotFoundPage(String path, boolean showPlaceholderPage) {
-		for (Iterator iter = placeholders.iterator(); iter.hasNext(); ) {
-			Placeholder placeholder = (Placeholder) iter.next();
+		for (Iterator<Placeholder> iter = placeholders.iterator(); iter.hasNext(); ) {
+			Placeholder placeholder = iter.next();
 			if (path.startsWith(placeholder.path) && Platform.getBundle(placeholder.bundle) == null) {
 				if ( showPlaceholderPage) {
 				    return placeholder.placeholderPage;
@@ -186,10 +181,10 @@ public class MissingContentManager {
 	}
 
 	public Placeholder[] getUnresolvedPlaceholders() {
-		List unresolved;
-		unresolved = new ArrayList();
-		for (Iterator iter = placeholders.iterator(); iter.hasNext(); ) {			
-			Placeholder ph = (Placeholder) iter.next();
+		List<Placeholder> unresolved;
+		unresolved = new ArrayList<Placeholder>();
+		for (Iterator<Placeholder> iter = placeholders.iterator(); iter.hasNext(); ) {			
+			Placeholder ph = iter.next();
 			String bundle = ph.bundle;
 			if (bundle != null && !bundlesToIgnore.contains(bundle) ) {
 			    if (Platform.getBundle(bundle) == null ) {
@@ -197,7 +192,7 @@ public class MissingContentManager {
 			    }
 			}
 		}
-		return (Placeholder[]) unresolved.toArray(new Placeholder[unresolved.size()]);
+		return unresolved.toArray(new Placeholder[unresolved.size()]);
 	}
 	
 	// Modifies the preferences to ignore any bundles that are currently unresolved placeholders

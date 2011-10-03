@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public final class WordTokenStream extends TokenStream {
 	private static final int TOKENS_LEN = 512;
 	private final Reader reader;
 	private final BreakIterator boundary;
-	private final ArrayList tokens;
+	private final ArrayList<Token> tokens;
 	private int token;
 	private int noTokens;
 	private final char[] cbuf;
@@ -37,7 +37,7 @@ public final class WordTokenStream extends TokenStream {
 		this.reader = reader;
 		boundary = BreakIterator.getWordInstance(locale);
 		cbuf = new char[BUF_LEN];
-		tokens = new ArrayList(TOKENS_LEN);
+		tokens = new ArrayList<Token>(TOKENS_LEN);
 
 	}
 	/**
@@ -92,7 +92,7 @@ public final class WordTokenStream extends TokenStream {
 			token = 0;
 		}
 
-		return (Token) tokens.get(token++);
+		return tokens.get(token++);
 
 	}
 }

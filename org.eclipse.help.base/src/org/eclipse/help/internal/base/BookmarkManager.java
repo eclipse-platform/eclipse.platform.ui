@@ -45,7 +45,7 @@ public class BookmarkManager extends Observable {
 	// everything changed (by the webapp)
 	public static final int WORLD_CHANGED = 5;
 	
-	private ArrayList bookmarks;
+	private ArrayList<Bookmark> bookmarks;
 
 	public static class Bookmark implements IHelpResource {
 		private String label;
@@ -166,7 +166,7 @@ public class BookmarkManager extends Observable {
 		if (bookmarks==null) {
 			String value = readBookmarks();
 			StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-			bookmarks = new ArrayList();
+			bookmarks = new ArrayList<Bookmark>();
 			while (tokenizer.hasMoreTokens()) {
 				String bookmark = tokenizer.nextToken();
 				// url and title are separated by vertical bar
@@ -177,7 +177,7 @@ public class BookmarkManager extends Observable {
 				bookmarks.add(new Bookmark(label, href));
 			}
 		}
-		return (IHelpResource[])bookmarks.toArray(new IHelpResource[bookmarks.size()]);
+		return bookmarks.toArray(new IHelpResource[bookmarks.size()]);
 	}
 
 	/**
