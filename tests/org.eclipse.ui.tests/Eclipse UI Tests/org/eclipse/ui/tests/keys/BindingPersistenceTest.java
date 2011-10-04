@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -206,7 +207,15 @@ public final class BindingPersistenceTest extends UITestCase {
 		}
 		assertEquals(3, numOfMarkers);
 		assertTrue("Unable to find delete marker", foundDeleteMarker);
-		TriggerSequence[] activeBindingsFor = bindingService.getActiveBindingsFor(addWS);
+
+		// make sure that the proper contexts are currently active
+		IContextService contextService = (IContextService) fWorkbench
+				.getService(IContextService.class);
+		contextService
+				.activateContext(IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);
+		contextService.activateContext(IContextService.CONTEXT_ID_WINDOW);
+		TriggerSequence[] activeBindingsFor = bindingService
+				.getActiveBindingsFor(addWS);
 		assertEquals(1, activeBindingsFor.length);
 	}
 
