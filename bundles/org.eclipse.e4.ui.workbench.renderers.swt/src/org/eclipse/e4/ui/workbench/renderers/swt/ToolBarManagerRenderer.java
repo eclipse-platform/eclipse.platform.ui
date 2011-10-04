@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -31,11 +32,13 @@ import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.ElementContainer;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -44,6 +47,7 @@ import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.RowLayoutFactory;
@@ -735,6 +739,51 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public ToolBarContributionRecord getContributionRecord(
 			MToolBarElement element) {
 		return modelContributionToRecord.get(element);
+	}
+
+	public void reconcileManagerToModel(IToolBarManager menuManager,
+			MToolBar toolBar) {
+		List<MToolBarElement> modelChildren = toolBar.getChildren();
+		HashSet<MOpaqueToolItem> oldModelItems = new HashSet<MOpaqueToolItem>();
+		for (MToolBarElement itemModel : modelChildren) {
+			if (itemModel instanceof MOpaqueToolItem) {
+				oldModelItems.add((MOpaqueToolItem) itemModel);
+			}
+		}
+
+		IContributionItem[] items = menuManager.getItems();
+		for (int src = 0, dest = 0; src < items.length; src++, dest++) {
+			IContributionItem item = items[src];
+			MToolBarElement element = getToolElement(item);
+			if (element == null) {
+				MOpaqueToolItem legacyItem = MenuFactoryImpl.eINSTANCE
+						.createOpaqueToolItem();
+				legacyItem.setElementId(item.getId());
+				legacyItem.setVisible(item.isVisible());
+				legacyItem.setOpaqueItem(item);
+				linkModelToContribution(legacyItem, item);
+				modelChildren.add(dest, legacyItem);
+			} else if (element instanceof MOpaqueToolItem) {
+				MOpaqueToolItem legacyItem = (MOpaqueToolItem) element;
+				oldModelItems.remove(legacyItem);
+				if (modelChildren.size() > dest) {
+					if (modelChildren.get(dest) != legacyItem) {
+						modelChildren.remove(legacyItem);
+						modelChildren.add(dest, legacyItem);
+					}
+				} else {
+					modelChildren.add(legacyItem);
+				}
+			}
+		}
+
+		if (!oldModelItems.isEmpty()) {
+			modelChildren.removeAll(oldModelItems);
+			for (MOpaqueToolItem model : oldModelItems) {
+				clearModelToContribution(model,
+						(IContributionItem) model.getOpaqueItem());
+			}
+		}
 	}
 
 }

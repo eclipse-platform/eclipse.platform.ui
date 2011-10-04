@@ -21,13 +21,16 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
@@ -135,6 +138,7 @@ public class CompatibilityView extends CompatibilityPart {
 		apr = rendererFactory.getRenderer(toolbar, parent);
 		if (apr instanceof ToolBarManagerRenderer) {
 			((ToolBarManagerRenderer) apr).linkModelToManager(toolbar, tbm);
+			((ToolBarManagerRenderer) apr).reconcileManagerToModel(tbm, toolbar);
 		}
 	}
 
@@ -160,7 +164,17 @@ public class CompatibilityView extends CompatibilityPart {
 			AbstractPartRenderer apr = rendererFactory.getRenderer(toolbar, null);
 			if (apr instanceof ToolBarManagerRenderer) {
 				ToolBarManager tbm = (ToolBarManager) actionBars.getToolBarManager();
-				((ToolBarManagerRenderer) apr).clearModelToManager(toolbar, tbm);
+				ToolBarManagerRenderer tbmr = (ToolBarManagerRenderer) apr;
+				tbmr.clearModelToManager(toolbar, tbm);
+				// remove opaque mappings
+				for (MToolBarElement element : toolbar.getChildren()) {
+					if (element instanceof MOpaqueToolItem) {
+						IContributionItem item = tbmr.getContribution(element);
+						if (item != null) {
+							tbmr.clearModelToContribution(element, item);
+						}
+					}
+				}
 			}
 		}
 

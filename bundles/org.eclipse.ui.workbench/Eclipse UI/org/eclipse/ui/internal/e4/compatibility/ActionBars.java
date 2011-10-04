@@ -15,7 +15,9 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -96,6 +98,16 @@ public class ActionBars extends SubActionBars {
 				}
 			} else {
 				toolbarManager.update(false);
+			}
+
+			MToolBar toolbar = part.getToolbar();
+			if (toolbar != null) {
+				Object renderer = toolbar.getRenderer();
+				if (renderer instanceof ToolBarManagerRenderer) {
+					// update the mapping of opaque items
+					((ToolBarManagerRenderer) renderer).reconcileManagerToModel(toolbarManager,
+							toolbar);
+				}
 			}
 		}
 		super.updateActionBars();
