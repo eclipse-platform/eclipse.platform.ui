@@ -35,14 +35,18 @@ public class ValueComputation extends Computation {
 
 	public void handleInvalid(ContextChangeEvent event, Set<Scheduled> scheduled) {
 		int eventType = event.getEventType();
-		if (eventType != ContextChangeEvent.RECALC && name.equals(event.getName()))
+
+		boolean containerDisposed = (eventType == ContextChangeEvent.DISPOSE && event.getContext() == originatingContext);
+		boolean definitionChanged = (eventType != ContextChangeEvent.RECALC && name.equals(event.getName()));
+
+		if (containerDisposed || definitionChanged)
 			invalidateComputation();
 
 		if (cachedValue == NotAValue) // already invalidated
 			return;
 
 		cachedValue = NotAValue;
-		originatingContext.invalidate(name, eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : ContextChangeEvent.RECALC, event.getOldValue(), scheduled);
+		originatingContext.invalidate(name, ContextChangeEvent.RECALC, event.getOldValue(), scheduled);
 	}
 
 	public Object get() {
