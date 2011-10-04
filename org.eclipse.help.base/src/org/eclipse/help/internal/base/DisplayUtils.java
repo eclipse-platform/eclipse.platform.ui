@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class DisplayUtils {
 			if (bundle == null) {
 				return;
 			}
-			Class c = bundle.loadClass(LOOP_CLASS_NAME);
+			Class<?> c = bundle.loadClass(LOOP_CLASS_NAME);
 			Method m = c.getMethod(method, new Class[]{});
 			m.invoke(null, new Object[]{});
 		} catch (Exception e) {

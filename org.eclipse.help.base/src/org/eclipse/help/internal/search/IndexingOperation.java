@@ -332,12 +332,12 @@ class IndexingOperation {
 	/**
 	 * Returns IDs of plugins which need docs added to index.
 	 */
-	private Collection getAddedPlugins(SearchIndex index) {
+	private Collection<String> getAddedPlugins(SearchIndex index) {
 		// Get the list of added plugins
-		Collection addedPlugins = index.getDocPlugins().getAdded();
+		Collection<String> addedPlugins = index.getDocPlugins().getAdded();
 
 		if (addedPlugins == null || addedPlugins.isEmpty())
-			return new ArrayList(0);
+			return new ArrayList<String>(0);
 		return addedPlugins;
 	}
 
@@ -347,7 +347,7 @@ class IndexingOperation {
 	 */
 	private Collection<URL> getAddedDocuments(SearchIndex index) {
 		// Get the list of added plugins
-		Collection addedPlugins = getAddedPlugins(index);
+		Collection<String> addedPlugins = getAddedPlugins(index);
 		if (HelpPlugin.DEBUG_SEARCH) {
 			traceAddedContributors(addedPlugins);
 		}
@@ -420,9 +420,9 @@ class IndexingOperation {
 		return addedDocs;
 	}
 
-	private void traceAddedContributors(Collection addedContributors) {
-		for (Iterator iter = addedContributors.iterator(); iter.hasNext();) {
-			String id = (String)iter.next();
+	private void traceAddedContributors(Collection<String> addedContributors) {
+		for (Iterator<String> iter = addedContributors.iterator(); iter.hasNext();) {
+			String id = iter.next();
 			System.out.println("Updating search index for contributor :" + id); //$NON-NLS-1$
 		}	
 	}
@@ -433,7 +433,7 @@ class IndexingOperation {
 	 */
 	private Collection<URL> getRemovedDocuments(SearchIndex index) {
 		// Get the list of removed plugins
-		Collection removedPlugins = index.getDocPlugins().getRemoved();
+		Collection<String> removedPlugins = index.getDocPlugins().getRemoved();
 		if (removedPlugins == null || removedPlugins.isEmpty())
 			return new ArrayList<URL>(0);
 		// get the list of indexed docs. This is a hashtable (url, plugin)
@@ -504,7 +504,7 @@ class IndexingOperation {
 	 * @param locale
 	 * @return
 	 */
-	private PrebuiltIndexes getIndexesToAdd(Collection pluginIds) {
+	private PrebuiltIndexes getIndexesToAdd(Collection<String> pluginIds) {
 		PrebuiltIndexes indexes = new PrebuiltIndexes(index);
 		
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -539,7 +539,7 @@ class IndexingOperation {
 
 	private Map mergeIndexes(IProgressMonitor monitor, boolean opened)
 			throws IndexingException {
-		Collection addedPluginIds = getAddedPlugins(index);
+		Collection<String> addedPluginIds = getAddedPlugins(index);
 		PrebuiltIndexes indexes = getIndexesToAdd(addedPluginIds);
 		PluginIndex[] pluginIndexes = indexes.getIndexes();
 		Map mergedDocs = null;

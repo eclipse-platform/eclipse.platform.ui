@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class StandaloneHelp extends EclipseController {
 		try {
 			StandaloneHelp help = new StandaloneHelp(args);
 
-			List helpCommand = Options.getHelpCommand();
+			List<String> helpCommand = Options.getHelpCommand();
 
 			if (help.executeCommand(helpCommand)) {
 				return;
@@ -109,12 +109,12 @@ public class StandaloneHelp extends EclipseController {
 	/**
 	 * @return true if commands contained a known command and it was executed
 	 */
-	private boolean executeCommand(List helpCommands) throws Exception {
+	private boolean executeCommand(List<String> helpCommands) throws Exception {
 
 		if (helpCommands.size() <= 0) {
 			return false;
 		}
-		String command = (String) helpCommands.get(0);
+		String command = helpCommands.get(0);
 
 		if ("start".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			start();
@@ -124,14 +124,14 @@ public class StandaloneHelp extends EclipseController {
 			return true;
 		} else if ("displayHelp".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (helpCommands.size() >= 2) {
-				displayHelp((String) helpCommands.get(1));
+				displayHelp(helpCommands.get(1));
 			} else {
 				displayHelp();
 			}
 			return true;
 		} else if ("displayHelpWindow".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (helpCommands.size() >= 2) {
-				displayHelpWindow((String) helpCommands.get(1));
+				displayHelpWindow(helpCommands.get(1));
 			} else {
 				displayHelpWindow();
 			}
@@ -149,17 +149,17 @@ public class StandaloneHelp extends EclipseController {
 			return executeUpdateCommand(command);
 		} else if ("displayContext".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (helpCommands.size() >= 4) {
-				displayContext((String) helpCommands.get(1), Integer
-						.parseInt((String) helpCommands.get(2)), Integer
-						.parseInt((String) helpCommands.get(3)));
+				displayContext(helpCommands.get(1), Integer
+						.parseInt(helpCommands.get(2)), Integer
+						.parseInt(helpCommands.get(3)));
 
 				return true;
 			}
 		} else if ("displayContextInfopop".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			if (helpCommands.size() >= 4) {
-				displayContextInfopop((String) helpCommands.get(1), Integer
-						.parseInt((String) helpCommands.get(2)), Integer
-						.parseInt((String) helpCommands.get(3)));
+				displayContextInfopop(helpCommands.get(1), Integer
+						.parseInt(helpCommands.get(2)), Integer
+						.parseInt(helpCommands.get(3)));
 				return true;
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,8 @@ public class Eclipse extends Thread {
 		ensureVmExists();
 	}
 	private void prepareEclipseCommand() {
-		List vmArgs = Options.getVmArgs();
-		List eclipseArgs = Options.getEclipseArgs();
+		List<String> vmArgs = Options.getVmArgs();
+		List<String> eclipseArgs = Options.getEclipseArgs();
 		cmdarray = new String[3 + vmArgs.size() + 1 + eclipseArgs.size()];
 		cmdarray[0] = new File(Options.getEclipseHome(), "eclipse").getAbsolutePath(); //$NON-NLS-1$
 		cmdarray[1] = "-vm"; //$NON-NLS-1$
@@ -65,8 +65,8 @@ public class Eclipse extends Thread {
 		}
 	}
 	private void prepareJavaCommand() throws Exception {
-		List vmArgs = Options.getVmArgs();
-		List eclipseArgs = Options.getEclipseArgs();
+		List<String> vmArgs = Options.getVmArgs();
+		List<String> eclipseArgs = Options.getEclipseArgs();
 		cmdarray = new String[1 + vmArgs.size() + 3 + eclipseArgs.size()];
 		cmdarray[0] = Options.getVm();
 		for (int i = 0; i < vmArgs.size(); i++) {

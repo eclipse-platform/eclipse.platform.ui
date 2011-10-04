@@ -53,12 +53,12 @@ public class RemoteStatusData {
 	 * Returns a subset of sites that cannot be connected.
 	 * May be empty, or may be the same as sites
 	 */
-	public static ArrayList checkSitesConnectivity(ArrayList sites)
+	public static ArrayList<URL> checkSitesConnectivity(ArrayList<URL> sites)
 	{
-		ArrayList badSites = new ArrayList();
+		ArrayList<URL> badSites = new ArrayList<URL>();
 		
 		for (int i=0;i<sites.size();i++)
-			if (!isConnected((URL)sites.get(i)))
+			if (!isConnected(sites.get(i)))
 				badSites.add(sites.get(i));
 		
 		return badSites;

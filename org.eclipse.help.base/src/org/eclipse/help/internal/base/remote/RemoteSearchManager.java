@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.search.ISearchHitCollector;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.QueryTooComplexException;
+import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.util.URLCoder;
 
 /*
@@ -70,7 +71,7 @@ public class RemoteSearchManager {
 							
 							RemoteSearchParser parser = new RemoteSearchParser();							
 							// parse the XML-serialized search results
-							List hits = parser.parse(in, new SubProgressMonitor(pm, 100));
+							List<SearchHit> hits = parser.parse(in, new SubProgressMonitor(pm, 100));
 							collector.addHits(hits, null);
 						} catch (IOException e) {
 							String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$

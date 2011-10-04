@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class StandaloneInfocenter extends EclipseController {
 		try {
 			StandaloneInfocenter infocenter = new StandaloneInfocenter(args);
 
-			List helpCommand = Options.getHelpCommand();
+			List<String> helpCommand = Options.getHelpCommand();
 
 			final String adminId = Options.getAdminId();
 			final String adminPassword = Options.getAdminPassword();
@@ -69,11 +69,11 @@ public class StandaloneInfocenter extends EclipseController {
 	/**
 	 * @return true if commands contained a known command and it was executed
 	 */
-	private boolean executeCommand(List helpCommand) throws Exception {
+	private boolean executeCommand(List<String> helpCommand) throws Exception {
 		if (helpCommand.size() <= 0) {
 			return false;
 		}
-		String command = (String) helpCommand.get(0);
+		String command = helpCommand.get(0);
 		if ("start".equalsIgnoreCase(command)) { //$NON-NLS-1$
 			start();
 			return true;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.help.internal.base.remote;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -215,13 +214,6 @@ public class HttpsUtility {
 	}
 	
 	private static void setTimeout(URLConnection conn, int milliseconds) {
-		Class conClass = conn.getClass();
-		try {
-			Method timeoutMethod = conClass.getMethod(
-					"setConnectTimeout", new Class[]{ int.class } ); //$NON-NLS-1$
-			timeoutMethod.invoke(conn, new Object[] { new Integer(milliseconds)} );
-		} catch (Exception e) {
-		     // If running on a 1.4 JRE an exception is expected, fall through
-		} 
+		conn.setConnectTimeout(milliseconds);
 	}
 }
