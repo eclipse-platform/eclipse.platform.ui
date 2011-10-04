@@ -582,6 +582,9 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 			if (oldSelectionProvider instanceof IPostSelectionProvider) {
 				((IPostSelectionProvider) oldSelectionProvider)
 						.removePostSelectionChangedListener(getPostSelectionChangedListener());
+			} else {
+				oldSelectionProvider
+						.removeSelectionChangedListener(getPostSelectionChangedListener());
 			}
 		}
 		if (selectionProvider != null) {
@@ -590,6 +593,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 			if (selectionProvider instanceof IPostSelectionProvider) {
 				((IPostSelectionProvider) selectionProvider)
 						.addPostSelectionChangedListener(getPostSelectionChangedListener());
+			} else {
+				selectionProvider.addSelectionChangedListener(getPostSelectionChangedListener());
 			}
 		}
 	}

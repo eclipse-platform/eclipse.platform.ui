@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -965,6 +965,8 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 				if (provider instanceof IPostSelectionProvider) {
 					((IPostSelectionProvider) provider)
 							.removePostSelectionChangedListener(postSelectionListener);
+				} else {
+					provider.removeSelectionChangedListener(postSelectionListener);
 				}
 			}
 		}
@@ -1000,6 +1002,8 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 				if (provider instanceof IPostSelectionProvider) {
 					((IPostSelectionProvider) provider)
 							.addPostSelectionChangedListener(postSelectionListener);
+				} else {
+					provider.addSelectionChangedListener(postSelectionListener);
 				}
 
 				/* BEGIN workaround for bug 319846 BEGIN */
