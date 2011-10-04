@@ -1813,6 +1813,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	private void editFont(FontDefinition definition, Display display) {
 		if (definition != null) {
 			final FontDialog fontDialog = new FontDialog(getShell());
+			fontDialog.setEffectsVisible(false);
 			fontDialog.setFontList(getFontValue(definition));
 			final FontData data = fontDialog.open();
 			if (data != null) {
