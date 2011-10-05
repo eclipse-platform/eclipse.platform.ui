@@ -2954,7 +2954,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPerspective dummyPerspective = null;
 		if (!revert) {
 			dummyPerspective = (MPerspective) modelService.cloneSnippet(application,
-					desc.getId());
+ desc.getId(),
+					window);
 		}
 
 		if (dummyPerspective == null) {
@@ -3225,7 +3226,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		MPerspective modelPerspective = (MPerspective) modelService.cloneSnippet(application,
-				perspective.getId());
+				perspective.getId(), window);
 
 		if (modelPerspective == null) {
 

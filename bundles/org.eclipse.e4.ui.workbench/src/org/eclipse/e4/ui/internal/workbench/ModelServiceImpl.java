@@ -42,6 +42,7 @@ import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
@@ -151,7 +152,8 @@ public class ModelServiceImpl implements EModelService {
 			MPlaceholder ph = (MPlaceholder) searchRoot;
 
 			// Don't search in shared areas unless the flag is set
-			if (!(ph.getRef() instanceof MArea) || (searchFlags & IN_SHARED_AREA) != 0) {
+			if (ph.getRef() != null
+					&& (!(ph.getRef() instanceof MArea) || (searchFlags & IN_SHARED_AREA) != 0)) {
 				findElementsRecursive(ph.getRef(), id, type, tagsToMatch, elements, searchFlags);
 			}
 		}
@@ -250,6 +252,11 @@ public class ModelServiceImpl implements EModelService {
 		EObject eObj = (EObject) element;
 		MUIElement clone = (MUIElement) EcoreUtil.copy(eObj);
 
+		// null out all the references
+		List<MPlaceholder> phList = findElements(clone, null, MPlaceholder.class, null);
+		for (MPlaceholder ph : phList)
+			ph.setRef(null);
+
 		if (snippetContainer != null) {
 			MUIElement snippet = findSnippet(snippetContainer, element.getElementId());
 			if (snippet != null)
@@ -265,7 +272,8 @@ public class ModelServiceImpl implements EModelService {
 	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneSnippet(org.eclipse.e4.ui.model.
 	 * application.MApplication, java.lang.String)
 	 */
-	public MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId) {
+	public MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId,
+			MWindow refWin) {
 		if (snippetContainer == null || snippetId == null || snippetId.length() == 0)
 			return null;
 
@@ -281,6 +289,18 @@ public class ModelServiceImpl implements EModelService {
 
 		EObject eObj = (EObject) elementToClone;
 		MUIElement element = (MUIElement) EcoreUtil.copy(eObj);
+
+		MUIElement appElement = refWin == null ? null : refWin.getParent();
+		if (appElement instanceof MApplication) {
+			EPlaceholderResolver resolver = ((MApplication) appElement).getContext().get(
+					EPlaceholderResolver.class);
+
+			// Re-resolve any placeholder references
+			List<MPlaceholder> phList = findElements(element, null, MPlaceholder.class, null);
+			for (MPlaceholder ph : phList)
+				resolver.resolvePlaceholderRef(ph, refWin);
+		}
+
 		return element;
 	}
 

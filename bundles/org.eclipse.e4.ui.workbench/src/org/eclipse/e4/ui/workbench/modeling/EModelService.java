@@ -177,9 +177,13 @@ public interface EModelService {
 	 *            The container of the snippet to clone used
 	 * @param snippetId
 	 *            The element id of the snippet to clone
+	 * @param refWin
+	 *            The window that Placeholder references should be resolved using
+	 * 
 	 * @return The cloned snippet or <code>null</code> if no snippet with the given id can be found
 	 */
-	public MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId);
+	public MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId,
+			MWindow refWin);
 
 	/**
 	 * Convenience method to find a snippet by id in a particular container
