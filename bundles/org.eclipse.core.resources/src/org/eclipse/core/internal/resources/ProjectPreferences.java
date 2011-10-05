@@ -346,7 +346,8 @@ public class ProjectPreferences extends EclipsePreferences {
 			return;
 		isWriting = true;
 		try {
-			super.flush();
+			// call the internal method because we don't want to be synchronized, we will do that ourselves later.
+			super.internalFlush();
 		} finally {
 			isWriting = false;
 		}
@@ -512,70 +513,71 @@ public class ProjectPreferences extends EclipsePreferences {
 				Policy.debug("Not saving preferences since there is no file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
-		Properties table = convertToProperties(new SortedProperties(), ""); //$NON-NLS-1$
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IResourceRuleFactory factory = workspace.getRuleFactory();
+		final BackingStoreException[] bse = new BackingStoreException[1];
 		try {
-			if (table.isEmpty()) {
-				IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-					public void run(IProgressMonitor monitor) throws CoreException {
-						// nothing to save. delete existing file if one exists.
-						if (fileInWorkspace.exists()) {
-							if (Policy.DEBUG_PREFERENCES)
-								Policy.debug("Deleting preference file: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
-							if (fileInWorkspace.isReadOnly()) {
-								IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, IWorkspace.VALIDATE_PROMPT);
-								if (!status.isOK())
-									throw new CoreException(status);
-							}
-							try {
-								fileInWorkspace.delete(true, null);
-							} catch (CoreException e) {
-								String message = NLS.bind(Messages.preferences_deleteException, fileInWorkspace.getFullPath());
-								log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null));
-							}
-						}
-					}
-				};
-				ISchedulingRule rule = factory.deleteRule(fileInWorkspace);
-				try {
-					ResourcesPlugin.getWorkspace().run(operation, rule, IResource.NONE, null);
-				} catch (OperationCanceledException e) {
-					throw new BackingStoreException(Messages.preferences_operationCanceled);
-				}
-				return;
-			}
-			table.put(VERSION_KEY, VERSION_VALUE);
-			// print the table to a string and remove the timestamp that Properties#store always adds
-			String s = removeTimestampFromTable(table);
-			final InputStream input = new BufferedInputStream(new ByteArrayInputStream(s.getBytes("UTF-8"))); //$NON-NLS-1$
-			final String finalQualifier = qualifier;
 			IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					if (fileInWorkspace.exists()) {
-						if (Policy.DEBUG_PREFERENCES)
-							Policy.debug("Setting preference file contents for: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
-						if (fileInWorkspace.isReadOnly()) {
-							IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, IWorkspace.VALIDATE_PROMPT);
-							if (!status.isOK())
-								throw new CoreException(status);
+					try {
+						Properties table = convertToProperties(new SortedProperties(), ""); //$NON-NLS-1$
+						// nothing to save. delete existing file if one exists.
+						if (table.isEmpty()) {
+							if (fileInWorkspace.exists()) {
+								if (Policy.DEBUG_PREFERENCES)
+									Policy.debug("Deleting preference file: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
+								if (fileInWorkspace.isReadOnly()) {
+									IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, IWorkspace.VALIDATE_PROMPT);
+									if (!status.isOK())
+										throw new CoreException(status);
+								}
+								try {
+									fileInWorkspace.delete(true, null);
+								} catch (CoreException e) {
+									String message = NLS.bind(Messages.preferences_deleteException, fileInWorkspace.getFullPath());
+									log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null));
+								}
+							}
+							return;
 						}
-						// set the contents
-						fileInWorkspace.setContents(input, IResource.KEEP_HISTORY, null);
-					} else {
-						// create the file
-						IFolder folder = (IFolder) fileInWorkspace.getParent();
-						if (!folder.exists()) {
+						table.put(VERSION_KEY, VERSION_VALUE);
+						// print the table to a string and remove the timestamp that Properties#store always adds
+						String s = removeTimestampFromTable(table);
+						final InputStream input = new BufferedInputStream(new ByteArrayInputStream(s.getBytes("UTF-8"))); //$NON-NLS-1$
+						final String finalQualifier = qualifier;
+						if (fileInWorkspace.exists()) {
 							if (Policy.DEBUG_PREFERENCES)
-								Policy.debug("Creating parent preference directory: " + folder.getFullPath()); //$NON-NLS-1$
-							folder.create(IResource.NONE, true, null);
+								Policy.debug("Setting preference file contents for: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
+							if (fileInWorkspace.isReadOnly()) {
+								IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, IWorkspace.VALIDATE_PROMPT);
+								if (!status.isOK()) {
+									input.close();
+									throw new CoreException(status);
+								}
+							}
+							// set the contents
+							fileInWorkspace.setContents(input, IResource.KEEP_HISTORY, null);
+						} else {
+							// create the file
+							IFolder folder = (IFolder) fileInWorkspace.getParent();
+							if (!folder.exists()) {
+								if (Policy.DEBUG_PREFERENCES)
+									Policy.debug("Creating parent preference directory: " + folder.getFullPath()); //$NON-NLS-1$
+								folder.create(IResource.NONE, true, null);
+							}
+							if (Policy.DEBUG_PREFERENCES)
+								Policy.debug("Creating preference file: " + fileInWorkspace.getLocation()); //$NON-NLS-1$
+							fileInWorkspace.create(input, IResource.NONE, null);
 						}
-						if (Policy.DEBUG_PREFERENCES)
-							Policy.debug("Creating preference file: " + fileInWorkspace.getLocation()); //$NON-NLS-1$
-						fileInWorkspace.create(input, IResource.NONE, null);
+						if (PREFS_DERIVED_QUALIFIER.equals(finalQualifier))
+							fileInWorkspace.setDerived(true, null);
+					} catch (BackingStoreException e) {
+						bse[0] = e;
+					} catch (IOException e) {
+						String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
+						log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+						bse[0] = new BackingStoreException(message);
 					}
-					if (PREFS_DERIVED_QUALIFIER.equals(finalQualifier))
-						fileInWorkspace.setDerived(true, null);
 				}
 			};
 			//don't bother with scheduling rules if we are already inside an operation
@@ -584,16 +586,14 @@ public class ProjectPreferences extends EclipsePreferences {
 					operation.run(null);
 				} else {
 					// we might: create the .settings folder, create the file, modify the file, or set derived flag for the file.
-					ISchedulingRule rule = MultiRule.combine(new ISchedulingRule[] {factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace), factory.derivedRule(fileInWorkspace)});
+					ISchedulingRule rule = MultiRule.combine(new ISchedulingRule[] {factory.deleteRule(fileInWorkspace), factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace), factory.derivedRule(fileInWorkspace)});
 					workspace.run(operation, rule, IResource.NONE, null);
+					if (bse[0] != null)
+						throw bse[0];
 				}
 			} catch (OperationCanceledException e) {
 				throw new BackingStoreException(Messages.preferences_operationCanceled);
 			}
-		} catch (IOException e) {
-			String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
-			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
-			throw new BackingStoreException(message);
 		} catch (CoreException e) {
 			String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
