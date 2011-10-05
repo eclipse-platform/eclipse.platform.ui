@@ -29,26 +29,53 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
  */
 public interface EModelService {
 	// Insertion constants
+
+	/** Insert the new element above the existing one */
 	public static final int ABOVE = 0;
+
+	/** Insert the new element below the existing one */
 	public static final int BELOW = 1;
+
+	/** Insert the new element to the left of the existing one */
 	public static final int LEFT_OF = 2;
+
+	/** Insert the new element to the right of the existing one */
 	public static final int RIGHT_OF = 3;
 
 	// Search modifiers / Location Constants
+
+	/** Returned Location if the element's parent chain does not relate to the MApplication's model */
 	public static final int NOT_IN_UI = 0x00;
+
+	/** Returned Location if the element is in the UI but not in an MPerspective */
 	public static final int OUTSIDE_PERSPECTIVE = 0x01;
+
+	/** Returned Location if the element is in the currently active perspective */
 	public static final int IN_ACTIVE_PERSPECTIVE = 0x02;
+
+	/** Returned Location if the element is in a non-active perspective */
 	public static final int IN_ANY_PERSPECTIVE = 0x04;
+
+	/** Returned Location if the element is contained in an MArea */
 	public static final int IN_SHARED_AREA = 0x08;
+
+	/** Returned Location if the element is in an MTrimBar */
 	public static final int IN_TRIM = 0x10;
 
 	// 'Standard' searches
-	public static final int UI_LAYOUT = OUTSIDE_PERSPECTIVE | IN_ACTIVE_PERSPECTIVE
-			| IN_SHARED_AREA;
+
+	/** Searches for elements in the UI that the user is currently seeing (excluding trim) */
 	public static final int PRESENTATION = OUTSIDE_PERSPECTIVE | IN_ACTIVE_PERSPECTIVE
 			| IN_SHARED_AREA;
+
+	/** Searches for elements in the UI that the user is currently seeing */
 	public static final int ANYWHERE = OUTSIDE_PERSPECTIVE | IN_ANY_PERSPECTIVE | IN_SHARED_AREA
 			| IN_TRIM;
+
+	/**
+	 * Searches for elements in the UI that the user is currently seeing that are OUTSIDE the
+	 * perspective
+	 */
 	public static final int GLOBAL = OUTSIDE_PERSPECTIVE | IN_SHARED_AREA;
 
 	/**

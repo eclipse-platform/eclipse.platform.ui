@@ -179,15 +179,7 @@ public class ModelServiceImpl implements EModelService {
 		return elements;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.modeling.EModelService#findPerspectiveElements(org.eclipse.e4
-	 * .ui.model.application.ui.MUIElement, java.lang.String, java.lang.Class, java.util.List,
-	 * boolean)
-	 */
-	public <T> List<T> findPerspectiveElements(MUIElement searchRoot, String id, Class<T> clazz,
+	private <T> List<T> findPerspectiveElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch) {
 		List<T> elements = new ArrayList<T>();
 		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements, PRESENTATION);
@@ -204,9 +196,9 @@ public class ModelServiceImpl implements EModelService {
 		if (id == null || id.length() == 0)
 			return null;
 
-		List elements = findElements(searchRoot, id, null, null);
+		List<MUIElement> elements = findElements(searchRoot, id, MUIElement.class, null);
 		if (elements.size() > 0)
-			return (MUIElement) elements.get(0);
+			return elements.get(0);
 		return null;
 	}
 
@@ -471,44 +463,6 @@ public class ModelServiceImpl implements EModelService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.modeling.EModelService#swap(org.eclipse.e4.ui.model.application.
-	 * MUIElement, org.eclipse.e4.ui.model.application.MPlaceholder)
-	 */
-	public void swap(MPlaceholder placeholder) {
-		MUIElement element = placeholder.getRef();
-
-		MElementContainer<MUIElement> elementParent = element.getParent();
-		int elementIndex = elementParent.getChildren().indexOf(element);
-		MElementContainer<MUIElement> phParent = placeholder.getParent();
-		int phIndex = phParent.getChildren().indexOf(placeholder);
-
-		// Remove the two elements from their respective parents
-		elementParent.getChildren().remove(element);
-		phParent.getChildren().remove(placeholder);
-
-		// swap over the UIElement info
-		boolean onTop = element.isOnTop();
-		boolean vis = element.isVisible();
-		boolean tbr = element.isToBeRendered();
-
-		element.setOnTop(placeholder.isOnTop());
-		element.setVisible(placeholder.isVisible());
-		element.setToBeRendered(placeholder.isToBeRendered());
-
-		placeholder.setOnTop(onTop);
-		placeholder.setVisible(vis);
-		placeholder.setToBeRendered(tbr);
-
-		// Add the elements back into the new parents
-		elementParent.getChildren().add(elementIndex, placeholder);
-		phParent.getChildren().add(phIndex, element);
-
-	}
-
 	private void combine(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
 			MPartSashContainer newSash, boolean newFirst, int ratio) {
 		MElementContainer<MUIElement> curParent = relTo.getParent();
@@ -636,7 +590,7 @@ public class ModelServiceImpl implements EModelService {
 			curParent = current.getParent();
 		}
 
-		MTrimmedWindow newWindow = BasicFactoryImpl.INSTANCE.createTrimmedWindow();
+		MTrimmedWindow newWindow = MBasicFactory.INSTANCE.createTrimmedWindow();
 
 		// HACK! should either be args or should be computed from the control being detached
 		newWindow.setX(x);
@@ -657,8 +611,11 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	/**
+	 * Wraps an element in a PartStack if it's a MPart or an MPlaceholder that references an MPart
+	 * 
 	 * @param element
-	 * @return
+	 *            The element to be wrapped
+	 * @return The wrapper for the given element
 	 */
 	private MWindowElement wrapElementForWindow(MPartSashContainerElement element) {
 		if (element instanceof MPlaceholder) {
@@ -709,7 +666,7 @@ public class ModelServiceImpl implements EModelService {
 	public MWindow getTopLevelWindowFor(MUIElement element) {
 		EObject eObj = (EObject) element;
 		while (eObj != null && !(eObj.eContainer() instanceof MApplication))
-			eObj = (EObject) eObj.eContainer();
+			eObj = eObj.eContainer();
 
 		if (eObj instanceof MWindow)
 			return (MWindow) eObj;
