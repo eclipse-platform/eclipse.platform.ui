@@ -117,13 +117,11 @@ public class TrackableComputationExt extends Computation {
 		if (eventType == ContextChangeEvent.DISPOSE) {
 			if (originatingContext.equals(eventsContext)) {
 				((EclipseContext) originatingContext).removeRAT(this);
-				invalidateComputation();
 				return false;
 			}
 		}
 		if (!result) {
 			((EclipseContext) originatingContext).removeRAT(this);
-			invalidateComputation();
 		}
 		return result;
 	}

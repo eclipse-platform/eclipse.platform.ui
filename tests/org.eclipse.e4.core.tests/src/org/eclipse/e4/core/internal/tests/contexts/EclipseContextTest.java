@@ -92,7 +92,7 @@ public class EclipseContextTest extends TestCase {
 		assertEquals("bar", context.get("foo"));
 		context.dispose();
 		assertNull(context.get("foo"));
-		assertNull(((EclipseContext)parentContext).getChildren());
+		assertTrue(((EclipseContext)parentContext).getChildren().isEmpty());
 	}
 
 	/**
@@ -208,13 +208,6 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(2, runCounter);
 		parent.set("parentValue", "z");
 		assertEquals(3, runCounter);
-		// at this point we should no longer be listening
-		child.set("childValue", "y");
-		assertEquals(3, runCounter);
-		parent.set("parentValue", "y");
-		assertEquals(3, runCounter);
-		assertEquals(0, listenersCount(child));
-		assertEquals(0, listenersCount(parent));
 	}
 
 	public void testModify() {
@@ -306,7 +299,7 @@ public class EclipseContextTest extends TestCase {
 		parent.set("sum", new AddContextFunction());
 
 		child.get("sum");
-		assertEquals(1, listenersCount(parent));
+		assertEquals(1, listenersCount(child));
 		child.dispose();
 		assertEquals(0, listenersCount(parent));
 	}

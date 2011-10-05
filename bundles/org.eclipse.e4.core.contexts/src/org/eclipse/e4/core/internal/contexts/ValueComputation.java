@@ -34,24 +34,20 @@ public class ValueComputation extends Computation {
 	}
 
 	public void handleInvalid(ContextChangeEvent event, Set<Scheduled> scheduled) {
-		int eventType = event.getEventType();
-
-		boolean containerDisposed = (eventType == ContextChangeEvent.DISPOSE && event.getContext() == originatingContext);
-		boolean definitionChanged = (eventType != ContextChangeEvent.RECALC && name.equals(event.getName()));
-
-		if (containerDisposed || definitionChanged)
-			invalidateComputation();
-
 		if (cachedValue == NotAValue) // already invalidated
 			return;
-
 		cachedValue = NotAValue;
 		originatingContext.invalidate(name, ContextChangeEvent.RECALC, event.getOldValue(), scheduled);
 	}
 
+	public boolean shouldRemove(ContextChangeEvent event) {
+		int eventType = event.getEventType();
+		boolean containerDisposed = (eventType == ContextChangeEvent.DISPOSE && event.getContext() == originatingContext);
+		boolean definitionChanged = (eventType != ContextChangeEvent.RECALC && name.equals(event.getName()));
+		return (containerDisposed || definitionChanged);
+	}
+
 	public Object get() {
-		if (!isValid())
-			throw new IllegalArgumentException("Reusing invalidated computation"); //$NON-NLS-1$
 		if (cachedValue != NotAValue)
 			return cachedValue;
 		if (this.computing)
@@ -61,7 +57,6 @@ public class ValueComputation extends Computation {
 		computing = true;
 		try {
 			cachedValue = function.compute(originatingContext);
-			validComputation = true;
 		} finally {
 			computing = false;
 			originatingContext.popComputation(this);

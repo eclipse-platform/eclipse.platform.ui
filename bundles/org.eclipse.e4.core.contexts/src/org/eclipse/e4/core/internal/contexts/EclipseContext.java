@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.WeakHashMap;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -73,7 +72,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
-	private Map<String, WeakHashMap<Computation, Object>> listeners = Collections.synchronizedMap(new HashMap<String, WeakHashMap<Computation, Object>>(10, 0.8f));
+	private Map<String, HashSet<Computation>> listeners = Collections.synchronizedMap(new HashMap<String, HashSet<Computation>>(10, 0.8f));
 	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
 	private Set<Computation> activeRATs = new HashSet<Computation>();
 
@@ -108,11 +107,14 @@ public class EclipseContext implements IEclipseContext {
 			debugAddOn.notify(this, IEclipseContextDebugger.EventType.CONSTRUCTED, null);
 	}
 
+	final static private Set<EclipseContext> noChildren = new HashSet<EclipseContext>(0);
+
 	public Set<EclipseContext> getChildren() {
-		if (children.size() == 0)
-			return null;
-		Set<EclipseContext> result = new HashSet<EclipseContext>(children.size());
+		Set<EclipseContext> result;
 		synchronized (children) {
+			if (children.size() == 0)
+				return noChildren;
+			result = new HashSet<EclipseContext>(children.size());
 			for (Iterator<WeakReference<EclipseContext>> i = children.iterator(); i.hasNext();) {
 				EclipseContext referredContext = i.next().get();
 				if (referredContext == null) {
@@ -126,6 +128,7 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public boolean containsKey(String name) {
+		trackAccess(name);
 		return containsKey(name, false);
 	}
 
@@ -151,30 +154,16 @@ public class EclipseContext implements IEclipseContext {
 	 */
 	public void dispose() {
 		// dispose of child contexts first
-		EclipseContext[] currentChildren = null;
-		synchronized (children) {
-			if (children.size() > 0) {
-				Set<EclipseContext> localCopy = new HashSet<EclipseContext>(children.size());
-				for (WeakReference<EclipseContext> childContextRef : children) {
-					EclipseContext childContext = childContextRef.get();
-					if (childContext != null)
-						localCopy.add(childContext);
-				}
-				currentChildren = new EclipseContext[localCopy.size()];
-				localCopy.toArray(currentChildren);
-				children.clear(); // just in case
-			}
-		}
-		if (currentChildren != null) {
-			for (EclipseContext childContext : currentChildren) {
-				childContext.dispose();
-			}
+		for (EclipseContext childContext : getChildren()) {
+			childContext.dispose();
 		}
 
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
 		Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
 		Set<Computation> allComputations = getListeners();
 		listeners.clear();
+		allComputations.addAll(activeRATs);
+		activeRATs.clear();
 		for (Computation computation : allComputations) {
 			computation.handleInvalid(event, scheduled);
 		}
@@ -207,18 +196,19 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public Object get(String name) {
+		trackAccess(name);
 		return internalGet(this, name, false);
 	}
 
 	public Object getLocal(String name) {
+		trackAccess(name);
 		return internalGet(this, name, true);
 	}
 
 	public Object internalGet(EclipseContext originatingContext, String name, boolean local) {
-		trackAccess(name);
 		if (this == originatingContext) {
 			ValueComputation valueComputation = localValueComputations.get(name);
-			if (valueComputation != null && valueComputation.isValid())
+			if (valueComputation != null)
 				return valueComputation.get();
 		}
 
@@ -235,26 +225,15 @@ public class EclipseContext implements IEclipseContext {
 		if (result != null) {
 			if (result instanceof IContextFunction) {
 				ValueComputation valueComputation = new ValueComputation(name, originatingContext, ((IContextFunction) result));
-
 				// do calculations before adding listeners
 				result = valueComputation.get();
-
 				originatingContext.localValueComputations.put(name, valueComputation);
-
-				// need to manually add dependency as the computation haven't being created yet at the time 
-				// we walked context hierarchy to find its definition
-				for (EclipseContext step = originatingContext; step != null; step = step.getParent()) {
-					step.addDependency(name, valueComputation);
-					if (step == this)
-						break;
-					step.addDependency(PARENT, valueComputation);
-				}
 			}
 			return result;
 		}
 		// 3. delegate to parent
 		if (!local) {
-			IEclipseContext parent = (IEclipseContext) getLocal(PARENT);
+			IEclipseContext parent = (IEclipseContext) localValues.get(PARENT);
 			if (parent != null) {
 				return ((EclipseContext) parent).internalGet(originatingContext, name, local);
 			}
@@ -269,35 +248,30 @@ public class EclipseContext implements IEclipseContext {
 	public void invalidate(String name, int eventType, Object oldValue, Set<Scheduled> scheduled) {
 		ContextChangeEvent event = new ContextChangeEvent(this, eventType, null, name, oldValue);
 		ValueComputation computation = localValueComputations.get(name);
-		if (computation != null && computation.isValid()) {
+		if (computation != null) {
+			if (computation.shouldRemove(event)) {
+				localValueComputations.remove(name);
+				Collection<HashSet<Computation>> allListeners = listeners.values();
+				for (HashSet<Computation> group : allListeners) {
+					group.remove(computation);
+				}
+			}
 			computation.handleInvalid(event, scheduled);
 		}
-		WeakHashMap<Computation, Object> namedComputations = listeners.get(name);
+		HashSet<Computation> namedComputations = listeners.get(name);
 		if (namedComputations != null) {
-			int invalidListenersCount = 0;
-			for (Computation listener : namedComputations.keySet()) {
-				if (listener.isValid())
-					listener.handleInvalid(event, scheduled);
-				else
-					invalidListenersCount++;
+			for (Computation listener : namedComputations) {
+				listener.handleInvalid(event, scheduled);
 			}
-			if (invalidListenersCount == namedComputations.size()) {
-				// all the listeners are invalid for this name
-				listeners.remove(name);
-			} else if (invalidListenersCount > 10 && (invalidListenersCount << 1) > namedComputations.size()) {
-				// more than half of listeners are invalid, clean the listener list
-				WeakHashMap<Computation, Object> tmp = new WeakHashMap<Computation, Object>(namedComputations.size() - invalidListenersCount, 0.75f);
-				for (Computation listener : namedComputations.keySet()) {
-					if (listener.isValid())
-						tmp.put(listener, null);
-				}
-				listeners.put(name, tmp);
-			}
+		}
+
+		// invalidate this name in child contexts
+		for (EclipseContext childContext : getChildren()) {
+			childContext.invalidate(name, eventType, oldValue, scheduled);
 		}
 	}
 
 	private boolean isSetLocally(String name) {
-		trackAccess(name);
 		return localValues.containsKey(name);
 	}
 
@@ -320,6 +294,11 @@ public class EclipseContext implements IEclipseContext {
 
 	public void removeRAT(Computation computation) {
 		activeRATs.remove(computation);
+		// also remove from listeners
+		Collection<HashSet<Computation>> allListeners = listeners.values();
+		for (HashSet<Computation> group : allListeners) {
+			group.remove(computation);
+		}
 	}
 
 	protected void processScheduled(Set<Scheduled> scheduledList) {
@@ -330,9 +309,6 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public void set(String name, Object value) {
-		if (DebugHelper.DEBUG_NAMES)
-			System.out.println("[context] set(" + name + ',' + value + ")" + " on " + toString());//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
 		if (PARENT.equals(name)) {
 			setParent((IEclipseContext) value);
 			return;
@@ -373,7 +349,6 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public EclipseContext getParent() {
-		trackAccess(PARENT);
 		return (EclipseContext) localValues.get(PARENT);
 	}
 
@@ -411,15 +386,12 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public void addDependency(String name, Computation computation) {
-		WeakHashMap<Computation, Object> nameListeners = listeners.get(name);
+		HashSet<Computation> nameListeners = listeners.get(name);
 		if (nameListeners == null) {
-			nameListeners = new WeakHashMap<Computation, Object>(30, 0.75f);
+			nameListeners = new HashSet<Computation>(30, 0.75f);
 			listeners.put(name, nameListeners);
 		}
-		// XXX a new computation (valid) might be equals to an old computation (invalid)
-		if (nameListeners.containsKey(computation))
-			nameListeners.remove(computation);
-		nameListeners.put(computation, null);
+		nameListeners.add(computation);
 	}
 
 	public void declareModifiable(String name) {
@@ -456,14 +428,11 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public Set<Computation> getListeners() {
-		Collection<WeakHashMap<Computation, Object>> collection = listeners.values();
+		Collection<HashSet<Computation>> collection = listeners.values();
 		Set<Computation> comps = new HashSet<Computation>();
 
-		for (WeakHashMap<Computation, Object> map : collection) {
-			for (Computation comp : map.keySet()) {
-				if (comp.isValid())
-					comps.add(comp);
-			}
+		for (HashSet<Computation> tmp : collection) {
+			comps.addAll(tmp);
 		}
 		return comps;
 	}
@@ -473,9 +442,8 @@ public class EclipseContext implements IEclipseContext {
 		// Add "boolean inReparent" on the root context and process right away?
 		processWaiting();
 		// 1) everybody who depends on me: I need to collect combined list of names injected
-		Set<String> tmp = listeners.keySet(); // clone internal name list
-		Set<String> usedNames = new HashSet<String>(tmp.size());
-		usedNames.addAll(tmp);
+		Set<String> usedNames = new HashSet<String>();
+		collectDependentNames(usedNames);
 
 		// 2) for each used name:
 		for (Iterator<String> i = usedNames.iterator(); i.hasNext();) {
@@ -487,8 +455,25 @@ public class EclipseContext implements IEclipseContext {
 			if (oldValue != newValue)
 				invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
 		}
+
+		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.ADDED, null, null, null);
+		for (Computation computation : localValueComputations.values()) {
+			Collection<HashSet<Computation>> allListeners = listeners.values();
+			for (HashSet<Computation> group : allListeners) {
+				group.remove(computation);
+			}
+			computation.handleInvalid(event, scheduled);
+		}
 		localValueComputations.clear();
-		// XXX localValueComputations -> all invalidate
+	}
+
+	private void collectDependentNames(Set<String> usedNames) {
+		Set<String> tmp = listeners.keySet(); // clone internal name list
+		usedNames.addAll(tmp);
+
+		for (EclipseContext childContext : getChildren()) {
+			childContext.collectDependentNames(usedNames);
+		}
 	}
 
 	public void processWaiting() {
@@ -599,6 +584,7 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public IEclipseContext getActiveChild() {
+		trackAccess(ACTIVE_CHILD);
 		return (EclipseContext) internalGet(this, ACTIVE_CHILD, true);
 	}
 
@@ -664,10 +650,8 @@ public class EclipseContext implements IEclipseContext {
 		Map<String, Object> result = new HashMap<String, Object>(localValueComputations.size());
 		for (String string : localValueComputations.keySet()) {
 			ValueComputation vc = localValueComputations.get(string);
-			if (vc == null)
-				continue;
-			if (vc.isValid())
-				result.put(string, localValueComputations.get(string).get());
+			if (vc != null)
+				result.put(string, vc.get());
 		}
 		return result;
 	}
@@ -682,14 +666,11 @@ public class EclipseContext implements IEclipseContext {
 
 	// This method is for debug only, do not use externally
 	public Set<Computation> getListeners(String name) {
-		WeakHashMap<Computation, Object> tmp = listeners.get(name);
+		HashSet<Computation> tmp = listeners.get(name);
 		if (tmp == null)
 			return null;
 		Set<Computation> result = new HashSet<Computation>(tmp.size());
-		for (Computation listener : tmp.keySet()) {
-			if (listener.isValid())
-				result.add(listener);
-		}
+		result.addAll(tmp);
 		return result;
 	}
 
