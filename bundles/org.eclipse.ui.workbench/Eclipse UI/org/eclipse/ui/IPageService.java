@@ -66,18 +66,20 @@ public interface IPageService {
     public IWorkbenchPage getActivePage();
 
     /**
-     * Removes the given page listener.
-     * Has no affect if an identical listener is not registered.
-     *
-     * @param listener a page listener
-     */
+	 * Removes the given page listener. Has no effect if an identical listener
+	 * is not registered.
+	 * 
+	 * @param listener
+	 *            a page listener
+	 */
     public void removePageListener(IPageListener listener);
 
     /**
-     * Removes the given page's perspective listener.
-     * Has no affect if an identical listener is not registered.
-     *
-     * @param listener a perspective listener
-     */
+	 * Removes the given page's perspective listener. Has no effect if an
+	 * identical listener is not registered.
+	 * 
+	 * @param listener
+	 *            a perspective listener
+	 */
     public void removePerspectiveListener(IPerspectiveListener listener);
 }

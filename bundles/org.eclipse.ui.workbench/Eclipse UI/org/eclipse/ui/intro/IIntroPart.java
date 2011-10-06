@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -194,11 +194,12 @@ public interface IIntroPart extends IAdaptable {
     public String getTitle();
 
     /**
-     * Removes the given property listener from this intro part.
-     * Has no affect if an identical listener is not registered.
-     *
-     * @param listener a property listener
-     */
+	 * Removes the given property listener from this intro part. Has no effect
+	 * if an identical listener is not registered.
+	 * 
+	 * @param listener
+	 *            a property listener
+	 */
     public void removePropertyListener(IPropertyListener listener);
 
     /**
