@@ -32,16 +32,9 @@ public class LaunchViewMessages extends NLS {
     public static String BreadcrumbDropDownAutoExpandAction_tooltip;
     public static String BreadcrumbDropDownAutoExpandAction_description;
 
-    public static String LaunchView_ToolBarMenu_label;
     public static String DebugToolBarAction_View_label;
     public static String DebugToolBarAction_View_tooltip;
     public static String DebugToolBarAction_View_description;
-    public static String DebugToolBarAction_Window_label;
-    public static String DebugToolBarAction_Window_tooltip;
-    public static String DebugToolBarAction_Window_description;
-    public static String DebugToolBarAction_Both_label;
-    public static String DebugToolBarAction_Both_tooltip;
-    public static String DebugToolBarAction_Both_description;
 
 	static {
 		// load message values from bundle file
