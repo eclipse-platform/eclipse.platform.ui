@@ -572,6 +572,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 				menu.setVisible(true);
 			}
 		};
+		popupMenuAction.setToolTipText(WorkbenchMessages.FilteredPreferenceDialog_FilterToolTip);
 		historyManager.add(popupMenuAction);
 		IHandlerService service = (IHandlerService) PlatformUI.getWorkbench()
 				.getService(IHandlerService.class);

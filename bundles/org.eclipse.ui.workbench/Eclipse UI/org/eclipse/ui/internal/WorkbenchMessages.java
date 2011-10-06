@@ -494,6 +494,7 @@ public class WorkbenchMessages extends NLS {
 
 	public static String FilteredPreferenceDialog_PreferenceSaveFailed;
 	public static String FilteredPreferenceDialog_Resize;
+	public static String FilteredPreferenceDialog_FilterToolTip;
 	
 	public static String FileExtension_fileTypeMessage;
 	public static String FileExtension_fileTypeLabel;
