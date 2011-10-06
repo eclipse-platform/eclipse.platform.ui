@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,10 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
@@ -187,6 +189,28 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 
 			public void focusLost(FocusEvent e) {
 				cancel(dialog);
+			}
+		});
+
+		table.addMouseMoveListener(new MouseMoveListener() {
+			TableItem fLastItem = null;
+
+			public void mouseMove(MouseEvent e) {
+				if (table.equals(e.getSource())) {
+					Object o = table.getItem(new Point(e.x, e.y));
+					if (fLastItem == null ^ o == null) {
+						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(
+								SWT.CURSOR_HAND));
+					}
+					if (o instanceof TableItem) {
+						if (!o.equals(fLastItem)) {
+							fLastItem = (TableItem) o;
+							table.setSelection(new TableItem[] { fLastItem });
+						}
+					} else if (o == null) {
+						fLastItem = null;
+					}
+				}
 			}
 		});
 

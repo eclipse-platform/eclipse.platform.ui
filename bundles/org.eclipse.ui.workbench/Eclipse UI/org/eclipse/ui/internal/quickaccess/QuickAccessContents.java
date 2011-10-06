@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -453,6 +454,28 @@ public abstract class QuickAccessContents {
 					TableItem selection = table.getSelection()[0];
 					if (selection.equals(o))
 						handleSelection();
+				}
+			}
+		});
+
+		table.addMouseMoveListener(new MouseMoveListener() {
+			TableItem lastItem = null;
+
+			public void mouseMove(MouseEvent e) {
+				if (table.equals(e.getSource())) {
+					Object o = table.getItem(new Point(e.x, e.y));
+					if (lastItem == null ^ o == null) {
+						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(
+								SWT.CURSOR_HAND));
+					}
+					if (o instanceof TableItem) {
+						if (!o.equals(lastItem)) {
+							lastItem = (TableItem) o;
+							table.setSelection(new TableItem[] { lastItem });
+						}
+					} else if (o == null) {
+						lastItem = null;
+					}
 				}
 			}
 		});
