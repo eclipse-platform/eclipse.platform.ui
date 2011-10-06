@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import com.ibm.icu.text.Collator;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,9 +30,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
-
+import java.util.StringTokenizer;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -70,7 +70,6 @@ import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 import org.eclipse.ui.internal.util.Util;
 
-import com.ibm.icu.text.Collator;
 
 /**
  * Provides access to the collection of defined editors for resource types.
@@ -647,11 +646,12 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
         Reader reader = null;
+        FileInputStream stream = null;
         try {
             // Get the editors defined in the preferences store
             String xmlString = store.getString(IPreferenceConstants.EDITORS);
             if (xmlString == null || xmlString.length() == 0) {
-                FileInputStream stream = new FileInputStream(workbenchStatePath
+                stream = new FileInputStream(workbenchStatePath
                         .append(IWorkbenchConstants.EDITOR_FILE_NAME)
                         .toOSString());
                 reader = new BufferedReader(new InputStreamReader(stream,
@@ -699,13 +699,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
                 }
             }
         } catch (IOException e) {
-            try {
-                if (reader != null) {
-					reader.close();
-				}
-            } catch (IOException ex) {
-                e.printStackTrace();
-            }
             //Ignore this as the workbench may not yet have saved any state
             return false;
         } catch (WorkbenchException e) {
@@ -713,6 +706,15 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
                     WorkbenchMessages.EditorRegistry_errorMessage, 
                     e.getStatus());
             return false;
+		} finally {
+			try {
+				if (reader != null) {
+					reader.close();
+				} else if (stream != null)
+					stream.close();
+			} catch (IOException ex) {
+				WorkbenchPlugin.log("Error reading editors: Could not close steam", ex); //$NON-NLS-1$
+			}
         }
 
         return true;
@@ -872,11 +874,12 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
         Reader reader = null;
+        FileInputStream stream = null;
         try {
             // Get the resource types
             String xmlString = store.getString(IPreferenceConstants.RESOURCES);
             if (xmlString == null || xmlString.length() == 0) {
-                FileInputStream stream = new FileInputStream(workbenchStatePath
+                stream = new FileInputStream(workbenchStatePath
                         .append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME)
                         .toOSString());
                 reader = new BufferedReader(new InputStreamReader(stream,
@@ -887,13 +890,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             // Read the defined resources into the table
             readResources(editorTable, reader);
         } catch (IOException e) {
-            try {
-                if (reader != null) {
-					reader.close();
-				}
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
             MessageDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
                     WorkbenchMessages.EditorRegistry_errorMessage);
             return false;
@@ -902,6 +898,16 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
                     WorkbenchMessages.EditorRegistry_errorMessage,
                     e.getStatus());
             return false;
+        } finally {
+            try {
+                if (reader != null) {
+					reader.close();
+				} else if (stream != null) {
+                	stream.close();
+				}
+            } catch (IOException ex) {
+				WorkbenchPlugin.log("Error reading resources: Could not close steam", ex); //$NON-NLS-1$
+            }
         }
         return true;
 
