@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -219,8 +219,7 @@ public class TypeFilteringDialog extends SelectionDialog {
         listViewer.getTable().setLayoutData(data);
         listViewer.getTable().setFont(parent.getFont());
         listViewer.setLabelProvider(FileEditorMappingLabelProvider.INSTANCE);
-        listViewer
-                .setContentProvider(FileEditorMappingContentProvider.INSTANCE);
+		listViewer.setContentProvider(ArrayContentProvider.getInstance());
         listViewer.setComparator(new ViewerComparator());
         addSelectionButtons(composite);
         createUserEntryGroup(composite);
