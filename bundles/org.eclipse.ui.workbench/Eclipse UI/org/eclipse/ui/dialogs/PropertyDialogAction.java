@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - Bug 294628 multiple selection
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -94,13 +95,13 @@ public class PropertyDialogAction extends SelectionProviderAction {
     }
 
 	/**
-	 * Returns whether the provided object has pages registered in the property
+	 * Returns whether the provided selection has pages registered in the property
 	 * page manager.
 	 * 
 	 * @param object
 	 * @return boolean
 	 */
-	private boolean hasPropertyPagesFor(Object object) {
+	private boolean hasPropertyPagesFor(IStructuredSelection object) {
 		return PropertyPageContributorManager.getManager().getApplicableContributors(object).size() != 0;
 	}
 
@@ -115,7 +116,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * state of the action on each selection change.
 	 * </p>
 	 * 
-	 * @return <code>true</code> if the selection is of size 1 and there are
+	 * @return <code>true</code> if the selection is not empty and there are
 	 *         property pages for the selected element, and <code>false</code>
 	 *         otherwise
 	 */
@@ -128,7 +129,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 
 	/**
 	 * Returns whether this action is applicable to the current selection. This
-	 * checks that the selection is of size 1, and checks with the workbench's
+	 * checks that the selection is not empty, and checks with the workbench's
 	 * property page manager to see if there are any property pages registered
 	 * for the selected element's type.
 	 * <p>
@@ -138,12 +139,12 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * 
 	 * @param selection
 	 *            The selection to test
-	 * @return <code>true</code> if the selection is of size 1 and there are
+	 * @return <code>true</code> if the selection is of not empty and there are
 	 *         property pages for the selected element, and <code>false</code>
 	 *         otherwise
 	 */
 	public boolean isApplicableForSelection(IStructuredSelection selection) {
-		return selection.size() == 1 && hasPropertyPagesFor(selection.getFirstElement());
+		return !selection.isEmpty() && hasPropertyPagesFor(selection);
 	}
 
 	
@@ -167,13 +168,11 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * @since 3.1
 	 */
 	public PreferenceDialog createDialog() {
-
-		Object element = getStructuredSelection().getFirstElement();
-		if (element == null) {
+		if (getStructuredSelection().isEmpty())
 			return null;
-		}
+
 		return PropertyDialog
-				.createDialogOn(shellProvider.getShell(), initialPageId, element);
+				.createDialogOn(shellProvider.getShell(), initialPageId, getStructuredSelection());
 	}
 
 	
@@ -181,6 +180,6 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
-		setEnabled(selection.size() == 1 && selection.getFirstElement() != null);
+		setEnabled(!selection.isEmpty());
 	}
 }

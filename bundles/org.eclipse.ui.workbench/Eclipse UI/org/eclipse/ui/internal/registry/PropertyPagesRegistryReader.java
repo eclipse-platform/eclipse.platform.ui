@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - Bug 294628 multiple selection
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
@@ -40,6 +40,19 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	 * Value "<code>value</code>".
 	 */
 	public static final String ATT_FILTER_VALUE = "value";//$NON-NLS-1$
+
+	/**
+	 * Value "<code>selectionFilter</code>". Is an enum allowing propertyPages to 
+	 * support multiple selection when enum value is <code>ATT_SELECTION_FILTER_MULTI</code>
+	 * @since 3.7
+	 */
+	public static final String ATT_SELECTION_FILTER = "selectionFilter";//$NON-NLS-1$
+
+	/**
+	 * Selection filter attribute value indicating support for multiple selection.
+	 * @since 3.7
+	 */
+	public static final String ATT_SELECTION_FILTER_MULTI = "multi";//$NON-NLS-1$
 
 	private static final String TAG_PAGE = "page";//$NON-NLS-1$
 
