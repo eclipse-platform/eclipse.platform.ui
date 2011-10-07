@@ -69,10 +69,10 @@ public class PluginIndex {
 			return;
 		}
 		boolean found = false;
-		ArrayList availablePrefixes = ResourceLocator.getPathPrefix(targetIndex
+		ArrayList<String> availablePrefixes = ResourceLocator.getPathPrefix(targetIndex
 				.getLocale());
 		for (int i = 0; i < availablePrefixes.size(); i++) {
-			String prefix = (String) availablePrefixes.get(i);
+			String prefix = availablePrefixes.get(i);
 			IPath prefixedPath = new Path(prefix + path);
 			// find index at this directory in plugin or fragments
 			URL url = FileLocator.find(bundle, prefixedPath, null);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 	/**
 	 * Map of all topics with this topic as ancestor
 	 */
-	private Map topicMap;
+	private Map<String, IHelpResource> topicMap;
 
 	/**
 	 * This constructor will be called when wrapping help resources.
@@ -72,7 +72,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 
 		if (topicMap == null) {
 			// traverse TOC and fill in the topicMap
-			topicMap = new HashMap();
+			topicMap = new HashMap<String, IHelpResource>();
 			topicMap.put(getHref(), element);
 			FastStack stack = new FastStack();
 			ITopic[] topics = getSubtopics();

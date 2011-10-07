@@ -169,7 +169,7 @@ public class HelpIndexBuilder {
 			createInfo(id, fid);
 		}
 
-		protected void createTable(Collection docBundleIds) {
+		protected void createTable(Collection<String> docBundleIds) {
 			// do nothing
 		}
 

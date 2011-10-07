@@ -32,11 +32,11 @@ public class Analyzer_en extends Analyzer {
 		return new PorterStemFilter(new StopFilter(false, new LowerCaseAndDigitsTokenizer(reader), getStopWords(), false));
 	}
 	
-	private Set stopWords;
+	private Set<String> stopWords;
 	
-	private Set getStopWords() {
+	private Set<String> getStopWords() {
 		if ( stopWords == null ) {
-			stopWords = new HashSet();
+			stopWords = new HashSet<String>();
 			for (int i = 0; i < STOP_WORDS.length; i++) {
 			    stopWords.add(STOP_WORDS[i]);
 			}

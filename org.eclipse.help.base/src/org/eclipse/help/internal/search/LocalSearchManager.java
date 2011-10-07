@@ -53,11 +53,11 @@ public class LocalSearchManager {
 	private static final String SEARCH_PARTICIPANT_XP_FULLNAME = "org.eclipse.help.base.searchParticipant"; //$NON-NLS-1$
 	private static final String SEARCH_PARTICIPANT_XP_NAME = "searchParticipant"; //$NON-NLS-1$
 	private static final String BINDING_XP_NAME = "binding"; //$NON-NLS-1$
-	private static final Object PARTICIPANTS_NOT_FOUND = new Object();
+	private static final ArrayList<ParticipantDescriptor> PARTICIPANTS_NOT_FOUND = new ArrayList<ParticipantDescriptor>();
 	private Map<String, Object> indexes = new HashMap<String, Object>();
 	private Map<String, AnalyzerDescriptor> analyzerDescriptors = new HashMap<String, AnalyzerDescriptor>();
 	private Map<String, ParticipantDescriptor> searchParticipantsById = new HashMap<String, ParticipantDescriptor>();
-	private Map<String, Object> searchParticipantsByPlugin = new HashMap<String, Object>();
+	private Map<String, ArrayList<ParticipantDescriptor>> searchParticipantsByPlugin = new HashMap<String, ArrayList<ParticipantDescriptor>>();
 	private ArrayList<ParticipantDescriptor> globalSearchParticipants;
 
 	private static class ParticipantDescriptor implements IHelpResource {
@@ -225,13 +225,13 @@ public class LocalSearchManager {
 
 	public boolean isIndexable(String url) {
 		url = trimQuery(url);
-		ArrayList list = getParticipantDescriptors(getPluginId(url));
+		ArrayList<ParticipantDescriptor> list = getParticipantDescriptors(getPluginId(url));
 		if (list == null)
 			return false;
 		int dotLoc = url.lastIndexOf('.');
 		String ext = url.substring(dotLoc + 1);
 		for (int i = 0; i < list.size(); i++) {
-			ParticipantDescriptor desc = (ParticipantDescriptor) list.get(i);
+			ParticipantDescriptor desc = list.get(i);
 			if (desc.matches(ext))
 				return true;
 		}
@@ -322,13 +322,13 @@ public class LocalSearchManager {
 	 */
 
 	public SearchParticipant getParticipant(String pluginId, String fileName) {
-		ArrayList list = getParticipantDescriptors(pluginId);
+		ArrayList<ParticipantDescriptor> list = getParticipantDescriptors(pluginId);
 		if (list == null)
 			return null;
 		int dotLoc = fileName.lastIndexOf('.');
 		String ext = fileName.substring(dotLoc + 1);
 		for (int i = 0; i < list.size(); i++) {
-			ParticipantDescriptor desc = (ParticipantDescriptor) list.get(i);
+			ParticipantDescriptor desc = list.get(i);
 			if (desc.matches(ext))
 				return desc.getParticipant();
 		}
@@ -344,11 +344,11 @@ public class LocalSearchManager {
 	 * @return whether or not the participant is bound to the plugin
 	 */
 	public boolean isParticipantBound(String pluginId, String participantId) {
-		List list = getParticipantDescriptors(pluginId);
+		List<ParticipantDescriptor> list = getParticipantDescriptors(pluginId);
 		if (list != null) {
-			Iterator iter = list.iterator();
+			Iterator<ParticipantDescriptor> iter = list.iterator();
 			while (iter.hasNext()) {
-				ParticipantDescriptor desc = (ParticipantDescriptor)iter.next();
+				ParticipantDescriptor desc = iter.next();
 				if (participantId.equals(desc.getId())) {
 					return true;
 				}
@@ -481,15 +481,15 @@ public class LocalSearchManager {
 	private ArrayList<ParticipantDescriptor> addBoundDescriptors(ArrayList<ParticipantDescriptor> list, ArrayList<IConfigurationElement> binding) {
 		for (int i = 0; i < binding.size(); i++) {
 			IConfigurationElement refEl = binding.get(i);
-			Collection<Object> collection = searchParticipantsByPlugin.values();
+			Collection<ArrayList<ParticipantDescriptor>> collection = searchParticipantsByPlugin.values();
 			boolean found = false;
-			for (Iterator<Object> iter = collection.iterator(); iter.hasNext();) {
+			for (Iterator<ArrayList<ParticipantDescriptor>> iter = collection.iterator(); iter.hasNext();) {
 				if (found)
 					break;
-				Object entry = iter.next();
-				if (entry == PARTICIPANTS_NOT_FOUND)
+				ArrayList<ParticipantDescriptor> participants = iter.next();
+				if (participants == PARTICIPANTS_NOT_FOUND)
 					continue;
-				ArrayList participants = (ArrayList) entry;
+				//ArrayList participants = (ArrayList) entry;
 				for (int j = 0; j < participants.size(); j++) {
 					ParticipantDescriptor desc = (ParticipantDescriptor) participants.get(j);
 					if (desc.contains(refEl)) {
@@ -571,8 +571,8 @@ public class LocalSearchManager {
 		}
 	}
 
-	private ArrayList getParticipantDescriptors(String pluginId) {
-		Object result = searchParticipantsByPlugin.get(pluginId);
+	private ArrayList<ParticipantDescriptor> getParticipantDescriptors(String pluginId) {
+		ArrayList<ParticipantDescriptor> result = searchParticipantsByPlugin.get(pluginId);
 		if (result == null) {
 			result = createSearchParticipants(pluginId);
 			if (result == null)
@@ -581,7 +581,7 @@ public class LocalSearchManager {
 		}
 		if (result == PARTICIPANTS_NOT_FOUND)
 			return null;
-		return (ArrayList) result;
+		return (ArrayList<ParticipantDescriptor>) result;
 	}
 
 	public void search(ISearchQuery searchQuery, ISearchHitCollector collector, IProgressMonitor pm)

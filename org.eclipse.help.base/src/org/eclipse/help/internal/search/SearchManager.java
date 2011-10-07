@@ -247,13 +247,13 @@ public class SearchManager {
 	 * when flush() is called.
 	 */
 	private class BufferedSearchHitCollector implements ISearchHitCollector {
-		private Set allHits = new HashSet();
+		private Set<SearchHit> allHits = new HashSet<SearchHit>();
 		private String wordsSearched = null;
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.help.internal.search.ISearchHitCollector#addHits(java.util.List, java.lang.String)
 		 */
-		public void addHits(List hits, String wordsSearched) {
+		public void addHits(List<SearchHit> hits, String wordsSearched) {
 			if (wordsSearched != null) {
 				this.wordsSearched = wordsSearched;
 			}
@@ -266,7 +266,7 @@ public class SearchManager {
 		 */
 		public void flush(ISearchHitCollector collector) {
 			// sort by score
-			List hitsList = new ArrayList(allHits);
+			List<SearchHit> hitsList = new ArrayList<SearchHit>(allHits);
 			Collections.sort(hitsList);
 			collector.addHits(hitsList, wordsSearched);
 			allHits.clear();

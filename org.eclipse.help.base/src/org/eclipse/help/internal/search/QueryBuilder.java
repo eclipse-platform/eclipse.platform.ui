@@ -369,7 +369,7 @@ public class QueryBuilder {
 	 *            if set to false, default field "contents" and all other fields
 	 *            will be searched
 	 */
-	public Query getLuceneQuery(Collection fieldNames, boolean fieldSearchOnly)
+	public Query getLuceneQuery(Collection<String> fieldNames, boolean fieldSearchOnly)
 			throws QueryTooComplexException {
 		// split search query into tokens
 		List<QueryWordsToken> userTokens = tokenizeUserQuery(searchWords);
@@ -385,24 +385,24 @@ public class QueryBuilder {
 	 *            if set to false, default field "contents" and all other fields
 	 *            will be searched
 	 */
-	private Query buildLuceneQuery(Collection fieldNames,
+	private Query buildLuceneQuery(Collection<String> fieldNames,
 			boolean fieldSearchOnly) {
 		String[] fields;
 		float[] boosts;
 		if (fieldSearchOnly) {
 			fields = new String[fieldNames.size()];
 			boosts = new float[fieldNames.size()];
-			Iterator fieldNamesIt = fieldNames.iterator();
+			Iterator<String> fieldNamesIt = fieldNames.iterator();
 			for (int i = 0; i < fieldNames.size(); i++) {
-				fields[i] = (String) fieldNamesIt.next();
+				fields[i] = fieldNamesIt.next();
 				boosts[i] = 5.0f;
 			}
 		} else {
 			fields = new String[fieldNames.size() + 2];
 	        boosts = new float[fieldNames.size() + 2];
-			Iterator fieldNamesIt = fieldNames.iterator();
+			Iterator<String> fieldNamesIt = fieldNames.iterator();
 			for (int i = 0; i < fieldNames.size(); i++) {
-				fields[i] = (String) fieldNamesIt.next();
+				fields[i] = fieldNamesIt.next();
 				boosts[i] = 5.0f;
 			}
 			fields[fieldNames.size()] = "contents"; //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 public class SearchProgressMonitor implements IProgressMonitor {
 
 	// Progress monitors, indexed by locale
-	protected static Map progressMonitors = new HashMap();
+	protected static Map<String, SearchProgressMonitor> progressMonitors = new HashMap<String, SearchProgressMonitor>();
 
 	// Dummy collector for triggering a progress monitor
 	protected static ISearchHitCollector dummy_collector;
@@ -42,7 +42,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	static {
 		dummy_collector = new ISearchHitCollector() {
-			public void addHits(List hits, String s) {
+			public void addHits(List<SearchHit> hits, String s) {
 			}
 
 			public void addQTCException(QueryTooComplexException exception) throws QueryTooComplexException {
@@ -150,7 +150,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 		// return an existing progress monitor if there is one
 		if (progressMonitors.get(locale) != null)
-			return (SearchProgressMonitor) progressMonitors.get(locale);
+			return progressMonitors.get(locale);
 
 		final SearchProgressMonitor pm = new SearchProgressMonitor();
 		progressMonitors.put(locale, pm);
@@ -205,8 +205,8 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		/**
 		 * Obtains names of fields in addition to default field
 		 */
-		public Collection getFieldNames() {
-			return new ArrayList();
+		public Collection<String> getFieldNames() {
+			return new ArrayList<String>();
 		}
 
 		/**

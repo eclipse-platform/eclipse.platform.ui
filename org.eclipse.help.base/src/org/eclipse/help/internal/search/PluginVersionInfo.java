@@ -60,7 +60,7 @@ public class PluginVersionInfo extends HelpProperties {
 	 *            if true, will cause detect change to ignore saved plugin
 	 *            version and behave like there was nothing saved
 	 */
-	public PluginVersionInfo(String name, Collection docBundleIds, File dir,
+	public PluginVersionInfo(String name, Collection<String> docBundleIds, File dir,
 			boolean ignoreSavedVersions) {
 		super(name, dir);
 		this.dir = dir;
@@ -68,10 +68,10 @@ public class PluginVersionInfo extends HelpProperties {
 		createTable(docBundleIds);
 	}
 
-	protected void createTable(Collection docBundleIds) {
+	protected void createTable(Collection<String> docBundleIds) {
 		// create table of current contributions
-		for (Iterator it = docBundleIds.iterator(); it.hasNext();) {
-			String bundleId = (String) it.next();
+		for (Iterator<String> it = docBundleIds.iterator(); it.hasNext();) {
+			String bundleId = it.next();
 			Bundle pluginBundle = Platform.getBundle(bundleId);
 			if (pluginBundle == null) {
 				continue;

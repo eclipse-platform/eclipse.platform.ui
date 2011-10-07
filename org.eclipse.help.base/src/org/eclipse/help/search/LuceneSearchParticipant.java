@@ -62,7 +62,7 @@ import org.osgi.framework.Bundle;
  */
 public abstract class LuceneSearchParticipant {
 
-	private static final HashSet EMPTY_SET = new HashSet();
+	private static final HashSet<String> EMPTY_SET = new HashSet<String>();
 
 	private String id;
 
@@ -119,7 +119,7 @@ public abstract class LuceneSearchParticipant {
 	 * 
 	 * @return a set of hrefs for documents managed by this participant.
 	 */
-	public Set getAllDocuments(String locale) {
+	public Set<String> getAllDocuments(String locale) {
 		return EMPTY_SET;
 	}
 
@@ -130,7 +130,7 @@ public abstract class LuceneSearchParticipant {
 	 * @return a set of contributing plug-in ids
 	 */
 
-	public Set getContributingPlugins() {
+	public Set<String> getContributingPlugins() {
 		return EMPTY_SET;
 	}
 
@@ -149,7 +149,7 @@ public abstract class LuceneSearchParticipant {
 	protected static String resolveVariables(String pluginId, String fileName, String locale) {
 		if (fileName.indexOf('$') == -1)
 			return fileName;
-		ArrayList prefix = ResourceLocator.getPathPrefix(locale);
+		ArrayList<String> prefix = ResourceLocator.getPathPrefix(locale);
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null)
 			return fileName;

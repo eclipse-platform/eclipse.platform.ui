@@ -449,15 +449,15 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 		// Create directories to merge and calculate all documents added
 		// and which are duplicates (to delete later)
 		for (int p = 0; p < pluginIndexes.length; p++) {
-			List indexIds = pluginIndexes[p].getIDs();
-			List indexPaths = pluginIndexes[p].getPaths();
+			List<String> indexIds = pluginIndexes[p].getIDs();
+			List<String> indexPaths = pluginIndexes[p].getPaths();
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
 
 			for (int i = 0; i < indexPaths.size(); i++) {
-				String indexId = (String) indexIds.get(i);
-				String indexPath = (String) indexPaths.get(i);
+				String indexId = indexIds.get(i);
+				String indexPath = indexPaths.get(i);
 				try {
 					dirList.add(new NIOFSDirectory(new File(indexPath)));
 				} catch (IOException ioe) {

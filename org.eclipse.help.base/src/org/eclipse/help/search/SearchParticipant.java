@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ import org.osgi.framework.Bundle;
  */
 public abstract class SearchParticipant {
 
-	private static final HashSet EMPTY_SET = new HashSet();
+	private static final HashSet<String> EMPTY_SET = new HashSet<String>();
 
 	private String id;
 
@@ -107,7 +107,7 @@ public abstract class SearchParticipant {
 	 * @param locale
 	 *            the index locale
 	 * 
-	 * @return a set of hrefs for documents managed by this participant.
+	 * @return a set<String> of hrefs for documents managed by this participant.
 	 */
 	public Set getAllDocuments(String locale) {
 		return EMPTY_SET;
@@ -117,7 +117,7 @@ public abstract class SearchParticipant {
 	 * Returns a set of identifiers of plug-ins that contribute indexable documents. This method is
 	 * only used for participants that handle documents outside of the help system's TOC.
 	 * 
-	 * @return a set of contributing plug-in ids
+	 * @return a set<String> of contributing plug-in ids
 	 */
 
 	public Set getContributingPlugins() {
@@ -139,7 +139,7 @@ public abstract class SearchParticipant {
 	protected static String resolveVariables(String pluginId, String fileName, String locale) {
 		if (fileName.indexOf('$') == -1)
 			return fileName;
-		ArrayList prefix = ResourceLocator.getPathPrefix(locale);
+		ArrayList<String> prefix = ResourceLocator.getPathPrefix(locale);
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null)
 			return fileName;

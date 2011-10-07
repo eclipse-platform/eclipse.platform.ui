@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import java.util.Comparator;
 /**
  * Compares two working sets by name.
  */
-public class WorkingSetComparator implements Comparator {
+public class WorkingSetComparator implements Comparator<WorkingSet> {
 	private Collator fCollator = Collator.getInstance();
 
 	/**
@@ -24,7 +24,7 @@ public class WorkingSetComparator implements Comparator {
 	 * 
 	 * @see Comparator#compare(Object, Object)
 	 */
-	public int compare(Object o1, Object o2) {
+	public int compare(WorkingSet o1,WorkingSet o2) {
 		String name1 = null;
 		String name2 = null;
 

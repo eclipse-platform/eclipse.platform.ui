@@ -473,8 +473,8 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		}
 		List<String> criterionIds = new ArrayList<String>();
 		if(null != allCriteriaValues){
-			for(Iterator iter = allCriteriaValues.keySet().iterator(); iter.hasNext();){
-				String criterion = (String) iter.next();
+			for(Iterator<String> iter = allCriteriaValues.keySet().iterator(); iter.hasNext();){
+				String criterion = iter.next();
 				if(null == criterion || 0 == criterion.length() || 0 == getCriterionValueIds(criterion).length)
 					continue;
 				criterionIds.add(criterion);

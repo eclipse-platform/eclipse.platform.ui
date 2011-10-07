@@ -37,7 +37,7 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 		this.criteriaScope = criteriaScope;
 	}
 
-	public CriteriaHelpScope(List criteriaScope){
+	public CriteriaHelpScope(List<CriterionResource> criteriaScope){
 		if(null == criteriaScope) {
 			this.criteriaScope = new CriterionResource[0];
 		} else {
@@ -72,11 +72,11 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 		if(null == criteriaScope){
 			return true;
 		}
-		Map<String, Set> ownCriteria = getCriteriaInfo(criteriaOfTopic);
-		Map<String, Set> scope = getCriteriaInfo(criteriaScope);
+		Map<String, Set<String>> ownCriteria = getCriteriaInfo(criteriaOfTopic);
+		Map<String, Set<String>> scope = getCriteriaInfo(criteriaScope);
 		outer: for (Iterator<String> keyIterator = scope.keySet().iterator(); keyIterator.hasNext();) {
 			String key = String.valueOf(keyIterator.next());
-			for (Iterator valueIterator = scope.get(key).iterator(); valueIterator.hasNext();) {
+			for (Iterator<String> valueIterator = scope.get(key).iterator(); valueIterator.hasNext();) {
 				String value = String.valueOf(valueIterator.next());
 				if (value.equals(UNCATEGORIZED)) {
 					if (!ownCriteria.containsKey(key)) {
@@ -92,14 +92,14 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 		return true;
 	}
 
-	private Map<String, Set> getCriteriaInfo(CriterionResource[] criteria) {
-		Map<String, Set> criteriaMap = new HashMap<String, Set>();
+	private Map<String, Set<String>> getCriteriaInfo(CriterionResource[] criteria) {
+		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		return criteriaMap;
 	}
 	
-	private Map<String, Set> getCriteriaInfo(ICriteria[] criteria) {
-		Map<String, Set> criteriaMap = new HashMap<String, Set>();
+	private Map<String, Set<String>> getCriteriaInfo(ICriteria[] criteria) {
+		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 	    return criteriaMap;
 	}

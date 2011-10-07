@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,15 +19,15 @@ import org.eclipse.core.runtime.*;
  * An implementation of ISearchQuery.
  */
 public class SearchQuery implements ISearchQuery {
-	Collection fieldNames;
+	Collection<String> fieldNames;
 	boolean fieldSearch;
 	String locale;
 	String searchWord;
 	public SearchQuery() {
-		this("", false, new ArrayList(), Platform.getNL()); //$NON-NLS-1$
+		this("", false, new ArrayList<String>(), Platform.getNL()); //$NON-NLS-1$
 	}
 	public SearchQuery(String searchWord, boolean fieldSearch,
-			Collection fieldNames, String locale) {
+			Collection<String> fieldNames, String locale) {
 		this.searchWord = searchWord;
 		this.fieldSearch = fieldSearch;
 		this.fieldNames = fieldNames;
@@ -38,7 +38,7 @@ public class SearchQuery implements ISearchQuery {
 	 * 
 	 * @return Collection
 	 */
-	public Collection getFieldNames() {
+	public Collection<String> getFieldNames() {
 		return fieldNames;
 	}
 
@@ -75,7 +75,7 @@ public class SearchQuery implements ISearchQuery {
 	 * @param fieldNames
 	 *            The fieldNames to set
 	 */
-	public void setFieldNames(Collection fieldNames) {
+	public void setFieldNames(Collection<String> fieldNames) {
 		this.fieldNames = fieldNames;
 	}
 

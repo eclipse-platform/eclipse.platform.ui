@@ -110,7 +110,7 @@ class IndexingOperation {
 		BaseHelpSystem.getLocalSearchManager().clearSearchParticipants();
 	}
 
-	private Map calculateNewToRemove(Collection<URL> newDocs, Map prebuiltDocs) {
+	private Map<String, String[]> calculateNewToRemove(Collection<URL> newDocs, Map<String, String[]> prebuiltDocs) {
 		// Calculate document that were in prebuilt indexes, but are not in
 		// TOCs. (prebuiltDocs - newDocs)
 		/*
@@ -118,7 +118,7 @@ class IndexingOperation {
 		 * delete completely, or String[] of indexIds with duplicates of the
 		 * document
 		 */
-		Map docsToDelete = prebuiltDocs;
+		Map<String, String[]> docsToDelete = prebuiltDocs;
 		ArrayList<String> prebuiltHrefs = new ArrayList<String>(prebuiltDocs.keySet());
 		for (int i = 0; i < prebuiltHrefs.size(); i++) {
 			String href = prebuiltHrefs.get(i);
@@ -147,13 +147,13 @@ class IndexingOperation {
 	/**
 	 * Returns documents that must be deleted
 	 */
-	private Map addNewDocuments(IProgressMonitor pm, Collection<URL> newDocs,
+	private Map<String, String[]> addNewDocuments(IProgressMonitor pm, Collection<URL> newDocs,
 			boolean opened) throws IndexingException {
-		Map prebuiltDocs = mergeIndexes(pm, opened);
+		Map<String, String[]> prebuiltDocs = mergeIndexes(pm, opened);
 		checkCancelled(pm);
 		Collection<URL> docsToIndex = calculateDocsToAdd(newDocs, prebuiltDocs);
 		checkCancelled(pm);
-		Map docsToDelete = calculateNewToRemove(newDocs, prebuiltDocs);
+		Map<String, String[]> docsToDelete = calculateNewToRemove(newDocs, prebuiltDocs);
 		pm.beginTask("", 10 * docsToIndex.size() + docsToDelete.size()); //$NON-NLS-1$
 		checkCancelled(pm);
 		addDocuments(new SubProgressMonitor(pm, 10 * docsToIndex.size()),
@@ -165,7 +165,7 @@ class IndexingOperation {
 		return docsToDelete;
 	}
 
-	private Collection<URL> calculateDocsToAdd(Collection<URL> newDocs, Map prebuiltDocs) {
+	private Collection<URL> calculateDocsToAdd(Collection<URL> newDocs, Map<String, String[]> prebuiltDocs) {
 		// Calculate documents that were not in prebuilt indexes, and still need
 		// to be added
 		// (newDocs minus prebuiltDocs)
@@ -196,7 +196,7 @@ class IndexingOperation {
 	 *            delete href, or String[] of indexIds to delete duplicates with
 	 *            given index IDs
 	 */
-	private void removeNewDocuments(IProgressMonitor pm, Map docsToDelete)
+	private void removeNewDocuments(IProgressMonitor pm, Map<String, String[]> docsToDelete)
 			throws IndexingException {
 		pm = new LazyProgressMonitor(pm);
 		pm.beginTask("", docsToDelete.size()); //$NON-NLS-1$
@@ -209,7 +209,7 @@ class IndexingOperation {
 			MultiStatus multiStatus = null;
 			for (Iterator<String> it = keysToDelete.iterator(); it.hasNext();) {
 				String href = it.next();
-				String[] indexIds = (String[]) docsToDelete.get(href);
+				String[] indexIds = docsToDelete.get(href);
 				if (indexIds == null) {
 					// delete all copies
 					index.removeDocument(href);
@@ -383,7 +383,7 @@ class IndexingOperation {
 				HelpBasePlugin.logError("Failed to get help search participant id for: " + participants[j].getClass().getName() + "; skipping this one.", t); //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			}
-			Set set;
+			Set<String> set;
 			try {
 				set = participants[j].getAllDocuments(index.getLocale());
 			}
@@ -393,8 +393,8 @@ class IndexingOperation {
 				continue;
 			}
 			
-			for (Iterator docs = set.iterator(); docs.hasNext();) {
-				String doc = (String) docs.next();
+			for (Iterator<String> docs = set.iterator(); docs.hasNext();) {
+				String doc = docs.next();
 				String id = null;
 				int qloc = doc.indexOf('?');
 				if (qloc!= -1) {
@@ -537,12 +537,12 @@ class IndexingOperation {
 		return indexes;
 	}
 
-	private Map mergeIndexes(IProgressMonitor monitor, boolean opened)
+	private Map<String, String[]> mergeIndexes(IProgressMonitor monitor, boolean opened)
 			throws IndexingException {
 		Collection<String> addedPluginIds = getAddedPlugins(index);
 		PrebuiltIndexes indexes = getIndexesToAdd(addedPluginIds);
 		PluginIndex[] pluginIndexes = indexes.getIndexes();
-		Map mergedDocs = null;
+		Map<String, String[]> mergedDocs = null;
 		// Always perform add batch to ensure that index is created and saved
 		// even if no new documents
 		if (!index.beginAddBatch(opened)) {

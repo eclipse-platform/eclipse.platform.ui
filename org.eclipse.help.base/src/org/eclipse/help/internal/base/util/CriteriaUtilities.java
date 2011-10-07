@@ -36,7 +36,7 @@ public class CriteriaUtilities {
 		return result;
     }
     
-    public static void addCriteriaToMap(Map<String, Set> map, ICriteria[] criteria) {
+    public static void addCriteriaToMap(Map<String, Set<String>> map, ICriteria[] criteria) {
     	for (int i = 0; i < criteria.length; ++i) {
 			ICriteria criterion = criteria[i];
 			String name = criterion.getName();
@@ -53,15 +53,15 @@ public class CriteriaUtilities {
 		}
     }
     
-    public static void addCriteriaToMap(Map<String, Set> map, CriterionResource[] criteria) {
+    public static void addCriteriaToMap(Map<String, Set<String>> map, CriterionResource[] criteria) {
     	for(int i = 0; i < criteria.length; ++ i){
 			CriterionResource criterion = criteria[i];
 			String criterionName = criterion.getCriterionName();
-			List criterionValues = criterion.getCriterionValues();
+			List<String> criterionValues = criterion.getCriterionValues();
 			
-			Set existedValueSet = map.get(criterionName);
+			Set<String> existedValueSet = map.get(criterionName);
 			if (null == existedValueSet)
-				existedValueSet = new HashSet();
+				existedValueSet = new HashSet<String>();
 			existedValueSet.addAll(criterionValues);
 			map.put(criterionName, existedValueSet);
 		}

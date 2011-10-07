@@ -69,15 +69,15 @@ public class SearchResults implements ISearchHitCollector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.search.ISearchHitCollector#addHits(List, String)
 	 */
-	public void addHits(List hits, String highlightTerms) {	
+	public void addHits(List<SearchHit> hits, String highlightTerms) {	
 		String urlEncodedWords = URLCoder.encode(highlightTerms);
 		List<SearchHit> searchHitList = new ArrayList<SearchHit>();
 		float scoreScale = 1.0f;
 		boolean scoreScaleSet = false;
 		
-		Iterator iter = hits.iterator();
+		Iterator<SearchHit> iter = hits.iterator();
 		for (int filteredHits = 0; filteredHits < maxHits && iter.hasNext(); ) {
-			SearchHit rawHit = (SearchHit)iter.next();
+			SearchHit rawHit = iter.next();
 			String href = rawHit.getHref();
 			IToc toc = null; // the TOC containing the topic
 			AdaptableHelpResource scope = null;

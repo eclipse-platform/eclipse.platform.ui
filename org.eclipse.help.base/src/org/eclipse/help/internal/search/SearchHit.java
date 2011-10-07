@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2000, 2011 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -18,7 +18,7 @@ import org.eclipse.help.search.ISearchEngineResult2;
 /**
  * A search result containing a document reference, score, summary, etc.
  */
-public class SearchHit implements ISearchEngineResult2, Comparable {
+public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 
 	private String href;
 	private String label;
@@ -53,7 +53,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 		this.isPotentialHit = isPotentialHit;
 	}
 	
-	public int compareTo(Object o) {
+	public int compareTo(SearchHit o) {
 		if (o == this) {
 			return 0;
 		}
@@ -163,4 +163,5 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 	public boolean isPotentialHit() {
 		return isPotentialHit;
 	}
+
 }

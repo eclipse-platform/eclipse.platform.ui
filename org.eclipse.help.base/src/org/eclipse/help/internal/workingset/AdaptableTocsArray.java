@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ public class AdaptableTocsArray implements IAdaptable {
 
 	IToc[] element;
 	AdaptableToc[] children;
-	HashMap map;
+	HashMap<String, AdaptableToc> map;
 
 	/**
 	 * This constructor will be called when wrapping help resources.
@@ -57,7 +57,7 @@ public class AdaptableTocsArray implements IAdaptable {
 	public AdaptableToc getAdaptableToc(String href) {
 		if (map == null) {
 			getChildren(); // make sure children are initialized
-			map = new HashMap(children.length);
+			map = new HashMap<String, AdaptableToc>(children.length);
 			for (int i = 0; i < children.length; i++)
 				map.put(children[i].getHref(), children[i]);
 		}

@@ -24,10 +24,10 @@ public class WorkingSet {
 	private List<CriterionResource> criteria;
 
 	public WorkingSet(String name) {
-		this(name, (List) null, (List) null);
+		this(name, (List<AdaptableHelpResource>) null, (List<CriterionResource>) null);
 	}
 
-	public WorkingSet(String name, List elements) {
+	public WorkingSet(String name, List<AdaptableHelpResource> elements) {
 		this(name, elements, null);
 	}
 	
@@ -137,10 +137,10 @@ public class WorkingSet {
 				CriterionResource criterion = iterator.next();
 				String criterionName = criterion.getCriterionName();
 				criterionItem.setAttribute("name", criterionName);//$NON-NLS-1$
-				List criterionValues = criterion.getCriterionValues();
+				List<String> criterionValues = criterion.getCriterionValues();
 				if(!criterionValues.isEmpty()){
-					for(Iterator iter = criterionValues.iterator(); iter.hasNext();){
-						String value = (String)iter.next();
+					for(Iterator<String> iter = criterionValues.iterator(); iter.hasNext();){
+						String value = iter.next();
 						if(value != null){
 							Element item = doc.createElement("item"); //$NON-NLS-1$
 							criterionItem.appendChild(item);

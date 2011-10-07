@@ -44,7 +44,7 @@ public class LuceneSearchParticipantAdapter extends SearchParticipant {
 		return searchParticipant.addDocument(searchIndex, pluginId, name, url, id, luceneDoc.getDocument());
 	}
 	
-	public Set getAllDocuments(String locale) {
+	public Set<String> getAllDocuments(String locale) {
 		return searchParticipant.getAllDocuments(locale);
 	}
 	
@@ -56,7 +56,7 @@ public class LuceneSearchParticipantAdapter extends SearchParticipant {
 		return searchParticipant.equals(obj);
 	}
 	
-	public Set getContributingPlugins() {
+	public Set<String> getContributingPlugins() {
 		return searchParticipant.getContributingPlugins();
 	}
 	
