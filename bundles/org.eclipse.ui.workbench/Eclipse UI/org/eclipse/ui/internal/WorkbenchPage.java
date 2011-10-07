@@ -3164,6 +3164,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public void savePerspectiveAs(IPerspectiveDescriptor perspective) {
 		MPerspective visiblePerspective = getPerspectiveStack().getSelectedElement();
+		// get the original perspective
+		String originalPerspectiveId = visiblePerspective.getElementId();
+		IPerspectiveDescriptor originalPerspective = getWorkbenchWindow().getWorkbench()
+				.getPerspectiveRegistry().findPerspectiveWithId(originalPerspectiveId);
+		// remove it from our collection of previously opened perspectives
+		sortedPerspectives.remove(originalPerspective);
+		// append the saved perspective
+		sortedPerspectives.add(perspective);
+
 		visiblePerspective.setLabel(perspective.getLabel());
 		visiblePerspective.setElementId(perspective.getId());
 		modelService.cloneElement(visiblePerspective, application);
