@@ -246,8 +246,14 @@ public class ModelServiceImpl implements EModelService {
 
 		// null out all the references
 		List<MPlaceholder> phList = findElements(clone, null, MPlaceholder.class, null);
-		for (MPlaceholder ph : phList)
+		for (MPlaceholder ph : phList) {
+			// Skip placeholders in the sharedArea
+			int location = getElementLocation(ph);
+			if ((location & IN_SHARED_AREA) != 0)
+				continue;
+
 			ph.setRef(null);
+		}
 
 		if (snippetContainer != null) {
 			MUIElement snippet = findSnippet(snippetContainer, element.getElementId());
