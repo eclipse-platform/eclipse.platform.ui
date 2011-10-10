@@ -115,7 +115,7 @@ public class WebappResources {
 
 		// load bundle
 		if (bundle == null) {
-			StringBuilder sb = new StringBuilder();
+			StringBuffer sb = new StringBuffer();
 			String language = locale.getLanguage();
 			String contry = locale.getCountry();
 			String variant = locale.getVariant();
