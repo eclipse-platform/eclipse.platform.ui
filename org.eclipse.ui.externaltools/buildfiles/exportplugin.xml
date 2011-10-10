@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <!-- Export a jar of .class files for the org.eclipse.ui.externaltools Eclipse plug-in
      along with other important plugin files to the "plugin-export" subdirectory
      of the target Eclipse installation 
