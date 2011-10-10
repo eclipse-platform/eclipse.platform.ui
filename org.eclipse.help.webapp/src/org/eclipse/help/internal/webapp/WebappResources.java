@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,19 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp;
 
-import java.text.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 
 /**
  * Uses a resource bundle to load images and strings from a property file in a
@@ -106,14 +115,71 @@ public class WebappResources {
 
 		// load bundle
 		if (bundle == null) {
-			bundle = ResourceBundle.getBundle(WebappResources.class.getName(),
-					locale);
+			StringBuilder sb = new StringBuilder();
+			String language = locale.getLanguage();
+			String contry = locale.getCountry();
+			String variant = locale.getVariant();
+			ResourceBundle bundle_l = null;
+			ResourceBundle bundle_c = null;
+			ResourceBundle bundle_v = null;
+			if (null != language && language.length() != 0) {
+				sb.append("_").append(language); //$NON-NLS-1$
+				bundle_l = getResourceBundle(sb.toString());
+			}
+			if (null != contry && contry.length() != 0) {
+				sb.append("_").append(contry); //$NON-NLS-1$
+				bundle_c = getResourceBundle(sb.toString());
+			}
+			if (null != variant && variant.length() != 0) {
+				sb.append("_").append(variant); //$NON-NLS-1$
+				bundle_v = getResourceBundle(sb.toString());
+			}
+			if (bundle_v != null) {
+				bundle = bundle_v;
+			} else if (bundle_c != null) {
+				bundle = bundle_c;
+			} else if (bundle_l != null) {
+				bundle = bundle_l;
+			} else {
+				bundle = getResourceBundle(""); //$NON-NLS-1$
+			}
+			// ******end******
 			if (bundle != null) {
 				resourceBundleTable.put(locale, bundle);
 			}
 		}
 		return bundle;
 	}
+	
+	private static ResourceBundle getResourceBundle(String key) {
+		ResourceBundle bundle;
+		Bundle hostBundle = Platform.getBundle(HelpWebappPlugin.getDefault()
+				.getBundle().getSymbolicName());
+		if (null == hostBundle) {
+			bundle = null;
+		}
+		URL url = hostBundle.getResource("org/eclipse/help/internal/webapp/WebappResources" + key + ".properties");  //$NON-NLS-1$//$NON-NLS-2$
+		if (null == url) {
+			bundle = null;
+		} else {
+			InputStream in = null;
+			try {
+				in = url.openStream();
+				bundle = new PropertyResourceBundle(in);
+			} catch (IOException e) {
+				bundle = null;
+			} finally {
+				if (null != in) {
+					try {
+						in.close();
+					} catch (IOException e) {
+					}
+				}
+			}
+		}
+		return bundle;
+	}
+	
 	private static Locale getDefaultLocale() {
 		String nl = Platform.getNL();
 		// sanity test
