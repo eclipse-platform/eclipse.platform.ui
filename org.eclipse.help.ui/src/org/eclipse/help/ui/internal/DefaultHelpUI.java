@@ -19,7 +19,6 @@ import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
-import org.eclipse.help.internal.context.Context;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
 import org.eclipse.help.ui.internal.util.FontUtils;
 import org.eclipse.help.ui.internal.views.ContextHelpPart;
@@ -43,7 +42,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.help.AbstractHelpUI;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 
@@ -389,10 +387,11 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		if (activePart != null) {
 			IContextProvider provider = (IContextProvider) activePart
 				.getAdapter(IContextProvider.class);
-			if (provider != null
-					&& (context == null || ((context instanceof Context) && IWorkbenchHelpContextIds.MISSING
-							.equals(((Context) context).getId())))) {
-				context = provider.getContext(c);
+			if (provider != null ) {
+				IContext providerContext = provider.getContext(c);
+				if ( providerContext != null ) {
+					context = providerContext;
+				}
 			}
 		}
 		if (context != null) {
