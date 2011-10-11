@@ -26,9 +26,9 @@ final class Identifier implements IIdentifier {
     private final static int HASH_INITIAL = Identifier.class.getName()
             .hashCode();
 
-    private final static Set strongReferences = new HashSet();
+	private final static Set<Identifier> strongReferences = new HashSet<Identifier>();
 
-    private Set activityIds = Collections.EMPTY_SET;
+	private Set<String> activityIds = Collections.emptySet();
 
     private transient String[] activityIdsAsArray = {};
 
@@ -110,7 +110,7 @@ final class Identifier implements IIdentifier {
 		}
     }
 
-    public Set getActivityIds() {
+	public Set<String> getActivityIds() {
         return activityIds;
     }
 
@@ -148,13 +148,12 @@ final class Identifier implements IIdentifier {
 		}
     }
 
-    boolean setActivityIds(Set activityIds) {
-        activityIds = Util.safeCopy(activityIds, String.class);
+	boolean setActivityIds(Set<String> activityIds) {
+		activityIds = Util.safeCopy(activityIds, String.class);
 
         if (!Util.equals(activityIds, this.activityIds)) {
             this.activityIds = activityIds;
-            this.activityIdsAsArray = (String[]) this.activityIds
-                    .toArray(new String[this.activityIds.size()]);
+			this.activityIdsAsArray = this.activityIds.toArray(new String[this.activityIds.size()]);
             hashCode = HASH_INITIAL;
             string = null;
             return true;
