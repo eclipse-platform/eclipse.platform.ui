@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,7 +96,7 @@ public class ViewRegistry implements IViewRegistry {
 					descriptor.setContributionURI(CompatibilityPart.COMPATIBILITY_VIEW_URI);
 
 					String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-					if (iconURI != null) {
+					if (iconURI != null && !iconURI.startsWith("platform:/plugin/")) { //$NON-NLS-1$
 						StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
 						builder.append(element.getNamespaceIdentifier()).append('/');
 
@@ -107,6 +107,8 @@ public class ViewRegistry implements IViewRegistry {
 
 						builder.append(iconURI);
 						descriptor.setIconURI(builder.toString());
+					} else {
+						descriptor.setIconURI(iconURI);
 					}
 
 					ViewDescriptor viewDescriptor = new ViewDescriptor(application, descriptor,
