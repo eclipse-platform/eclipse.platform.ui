@@ -1682,7 +1682,6 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	protected FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
-
 	/**
 	 * The text viewer's hyperlink detectors.
 	 * @since 3.1
@@ -1719,6 +1718,12 @@ public class TextViewer extends Viewer implements
 	 * @since 3.5
 	 */
 	private int fLastEventTime;
+	/**
+	 * Pointer to disposed control.
+	 * 
+	 * @since 3.8
+	 */
+	private Control fDisposedControl;
 
 
 	//---- Construction and disposal ------------------
@@ -1797,6 +1802,7 @@ public class TextViewer extends Viewer implements
 		fTextWidget.addDisposeListener(
 			new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
+					fDisposedControl= getControl();
 					handleDispose();
 				}
 			}
@@ -1841,7 +1847,7 @@ public class TextViewer extends Viewer implements
 	 * @see Viewer#getControl()
 	 */
 	public Control getControl() {
-		return fTextWidget;
+		return fTextWidget != null ? fTextWidget : fDisposedControl;
 	}
 
 	/*
