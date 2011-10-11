@@ -170,10 +170,6 @@ public class ViewRegistry implements IViewRegistry {
 
 	}
 
-	/**
-	 * @param id
-	 * @return
-	 */
 	public ViewCategory findCategory(String id) {
 		if (id == null) {
 			return null;
@@ -186,9 +182,6 @@ public class ViewRegistry implements IViewRegistry {
 		return null;
 	}
 
-	/**
-	 * @return
-	 */
 	public Category getMiscCategory() {
 		// TODO Auto-generated method stub
 		return null;
