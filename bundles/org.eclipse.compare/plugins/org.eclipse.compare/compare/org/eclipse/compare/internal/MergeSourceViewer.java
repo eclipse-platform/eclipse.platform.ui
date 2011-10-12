@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,37 +12,23 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-
+import org.eclipse.compare.ICompareContainer;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -51,13 +37,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -71,14 +50,28 @@ import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
-import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISharedTextColors;
-import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -89,19 +82,15 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
-
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ChangeEncodingAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.ui.editors.text.EditorsUI;
-
-import org.eclipse.compare.ICompareContainer;
 
 /**
  * Wraps a JFace SourceViewer and add some convenience methods.
@@ -940,44 +929,20 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 	/**
 	 * Hides or shows line number ruler column based of preference setting
 	 */
-	private void updateLineNumberRuler()
-	{
-		IVerticalRuler v= getVerticalRuler(getSourceViewer());
-		if (v!=null && v instanceof CompositeRuler) {
-			CompositeRuler c= (CompositeRuler) v;
-
-			if(!fShowLineNumber){
-				if(fLineNumberColumn!=null){
-					c.removeDecorator(fLineNumberColumn);
-				}
-			} else {
-				if(fLineNumberColumn==null){
-					fLineNumberColumn = new LineNumberRulerColumn();
-					updateLineNumberColumnPresentation(false);
-				}
-				c.addDecorator(0, fLineNumberColumn);
+	private void updateLineNumberRuler() {
+		if (!fShowLineNumber) {
+			if (fLineNumberColumn != null) {
+				getSourceViewer().removeVerticalRulerColumn(fLineNumberColumn);
 			}
+		} else {
+			if (fLineNumberColumn == null) {
+				fLineNumberColumn = new LineNumberRulerColumn();
+				updateLineNumberColumnPresentation(false);
+			}
+			getSourceViewer().addVerticalRulerColumn(fLineNumberColumn);
 		}
 	}
 
-	/**
-	 * Calls the <code>getVerticalRuler</code> method of the given viewer.
-	 * 
-	 * TODO: don't use reflection
-	 * 
-	 * @param viewer the viewer to call <code>getVerticalRuler</code> on
-	 */
-	private IVerticalRuler getVerticalRuler(SourceViewer viewer) {
-		try {
-			Method method= SourceViewer.class.getDeclaredMethod("getVerticalRuler", new Class[] {}); //$NON-NLS-1$
-			method.setAccessible(true);
-			return (IVerticalRuler) method.invoke(viewer, new Object[] {});
-		} catch (Throwable e) {
-			CompareUIPlugin.log(e);
-		}
-		return null;
-	}
-	
 	private void updateLineNumberColumnPresentation(boolean refresh) {
 		if (fLineNumberColumn == null)
 			return;
