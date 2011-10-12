@@ -107,10 +107,11 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 				((IContentChangeNotifier) te).removeContentChangeListener(contentChangeListener);
 			}
 		}
-		// Discard of the left buffer
+		// Discard of the buffer
 		ITypedElement left = getFileElement();
 		if (left instanceof LocalResourceTypedElement)
 			 ((LocalResourceTypedElement) left).discardBuffer();
+		document = null;
 	}
 
 	private ITypedElement getFileElement() {
