@@ -909,7 +909,7 @@ public class LaunchView extends AbstractDebugView
             fDebugToolbarPerspectives = ViewContextService.parseList(preference);
         }
         IPerspectiveDescriptor perspective = getSite().getPage().getPerspective();
-        fDebugToolbarInView = perspective == null || !fDebugToolbarPerspectives.contains(perspective.getId());
+        fDebugToolbarInView = isDebugToolbarShownInPerspective(perspective);
 	}
 	
 	/* (non-Javadoc)
