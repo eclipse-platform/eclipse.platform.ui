@@ -3151,9 +3151,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#savePerspective()
 	 */
 	public void savePerspective() {
-		// FIXME compat savePerspective
-		E4Util.unsupported("savePerspective"); //$NON-NLS-1$
-
+		throw new UnsupportedOperationException();
 	}
 
 	/*
