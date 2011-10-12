@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class EntityResolutionTest extends TestCase {
 			if (reader != null) {
 				char[] cbuf = new char[5];
 				read = reader.read(cbuf);
+				reader.close();
 			} else {
 				byte buf[] = new byte[5];
 				read = stream.read(buf);
@@ -39,6 +40,9 @@ public class EntityResolutionTest extends TestCase {
 				assertTrue("Entity not found", read > 0);
 			} else {
 				assertTrue("Unsupported Entity did not return empty stream", read == -1);
+			}
+			if (stream != null) {
+			    stream.close();
 			}
 	}
 	

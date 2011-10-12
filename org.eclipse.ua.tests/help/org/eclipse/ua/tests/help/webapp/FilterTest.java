@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -59,6 +59,7 @@ public class FilterTest extends TestCase {
 			filteredOutput.write(BODY1.getBytes());
 			filteredOutput.write(CONTENT1.getBytes());
 			filteredOutput.write(BODY2.getBytes());
+			filteredOutput.close();
 		} catch (IOException e) {
 			fail("IO Exception");
 		}
@@ -78,6 +79,7 @@ public class FilterTest extends TestCase {
 			filteredOutput.write(BODY1.getBytes());
 			filteredOutput.write(CONTENT1.getBytes());
 			filteredOutput.write(BODY2.getBytes());
+			filteredOutput.close();
 		} catch (IOException e) {
 			fail("IO Exception");
 		}
@@ -95,6 +97,7 @@ public class FilterTest extends TestCase {
 			filteredOutput.write(BODYLC1.getBytes());
 			filteredOutput.write(CONTENT1.getBytes());
 			filteredOutput.write(BODYLC2.getBytes());
+			filteredOutput.close();
 		} catch (IOException e) {
 			fail("IO Exception");
 		}
@@ -110,6 +113,7 @@ public class FilterTest extends TestCase {
 			filteredOutput.write(BODY1.getBytes());
 			filteredOutput.write(CONTENT1.getBytes());
 			filteredOutput.write(BODY2.getBytes());
+			filteredOutput.close();
 		} catch (IOException e) {
 			fail("IO Exception");
 		}
@@ -127,6 +131,7 @@ public class FilterTest extends TestCase {
 			filteredOutput.write(HEAD2.getBytes());
 			filteredOutput.write(BODY1.getBytes());
 			filteredOutput.write(BODY2.getBytes());
+			filteredOutput.close();
 			final String expected = HTML40 + HEAD1 + CONTENT_TYPE_UTF8 + HEAD2 + BODY1 + '\n' + CHINESE_CONTENT + '\n' + BODY2;
 			assertEquals(expected, output.toString("UTF-8"));
 		} catch (IOException e) {
@@ -144,6 +149,7 @@ public class FilterTest extends TestCase {
 			filteredOutput.write(HEAD2.getBytes());
 			filteredOutput.write(BODY1.getBytes());
 			filteredOutput.write(BODY2.getBytes());
+			filteredOutput.close();
 			final String expected = HTML40 + HEAD1 + CONTENT_TYPE_ISO_8859_1 + HEAD2 + BODY1 + '\n' + CHINESE_ENTITY_CONTENT + '\n' + BODY2;
 			assertEquals(expected, output.toString());
 		} catch (IOException e) {
@@ -160,6 +166,7 @@ public class FilterTest extends TestCase {
 			filteredOutput.write(HEAD2.getBytes());
 			filteredOutput.write(BODY1.getBytes());
 			filteredOutput.write(BODY2.getBytes());
+			filteredOutput.close();
 			final String expected = HTML40 + HEAD1 + HEAD2 + BODY1 + '\n' + CHINESE_ENTITY_CONTENT + '\n' + BODY2;
 			assertEquals(expected, output.toString());
 		} catch (IOException e) {

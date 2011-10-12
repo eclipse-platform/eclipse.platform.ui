@@ -34,11 +34,10 @@ public class LoadServletUtil {
 		URL url = new URL("http", "localhost", port, "/help/index.jsp");
 		URLConnection connection = url.openConnection();
 		setTimeout(connection, 5000);
-		InputStream input = connection.getInputStream();
-		 input = url.openStream();
+		InputStream input  = url.openStream();
 		int firstbyte = input.read();
-		Assert.assertTrue(firstbyte > 0);
 		input.close();
+		Assert.assertTrue(firstbyte > 0);
 	}
 	
 	/**

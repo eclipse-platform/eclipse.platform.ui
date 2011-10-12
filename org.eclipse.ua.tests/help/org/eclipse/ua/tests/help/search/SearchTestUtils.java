@@ -96,7 +96,7 @@ public class SearchTestUtils {
 
 	public static SearchHit[] getSearchHits(String searchWord, String nl) {
 		SearchHit[] hits;
-		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList(), nl);
+		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<String>(), nl);
 		SearchResults collector = new SearchResults(null, 500, nl);
 		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
 		hits = collector.getSearchHits();

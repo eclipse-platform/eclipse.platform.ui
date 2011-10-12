@@ -148,7 +148,7 @@ public class PrebuiltIndexCompatibility extends TestCase {
 			Directory luceneDirectory = new NIOFSDirectory(new File(filePath));
 			IndexSearcher searcher = new IndexSearcher(luceneDirectory, true);
 			QueryBuilder queryBuilder = new QueryBuilder("eclipse", new AnalyzerDescriptor("en-us"));
-			Query luceneQuery = queryBuilder.getLuceneQuery(new ArrayList() , false);
+			Query luceneQuery = queryBuilder.getLuceneQuery(new ArrayList<String>() , false);
 			TopDocs hits = searcher.search(luceneQuery, 500);
 			assertEquals(hits.totalHits, 1);
 		} else {

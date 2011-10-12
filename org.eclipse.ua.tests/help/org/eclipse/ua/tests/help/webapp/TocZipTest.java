@@ -60,7 +60,9 @@ public class TocZipTest extends TestCase {
 	    while(result != -1) {
 	      os.write(result);
 	      result = buffered.read();
-	    }        
+	    }   
+	    buffered.close();
+	    os.close();
 	    return  os.toString();
 	}
 	

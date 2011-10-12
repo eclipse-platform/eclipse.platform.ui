@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class SearchCheatsheet extends TestCase {
 	}
 	
 	public SearchHit[] findHits(String searchWord) {
-		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList(), Platform.getNL());
+		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<String>(), Platform.getNL());
 		SearchResults collector = new SearchResults(null, 10, Platform.getNL());
 		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
 		return collector.getSearchHits();
