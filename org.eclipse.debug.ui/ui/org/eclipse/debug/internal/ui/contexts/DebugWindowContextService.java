@@ -164,25 +164,26 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	}
 	
 	protected void notify(DebugContextEvent event) {
+	    // Allow handling for case where getActiveProvider() == null.
+	    // This can happen upon removeContextProvider() called on last available 
+	    // provider (bug 360637).
 		IDebugContextProvider provider = getActiveProvider();
-		if (provider != null) {
-			IWorkbenchPart part = event.getDebugContextProvider().getPart();
+		IWorkbenchPart part = event.getDebugContextProvider().getPart();
 		
-			// Once for listeners
-			if (provider == event.getDebugContextProvider()) {		
-				notify(event, getListeners(null));
-			}		
-			if (part != null) {
-				notify(event, getListeners(part));
-			}
-			
-			// Again for post-listeners
-			if (provider == event.getDebugContextProvider()) {
-				notify(event, getPostListeners(null));
-			}
-			if (part != null) {
-				notify(event, getPostListeners(part));
-			}
+		// Once for listeners
+		if (provider == null || provider == event.getDebugContextProvider()) {		
+			notify(event, getListeners(null));
+		}		
+		if (part != null) {
+			notify(event, getListeners(part));
+		}
+		
+		// Again for post-listeners
+		if (provider == null || provider == event.getDebugContextProvider()) {
+			notify(event, getPostListeners(null));
+		}
+		if (part != null) {
+			notify(event, getPostListeners(part));
 		}
 	}
 	
