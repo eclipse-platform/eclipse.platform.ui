@@ -1179,6 +1179,34 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		return fVerticalRuler;
 	}
 
+	/**
+	 * Adds the give column as last column to this viewer's vertical ruler.
+	 * 
+	 * @param column the column to be added
+	 * @since 3.8
+	 */
+	public void addVerticalRulerColumn(IVerticalRulerColumn column) {
+		IVerticalRuler ruler= getVerticalRuler();
+		if (ruler instanceof CompositeRuler) {
+			CompositeRuler compositeRuler= (CompositeRuler)ruler;
+			compositeRuler.addDecorator(99, column);
+		}
+	}
+
+	/**
+	 * Removes the give column from this viewer's vertical ruler.
+	 * 
+	 * @param column the column to be removed
+	 * @since 3.8
+	 */
+	public void removeVerticalRulerColumn(IVerticalRulerColumn column) {
+		IVerticalRuler ruler= getVerticalRuler();
+		if (ruler instanceof CompositeRuler) {
+			CompositeRuler compositeRuler= (CompositeRuler)ruler;
+			compositeRuler.removeDecorator(column);
+		}
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.source.ISourceViewerExtension#showAnnotationsOverview(boolean)
 	 * @since 2.1
@@ -1207,4 +1235,5 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
     		return null;
     	return fVerticalRulerHoveringController.getCurrentAnnotationHover();
     }
+
 }

@@ -51,14 +51,12 @@ import org.eclipse.jface.text.projection.ProjectionDocumentEvent;
 import org.eclipse.jface.text.projection.ProjectionDocumentManager;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
-import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
 
 
@@ -1276,32 +1274,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 		} else
 			super.handleVerifyEvent(e);
-	}
-
-	/**
-	 * Adds the give column as last column to this viewer's vertical ruler.
-	 *
-	 * @param column the column to be added
-	 */
-	public void addVerticalRulerColumn(IVerticalRulerColumn column) {
-		IVerticalRuler ruler= getVerticalRuler();
-		if (ruler instanceof CompositeRuler) {
-			CompositeRuler compositeRuler= (CompositeRuler) ruler;
-			compositeRuler.addDecorator(99, column);
-		}
-	}
-
-	/**
-	 * Removes the give column from this viewer's vertical ruler.
-	 *
-	 * @param column the column to be removed
-	 */
-	public void removeVerticalRulerColumn(IVerticalRulerColumn column) {
-		IVerticalRuler ruler= getVerticalRuler();
-		if (ruler instanceof CompositeRuler) {
-			CompositeRuler compositeRuler= (CompositeRuler) ruler;
-			compositeRuler.removeDecorator(column);
-		}
 	}
 
 	/*
