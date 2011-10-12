@@ -46,5 +46,6 @@ public class AllSearchTests extends TestSuite {
 		addTestSuite(WorkingSetManagerTest.class);
 		addTestSuite(InfocenterWorkingSetManagerTest.class);
 		addTestSuite(PrebuiltIndexCompatibility.class);
+		addTestSuite(LockTest.class);
 	}
 }
