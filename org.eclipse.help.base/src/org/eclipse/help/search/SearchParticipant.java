@@ -109,7 +109,7 @@ public abstract class SearchParticipant {
 	 * 
 	 * @return a set<String> of hrefs for documents managed by this participant.
 	 */
-	public Set getAllDocuments(String locale) {
+	public Set<String> getAllDocuments(String locale) {
 		return EMPTY_SET;
 	}
 
@@ -120,7 +120,7 @@ public abstract class SearchParticipant {
 	 * @return a set<String> of contributing plug-in ids
 	 */
 
-	public Set getContributingPlugins() {
+	public Set<String> getContributingPlugins() {
 		return EMPTY_SET;
 	}
 
