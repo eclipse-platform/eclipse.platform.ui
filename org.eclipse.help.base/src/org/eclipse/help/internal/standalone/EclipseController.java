@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 
 	// Inter process lock
 	private FileLock lock;
+	private RandomAccessFile raf;
 
 	private boolean eclipseEnded = false;
 
@@ -248,7 +249,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		if (!Options.getLockFile().exists()) {
 			Options.getLockFile().getParentFile().mkdirs();
 		}
-		RandomAccessFile raf = new RandomAccessFile(Options.getLockFile(), "rw"); //$NON-NLS-1$
+		raf = new RandomAccessFile(Options.getLockFile(), "rw"); //$NON-NLS-1$
 		lock = raf.getChannel().lock();
 		if (Options.isDebug()) {
 			System.out.println("Lock obtained."); //$NON-NLS-1$
@@ -265,6 +266,13 @@ public class EclipseController implements EclipseLifeCycleListener {
 				lock = null;
 			} catch (IOException ioe) {
 			}
+		}
+		if (raf != null) {
+			try {
+				raf.close();
+			} catch (IOException ioe) {
+			}
+			raf = null;
 		}
 	}
 

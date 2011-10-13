@@ -40,6 +40,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 	private static boolean shutdownOnClose = false; // Shutdown help when the embedded browser is closed
 	private File metadata;
 	private FileLock lock;
+	private RandomAccessFile raf;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
@@ -150,7 +151,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 	private void obtainLock() {
 		File lockFile = new File(metadata, APPLICATION_LOCK_FILE);
 		try {
-			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
+			raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
 			lock = raf.getChannel().lock();
 		} catch (IOException ioe) {
 			lock = null;
@@ -163,6 +164,13 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 				lock.channel().close();
 			} catch (IOException ioe) {
 			}
+		}
+		if (raf != null) {
+			try {
+				raf.close();
+			} catch (IOException ioe) {
+			}
+			raf = null;
 		}
 	}
 

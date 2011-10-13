@@ -74,9 +74,12 @@ public class TestConnectionUtility {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 				String line;
 				while (( line = reader.readLine())!=null){
-					if (line.indexOf("<tocContributions>")>-1) //$NON-NLS-1$
+					if (line.indexOf("<tocContributions>")>-1)  { //$NON-NLS-1$
+						reader.close();
 						return true;
+					}
 				}
+				reader.close();
 			}
 		}catch (Exception ex){}
 		finally{

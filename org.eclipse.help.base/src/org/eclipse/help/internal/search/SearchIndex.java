@@ -128,6 +128,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 	private Collection<Thread> searches = new ArrayList<Thread>();
 
 	private FileLock lock;
+	private RandomAccessFile raf =  null;
 
 	/**
 	 * Constructor.
@@ -952,16 +953,25 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 		File lockFile = getLockFile();
 		lockFile.getParentFile().mkdirs();
 		try {
-			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
+			raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
 			FileLock l = raf.getChannel().tryLock();
 			if (l != null) {
+				// The RandomAccessFile raf cannot be closed yet because closing it will release the
+				// lock. It will be closed when the lock is released.
 				lock = l;
-				return true;
+				return true;  
 			}
 			logLockFailure(null);
 		} catch (IOException ioe) {
 			lock = null;
 			logLockFailure(ioe);
+		}
+		if ( raf != null ) {
+			try {
+				raf.close();
+			} catch (IOException e) {
+			}
+			raf = null;
 		}
 		return false;
 	}
@@ -1002,6 +1012,13 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 			}
 			lock = null;
 		}
+		if (raf != null ) {
+			try { 
+			    raf.close();
+			} catch (IOException ioe) {
+			}
+			raf = null;
+		}       
 	}
 
 	public static String getIndexableHref(String url) {
