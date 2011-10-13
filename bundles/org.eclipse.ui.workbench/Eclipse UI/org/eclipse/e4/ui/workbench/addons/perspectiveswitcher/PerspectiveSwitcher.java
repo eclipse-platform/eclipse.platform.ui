@@ -196,7 +196,9 @@ public class PerspectiveSwitcher {
 		}
 
 		private void updateToolItem(ToolItem ti, String attName, Object newValue) {
-			if (UIEvents.UILabel.LABEL.equals(attName)) {
+			boolean showText = PrefUtil.getAPIPreferenceStore().getBoolean(
+					IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR);
+			if (showText && UIEvents.UILabel.LABEL.equals(attName)) {
 				String newName = (String) newValue;
 				ti.setText(newName);
 			} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {

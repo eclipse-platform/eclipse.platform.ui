@@ -3172,6 +3172,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		sortedPerspectives.add(perspective);
 
 		visiblePerspective.setLabel(perspective.getLabel());
+		visiblePerspective.setTooltip(perspective.getLabel());
 		visiblePerspective.setElementId(perspective.getId());
 		modelService.cloneElement(visiblePerspective, application);
 		if (perspective instanceof PerspectiveDescriptor) {
