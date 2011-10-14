@@ -37,6 +37,7 @@ public class AllUITests extends EclipseTest {
 		suite.addTest(CreatePatchTest.suite());
 		suite.addTest(CVSHisoryTableProviderTest.suite());
 		suite.addTest(PatchTreeTest.suite());
+		suite.addTest(RepositoriesViewTests.suite());
 		return suite;
 	}
 
