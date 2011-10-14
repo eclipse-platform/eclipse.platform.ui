@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -275,8 +275,7 @@ public class TopicTest extends TestCase {
 		assertFalse(t2.isEnabled(HelpEvaluationContext.getContext()));
 	}
 	
-	/*
-	 * Disabled, see Bug 210024 [Help] Topic element problems constructing from an ITopic
+
 	public void testUserTopicWithFilteredChildren() {
 		UserTopic u1 = new UserTopic(ECLIPSE, ECLIPSE_HREF, true);
 		UserTopic u2 = new UserTopic(BUGZILLA, BUGZILLA_HREF, false);
@@ -291,7 +290,7 @@ public class TopicTest extends TestCase {
 		assertEquals(BUGZILLA_HREF, t2.getHref());
 		assertFalse(t2.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	*/
+	
 	
 	public void testCopyUserTopicWithChildren() {
 		UserTopic u1 = new UserTopic(ECLIPSE, ECLIPSE_HREF, true);

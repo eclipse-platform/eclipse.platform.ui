@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,6 +141,9 @@ public class UAElement implements IUAElement {
 	}
 
 	public void appendChildren(IUAElement[] children) {
+		if (this.children == null && children.length > 0) {
+			this.children = new ArrayList(4);
+		}
 		for (int i=0;i<children.length;i++) {
 			appendChild(children[i] instanceof UAElement ? (UAElement)children[i] : UAElementFactory.newElement(children[i]));
 		}
