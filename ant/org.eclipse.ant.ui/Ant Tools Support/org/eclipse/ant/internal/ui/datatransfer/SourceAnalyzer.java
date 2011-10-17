@@ -1,19 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Richard Hoefter and others.
+ * Copyright (c) 2005, 2011 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation 
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 313386
  *     IBM Corporation - incorporating into Eclipse
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -100,6 +100,10 @@ public class SourceAnalyzer {
             if (EclipseClasspath.isLinkedResource(srcDir)) {
                 String link = classpath.resolveLinkedResource(srcDir);
                 dir = new File(link);
+                if (!dir.isAbsolute()) {
+                    // make absolute
+                    dir = new File(ExportUtil.getProjectRoot(currentProject), link);
+                }
             }
             Set sources = findFiles(dir, ".java"); //$NON-NLS-1$
 
