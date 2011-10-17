@@ -131,7 +131,7 @@ public class PlatformUIPreferenceListener implements
 					if (xmlString != null && xmlString.length() > 0) {
 						reader = new StringReader(xmlString);
 						// Build the editor map.
-						HashMap editorMap = new HashMap();
+						HashMap<String, IEditorDescriptor> editorMap = new HashMap<String, IEditorDescriptor>();
 						int i = 0;
 						IEditorDescriptor[] descriptors = editorRegistry
 								.getSortedEditorsFromPlugins();
