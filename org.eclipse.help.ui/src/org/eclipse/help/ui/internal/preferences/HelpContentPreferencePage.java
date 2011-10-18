@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.preferences;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -25,6 +27,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -40,6 +43,9 @@ import org.eclipse.ui.PlatformUI;
  */
 public class HelpContentPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
+	
+	private ICTable table;
+	private ICButtons buttons;
 
 	private InfocenterDisplay remoteICPage;
 
@@ -62,6 +68,11 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	public void init(IWorkbench workbench) {
 	}
 
+	public ICTable getTable()
+	{
+		return table;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -81,10 +92,10 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		createSearchLocalHelpFirst(parent);
 		createSearchLocalHelpLast(parent);
 		
-		remoteICPage = new InfocenterDisplay(this);
+/*		remoteICPage = new InfocenterDisplay(this);
 		remoteICPage.createContents(parent);
-
-		initializeTableEnablement(searchLocalHelpOnly.getSelection());
+*/
+		initializeTableEnablement(parent,searchLocalHelpOnly.getSelection());
 		
 		return parent;
 	}
@@ -97,11 +108,15 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	protected void performDefaults() {
 		super.performDefaults();
 
+		List ics = ICPreferences.getDefaultICs();
+		table.setICs(ics);
+		
 		// Restore Defaults functionality here		
-		HelpContentBlock currentBlock=remoteICPage.getHelpContentBlock();
+/*		HelpContentBlock currentBlock=remoteICPage.getHelpContentBlock();
 		currentBlock.getRemoteICviewer().getRemoteICList().removeAllRemoteICs(currentBlock.getRemoteICList());
 		currentBlock.getRemoteICviewer().getRemoteICList().loadDefaultPreferences();
 		currentBlock.restoreDefaultButtons();
+*/
 		boolean remoteHelpOn = new DefaultPreferenceFileHandler().isRemoteHelpOn();
 		boolean remoteHelpPreferred = new DefaultPreferenceFileHandler().isRemoteHelpPreferred();
 		searchLocalHelpOnly.setSelection(!remoteHelpOn);
@@ -117,9 +132,6 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	 */
 	public boolean performOk() {
 
-		HelpContentBlock currentBlock;
-		RemoteIC[] currentRemoteICArray;
-		
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		/*
 		 * (non-Javadoc)
@@ -129,13 +141,12 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		prefs.putBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, !(searchLocalHelpOnly.getSelection()));
 		prefs.putBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, searchLocalHelpLast.getSelection());
 	
-		currentBlock=remoteICPage.getHelpContentBlock();
-		currentRemoteICArray=currentBlock.getRemoteICList();
-     	PreferenceFileHandler.commitRemoteICs(currentRemoteICArray);
-		
+
+		List ics = table.getICs();
+		ICPreferences.setICs(ics);
+
     	RemoteHelp.notifyPreferenceChange();
 		return super.performOk();
-
 	}
 
 	/*
@@ -191,18 +202,22 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	 * Initialize the table enablement with the current checkbox selection 
 	 */
 	
-	private void initializeTableEnablement(boolean isRemoteHelpDisabled)
-	{
+	private void initializeTableEnablement(Composite parent, boolean isRemoteHelpDisabled)
+	{		
+		Composite top = new Composite(parent, SWT.NONE);
+
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 2;
+		layout.marginWidth = 2;
+		top.setLayout(layout);
+
+		top.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		table = new ICTable(top);
+		buttons = new ICButtons(top,this);
 		
-		HelpContentBlock currentBlock=remoteICPage.getHelpContentBlock();
-		
-		if(isRemoteHelpDisabled)
-			currentBlock.disableAllButtons();
-		else
-			currentBlock.restoreDefaultButtons();
-			
-		// Disable/Enable table
-		currentBlock.getRemoteICviewer().getTable().setEnabled(!isRemoteHelpDisabled);
+		changeListener.handleEvent(null);
 	}
 
 	/*
@@ -211,18 +226,12 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	 */
 	private Listener changeListener = new Listener() {
 		public void handleEvent(Event event) {
-
-			HelpContentBlock currentBlock=remoteICPage.getHelpContentBlock();			
 			
 			boolean isRemoteHelpEnabled = !(searchLocalHelpOnly.getSelection());
-			//  Disable/Enable buttons
-			if(isRemoteHelpEnabled)
-				currentBlock.restoreDefaultButtons();
-			else
-				currentBlock.disableAllButtons();
 			
 			// Disable/Enable table
-			currentBlock.getRemoteICviewer().getTable().setEnabled(isRemoteHelpEnabled);
+			table.getTable().setEnabled(isRemoteHelpEnabled);
+			buttons.setEnabled(isRemoteHelpEnabled);
 		}
 		
 	};
