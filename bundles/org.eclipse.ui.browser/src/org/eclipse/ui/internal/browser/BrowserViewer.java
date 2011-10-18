@@ -289,9 +289,15 @@ public class BrowserViewer extends Composite {
     }
 
     protected void updateBackNextBusy() {
-        back.setEnabled(isBackEnabled());
-        forward.setEnabled(isForwardEnabled());
-        busy.setBusy(loading);
+    	if (!back.isDisposed()) {
+            back.setEnabled(isBackEnabled());
+    	}
+    	if (!forward.isDisposed()) {
+            forward.setEnabled(isForwardEnabled());
+    	}
+    	if (!busy.isDisposed()) {
+            busy.setBusy(loading);
+        }
 
         if (backNextListener != null)
             backNextListener.updateBackNextBusy();
@@ -846,7 +852,7 @@ public class BrowserViewer extends Composite {
      * Update the history list to the global/shared copy.
      */
     protected void updateHistory() {
-        if (combo == null)
+        if (combo == null || combo.isDisposed())
             return;
 
         String temp = combo.getText();
