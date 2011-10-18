@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,4 +53,25 @@ public class ReflectionUtils {
 		return ret;
 	}
 
+	public static Object getField(Object object, String name, boolean deep)
+			throws IllegalArgumentException, IllegalAccessException,
+			SecurityException, NoSuchFieldException {
+		Class clazz = object.getClass();
+		NoSuchFieldException ex = null;
+		while (clazz != null) {
+			try {
+				Field field = clazz.getDeclaredField(name);
+				field.setAccessible(true);
+				return field.get(object);
+			} catch (NoSuchFieldException e) {
+				if (ex == null) {
+					ex = e;
+				}
+				if (!deep)
+					break;
+				clazz = clazz.getSuperclass();
+			}
+		}
+		throw ex;
+	}
 }
