@@ -203,9 +203,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 * @see org.eclipse.ui.IPerspectiveRegistry#getPerspectives()
 	 */
 	public IPerspectiveDescriptor[] getPerspectives() {
-		Collection<PerspectiveDescriptor> allowedDescriptors = WorkbenchActivityHelper
-				.restrictCollection(descriptors.values(), new ArrayList<PerspectiveDescriptor>());
-		return allowedDescriptors.toArray(new IPerspectiveDescriptor[allowedDescriptors.size()]);
+		Collection<?> descs = WorkbenchActivityHelper.restrictCollection(descriptors.values(),
+				new ArrayList<Object>());
+		return descs.toArray(new IPerspectiveDescriptor[descs.size()]);
 	}
 
 	/**
