@@ -525,63 +525,6 @@ public class ModeledPageLayout implements IPageLayout {
 			}
 			return;
 		}
-
-		/**
-		 * I will be back later to delete the code below this point because we
-		 * have statically verified it can never run. This was pointed to by the
-		 * dead code warning below.
-		 * 
-		 * Bugzilla 359438
-		 */
-		boolean isStack = true;
-
-		// Create the new sash if we're going to need one
-		// But neither if clause runs because isStack is true
-		MPartSashContainer newSash = null;
-		if ((swtSide == SWT.TOP || swtSide == SWT.BOTTOM) && !isStack) {
-			newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
-			String label = "Vertical Sash[" + toInsert.getElementId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-			newSash.setElementId(label);
-			newSash.setHorizontal(false);
-		} else if ((swtSide == SWT.LEFT || swtSide == SWT.RIGHT) && !isStack) {
-			newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
-			String label = "Horizontal Sash[" + toInsert.getElementId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-			newSash.setElementId(label);
-			newSash.setHorizontal(true);
-		}
-
-		List parts;
-		// At this point relParent is ALLWAYS null because there is a return in
-		// the != null case above
-		// And we know newSash is always null since the code above to set it is
-		// never run.
-		if (newSash == null && relParent != null) {
-			// So this code would never run
-			parts = relParent.getChildren();
-		} else {
-			// And if this code did run it could only thrown an NPE because
-			// newSash is null
-			MUIElement vscElement = newSash;
-			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) vscElement;
-			insertParent(container, relTo);
-			parts = newSash.getChildren();
-
-			// List<Integer> weights = newSash.getWeights();
-			// weights.add(ratio);
-			// weights.add(100 - ratio);
-		}
-
-		// And this code would never be reached because the above code, if we
-		// got there would thrown an NPE.
-
-		// Insert the part in the correct location
-		int index = parts.indexOf(relTo);
-		if (swtSide == SWT.BOTTOM || swtSide == SWT.RIGHT) {
-			index++;
-
-		}
-
-		parts.add(index, toInsert);
 	}
 
 	public static void insert(MUIElement toInsert, MUIElement relTo,
