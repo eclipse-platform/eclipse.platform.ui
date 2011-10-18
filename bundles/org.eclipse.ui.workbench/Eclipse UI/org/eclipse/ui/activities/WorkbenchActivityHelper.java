@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -597,9 +597,10 @@ public final class WorkbenchActivityHelper {
 	 * 
 	 * @since 3.4
 	 */
-	public static Collection restrictCollection(Collection toBeFiltered, Collection result) {
-		for (Iterator iterator = toBeFiltered.iterator(); iterator.hasNext();) {
-			Object item = iterator.next();
+	public static <T> Collection<T> restrictCollection(Collection<T> toBeFiltered,
+			Collection<T> result) {
+		for (Iterator<T> iterator = toBeFiltered.iterator(); iterator.hasNext();) {
+			T item = iterator.next();
 			if (!restrictUseOf(item)) {
 				result.add(item);
 			}

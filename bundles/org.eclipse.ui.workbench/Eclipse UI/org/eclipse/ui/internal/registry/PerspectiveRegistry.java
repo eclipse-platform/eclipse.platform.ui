@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -151,7 +153,11 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 * )
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId) {
-		return descriptors.get(perspectiveId);
+		IPerspectiveDescriptor candidate = descriptors.get(perspectiveId);
+		if (WorkbenchActivityHelper.restrictUseOf(candidate)) {
+			return null;
+		}
+		return candidate;
 	}
 
 	/*
@@ -164,6 +170,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	public IPerspectiveDescriptor findPerspectiveWithLabel(String label) {
 		for (IPerspectiveDescriptor descriptor : descriptors.values()) {
 			if (descriptor.getLabel().equals(label)) {
+				if (WorkbenchActivityHelper.restrictUseOf(descriptor)) {
+					return null;
+				}
 				return descriptor;
 			}
 		}
@@ -194,7 +203,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 * @see org.eclipse.ui.IPerspectiveRegistry#getPerspectives()
 	 */
 	public IPerspectiveDescriptor[] getPerspectives() {
-		return descriptors.values().toArray(new IPerspectiveDescriptor[descriptors.size()]);
+		Collection<PerspectiveDescriptor> allowedDescriptors = WorkbenchActivityHelper
+				.restrictCollection(descriptors.values(), new ArrayList<PerspectiveDescriptor>());
+		return allowedDescriptors.toArray(new IPerspectiveDescriptor[allowedDescriptors.size()]);
 	}
 
 	/**
