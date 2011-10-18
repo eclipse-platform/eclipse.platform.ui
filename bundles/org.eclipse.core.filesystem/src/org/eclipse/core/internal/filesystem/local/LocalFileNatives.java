@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.osgi.util.NLS;
 abstract class LocalFileNatives {
 	private static boolean hasNatives = false;
 	private static boolean isUnicode = false;
+	private static int nativeAttributes = -1;
 
 	/** instance of this library */
 	// The name convention is to use the plugin version at the time the library is changed.  
@@ -32,6 +33,12 @@ abstract class LocalFileNatives {
 			System.loadLibrary(LIBRARY_NAME);
 			hasNatives = true;
 			isUnicode = internalIsUnicode();
+			try {
+				nativeAttributes = nativeAttributes();
+			} catch (UnsatisfiedLinkError e) {
+				// older native implementations did not support this
+				// call, so we need to handle the error silently
+			}
 		} catch (UnsatisfiedLinkError e) {
 			if (isLibraryPresent())
 				logMissingNativeLibrary(e);
@@ -77,14 +84,7 @@ abstract class LocalFileNatives {
 	 *    or -1 if native attributes are not available. 
 	 */
 	public static int attributes() {
-		try {
-			return nativeAttributes();
-		} catch (UnsatisfiedLinkError e) {
-			//older native implementations did not support this
-			//call, so we cannot return supported attribute
-			//information for them.
-			return -1;
-		}
+		return nativeAttributes;
 	}
 
 	/**
