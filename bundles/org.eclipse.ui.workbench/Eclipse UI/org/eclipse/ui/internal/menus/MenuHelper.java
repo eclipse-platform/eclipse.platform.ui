@@ -636,7 +636,9 @@ public class MenuHelper {
 		} else {
 			item.setIconURI(iconUri);
 		}
-		item.setTooltip(getTooltip(element));
+		String tooltip = getTooltip(element);
+		// if no tooltip defined, use the textual label as the tooltip
+		item.setTooltip(tooltip == null ? text : tooltip);
 		return item;
 	}
 
@@ -1037,7 +1039,7 @@ public class MenuHelper {
 			parentPath = parentPath.substring(0, parentPath.lastIndexOf('.'));
 			// swap '.' with '/' so that it becomes a path
 			parentPath = parentPath.replace('.', '/');
-			
+
 			// construct the URL
 			URL url = FileLocator.find(bundle, new Path(parentPath).append(path), null);
 			return url == null ? null : url.toString();
