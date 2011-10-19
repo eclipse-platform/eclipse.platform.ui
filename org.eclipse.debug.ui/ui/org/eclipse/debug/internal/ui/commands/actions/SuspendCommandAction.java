@@ -24,7 +24,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public class SuspendCommandAction extends DebugCommandAction {
 
-
+    public SuspendCommandAction() {
+        setActionDefinitionId("org.eclipse.debug.ui.commands.Suspend"); //$NON-NLS-1$
+    }
+    
     public String getText() {
         return ActionMessages.SuspendAction_0;
     }
@@ -34,7 +37,7 @@ public class SuspendCommandAction extends DebugCommandAction {
     }
 
     public String getId() {
-        return "org.eclipse.debug.ui.debugview.toolbar.suspend"; //$NON-NLS-1$
+        return "org.eclipse.debug.ui.commands.Suspend"; //$NON-NLS-1$
     }
 
     public String getToolTipText() {

@@ -49,9 +49,6 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      */
     public void init(IAction action) {
         fDebugAction.setActionProxy(action);
-
-        // Ensure that the key accelerator is shown in tool-tip
-        action.setActionDefinitionId(fDebugAction.getActionDefinitionId());
     }
     
     /*
