@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300, bug 95297, bug 128104, bug 201180 
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300, bug 95297, bug 128104, bug 201180, bug 288830 
  *     IBM Corporation - NLS'ing and incorporating into Eclipse. 
  *                     - Bug 177833 Class created from combination of all utility classes of contribution 
  *                     - Bug 267459 Java project with an external jar file from C:\ on the build path throws a NPE during the Ant Buildfile generation.
@@ -637,6 +637,9 @@ public class ExportUtil {
 	public static Set validateEdit(Shell shell, List files)
 			throws CoreException {
 		Set confirmedFiles = new TreeSet(getIFileComparator());
+		if (files.size() == 0) {
+		    return confirmedFiles;
+		}
 		IStatus status = ((IFile) files.get(0)).getWorkspace().validateEdit(
 				(IFile[]) files.toArray(new IFile[files.size()]), shell);
 		if (status.isMultiStatus() && status.getChildren().length > 0) {

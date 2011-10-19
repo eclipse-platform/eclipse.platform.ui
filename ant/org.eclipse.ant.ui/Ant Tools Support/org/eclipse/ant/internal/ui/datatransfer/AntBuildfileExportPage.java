@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 Richard Hoefter and others.
+ * Copyright (c) 2004, 2011 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95296
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95296, bug 288830
  *     IBM Corporation - adapted to wizard export page
  *******************************************************************************/
 
@@ -252,7 +252,7 @@ public class AntBuildfileExportPage extends WizardPage {
         }
         List cyclicProjects;
         try {
-            cyclicProjects = getCyclicProjects(getProjects());
+            cyclicProjects = getCyclicProjects(getProjects(false));
             if (cyclicProjects.size() > 0) {
             	setErrorMessage(MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_6,
                         new String[] {ExportUtil.toString(cyclicProjects, ", ")})); //$NON-NLS-1$
@@ -295,7 +295,10 @@ public class AntBuildfileExportPage extends WizardPage {
         final List projectNames = new ArrayList();
         final Set projects;
         try {
-            projects = getProjects();
+            projects = getProjects(true);
+            if (projects.size() == 0) {
+                return false;
+            }
         } catch (JavaModelException e) {
             AntUIPlugin.log(e);
             setErrorMessage(MessageFormat.format(
@@ -352,9 +355,10 @@ public class AntBuildfileExportPage extends WizardPage {
 
     /**
      * Get projects to write buildfiles for. Opens confirmation dialog.
+     * @param displayConfirmation if set to true a dialog prompts for confirmation before overwriting files
      * @return set of project names 
      */
-    private Set getProjects() throws JavaModelException
+    private Set getProjects(boolean displayConfirmation) throws JavaModelException
     {
         // collect all projects to create buildfiles for
         Set projects = new TreeSet(ExportUtil.getJavaProjectComparator());
@@ -367,11 +371,11 @@ public class AntBuildfileExportPage extends WizardPage {
         
         // confirm overwrite
         List confirmOverwrite = getConfirmOverwriteSet(projects);
-        if (confirmOverwrite.size() > 0)
+        if (displayConfirmation && confirmOverwrite.size() > 0)
         {
             String message = DataTransferMessages.AntBuildfileExportPage_3 + ExportUtil.NEWLINE +
                 ExportUtil.toString(confirmOverwrite, ExportUtil.NEWLINE);
-            if (!MessageDialog.openConfirm(getShell(), DataTransferMessages.AntBuildfileExportPage_4, message))
+            if (!MessageDialog.openQuestion(getShell(), DataTransferMessages.AntBuildfileExportPage_4, message))
             {
                 return new TreeSet(ExportUtil.getJavaProjectComparator());
             }
