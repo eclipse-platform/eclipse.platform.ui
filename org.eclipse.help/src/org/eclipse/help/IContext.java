@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,10 +31,11 @@ package org.eclipse.help;
  */
 public interface IContext {
 	/**
-	 * Returns a list of related topics for this help context.
+	 * Returns the related topics for this help context.
 	 * 
-	 * @return a list of related help topics or <code>null</code>
-	 * if no related topics have been defined for this context.
+	 * @return an array of related help topics.  
+	 * If no related topics have been defined for this context a zero length array is returned.
+	 * May not return <code>null</code>
 	 * @since 2.0
 	 */
 	public IHelpResource[] getRelatedTopics();
