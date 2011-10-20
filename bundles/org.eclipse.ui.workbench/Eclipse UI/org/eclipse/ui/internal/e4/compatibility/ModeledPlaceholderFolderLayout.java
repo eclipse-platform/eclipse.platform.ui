@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
 public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout {
@@ -57,11 +55,4 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 	public void setProperty(String id, String value) {
 		// folderModel.setProperty(id, value);
 	}
-
-	protected boolean isViewVisible(String viewID) {
-		IViewDescriptor viewDescriptor = viewRegistry.find(viewID);
-		// .filterItem() can accept null as an argument
-		return !WorkbenchActivityHelper.filterItem(viewDescriptor);
-	}
-
 }

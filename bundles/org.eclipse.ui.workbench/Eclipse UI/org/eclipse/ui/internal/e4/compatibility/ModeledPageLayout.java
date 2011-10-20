@@ -37,8 +37,13 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPlaceholderFolderLayout;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.IIdentifierListener;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -85,6 +90,34 @@ public class ModeledPageLayout implements IPageLayout {
 	boolean createReferences;
 
 	private IViewRegistry viewRegistry;
+
+	private class ViewActivator implements IIdentifierListener {
+		private MUIElement element;
+
+		public ViewActivator(MUIElement element) {
+			this.element = element;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.eclipse.ui.activities.IIdentifierListener#identifierChanged(org
+		 * .eclipse.ui.activities.IdentifierEvent)
+		 */
+		public void identifierChanged(IdentifierEvent identifierEvent) {
+			IIdentifier identifier = identifierEvent.getIdentifier();
+
+			// Not activated, do nothing
+			if (!identifier.isEnabled())
+				return;
+
+			// stop listening for activations
+			identifier.removeIdentifierListener(this);
+
+			element.setToBeRendered(true);
+		}
+	}
 
 	public ModeledPageLayout(MWindow window, EModelService modelService,
 			EPartService partService,
@@ -187,8 +220,8 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public void addStandaloneView(String viewId, boolean showTitle,
 			int relationship, float ratio, String refId) {
-		insertView(viewId, relationship, ratio, refId, true,
-				false);
+		boolean isVisible = isViewVisible(viewId);
+		insertView(viewId, relationship, ratio, refId, isVisible, false);
 	}
 
 	public void addStandaloneViewPlaceholder(String viewId, int relationship,
@@ -210,10 +243,21 @@ public class ModeledPageLayout implements IPageLayout {
 		addView(viewId, relationship, ratio, refId);
 	}
 
-	private boolean isViewVisible(String viewID) {
+	protected boolean isViewVisible(String viewID) {
 		IViewDescriptor viewDescriptor = viewRegistry.find(viewID);
-		// .filterItem() can accept null as an argument
+		if (viewDescriptor == null)
+			return false;
+		if (WorkbenchActivityHelper.restrictUseOf(viewDescriptor))
+			return false;
 		return !WorkbenchActivityHelper.filterItem(viewDescriptor);
+	}
+
+	protected void addViewActivator(MUIElement element) {
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
+		IIdentifier identifier = support.getActivityManager().getIdentifier(
+				WorkbenchActivityHelper.createUnifiedId((IPluginContribution) descriptor));
+
+		identifier.addIdentifierListener(new ViewActivator(element));
 	}
 
 	public IFolderLayout createFolder(String folderId, int relationship,

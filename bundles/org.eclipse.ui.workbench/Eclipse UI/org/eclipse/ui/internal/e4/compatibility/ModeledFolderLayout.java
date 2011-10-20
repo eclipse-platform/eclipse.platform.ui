@@ -39,7 +39,10 @@ public class ModeledFolderLayout extends ModeledPlaceholderFolderLayout
 				parent = parent.getParent();
 			}
 			folderModel.setToBeRendered(true);
-			viewModel.setToBeRendered(isViewVisible(viewId));
+			boolean isViewVisible = layout.isViewVisible(viewId);
+			if (!isViewVisible)
+				layout.addViewActivator(viewModel);
+			viewModel.setToBeRendered(isViewVisible);
 			folderModel.getChildren().add(viewModel);
 		}
 	}
