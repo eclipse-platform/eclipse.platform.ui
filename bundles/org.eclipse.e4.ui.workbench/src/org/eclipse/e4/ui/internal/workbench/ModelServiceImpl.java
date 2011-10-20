@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -738,6 +739,15 @@ public class ModelServiceImpl implements EModelService {
 					String generatedId = "PartStack@" + Integer.toHexString(stack.hashCode()); //$NON-NLS-1$
 					stack.setElementId(generatedId);
 				}
+
+				// Also remove any min/max tags on the area (or its placeholder)
+				MUIElement areaPresentation = area;
+				if (area.getCurSharedRef() != null)
+					areaPresentation = area.getCurSharedRef();
+
+				areaPresentation.getTags().remove(IPresentationEngine.MAXIMIZED);
+				areaPresentation.getTags().remove(IPresentationEngine.MINIMIZED);
+				areaPresentation.getTags().remove(IPresentationEngine.MINIMIZED_BY_ZOOM);
 			}
 		}
 

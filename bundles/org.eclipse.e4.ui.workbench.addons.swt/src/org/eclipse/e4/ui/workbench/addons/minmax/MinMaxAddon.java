@@ -59,10 +59,10 @@ public class MinMaxAddon {
 
 	static String ID_SUFFIX = "(minimized)"; //$NON-NLS-1$
 
-	// tags representing the min/max state
-	public static String MINIMIZED = "Minimized"; //$NON-NLS-1$
-	public static String MAXIMIZED = "Maximized"; //$NON-NLS-1$
-	public static String MINIMIZED_BY_ZOOM = "MinimizedByZoom"; //$NON-NLS-1$
+	// tags representing the min/max state (h
+	private static String MINIMIZED = IPresentationEngine.MINIMIZED;
+	private static String MAXIMIZED = IPresentationEngine.MAXIMIZED;
+	private static String MINIMIZED_BY_ZOOM = IPresentationEngine.MINIMIZED_BY_ZOOM;
 
 	@Inject
 	IEventBroker eventBroker;

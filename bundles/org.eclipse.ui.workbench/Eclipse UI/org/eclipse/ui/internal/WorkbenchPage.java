@@ -53,6 +53,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -148,11 +149,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         IWorkbenchPage {
 	
 	static final String SECONDARY_ID_HEADER = "3x-secondary:"; //$NON-NLS-1$
-
-	// HACK!! Constants are defined in MinMaxAddon
-	private static final String EAMinimizedHack = "Minimized"; //$NON-NLS-1$
-	private static final String EAMaximizedHack = "Maximized"; //$NON-NLS-1$
-	private static final String EAMinimizedByZoomHack = "MinimizedByZoom"; //$NON-NLS-1$
 
 	class E4PartListener implements org.eclipse.e4.ui.workbench.modeling.IPartListener {
 
@@ -3461,9 +3457,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		String state = null;
 		
 		if (iState == STATE_MINIMIZED) {
-			state = EAMinimizedHack;
+			state = IPresentationEngine.MINIMIZED;
 		} else if (iState == STATE_MAXIMIZED) {
-			state = EAMaximizedHack;
+			state = IPresentationEngine.MAXIMIZED;
 		}
 		setPartState(element, state);
 	}
@@ -3479,9 +3475,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MUIElement element = getActiveElement(ref);
 
 		if (element != null) {
-			if (element.getTags().contains(EAMinimizedHack)) {
+			if (element.getTags().contains(IPresentationEngine.MINIMIZED)) {
 				state = STATE_MINIMIZED;
-			} else if (element.getTags().contains(EAMaximizedHack)) {
+			} else if (element.getTags().contains(IPresentationEngine.MAXIMIZED)) {
 				state = STATE_MAXIMIZED;
 			}
 		}
@@ -3491,16 +3487,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	// if the state is null, then we'll just restore the view
 	private void setPartState(MUIElement element, String state) {
 		if (element != null) {
-			element.getTags().remove(EAMinimizedByZoomHack);
-			if (EAMinimizedHack.equals(state)) {
-				element.getTags().remove(EAMaximizedHack);
-				element.getTags().add(EAMinimizedHack);
-			} else if (EAMaximizedHack.equals(state)) {
-				element.getTags().remove(EAMinimizedHack);
-				element.getTags().add(EAMaximizedHack);
+			element.getTags().remove(IPresentationEngine.MINIMIZED_BY_ZOOM);
+			if (IPresentationEngine.MINIMIZED.equals(state)) {
+				element.getTags().remove(IPresentationEngine.MAXIMIZED);
+				element.getTags().add(IPresentationEngine.MINIMIZED);
+			} else if (IPresentationEngine.MAXIMIZED.equals(state)) {
+				element.getTags().remove(IPresentationEngine.MINIMIZED);
+				element.getTags().add(IPresentationEngine.MAXIMIZED);
 			} else {
-				element.getTags().remove(EAMinimizedHack);
-				element.getTags().remove(EAMaximizedHack);
+				element.getTags().remove(IPresentationEngine.MINIMIZED);
+				element.getTags().remove(IPresentationEngine.MAXIMIZED);
 			}
 		}
 	}
@@ -3531,8 +3527,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MUIElement element = getActiveElement(ref);
 		if (element != null) {
 			String state = null;
-			if (!element.getTags().contains(EAMaximizedHack)) {
-				state = EAMaximizedHack;
+			if (!element.getTags().contains(IPresentationEngine.MAXIMIZED)) {
+				state = IPresentationEngine.MAXIMIZED;
 			}
 			this.setPartState(element, state);
 		}

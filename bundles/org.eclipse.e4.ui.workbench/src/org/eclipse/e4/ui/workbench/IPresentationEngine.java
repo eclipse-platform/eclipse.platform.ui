@@ -21,6 +21,15 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
  * to model elements, as well as for running any event loop required for handling user events on
  * those widgets.
  */
+/**
+ *
+ */
+/**
+ *
+ */
+/**
+ *
+ */
 public interface IPresentationEngine {
 	/**
 	 * The ID to access the service in the {@link IEclipseContext}
@@ -45,6 +54,27 @@ public interface IPresentationEngine {
 	 * When applied as a tag to an MUIElement inhibits moving the element (ie. through DnD...
 	 */
 	public static final String NO_MOVE = "NoMove"; //$NON-NLS-1$
+
+	/**
+	 * When added to an element's 'tags' this should cause the presentation to move that element to
+	 * the trim. In the default implementation you can only apply this tag to an MPartStack or the
+	 * MPlaceholder of the MArea.
+	 */
+	public static String MINIMIZED = "Minimized"; //$NON-NLS-1$
+
+	/**
+	 * When added to an element's 'tags' this should cause the presentation to minimize all other
+	 * presentation elements. In the default implementation you can only apply this tag to an
+	 * MPartStack or the MPlaceholder of the MArea.
+	 */
+	public static String MAXIMIZED = "Maximized"; //$NON-NLS-1$
+
+	/**
+	 * This tag should be applied to any element that had its MINIMIZED tag set due to a different
+	 * element going maximized. This allows the restore operation to only restore elements that the
+	 * user did not explicitly minimize.
+	 */
+	public static String MINIMIZED_BY_ZOOM = "MinimizedByZoom"; //$NON-NLS-1$
 
 	/**
 	 * Creates and returns the UI element for the given model element.
