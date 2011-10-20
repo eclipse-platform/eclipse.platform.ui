@@ -200,6 +200,12 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			MUIElement curSel = stackModel.getSelectedElement();
 			MPart part = (MPart) ((curSel instanceof MPlaceholder) ? ((MPlaceholder) curSel)
 					.getRef() : curSel);
+
+			// Ensure that the placeholder's ref is set correctly before
+			// adjusting its toolbar
+			if (curSel instanceof MPlaceholder) {
+				part.setCurSharedRef((MPlaceholder) curSel);
+			}
 			sr.adjustTR(ctf, part);
 		}
 
