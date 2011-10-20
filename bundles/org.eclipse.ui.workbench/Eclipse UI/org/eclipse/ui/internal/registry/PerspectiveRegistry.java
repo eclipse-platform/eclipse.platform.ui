@@ -153,8 +153,13 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 * )
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId) {
+		return findPerspectiveWithId(perspectiveId, true);
+	}
+
+	public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId,
+			boolean considerRestrictRules) {
 		IPerspectiveDescriptor candidate = descriptors.get(perspectiveId);
-		if (WorkbenchActivityHelper.restrictUseOf(candidate)) {
+		if (considerRestrictRules && WorkbenchActivityHelper.restrictUseOf(candidate)) {
 			return null;
 		}
 		return candidate;

@@ -62,6 +62,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -75,6 +76,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.service.event.Event;
@@ -429,7 +431,13 @@ public class PerspectiveSwitcher {
 
 	// FIXME see https://bugs.eclipse.org/bugs/show_bug.cgi?id=313771
 	private IPerspectiveDescriptor getDescriptorFor(String id) {
-		return PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id);
+		IPerspectiveRegistry perspectiveRegistry = PlatformUI.getWorkbench()
+				.getPerspectiveRegistry();
+		if (perspectiveRegistry instanceof PerspectiveRegistry) {
+			return ((PerspectiveRegistry) perspectiveRegistry).findPerspectiveWithId(id, false);
+		}
+
+		return perspectiveRegistry.findPerspectiveWithId(id);
 	}
 
 	private void selectPerspective() {
