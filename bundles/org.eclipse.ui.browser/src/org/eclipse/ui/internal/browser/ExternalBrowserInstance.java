@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.browser;
 
 import java.net.URL;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.browser.AbstractWebBrowser;
@@ -43,6 +44,9 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 		String params = WebBrowserUtil.createParameterString(parameters, urlText);
 
 		try {
+			if ( Util.isMac()) {
+			    location = "open -a " + location; //$NON-NLS-1$
+		     }
 			Trace.trace(Trace.FINEST, "Launching " + location + " " + params); //$NON-NLS-1$//$NON-NLS-2$
 			if (params == null || params.length() == 0)
 				process = Runtime.getRuntime().exec(location);

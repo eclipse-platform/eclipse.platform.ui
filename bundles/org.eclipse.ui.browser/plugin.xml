@@ -157,7 +157,7 @@
          os="MacOSX"
          executable="firefox-bin"
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
-         <location>Applications/Firefox.app/Contents/MacOS/firefox-bin</location>
+         <location>Applications/Firefox.app</location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.camino"
