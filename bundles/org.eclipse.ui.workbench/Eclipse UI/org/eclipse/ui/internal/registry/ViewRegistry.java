@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
@@ -133,7 +135,11 @@ public class ViewRegistry implements IViewRegistry {
 	}
 
 	public IViewDescriptor find(String id) {
-		return descriptors.get(id);
+		IViewDescriptor candidate = descriptors.get(id);
+		if (WorkbenchActivityHelper.restrictUseOf(candidate)) {
+			return null;
+		}
+		return candidate;
 	}
 
 	/*
@@ -151,7 +157,9 @@ public class ViewRegistry implements IViewRegistry {
 	 * @see org.eclipse.ui.views.IViewRegistry#getViews()
 	 */
 	public IViewDescriptor[] getViews() {
-		return descriptors.values().toArray(new IViewDescriptor[descriptors.size()]);
+		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(
+				descriptors.values(), new ArrayList<Object>());
+		return allowedViews.toArray(new IViewDescriptor[allowedViews.size()]);
 	}
 
 	/*
@@ -160,7 +168,9 @@ public class ViewRegistry implements IViewRegistry {
 	 * @see org.eclipse.ui.views.IViewRegistry#getStickyViews()
 	 */
 	public IStickyViewDescriptor[] getStickyViews() {
-		return stickyDescriptors.toArray(new IStickyViewDescriptor[stickyDescriptors.size()]);
+		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(stickyDescriptors,
+				new ArrayList<Object>());
+		return allowedViews.toArray(new IStickyViewDescriptor[allowedViews.size()]);
 	}
 
 	/**

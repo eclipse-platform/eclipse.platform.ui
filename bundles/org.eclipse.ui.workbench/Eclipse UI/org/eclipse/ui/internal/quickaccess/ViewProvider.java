@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,10 @@ public class ViewProvider extends QuickAccessProvider {
 					if (id != null) {
 						ViewElement element = new ViewElement(this, window, descriptors.get(i));
 						IViewDescriptor viewDescriptor = viewRegistry.find(element.getId());
-						// filterItem() can accept a null argument
+						// Ignore if restricted
+						if (viewDescriptor == null)
+							continue;
+						// Ignore if filtered
 						if (!WorkbenchActivityHelper.filterItem(viewDescriptor)) {
 							idToElement.put(element.getId(), element);
 						}
