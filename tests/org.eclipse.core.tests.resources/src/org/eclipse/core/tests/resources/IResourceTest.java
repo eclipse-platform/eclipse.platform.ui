@@ -18,7 +18,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.CancelingProgressMonitor;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
@@ -1790,6 +1790,27 @@ public class IResourceTest extends ResourceTest {
 			Workspace.clear(fileLocation.toFile());
 			Workspace.clear(variableLocation.toFile());
 		}
+	}
+
+	public void testIsConflicting() throws CoreException {
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFolder a = project.getFolder("a");
+		IFolder b = project.getFolder("b");
+
+		ensureExistsInWorkspace(new IResource[] {project, a, b}, true);
+
+		ISchedulingRule multi = MultiRule.combine(a, b);
+
+		assertEquals(false, a.isConflicting(b));
+		assertEquals(false, b.isConflicting(a));
+
+		assertEquals(true, a.isConflicting(multi));
+		assertEquals(true, multi.isConflicting(a));
+
+		assertEquals(true, b.isConflicting(multi));
+		assertEquals(true, multi.isConflicting(b));
+
+		project.delete(true, getMonitor());
 	}
 
 	/**

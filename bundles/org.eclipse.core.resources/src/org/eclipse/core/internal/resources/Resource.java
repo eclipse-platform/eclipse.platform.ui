@@ -1344,9 +1344,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see ISchedulingRule#isConflicting(ISchedulingRule)
 	 */
 	public boolean isConflicting(ISchedulingRule rule) {
+		if (this == rule)
+			return true;
 		//must not schedule at same time as notification
 		if (rule.getClass().equals(WorkManager.NotifyRule.class))
 			return true;
+		if (rule instanceof MultiRule)
+			return rule.isConflicting(this);
 		if (!(rule instanceof IResource))
 			return false;
 		IPath otherPath = ((IResource) rule).getFullPath();
