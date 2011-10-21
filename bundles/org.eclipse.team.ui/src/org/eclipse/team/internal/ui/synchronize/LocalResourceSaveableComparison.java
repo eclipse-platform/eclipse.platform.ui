@@ -248,10 +248,10 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 */
 	public String getName() {
 		// Return the name of the file element as held in the compare input
-		if (input.getLeft().equals(fileElement)) {
+		if (input.getLeft() != null && input.getLeft().equals(fileElement)) {
 			return input.getLeft().getName();
 		}
-		if (input.getRight().equals(fileElement)) {
+		if (input.getRight() != null && input.getRight().equals(fileElement)) {
 			return input.getRight().getName();
 		}
 		// Fallback call returning name of the main non-null element of the input
@@ -289,14 +289,15 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 
 			ContentMergeViewer cmv = (ContentMergeViewer) e.getSource();
 
-			if (input.getLeft().equals(fileElement)) {
+			if (input.getLeft() != null && input.getLeft().equals(fileElement)) {
 				if (changed && cmv.internalIsLeftDirty())
 					setDirty(changed);
 				else if (!changed && !cmv.internalIsLeftDirty()) {
 					setDirty(changed);
 				}
 			}
-			if (input.getRight().equals(fileElement)) {
+			if (input.getRight() != null
+					&& input.getRight().equals(fileElement)) {
 				if (changed && cmv.internalIsRightDirty())
 					setDirty(changed);
 				else if (!changed && !cmv.internalIsRightDirty()) {

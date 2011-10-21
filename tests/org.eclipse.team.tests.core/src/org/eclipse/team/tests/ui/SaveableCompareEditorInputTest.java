@@ -272,4 +272,56 @@ public class SaveableCompareEditorInputTest extends TeamTest {
 		 * handled, see javadoc to SaveableCompareEditorInput.
 		 */
 	}
+
+	public void testDirtyFlagOnLocalResourceTypedElementAndEmptyRight()
+			throws CoreException, InvocationTargetException,
+			InterruptedException, IllegalArgumentException, SecurityException,
+			IllegalAccessException, NoSuchFieldException,
+			NoSuchMethodException, IOException {
+
+		// Create left element by SaveableCompareEditorInput to be properly
+		// saved, see javadoc to SaveableCompareEditorInput
+		LocalResourceTypedElement el1 = (LocalResourceTypedElement) SaveableCompareEditorInput
+				.createFileElement(file1);
+		ITypedElement el2 = null;
+
+		CompareConfiguration conf = new CompareConfiguration();
+		conf.setLeftEditable(true);
+		TestSaveableEditorInput compareEditorInput = new TestSaveableEditorInput(
+				el1, el2, conf);
+
+		compareEditorInput.prepareCompareInput(null);
+
+		verifyDirtyStateChanges(compareEditorInput);
+
+		// check whether file was saved
+
+		assertTrue(compareContent(new ByteArrayInputStream(
+				(fileContents1 + appendFileContents).getBytes()),
+				file1.getContents()));
+	}
+
+	public void testDirtyFlagOnCustomTypedElementAndEmptyRight()
+			throws CoreException, InvocationTargetException,
+			InterruptedException, IllegalArgumentException, SecurityException,
+			IllegalAccessException, NoSuchFieldException,
+			NoSuchMethodException, IOException {
+
+		ITypedElement el1 = new TestFileElement(file1);
+		ITypedElement el2 = null;
+
+		CompareConfiguration conf = new CompareConfiguration();
+		conf.setLeftEditable(true);
+		TestSaveableEditorInput compareEditorInput = new TestSaveableEditorInput(
+				el1, el2, conf);
+
+		compareEditorInput.prepareCompareInput(null);
+
+		verifyDirtyStateChanges(compareEditorInput);
+
+		/*
+		 * not checking if changes were saved because in this case saving is not
+		 * handled, see javadoc to SaveableCompareEditorInput.
+		 */
+	}
 }
