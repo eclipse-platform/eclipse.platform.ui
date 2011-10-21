@@ -385,17 +385,28 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
 
+		Rectangle modelBounds = wbwShell.getBounds();
+		if (wbwModel.getX() >= 0) {
+			modelBounds.x = wbwModel.getX();
+		}
+		if (wbwModel.getY() >= 0) {
+			modelBounds.y = wbwModel.getY();
+		}
+		if (wbwModel.getHeight() >= 0) {
+			modelBounds.height = wbwModel.getHeight();
+		}
+		if (wbwModel.getWidth() >= 0) {
+			modelBounds.width = wbwModel.getWidth();
+		}
 		// Force the shell onto the display if it would be invisible otherwise
-		Rectangle modelBounds = new Rectangle(wbwModel.getX(), wbwModel.getY(),
-				wbwModel.getWidth(), wbwModel.getHeight());
 		Rectangle displayBounds = Display.getCurrent().getBounds();
 		if (!modelBounds.intersects(displayBounds)) {
 			Rectangle clientArea = Display.getCurrent().getClientArea();
 			modelBounds.x = clientArea.x;
 			modelBounds.y = clientArea.y;
 		}
-
 		wbwShell.setBounds(modelBounds);
+
 		setCSSInfo(wbwModel, wbwShell);
 
 		// set up context
