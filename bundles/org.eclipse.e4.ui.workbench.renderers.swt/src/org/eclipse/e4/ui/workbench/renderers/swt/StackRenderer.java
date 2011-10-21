@@ -135,7 +135,9 @@ public class StackRenderer extends LazyStackRenderer {
 						.getActiveChild();
 				if (activeChild == null
 						|| activeChild.get(MWindow.class) != application
-								.getSelectedElement()) {
+								.getSelectedElement()
+						|| application.getSelectedElement() != modelService
+								.getTopLevelWindowFor(stackToActivate)) {
 					return false;
 				}
 			}
