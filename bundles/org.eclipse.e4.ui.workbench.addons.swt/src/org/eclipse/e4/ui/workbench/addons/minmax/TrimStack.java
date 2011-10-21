@@ -33,6 +33,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -369,11 +370,11 @@ public class TrimStack {
 		restoreBtn.setImage(getRestoreImage());
 		restoreBtn.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				minimizedElement.getTags().remove(MinMaxAddon.MINIMIZED);
+				minimizedElement.getTags().remove(IPresentationEngine.MINIMIZED);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				minimizedElement.getTags().remove(MinMaxAddon.MINIMIZED);
+				minimizedElement.getTags().remove(IPresentationEngine.MINIMIZED);
 			}
 		});
 
@@ -514,7 +515,7 @@ public class TrimStack {
 
 	void restoreStack() {
 		minimizedElement.setVisible(true);
-		minimizedElement.getTags().remove(MinMaxAddon.MINIMIZED);
+		minimizedElement.getTags().remove(IPresentationEngine.MINIMIZED);
 		toolControl.setToBeRendered(false);
 
 		if (hostPane != null && !hostPane.isDisposed())
