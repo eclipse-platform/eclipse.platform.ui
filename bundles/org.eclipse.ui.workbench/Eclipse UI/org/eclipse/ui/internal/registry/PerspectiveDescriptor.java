@@ -53,8 +53,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 		this.label = label;
 		if (originalDescriptor != null) {
 			this.originalId = originalDescriptor.getOriginalId();
-			// Direct member access by design
-			this.image = originalDescriptor.image;
+			this.image = originalDescriptor.getImageDescriptor();
 			this.pluginId = originalDescriptor.getPluginId();
 			this.hasCustomDefinition = true;
 		}
