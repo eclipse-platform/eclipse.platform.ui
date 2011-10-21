@@ -1131,11 +1131,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				}
 			}
 
+			MPart activePart = findPart(getActiveEditor());
+			boolean closeActivePart = false;
 			// now hide all instantiated editors
 			for (IEditorReference editorRef : editorRefs) {
 				MPart model = ((EditorReference) editorRef).getModel();
-				// saving should've been handled earlier above
-				if (!(hidePart(model, false, confirm, false))) {
+				if (activePart == model) {
+					closeActivePart = true;
+				} else if (!(hidePart(model, false, confirm, false))) {
+					// saving should've been handled earlier above
+					return false;
+				}
+			}
+
+			// close the active part last to minimize activation churn
+			if (closeActivePart) {
+				if (!(hidePart(activePart, false, confirm, false))) {
 					return false;
 				}
 			}
