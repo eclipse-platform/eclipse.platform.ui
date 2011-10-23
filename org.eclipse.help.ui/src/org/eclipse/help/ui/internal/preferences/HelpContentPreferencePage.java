@@ -18,9 +18,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.base.remote.DefaultPreferenceFileHandler;
-import org.eclipse.help.internal.base.remote.PreferenceFileHandler;
 import org.eclipse.help.internal.base.remote.RemoteHelp;
-import org.eclipse.help.internal.base.remote.RemoteIC;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.Dialog;
@@ -46,8 +44,6 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	
 	private ICTable table;
 	private ICButtons buttons;
-
-	private InfocenterDisplay remoteICPage;
 
 	private Button searchLocalHelpOnly;
 	private Button searchLocalHelpFirst;
