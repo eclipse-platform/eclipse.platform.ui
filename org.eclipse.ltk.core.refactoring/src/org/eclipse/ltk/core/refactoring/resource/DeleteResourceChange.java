@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.resource;
 
+import java.net.URI;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -89,7 +91,22 @@ public class DeleteResourceChange extends ResourceChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return Messages.format(RefactoringCoreMessages.DeleteResourceChange_name, BasicElementLabels.getPathLabel(fResourcePath.makeRelative(), false));
+		IPath path= fResourcePath.makeRelative();
+		String label= BasicElementLabels.getPathLabel(path, false);
+		
+		if (path.segmentCount() == 1) {
+			IResource resource= getResource();
+			IPath location= resource.getLocation();
+			if (location != null) {
+				label= label + BasicElementLabels.CONCAT_STRING + BasicElementLabels.getPathLabel(location, true);
+			} else {
+				URI uri= resource.getLocationURI();
+				if (uri != null) {
+					label= label + BasicElementLabels.CONCAT_STRING + BasicElementLabels.getURLPart(uri.toString());
+				}
+			}
+		}
+		return Messages.format(RefactoringCoreMessages.DeleteResourceChange_name, label);
 	}
 
 	/* (non-Javadoc)
