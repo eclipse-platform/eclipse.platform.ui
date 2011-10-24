@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 import junit.framework.TestCase;
 
 /**
- * Test for functions which decode a topic string
+ * Test for methods in UrlUtils
  */
 
 public class UrlUtilsTests extends TestCase {
@@ -96,5 +96,46 @@ public class UrlUtilsTests extends TestCase {
 		req.setPathInfo("/b/a/c/index.jsp");
 		assertEquals("../../../a/a/a/test.jsp", UrlUtil.getRelativePath(req, "/a/a/a/test.jsp"));
 	}
+
+	public void testGetHelpUrlNull() {
+		assertEquals("about:blank", UrlUtil.getHelpURL(null));
+	}
+
+	public void testGetHelpUrlHttp() {
+		assertEquals("http://www.eclipse.org", UrlUtil.getHelpURL("http://www.eclipse.org"));
+	}
+
+	public void testGetHelpUrlHttps() {
+		assertEquals("https://bugs.eclipse.org/bugs/", UrlUtil.getHelpURL("https://bugs.eclipse.org/bugs/"));
+	}
+	
+	public void testGetHelpUrlFile() {
+		assertEquals("../topic/file://etc/about.html", UrlUtil.getHelpURL("file://etc/about.html"));
+	}
+	
+	public void testGetHelpUrlPageInBundle() {
+		assertEquals("../topic/bundle/help.html", UrlUtil.getHelpURL("/bundle/help.html"));
+	}
+	
+	public void testGetHelpUrlNullDepthTwo() {
+		assertEquals("about:blank", UrlUtil.getHelpURL(null, 2));
+	}
+
+	public void testGetHelpUrlHttpDepthTwo() {
+		assertEquals("http://www.eclipse.org", UrlUtil.getHelpURL("http://www.eclipse.org", 2));
+	}
+
+	public void testGetHelpUrlHttpDepthTwos() {
+		assertEquals("https://bugs.eclipse.org/bugs/", UrlUtil.getHelpURL("https://bugs.eclipse.org/bugs/", 2));
+	}
+	
+	public void testGetHelpUrlFileDepthTwo() {
+		assertEquals("../../topic/file://etc/about.html", UrlUtil.getHelpURL("file://etc/about.html", 2));
+	}
+	
+	public void testGetHelpUrlPageInBundleDepthTwo() {
+		assertEquals("../../topic/bundle/help.html", UrlUtil.getHelpURL("/bundle/help.html", 2));
+	}
+	
 	
 }

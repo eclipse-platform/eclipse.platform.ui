@@ -27,6 +27,7 @@ import org.eclipse.help.internal.base.MissingContentManager;
 import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.util.ProductPreferences;
+import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.webapp.data.WebappPreferences;
 
 
@@ -284,8 +285,9 @@ public class StatusProducer implements IHelpContentProducer {
 		pageBuffer.append(tab(3)+"<ul>\n"); //$NON-NLS-1$
 		for (int i = 0; i < unresolved.length; i++ ) {
 			pageBuffer.append(tab(4) + "<li>\n"); //$NON-NLS-1$
-			pageBuffer.append(tab(5) + "<a href = \".."); //$NON-NLS-1$
-			pageBuffer.append(unresolved[i].placeholderPage);
+			pageBuffer.append(tab(5) + "<a href = \""); //$NON-NLS-1$			
+			String href = unresolved[i].placeholderPage;
+			pageBuffer.append(UrlUtil.getHelpURL(href, 2));
 			pageBuffer.append("\">"); //$NON-NLS-1$
 			pageBuffer.append(unresolved[i].bundle);
 			pageBuffer.append("</a>\n"); //$NON-NLS-1$

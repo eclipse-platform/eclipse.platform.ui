@@ -151,14 +151,37 @@ public class UrlUtil {
 	 * @return String
 	 */
 	public static String getHelpURL(String url) {
+		return getHelpURL(url, 1);
+	}
+	
+
+	/**
+	 * Returns a URL that can be used as
+	 * 
+	 * @param url either a complete url including protocol or a help page
+	 * path of form /plugin/path
+	 * @param depth the number of directory segments beneath /help of the containing pages url
+	 * @return a path that can be used as the href value of an anchor
+	 */
+	public static String getHelpURL(String url, int depth) {
 		if (url == null || url.length() == 0)
 			url = "about:blank"; //$NON-NLS-1$
 		else if (url.startsWith("http:/") || url.startsWith("https:/")); //$NON-NLS-1$ //$NON-NLS-2$
 		else if (url.startsWith("file:/") || url.startsWith("jar:file:/")) //$NON-NLS-1$ //$NON-NLS-2$
-			url = "../topic/" + url; //$NON-NLS-1$
+			url = getHelpUrlPrefix(depth) +'/' + url;
 		else
-			url = "../topic" + url; //$NON-NLS-1$
+			url =  getHelpUrlPrefix(depth) + url; 
 		return url;
+	}
+
+	private static String getHelpUrlPrefix(int depth) {
+		String prefix;
+		prefix = ""; //$NON-NLS-1$
+		for (int d = 0; d < depth; d++) {
+			prefix += "../"; //$NON-NLS-1$
+		};
+		prefix += "topic"; //$NON-NLS-1$
+		return prefix;
 	}
 	
 	/**
