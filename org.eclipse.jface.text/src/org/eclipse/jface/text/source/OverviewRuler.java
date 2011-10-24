@@ -57,15 +57,19 @@ import org.eclipse.jface.text.source.projection.AnnotationBag;
 
 
 /**
- * Ruler presented next to a source viewer showing all annotations of the
- * viewer's annotation model in a compact format. The ruler has the same height
- * as the source viewer.
+ * Ruler presented next to a source viewer showing all annotations of the viewer's annotation model
+ * in a compact format. The ruler has the same height as the source viewer.
  * <p>
- * Clients usually instantiate and configure objects of this class.</p>
- *
+ * This overview ruler uses non-saturated colors unless {@link #setUseSaturatedColors(boolean)} gets
+ * called.
+ * </p>
+ * <p>
+ * Clients usually instantiate and configure objects of this class.
+ * </p>
+ * 
  * @since 2.1
  */
-public class OverviewRuler implements IOverviewRuler {
+public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 
 	/**
 	 * Internal listener class.
@@ -487,6 +491,13 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @since 3.4
 	 */
 	private boolean fIsTemporaryAnnotationDiscolored;
+	
+	/**
+	 * Tells whether saturated colors are used in the overview ruler.
+	 * 
+	 * @since 3.8
+	 */
+	private boolean fUseSaturatedColors= false;
 
 
 	/**
@@ -775,8 +786,8 @@ public class OverviewRuler implements IOverviewRuler {
 						fAnnotationHeight= hh;
 						
 						if (!areColorsComputed) {
-							fill= getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
 							stroke= getStrokeColor(annotationType, style[t] == FilterIterator.TEMPORARY);
+							fill= fUseSaturatedColors ? stroke : getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
 							areColorsComputed= true;
 						}
 
@@ -1496,5 +1507,14 @@ public class OverviewRuler implements IOverviewRuler {
 
 		if (overview.length() > 0)
 			fHeader.setToolTipText(overview);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.8
+	 */
+	public void setUseSaturatedColors(boolean useSaturatedColor) {
+		fUseSaturatedColors= useSaturatedColor;
 	}
 }

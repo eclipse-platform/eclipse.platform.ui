@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,26 +14,35 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * This interface defines a visual component which may serve
- * text viewers as an overview annotation presentation area.  This means,
- * presentation of annotations is independent from the actual view port of
- * the text viewer. The annotations of the viewer's whole document are
- * visible in the overview ruler.
+ * This interface defines a visual component which may serve text viewers as an overview annotation
+ * presentation area. This means, presentation of annotations is independent from the actual view
+ * port of the text viewer. The annotations of the viewer's whole document are visible in the
+ * overview ruler.
  * <p>
  * This interfaces embodies three contracts:
  * <ul>
- * <li>	The overview ruler retrieves the annotations it presents from an annotation model.
- * <li>	The ruler is a visual component which must be integrated in a hierarchy of SWT controls.
- * <li> The ruler provides interested clients with mapping and
- * 		interaction information. This covers the mapping between
- * 		coordinates of the ruler's control and line numbers based
- * 		on the connected text viewer's document (<code>IVerticalRulerInfo</code>).
- * </ul></p>
+ * <li>The overview ruler retrieves the annotations it presents from an annotation model.
+ * <li>The ruler is a visual component which must be integrated in a hierarchy of SWT controls.
+ * <li>The ruler provides interested clients with mapping and interaction information. This covers
+ * the mapping between coordinates of the ruler's control and line numbers based on the connected
+ * text viewer's document (<code>IVerticalRulerInfo</code>).
+ * </ul>
+ * </p>
  * <p>
- * Clients may implement this interface or use the default implementation provided
- * by <code>OverviewRuler</code>.</p>
- *
+ * In order to provide backward compatibility for clients of <code>IOverviewRuler</code>, extension
+ * interfaces are used as a means of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.source.IOverviewRulerExtension} since version 3.8
+ * allowing the ruler to set whether to use saturated colors.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Clients may implement this interface or use the default implementation provided by
+ * <code>OverviewRuler</code>.
+ * </p>
+ * 
  * @see org.eclipse.jface.text.ITextViewer
+ * @see org.eclipse.jface.text.source.IOverviewRulerExtension
  * @since 2.1
  */
 public interface IOverviewRuler extends IVerticalRuler {

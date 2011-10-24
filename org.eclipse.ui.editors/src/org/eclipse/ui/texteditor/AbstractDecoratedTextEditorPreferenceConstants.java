@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -252,6 +252,17 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 */
 	public static final String EDITOR_WIDE_CARET= AbstractTextEditor.PREFERENCE_WIDE_CARET;
+
+	/**
+	 * A named preference that controls whether to use saturated colors in the overview ruler.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code>, saturated colors are used
+	 * </p>
+	 * 
+	 * @since 3.8
+	 * @see org.eclipse.jface.text.source.IOverviewRulerExtension#setUseSaturatedColors(boolean)
+	 */
+	public static final String USE_SATURATED_COLORS_IN_OVERVIEW_RULER= "Accessibility.UseSaturatedColors"; //$NON-NLS-1$;
 
 	/**
 	 * A named preference that holds the color used as the text selection foreground.
@@ -677,6 +688,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, true);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_SATURATED_COLORS_IN_OVERVIEW_RULER, false);
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR, true);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR, true);

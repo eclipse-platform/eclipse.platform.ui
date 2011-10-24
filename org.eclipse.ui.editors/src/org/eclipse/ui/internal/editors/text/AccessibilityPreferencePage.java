@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -363,6 +363,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.USE_SATURATED_COLORS_IN_OVERVIEW_RULER));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -406,6 +407,10 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		label= TextEditorMessages.QuickDiffConfigurationBlock_characterMode;
 		Preference quickDiffTextMode= new Preference(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, label, null);
 		addCheckBox(appearanceComposite, quickDiffTextMode, new BooleanDomain(), 0);
+
+		label= TextEditorMessages.TextEditorPreferencePage_accessibility_useSaturatedColorsInOverviewRuler;
+		Preference useSaturatedColors= new Preference(AbstractDecoratedTextEditorPreferenceConstants.USE_SATURATED_COLORS_IN_OVERVIEW_RULER, label, null);
+		addCheckBox(appearanceComposite, useSaturatedColors, new BooleanDomain(), 0);
 
 		return appearanceComposite;
 	}

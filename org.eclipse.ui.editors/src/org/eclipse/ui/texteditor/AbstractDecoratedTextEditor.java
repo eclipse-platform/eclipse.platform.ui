@@ -101,6 +101,7 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IChangeRulerColumn;
 import org.eclipse.jface.text.source.IOverviewRuler;
+import org.eclipse.jface.text.source.IOverviewRulerExtension;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension;
@@ -213,6 +214,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.4
 	 */
 	public final static String DEFAULT_OVERVIEW_RULER_CONTEXT_MENU_ID= "#OverviewRulerContext"; //$NON-NLS-1$
+
+	/**
+	 * Preference key that controls whether to use saturated colors in the overview ruler.
+	 * 
+	 * @since 3.8
+	 */
+	private static final String USE_SATURATED_COLORS_IN_OVERVIEW_RULER= AbstractDecoratedTextEditorPreferenceConstants.USE_SATURATED_COLORS_IN_OVERVIEW_RULER;
 
 
 	/**
@@ -452,6 +460,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
 
+		if (fOverviewRuler instanceof IOverviewRulerExtension)
+			((IOverviewRulerExtension)fOverviewRuler).setUseSaturatedColors(isPrefUseSaturatedColorsOn());
+
 		if (!isOverwriteModeEnabled())
 			enableOverwriteMode(false);
 
@@ -649,6 +660,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
+	 * Checks if the preference to use saturated colors is enabled for the overview ruler.
+	 * 
+	 * @return <code>true</code> if the saturated colors preference is enabled, <code>false</code>
+	 *         otherwise
+	 * @since 3.8
+	 */
+	private boolean isPrefUseSaturatedColorsOn() {
+		IPreferenceStore store= getPreferenceStore();
+		return store != null ? store.getBoolean(USE_SATURATED_COLORS_IN_OVERVIEW_RULER) : false;
+	}
+
+	/**
 	 * Initializes the given line number ruler column from the preference store.
 	 *
 	 * @param rulerColumn the ruler column to be initialized
@@ -800,6 +823,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				else
 					hideOverviewRuler();
 				return;
+			}
+
+			if (USE_SATURATED_COLORS_IN_OVERVIEW_RULER.equals(property)) {
+				if (fOverviewRuler instanceof IOverviewRulerExtension) {
+					((IOverviewRulerExtension)fOverviewRuler).setUseSaturatedColors(isPrefUseSaturatedColorsOn());
+					fOverviewRuler.update();
+				}
 			}
 
 			if (DISABLE_OVERWRITE_MODE.equals(property)) {
