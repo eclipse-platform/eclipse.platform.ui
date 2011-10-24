@@ -76,9 +76,7 @@ public class EclipseContext implements IEclipseContext {
 	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
 	private Set<Computation> activeRATs = new HashSet<Computation>();
 
-	final Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
-
-	private final ILookupStrategy strategy;
+	final protected Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
 
 	private ArrayList<String> modifiable;
 
@@ -98,8 +96,7 @@ public class EclipseContext implements IEclipseContext {
 
 	static private final IEclipseContextDebugger debugAddOn = ContextDebugHelper.getDebugger();
 
-	public EclipseContext(IEclipseContext parent, ILookupStrategy strategy) {
-		this.strategy = strategy;
+	public EclipseContext(IEclipseContext parent) {
 		setParent(parent);
 		if (parent == null)
 			waiting = Collections.synchronizedList(new ArrayList<Computation>());
@@ -140,10 +137,6 @@ public class EclipseContext implements IEclipseContext {
 		IEclipseContext parent = getParent();
 		if (parent != null && parent.containsKey(name))
 			return true;
-		if (strategy != null) {
-			if (strategy.containsKey(name, this))
-				return true;
-		}
 		return false;
 	}
 
@@ -175,8 +168,6 @@ public class EclipseContext implements IEclipseContext {
 			}
 		}
 
-		if (strategy != null)
-			strategy.dispose();
 		localValueComputations.clear();
 
 		// if this was the parent's active child, deactivate it
@@ -218,8 +209,8 @@ public class EclipseContext implements IEclipseContext {
 			result = localValues.get(name);
 			if (result == null)
 				return null;
-		} else if (strategy != null) // 2. try the local strategy
-			result = strategy.lookup(name, originatingContext);
+		} else
+			result = lookup(name, originatingContext);
 
 		// if we found something, compute the concrete value and return
 		if (result != null) {
@@ -568,7 +559,7 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public IEclipseContext createChild() {
-		return new EclipseContext(this, null); // strategies are not inherited
+		return new EclipseContext(this); // strategies are not inherited
 	}
 
 	public IEclipseContext createChild(String name) {
@@ -695,4 +686,11 @@ public class EclipseContext implements IEclipseContext {
 			throw new IllegalArgumentException("Internal error: Invalid nested computation processing"); //$NON-NLS-1$
 	}
 
+	/**
+	 * This method can be overriden to provide additional source for the requested data.
+	 * The override is expected to take care of initiating dynamic updates.
+	 */
+	protected Object lookup(String name, EclipseContext originatingContext) {
+		return null;
+	}
 }

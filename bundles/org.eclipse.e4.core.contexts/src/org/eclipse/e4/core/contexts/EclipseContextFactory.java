@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.e4.core.contexts;
 
 import java.util.WeakHashMap;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.core.internal.contexts.osgi.OSGiContextStrategy;
+import org.eclipse.e4.core.internal.contexts.osgi.EclipseContextOSGi;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -26,7 +26,7 @@ public final class EclipseContextFactory {
 	 * @return A new empty context.
 	 */
 	static public IEclipseContext create() {
-		return new EclipseContext(null, null);
+		return new EclipseContext(null);
 	}
 
 	/**
@@ -53,7 +53,7 @@ public final class EclipseContextFactory {
 		synchronized (serviceContexts) {
 			IEclipseContext result = serviceContexts.get(bundleContext);
 			if (result == null) {
-				result = new EclipseContext(null, new OSGiContextStrategy(bundleContext));
+				result = new EclipseContextOSGi(bundleContext);
 				result.set(EclipseContext.DEBUG_STRING, "OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
 				serviceContexts.put(bundleContext, result);
 			}

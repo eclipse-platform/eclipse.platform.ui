@@ -21,9 +21,9 @@ public class CoreTestsActivator implements BundleActivator {
 
 	static private CoreTestsActivator defaultInstance;
 	private BundleContext bundleContext;
-	private ServiceTracker debugTracker = null;
-	private ServiceTracker preferencesTracker = null;
-	private ServiceTracker eventAdminTracker;
+	private ServiceTracker<DebugOptions, DebugOptions> debugTracker = null;
+	private ServiceTracker<IPreferencesService, IPreferencesService> preferencesTracker = null;
+	private ServiceTracker<EventAdmin, EventAdmin> eventAdminTracker;
 
 	public CoreTestsActivator() {
 		defaultInstance = this;
@@ -60,18 +60,18 @@ public class CoreTestsActivator implements BundleActivator {
 		if (preferencesTracker == null) {
 			if (bundleContext == null)
 				return null;
-			preferencesTracker = new ServiceTracker(bundleContext, IPreferencesService.class.getName(), null);
+			preferencesTracker = new ServiceTracker<IPreferencesService, IPreferencesService>(bundleContext, IPreferencesService.class.getName(), null);
 			preferencesTracker.open();
 		}
-		return (IPreferencesService) preferencesTracker.getService();
+		return preferencesTracker.getService();
 	}
 
 	public boolean getBooleanDebugOption(String option, boolean defaultValue) {
 		if (debugTracker == null) {
-			debugTracker = new ServiceTracker(bundleContext, DebugOptions.class.getName(), null);
+			debugTracker = new ServiceTracker<DebugOptions, DebugOptions>(bundleContext, DebugOptions.class.getName(), null);
 			debugTracker.open();
 		}
-		DebugOptions options = (DebugOptions) debugTracker.getService();
+		DebugOptions options = debugTracker.getService();
 		if (options != null) {
 			String value = options.getOption(option);
 			if (value != null)
@@ -83,10 +83,10 @@ public class CoreTestsActivator implements BundleActivator {
 		if (eventAdminTracker == null) {
 			if (bundleContext == null)
 				return null;
-			eventAdminTracker = new ServiceTracker(bundleContext, EventAdmin.class.getName(), null);
+			eventAdminTracker = new ServiceTracker<EventAdmin, EventAdmin>(bundleContext, EventAdmin.class.getName(), null);
 			eventAdminTracker.open();
 		}
-		return (EventAdmin) eventAdminTracker.getService();
+		return eventAdminTracker.getService();
 	}
 
 }

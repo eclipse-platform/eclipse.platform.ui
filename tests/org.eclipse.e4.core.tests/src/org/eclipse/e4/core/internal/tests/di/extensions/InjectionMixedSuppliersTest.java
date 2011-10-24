@@ -60,7 +60,7 @@ public class InjectionMixedSuppliersTest extends TestCase {
 	
 	private void setPreference(String key, String value) throws BackingStoreException {
 		String nodePath = CoreTestsActivator.getDefault().getBundleContext().getBundle().getSymbolicName();
-		IEclipsePreferences node = new InstanceScope().getNode(nodePath);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(nodePath);
 		node.put(key, value);
 		node.flush();
 	}

@@ -19,7 +19,7 @@ public class ContextsActivator implements BundleActivator {
 
 	static private ContextsActivator defaultInstance;
 	private BundleContext bundleContext;
-	private ServiceTracker debugTracker = null;
+	private ServiceTracker<DebugOptions, DebugOptions> debugTracker = null;
 
 	public ContextsActivator() {
 		defaultInstance = this;
@@ -50,10 +50,10 @@ public class ContextsActivator implements BundleActivator {
 		if (myBundleContext == null)
 			return defaultValue;
 		if (getDefault().debugTracker == null) {
-			getDefault().debugTracker = new ServiceTracker(getDefault().bundleContext, DebugOptions.class.getName(), null);
+			getDefault().debugTracker = new ServiceTracker<DebugOptions, DebugOptions>(getDefault().bundleContext, DebugOptions.class.getName(), null);
 			getDefault().debugTracker.open();
 		}
-		DebugOptions options = (DebugOptions) getDefault().debugTracker.getService();
+		DebugOptions options = getDefault().debugTracker.getService();
 		if (options != null) {
 			String value = options.getOption(option);
 			if (value != null)

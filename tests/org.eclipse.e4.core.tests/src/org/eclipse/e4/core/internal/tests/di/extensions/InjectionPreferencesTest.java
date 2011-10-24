@@ -167,7 +167,7 @@ public class InjectionPreferencesTest extends TestCase {
 	public void testBaseTypeConversion() throws BackingStoreException {
 		// setup preferences
 		String nodePath = CoreTestsActivator.getDefault().getBundleContext().getBundle().getSymbolicName();
-		IEclipsePreferences node = new InstanceScope().getNode(nodePath);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(nodePath);
 		node.putInt(KEY_INT, 12);
 		node.putBoolean(KEY_BOOL, true);
 		node.putDouble(KEY_DOUBLE, 12.35345345345d);
@@ -208,7 +208,7 @@ public class InjectionPreferencesTest extends TestCase {
 	public void testAutoConversion() throws BackingStoreException {
 		// setup preferences
 		String nodePath = CoreTestsActivator.getDefault().getBundleContext().getBundle().getSymbolicName();
-		IEclipsePreferences node = new InstanceScope().getNode(nodePath);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(nodePath);
 		node.putInt(KEY_INT, 12);
 		node.putBoolean(KEY_BOOL, true);
 		node.putDouble(KEY_DOUBLE, 12.35345345345d);
@@ -244,13 +244,13 @@ public class InjectionPreferencesTest extends TestCase {
 
 	private void setPreference(String key, String value) throws BackingStoreException {
 		String nodePath = CoreTestsActivator.getDefault().getBundleContext().getBundle().getSymbolicName();
-		IEclipsePreferences node = new InstanceScope().getNode(nodePath);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(nodePath);
 		node.put(key, value);
 		node.flush();
 	}
 	
 	private void setPreference(String key, String nodePath, String value) throws BackingStoreException {
-		IEclipsePreferences node = new InstanceScope().getNode(nodePath);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(nodePath);
 		node.put(key, value);
 		node.flush();
 	}

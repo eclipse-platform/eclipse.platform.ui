@@ -211,7 +211,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		Stack<Computation> current = EclipseContext.getCalculatedComputations();
 		Computation plug = current.pop();
 		if (plug != null)
-			throw new IllegalArgumentException("Internal error in nested computation processing");
+			throw new IllegalArgumentException("Internal error in nested computation processing"); //$NON-NLS-1$
 	}
 
 	static public ContextObjectSupplier getObjectSupplier(IEclipseContext context, IInjector injector) {

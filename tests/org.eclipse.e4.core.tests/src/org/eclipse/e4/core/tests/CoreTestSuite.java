@@ -22,7 +22,6 @@ import org.eclipse.e4.core.internal.tests.contexts.ReparentingTest;
 import org.eclipse.e4.core.internal.tests.contexts.RunAndTrackTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ActivationInjectionTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.AnnotationsInjectionTest;
-import org.eclipse.e4.core.internal.tests.contexts.inject.Bug304585Test;
 import org.eclipse.e4.core.internal.tests.contexts.inject.Bug317183Test;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ComplexDisposalTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ContextFunctionDynamicsTest;
@@ -92,7 +91,6 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(DisposingReferencedContextTest.class);
 		addTestSuite(InjectionOrderTest.class);
 		addTestSuite(GroupedUpdatesTest.class);
-		addTestSuite(Bug304585Test.class);
 		addTestSuite(ExtraDependenciesTest.class);
 		addTestSuite(ContextFunctionDynamicsTest.class);
 		addTestSuite(InjectArraysTest.class);

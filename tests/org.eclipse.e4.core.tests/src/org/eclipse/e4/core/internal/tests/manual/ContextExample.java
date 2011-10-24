@@ -106,7 +106,7 @@ public class ContextExample {
 
 	public void runWithService() {
 		BundleContext bundleContext = CoreTestsActivator.getDefault().getBundleContext();
-		ServiceRegistration reg = bundleContext.registerService(IPaletteService.class
+		ServiceRegistration<?> reg = bundleContext.registerService(IPaletteService.class
 				.getName(), new PaletteImpl(Color.BLUE), null);
 		IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
 		Crayon crayon = new Crayon();

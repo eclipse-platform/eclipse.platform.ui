@@ -48,7 +48,6 @@ public class ContextInjectionDisposeTest extends TestCase {
 			@Inject
 			private String Field;
 
-			@SuppressWarnings("unused")
 			@PreDestroy
 			public void dispose() {
 				disposeInvoked = true;
@@ -70,7 +69,6 @@ public class ContextInjectionDisposeTest extends TestCase {
 			Object Field;
 			String methodValue;
 
-			@SuppressWarnings("unused")
 			@PreDestroy
 			public void dispose() {
 				disposeInvoked = true;
@@ -108,7 +106,6 @@ public class ContextInjectionDisposeTest extends TestCase {
 			Integer Field;
 			Object methodValue;
 
-			@SuppressWarnings("unused")
 			@PreDestroy
 			public void dispose() {
 				disposeInvoked = true;

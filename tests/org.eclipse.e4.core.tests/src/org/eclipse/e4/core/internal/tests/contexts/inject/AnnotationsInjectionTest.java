@@ -90,7 +90,6 @@ public class AnnotationsInjectionTest extends TestCase {
 			int setMethodCalled = 0;
 			public TestData value;
 
-			@SuppressWarnings("unused")
 			@PostConstruct
 			public void init() {
 				postConstructCalled++;
@@ -337,7 +336,6 @@ public class AnnotationsInjectionTest extends TestCase {
 			@Inject
 			public TestData directFieldInjection;
 
-			@SuppressWarnings("unused")
 			@PreDestroy
 			public void aboutToClose() {
 				preDestoryCalled++;
