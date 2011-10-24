@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - [refactoring] Provide a way to implement refactorings that depend on resources that have to be explicitly released - https://bugs.eclipse.org/347599
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.resource;
 
@@ -35,6 +36,7 @@ import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringContext;
 import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -302,14 +304,20 @@ public class ResourceRefactoringTests extends TestCase {
 
 	private Change perform(RefactoringDescriptor descriptor) throws CoreException {
 		RefactoringStatus status= new RefactoringStatus();
-		Refactoring refactoring= descriptor.createRefactoring(status);
-		assertTrue(status.isOK());
+		final RefactoringContext context= descriptor.createRefactoringContext(status);
+		try {
+			final Refactoring refactoring= context != null ? context.getRefactoring() : null;
+			assertTrue(status.isOK());
 
-		PerformRefactoringOperation op= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
-		op.run(null);
-		RefactoringStatus validationStatus= op.getValidationStatus();
-		assertTrue(!validationStatus.hasFatalError() && !validationStatus.hasError());
-		return op.getUndoChange();
+			PerformRefactoringOperation op= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
+			op.run(null);
+			RefactoringStatus validationStatus= op.getValidationStatus();
+			assertTrue(!validationStatus.hasFatalError() && !validationStatus.hasError());
+			return op.getUndoChange();
+		} finally {
+			if (context != null)
+				context.dispose();
+		}
 	}
 
 	private IResource assertMove(IResource source, IContainer destination, String content) throws CoreException, IOException {

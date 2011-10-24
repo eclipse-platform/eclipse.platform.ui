@@ -34,6 +34,7 @@ import org.eclipse.ui.progress.IProgressService;
 
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringContext;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
@@ -67,6 +68,11 @@ public class RefactoringWizardOpenOperation {
 
 	/**
 	 * Creates a new refactoring wizard starter for the given wizard.
+	 * <p>
+	 * If the wizard was created via {@link RefactoringWizard#RefactoringWizard(RefactoringContext, int)},
+	 * then this operation will also {@link RefactoringContext#dispose() dispose} of the context
+	 * at the end of all <code>run</code> methods.
+	 * </p>
 	 *
 	 * @param wizard the wizard to open a dialog for
 	 */
@@ -187,6 +193,9 @@ public class RefactoringWizardOpenOperation {
 				} finally {
 					manager.endRule(ResourcesPlugin.getWorkspace().getRoot());
 					refactoring.setValidationContext(null);
+					RefactoringContext refactoringContext= fWizard.getRefactoringContext();
+					if (refactoringContext != null)
+						refactoringContext.dispose();
 				}
 			}
 		};

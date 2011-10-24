@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - [refactoring] Provide a way to implement refactorings that depend on resources that have to be explicitly released - https://bugs.eclipse.org/347599
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
@@ -229,27 +230,56 @@ public abstract class RefactoringDescriptor implements Comparable {
 	/**
 	 * Creates the a new refactoring instance for this refactoring descriptor.
 	 * <p>
-	 * This method is used by the refactoring framework to instantiate a
-	 * refactoring from a refactoring descriptor, in order to apply it later on
-	 * a local or remote workspace.
-	 * </p>
-	 * <p>
 	 * The returned refactoring must be in an initialized state, i.e. ready to
 	 * be executed via {@link PerformRefactoringOperation}.
 	 * </p>
+	 * <p>
+	 * This method is not intended to be called directly from code that does not belong to this
+	 * class and its subclasses. External code should call
+	 * {@link #createRefactoringContext(RefactoringStatus)} and obtain the refactoring object from
+	 * the refactoring context.
+	 * </p>
 	 *
 	 * @param status
-	 *            a refactoring status used to describe the outcome of the
-	 *            initialization
+	 *          a refactoring status used to describe the outcome of the initialization
 	 * @return the refactoring, or <code>null</code> if this refactoring
 	 *         descriptor represents the unknown refactoring, or if no
 	 *         refactoring contribution is available for this refactoring
 	 *         descriptor which is capable to create a refactoring
 	 * @throws CoreException
-	 *             if an error occurs while creating the refactoring instance
+	 *         if an error occurs while creating the refactoring instance
 	 */
 	public abstract Refactoring createRefactoring(RefactoringStatus status) throws CoreException;
 
+	/**
+	 * Creates the a new refactoring context and the associated refactoring instance for this
+	 * refactoring descriptor.
+	 * <p>
+	 * This method is used by the refactoring framework to instantiate a refactoring
+	 * from a refactoring descriptor, in order to apply it later on a local or remote workspace.
+	 * </p>
+	 * <p>
+	 * The default implementation of this method wraps the refactoring in a trivial refactoring
+	 * context. Subclasses may override this method to create a custom refactoring context.
+	 * </p>
+	 *
+	 * @param status
+	 * 			a refactoring status used to describe the outcome of the initialization
+	 * @return the refactoring context, or <code>null</code> if this refactoring
+	 *         	descriptor represents the unknown refactoring, or if no
+	 *         	refactoring contribution is available for this refactoring
+	 *         	descriptor which is capable to create a refactoring.
+	 * @throws CoreException
+	 *          if an error occurs while creating the refactoring context
+	 * @since 3.6
+	 */
+	public RefactoringContext createRefactoringContext(RefactoringStatus status) throws CoreException {
+		Refactoring refactoring= createRefactoring(status);
+		if (refactoring == null)
+			return null;
+		return new RefactoringContext(refactoring);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

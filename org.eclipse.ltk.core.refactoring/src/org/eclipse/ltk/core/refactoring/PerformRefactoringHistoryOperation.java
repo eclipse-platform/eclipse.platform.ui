@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - [refactoring] Provide a way to implement refactorings that depend on resources that have to be explicitly released - https://bugs.eclipse.org/347599
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
@@ -127,11 +128,49 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	 *             if an error occurs while creating the refactoring instance
 	 *
 	 * @since 3.4
+	 * @deprecated since 3.6. Override {@link #createRefactoringContext(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)} instead
 	 */
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
 		try {
 			Assert.isNotNull(descriptor);
 			return createRefactoring(descriptor, status); // call for backward compatibility
+		} finally {
+			if (monitor != null) {
+				monitor.done();
+			}
+		}
+	}
+
+	/**
+	 * Method which is called to create a refactoring context from a refactoring descriptor.
+	 * The refactoring context must contain a refactoring in an initialized state at the return
+	 * of the method call.
+	 * <p>
+	 * A caller of this method must ensure that {@link RefactoringContext#dispose()} is eventually called.
+	 * </p>
+	 * 
+	 * <p>
+	 * The default implementation delegates the task to the refactoring descriptor.
+	 * </p>
+	 *
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @param status
+	 *            a refactoring status to describe the outcome of the initialization
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @return the refactoring context, or <code>null</code> if this refactoring descriptor
+	 *            represents the unknown refactoring, or if no refactoring contribution is
+	 *            available for this refactoring descriptor
+	 * @throws CoreException
+	 *             if an error occurs while creating the refactoring context
+	 * @since 3.6
+	 */
+	protected RefactoringContext createRefactoringContext(final RefactoringDescriptor descriptor,
+			final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
+		try {
+			Assert.isNotNull(descriptor);
+			return descriptor.createRefactoringContext(status);
 		} finally {
 			if (monitor != null) {
 				monitor.done();
@@ -177,15 +216,16 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 			for (int index= 0; index < proxies.length; index++) {
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				if (descriptor != null) {
-					Refactoring refactoring= null;
+					RefactoringContext context= null;
 					RefactoringStatus status= new RefactoringStatus();
 					try {
 						try {
-							refactoring= createRefactoring(descriptor, status, new SubProgressMonitor(monitor, 30, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							context= createRefactoringContext(descriptor, status, new SubProgressMonitor(monitor, 30, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						} catch (CoreException exception) {
 							status.merge(RefactoringStatus.create(exception.getStatus()));
 						}
-						if (refactoring != null && !status.hasFatalError()) {
+						if (context != null && !status.hasFatalError()) {
+							Refactoring refactoring= context.getRefactoring();
 							final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 							try {
 								status.merge(aboutToPerformRefactoring(refactoring, descriptor, new SubProgressMonitor(monitor, 30, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
@@ -201,6 +241,8 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 						}
 					} finally {
 						fExecutionStatus.merge(status);
+						if (context != null)
+							context.dispose();
 					}
 				}
 			}

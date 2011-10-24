@@ -33,6 +33,7 @@ import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringContext;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
@@ -154,6 +155,7 @@ public abstract class RefactoringWizard extends Wizard {
 	private static final int LAST= 1 << 8;
 
 	private final int fFlags;
+	private final RefactoringContext fRefactoringContext;
 	private final Refactoring fRefactoring;
 	private String fDefaultPageTitle;
 
@@ -180,11 +182,31 @@ public abstract class RefactoringWizard extends Wizard {
 	 *  taken as a default.
 	 */
 	public RefactoringWizard(Refactoring refactoring, int flags) {
+		this(null, refactoring, flags);
 		Assert.isNotNull(refactoring);
+	}
+	
+	/**
+	 * Creates a new refactoring wizard for the given refactoring context.
+	 *
+	 * @param refactoringContext the refactoringContext the wizard is presenting
+	 * @param flags flags specifying the behavior of the wizard. If neither
+	 *  <code>WIZARD_BASED_USER_INTERFACE</code> nor <code>DIALOG_BASED_UESR_INTERFACE</code>
+	 *  is specified then <code>WIZARD_BASED_USER_INTERFACE</code> will be
+	 *  taken as a default.
+	 * @since 3.7
+	 */
+	public RefactoringWizard(RefactoringContext refactoringContext, int flags) {
+		this(refactoringContext, null, flags);
+		Assert.isNotNull(refactoringContext);
+	}
+	
+	private RefactoringWizard(RefactoringContext refactoringContext, Refactoring refactoring, int flags) {
 		Assert.isTrue(flags < LAST);
 		if ((flags & DIALOG_BASED_USER_INTERFACE) == 0)
 			flags |= WIZARD_BASED_USER_INTERFACE;
 		Assert.isTrue((flags & DIALOG_BASED_USER_INTERFACE) != 0 || (flags & WIZARD_BASED_USER_INTERFACE) != 0);
+		fRefactoringContext= refactoringContext;
 		fRefactoring= refactoring;
 		fFlags= flags;
 		setNeedsProgressMonitor(true);
@@ -200,10 +222,20 @@ public abstract class RefactoringWizard extends Wizard {
 	 *
 	 * @return the wizard's refactoring
 	 */
-	public final Refactoring getRefactoring(){
+	public final Refactoring getRefactoring() {
 		return fRefactoring;
 	}
 
+	/**
+	 * Returns the refactoring context this wizard is associated with, or <code>null</code> if none.
+	 *
+	 * @return the wizard's refactoring context or <code>null</code>
+	 * @since 3.7
+	 */
+	public final RefactoringContext getRefactoringContext() {
+		return fRefactoringContext;
+	}
+	
 	/**
 	 * Returns the refactoring wizard flags that have been set for this wizard.
 	 * Note that the set of valid flags may grow in the future.

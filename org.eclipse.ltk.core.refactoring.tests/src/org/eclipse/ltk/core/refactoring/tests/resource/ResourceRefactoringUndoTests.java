@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,7 +135,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		RenameResourceDescriptor desc= (RenameResourceDescriptor) renameContribution.createDescriptor();
 		desc.setResourcePath(testFile.getFullPath());
 		desc.setNewName(TEST_NEWFILE_NAME);
-		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoring(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 		FileSnapshot snap= new FileSnapshot(testFile);
 		execute(op);
@@ -160,7 +160,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		RenameResourceDescriptor desc= (RenameResourceDescriptor) renameContribution.createDescriptor();
 		desc.setResourcePath(testFolder.getFullPath());
 		desc.setNewName(TEST_NEWFOLDER_NAME);
-		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoring(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 		FolderSnapshot snap= new FolderSnapshot(testFolder);
 		execute(op);
@@ -184,7 +184,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		RenameResourceDescriptor desc= (RenameResourceDescriptor) renameContribution.createDescriptor();
 		desc.setResourcePath(fProject.getProject().getFullPath());
 		desc.setNewName(TEST_NEWPROJECT_NAME);
-		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoring(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 		ProjectSnapshot snap= new ProjectSnapshot(fProject.getProject());
 		execute(op);
@@ -206,7 +206,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
 		desc.setResourcePaths(new IPath[] { testFile.getFullPath() });
 
-		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoring(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 		FileSnapshot snap= new FileSnapshot(testFile);
 
@@ -225,7 +225,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
 		desc.setResourcePaths(new IPath[] { testLinkedFile.getFullPath() });
 
-		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoring(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 		FileSnapshot snap= new FileSnapshot(testLinkedFile);
 
@@ -244,7 +244,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
 		desc.setResourcePaths(new IPath[] { testSubFolder.getFullPath() });
 
-		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoring(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 		FolderSnapshot snap= new FolderSnapshot(testSubFolder);
 
@@ -263,7 +263,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
 		desc.setResourcePaths(new IPath[] { testLinkedFolder.getFullPath() });
 
-		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoring(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 		FolderSnapshot snap= new FolderSnapshot(testLinkedFolder);
 		execute(op);
@@ -280,7 +280,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
 		desc.setResourcePaths(new IPath[] { fProject.getProject().getFullPath() });
 
-		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoring(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 		execute(op);
 		assertFalse("Project delete failed", fProject.getProject().exists());
@@ -312,7 +312,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		desc.setResourcePaths(new IPath[] { fProject.getProject().getFullPath() });
 		desc.setDeleteContents(true);
 
-		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoring(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
+		PerformRefactoringOperation op= new PerformRefactoringOperation(desc.createRefactoringContext(new RefactoringStatus()), CheckConditionsOperation.ALL_CONDITIONS);
 
 // we don't snapshot since CONTENT will be deleted
 		execute(op);

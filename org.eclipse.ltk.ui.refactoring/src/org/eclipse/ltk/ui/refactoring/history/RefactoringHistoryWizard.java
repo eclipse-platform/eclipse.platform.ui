@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - [refactoring] Provide a way to implement refactorings that depend on resources that have to be explicitly released - https://bugs.eclipse.org/347599
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.history;
 
@@ -57,6 +58,7 @@ import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringHistoryOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringContext;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
@@ -553,6 +555,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *         descriptor
 	 * @throws CoreException
 	 *             if an error occurs while creating the refactoring instance
+	 * @deprecated since 3.6. Override {@link #createRefactoringContext(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)} instead
 	 */
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status) throws CoreException {
 		Assert.isNotNull(descriptor);
@@ -581,6 +584,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *             if an error occurs while creating the refactoring instance
 	 *
 	 * @since 3.4
+	 * @deprecated since 3.7. Override {@link #createRefactoringContext(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)} instead
 	 */
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
 		final Refactoring refactoring= createRefactoring(descriptor, status);
@@ -590,6 +594,43 @@ public class RefactoringHistoryWizard extends Wizard {
 				return refactoring;
 		} else
 			status.addFatalError(Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_error_instantiate_refactoring, descriptor.getDescription()));
+		return null;
+	}
+
+	/**
+	 * Creates a refactoring context from the specified refactoring descriptor.
+	 * <p>
+	 * The default implementation calls
+	 * {@link RefactoringDescriptor#createRefactoringContext(RefactoringStatus)} followed by
+	 * {@link #aboutToPerformRefactoring(Refactoring, RefactoringDescriptor, IProgressMonitor)}.
+	 * Implementors can replace this implementation.
+	 * </p>
+	 *
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @param status
+	 *            the refactoring status
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @return the refactoring context, or <code>null</code> if this refactoring descriptor
+	 *         represents the unknown refactoring, or if no refactoring contribution is available
+	 *         for this refactoring descriptor
+	 * @throws CoreException
+	 *             if an error occurs while creating the refactoring context
+	 *
+	 * @since 3.7
+	 */
+	protected RefactoringContext createRefactoringContext(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(descriptor);
+		final RefactoringContext context= descriptor.createRefactoringContext(status);
+		if (context != null) {
+			final Refactoring refactoring= context.getRefactoring();
+			status.merge(aboutToPerformRefactoring(refactoring, descriptor, monitor));
+			if (!status.hasFatalError())
+				return context;
+		} else {
+			status.addFatalError(Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_error_instantiate_refactoring, descriptor.getDescription()));
+		}
 		return null;
 	}
 
@@ -825,33 +866,39 @@ public class RefactoringHistoryWizard extends Wizard {
 							service.connect();
 							final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 							if (descriptor != null) {
-								final Refactoring refactoring= createRefactoring(descriptor, status, new SubProgressMonitor(monitor, 60, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-								if (refactoring != null && status.isOK()) {
-									fPreviewPage.setRefactoring(refactoring);
-									fErrorPage.setRefactoring(refactoring);
-									status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.INITIAL_CONDITONS));
-									if (!status.isOK()) {
-										prepareErrorPage(status, proxy, status.hasFatalError(), last);
-										result[0]= fErrorPage;
-									} else {
-										status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 65, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.FINAL_CONDITIONS));
+								final RefactoringContext context= createRefactoringContext(descriptor, status, new SubProgressMonitor(monitor, 60, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								try {
+									if (context != null && status.isOK()) {
+										final Refactoring refactoring= context.getRefactoring();
+										fPreviewPage.setRefactoring(refactoring);
+										fErrorPage.setRefactoring(refactoring);
+										status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.INITIAL_CONDITONS));
 										if (!status.isOK()) {
 											prepareErrorPage(status, proxy, status.hasFatalError(), last);
 											result[0]= fErrorPage;
 										} else {
-											final Change change= createChange(refactoring, new SubProgressMonitor(monitor, 5, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-											getShell().getDisplay().syncExec(new Runnable() {
-
-												public final void run() {
-													fPreviewPage.setChange(change);
-												}
-											});
-											result[0]= fPreviewPage;
+											status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 65, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.FINAL_CONDITIONS));
+											if (!status.isOK()) {
+												prepareErrorPage(status, proxy, status.hasFatalError(), last);
+												result[0]= fErrorPage;
+											} else {
+												final Change change= createChange(refactoring, new SubProgressMonitor(monitor, 5, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+												getShell().getDisplay().syncExec(new Runnable() {
+	
+													public final void run() {
+														fPreviewPage.setChange(change);
+													}
+												});
+												result[0]= fPreviewPage;
+											}
 										}
+									} else {
+										prepareErrorPage(status, proxy, status.hasFatalError(), last);
+										result[0]= fErrorPage;
 									}
-								} else {
-									prepareErrorPage(status, proxy, status.hasFatalError(), last);
-									result[0]= fErrorPage;
+								} finally {
+									if (context != null)
+										context.dispose();
 								}
 							} else {
 								status.merge(RefactoringStatus.createFatalErrorStatus(RefactoringUIMessages.RefactoringHistoryWizard_error_resolving_refactoring));
@@ -1031,8 +1078,8 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 			final PerformRefactoringHistoryOperation operation= new PerformRefactoringHistoryOperation(new RefactoringHistoryImplementation(descriptors)) {
 
-				protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus state, IProgressMonitor monitor) throws CoreException {
-					return RefactoringHistoryWizard.this.createRefactoring(descriptor, state, monitor);
+				protected RefactoringContext createRefactoringContext(final RefactoringDescriptor descriptor, final RefactoringStatus state, IProgressMonitor monitor) throws CoreException {
+					return RefactoringHistoryWizard.this.createRefactoringContext(descriptor, state, monitor);
 				}
 
 				protected void refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
