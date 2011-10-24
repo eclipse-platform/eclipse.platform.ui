@@ -20,6 +20,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.ant.tests.ui.AbstractAntUIBuildTest;
@@ -240,5 +241,14 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 			msg = msg.substring(0, index);
 		}
 		return msg.endsWith(PLUGIN_VERSION);
+	}
+
+	public void testFailInputHandler() throws CoreException {
+		ILaunchConfiguration config = getLaunchConfiguration("echoingSepVM");
+		assertNotNull("Could not locate launch configuration for " + "echoingSepVM", config);
+		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
+		copy.setAttribute(IAntUIConstants.SET_INPUTHANDLER, false);
+		launch(copy);
+		assertTrue("Incorrect message. Should start with Message:. Message: " + ConsoleLineTracker.getMessage(1), ConsoleLineTracker.getMessage(1).startsWith("echo1"));
 	}
 }

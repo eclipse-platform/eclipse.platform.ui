@@ -385,7 +385,7 @@ public class InternalAntRunner {
 				System.setProperty("eclipse.ant.noInput", "true");  //$NON-NLS-1$//$NON-NLS-2$
 				if (isVersionCompatible("1.5") && (inputHandlerClassname == null || inputHandlerClassname.length() == 0)) { //$NON-NLS-1$
 					InputHandlerSetter setter= new InputHandlerSetter();
-					setter.setInputHandler(getCurrentProject(), "org.eclipse.ant.internal.ui.antsupport.inputhandler.FailInputHandler"); //$NON-NLS-1$
+					setter.setInputHandler(getCurrentProject(), "org.eclipse.ant.internal.launching.remote.inputhandler.FailInputHandler"); //$NON-NLS-1$
 				}
 			}
 			
