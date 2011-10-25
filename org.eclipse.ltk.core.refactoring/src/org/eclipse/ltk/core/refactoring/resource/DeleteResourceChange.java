@@ -92,7 +92,9 @@ public class DeleteResourceChange extends ResourceChange {
 	 */
 	public String getName() {
 		IPath path= fResourcePath.makeRelative();
-		String label= BasicElementLabels.getPathLabel(path, false);
+		String label= Messages.format(
+				RefactoringCoreMessages.DeleteResourceChange_name,
+				BasicElementLabels.getPathLabel(path, false));
 		
 		if (path.segmentCount() == 1) {
 			IResource resource= getResource();
@@ -106,7 +108,7 @@ public class DeleteResourceChange extends ResourceChange {
 				}
 			}
 		}
-		return Messages.format(RefactoringCoreMessages.DeleteResourceChange_name, label);
+		return label;
 	}
 
 	/* (non-Javadoc)
