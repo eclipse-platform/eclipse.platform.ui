@@ -2137,6 +2137,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected String[] collectOverviewRulerMenuPreferencePages() {
 		return new String[] { "org.eclipse.ui.editors.preferencePages.Annotations", //$NON-NLS-1$
 				"org.eclipse.ui.preferencePages.GeneralTextEditor", //$NON-NLS-1$
+				"org.eclipse.ui.editors.preferencePages.Accessibility", //$NON-NLS-1$
 				"org.eclipse.ui.editors.preferencePages.QuickDiff", //$NON-NLS-1$
 				"org.eclipse.ui.preferencePages.ColorsAndFonts" //$NON-NLS-1$
 		};
