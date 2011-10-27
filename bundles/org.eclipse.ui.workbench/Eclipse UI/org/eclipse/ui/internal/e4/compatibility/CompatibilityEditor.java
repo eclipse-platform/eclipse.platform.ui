@@ -43,6 +43,9 @@ public class CompatibilityEditor extends CompatibilityPart {
 
 	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
 		super.createPartControl(legacyPart, parent);
+
+		part.getContext().set(IEditorPart.class, (IEditorPart) legacyPart);
+
 		EditorDescriptor descriptor = reference.getDescriptor();
 		if (descriptor != null) {
 			IConfigurationElement element = descriptor.getConfigurationElement();

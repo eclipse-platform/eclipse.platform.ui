@@ -87,6 +87,8 @@ public class CompatibilityView extends CompatibilityPart {
 	 */
 	@Override
 	protected void createPartControl(IWorkbenchPart legacyPart, Composite parent) {
+		part.getContext().set(IViewPart.class, (IViewPart) legacyPart);
+
 		// Some views (i.e. Console) require that the actual ToolBar be
 		// instantiated before they are
 		IActionBars actionBars = ((IViewPart) legacyPart).getViewSite().getActionBars();
