@@ -410,4 +410,9 @@ public class ThemeEngine implements IThemeEngine {
 		}
 		return engine.getViewCSS().getComputedStyle(e, null);
 	}
+
+	public List<String> getStylesheets(ITheme selection) {
+		List<String> ss  = stylesheets.get(selection.getId());
+		return ss == null ? new ArrayList<String>() : ss;
+	}
 }
