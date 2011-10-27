@@ -41,7 +41,11 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 	 * @return The list of rendered place holders (may be null)
 	 */
 	public static List<MPlaceholder> getRenderedPlaceholders(MUIElement element) {
-		return renderedMap.get(element);
+		List<MPlaceholder> mapVal = renderedMap.get(element);
+		if (mapVal == null)
+			return new ArrayList<MPlaceholder>();
+
+		return mapVal;
 	}
 
 	@Inject
