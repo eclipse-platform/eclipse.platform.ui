@@ -57,6 +57,7 @@ public class E4Workbench implements IWorkbench {
 	IEclipseContext appContext;
 	IPresentationEngine renderer;
 	MApplication appModel = null;
+	private UIEventPublisher uiEventPublisher;
 
 	public IEclipseContext getContext() {
 		return appContext;
@@ -73,8 +74,8 @@ public class E4Workbench implements IWorkbench {
 			init((MApplication) uiRoot);
 		}
 
-		// Hook the global notifications
-		((Notifier) uiRoot).eAdapters().add(new UIEventPublisher(appContext));
+		uiEventPublisher = new UIEventPublisher(appContext);
+		((Notifier) uiRoot).eAdapters().add(uiEventPublisher);
 	}
 
 	/**
@@ -129,6 +130,10 @@ public class E4Workbench implements IWorkbench {
 	public boolean close() {
 		if (renderer != null) {
 			renderer.stop();
+		}
+		if (uiEventPublisher != null && appModel != null) {
+			((Notifier) appModel).eAdapters().remove(uiEventPublisher);
+			uiEventPublisher = null;
 		}
 		return true;
 	}
