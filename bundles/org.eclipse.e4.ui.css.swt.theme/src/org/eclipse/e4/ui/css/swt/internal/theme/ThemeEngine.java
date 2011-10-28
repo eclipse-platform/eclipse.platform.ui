@@ -57,6 +57,7 @@ public class ThemeEngine implements IThemeEngine {
 	private List<IResourceLocator> globalSourceLocators = new ArrayList<IResourceLocator>();
 
 	private HashMap<String, List<String>> stylesheets = new HashMap<String, List<String>>();
+	private HashMap<String, List<String>> modifiedStylesheets = new HashMap<String, List<String>>();
 	private HashMap<String, List<IResourceLocator>> sourceLocators = new HashMap<String, List<IResourceLocator>>();
 
 	private static final String THEMEID_KEY = "themeid";
@@ -414,5 +415,9 @@ public class ThemeEngine implements IThemeEngine {
 	public List<String> getStylesheets(ITheme selection) {
 		List<String> ss  = stylesheets.get(selection.getId());
 		return ss == null ? new ArrayList<String>() : ss;
+	}
+	
+	public void themeModified(ITheme theme, List<String> paths) {
+		modifiedStylesheets.put(theme.getId(), paths);
 	}
 }

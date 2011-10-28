@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.tweaklets;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;

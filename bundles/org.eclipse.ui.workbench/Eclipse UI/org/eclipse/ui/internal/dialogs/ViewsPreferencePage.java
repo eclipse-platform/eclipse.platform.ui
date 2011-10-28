@@ -36,6 +36,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -51,7 +53,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private String defaultTheme;
 
 	private Button enableAnimations;
-
+	
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -73,17 +75,27 @@ public class ViewsPreferencePage extends PreferencePage implements
 		themeIdCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(SelectionChangedEvent event) {
-				engine.setTheme(getSelection(), false);
+				ITheme selection = getSelection();
+				engine.setTheme(selection, false);
+				((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY))
+						.setSelection(selection);
 			}
 		});
 
 		createEnableAnimationsPref(comp);
+
+		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY))
+				.setSelection(currentTheme);
+		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).createContents(comp);
+
 
 		return comp;
 	}
 
 	private Button createCheckButton(Composite composite, String text, boolean selection) {
 		Button button = new Button(composite, SWT.CHECK);
+		GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 2, 1);
+		button.setLayoutData(data);
 		button.setText(text);
 		button.setSelection(selection);
 		return button;
@@ -115,10 +127,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 	@Override
 	public boolean performOk() {
 		engine.setTheme(getSelection(), true);
-
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
 				enableAnimations.getSelection());
+		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).performOK();
 		return super.performOk();
 	}
 
