@@ -17,13 +17,15 @@ import java.util.Map;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.SynchronousBundleListener;
 
-public class EclipseContextOSGi extends EclipseContext implements ServiceListener {
+public class EclipseContextOSGi extends EclipseContext implements ServiceListener, SynchronousBundleListener {
 
 	final private BundleContext bundleContext;
 
@@ -46,6 +48,7 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 			// should never happen
 		}
 		this.bundleContext.addServiceListener(this);
+		this.bundleContext.addBundleListener(this);
 	}
 
 	public boolean containsKey(String name, boolean localOnly) {
@@ -93,6 +96,7 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 		}
 		refs.clear();
 		bundleContext.removeServiceListener(this);
+		bundleContext.removeBundleListener(this);
 		super.dispose();
 	}
 
@@ -115,5 +119,15 @@ public class EclipseContextOSGi extends EclipseContext implements ServiceListene
 				set(name, service);
 			}
 		}
+	}
+
+	public void bundleChanged(BundleEvent event) {
+		// In case OSGi context has not being properly disposed by the application,
+		// OSGi framework shutdown will trigged uninjection of all consumed OSGi 
+		// service. To avoid this, we detect framework shutdown and release services.
+		if (event.getType() != BundleEvent.STOPPING)
+			return;
+		if (event.getBundle().getBundleId() == 0)
+			dispose();
 	}
 }
