@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -301,6 +302,12 @@ public class XMLModelReconciler extends ModelReconciler {
 		if (object instanceof MApplication) {
 			for (MCommand command : ((MApplication) object).getCommands()) {
 				if (constructDeltas(deltas, references, (EObject) command, element, id)) {
+					return true;
+				}
+			}
+
+			for (MAddon addon : ((MApplication) object).getAddons()) {
+				if (constructDeltas(deltas, references, (EObject) addon, element, id)) {
 					return true;
 				}
 			}
@@ -1370,10 +1377,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return null;
 		}
 
+		EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription.getObjectChanges();
 		if (reference instanceof MUIElement) {
-			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
-					.getObjectChanges();
-
 			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
 				EObject key = entry.getKey();
 				if (key == reference) {
@@ -1526,6 +1531,22 @@ public class XMLModelReconciler extends ModelReconciler {
 				return reference instanceof MApplication ? changeDescription : reference
 						.eContainer();
 			}
+		}
+
+		if (reference instanceof MAddon) {
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key instanceof MApplication) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(APPLICATION_ADDONS_ATTNAME)) {
+							EList<?> value = (EList<?>) change.getValue();
+							return value.contains(reference) ? key : null;
+						}
+					}
+				}
+			}
+
+			return reference.eContainer();
 		}
 
 		return null;

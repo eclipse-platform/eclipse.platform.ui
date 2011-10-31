@@ -13,11 +13,13 @@ package org.eclipse.e4.ui.tests.reconciler;
 
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -1394,6 +1396,78 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertNotNull(newContainer.getChildren().get(0));
 		assertFalse(partStackA == newContainer.getChildren().get(0));
 		assertEquals(partStackB, newContainer.getChildren().get(1));
+	}
+
+	/**
+	 * Test to ensure that the <tt>persistedState</tt> attribute of an
+	 * <tt>MAddon</tt> is recognized as a delta.
+	 */
+	private void testBug361851(String originalValue, String newValue) {
+		MApplication application = createApplication();
+
+		MAddon addon = ApplicationFactoryImpl.eINSTANCE.createAddon();
+		application.getAddons().add(addon);
+		addon.getPersistedState().put("key", originalValue);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		addon.getPersistedState().put("key", newValue);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		addon = application.getAddons().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(originalValue, addon.getPersistedState().get("key"));
+
+		applyAll(deltas);
+
+		assertEquals(newValue, addon.getPersistedState().get("key"));
+	}
+
+	public void testBug361851_NullNull() {
+		testBug361851(null, null);
+	}
+
+	public void testBug361851_NullEmpty() {
+		testBug361851(null, "");
+	}
+
+	public void testBug361851_NullString() {
+		testBug361851(null, "string");
+	}
+
+	public void testBug361851_EmptyNull() {
+		testBug361851("", null);
+	}
+
+	public void testBug361851_EmptyEmpty() {
+		testBug361851("", "");
+	}
+
+	public void testBug361851_EmptyString() {
+		testBug361851("", "string");
+	}
+
+	public void testBug361851_StringNull() {
+		testBug361851("string", null);
+	}
+
+	public void testBug361851_StringEmpty() {
+		testBug361851("string", "");
+	}
+
+	public void testBug361851_StringStringUnchanged() {
+		testBug361851("string", "string");
+	}
+
+	public void testBug361851_StringStringChanged() {
+		testBug361851("string", "string2");
 	}
 
 	/**

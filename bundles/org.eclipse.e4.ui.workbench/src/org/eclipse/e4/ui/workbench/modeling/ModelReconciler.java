@@ -46,6 +46,12 @@ public abstract class ModelReconciler {
 			.getApplication_Commands().getName();
 
 	/**
+	 * Attribute defined by MApplications (value is <code>addons</code>).
+	 */
+	public static final String APPLICATION_ADDONS_ATTNAME = ApplicationPackageImpl.eINSTANCE
+			.getApplication_Addons().getName();
+
+	/**
 	 * Attribute defined by MContexts (value is <code>properties</code>).
 	 */
 	public static final String CONTEXT_PROPERTIES_ATTNAME = UiPackageImpl.eINSTANCE
