@@ -23,6 +23,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
@@ -67,17 +68,21 @@ public class ViewProvider extends QuickAccessProvider {
 			for (int i = 0; i < descriptors.size(); i++) {
 				MPartDescriptor descriptor = descriptors.get(i);
 				String uri = descriptor.getContributionURI();
-				if (uri != null && !uri.equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
+				if (uri != null) {
 					String id = descriptor.getElementId();
-					if (id != null) {
-						ViewElement element = new ViewElement(this, window, descriptors.get(i));
-						IViewDescriptor viewDescriptor = viewRegistry.find(element.getId());
-						// Ignore if restricted
-						if (viewDescriptor == null)
-							continue;
-						// Ignore if filtered
-						if (!WorkbenchActivityHelper.filterItem(viewDescriptor)) {
-							idToElement.put(element.getId(), element);
+					if (id != null && !id.equals(CompatibilityEditor.MODEL_ELEMENT_ID)) {
+						ViewElement element = new ViewElement(this, window, descriptor);
+						if (uri.equals(CompatibilityPart.COMPATIBILITY_VIEW_URI)) {
+							IViewDescriptor viewDescriptor = viewRegistry.find(element.getId());
+							// Ignore if restricted
+							if (viewDescriptor == null)
+								continue;
+							// Ignore if filtered
+							if (!WorkbenchActivityHelper.filterItem(viewDescriptor)) {
+								idToElement.put(element.getId(), element);
+							}
+						} else {
+							idToElement.put(id, element);
 						}
 					}
 				}
