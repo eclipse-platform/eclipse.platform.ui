@@ -51,7 +51,7 @@ public class CompatibilityEditor extends CompatibilityPart {
 			IConfigurationElement element = descriptor.getConfigurationElement();
 			if (element != null) {
 				String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-				if (iconURI != null) {
+				if (iconURI != null && !iconURI.startsWith("platform:/plugin/")) { //$NON-NLS-1$
 					StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
 					builder.append(element.getNamespaceIdentifier()).append('/');
 
@@ -62,8 +62,9 @@ public class CompatibilityEditor extends CompatibilityPart {
 					}
 
 					builder.append(iconURI);
-					part.setIconURI(builder.toString());
+					iconURI = builder.toString();
 				}
+				part.setIconURI(iconURI);
 			}
 		}
 	}
