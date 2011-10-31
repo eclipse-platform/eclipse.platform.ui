@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -42,6 +43,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 public class PatchUITest extends TestCase {
 
@@ -124,6 +127,73 @@ public class PatchUITest extends TestCase {
 		InputStream actual = testProject.getFile("exp_addition.txt")
 				.getContents();
 		compareStreams(expected, actual);
+	}
+
+	public void testApplyClipboardPatch_AdditionWithWindowsLD() throws Exception {
+		// Clipboard support on Mac OS is not reliable when tests are run
+		// through an SSH session, see bug 272870 for details
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+			return;
+		}
+
+		Preferences workspacePreferences = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE);
+		final String previous = getStoredValue(workspacePreferences);
+		// set new text file line delimiter to "\r\n" (Windows)
+		saveValue(workspacePreferences, "\r\n");
+
+		copyIntoClipboard("patch_addition.txt");
+
+		openPatchWizard();
+		assertTrue(wizard.getPageCount() == 3);
+		IWizardPage patchWizardPage = wizard.getPages()[0];
+
+		assertTrue(patchWizardPage.canFlipToNextPage());
+
+		callMethod(wizardDialog, "nextPressed", new Object[] {});
+
+		processQueuedEvents();
+		assertTrue(wizard.canFinish());
+		wizard.performFinish();
+		wizardDialog.close();
+
+		InputStream expectedIS = PatchUtils.asInputStream("exp_addition.txt");
+		InputStream actualIS = testProject.getFile("exp_addition.txt").getContents();
+
+		String expected = PatchUtils.asString(expectedIS).replaceAll("\n", "\r\n");
+		String actual = PatchUtils.asString(actualIS);
+
+		assertEquals(expected, actual);
+
+		// restore previously saved value for LD
+		saveValue(workspacePreferences, previous);
+	}
+
+	/**
+	 * Returns the value that is currently stored for the line delimiter.
+	 *
+	 * @param node
+	 *            preferences node from which the value should be read
+	 * @return the currently stored line delimiter
+	 */
+	private String getStoredValue(Preferences node) {
+		try {
+			// be careful looking up for our node so not to create any nodes as side effect
+			if (node.nodeExists(Platform.PI_RUNTIME))
+				return node.node(Platform.PI_RUNTIME).get(Platform.PREF_LINE_SEPARATOR, null);
+		} catch (BackingStoreException e) {
+			// ignore
+		}
+		return null;
+	}
+
+	private void saveValue(Preferences preferences, String val) throws BackingStoreException{
+		Preferences node = preferences.node(Platform.PI_RUNTIME);
+		if (val == null) {
+			node.remove(Platform.PREF_LINE_SEPARATOR);
+		} else {
+			node.put(Platform.PREF_LINE_SEPARATOR, val);
+		}
+		node.flush();
 	}
 
 	private void openPatchWizard() {
