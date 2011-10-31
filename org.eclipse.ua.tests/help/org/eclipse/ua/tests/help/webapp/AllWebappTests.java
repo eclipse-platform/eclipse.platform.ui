@@ -37,7 +37,6 @@ public class AllWebappTests extends TestSuite {
 		suite.addTestSuite(FilterExtensionTest.class);
 		suite.addTestSuite(FragmentServletTest.class);
 		suite.addTestSuite(HelpServerInterrupt.class);
-		suite.addTestSuite(ParallelServerAccessTest.class);
 		suite.addTestSuite(HelpServerBinding.class);
 		suite.addTestSuite(HtmlCoderTest.class);
 		suite.addTestSuite(TocZipTest.class);

@@ -23,6 +23,8 @@ import org.eclipse.ua.tests.help.util.LoadServletUtil;
 
 /**
  * Test the performance of the help server without launching the Help UI
+ * Note, this test has been contributed to Equinox, see Bug 362511
+ * It is no longer run as part of the UA test suite
  */
 
 public class ParallelServerAccessTest extends TestCase {
