@@ -113,7 +113,7 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		} catch (CoreException e) {
 			IStatus status = e.getStatus();
 			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-					status.getCode(), status.getMessage(), status.getException()));
+					status.getCode(), status.getMessage(), e));
 		}
 	}
 
