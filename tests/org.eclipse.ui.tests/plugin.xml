@@ -760,6 +760,10 @@
             class="org.eclipse.ui.tests.leaks.ContextEditorPart"
             id="org.eclipse.ui.tests.leak.contextEditor">
       </editor>
+      <editor
+            name="Bug 356116 Editor"
+            id="org.eclipse.ui.tests.editor.bug356116">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -1107,6 +1111,19 @@
              id="defaultedContentType"
              name="org.eclipse.ui.tests.defaultedContentType"
              priority="normal"/>
+     <content-type
+           base-type="org.eclipse.core.runtime.xml"
+           priority="normal"
+           file-extensions="bug356116"
+           name="Bug 356116 A content type"
+           id="org.eclipse.ui.tests.contentType.bug356116.a">
+     </content-type>
+     <content-type
+           priority="normal"
+           file-extensions="bug356116"
+           name="Bug 356116 B content type"
+           id="org.eclipse.ui.tests.contentType.bug356116.b">
+     </content-type>
    </extension>
    		
    <extension

@@ -143,12 +143,11 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     private static final Comparator comparer = new Comparator() {
         private Collator collator = Collator.getInstance();
 
-        public int compare(Object arg0, Object arg1) {
-            String s1 = ((IEditorDescriptor) arg0).getLabel();
-            String s2 = ((IEditorDescriptor) arg1).getLabel();
-            return collator.compare(s1, s2);
-        }
-    };
+	/*
+	 * Compares the labels from two IEditorDescriptor objects
+	 */
+	private static final Comparator comparer = new Comparator() {
+		private Collator collator = Collator.getInstance();
 
 	private RelatedRegistry relatedRegistry;
 
@@ -343,7 +342,20 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
     public IEditorDescriptor getDefaultEditor(String filename) {
-		return getDefaultEditor(filename, guessAtContentType(filename));
+		IEditorDescriptor defaultEditor = getDefaultEditor(filename, guessAtContentType(filename));
+		if (defaultEditor != null) {
+			return defaultEditor;
+		}
+
+		IContentType[] contentTypes = Platform.getContentTypeManager()
+				.findContentTypesFor(filename);
+		for (int i = 0; i < contentTypes.length; i++) {
+			IEditorDescriptor editor = getDefaultEditor(filename, contentTypes[i]);
+			if (editor != null) {
+				return editor;
+			}
+		}
+		return null;
     }
 
 	/**
