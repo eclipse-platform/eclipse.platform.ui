@@ -108,18 +108,19 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 
 		super.showTab(tabElement);
 
-		// Force a context switch
-		if (tabElement instanceof MPerspective) {
-			IEclipseContext context = persp.getContext();
-			context.get(EPartService.class).switchPerspective(persp);
-		}
-
+		// relayout the perspective
 		Composite psComp = ctrl.getParent();
 		StackLayout sl = (StackLayout) psComp.getLayout();
 		sl.topControl = ctrl;
 		psComp.layout();
 
 		ctrl.moveAbove(null);
+
+		// Force a context switch
+		if (tabElement instanceof MPerspective) {
+			IEclipseContext context = persp.getContext();
+			context.get(EPartService.class).switchPerspective(persp);
+		}
 
 		// Move any other controls to 'limbo'
 		Control[] kids = ctrl.getParent().getChildren();
