@@ -46,7 +46,7 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 	}
 	
 	/*
-	 * Private class used to safely notify listeners of resouce sync info changes. 
+	 * Private class used to safely notify listeners of resource sync info changes. 
 	 * Subclass override the notify(IResourceStateChangeListener) method to
 	 * fire specific events inside an ISafeRunnable.
 	 */
@@ -57,13 +57,13 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 		}
 		public void run(ICVSListener listener) {
 			this.listener = listener;
-			Platform.run(this);
+			SafeRunner.run(this);
 		}
 		public void run() throws Exception {
 			notify(listener);
 		}
 		/**
-		 * Subsclasses overide this method to send an event safely to a lsistener
+		 * Subclasses override this method to send an event safely to a listener
 		 * @param listener
 		 */
 		protected abstract void notify(ICVSListener listener);
@@ -185,7 +185,7 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 	}
 	
 	/*
-	 * Cache the location and store it in the preferences for persistance
+	 * Cache the location and store it in the preferences for persistence
 	 */
 	private void store(CVSRepositoryLocation location) {
 		// Cache the location instance for later retrieval
