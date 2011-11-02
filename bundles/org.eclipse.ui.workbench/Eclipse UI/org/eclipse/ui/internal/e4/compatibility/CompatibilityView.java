@@ -37,8 +37,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.ViewReference;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 
@@ -145,10 +145,10 @@ public class CompatibilityView extends CompatibilityPart {
 	}
 
 	@Override
-	void disposeSite() {
+	void disposeSite(PartSite site) {
 		IEclipseContext context = getModel().getContext();
 		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
-		IActionBars actionBars = ((IViewSite) getReference().getSite()).getActionBars();
+		IActionBars actionBars = site.getActionBars();
 
 		for (MMenu menu : part.getMenus()) {
 			if (menu.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
@@ -180,6 +180,6 @@ public class CompatibilityView extends CompatibilityPart {
 			}
 		}
 
-		super.disposeSite();
+		super.disposeSite(site);
 	}
 }

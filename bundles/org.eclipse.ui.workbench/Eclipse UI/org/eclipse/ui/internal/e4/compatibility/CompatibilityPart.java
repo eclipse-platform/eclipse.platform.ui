@@ -132,7 +132,7 @@ public abstract class CompatibilityPart {
 			}
 
 			// dispose the site that was originally initialized for this part
-			disposeSite();
+			internalDisposeSite();
 
 			// create a new error part notifying the user of the failure
 			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
@@ -177,7 +177,7 @@ public abstract class CompatibilityPart {
 			}
 		}
 
-		disposeSite();
+		internalDisposeSite();
 		alreadyDisposed = true;
 	}
 
@@ -237,7 +237,7 @@ public abstract class CompatibilityPart {
 					logger.error(ex);
 				}
 			}
-			disposeSite();
+			internalDisposeSite();
 
 			alreadyDisposed = false;
 			WorkbenchPlugin.log("Unable to create part", e.getStatus()); //$NON-NLS-1$
@@ -334,12 +334,20 @@ public abstract class CompatibilityPart {
 	 * Disposes of the 3.x part's site if it has one. Subclasses may override
 	 * but must call <code>super.disposeSite()</code> in its implementation.
 	 */
-	void disposeSite() {
+	private void internalDisposeSite() {
 		PartSite site = getReference().getSite();
 		if (site != null) {
-			deactivateActionBars(site instanceof ViewSite);
-			site.dispose();
+			disposeSite(site);
 		}
+	}
+
+	/**
+	 * Disposes of the 3.x part's site if it has one. Subclasses may override
+	 * but must call <code>super.disposeSite()</code> in its implementation.
+	 */
+	void disposeSite(PartSite site) {
+		deactivateActionBars(site instanceof ViewSite);
+		site.dispose();
 	}
 
 	@Persist

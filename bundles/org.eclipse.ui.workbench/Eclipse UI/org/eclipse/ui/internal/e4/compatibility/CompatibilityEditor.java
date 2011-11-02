@@ -17,10 +17,10 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.EditorActionBars;
 import org.eclipse.ui.internal.EditorReference;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -90,12 +90,9 @@ public class CompatibilityEditor extends CompatibilityPart {
 	}
 
 	@Override
-	void disposeSite() {
-		IEditorSite site = (IEditorSite) getReference().getSite();
-		if (site != null) {
-			EditorActionBars bars = (EditorActionBars) site.getActionBars();
-			EditorReference.disposeEditorActionBars(bars);
-		}
-		super.disposeSite();
+	void disposeSite(PartSite site) {
+		EditorActionBars bars = (EditorActionBars) site.getActionBars();
+		EditorReference.disposeEditorActionBars(bars);
+		super.disposeSite(site);
 	}
 }
