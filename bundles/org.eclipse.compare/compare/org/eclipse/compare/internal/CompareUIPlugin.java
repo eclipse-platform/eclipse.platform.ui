@@ -446,7 +446,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * 	no workbench window is active
 	 */
 	public static Shell getShell() {
-		IWorkbenchWindow window= getActiveWorkbenchWindow();
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window == null)
 			return null;
 		return window.getShell();
@@ -1249,7 +1249,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	private void internalOpenDialog(final CompareEditorInput input) {
 		Runnable runnable = new Runnable() {
 			public void run() {
-				CompareDialog dialog= new CompareDialog(getShell(), input);
+				CompareDialog dialog = new CompareDialog(PlatformUI
+						.getWorkbench().getModalDialogShellProvider()
+						.getShell(), input);
 				dialog.open();
 			}
 		};
