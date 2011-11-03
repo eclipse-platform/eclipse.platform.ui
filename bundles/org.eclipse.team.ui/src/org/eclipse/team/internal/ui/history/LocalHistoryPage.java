@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -558,7 +558,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	}
 
 	public boolean isValidInput(Object object) {
-		return (object instanceof IFile);
+		return object instanceof IFile;
 	}
 
 	public void refresh() {
@@ -676,7 +676,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	public ICompareInput getCompareInput(Object object) {
 		if (object instanceof IFileRevision){
 			IFileRevision selectedFileRevision = (IFileRevision)object;
-			ITypedElement fileElement = SaveableCompareEditorInput.createFileElement((IFile) file);
+			ITypedElement fileElement = SaveableCompareEditorInput.createFileElement(file);
 			FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
 			DiffNode node = new DiffNode(fileElement, right);
 			return node;
@@ -800,7 +800,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 				expandable.add(categories[i]);
 			}
 		}
-		return (Object[]) expandable.toArray(new Object[expandable.size()]);
+		return expandable.toArray(new Object[expandable.size()]);
 	}
 
 	private AbstractHistoryCategory[] sortRevisions(IFileRevision[] revisions, IProgressMonitor monitor) {

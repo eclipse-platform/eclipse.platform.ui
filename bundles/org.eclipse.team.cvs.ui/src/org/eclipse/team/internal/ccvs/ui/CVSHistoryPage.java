@@ -1212,7 +1212,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		// First, adapt to IResource and ensure mapped to CVS
 		IResource resource = (IResource)Utils.getAdapter(object, IResource.class);
 		if (resource instanceof IFile) {
-			RepositoryProvider provider = RepositoryProvider.getProvider(((IResource)resource).getProject());
+			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
 			if (provider instanceof CVSTeamProvider)
 				return CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 			return null;
@@ -1646,7 +1646,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 			
 			elementsToExpand = new Object[expandable.size()];
-			elementsToExpand = (Object[]) expandable.toArray(new Object[expandable.size()]);
+			elementsToExpand = expandable.toArray(new Object[expandable.size()]);
 		}
 
 		private boolean sortRevisions() {
@@ -1800,8 +1800,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	public boolean isValidInput(Object object) {
-		ICVSFile file = getCVSFile(object);
-		return file != null;
+		return getCVSFile(object) != null;
 	}
 
 	public String getName() {

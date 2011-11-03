@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
@@ -37,7 +36,7 @@ import org.eclipse.ui.part.*;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
-public class GenericHistoryView extends ViewPart implements IHistoryView, IPropertyChangeListener, IShowInTarget {
+public class GenericHistoryView extends PageBookView implements IHistoryView, IPropertyChangeListener, IShowInTarget {
 
 	private static final String HISTORY_VIEW_GROUP = "org.eclipse.team.ui.historyView"; //$NON-NLS-1$
 	private static final String NAVIGATION_GROUP = "org.eclipse.team.ui.navigation"; //$NON-NLS-1$
@@ -46,54 +45,16 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	static boolean sameSource(IHistoryPageSource source1, IHistoryPageSource source2) {
 		return source1 == source2 || (source1 != null && source2 != null && source1.equals(source2));
 	}
-	
-	class PageContainer {
-		private Page page;
-		private SubActionBars subBars;
-		private final IHistoryPageSource source;
 
-		public PageContainer(Page page, IHistoryPageSource source) {
-			this.page = page;
-			this.source = source;
+	private boolean matches(IPage page, Object object, IHistoryPageSource pageSource) {
+		if (page instanceof IHistoryPage) {
+			Object input = ((IHistoryPage)page).getInput();
+			if (input != null)
+				return input.equals(object) && sameSource(getPageSourceFor(object, pageSource), getPageSourceFor(input, null));
 		}
-
-		public Page getPage() {
-			return page;
-		}
-
-		public void setPage(Page page) {
-			this.page = page;
-		}
-
-		public SubActionBars getSubBars() {
-			return subBars;
-		}
-
-		public void setSubBars(SubActionBars subBars) {
-			this.subBars = subBars;
-		}
-
-		public IHistoryPageSource getSource() {
-			return source;
-		}
-		
-		public boolean matches(Object object, IHistoryPageSource pageSource) {
-			if (page instanceof IHistoryPage) {
-				Object input = ((IHistoryPage)page).getInput();
-				if (input != null)
-					return input.equals(object) && sameSource(getPageSourceFor(object, pageSource), getPageSourceFor(input, source));
-			}
-			return false;
-		}
-
-		public boolean canShow(Object object, IHistoryPageSource pageSource) {
-			if (page instanceof IHistoryPage && sameSource(getPageSourceFor(object, pageSource), getPageSourceFor(((IHistoryPage)page).getInput(), source))) {
-				return ((IHistoryPage)page).isValidInput(object);
-			}
-			return false;
-		}
+		return false;
 	}
-	
+
 	/*
 	 * The navigation history for this view.
 	 * The history adds the MRU to the end so basic navigation goes backwards.
@@ -156,7 +117,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				next = size() - 1;
 			return getEntry(next);
 		}
-		
 		public void updateName(IHistoryPage historyPage,
 				IHistoryPageSource pageSource) {
 			NavigationHistoryEntry[] historyEntries = getEntries();
@@ -168,7 +128,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			navigateAction.update();
 		}
 	}
-	
+
 	static class NavigationHistoryEntry {
 		Object object;
 		String name;
@@ -194,7 +154,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			return object.hashCode();
 		}
 	}
-	
+
 	abstract class MenuCreator implements IMenuCreator {
 		private MenuManager menuManager;
 		public void dispose() {
@@ -223,13 +183,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			if (menuManager != null)
 				menuManager.update(true);
 		}
-
 		protected abstract IAction[] getDropDownActions();
-		
 		public Menu getMenu(Menu parent) {
 			return null;
 		}
-		
 		public void rebuildMenu() {
 			if(menuManager != null) {
 				menuManager.dispose();
@@ -237,7 +194,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			}
 		}
 	}
-	
+
 	class NavigationHistoryAction extends Action {
 		private MenuCreator menuCreator;
 		private IAction[] actions;
@@ -278,7 +235,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			menuCreator.rebuildMenu();
 			updateCheckState();
 		}
-		
 		private void updateCheckState() {
 			IAction[] actions = getActions();
 			for (int i = 0; i < actions.length; i++) {
@@ -299,7 +255,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			return actions;
 		}
 	}
-	
+
 	class NavigationHistoryEntryAction extends Action {
 
 		private final NavigationHistoryEntry navigationHistoryEntry;
@@ -308,22 +264,14 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			super(navigationHistoryEntry.name);
 			this.navigationHistoryEntry = navigationHistoryEntry;
 		}
-		
 		public void run() {
 			navigationHistory.gotoEntry(navigationHistoryEntry);
 			navigateAction.updateCheckState();
 		}
-		
 		public void update() {
 			setChecked(navigationHistory.getCurrentEntry() == navigationHistoryEntry);
 		}
-		
 	}
-
-	/**
-	 * The pagebook control, or <code>null</code> if not initialized.
-	 */
-	private PageBook book;
 
 	/**
 	 * View actions
@@ -334,50 +282,33 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	private NavigationHistoryAction navigateAction;
 
 	/**
-	 * The page container for the default page.
-	 */
-	private PageContainer defaultPageContainer;
-
-	/**
-	 * The current page container
-	 */
-	PageContainer currentPageContainer;
-	
-	/**
 	 * The drop target + drop target listener
 	 */
 	DropTarget dropTarget;
 	GenericHistoryDropAdapter dropAdapter;
-	
+
 	NavigationHistory navigationHistory = new NavigationHistory();
-	
+
 	/**
 	 * Keeps track of the last selected element (either by selecting or opening an editor)
 	 */
 	private Object lastSelectedElement;
 
-	private IPartListener partListener = new IPartListener() {
-		public void partActivated(IWorkbenchPart part) {
-			if (part instanceof IEditorPart)
-				editorActivated((IEditorPart) part);
-		}
+	public void partActivated(IWorkbenchPart part) {
+		// don't call super.partActivated(IWorkbenchPart), it will be done in #showHistoryPageFor(...)
+		if (part instanceof IEditorPart)
+			editorActivated((IEditorPart) part);
+	}
 
-		public void partBroughtToTop(IWorkbenchPart part) {
-			if (part == GenericHistoryView.this)
-				editorActivated(getViewSite().getPage().getActiveEditor());
-		}
+	public void partBroughtToTop(IWorkbenchPart part) {
+		if (part == GenericHistoryView.this)
+			editorActivated(getViewSite().getPage().getActiveEditor());
+	}
 
-		public void partOpened(IWorkbenchPart part) {
-			if (part == GenericHistoryView.this)
-				editorActivated(getViewSite().getPage().getActiveEditor());
-		}
-
-		public void partClosed(IWorkbenchPart part) {
-		}
-
-		public void partDeactivated(IWorkbenchPart part) {
-		}
-	};
+	public void partOpened(IWorkbenchPart part) {
+		if (part == GenericHistoryView.this)
+			editorActivated(getViewSite().getPage().getActiveEditor());
+	}
 
 	private IPartListener2 partListener2 = new IPartListener2() {
 		public void partActivated(IWorkbenchPartReference ref) {
@@ -416,11 +347,11 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				//Always take the first element - this is not intended to work with multiple selection
 				//Also, hang on to this selection for future use in case the history view is not visible
 				lastSelectedElement = structSelection.getFirstElement();
-				
+
 				if (!isLinkingEnabled() || !checkIfPageIsVisible()) {
 					return;
 				}
-				
+
 				if (lastSelectedElement != null){
 					Object resource;
 					if (lastSelectedElement instanceof SyncInfoModelElement) {
@@ -430,7 +361,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 						resource = Utils.getAdapter(lastSelectedElement, IResource.class);
 					}
 					if (resource != null)
-						showHistory((IResource) resource);
+						showHistory(resource);
 					else
 						showHistory(lastSelectedElement);
 					//reset lastSelectedElement
@@ -445,54 +376,22 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 
 	private boolean viewPinned;
 
-	/**
-	 * Refreshes the global actions for the active page.
-	 */
-	void refreshGlobalActionHandlers() {
-		// Clear old actions.
-		IActionBars bars = getViewSite().getActionBars();
-		bars.clearGlobalActionHandlers();
-
-		// Set new actions.
-		Map newActionHandlers = currentPageContainer.getSubBars().getGlobalActionHandlers();
-		if (newActionHandlers != null) {
-			Set keys = newActionHandlers.entrySet();
-			Iterator iter = keys.iterator();
-			while (iter.hasNext()) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				bars.setGlobalActionHandler((String) entry.getKey(), (IAction) entry.getValue());
-			}
-		}
-		
-		//add refresh action handler from history view
-		bars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
-		
-	}
-
 	public void createPartControl(Composite parent) {
-		// Create the page book.
-		book = new PageBook(parent, SWT.NONE);
+		super.createPartControl(parent);
 
 		this.linkingEnabled = TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_EDITOR_LINKING);
 
-		// Create the default page rec.
-		defaultPageContainer = createDefaultPage(book);
-		
 		//Contribute toolbars
 		configureToolbars(getViewSite().getActionBars());
 
 		//add global action handler
 		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
-		
+
 		//initialize the drag and drop
 		initDragAndDrop();
 
-		// Show the default page	
-		showPageRec(defaultPageContainer);
-
 		// add listener for editor page activation - this is to support editor
 		// linking
-		getSite().getPage().addPartListener(partListener);
 		getSite().getPage().addPartListener(partListener2);
 
 		// add listener for selections
@@ -516,13 +415,12 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 
 		refreshAction = new Action(TeamUIMessages.GenericHistoryView_Refresh, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_REFRESH)) {
 			public void run() {
-				((IHistoryPage) currentPageContainer.getPage()).refresh();
+				getHistoryPage().refresh();
 			}
 		};
 		refreshAction.setToolTipText(TeamUIMessages.GenericHistoryView_RefreshTooltip);
 		refreshAction.setEnabled(true);
-		
-		
+
 		linkWithEditorAction = new Action(TeamUIMessages.GenericHistoryView_LinkWithEditor, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_LINK_WITH)) {
 			public void run() {
 				if (isChecked()) {
@@ -535,10 +433,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		};
 		linkWithEditorAction.setChecked(isLinkingEnabled());
 		linkWithEditorAction.setToolTipText(TeamUIMessages.GenericHistoryView_LinkWithTooltip);
-		
+
 		navigateAction = new NavigationHistoryAction();
 		Utils.initAction(navigateAction, "action.previousHistory."); //$NON-NLS-1$
-		
+
 		//Create the local tool bar
 		IToolBarManager tbm = actionBars.getToolBarManager();
 		tbm.add(new Separator(HISTORY_VIEW_GROUP));
@@ -561,7 +459,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	public void setLinkingEnabled(boolean enabled) {
 		this.linkingEnabled = enabled;
 
-		// remember the last setting in the dialog settings		
+		// remember the last setting in the dialog settings
 		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IFileHistoryConstants.PREF_GENERIC_HISTORYVIEW_EDITOR_LINKING, enabled);
 
 		// if turning linking on, update the selection to correspond to the active editor
@@ -585,12 +483,12 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		int ops = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
 		Transfer[] transfers = new Transfer[] {ResourceTransfer.getInstance(), PluginTransfer.getInstance()};
 
-		dropTarget = new DropTarget(book, ops);
+		dropTarget = new DropTarget(getPageBook(), ops);
 		dropTarget.setTransfer(transfers);
 		dropAdapter = new GenericHistoryDropAdapter(this);
 		dropTarget.addDropListener(dropAdapter);
 	}
-	
+
 	public void setFocus() {
 		if (isLinkingEnabled()){
 			if (lastSelectedElement != null){
@@ -599,7 +497,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				} else {
 					Object resource = Utils.getAdapter(lastSelectedElement, IResource.class);
 					if (resource != null)
-						showHistoryPageFor((IResource) resource, false, false, null);
+						showHistoryPageFor(resource, false, false, null);
 					else
 						showHistoryPageFor(lastSelectedElement, false, false, null);
 				}
@@ -607,139 +505,79 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				lastSelectedElement  = null;
 			}
 		}
-		
-		if (currentPageContainer.page instanceof IPage){
-			((IPage) currentPageContainer.page).setFocus();
-		}
+		getCurrentPage().setFocus();
 	}
 
-	/**
-	 * Shows page contained in the given page record in this view. The page record must 
-	 * be one from this pagebook view.
-	 * <p>
-	 * The <code>PageBookView</code> implementation of this method asks the
-	 * pagebook control to show the given page's control, and records that the
-	 * given page is now current. Subclasses may extend.
-	 * </p>
-	 *
-	 * @param pageContainer the page record containing the page to show
-	 */
-	protected void showPageRec(PageContainer pageContainer) {
-		// If already showing do nothing
-		if (currentPageContainer == pageContainer) {
-			addNavigationHistoryEntry();
-			return;
-		}
-
-		// Hide old page.
-		if (currentPageContainer != null) {
-			currentPageContainer.getSubBars().deactivate();
-			//give the current page a chance to dispose
-			((IHistoryPage)currentPageContainer.getPage()).removePropertyChangeListener(this);
-			currentPageContainer.getPage().dispose();
-			currentPageContainer.getSubBars().dispose();
-		}
-		// Show new page.
-		currentPageContainer = pageContainer;
-	
-		Control pageControl = currentPageContainer.getPage().getControl();
-		if (pageControl != null && !pageControl.isDisposed()) {
-			// Verify that the page control is not disposed
-			// If we are closing, it may have already been disposed
-			book.showPage(pageControl);
-			((IHistoryPage)currentPageContainer.getPage()).addPropertyChangeListener(this);
-			currentPageContainer.getSubBars().activate();
-			refreshGlobalActionHandlers();
-			// Update action bars.
-			getViewSite().getActionBars().updateActionBars();
-			addNavigationHistoryEntry();
-		}
+	protected void showPageRec(PageRec pageRec) {
+		super.showPageRec(pageRec);
+		addNavigationHistoryEntry();
 	}
 
 	private void addNavigationHistoryEntry() {
-		if (currentPageContainer != null) {
-			Object input = ((IHistoryPage)currentPageContainer.getPage()).getInput();
+		if (getCurrentPage() != null) {
+			Object input = getHistoryPage().getInput();
 			if (input != null)
-				navigationHistory.addEntry(input, ((IHistoryPage)currentPageContainer.getPage()).getName(), currentPageContainer.getSource());
+				navigationHistory.addEntry(input, getHistoryPage().getName(), getPageSourceFor(input, null));
 		}
 	}
 
-	/**
-	 * Initializes the given page with a page site.
-	 * <p>
-	 * Subclasses should call this method after
-	 * the page is created but before creating its
-	 * controls.
-	 * </p>
-	 * <p>
-	 * Subclasses may override
-	 * </p>
-	 * @param page The page to initialize
-	 */
-	protected PageSite initPage(IPageBookViewPage page) {
-		try {
-			PageSite site = new PageSite(getViewSite());
-			page.init(site);
-			return site;
-		} catch (PartInitException e) {
-			TeamUIPlugin.log(e);
-		}
-		return null;
-	}
-	
 	public IHistoryPage showHistoryFor(Object object, boolean force) {
 		return showHistoryPageFor(object, true, force, null);
 	}
-	
+
 	public IHistoryPage showHistoryPageFor(Object object, boolean refresh, boolean force, IHistoryPageSource pageSource) {
 		if (Policy.DEBUG_HISTORY) {
 			String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
 			System.out.println(time + ": GenericHistoryView#showHistoryPageFor, the object to show is: " + object); //$NON-NLS-1$
 		}
-		
+
 		// Check to see if history view is visible - if it's not, don't bother
 		// going to the trouble of fetching the history
-		if (!this.getSite().getPage().isPartVisible(this))
+		if (!checkIfPageIsVisible())
 			return null;
-		
+
 		// Ensure that there is a page source available
 		pageSource = getPageSourceFor(object, pageSource);
 		if (pageSource == null || !pageSource.canShowHistoryFor(object))
 			return null;
-		
+
 		// Check to see if the object is already being displayed in another page
 		IHistoryPage existingPage = checkForExistingPage(object, refresh, force, pageSource);
 		if (existingPage != null){
 			return existingPage;
 		}
-		
+
 		// Now check to see if this view is pinned
 		if (isViewPinned() && !force) {
 			return handlePinnedView(object, refresh, pageSource);
 		}
-		
-		// If a current page exists, see if it can handle the dropped item.
-		// Otherwise, create a new page
-		PageContainer tempPageContainer = null;
-		if (currentPageContainer!= null && currentPageContainer.canShow(object, pageSource)) {
-			tempPageContainer = currentPageContainer;
-		} else {
-			tempPageContainer = createPage(pageSource, object);
-		}
-		
-		// Set the new page to the current page for the view
-		IHistoryPage historyPage = ((IHistoryPage)tempPageContainer.getPage());
-		
+
+		HistoryPageSourceWorkbenchPart part = new HistoryPageSourceWorkbenchPart(
+				object, pageSource, getViewSite());
+
+		// If a page for the part exists, open it; otherwise, create a new page
+		super.partActivated(part);
+
 		if (Policy.DEBUG_HISTORY) {
 			String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-			System.out.println(time + ": GenericHistoryView#showHistoryPageFor, the page to show the history is: " + historyPage); //$NON-NLS-1$
+			System.out.println(time + ": GenericHistoryView#showHistoryPageFor, the page showing the history is: " + getHistoryPage()); //$NON-NLS-1$
 		}
-		
-		historyPage.setInput(object);
-		((HistoryPage)historyPage).setHistoryView(this);
-		setContentDescription(historyPage.getName());
-		showPageRec(tempPageContainer);
-		return historyPage;
+
+		return getHistoryPage();
+	}
+
+	protected PageRec getPageRec(IWorkbenchPart part) {
+		PageRec rec = super.getPageRec(part);
+		if (rec != null) {
+			if (part instanceof HistoryPageSourceWorkbenchPart) {
+				HistoryPageSourceWorkbenchPart p = (HistoryPageSourceWorkbenchPart)part;
+				IHistoryPage historyPage = (IHistoryPage) rec.page;
+				historyPage.setInput(p.getObject());
+				((HistoryPage)historyPage).setHistoryView(this);
+				setContentDescription(historyPage.getName());
+			}
+		}
+		return rec;
 	}
 
 	private IHistoryPageSource getPageSourceFor(Object object, IHistoryPageSource pageSource) {
@@ -758,7 +596,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				return LocalHistoryPageSource.getInstance();
 			} else {
 				IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
-				
 				if (fileHistory != null) {
 					IHistoryPageSource source = (IHistoryPageSource)Utils.getAdapter(fileHistory, IHistoryPageSource.class,true);
 					if (source != null)
@@ -783,7 +620,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			getSite().getPage().activate(view);
 			if (view instanceof GenericHistoryView)
 				return ((GenericHistoryView) view).showHistoryPageFor(object, refresh, true, source);
-	
+
 		} catch (PartInitException e) {
 		}
 		return null;
@@ -799,16 +636,15 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			getSite().getPage().bringToTop((IWorkbenchPart)tempPage.getHistoryView());
 		return tempPage;
 	}
-	
+
 	private IHistoryPage checkForExistingPage(Object object, boolean refresh, IHistoryPageSource pageSource) {
 		//first check to see if the main history view contains the current resource
-		if (currentPageContainer != null) {
-			if (currentPageContainer.matches(object, pageSource)){ 
+		if (getCurrentPage() != null) {
+			if (matches(getCurrentPage(), object, pageSource)) {
 				//current page contains object, so just refresh it
-				IHistoryPage tempPage =((IHistoryPage)currentPageContainer.getPage());
+				IHistoryPage tempPage = (IHistoryPage) getCurrentPage();
 				if (refresh)
 					tempPage.refresh();
-				
 				return tempPage;
 			}
 		}
@@ -832,7 +668,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		}
 		return null;
 	}
-	
+
 	public GenericHistoryView findUnpinnedHistoryView(){
 		IWorkbenchPage page = getSite().getPage();
 		IViewReference[] historyViews = page.getViewReferences();
@@ -845,34 +681,58 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		}
 		return null;
 	}
-	
+
 	boolean isViewPinned() {
 		return viewPinned;
 	}
 
-	private PageContainer createPage(IHistoryPageSource source, Object object) {
-		Page page = source.createPage(object);
-		PageSite site = initPage(page);
-		((IHistoryPage) page).setSite(new WorkbenchHistoryPageSite(this, page.getSite()));
-		page.createControl(book);
-		PageContainer container = new PageContainer(page, source);
-		container.setSubBars((SubActionBars) site.getActionBars());
-		return container;
+	protected PageRec doCreatePage(IWorkbenchPart part) {
+		HistoryPageSourceWorkbenchPart p = (HistoryPageSourceWorkbenchPart) part;
+		IHistoryPageSource source = p.getSource();
+		IPageBookViewPage page = source.createPage(p.getObject());
+		if (page != null) {
+			initPage(page);
+			IHistoryPage historyPage = (IHistoryPage) page;
+			historyPage.setSite(new WorkbenchHistoryPageSite(this, page.getSite()));
+			page.createControl(getPageBook());
+			historyPage.setInput(p.getObject());
+			((HistoryPage)page).setHistoryView(this);
+			setContentDescription(historyPage.getName());
+			return new PageRec(part, page);
+		}
+		return null;
 	}
 
-	protected PageContainer createDefaultPage(PageBook book) {
+	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
+		IPage page = pageRecord.page;
+		page.dispose();
+		pageRecord.dispose();
+	}
+
+	protected IWorkbenchPart getBootstrapPart() {
+		return null;
+	}
+
+	protected boolean isImportant(IWorkbenchPart part) {
+		if (part instanceof HistoryPageSourceWorkbenchPart) {
+			HistoryPageSourceWorkbenchPart p = (HistoryPageSourceWorkbenchPart)part;
+			Object object = p.getObject();
+			return p.getSource().canShowHistoryFor(object);
+		}
+		return false;
+	}
+
+	protected IPage createDefaultPage(PageBook book) {
 		GenericHistoryViewDefaultPage page = new GenericHistoryViewDefaultPage();
-		PageSite site = initPage(page);
+		initPage(page);
 		page.createControl(book);
-		PageContainer container = new PageContainer(page, null);
-		container.setSubBars((SubActionBars) site.getActionBars());
-		return container;
+		return page;
 	}
 
 	/**
 	 * An editor has been activated.  Fetch the history if the file is shared and the history view
 	 * is visible in the current page.
-	 * 
+	 *
 	 * @param editor the active editor
 	 */
 	protected void editorActivated(IEditorPart editor) {
@@ -880,7 +740,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		//for future use
 		if (editor != null && !checkIfPageIsVisible())
 			lastSelectedElement = editor;
-		
+
 		//Only fetch contents if the view is shown in the current page.
 		if (editor == null || !isLinkingEnabled() || !checkIfPageIsVisible() || isViewPinned()) {
 			return;
@@ -907,14 +767,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		//Remove the drop listener
 		if (dropTarget != null && !dropTarget.isDisposed())
 			dropTarget.removeDropListener(dropAdapter);
-		//Call dispose on current and default pages
-		((IHistoryPage)currentPageContainer.getPage()).removePropertyChangeListener(this);
-		currentPageContainer.getPage().dispose();
-		defaultPageContainer.getPage().dispose();
-		currentPageContainer = null;
-		defaultPageContainer = null;
-		//Remove the part listeners
-		getSite().getPage().removePartListener(partListener);
+		//Remove the part listener
 		getSite().getPage().removePartListener(partListener2);
 		//Remove the selection listener
 		getSite().getPage().removePostSelectionListener(selectionListener);
@@ -922,28 +775,24 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	}
 
 	public IHistoryPage showHistoryFor(Object object) {
-		 return showHistoryFor(object, false);
+		return showHistoryFor(object, false);
 	}
 
 	public IHistoryPage getHistoryPage() {
-		if (currentPageContainer != null &&
-			currentPageContainer.getPage() != null)
-			return (IHistoryPage) currentPageContainer.getPage();
-		
-		return (IHistoryPage) defaultPageContainer.getPage();
+		return (IHistoryPage) getCurrentPage();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getSource() == currentPageContainer.getPage()) {
+		if (event.getSource() == getCurrentPage()) {
 			if (event.getProperty().equals(IHistoryPage.P_NAME)) {
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						IHistoryPage historyPage = (IHistoryPage) currentPageContainer.getPage();
+						IHistoryPage historyPage = getHistoryPage();
 						setContentDescription(historyPage.getName());
-						navigationHistory.updateName(historyPage, currentPageContainer.getSource());
+						navigationHistory.updateName(historyPage, getPageSourceFor(historyPage.getInput(), null));
 					}
 				});
 			} else if (event.getProperty().equals(IHistoryPage.P_DESCRIPTION)) {
@@ -961,7 +810,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		}
 		return findUnpinnedHistoryView();
 	}
-	
+
 	private void showHistory(Object object) {
 		// Only show the history if the input differs
 		// (i.e. don't do the change if the input is the same but the page source differs; bug 167648)

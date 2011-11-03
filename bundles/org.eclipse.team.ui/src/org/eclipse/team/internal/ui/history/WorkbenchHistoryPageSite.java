@@ -18,15 +18,15 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageSite;
 
 public class WorkbenchHistoryPageSite implements IHistoryPageSite {
-	
+
 	GenericHistoryView part;
 	IPageSite site;
-	
+
 	public WorkbenchHistoryPageSite(GenericHistoryView part, IPageSite site) {
 		this.part = part;
 		this.site = site;
 	}
-	
+
 	public IPageSite getWorkbenchPageSite() {
 		return site;
 	}
@@ -50,7 +50,7 @@ public class WorkbenchHistoryPageSite implements IHistoryPageSite {
 	public void setFocus() {
 //		 Nothing to do
 	}
-	
+
 	public boolean isModal() {
 		return false;
 	}
