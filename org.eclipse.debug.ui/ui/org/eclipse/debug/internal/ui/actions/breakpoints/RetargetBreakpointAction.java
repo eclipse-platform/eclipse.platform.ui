@@ -41,7 +41,11 @@ public abstract class RetargetBreakpointAction extends RetargetAction implements
 	
     protected Object getAdapter(IAdaptable adaptable) {
         ToggleBreakpointsTargetManager manager = ToggleBreakpointsTargetManager.getDefault();
-        return manager.getToggleBreakpointsTarget(getActivePart(), getTargetSelection());
+        IPart activePart = getActivePart();
+        if (activePart != null) {
+            return manager.getToggleBreakpointsTarget(getActivePart(), getTargetSelection());
+        }
+        return null;
     }
 
     public void init(IWorkbenchWindow window) {

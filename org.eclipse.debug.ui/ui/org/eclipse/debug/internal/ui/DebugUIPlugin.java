@@ -1327,7 +1327,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * {@link IEvaluationService} can be acquired, otherwise the new context is created with no 
 	 * parent context
 	 * 
-	 * @param defaultvar the default variable for the new context
+	 * @param defaultvar the default variable for the new context (cannot be <code>null</code>).
 	 * @return a new {@link IEvaluationContext}
 	 * @since 3.7
 	 */
