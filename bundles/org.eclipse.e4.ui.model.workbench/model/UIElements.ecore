@@ -1,4 +1,3 @@
-<<<<<<< TREE
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -379,9 +378,9 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="mainMenu" eType="#//ui/menu/Menu"
             containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
-            defaultValueLiteral="-1"/>
+            defaultValueLiteral="-2147483648"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
-            defaultValueLiteral="-1"/>
+            defaultValueLiteral="-2147483648"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
             defaultValueLiteral="-1"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"

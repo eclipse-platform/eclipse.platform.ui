@@ -69,6 +69,7 @@ public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MC
 
 	/**
 	 * Returns the value of the '<em><b>X</b></em>' attribute.
+	 * The default value is <code>"-2147483648"</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>X</em>' attribute isn't clear,
@@ -77,7 +78,7 @@ public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MC
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>X</em>' attribute.
 	 * @see #setX(int)
-	 * @model
+	 * @model default="-2147483648"
 	 * @generated
 	 */
 	int getX();
@@ -94,6 +95,7 @@ public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MC
 
 	/**
 	 * Returns the value of the '<em><b>Y</b></em>' attribute.
+	 * The default value is <code>"-2147483648"</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Y</em>' attribute isn't clear,
@@ -102,7 +104,7 @@ public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MC
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Y</em>' attribute.
 	 * @see #setY(int)
-	 * @model
+	 * @model default="-2147483648"
 	 * @generated
 	 */
 	int getY();
@@ -119,6 +121,7 @@ public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MC
 
 	/**
 	 * Returns the value of the '<em><b>Width</b></em>' attribute.
+	 * The default value is <code>"-2147483648"</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Width</em>' attribute isn't clear,
@@ -127,7 +130,7 @@ public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MC
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Width</em>' attribute.
 	 * @see #setWidth(int)
-	 * @model
+	 * @model default="-2147483648"
 	 * @generated
 	 */
 	int getWidth();
@@ -144,6 +147,7 @@ public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MC
 
 	/**
 	 * Returns the value of the '<em><b>Height</b></em>' attribute.
+	 * The default value is <code>"-2147483648"</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Height</em>' attribute isn't clear,
@@ -152,7 +156,7 @@ public interface MWindow extends MElementContainer<MWindowElement>, MUILabel, MC
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Height</em>' attribute.
 	 * @see #setHeight(int)
-	 * @model
+	 * @model default="-2147483648"
 	 * @generated
 	 */
 	int getHeight();
