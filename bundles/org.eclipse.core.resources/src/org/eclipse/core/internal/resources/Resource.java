@@ -517,7 +517,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 		if (!(rule instanceof IResource))
 			return false;
-		return path.isPrefixOf(((IResource) rule).getFullPath());
+		IResource resource = (IResource) rule;
+		if (!workspace.equals(resource.getWorkspace()))
+			return false;
+		return path.isPrefixOf(resource.getFullPath());
 	}
 
 	public void convertToPhantom() throws CoreException {
@@ -1353,7 +1356,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			return rule.isConflicting(this);
 		if (!(rule instanceof IResource))
 			return false;
-		IPath otherPath = ((IResource) rule).getFullPath();
+		IResource resource = (IResource) rule;
+		if (!workspace.equals(resource.getWorkspace()))
+			return false;
+		IPath otherPath = resource.getFullPath();
 		return path.isPrefixOf(otherPath) || otherPath.isPrefixOf(path);
 	}
 
