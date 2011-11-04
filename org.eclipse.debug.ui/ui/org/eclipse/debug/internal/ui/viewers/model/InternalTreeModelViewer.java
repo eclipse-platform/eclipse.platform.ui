@@ -1424,6 +1424,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	    	for (int i = 0; i < visibleColumnIds.length; i++) {
 				String id = visibleColumnIds[i];
 				String header = presentation.getHeader(id);
+				if (header == null) header = id;
 				// TODO: allow client to specify style
 				TreeColumn column = new TreeColumn(tree, SWT.LEFT, i);
 				column.setMoveable(true);
@@ -1519,6 +1520,19 @@ public class InternalTreeModelViewer extends TreeViewer
 				String[] columns = (String[]) fVisibleColumns.get(presentation.getId());
 				if (columns == null) {
 					return presentation.getInitialColumns();
+				} else {
+				    String[] available = presentation.getAvailableColumns();
+				    outer: for (int i = 0; i < columns.length; i++) {
+				        for (int j = 0; j < available.length; j++) {
+				            if (columns[i].equals(available[j])) continue outer;
+				        }
+				        // We found a column ID which is not in current list of available column IDs.
+				        // Clear out saved column data for given column presentation.
+                        fVisibleColumns.remove(presentation.getId());
+                        fColumnOrder.remove(presentation.getId());
+                        fColumnSizes.remove(presentation.getId());
+                        return presentation.getInitialColumns();
+				    }
 				}
 				return columns;
 			}
