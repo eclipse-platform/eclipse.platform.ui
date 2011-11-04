@@ -388,8 +388,9 @@ public class UnifiedTree {
 
 	private static class PatternHolder {
 		//Initialize-on-demand Holder class to avoid compiling Pattern if never needed
-		//Pattern: A UNIX relative path that just points backward
-		public static Pattern trivialSymlinkPattern = Pattern.compile("\\.[./]*"); //$NON-NLS-1$
+		//Pattern: A UNIX or Windows relative path that just points backward
+		private static final String REGEX = Platform.getOS().equals(Platform.OS_WIN32) ? "\\.[.\\\\]*" : "\\.[./]*"; //$NON-NLS-1$ //$NON-NLS-2$
+		public static final Pattern TRIVIAL_SYMLINK_PATTERN = Pattern.compile(REGEX);
 	}
 
 	/**
@@ -457,7 +458,7 @@ public class UnifiedTree {
 	private boolean isRecursiveLink(IFileStore parentStore, IFileInfo localInfo) {
 		//Try trivial pattern first - works also on remote EFS stores
 		String linkTarget = localInfo.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET);
-		if (linkTarget != null && PatternHolder.trivialSymlinkPattern.matcher(linkTarget).matches()) {
+		if (linkTarget != null && PatternHolder.TRIVIAL_SYMLINK_PATTERN.matcher(linkTarget).matches()) {
 			return true;
 		}
 		//Need canonical paths to check all other possibilities

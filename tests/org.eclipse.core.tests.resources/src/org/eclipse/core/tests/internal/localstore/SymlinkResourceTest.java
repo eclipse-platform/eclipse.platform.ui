@@ -61,6 +61,14 @@ public class SymlinkResourceTest extends LocalStoreTest {
 		mkLink(folderC, "link", new Path("../b").toOSString(), true);
 	}
 
+	protected void createBug358830Structure(IFileStore rootDir) throws CoreException {
+		IFileStore folderA = rootDir.getChild("a");
+		folderA.mkdir(EFS.NONE, getMonitor());
+
+		/* create trivial recursive symbolic link */
+		mkLink(folderA, "link", new Path("../").toOSString(), true);
+	}
+
 	/**
 	 * Test a very specific case of mutually recursive symbolic links:
 	 * <pre>
@@ -110,4 +118,37 @@ public class SymlinkResourceTest extends LocalStoreTest {
 		});
 	}
 
+	public void testBug358830() throws Exception {
+		if (isHudsonOnWin7())
+			return;
+
+		/* Only run the test if EFS supports symbolic links on this Platform */
+		if ((EFS.getLocalFileSystem().attributes() & EFS.ATTRIBUTE_SYMLINK) == 0) {
+			return;
+		}
+
+		/* Re-use projects which are cleaned up automatically */
+		final IProject project = projects[0];
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				/* delete open project because we must re-open with BACKGROUND_REFRESH */
+				project.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
+				project.create(null);
+				createBug358830Structure(EFS.getStore(project.getLocationURI()));
+				project.open(IResource.BACKGROUND_REFRESH, getMonitor());
+			}
+		}, null);
+
+		//wait for BACKGROUND_REFRESH to complete.
+		waitForRefresh();
+		final int resourceCount[] = new int[] {0};
+		project.accept(new IResourceVisitor() {
+			public boolean visit(IResource resource) {
+				resourceCount[0]++;
+				return true;
+			}
+		});
+		//We have 1 root + 1 folder + 1 file (.project) --> 3 elements to visit
+		assertEquals(3, resourceCount[0]);
+	}
 }
