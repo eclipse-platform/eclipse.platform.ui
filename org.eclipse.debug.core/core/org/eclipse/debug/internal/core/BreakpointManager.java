@@ -394,6 +394,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 	
 	/**
+	 * Calls {@link #initializeBreakpoints()} if breakpoints have not yet been initialized.
+	 */
+	public void ensureBreakpointsInitialized() {
+	    getBreakpoints0();
+	}
+	
+	/**
 	 * The BreakpointManager waits to load the breakpoints
 	 * of the workspace until a request is made to retrieve the 
 	 * breakpoints.

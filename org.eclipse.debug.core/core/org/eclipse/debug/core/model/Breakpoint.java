@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
@@ -41,17 +42,21 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	
-	static {
-		// making sure that the BreakpointManager is correctly initialized
-		// before any breakpoint marker related operation (see bug 54993)
-		DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
-	}
-				
 	/**
 	 * Underlying marker.
 	 */
 	private IMarker fMarker= null;
-	
+
+    /**
+     * Default constructor used to ensure that breakpoint manager is initialized.
+     */
+    public Breakpoint() {
+        // making sure that the BreakpointManager is correctly initialized
+        // before any breakpoint marker related operation (see bug 54993)
+        ((BreakpointManager)DebugPlugin.getDefault().getBreakpointManager()).ensureBreakpointsInitialized();
+    }
+                
+
 	/**
 	 * @see IBreakpoint#setMarker(IMarker)
 	 */
