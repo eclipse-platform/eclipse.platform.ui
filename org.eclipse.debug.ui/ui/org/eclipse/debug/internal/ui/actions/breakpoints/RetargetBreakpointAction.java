@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,15 +12,19 @@
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTargetManagerListener;
-import org.eclipse.debug.internal.ui.actions.RetargetAction;
-import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+
+import org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTargetManagerListener;
+import org.eclipse.debug.internal.ui.actions.RetargetAction;
+import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
+
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 
 
 /**
@@ -41,9 +45,9 @@ public abstract class RetargetBreakpointAction extends RetargetAction implements
 	
     protected Object getAdapter(IAdaptable adaptable) {
         ToggleBreakpointsTargetManager manager = ToggleBreakpointsTargetManager.getDefault();
-        IPart activePart = getActivePart();
+		IWorkbenchPart activePart = getActivePart();
         if (activePart != null) {
-            return manager.getToggleBreakpointsTarget(getActivePart(), getTargetSelection());
+			return manager.getToggleBreakpointsTarget(activePart, getTargetSelection());
         }
         return null;
     }
