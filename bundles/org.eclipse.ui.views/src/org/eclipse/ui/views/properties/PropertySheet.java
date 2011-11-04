@@ -279,8 +279,10 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * since 3.4
 	 */
 	public void partClosed(IWorkbenchPart part) {
-		if (isPinned() && part.equals(currentPart)) {
-			pinPropertySheetAction.setChecked(false);
+		if (part.equals(currentPart)) {
+			if (isPinned())
+				pinPropertySheetAction.setChecked(false);
+			currentPart = null;
 		}
 		super.partClosed(part);
 	}
