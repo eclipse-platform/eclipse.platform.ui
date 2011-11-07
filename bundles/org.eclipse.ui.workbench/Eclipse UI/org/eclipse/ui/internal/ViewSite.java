@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -47,6 +49,10 @@ public class ViewSite extends PartSite implements IViewSite {
 	@Override
 	public void dispose() {
 		getActionBars().getMenuManager().dispose();
+		IToolBarManager manager = getActionBars().getToolBarManager();
+		if (manager instanceof ToolBarManager) {
+			((ToolBarManager) manager).dispose();
+		}
 		super.dispose();
 	}
 }
