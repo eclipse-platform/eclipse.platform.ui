@@ -831,10 +831,7 @@ public class StackRenderer extends LazyStackRenderer {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-		if (menu.getData() instanceof MenuManager) {
-			MenuManager manager = (MenuManager) menu.getData();
-			manager.dispose();
-		} else {
+		if (!(menu.getData() instanceof MenuManager)) {
 			menu.dispose();
 		}
 	}
