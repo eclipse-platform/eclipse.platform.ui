@@ -82,6 +82,8 @@ public class Measure extends CSSValueImpl {
 			return CSS_CM;
 		case LexicalUnit.SAC_EM:
 			return CSS_EMS;
+		case LexicalUnit.SAC_EX:
+			return CSS_EXS;
 		case LexicalUnit.SAC_INCH:
 			return CSS_IN;
 		case LexicalUnit.SAC_STRING_VALUE:
