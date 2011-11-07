@@ -149,19 +149,17 @@ public class CompatibilityView extends CompatibilityPart {
 		IEclipseContext context = getModel().getContext();
 		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
 		IActionBars actionBars = site.getActionBars();
-		MenuManager mm = (MenuManager) actionBars.getMenuManager();
 
 		for (MMenu menu : part.getMenus()) {
 			if (menu.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
 				AbstractPartRenderer apr = rendererFactory.getRenderer(menu, null);
 				if (apr instanceof MenuManagerRenderer) {
+					MenuManager mm = (MenuManager) actionBars.getMenuManager();
 					((MenuManagerRenderer) apr).clearModelToManager(menu, mm);
 				}
 				break;
 			}
 		}
-
-		mm.dispose();
 
 		MToolBar toolbar = part.getToolbar();
 		if (toolbar != null) {

@@ -43,4 +43,10 @@ public class ViewSite extends PartSite implements IViewSite {
 		}
 		return null;
 	}
+
+	@Override
+	public void dispose() {
+		getActionBars().getMenuManager().dispose();
+		super.dispose();
+	}
 }
