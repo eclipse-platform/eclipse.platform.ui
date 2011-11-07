@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -252,18 +252,19 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	protected void cancelPressed() {
 		// Inform all pages that we are cancelling
 		Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
+		final boolean[] cancelOK = new boolean[] { true }; 
 		while (nodes.hasNext()) {
 			final IPreferenceNode node = (IPreferenceNode) nodes.next();
 			if (getPage(node) != null) {
 				SafeRunnable.run(new SafeRunnable() {
 					public void run() {
 						if (!getPage(node).performCancel()) {
-							return;
+							cancelOK[0] = false;
 						}
 					}
-
-
 				});
+				if (!cancelOK[0])
+					return;
 			}
 		}
 		
