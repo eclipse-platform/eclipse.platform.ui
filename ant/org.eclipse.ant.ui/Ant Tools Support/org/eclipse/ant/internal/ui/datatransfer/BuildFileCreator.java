@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95297, bug 97051, bug 128103, bug 201180, bug 161354
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95297, bug 97051, bug 128103, bug 201180, bug 161354, bug 313386
  *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276, bug 124210, bug 161845, bug 177833
  *     Nikolay Metchev (N.Metchev@teamphone.com) - bug 108276
  *     Ryan Fong (rfong@trapezenetworks.com) - bug 201143
@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -746,6 +747,37 @@ public class BuildFileCreator
         }
         root.appendChild(element);
         
+        // Bug 313386 optimization:
+        // Source directories with the same classes directory get only one <javac> tag
+        // Side effect: Eclipse inclusion and exclusion filters apply to the specified source directory.
+        //              Ant inclusion and exclusion filters apply to all source directories.
+        //              This may lead to unexpected behavior.
+        HashMap class2sources = new HashMap();
+        HashMap class2includes = new HashMap();
+        HashMap class2excludes = new HashMap();
+        for (int i = 0; i < srcDirs.size(); i++) {
+            String srcDir = (String) srcDirs.get(i);
+            if (!EclipseClasspath.isReference(srcDir)) {
+                String classDir = (String) classDirs.get(i);
+                List inclusions = (List) inclusionLists.get(i);
+                List exclusions = (List) exclusionLists.get(i);
+                List list = (List) class2sources.get(classDir);
+                List list2 = (List) class2includes.get(classDir);
+                List list3 = (List) class2excludes.get(classDir);
+                if (list == null) {
+                    list = new ArrayList();
+                    list2 = new ArrayList();
+                    list3 = new ArrayList();
+                    class2sources.put(classDir, list);
+                    class2includes.put(classDir, list2);
+                    class2excludes.put(classDir, list3);
+                }
+                list.add(srcDir);
+                list2.addAll(inclusions);
+                list3.addAll(exclusions);
+            }
+        }
+        
         // <target name="build-project" depends="init">
         //     <echo message="${ant.project.name}: ${ant.file}"/>
         //     <javac destdir="classes">
@@ -767,26 +799,42 @@ public class BuildFileCreator
             if (!EclipseClasspath.isReference(srcDir))
             {
                 String classDir = (String) classDirs.get(i);
-                List inclusions = (List) inclusionLists.get(i);
-                List exclusions = (List) exclusionLists.get(i);
+                List sources = (List) class2sources.get(classDir);
+                List inclusions = (List) class2includes.get(classDir);
+                List exclusions = (List) class2excludes.get(classDir);
+                if (sources != null && sources.size() > 1) {
+                    // remove list to exclude it from the next iteration
+                    class2sources.put(classDir, null);
+                }
+                else if (sources == null) {
+                    continue;
+                }
+                
                 Element javacElement = doc.createElement("javac"); //$NON-NLS-1$
+                javacElement.setAttribute("includeantruntime", "false"); //$NON-NLS-1$ //$NON-NLS-2$
                 javacElement.setAttribute("destdir", classDir); //$NON-NLS-1$
                 javacElement.setAttribute("debug", "true"); //$NON-NLS-1$ //$NON-NLS-2$
                 javacElement.setAttribute("debuglevel", "${debuglevel}"); //$NON-NLS-1$ //$NON-NLS-2$
-                javacElement.setAttribute("source", "${source}"); //$NON-NLS-1$ //$NON-NLS-2$
+                javacElement.setAttribute("source", "${source}"); //$NON-NLS-1$ //$NON-NLS-2$                
                 javacElement.setAttribute("target", "${target}"); //$NON-NLS-1$ //$NON-NLS-2$
-    
-                Element srcElement = doc.createElement("src"); //$NON-NLS-1$
-                srcElement.setAttribute("path", srcDir); //$NON-NLS-1$
-                javacElement.appendChild(srcElement);            
-    
+                
+                // Bug 313386: <javac> tag with several source directories
+                //assert list.size() != 1 || srcDir.equals(list.get(i));
+                for (Iterator iterator = sources.iterator(); iterator.hasNext();) {
+                    String s = (String) iterator.next();
+                    Element srcElement = doc.createElement("src"); //$NON-NLS-1$
+                    srcElement.setAttribute("path", s); //$NON-NLS-1$
+                    javacElement.appendChild(srcElement);
+                }
+
                 for (Iterator iter = inclusions.iterator(); iter.hasNext();)
                 {
                     String inclusion = (String) iter.next();
                     Element includeElement = doc.createElement("include"); //$NON-NLS-1$
                     includeElement.setAttribute(IAntCoreConstants.NAME, inclusion);
                     javacElement.appendChild(includeElement);
-                }           
+                }      
+                
                 for (Iterator iter = exclusions.iterator(); iter.hasNext();)
                 {
                     String exclusion = (String) iter.next();
