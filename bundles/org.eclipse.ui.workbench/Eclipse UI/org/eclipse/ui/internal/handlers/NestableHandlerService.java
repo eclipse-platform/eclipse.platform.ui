@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import java.util.Iterator;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -61,16 +59,17 @@ public final class NestableHandlerService extends SlaveHandlerService implements
 			return;
 		}
 
-		final Iterator localActivationItr = localActivationsToParentActivations
-				.keySet().iterator();
-		while (localActivationItr.hasNext()) {
-			final Object object = localActivationItr.next();
+		Object[] localActivations = localActivationsToParentActivations.keySet().toArray();
+		for (int i = 0; i < localActivations.length; i++) {
+			final Object object = localActivations[i];
 			if (object instanceof IHandlerActivation) {
 				final IHandlerActivation localActivation = (IHandlerActivation) object;
-				super.doActivation(localActivation);
+				// Ignore activations that have been cleared since the copy
+				// was made.
+				if (localActivationsToParentActivations.containsKey(localActivation))
+					super.doActivation(localActivation);
 			}
 		}
-
 		active = true;
 	}
 
@@ -91,11 +90,11 @@ public final class NestableHandlerService extends SlaveHandlerService implements
 		deactivateHandlers(parentActivations);
 		parentActivations.clear();
 
-		final Iterator localActivationItr = localActivationsToParentActivations
-				.keySet().iterator();
-		while (localActivationItr.hasNext()) {
-			final Object object = localActivationItr.next();
-			localActivationsToParentActivations.put(object, null);
+		Object[] localActivations = localActivationsToParentActivations.keySet().toArray();
+		for (int i = 0; i < localActivations.length; i++) {
+			final Object object = localActivations[i];
+			if (localActivationsToParentActivations.containsKey(object))
+				localActivationsToParentActivations.put(object, null);
 		}
 
 		active = false;
