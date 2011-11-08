@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1513,17 +1513,17 @@ public class CopyFilesAndFoldersOperation {
 
 			}
 			if (!destination.isVirtual()) {
-			if (sourceLocation.equals(destinationLocation)) {
-				return NLS
-						.bind(
-								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_sameSourceAndDest,
-								sourceResource.getName());
-			}
-			// is the source a parent of the destination?
-			if (new Path(sourceLocation.toString()).isPrefixOf(new Path(
-					destinationLocation.toString()))) {
-				return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationDescendentError;
-			}
+				if (sourceLocation.equals(destinationLocation)) {
+					return NLS
+							.bind(
+									IDEWorkbenchMessages.CopyFilesAndFoldersOperation_sameSourceAndDest,
+									sourceResource.getName());
+				}
+				// is the source a parent of the destination?
+				if (new Path(sourceLocation.toString()).isPrefixOf(new Path(
+						destinationLocation.toString()))) {
+					return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationDescendentError;
+				}
 			}
 
 			String linkedResourceMessage = validateLinkedResource(destination,
@@ -1620,35 +1620,34 @@ public class CopyFilesAndFoldersOperation {
 			return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationAccessError;
 
 		if (!destination.isVirtual()) {
-		IFileStore destinationStore;
-		try {
-			destinationStore = EFS.getStore(destination.getLocationURI());
-		} catch (CoreException exception) {
-			IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception);
-			return NLS
-					.bind(
-							IDEWorkbenchMessages.CopyFilesAndFoldersOperation_internalError,
-							exception.getLocalizedMessage());
-		}
-		for (int i = 0; i < sourceStores.length; i++) {
-			IFileStore sourceStore = sourceStores[i];
-			IFileStore sourceParentStore = sourceStore.getParent();
+			IFileStore destinationStore;
+			try {
+				destinationStore = EFS.getStore(destination.getLocationURI());
+			} catch (CoreException exception) {
+				IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception);
+				return NLS
+						.bind(
+								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_internalError,
+								exception.getLocalizedMessage());
+			}
+			for (int i = 0; i < sourceStores.length; i++) {
+				IFileStore sourceStore = sourceStores[i];
+				IFileStore sourceParentStore = sourceStore.getParent();
 
-			if (sourceStore != null) {
-				if (destinationStore.equals(sourceStore)
-						|| (sourceParentStore != null && destinationStore
-								.equals(sourceParentStore))) {
-					return NLS
-							.bind(
-									IDEWorkbenchMessages.CopyFilesAndFoldersOperation_importSameSourceAndDest,
-									sourceStore.getName());
-				}
-				// work around bug 16202. replacement for
-				// sourcePath.isPrefixOf(destinationPath)
-				IFileStore destinationParent = destinationStore.getParent();
-				if (sourceStore.isParentOf(destinationParent)) {
-					return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationDescendentError;
-				}
+				if (sourceStore != null) {
+					if (destinationStore.equals(sourceStore)
+							|| (sourceParentStore != null && destinationStore
+							.equals(sourceParentStore))) {
+						return NLS
+								.bind(
+										IDEWorkbenchMessages.CopyFilesAndFoldersOperation_importSameSourceAndDest,
+										sourceStore.getName());
+					}
+					// work around bug 16202. replacement for
+					// sourcePath.isPrefixOf(destinationPath)
+					if (sourceStore.isParentOf(destinationStore)) {
+						return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationDescendentError;
+					}
 				}
 			}
 		}
