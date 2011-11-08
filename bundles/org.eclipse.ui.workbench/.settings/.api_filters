@@ -1,30 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.ui.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
     <resource path="Eclipse UI/org/eclipse/ui/IWorkingSetManager.java" type="org.eclipse.ui.IWorkingSetManager">
         <filter id="1209008130">
             <message_arguments>
                 <message_argument value="3.7"/>
-                <message_argument value="3.101"/>
+                <message_argument value="3.103"/>
                 <message_argument value="getRecentWorkingSetsLength()"/>
             </message_arguments>
         </filter>
         <filter id="1209008130">
             <message_arguments>
                 <message_argument value="3.7"/>
-                <message_argument value="3.101"/>
-                <message_argument value="setRecentWorkingSetsLength(int)"/>
-            </message_arguments>
-        </filter>
-        <filter id="1209008130">
-            <message_arguments>
-                <message_argument value="3.7"/>
-                <message_argument value="3.102"/>
-                <message_argument value="getRecentWorkingSetsLength()"/>
-            </message_arguments>
-        </filter>
-        <filter id="1209008130">
-            <message_arguments>
-                <message_argument value="3.7"/>
-                <message_argument value="3.102"/>
+                <message_argument value="3.103"/>
                 <message_argument value="setRecentWorkingSetsLength(int)"/>
             </message_arguments>
         </filter>
