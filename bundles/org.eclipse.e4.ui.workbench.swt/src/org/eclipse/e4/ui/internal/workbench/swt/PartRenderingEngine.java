@@ -720,6 +720,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private Shell getLimboShell() {
 		if (limbo == null) {
 			limbo = new Shell(Display.getCurrent(), SWT.NONE);
+
+			// Place the limbo shell 'off screen'
+			limbo.setLocation(0, 10000);
+
 			limbo.setBackgroundMode(SWT.INHERIT_DEFAULT);
 			limbo.setData(ShellActivationListener.DIALOG_IGNORE_KEY,
 					Boolean.TRUE);
