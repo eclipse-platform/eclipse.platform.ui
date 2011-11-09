@@ -220,8 +220,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public void addStandaloneView(String viewId, boolean showTitle,
 			int relationship, float ratio, String refId) {
-		boolean isVisible = isViewVisible(viewId);
-		insertView(viewId, relationship, ratio, refId, isVisible, false);
+		insertView(viewId, relationship, ratio, refId, true, false);
 	}
 
 	public void addStandaloneViewPlaceholder(String viewId, int relationship,
@@ -231,8 +230,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void addView(String viewId, int relationship, float ratio, String refId) {
-		boolean isVisible = isViewVisible(viewId);
-		insertView(viewId, relationship, ratio, refId, isVisible, true);
+		insertView(viewId, relationship, ratio, refId, true, true);
 	}
 
 	public void addView(String viewId, int relationship, float ratio, String refId,
@@ -243,20 +241,21 @@ public class ModeledPageLayout implements IPageLayout {
 		addView(viewId, relationship, ratio, refId);
 	}
 
-	protected boolean isViewVisible(String viewID) {
+	protected boolean isViewFiltered(String viewID) {
 		IViewDescriptor viewDescriptor = viewRegistry.find(viewID);
 		if (viewDescriptor == null)
 			return false;
 		if (WorkbenchActivityHelper.restrictUseOf(viewDescriptor))
-			return false;
-		return !WorkbenchActivityHelper.filterItem(viewDescriptor);
+			return true;
+		return WorkbenchActivityHelper.filterItem(viewDescriptor);
 	}
 
 	protected void addViewActivator(MUIElement element) {
+		IPluginContribution contribution = (IPluginContribution) viewRegistry.find(element
+				.getElementId());
 		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		IIdentifier identifier = support.getActivityManager().getIdentifier(
-				WorkbenchActivityHelper.createUnifiedId((IPluginContribution) descriptor));
-
+				WorkbenchActivityHelper.createUnifiedId(contribution));
 		identifier.addIdentifierListener(new ViewActivator(element));
 	}
 
@@ -386,16 +385,27 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private void insertView(String viewId, int relationship, float ratio,
 			String refId, boolean visible, boolean withStack) {
-		MStackElement viewModel = createViewModel(application, viewId, visible, page, partService,
+
+		// Hide views that are filtered by capabilities
+		boolean isFiltered = isViewFiltered(viewId);
+
+		MStackElement viewModel = createViewModel(application, viewId, visible && !isFiltered,
+				page, partService,
 				createReferences);
 		if (viewModel != null) {
 			if (withStack) {
 				String stackId = viewId + "MStack"; // Default id...basically unusable //$NON-NLS-1$
-				MPartStack stack = insertStack(stackId, relationship, ratio, refId, visible);
+				MPartStack stack = insertStack(stackId, relationship, ratio, refId, visible
+						& !isFiltered);
 				stack.getChildren().add(viewModel);
 			} else {
 				insert(viewModel, findRefModel(refId), plRelToSwt(relationship), ratio);
 			}
+
+		}
+
+		if (isFiltered) {
+			addViewActivator(viewModel);
 		}
 	}
 
