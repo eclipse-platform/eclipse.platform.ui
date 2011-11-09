@@ -456,13 +456,11 @@ public class TrimStack {
 		if (isEditorStack()) {
 			if (trimStackTB.getItemCount() == 1) {
 				MUIElement data = getLeafPart(minimizedElement);
-				if (data != null) {
-					ToolItem ti = new ToolItem(trimStackTB, SWT.CHECK);
-					ti.setToolTipText(Messages.TrimStack_SharedAreaTooltip);
-					ti.setImage(getLayoutImage());
-					ti.setData(data);
-					ti.addSelectionListener(toolItemSelectionListener);
-				}
+				ToolItem ti = new ToolItem(trimStackTB, SWT.CHECK);
+				ti.setToolTipText(Messages.TrimStack_SharedAreaTooltip);
+				ti.setImage(getLayoutImage());
+				ti.setData(data);
+				ti.addSelectionListener(toolItemSelectionListener);
 			}
 		} else if (minimizedElement instanceof MPartStack) {
 			MPartStack theStack = (MPartStack) minimizedElement;
