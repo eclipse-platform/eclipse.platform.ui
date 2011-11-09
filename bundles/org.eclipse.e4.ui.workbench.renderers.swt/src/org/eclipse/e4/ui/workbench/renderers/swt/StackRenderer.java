@@ -82,6 +82,12 @@ public class StackRenderer extends LazyStackRenderer {
 	private static final String SHELL_CLOSE_EDITORS_MENU = "shell_close_editors_menu"; //$NON-NLS-1$
 	private static final String STACK_SELECTED_PART = "stack_selected_part"; //$NON-NLS-1$
 
+	// Minimum characters in for stacks outside the shared area
+	private static int MIN_VIEW_CHARS = 1;
+
+	// Minimum characters in for stacks inside the shared area
+	private static int MIN_EDITOR_CHARS = 15;
+
 	// View Menu / TB data constants
 	private static final String TOP_RIGHT = "topRight"; //$NON-NLS-1$
 	//private static final String MENU_TB = "menuTB"; //$NON-NLS-1$
@@ -376,9 +382,18 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		// TBD: need to define attributes to handle this
-		int styleModifier = 0; // SWT.CLOSE
-		final CTabFolder ctf = new CTabFolder(parentComposite, SWT.BORDER
-				| styleModifier);
+		final CTabFolder ctf = new CTabFolder(parentComposite, SWT.BORDER);
+
+		// Adjust the minimum chars based on the location
+		int location = modelService.getElementLocation(element);
+		if ((location & EModelService.IN_SHARED_AREA) != 0) {
+			ctf.setMinimumCharacters(MIN_EDITOR_CHARS);
+			ctf.setUnselectedCloseVisible(true);
+		} else {
+			ctf.setMinimumCharacters(MIN_VIEW_CHARS);
+			ctf.setUnselectedCloseVisible(false);
+		}
+
 		bindWidget(element, ctf); // ?? Do we need this ?
 
 		// Add a composite to manage the view's TB and Menu
@@ -768,20 +783,24 @@ public class StackRenderer extends LazyStackRenderer {
 					showMenu((ToolItem) e.widget);
 				}
 			});
-			menuTB.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-				public void getName(AccessibleEvent e) {
-					if (e.childID != ACC.CHILDID_SELF) {
-						Accessible accessible = (Accessible) e.getSource();
-						ToolBar toolBar = (ToolBar) accessible.getControl();
-						if (0 <= e.childID && e.childID < toolBar.getItemCount()) {
-							ToolItem item = toolBar.getItem(e.childID);
-							if (item != null) {
-								e.result = item.getToolTipText();
+			menuTB.getAccessible().addAccessibleListener(
+					new AccessibleAdapter() {
+						public void getName(AccessibleEvent e) {
+							if (e.childID != ACC.CHILDID_SELF) {
+								Accessible accessible = (Accessible) e
+										.getSource();
+								ToolBar toolBar = (ToolBar) accessible
+										.getControl();
+								if (0 <= e.childID
+										&& e.childID < toolBar.getItemCount()) {
+									ToolItem item = toolBar.getItem(e.childID);
+									if (item != null) {
+										e.result = item.getToolTipText();
+									}
+								}
 							}
 						}
-					}
-				}
-			});
+					});
 		}
 
 		ToolItem ti = menuTB.getItem(0);
