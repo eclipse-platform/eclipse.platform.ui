@@ -3185,6 +3185,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (perspective instanceof PerspectiveDescriptor) {
 			((PerspectiveDescriptor) perspective).setHasCustomDefinition(true);
 		}
+
+		UIEvents.publishEvent(UIEvents.UILifeCycle.PERSPECTIVE_SAVED, visiblePerspective);
 	}
 
 	/*
@@ -3277,7 +3279,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		modelPerspective.getContext().activate();
 		legacyWindow.firePerspectiveActivated(this, perspective);
 
-		// FIXME: we need to fire events
+		UIEvents.publishEvent(UIEvents.UILifeCycle.PERSPECTIVE_OPENED, modelPerspective);
 	}
 
 

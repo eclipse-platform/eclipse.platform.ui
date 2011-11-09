@@ -121,6 +121,16 @@ public class UIEvents {
 		 * Sent when an MPart is activated
 		 */
 		public static final String ACTIVATE = TOPIC + TOPIC_SEP + "activate"; //$NON-NLS-1$
+
+		/**
+		 * Sent when a perspective is saved
+		 */
+		public static final String PERSPECTIVE_SAVED = TOPIC + TOPIC_SEP + "perpSaved"; //$NON-NLS-1$
+
+		/**
+		 * Sent when a perspective is opened
+		 */
+		public static final String PERSPECTIVE_OPENED = TOPIC + TOPIC_SEP + "perspOpened"; //$NON-NLS-1$
 	}
 
 	/**

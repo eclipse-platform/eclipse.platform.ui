@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
@@ -49,8 +50,8 @@ import org.eclipse.e4.ui.internal.workbench.PlaceholderResolver;
 import org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.ResourceHandler;
 import org.eclipse.e4.ui.internal.workbench.WorkbenchLogger;
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -244,8 +245,11 @@ public class E4Application implements IApplication {
 		}
 
 		// Create the addons
-		for (MContribution addon : appModel.getAddons()) {
-			Object obj = factory.create(addon.getContributionURI(), appContext);
+		IEclipseContext addonStaticContext = EclipseContextFactory.create();
+		for (MAddon addon : appModel.getAddons()) {
+			addonStaticContext.set(MAddon.class, addon);
+			Object obj = factory.create(addon.getContributionURI(), appContext,
+					addonStaticContext);
 			addon.setObject(obj);
 		}
 

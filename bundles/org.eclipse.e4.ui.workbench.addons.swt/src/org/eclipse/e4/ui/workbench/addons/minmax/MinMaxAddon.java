@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
@@ -78,6 +79,76 @@ public class MinMaxAddon {
 
 	// Allow 'local' changes to the tags
 	private boolean ignoreTagChanges = false;
+
+	@Inject
+	MAddon minMaxAddon;
+
+	private EventHandler perspSavedListener = new EventHandler() {
+		public void handleEvent(Event event) {
+			final MPerspective savedPersp = (MPerspective) event.getProperty(EventTags.ELEMENT);
+			String cache = getTrimCache(savedPersp);
+			System.out.println(savedPersp.getElementId() + ':' + cache);
+			minMaxAddon.getPersistedState().put(savedPersp.getElementId(), cache);
+		}
+
+		private String getTrimCache(MPerspective savedPersp) {
+			MWindow topWin = modelService.getTopLevelWindowFor(savedPersp);
+			String perspIdStr = '(' + savedPersp.getElementId() + ')';
+
+			String cache = getWinCache(topWin, perspIdStr);
+			for (MWindow dw : savedPersp.getWindows()) {
+				cache += getWinCache(dw, perspIdStr);
+			}
+
+			return cache;
+		}
+
+		private String getWinCache(MWindow win, String perspIdStr) {
+			String winStr = ""; //$NON-NLS-1$
+
+			List<MPartStack> stackList = modelService.findElements(win, null, MPartStack.class,
+					null);
+			for (MPartStack stack : stackList) {
+				winStr += getStackTrimLoc(stack, perspIdStr);
+			}
+			return winStr;
+		}
+
+		private String getStackTrimLoc(MPartStack stack, String perspIdStr) {
+			MWindow stackWin = modelService.getTopLevelWindowFor(stack);// getContainingWindow(stack);
+			MUIElement tcElement = modelService.find(stack.getElementId() + perspIdStr, stackWin);
+			if (tcElement == null)
+				return ""; //$NON-NLS-1$
+
+			MTrimBar bar = (MTrimBar) ((MUIElement) tcElement.getParent());
+			int sideVal = bar.getSide().getValue();
+			int index = bar.getChildren().indexOf(tcElement);
+			return stack.getElementId() + ' ' + sideVal + ' ' + index + "#";
+		}
+	};
+
+	private EventHandler perspOpenedListener = new EventHandler() {
+		public void handleEvent(Event event) {
+			final MPerspective openedPersp = (MPerspective) event.getProperty(EventTags.ELEMENT);
+
+			// Find any minimized stacks and show their trim
+			MWindow topWin = modelService.getTopLevelWindowFor(openedPersp);
+			showMinimizedTrim(topWin);
+			for (MWindow dw : openedPersp.getWindows()) {
+				showMinimizedTrim(dw);
+			}
+		}
+
+		private void showMinimizedTrim(MWindow win) {
+			List<MPartStack> stackList = modelService.findElements(win, null, MPartStack.class,
+					null);
+			for (MPartStack stack : stackList) {
+				if (stack.getTags().contains(IPresentationEngine.MINIMIZED)) {
+					createTrim(stack);
+				}
+			}
+		}
+	};
 
 	private CTabFolder2Adapter CTFButtonListener = new CTabFolder2Adapter() {
 		private MUIElement getElementToChange(CTabFolderEvent event) {
@@ -356,6 +427,8 @@ public class MinMaxAddon {
 				UIEvents.ApplicationElement.ELEMENTID);
 		eventBroker.subscribe(topic, idChangeListener);
 
+		eventBroker.subscribe(UIEvents.UILifeCycle.PERSPECTIVE_SAVED, perspSavedListener);
+		eventBroker.subscribe(UIEvents.UILifeCycle.PERSPECTIVE_OPENED, perspOpenedListener);
 	}
 
 	@PreDestroy
@@ -365,6 +438,8 @@ public class MinMaxAddon {
 		eventBroker.unsubscribe(perspectiveChangeListener);
 		eventBroker.unsubscribe(tagChangeListener);
 		eventBroker.unsubscribe(idChangeListener);
+		eventBroker.unsubscribe(perspSavedListener);
+		eventBroker.unsubscribe(perspOpenedListener);
 	}
 
 	private MArea getAreaFor(MPartStack stack) {
@@ -586,16 +661,14 @@ public class MinMaxAddon {
 			trimStack.setElementId(trimId);
 			trimStack.setContributionURI(TrimStack.CONTRIBUTION_URI);
 
-			Rectangle winBounds = winShell.getBounds();
-			int winCenterX = winBounds.width / 2;
-			Control stackCtrl = (Control) element.getWidget();
-			Rectangle stackBounds = stackCtrl.getBounds();
-			stackBounds = winShell.getDisplay().map(stackCtrl, winShell, stackBounds);
-			int stackCenterX = stackBounds.x + (stackBounds.width / 2);
-			SideValue side = stackCenterX < winCenterX ? SideValue.LEFT : SideValue.RIGHT;
-			MTrimBar bar = modelService.getTrim(window, side);
+			// Check if we have a cached location
+			MTrimBar bar = getBarForElement(element, window);
+			int index = getCachedIndex(element);
+			if (index == -1 || index >= bar.getChildren().size())
+				bar.getChildren().add(trimStack);
+			else
+				bar.getChildren().add(index, trimStack);
 
-			bar.getChildren().add(trimStack);
 			bar.setVisible(true);
 
 			// get the parent trim bar, see bug 320756
@@ -620,6 +693,56 @@ public class MinMaxAddon {
 			}
 			trimStack.setToBeRendered(true);
 		}
+	}
+
+	private int getCachedIndex(MUIElement element) {
+		MPerspective persp = modelService.getPerspectiveFor(element);
+		String cache = minMaxAddon.getPersistedState().get(persp.getElementId());
+		if (cache == null)
+			return -1;
+
+		String[] stacks = cache.split("#"); //$NON-NLS-1$
+		for (String stackInfo : stacks) {
+			String[] vals = stackInfo.split(" "); //$NON-NLS-1$
+			if (vals[0].equals(element.getElementId())) {
+				return Integer.parseInt(vals[2]);
+			}
+		}
+		return -1;
+	}
+
+	private SideValue getCachedBar(MUIElement element) {
+		MPerspective persp = modelService.getPerspectiveFor(element);
+		String cache = minMaxAddon.getPersistedState().get(persp.getElementId());
+		if (cache == null)
+			return null;
+
+		String[] stacks = cache.split("#"); //$NON-NLS-1$
+		for (String stackInfo : stacks) {
+			String[] vals = stackInfo.split(" "); //$NON-NLS-1$
+			if (vals[0].equals(element.getElementId())) {
+				int sideVal = Integer.parseInt(vals[1]);
+				return SideValue.get(sideVal);
+			}
+		}
+		return null;
+	}
+
+	private MTrimBar getBarForElement(MUIElement element, MTrimmedWindow window) {
+		SideValue side = getCachedBar(element);
+		if (side == null) {
+			Shell winShell = (Shell) window.getWidget();
+			Rectangle winBounds = winShell.getBounds();
+			int winCenterX = winBounds.width / 2;
+			Control stackCtrl = (Control) element.getWidget();
+			Rectangle stackBounds = stackCtrl.getBounds();
+			stackBounds = winShell.getDisplay().map(stackCtrl, winShell, stackBounds);
+			int stackCenterX = stackBounds.x + (stackBounds.width / 2);
+			side = stackCenterX < winCenterX ? SideValue.LEFT : SideValue.RIGHT;
+		}
+		MTrimBar bar = modelService.getTrim(window, side);
+
+		return bar;
 	}
 
 	private String getMinimizedElementSuffix(MUIElement element) {
