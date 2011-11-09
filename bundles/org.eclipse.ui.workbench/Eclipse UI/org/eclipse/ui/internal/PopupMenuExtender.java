@@ -550,6 +550,8 @@ public class PopupMenuExtender implements IMenuListener2,
 				unlink(renderer, menuModel);
 				renderer.clearModelToManager(menuModel, menu);
 			}
+
+			modelPart.getMenus().remove(menuModel);
 		}
 	}
 
