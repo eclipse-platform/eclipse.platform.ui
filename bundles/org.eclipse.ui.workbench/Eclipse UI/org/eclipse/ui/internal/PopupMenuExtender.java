@@ -38,7 +38,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuService;
-import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
@@ -83,7 +82,7 @@ public class PopupMenuExtender implements IMenuListener2,
 
     private final IWorkbenchPart part;
 
-    private Map staticActionBuilders = null;
+	private Map<String, ViewerActionBuilder> staticActionBuilders = null;
 
     /**
      * The boolean properties maintained by this extender. A bit set is used to
@@ -91,8 +90,7 @@ public class PopupMenuExtender implements IMenuListener2,
      */
 	private int bitSet = 0;
 	
-	private ArrayList actionContributionCache = new ArrayList();
-	private ArrayList managerContributionCache = new ArrayList();
+	private ArrayList<PluginActionContributionItem> actionContributionCache = new ArrayList<PluginActionContributionItem>();
 	private boolean cleanupNeeded = false;
 
 	private MPart modelPart;
@@ -188,9 +186,9 @@ public class PopupMenuExtender implements IMenuListener2,
      * 
      * @return The set of all identifiers that represent this extender.
      */
-    public Set getMenuIds() {
+	public Set<String> getMenuIds() {
     	if (staticActionBuilders == null) {
-    		return Collections.EMPTY_SET;
+			return Collections.emptySet();
     	}
     	
         return staticActionBuilders.keySet();
@@ -325,14 +323,11 @@ public class PopupMenuExtender implements IMenuListener2,
     private final void clearStaticActions() {
 		bitSet &= ~STATIC_ACTION_READ;
 		if (staticActionBuilders != null) {
-			final Iterator staticActionBuilderItr = staticActionBuilders
+			final Iterator<ViewerActionBuilder> staticActionBuilderItr = staticActionBuilders
 					.values().iterator();
 			while (staticActionBuilderItr.hasNext()) {
-				final Object staticActionBuilder = staticActionBuilderItr
-						.next();
-				if (staticActionBuilder instanceof ViewerActionBuilder) {
-					((ViewerActionBuilder) staticActionBuilder).dispose();
-				}
+				final ViewerActionBuilder staticActionBuilder = staticActionBuilderItr.next();
+				staticActionBuilder.dispose();
 			}
 		}
 	}
@@ -342,11 +337,10 @@ public class PopupMenuExtender implements IMenuListener2,
      */
     private void addStaticActions(IMenuManager mgr) {
 		if (staticActionBuilders != null) {
-			final Iterator staticActionBuilderItr = staticActionBuilders
+			final Iterator<ViewerActionBuilder> staticActionBuilderItr = staticActionBuilders
 					.values().iterator();
 			while (staticActionBuilderItr.hasNext()) {
-				final ViewerActionBuilder staticActionBuilder = (ViewerActionBuilder) staticActionBuilderItr
-						.next();
+				final ViewerActionBuilder staticActionBuilder = staticActionBuilderItr.next();
 				staticActionBuilder.contribute(mgr, null, true);
 			}
 		}
@@ -453,21 +447,17 @@ public class PopupMenuExtender implements IMenuListener2,
 		final IContributionItem[] items = mgr.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof PluginActionContributionItem) {
-				actionContributionCache.add(items[i]);
+				actionContributionCache.add((PluginActionContributionItem) items[i]);
 			} else if (items[i] instanceof IMenuManager) {
-				if (items[i] instanceof ContributionManager) {
-					managerContributionCache.add(items[i]);
-				}
-				gatherContributions(((IMenuManager)items[i]));
+				gatherContributions(((IMenuManager) items[i]));
 			}
 		}
 	}
 	
 	private void cleanUpContributionCache() {
 		if (!actionContributionCache.isEmpty()) {
-			PluginActionContributionItem[] items = (PluginActionContributionItem[]) actionContributionCache
-					.toArray(new PluginActionContributionItem[actionContributionCache
-							.size()]);
+			PluginActionContributionItem[] items = actionContributionCache
+					.toArray(new PluginActionContributionItem[actionContributionCache.size()]);
 			actionContributionCache.clear();
 			for (int i = 0; i < items.length; i++) {
 				items[i].dispose();
@@ -481,8 +471,6 @@ public class PopupMenuExtender implements IMenuListener2,
 			renderer.cleanUp(menuModel);
 		}
 
-		managerContributionCache.clear();
-
 	}
 
 	/**
@@ -490,9 +478,9 @@ public class PopupMenuExtender implements IMenuListener2,
      */
     private final void readStaticActions() {
     	if (staticActionBuilders != null) {
-			final Iterator menuIdItr = staticActionBuilders.keySet().iterator();
+			final Iterator<String> menuIdItr = staticActionBuilders.keySet().iterator();
 			while (menuIdItr.hasNext()) {
-				final String menuId = (String) menuIdItr.next();
+				final String menuId = menuIdItr.next();
 				readStaticActionsFor(menuId);
 			}
 		}
@@ -515,13 +503,13 @@ public class PopupMenuExtender implements IMenuListener2,
 		}
 
 		if (staticActionBuilders == null) {
-			staticActionBuilders = new HashMap();
+			staticActionBuilders = new HashMap<String, ViewerActionBuilder>();
 		}
 
 		Object object = staticActionBuilders.get(menuId);
 		if (!(object instanceof ViewerActionBuilder)) {
 			object = new ViewerActionBuilder();
-			staticActionBuilders.put(menuId, object);
+			staticActionBuilders.put(menuId, (ViewerActionBuilder) object);
 		}
 		final ViewerActionBuilder staticActionBuilder = (ViewerActionBuilder) object;
 		staticActionBuilder.readViewerContributions(menuId, selProvider, part);
@@ -611,8 +599,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		for (int i = 0; i < deltas.length; i++) {
 			IExtensionDelta delta = deltas[i];
 			IExtensionPoint extensionPoint = delta.getExtensionPoint();
-			if (extensionPoint.getNamespace().equals(
-					WorkbenchPlugin.PI_WORKBENCH)
+			if (extensionPoint.getContributor().getName().equals(WorkbenchPlugin.PI_WORKBENCH)
 					&& extensionPoint.getSimpleIdentifier().equals(
 							IWorkbenchRegistryConstants.PL_POPUP_MENU)) {
 
