@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public abstract class CVSFieldEditorPreferencePage extends FieldEditorPreference
 	public static IPreferenceStore getCVSPreferenceStore() {
 		return CVSUIPlugin.getPlugin().getPreferenceStore();
 	}
-	
+
 	/**
 	 * Constructor for CVSFieldEditorPreferencePage.
 	 */
@@ -45,32 +45,32 @@ public abstract class CVSFieldEditorPreferencePage extends FieldEditorPreference
 		Control control = super.createContents(parent);
 		String id = getPageHelpContextId();
 		if (id != null)
-            PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), id);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), id);
 		Dialog.applyDialogFont(control);
 		return control;
 	}
-	
+
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	/**
 	 * Method getPageHelpContextId must be overridden by subclasses to provide
 	 * the help context ID of the page. Return null for no page F1 help.
-	 * 
+	 *
 	 * @return String
 	 */
 	protected abstract String getPageHelpContextId();
-	
+
 	/**
 	 * Method getPageDescription must be overridden by subclasses to provide the
 	 * description of the page. Return null for no description.
 	 * @return String
 	 */
 	protected abstract String getPageDescription();
-	
+
 	/**
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
@@ -80,11 +80,11 @@ public abstract class CVSFieldEditorPreferencePage extends FieldEditorPreference
 		return true;
 	}
 
-    /**
-     * Push the preferences to the Core plugin as required
-     */
-    protected void pushPreferences() {
-        // Do nothing by default
-    }
-	
+	/**
+	 * Push the preferences to the Core plugin as required
+	 */
+	protected void pushPreferences() {
+		// Do nothing by default
+	}
+
 }
