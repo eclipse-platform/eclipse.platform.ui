@@ -178,6 +178,17 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" 
             platform="carbon"/>
       <key
+      		platform="gtk"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M1+Y"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ui.edit.redo"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M1+M2+Z"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" 
+            platform="gtk"/>
+      <key
             commandId="org.eclipse.ui.edit.cut"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M1+X"
