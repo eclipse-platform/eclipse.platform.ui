@@ -35,6 +35,8 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuDetectEvent;
@@ -337,6 +339,17 @@ public class PerspectiveSwitcher {
 				disposeTBImages();
 			}
 
+		});
+
+		psTB.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				if (0 <= e.childID && e.childID < psTB.getItemCount()) {
+					ToolItem item = psTB.getItem(e.childID);
+					if (item != null) {
+						e.result = item.getToolTipText();
+					}
+				}
+			}
 		});
 
 		final ToolItem createItem = new ToolItem(psTB, SWT.PUSH);
