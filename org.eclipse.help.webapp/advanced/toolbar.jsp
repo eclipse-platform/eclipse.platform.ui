@@ -328,6 +328,7 @@ function menu(button, param) {
 			var properties = entries[i].split("=");
 			var anchor = doc.createElement("a");
 			var text = doc.createTextNode(properties[0]);
+			anchor.title = properties[0];
 			anchor.appendChild(text);
 			anchor.href = "javascript:parent.frames[0].closeMenu(),parent.frames[0]." + properties[1];
 			anchor.target = "_self";
