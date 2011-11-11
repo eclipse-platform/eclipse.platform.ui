@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,35 +10,44 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import org.w3c.dom.DOMException;
+
 /**
- * Interface to a memento used for saving the important state of an object
- * in a form that can be persisted in the file system.
+ * Interface to a memento used for saving the important state of an object in a
+ * form that can be persisted in the file system.
  * <p>
  * Mementos were designed with the following requirements in mind:
  * <ol>
- *  <li>Certain objects need to be saved and restored across platform sessions.
- *    </li>
- *  <li>When an object is restored, an appropriate class for an object might not
- *    be available. It must be possible to skip an object in this case.</li>
- *  <li>When an object is restored, the appropriate class for the object may be
- *    different from the one when the object was originally saved. If so, the
- *    new class should still be able to read the old form of the data.</li>
+ * <li>Certain objects need to be saved and restored across platform sessions.</li>
+ * <li>When an object is restored, an appropriate class for an object might not
+ * be available. It must be possible to skip an object in this case.</li>
+ * <li>When an object is restored, the appropriate class for the object may be
+ * different from the one when the object was originally saved. If so, the new
+ * class should still be able to read the old form of the data.</li>
  * </ol>
  * </p>
  * <p>
- * Mementos meet these requirements by providing support for storing a
- * mapping of arbitrary string keys to primitive values, and by allowing
- * mementos to have other mementos as children (arranged into a tree).
- * A robust external storage format based on XML is used.
- * </p><p>
- * The key for an attribute may be any alpha numeric value.  However, the
- * value of <code>TAG_ID</code> is reserved for internal use.
- * </p><p>
+ * Mementos meet these requirements by providing support for storing a mapping
+ * of arbitrary string keys to primitive values, and by allowing mementos to
+ * have other mementos as children (arranged into a tree). A robust external
+ * storage format based on XML is used.
+ * </p>
+ * <p>
+ * The key for an attribute may be any alpha numeric value that doesn't start
+ * with a number. eg: [A-Za-z][A-Za-z0-9]* Using '.' is unsupported. However,
+ * the value of <code>TAG_ID</code> is reserved for internal use.
+ * </p>
+ * <p>
+ * The default implementation can throw a {@link DOMException} for createChild
+ * and put operations. See {@link XMLMemento}.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
- *
+ * 
  * @see IPersistableElement
  * @see IElementFactory
+ * @see XMLMemento
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMemento {
@@ -81,19 +90,24 @@ public interface IMemento {
     public IMemento createChild(String type, String id);
 
     /**
-     * Returns the first child with the given type id.
-     *
-     * @param type the type id
-     * @return the first child with the given type
-     */
+	 * Returns the first child with the given type id.
+	 * 
+	 * @param type
+	 *            the type id
+	 * @return the first child with the given type. May return <code>null</code>
+	 *         .
+	 */
     public IMemento getChild(String type);
 
     /**
-     * Returns all children with the given type id.
-     *
-     * @param type the type id
-     * @return an array of children with the given type
-     */
+	 * Returns all children with the given type id.
+	 * 
+	 * @param type
+	 *            the type id
+	 * @return an array of children with the given type. This will not be
+	 *         <code>null</code>. If there are no keys, an array of length zero
+	 *         will be returned.
+	 */
     public IMemento[] getChildren(String type);
 
     /**
