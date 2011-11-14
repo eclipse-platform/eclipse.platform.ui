@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		fgTags.add("br"); //$NON-NLS-1$
 		fgTags.add("br/"); //$NON-NLS-1$
 		fgTags.add("div"); //$NON-NLS-1$
+		fgTags.add("del"); //$NON-NLS-1$
 		fgTags.add("h1"); //$NON-NLS-1$
 		fgTags.add("h2"); //$NON-NLS-1$
 		fgTags.add("h3"); //$NON-NLS-1$
@@ -70,7 +71,9 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	private int fCounter= 0;
 	private TextPresentation fTextPresentation;
 	private int fBold= 0;
-	private int fStartOffset= -1;
+	private int fBoldStartOffset= -1;
+	private int fStrikeout= 0;
+	private int fStrikeoutStartOffset= -1;
 	private boolean fInParagraph= false;
 	private boolean fIsPreformattedText= false;
 	private boolean fIgnore= false;
@@ -95,10 +98,72 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		return c;
 	}
 
+	private void setBold(int offset, int length) {
+		if (fTextPresentation != null && offset >= 0 && length > 0) {
+			fTextPresentation.addStyleRange(new StyleRange(offset, length, null, null, SWT.BOLD));
+		}
+	}
+
+	private void setStrikeout(int offset, int length) {
+		if (fTextPresentation != null && offset >= 0 && length > 0) {
+			StyleRange styleRange= new StyleRange(offset, length, null, null, SWT.NORMAL);
+			styleRange.strikeout= true;
+			fTextPresentation.addStyleRange(styleRange);
+		}
+	}
+
+	private void setBoldAndStrikeOut(int offset, int length) {
+		if (fTextPresentation != null && offset >= 0 && length > 0) {
+			StyleRange styleRange= new StyleRange(offset, length, null, null, SWT.BOLD);
+			styleRange.strikeout= true;
+			fTextPresentation.addStyleRange(styleRange);
+		}
+	}
+
 	protected void startBold() {
-		if (fBold == 0)
-			fStartOffset= fCounter;
-		++ fBold;
+		if (fBold == 0) {
+			fBoldStartOffset= fCounter;
+			if (fStrikeout > 0) {
+				setStrikeout(fStrikeoutStartOffset, fCounter - fStrikeoutStartOffset);
+			}
+		}
+		++fBold;
+	}
+
+	protected void stopBold() {
+		--fBold;
+		if (fBold == 0) {
+			if (fStrikeout == 0) {
+				setBold(fBoldStartOffset, fCounter - fBoldStartOffset);
+			} else {
+				setBoldAndStrikeOut(fBoldStartOffset, fCounter - fBoldStartOffset);
+				fStrikeoutStartOffset= fCounter;
+			}
+			fBoldStartOffset= -1;
+		}
+	}
+
+	protected void startStrikeout() {
+		if (fStrikeout == 0) {
+			fStrikeoutStartOffset= fCounter;
+			if (fBold > 0) {
+				setBold(fBoldStartOffset, fCounter - fBoldStartOffset);
+			}
+		}
+		++fStrikeout;
+	}
+
+	protected void stopStrikeout() {
+		--fStrikeout;
+		if (fStrikeout == 0) {
+			if (fBold == 0) {
+				setStrikeout(fStrikeoutStartOffset, fCounter - fStrikeoutStartOffset);
+			} else {
+				setBoldAndStrikeOut(fStrikeoutStartOffset, fCounter - fStrikeoutStartOffset);
+				fBoldStartOffset= fCounter;
+			}
+			fStrikeoutStartOffset= -1;
+		}
 	}
 
 	protected void startPreformattedText() {
@@ -111,15 +176,6 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		setSkipWhitespace(true);
 	}
 
-	protected void stopBold() {
-		-- fBold;
-		if (fBold == 0) {
-			if (fTextPresentation != null) {
-				fTextPresentation.addStyleRange(new StyleRange(fStartOffset, fCounter - fStartOffset, null, null, SWT.BOLD));
-			}
-			fStartOffset= -1;
-		}
-	}
 
 	/*
 	 * @see org.eclipse.jdt.internal.ui.text.SubstitutionTextReader#computeSubstitution(int)
@@ -171,6 +227,11 @@ public class HTML2TextReader extends SubstitutionTextReader {
 			return EMPTY_STRING;
 		}
 
+		if ("del".equals(html)) { //$NON-NLS-1$
+			startStrikeout();
+			return EMPTY_STRING;
+		}
+
 		if ((html.length() > 1 && html.charAt(0) == 'h' && Character.isDigit(html.charAt(1))) || "dt".equals(html)) { //$NON-NLS-1$
 			startBold();
 			return EMPTY_STRING;
@@ -188,6 +249,11 @@ public class HTML2TextReader extends SubstitutionTextReader {
 
 		if ("/b".equals(html)) { //$NON-NLS-1$
 			stopBold();
+			return EMPTY_STRING;
+		}
+
+		if ("/del".equals(html)) { //$NON-NLS-1$
+			stopStrikeout();
 			return EMPTY_STRING;
 		}
 
