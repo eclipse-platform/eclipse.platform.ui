@@ -84,7 +84,11 @@ public class DeleteResourceChange extends ResourceChange {
 	}
 
 	private IResource getResource() {
-		return ResourcesPlugin.getWorkspace().getRoot().findMember(fResourcePath);
+		IResource resource= ResourcesPlugin.getWorkspace().getRoot().findMember(fResourcePath);
+		if (resource == null && fResourcePath.segmentCount() == 1) {
+			resource= ResourcesPlugin.getWorkspace().getRoot().getProject(fResourcePath.segment(0));
+		}
+		return resource;
 	}
 
 	/* (non-Javadoc)
@@ -98,13 +102,15 @@ public class DeleteResourceChange extends ResourceChange {
 		
 		if (path.segmentCount() == 1) {
 			IResource resource= getResource();
-			IPath location= resource.getLocation();
-			if (location != null) {
-				label= label + BasicElementLabels.CONCAT_STRING + BasicElementLabels.getPathLabel(location, true);
-			} else {
-				URI uri= resource.getLocationURI();
-				if (uri != null) {
-					label= label + BasicElementLabels.CONCAT_STRING + BasicElementLabels.getURLPart(uri.toString());
+			if (resource != null) {
+				IPath location= resource.getLocation();
+				if (location != null) {
+					label= label + BasicElementLabels.CONCAT_STRING + BasicElementLabels.getPathLabel(location, true);
+				} else {
+					URI uri= resource.getLocationURI();
+					if (uri != null) {
+						label= label + BasicElementLabels.CONCAT_STRING + BasicElementLabels.getURLPart(uri.toString());
+					}
 				}
 			}
 		}

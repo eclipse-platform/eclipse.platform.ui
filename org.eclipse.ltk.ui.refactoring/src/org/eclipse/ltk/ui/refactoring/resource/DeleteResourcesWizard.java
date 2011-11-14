@@ -180,7 +180,11 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			if (uri != null)
 				return BasicElementLabels.getURLPart(uri.toString());
 			
-			return BasicElementLabels.getURLPart(resource.getRawLocationURI().toString());
+			URI rawLocationURI= resource.getRawLocationURI();
+			if (rawLocationURI != null)
+				return BasicElementLabels.getURLPart(rawLocationURI.toString());
+			
+			return BasicElementLabels.getResourceName(resource);
 		}
 
 		private boolean containsLinkedResource(IResource[] resources) {
