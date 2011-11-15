@@ -658,6 +658,18 @@ public class ModelServiceImpl implements EModelService {
 
 		// Didn't find a trim bar for the side, make one
 		MTrimBar newBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+
+		// Assign default ids to the trim bars to match legacy eclipse
+		if (sv == SideValue.TOP) {
+			newBar.setElementId("org.eclipse.ui.main.menu"); //$NON-NLS-1$	
+		} else if (sv == SideValue.BOTTOM) {
+			newBar.setElementId("org.eclipse.ui.trim.status"); //$NON-NLS-1$	
+		} else if (sv == SideValue.LEFT) {
+			newBar.setElementId("org.eclipse.ui.trim.vertical1"); //$NON-NLS-1$	
+		} else if (sv == SideValue.RIGHT) {
+			newBar.setElementId("org.eclipse.ui.trim.vertical2"); //$NON-NLS-1$	
+		}
+
 		newBar.setSide(sv);
 		window.getTrimBars().add(newBar);
 		return newBar;
