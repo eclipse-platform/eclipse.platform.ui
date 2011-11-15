@@ -1424,7 +1424,6 @@ public class InternalTreeModelViewer extends TreeViewer
 	    	for (int i = 0; i < visibleColumnIds.length; i++) {
 				String id = visibleColumnIds[i];
 				String header = presentation.getHeader(id);
-				if (header == null) header = id;
 				// TODO: allow client to specify style
 				TreeColumn column = new TreeColumn(tree, SWT.LEFT, i);
 				column.setMoveable(true);
@@ -1442,8 +1441,8 @@ public class InternalTreeModelViewer extends TreeViewer
 	    	}
 	    	tree.setHeaderVisible(true);
 	    	tree.setLinesVisible(true);
-	    	presentationContext.setColumns(getVisibleColumns());
-	    	setColumnProperties(getVisibleColumns());
+	    	presentationContext.setColumns(visibleColumnIds);
+	    	setColumnProperties(visibleColumnIds);
 	    	setCellModifier(fCellModifier);
     	} else {
     		tree.setHeaderVisible(false);
@@ -1522,16 +1521,21 @@ public class InternalTreeModelViewer extends TreeViewer
 					return presentation.getInitialColumns();
 				} else {
 				    String[] available = presentation.getAvailableColumns();
-				    outer: for (int i = 0; i < columns.length; i++) {
+				    for (int i = 0; i < columns.length; i++) {
+				        boolean columnAvailable = false;
 				        for (int j = 0; j < available.length; j++) {
-				            if (columns[i].equals(available[j])) continue outer;
+				            if (columns[i].equals(available[j])) columnAvailable = true;
 				        }
-				        // We found a column ID which is not in current list of available column IDs.
-				        // Clear out saved column data for given column presentation.
-                        fVisibleColumns.remove(presentation.getId());
-                        fColumnOrder.remove(presentation.getId());
-                        fColumnSizes.remove(presentation.getId());
-                        return presentation.getInitialColumns();
+				        
+				        if (!columnAvailable || presentation.getHeader(columns[i]) == null) {
+    				        // We found a column ID which is not in current list of available column IDs.
+				            // Or the presentation cannot return a header title for the given column.
+    				        // Clear out saved column data for given column presentation.
+                            fVisibleColumns.remove(presentation.getId());
+                            fColumnOrder.remove(presentation.getId());
+                            fColumnSizes.remove(presentation.getId());
+                            return presentation.getInitialColumns();
+				        }
 				    }
 				}
 				return columns;

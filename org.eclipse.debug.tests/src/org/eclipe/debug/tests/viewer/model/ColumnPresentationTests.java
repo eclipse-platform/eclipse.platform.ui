@@ -102,10 +102,19 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		protected String[] columnIds;
 
 		MyColumnPresentation() {
-			columnIds = new String[5];
-			for (int i = 0; i < columnIds.length; i++) {
-				columnIds[i] = "ColumnId_" + i;
-			}
+		    this (makeDefaultColumnIds());
+        }
+
+		static String[] makeDefaultColumnIds() {
+            String[] columnIds = new String[5];
+            for (int i = 0; i < columnIds.length; i++) {
+                columnIds[i] = "ColumnId_" + i;
+            }
+            return columnIds;
+		}
+		
+		MyColumnPresentation(String[] columnIds) {
+			this.columnIds = columnIds;
 		}
 
 		public void init(IPresentationContext context) {
@@ -133,7 +142,10 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		}
 
 		public String getHeader(String id) {
-			return id;
+		    if (Arrays.asList(columnIds).indexOf(id) != -1) {
+		        return id;
+		    }
+		    return null;
 		}
 
 		public String getId() {
@@ -378,4 +390,40 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			assertEquals(newWidths[i], columns[i].getWidth());
 		}
 	}
+	
+	/**
+     * In this test: verify that tree viewer can handle the column presentation changing 
+     * its available column IDs between runs (bug 360015).
+     */
+    public void testChangedColumnIds() throws InterruptedException {
+        MyColumnPresentation colPre = new MyColumnPresentation();
+        
+        makeModel(colPre, "m1");
+        TreeColumn[] columns = fViewer.getTree().getColumns();
+        // Select visible columns
+        fViewer.setVisibleColumns(new String[] { colPre.columnIds[0] });
+        do {
+            if (!fDisplay.readAndDispatch()) {
+                Thread.sleep(0);
+            }
+        } while (fViewer.getTree().getColumns().length != 1);
+        
+        // get InternalTreeModelViewer to rebuild columns due to change of
+        // model and presentation - first set to another model and column
+        // presentation, then switch to a model with original presentation.
+        makeModel(new MyColumnPresentation2(), "m2");
+        
+        String[] newColumnIds = MyColumnPresentation.makeDefaultColumnIds();
+        newColumnIds[0] = "new_column_id";
+        colPre = new MyColumnPresentation(newColumnIds);
+        
+        makeModel(colPre, "m3");
+        
+        // verify user resized widths are used instead of the initial widths from IColumnPresentation2
+        columns = fViewer.getTree().getColumns();
+        for (int i = 0; i < columns.length; i++) {
+            assertEquals(newColumnIds[i], columns[i].getText());
+        }
+    }
+
 }
