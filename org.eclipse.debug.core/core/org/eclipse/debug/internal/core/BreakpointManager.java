@@ -341,6 +341,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
         	fImportParticipants = null;
         	fDefaultParticipant = null;
         }
+        if(fBreakpoints != null) {
+        	fBreakpoints.clear();
+        	fBreakpoints = null;
+        }
+        if(fMarkersToBreakpoints != null) {
+        	fMarkersToBreakpoints.clear();
+        }
 	}
 
 	/**
@@ -394,10 +401,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 	
 	/**
-	 * Calls {@link #initializeBreakpoints()} if breakpoints have not yet been initialized.
+	 * Perform any initialization of the manager. 
+	 * 
+	 * Called when {@link DebugPlugin#start(org.osgi.framework.BundleContext)} is called.
+	 * 
+	 * @since 3.8
 	 */
-	public void ensureBreakpointsInitialized() {
-	    getBreakpoints0();
+	public void start() {
+		getBreakpoints0();
 	}
 	
 	/**

@@ -677,7 +677,9 @@ public class DebugPlugin extends Plugin {
 		manager.registerAdapters(actionFactory, ITerminate.class);
 		manager.registerAdapters(actionFactory, ILaunch.class);
 		manager.registerAdapters(actionFactory, IProcess.class);
-		manager.registerAdapters(actionFactory, IDebugElement.class);		
+		manager.registerAdapters(actionFactory, IDebugElement.class);	
+		getBreakpointManager();
+		fBreakpointManager.start();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,12 +28,11 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
  * Abstract implementation of a breakpoint. This class is
- * intended to be subclassed by implementations
+ * intended to be sub-classed by implementations
  * of breakpoints.
  * 
  * @see IBreakpoint
@@ -46,16 +45,6 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	 * Underlying marker.
 	 */
 	private IMarker fMarker= null;
-
-    /**
-     * Default constructor used to ensure that breakpoint manager is initialized.
-     */
-    public Breakpoint() {
-        // making sure that the BreakpointManager is correctly initialized
-        // before any breakpoint marker related operation (see bug 54993)
-        ((BreakpointManager)DebugPlugin.getDefault().getBreakpointManager()).ensureBreakpointsInitialized();
-    }
-                
 
 	/**
 	 * @see IBreakpoint#setMarker(IMarker)
