@@ -11,11 +11,11 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import com.ibm.icu.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -23,8 +23,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.misc.StringMatcher;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * A filter used in conjunction with <code>FilteredTree</code>. In order to
@@ -45,14 +43,14 @@ public class PatternFilter extends ViewerFilter {
 	/**
 	 * Maps parent elements to TRUE or FALSE
 	 * 
-	 * @since 3.8
+	 * @since 3.103
 	 */
     protected Map foundAnyCache = new HashMap();
     
 	/**
 	 * Specifies if caching of filter results should be used.
 	 * 
-	 * @since 3.8
+	 * @since 3.103
 	 */
 	protected boolean useCache = false;
     
@@ -98,7 +96,7 @@ public class PatternFilter extends ViewerFilter {
 	 * @param elements
 	 *            the elements to filter
 	 * @return the filtered elements
-	 * @since 3.8
+	 * @since 3.103
 	 */
 	protected Object[] doFilter(Viewer viewer, Object parent, Object[] elements) {
         Object[] filtered = (Object[]) cache.get(parent);
