@@ -58,7 +58,6 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -1317,47 +1316,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 		return new LocalWorkingSetManager(WorkbenchPlugin.getDefault().getBundleContext());
 	}
 
-	class ActiveWorkbenchWindowQueryContextFunction implements IContextFunction {
-
-		private final String variable;
-
-		public ActiveWorkbenchWindowQueryContextFunction(String variable) {
-			this.variable = variable;
-		}
-
-		public Object compute(IEclipseContext context) {
-			IEclipseContext child = context.getActiveChild();
-			return child == null ? null : child.getLocal(variable);
-		}
-
-	}
-
 	/**
 	 * Initializes the workbench now that the display is created.
 	 * 
 	 * @return true if init succeeded.
 	 */
 	private boolean init() {
-		application.getContext().set(ISources.ACTIVE_EDITOR_ID_NAME,
-				new ActiveWorkbenchWindowQueryContextFunction(ISources.ACTIVE_EDITOR_ID_NAME));
-		application.getContext().set(ISources.ACTIVE_EDITOR_NAME,
-				new ActiveWorkbenchWindowQueryContextFunction(ISources.ACTIVE_EDITOR_NAME));
-		application.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
-				new ActiveWorkbenchWindowQueryContextFunction(ISources.ACTIVE_EDITOR_INPUT_NAME));
-
-		application.getContext().set(ISources.SHOW_IN_INPUT,
-				new ActiveWorkbenchWindowQueryContextFunction(ISources.SHOW_IN_INPUT));
-		application.getContext().set(ISources.SHOW_IN_SELECTION,
-				new ActiveWorkbenchWindowQueryContextFunction(ISources.SHOW_IN_SELECTION));
-
-		application.getContext().set(ISources.ACTIVE_PART_NAME,
-				new ActiveWorkbenchWindowQueryContextFunction(ISources.ACTIVE_PART_NAME));
-		application.getContext().set(ISources.ACTIVE_PART_ID_NAME,
-				new ActiveWorkbenchWindowQueryContextFunction(ISources.ACTIVE_PART_ID_NAME));
-		application.getContext().set(ISources.ACTIVE_SITE_NAME,
-				new ActiveWorkbenchWindowQueryContextFunction(ISources.ACTIVE_SITE_NAME));
-		application.getContext().set("org.eclipse.core.runtime.Platform", Platform.class); //$NON-NLS-1$
-
 		// setup debug mode if required.
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;
