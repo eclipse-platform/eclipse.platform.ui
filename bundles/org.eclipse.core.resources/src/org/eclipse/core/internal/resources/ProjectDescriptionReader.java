@@ -925,6 +925,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		} catch (SAXException e) {
 			log(e);
 		}
+		
+		if (projectDescription != null && projectDescription.getName() == null)
+			parseProblem(Messages.projRead_missingProjectName);
+			
 		switch (problems.getSeverity()) {
 			case IStatus.ERROR :
 				Policy.log(problems);
