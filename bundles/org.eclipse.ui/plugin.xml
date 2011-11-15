@@ -271,6 +271,11 @@
             sequence="M1+M2+E"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            commandId="org.eclipse.ui.window.showContextMenu"
+            sequence="CTRL+SHIFT+F10"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.window.showSystemMenu"
             sequence="M3+-"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
@@ -1038,6 +1043,11 @@
             description="%command.showViewMenu.description"
             id="org.eclipse.ui.window.showViewMenu"
             name="%command.showViewMenu.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            description="%command.showContextMenu.description"
+            id="org.eclipse.ui.window.showContextMenu"
+            name="%command.showContextMenu.name"/>
       <command
             categoryId="org.eclipse.ui.category.window"
             description="%command.activateEditor.description"
@@ -1925,6 +1935,10 @@
                </instanceof>
             </with>
          </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.ContextMenuHandler"
+            commandId="org.eclipse.ui.window.showContextMenu">
       </handler>
       <handler
             class="org.eclipse.ui.internal.ShowPartPaneMenuHandler"
