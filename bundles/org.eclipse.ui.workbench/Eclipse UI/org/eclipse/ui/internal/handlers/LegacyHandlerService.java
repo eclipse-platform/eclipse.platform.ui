@@ -373,7 +373,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .core.commands.Command, org.eclipse.swt.widgets.Event)
 	 */
 	public ExecutionEvent createExecutionEvent(Command command, Event event) {
-		ExpressionContext legacy = new ExpressionContext(eclipseContext);
+		EvaluationContext legacy = new EvaluationContext(evalContext,
+				evalContext.getDefaultVariable());
 		ExecutionEvent e = new ExecutionEvent(command, Collections.EMPTY_MAP, event, legacy);
 		return e;
 	}
@@ -386,7 +387,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .core.commands.ParameterizedCommand, org.eclipse.swt.widgets.Event)
 	 */
 	public ExecutionEvent createExecutionEvent(ParameterizedCommand command, Event event) {
-		ExpressionContext legacy = new ExpressionContext(eclipseContext);
+		EvaluationContext legacy = new EvaluationContext(evalContext,
+				evalContext.getDefaultVariable());
 		ExecutionEvent e = new ExecutionEvent(command.getCommand(), command.getParameterMap(),
 				event, legacy);
 		return e;
