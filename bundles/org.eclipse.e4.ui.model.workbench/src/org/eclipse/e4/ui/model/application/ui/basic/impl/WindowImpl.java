@@ -263,7 +263,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int WIDTH_EDEFAULT = -2147483648;
+	protected static final int WIDTH_EDEFAULT = -1;
 
 	/**
 	 * The cached value of the '{@link #getWidth() <em>Width</em>}' attribute.
@@ -283,7 +283,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int HEIGHT_EDEFAULT = -2147483648;
+	protected static final int HEIGHT_EDEFAULT = -1;
 
 	/**
 	 * The cached value of the '{@link #getHeight() <em>Height</em>}' attribute.

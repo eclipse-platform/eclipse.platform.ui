@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecore:EPackage xmi:version="2.0"
-    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="application"
-    nsURI="http://www.eclipse.org/ui/2010/UIModel/application" nsPrefix="application">
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="application" nsURI="http://www.eclipse.org/ui/2010/UIModel/application"
+    nsPrefix="application">
   <eClassifiers xsi:type="ecore:EDataType" name="IEclipseContext" instanceClassName="org.eclipse.e4.core.contexts.IEclipseContext"
       serializable="false"/>
   <eClassifiers xsi:type="ecore:EClass" name="StringToStringMap" instanceClassName="java.util.Map$Entry">
@@ -223,7 +222,8 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="coreExpression" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
           transient="true"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="SnippetContainer">
+    <eClassifiers xsi:type="ecore:EClass" name="SnippetContainer" abstract="true"
+        interface="true">
       <eStructuralFeatures xsi:type="ecore:EReference" name="snippets" upperBound="-1"
           eType="#//ui/UIElement" containment="true"/>
     </eClassifiers>

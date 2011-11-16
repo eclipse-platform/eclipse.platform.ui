@@ -24,7 +24,7 @@ import java.util.List;
  * </ul>
  * </p>
  *
- * @model
+ * @model interface="true" abstract="true"
  * @generated
  */
 public interface MSnippetContainer {
