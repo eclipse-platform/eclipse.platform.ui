@@ -309,8 +309,9 @@ public class SearchField {
 	protected void checkFocusLost(final Table table, final Text text) {
 		table.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				if (!table.isDisposed() && !text.isDisposed()) {
-					if (!table.isFocusControl() && !text.isFocusControl()) {
+				if (!shell.isDisposed() && !table.isDisposed() && !text.isDisposed()) {
+					if (!shell.isFocusControl() && !table.isFocusControl()
+							&& !text.isFocusControl()) {
 						text.setText(""); //$NON-NLS-1$
 						quickAccessContents.resetProviders();
 					}
