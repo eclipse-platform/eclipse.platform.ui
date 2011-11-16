@@ -1165,7 +1165,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (!((GrabFocus)Tweaklets.get(GrabFocus.KEY)).grabFocusAllowed(part)) {
         	return;
         }
-        checkIntro();
+
+		if (mode != VIEW_CREATE) {
+			checkIntro();
+		}
+
         if (mode == VIEW_ACTIVATE) {
 			activate(part);
 		} else if (mode == VIEW_VISIBLE) {
