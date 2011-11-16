@@ -14,6 +14,7 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.runtime.CoreException;
 
@@ -59,10 +60,13 @@ public class ResourceAttributes {
 
 	/**
 	 * Returns whether this ResourceAttributes object is marked archive.
-	 *
+	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_ARCHIVE}.</p>
+	 * 
 	 * @return <code>true</code> if this resource is marked archive, 
 	 *		<code>false</code> otherwise
 	 * @see #setArchive(boolean)
+	 * @see IFileSystem#attributes()
+	 * @see EFS#ATTRIBUTE_ARCHIVE
 	 */
 	public boolean isArchive() {
 		return (attributes & EFS.ATTRIBUTE_ARCHIVE) != 0;
@@ -70,10 +74,13 @@ public class ResourceAttributes {
 
 	/**
 	 * Returns whether this ResourceAttributes object is marked executable.
+	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_EXECUTABLE}.</p>
 	 *
 	 * @return <code>true</code> if this resource is marked executable, 
 	 *		<code>false</code> otherwise
 	 * @see #setExecutable(boolean)
+	 * @see IFileSystem#attributes()
+	 * @see EFS#ATTRIBUTE_EXECUTABLE
 	 */
 	public boolean isExecutable() {
 		return (attributes & EFS.ATTRIBUTE_EXECUTABLE) != 0;
@@ -81,10 +88,13 @@ public class ResourceAttributes {
 
 	/**
 	 * Returns whether this ResourceAttributes object is marked hidden.
+	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_HIDDEN}.</p>
 	 *
 	 * @return <code>true</code> if this resource is marked hidden, 
 	 *		<code>false</code> otherwise
 	 * @see #setHidden(boolean)
+	 * @see IFileSystem#attributes()
+	 * @see EFS#ATTRIBUTE_HIDDEN
 	 * @since 3.2
 	 */
 	public boolean isHidden() {
@@ -93,10 +103,13 @@ public class ResourceAttributes {
 
 	/**
 	 * Returns whether this ResourceAttributes object is marked read only.
+	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_READ_ONLY}.</p>
 	 *
 	 * @return <code>true</code> if this resource is marked as read only, 
 	 *		<code>false</code> otherwise
 	 * @see #setReadOnly(boolean)
+	 * @see IFileSystem#attributes()
+	 * @see EFS#ATTRIBUTE_READ_ONLY
 	 */
 	public boolean isReadOnly() {
 		return (attributes & EFS.ATTRIBUTE_READ_ONLY) != 0;
@@ -104,10 +117,13 @@ public class ResourceAttributes {
 
 	/**
 	 * Returns whether this ResourceAttributes object is marked as symbolic link.
+	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_SYMLINK}.</p>
 	 *
 	 * @return <code>true</code> if this resource is marked as symbolic link, 
 	 *		<code>false</code> otherwise
 	 * @see #setSymbolicLink(boolean)
+	 * @see IFileSystem#attributes()
+	 * @see EFS#ATTRIBUTE_SYMLINK
 	 * @since 3.4
 	 */
 	public boolean isSymbolicLink() {
@@ -116,10 +132,13 @@ public class ResourceAttributes {
 
 	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked archive.
+	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_ARCHIVE}.</p>
 	 *
 	 * @param archive <code>true</code> to set it to be archive, 
 	 *		<code>false</code> to unset
 	 * @see #isArchive()
+	 * @see IFileSystem#attributes()
+	 * @see EFS#ATTRIBUTE_ARCHIVE
 	 */
 	public void setArchive(boolean archive) {
 		set(EFS.ATTRIBUTE_ARCHIVE, archive);
@@ -148,10 +167,13 @@ public class ResourceAttributes {
 
 	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked executable.
-	 *
+	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_EXECUTABLE}.</p>
+	 * 
 	 * @param executable <code>true</code> to set it to be executable, 
 	 *		<code>false</code> to unset
 	 * @see #isExecutable()
+	 * @see IFileSystem#attributes()
+	 * @see EFS#ATTRIBUTE_EXECUTABLE
 	 */
 	public void setExecutable(boolean executable) {
 		set(EFS.ATTRIBUTE_EXECUTABLE, executable);
@@ -159,10 +181,13 @@ public class ResourceAttributes {
 
 	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked hidden
-	 *
+	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_HIDDEN}.</p>
+	 * 
 	 * @param hidden <code>true</code> to set it to be marked hidden,
 	 *		<code>false</code> to unset
 	 * @see #isHidden()
+	 * @see IFileSystem#attributes()
+	 * @see EFS#ATTRIBUTE_HIDDEN
 	 * @since 3.2
 	 */
 	public void setHidden(boolean hidden) {
@@ -171,10 +196,13 @@ public class ResourceAttributes {
 
 	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked read only.
-	 *
+	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_READ_ONLY}.</p>
+	 * 
 	 * @param readOnly <code>true</code> to set it to be marked read only, 
 	 *		<code>false</code> to unset
 	 * @see #isReadOnly()
+	 * @see IFileSystem#attributes()
+	 * @see EFS#ATTRIBUTE_READ_ONLY
 	 */
 	public void setReadOnly(boolean readOnly) {
 		set(EFS.ATTRIBUTE_READ_ONLY, readOnly);
@@ -182,10 +210,13 @@ public class ResourceAttributes {
 
 	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked as symbolic link.
-	 *
+	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_SYMLINK}.</p>
+	 * 
 	 * @param symLink <code>true</code> to set it to be marked as symbolic link, 
 	 *		<code>false</code> to unset
 	 * @see #isSymbolicLink()
+	 * @see IFileSystem#attributes()
+	 * @see EFS#ATTRIBUTE_SYMLINK
 	 * @since 3.4
 	 */
 	public void setSymbolicLink(boolean symLink) {
