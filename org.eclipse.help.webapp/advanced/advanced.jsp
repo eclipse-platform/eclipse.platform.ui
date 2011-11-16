@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2010 IBM Corporation and others.
+ Copyright (c) 2000, 2011 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -218,7 +218,7 @@ for (int i=0; i<tocData.getTocCount(); i++)
   			<table cellspacing=10 cellpading=0 border=0 align=<%=isRTL?"left":"right"%>  style="background:transparent;">
 				<tr>
 					<td>
-						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value="<%=ServletResources.getString("SearchLabel", request)%>"  id="go" alt="<%=ServletResources.getString("SearchLabel", request)%>" title="<%=ServletResources.getString("SearchLabel", request)%>">
+						<input id="searchButton" class='button' type="submit" role="button" onclick="doAdvancedSearch()" value="<%=ServletResources.getString("SearchLabel", request)%>"  id="go" alt="<%=ServletResources.getString("SearchLabel", request)%>" title="<%=ServletResources.getString("SearchLabel", request)%>">
 					</td>
 					<td>
 					  	<input class='button' type="button" onclick="window.close()"  type="button"  value="<%=ServletResources.getString("Cancel", request)%>"  id="cancel" alt="<%=ServletResources.getString("Cancel", request)%>" title="<%=ServletResources.getString("Cancel", request)%>">

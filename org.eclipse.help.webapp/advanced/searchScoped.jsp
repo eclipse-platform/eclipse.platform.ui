@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2010 IBM Corporation and others.
+ Copyright (c) 2000, 2011 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -300,7 +300,7 @@ function onloadHandler(e)
 					       title="<%=UrlUtil.htmlEncode(ServletResources.getString("expression_label", request))%>">
 				</td>
 				<td >
-					<input type="button" onclick="this.blur();doSearch()" value="<%=ServletResources.getString("GO", request)%>" id="go" alt="<%=ServletResources.getString("GO", request)%>" title="<%=ServletResources.getString("GO", request)%>">
+					<input type="submit" role="button" onclick="this.blur();doSearch()" value="<%=ServletResources.getString("GO", request)%>" id="go" alt="<%=ServletResources.getString("GO", request)%>" title="<%=ServletResources.getString("GO", request)%>">
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
