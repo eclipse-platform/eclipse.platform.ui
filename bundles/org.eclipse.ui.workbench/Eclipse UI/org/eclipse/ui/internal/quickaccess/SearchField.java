@@ -18,13 +18,11 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -190,7 +188,7 @@ public class SearchField {
 			}
 
 			@Override
-			public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+			public EvaluationResult evaluate(IEvaluationContext context) {
 				return EvaluationResult.valueOf(SearchField.class.getName().equals(
 						context.getVariable(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME)));
 			}
@@ -199,25 +197,25 @@ public class SearchField {
 		IHandlerService whService = windowContext.get(IHandlerService.class);
 		whService.activateHandler(IWorkbenchCommandConstants.EDIT_SELECT_ALL,
 				new AbstractHandler() {
-					public Object execute(ExecutionEvent event) throws ExecutionException {
+					public Object execute(ExecutionEvent event) {
 						text.selectAll();
 						return null;
 					}
 				}, focusExpr);
 		whService.activateHandler(IWorkbenchCommandConstants.EDIT_CUT, new AbstractHandler() {
-			public Object execute(ExecutionEvent event) throws ExecutionException {
+			public Object execute(ExecutionEvent event) {
 				text.cut();
 				return null;
 			}
 		}, focusExpr);
 		whService.activateHandler(IWorkbenchCommandConstants.EDIT_COPY, new AbstractHandler() {
-			public Object execute(ExecutionEvent event) throws ExecutionException {
+			public Object execute(ExecutionEvent event) {
 				text.copy();
 				return null;
 			}
 		}, focusExpr);
 		whService.activateHandler(IWorkbenchCommandConstants.EDIT_PASTE, new AbstractHandler() {
-			public Object execute(ExecutionEvent event) throws ExecutionException {
+			public Object execute(ExecutionEvent event) {
 				text.paste();
 				return null;
 			}
@@ -226,8 +224,6 @@ public class SearchField {
 
 	/**
 	 * This method was copy/pasted from JFace.
-	 * 
-	 * @see org.eclipse.jface.window.Window#getClosestMonitor(Display, Point)
 	 */
 	private static Monitor getClosestMonitor(Display toSearch, Point toFind) {
 		int closest = Integer.MAX_VALUE;
@@ -256,9 +252,6 @@ public class SearchField {
 
 	/**
 	 * This method was copy/pasted from JFace.
-	 * 
-	 * @see org.eclipse.jface.window.Window#getConstrainedShellBounds(Display,
-	 *      Rectangle)
 	 */
 	private Rectangle getConstrainedShellBounds(Display display, Rectangle preferredSize) {
 		Rectangle result = new Rectangle(preferredSize.x, preferredSize.y, preferredSize.width,
