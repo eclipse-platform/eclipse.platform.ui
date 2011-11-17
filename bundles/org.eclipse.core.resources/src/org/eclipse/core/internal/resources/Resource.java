@@ -869,13 +869,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		// check if we deleted a preferences file 
 		ProjectPreferences.deleted(this);
 
-		/* if we are synchronizing, do not delete the resource. Convert it
-		 into a phantom. Actual deletion will happen when we refresh or push. */
-		if (convertToPhantom && getType() != PROJECT && synchronizing(getResourceInfo(true, false)))
-			convertToPhantom();
-		else
-			workspace.deleteResource(this);
-
 		//remove all deleted linked resources from the project description
 		if (getType() != IResource.PROJECT && links != null) {
 			Project project = (Project) getProject();
@@ -886,10 +879,23 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					wasChanged |= description.setLinkLocation(it.next().getProjectRelativePath(), null);
 				if (wasChanged) {
 					project.internalSetDescription(description, true);
-					project.writeDescription(IResource.FORCE);
+					try {
+						project.writeDescription(IResource.FORCE);
+					} catch (CoreException e) {
+						// a problem happened updating the description, update the description in memory
+						project.updateDescription();
+						throw e; // rethrow
+					}
 				}
 			}
 		}
+		
+		/* if we are synchronizing, do not delete the resource. Convert it
+		 into a phantom. Actual deletion will happen when we refresh or push. */
+		if (convertToPhantom && getType() != PROJECT && synchronizing(getResourceInfo(true, false)))
+			convertToPhantom();
+		else
+			workspace.deleteResource(this);
 
 		List<Resource> filters = findFilters();
 		if ((filters != null) && (filters.size() > 0)) {

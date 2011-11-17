@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -880,6 +880,55 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("2.0", link.exists());
 		assertTrue("2.1", link.isLinked());
 		assertEquals("2.2", resolve(localFolder), link.getLocation());
+	}
+
+	/**
+	 * Tests deleting a linked resource when .project is read-only
+	 */
+	public void testDeleteLink_Bug351823() throws CoreException {
+		IProject project = existingProject;
+
+		IFile link = project.getFile(getUniqueString());
+		link.createLink(localFile, IResource.NONE, getMonitor());
+
+		// set .project read-only
+		IFile descriptionFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		ResourceAttributes attrs = descriptionFile.getResourceAttributes();
+		attrs.setReadOnly(true);
+		descriptionFile.setResourceAttributes(attrs);
+
+		try {
+			try {
+				link.delete(false, getMonitor());
+				fail("1.0");
+			} catch (CoreException e1) {
+				// should fail
+			}
+
+			assertTrue("2.0", link.exists());
+			assertTrue("3.0", link.isLinked());
+
+			HashMap<IPath, LinkDescription> links = ((Project) project).internalGetDescription().getLinks();
+			assertNotNull("4.0", links);
+			assertEquals("5.0", 1, links.size());
+
+			LinkDescription linkDesc = links.values().iterator().next();
+			assertEquals("6.0", link.getProjectRelativePath(), linkDesc.getProjectRelativePath());
+
+			// try to delete again
+			// if the project description in memory is ok, it should fail
+			try {
+				link.delete(false, getMonitor());
+				fail("7.0");
+			} catch (CoreException e1) {
+				// should fail
+			}
+		} finally {
+			// set .project writable
+			attrs = descriptionFile.getResourceAttributes();
+			attrs.setReadOnly(false);
+			descriptionFile.setResourceAttributes(attrs);
+		}
 	}
 
 	/**
