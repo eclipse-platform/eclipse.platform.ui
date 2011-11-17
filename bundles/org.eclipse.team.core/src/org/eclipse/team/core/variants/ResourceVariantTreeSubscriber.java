@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,21 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.core.variants;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamStatus;
@@ -32,8 +21,6 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.*;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * A specialization of Subscriber that uses <code>IResourceVariantTree</code> objects
@@ -118,13 +105,16 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
 		monitor = Policy.monitorFor(monitor);
 		List errors = new ArrayList();
+		List cancels = new ArrayList();
 		try {
 			monitor.beginTask(null, 1000 * resources.length);
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				if (resource.getProject().isAccessible()) {
 					IStatus status = refresh(resource, depth, Policy.subMonitorFor(monitor, 1000));
-					if (!status.isOK()) {
+					if (status.getSeverity() == IStatus.CANCEL) {
+						cancels.add(status);
+					} else if (!status.isOK()) {
 						errors.add(status);
 					}
 				}
@@ -133,10 +123,31 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 			monitor.done();
 		} 
 		if (!errors.isEmpty()) {
-			int numSuccess = resources.length - errors.size();
+			int numSuccess = resources.length - errors.size() - cancels.size();
+			if (!cancels.isEmpty()) {
+				errors.addAll(cancels);
+				throw new TeamException(new MultiStatus(TeamPlugin.ID, 0,
+						(IStatus[]) errors.toArray(new IStatus[errors.size()]),
+						NLS.bind(
+								Messages.ResourceVariantTreeSubscriber_3,
+								(new Object[] { getName(),
+										Integer.toString(numSuccess),
+										Integer.toString(resources.length),
+										Integer.toString(cancels.size()) })),
+						null) {
+					public int getSeverity() {
+						// we want to display status as an error
+						return IStatus.ERROR;
+					}
+				});
+			}
 			throw new TeamException(new MultiStatus(TeamPlugin.ID, 0, 
 					(IStatus[]) errors.toArray(new IStatus[errors.size()]), 
 					NLS.bind(Messages.ResourceVariantTreeSubscriber_1, (new Object[] {getName(), Integer.toString(numSuccess), Integer.toString(resources.length)})), null)); 
+		}
+		if (!cancels.isEmpty()) {
+			throw new OperationCanceledException(
+					((IStatus) cancels.get(0)).getMessage());
 		}
 	}
 	
@@ -166,6 +177,11 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 			return Status.OK_STATUS;
 		} catch (TeamException e) {
 			return new TeamStatus(IStatus.ERROR, TeamPlugin.ID, 0, NLS.bind(Messages.ResourceVariantTreeSubscriber_2, new String[] { resource.getFullPath().toString(), e.getMessage() }), e, resource); 
+		} catch (OperationCanceledException e) {
+			return new TeamStatus(IStatus.CANCEL, TeamPlugin.ID, 0, NLS.bind(
+					Messages.ResourceVariantTreeSubscriber_4,
+					new String[] { resource.getFullPath().toString() }), e,
+					resource);
 		} finally {
 			monitor.done();
 		} 

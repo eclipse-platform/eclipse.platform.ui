@@ -88,6 +88,8 @@ public class Messages extends NLS {
 	public static String SyncInfoTree_0;
 	public static String ResourceVariantTreeSubscriber_1;
 	public static String ResourceVariantTreeSubscriber_2;
+	public static String ResourceVariantTreeSubscriber_3;
+	public static String ResourceVariantTreeSubscriber_4;
 	public static String SyncByteConverter_1;
 	public static String BatchingLock_11;
 	public static String SubscriberEventHandler_12;
