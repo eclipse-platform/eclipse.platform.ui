@@ -511,6 +511,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		List<MPerspectiveStack> ps = modelService.findElements(model, null,
 				MPerspectiveStack.class, null);
 		MPerspective curPersp = null;
+		boolean newWindow = true;
 		if (ps.size() > 0) {
 			MPerspectiveStack stack = ps.get(0);
 			if (stack.getSelectedElement() != null) {
@@ -519,10 +520,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 						.findPerspectiveWithId(curPersp.getElementId());
 				if (thePersp != null) {
 					perspective = thePersp;
+					newWindow = false;
 				}
 			}
 		}
 		page.setPerspective(perspective);
+		if (newWindow) {
+			page.fireInitialPartVisibilityEvents();
+		}
 		firePageActivated();
 
 		populateTopTrimContributions();

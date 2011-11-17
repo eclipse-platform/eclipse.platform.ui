@@ -187,9 +187,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		public void partVisible(MPart part) {
-			firePartVisible(part);
+			// ignored, use the BRINGTOTOP event instead
 		}
 	}
+
+	private EventHandler bringToTopHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (element instanceof MPart) {
+				firePartVisible((MPart) element);
+			}
+		}
+	};
 
 	ArrayList<MPart> activationList = new ArrayList<MPart>();
 
@@ -1435,6 +1444,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			legacyWindow.setActivePage(null);
 			partService.removePartListener(e4PartListener);
 			broker.unsubscribe(selectionHandler);
+			broker.unsubscribe(bringToTopHandler);
 			broker.unsubscribe(areaWidgetHandler);
 			broker.unsubscribe(referenceRemovalEventHandler);
 
@@ -2333,6 +2343,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		broker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
+		broker.subscribe(UIEvents.UILifeCycle.BRINGTOTOP, bringToTopHandler);
 		broker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
 				areaWidgetHandler);
 		broker.subscribe(
@@ -3880,6 +3891,44 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		return references;
+	}
+
+	void fireInitialPartVisibilityEvents() {
+		MPerspective selectedElement = getPerspectiveStack().getSelectedElement();
+		// technically shouldn't be null here
+		if (selectedElement != null) {
+			Collection<MPart> parts = modelService.findElements(selectedElement, null, MPart.class,
+					null);
+			List<MPart> visibleParts = new ArrayList<MPart>(parts.size());
+			for (MPart part : parts) {
+				if (isVisible(selectedElement, part)) {
+					visibleParts.add(part);
+				}
+			}
+
+			for (MPart part : visibleParts) {
+				firePartVisible(part);
+			}
+		}
+	}
+
+	private boolean isVisible(MPerspective perspective, MUIElement element) {
+		if (element == perspective) {
+			return true;
+		} else if (element.isVisible() && element.isToBeRendered()) {
+			MElementContainer<?> parent = element.getParent();
+			if (parent instanceof MPartStack) {
+				if (parent.getSelectedElement() == element) {
+					return isVisible(perspective, parent);
+				}
+			} else if (parent == null) {
+				MPlaceholder placeholder = element.getCurSharedRef();
+				return placeholder == null ? false : isVisible(perspective, placeholder);
+			} else {
+				return isVisible(perspective, parent);
+			}
+		}
+		return false;
 	}
 
 	private void firePartActivated(MPart part) {

@@ -705,6 +705,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 							background.dispose();
 						registration[0].unregister(); // unregister ourself
 						WorkbenchPlugin.unsetSplashShell(display);
+
+						// fire part visibility events now that we're up
+						for (IWorkbenchWindow window : getWorkbenchWindows()) {
+							IWorkbenchPage page = window.getActivePage();
+							if (page != null) {
+								((WorkbenchPage) page).fireInitialPartVisibilityEvents();
+							}
+						}
 					}
 
 					public void update() {
