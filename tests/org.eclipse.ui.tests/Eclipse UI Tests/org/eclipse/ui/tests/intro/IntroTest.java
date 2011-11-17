@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,11 @@
 package org.eclipse.ui.tests.intro;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -85,6 +88,40 @@ public class IntroTest extends UITestCase {
         assertTrue(introManager.closeIntro(part));
         assertNull(introManager.getIntro());
     }
+
+	public void testCreateProblemsView() throws Exception {
+		IIntroManager introManager= window.getWorkbench().getIntroManager();
+		IIntroPart part= introManager.showIntro(window, false);
+		assertNotNull(part);
+		assertFalse(introManager.isIntroStandby(part));
+
+		IViewReference viewRef= window.getActivePage().findViewReference(IPageLayout.ID_PROBLEM_VIEW);
+		assertNull(viewRef);
+		IViewPart problemsView= window.getActivePage().showView(IPageLayout.ID_PROBLEM_VIEW, null, IWorkbenchPage.VIEW_CREATE);
+		assertNotNull(problemsView);
+		assertFalse(introManager.isIntroStandby(part));
+
+		window.getActivePage().hideView(problemsView);
+		assertTrue(introManager.closeIntro(part));
+		assertNull(introManager.getIntro());
+	}
+
+	public void testActivateProblemsView() throws Exception {
+		IIntroManager introManager= window.getWorkbench().getIntroManager();
+		IIntroPart part= introManager.showIntro(window, false);
+		assertNotNull(part);
+		assertFalse(introManager.isIntroStandby(part));
+
+		IViewReference viewRef= window.getActivePage().findViewReference(IPageLayout.ID_PROBLEM_VIEW);
+		assertNull(viewRef);
+		IViewPart problemsView= window.getActivePage().showView(IPageLayout.ID_PROBLEM_VIEW);
+		assertNotNull(problemsView);
+		assertTrue(introManager.isIntroStandby(part));
+
+		window.getActivePage().hideView(problemsView);
+		assertTrue(introManager.closeIntro(part));
+		assertNull(introManager.getIntro());
+	}
 
     public void testStandby() {
         IWorkbench workbench = window.getWorkbench();
