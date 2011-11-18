@@ -134,8 +134,8 @@ public class EclipseContext implements IEclipseContext {
 			return true;
 		if (localOnly)
 			return false;
-		IEclipseContext parent = getParent();
-		if (parent != null && parent.containsKey(name))
+		EclipseContext parent = getParent();
+		if (parent != null && parent.containsKey(name, localOnly))
 			return true;
 		return false;
 	}
