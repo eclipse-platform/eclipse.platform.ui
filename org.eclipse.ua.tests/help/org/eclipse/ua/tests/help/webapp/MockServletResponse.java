@@ -14,6 +14,7 @@ package org.eclipse.ua.tests.help.webapp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -200,6 +201,26 @@ public class MockServletResponse implements HttpServletResponse {
 	
 	public String getIllegalCharatersFound() {
 		return illegalCharactersFound;
+	}
+
+	public int getStatus() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public String getHeader(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Collection<String> getHeaders(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Collection<String> getHeaderNames() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	
