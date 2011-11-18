@@ -66,6 +66,8 @@ public class SearchField {
 	private static final String ORDERED_ELEMENTS = "orderedElements"; //$NON-NLS-1$
 	private static final int MAXIMUM_NUMBER_OF_ELEMENTS = 60;
 	private static final int MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT = 3;
+	private static final String DIALOG_HEIGHT = "dialogHeight"; //$NON-NLS-1$
+	private static final String DIALOG_WIDTH = "dialogWidth"; //$NON-NLS-1$
 
 	Shell shell;
 	private Text text;
@@ -80,6 +82,8 @@ public class SearchField {
 	private Map<QuickAccessElement, ArrayList<String>> textMap = new HashMap<QuickAccessElement, ArrayList<String>>();
 
 	private LinkedList<QuickAccessElement> previousPicksList = new LinkedList<QuickAccessElement>();
+	private int dialogHeight = -1;
+	private int dialogWidth = -1;
 
 	@PostConstruct
 	void createWidget(final Composite parent, MApplication application, MWindow window) {
@@ -108,6 +112,8 @@ public class SearchField {
 			}
 
 			void doClose() {
+				dialogHeight = shell.getSize().y;
+				dialogWidth = shell.getSize().x;
 			}
 
 			QuickAccessElement getPerfectMatch(String filter) {
@@ -129,6 +135,7 @@ public class SearchField {
 		shell.addShellListener(new ShellAdapter() {
 			@Override
 			public void shellClosed(ShellEvent e) {
+				quickAccessContents.doClose();
 				text.setText(""); //$NON-NLS-1$
 				e.doit = false;
 			}
@@ -257,8 +264,8 @@ public class SearchField {
 		Rectangle result = new Rectangle(preferredSize.x, preferredSize.y, preferredSize.width,
 				preferredSize.height);
 
-		Monitor mon = getClosestMonitor(display, Geometry.centerPoint(result));
-
+		Point topLeft = new Point(preferredSize.x, preferredSize.y);
+		Monitor mon = getClosestMonitor(display, topLeft);
 		Rectangle bounds = mon.getClientArea();
 
 		if (result.height > bounds.height) {
@@ -280,8 +287,10 @@ public class SearchField {
 		Composite parent = text.getParent();
 		Rectangle tempBounds = parent.getBounds();
 		Rectangle compBounds = display.map(parent, null, tempBounds);
-		int width = Math.max(350, compBounds.width);
-		int height = 250;
+		int preferredWidth = dialogWidth == -1 ? 350 : dialogWidth;
+		int width = Math.max(preferredWidth, compBounds.width);
+		int height = dialogHeight == -1 ? 250 : dialogHeight;
+
 		shell.setBounds(getConstrainedShellBounds(display, new Rectangle(compBounds.x, compBounds.y
 				+ compBounds.height, width, height)));
 		shell.layout();
@@ -305,6 +314,7 @@ public class SearchField {
 				if (!shell.isDisposed() && !table.isDisposed() && !text.isDisposed()) {
 					if (!shell.isFocusControl() && !table.isFocusControl()
 							&& !text.isFocusControl()) {
+						quickAccessContents.doClose();
 						text.setText(""); //$NON-NLS-1$
 						quickAccessContents.resetProviders();
 					}
@@ -320,6 +330,14 @@ public class SearchField {
 			String[] orderedProviders = dialogSettings.getArray(ORDERED_PROVIDERS);
 			String[] textEntries = dialogSettings.getArray(TEXT_ENTRIES);
 			String[] textArray = dialogSettings.getArray(TEXT_ARRAY);
+			try {
+				dialogHeight = dialogSettings.getInt(DIALOG_HEIGHT);
+				dialogWidth = dialogSettings.getInt(DIALOG_WIDTH);
+			} catch (NumberFormatException e) {
+				dialogHeight = -1;
+				dialogWidth = -1;
+			}
+
 			if (orderedElements != null && orderedProviders != null && textEntries != null
 					&& textArray != null) {
 				int arrayIndex = 0;
@@ -375,6 +393,8 @@ public class SearchField {
 		dialogSettings.put(ORDERED_PROVIDERS, orderedProviders);
 		dialogSettings.put(TEXT_ENTRIES, textEntries);
 		dialogSettings.put(TEXT_ARRAY, textArray);
+		dialogSettings.put(DIALOG_HEIGHT, shell.getSize().y);
+		dialogSettings.put(DIALOG_WIDTH, shell.getSize().x);
 	}
 
 	private IDialogSettings getDialogSettings() {
