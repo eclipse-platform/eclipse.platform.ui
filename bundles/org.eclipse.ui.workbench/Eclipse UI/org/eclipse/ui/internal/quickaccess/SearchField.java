@@ -312,6 +312,10 @@ public class SearchField {
 		table.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if (!shell.isDisposed() && !table.isDisposed() && !text.isDisposed()) {
+					if (table.getDisplay().getActiveShell() == table.getShell()) {
+						text.setFocus();
+						return;
+					}
 					if (!shell.isFocusControl() && !table.isFocusControl()
 							&& !text.isFocusControl()) {
 						quickAccessContents.doClose();
