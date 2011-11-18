@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,10 @@ public interface ICVSUIConstants {
 	public final String PREF_CVS_RSH_PARAMETERS = "pref_cvs_rsh_parameters"; //$NON-NLS-1$
 	public final String PREF_CVS_SERVER = "pref_cvs_server"; //$NON-NLS-1$
 	public final String PREF_CONSIDER_CONTENTS = "pref_consider_contents"; //$NON-NLS-1$
+	/**
+	 * Preference to save the pattern for the regex filter used in the Synchronize View.
+	 */
+	public final String PREF_SYNCVIEW_REGEX_FILTER_PATTERN = "pref_syncview_regex_filter_pattern"; //$NON-NLS-1$
 	public final String PREF_REPLACE_UNMANAGED = "pref_replace_unmanaged"; //$NON-NLS-1$
 	public final String PREF_COMPRESSION_LEVEL = "pref_compression_level"; //$NON-NLS-1$
 	public final String PREF_TEXT_KSUBST = "pref_text_ksubst"; //$NON-NLS-1$

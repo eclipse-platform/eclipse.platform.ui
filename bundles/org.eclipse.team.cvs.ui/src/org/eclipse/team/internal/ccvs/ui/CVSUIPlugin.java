@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -578,6 +579,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, CVSProviderPlugin.DEFAULT_PRUNE);
 		store.setDefault(ICVSUIConstants.PREF_TIMEOUT, CVSProviderPlugin.DEFAULT_TIMEOUT);
 		store.setDefault(ICVSUIConstants.PREF_CONSIDER_CONTENTS, true);
+		store.setDefault(ICVSUIConstants.PREF_SYNCVIEW_REGEX_FILTER_PATTERN, ""); //default pattern is empty string //$NON-NLS-1$		
 		store.setDefault(ICVSUIConstants.PREF_COMPRESSION_LEVEL, CVSProviderPlugin.DEFAULT_COMPRESSION_LEVEL);
 		store.setDefault(ICVSUIConstants.PREF_TEXT_KSUBST, CVSProviderPlugin.DEFAULT_TEXT_KSUBST_OPTION.toMode());
 		store.setDefault(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND, true);
@@ -754,5 +756,9 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 
 	public ActiveChangeSetManager getChangeSetManager() {
 		return CVSProviderPlugin.getPlugin().getChangeSetManager();
+	}
+
+	public org.osgi.service.prefs.Preferences getInstancePreferences() {
+		return InstanceScope.INSTANCE.getNode(getBundle().getSymbolicName());
 	}
 }

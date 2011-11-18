@@ -11,8 +11,11 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.compare.CompareUI;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.IPreferencePageContainer;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
@@ -20,6 +23,8 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  * Preference page for configuring CVS comparisons
  */
 public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
+	private BooleanFieldEditor contents;
+	private StringFieldEditor regex;
 
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ccvs.ui.CVSFieldEditorPreferencePage#getPageHelpContextId()
@@ -39,22 +44,43 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
      * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
      */
     protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(ICVSUIConstants.PREF_CONSIDER_CONTENTS,
+		IPreferenceStore store = getPreferenceStore();
+
+		contents = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSIDER_CONTENTS,
 				CVSUIMessages.ComparePreferencePage_4,
 				BooleanFieldEditor.DEFAULT, getFieldEditorParent()) {
+			private Event selectionEvent = createSelectionEvent();
+			private Event createSelectionEvent() {
+				Event event = new Event();
+				event.type = SWT.Selection;
+				return event;
+			}
 			// invert the UI
 			protected void doLoad() {
 				super.doLoad();
 				getChangeControl(getFieldEditorParent()).setSelection(!getBooleanValue());
+				getChangeControl(getFieldEditorParent()).notifyListeners(SWT.Selection,
+						selectionEvent);
 			}
 			protected void doLoadDefault() {
 				super.doLoadDefault();
 				getChangeControl(getFieldEditorParent()).setSelection(!getBooleanValue());
+				getChangeControl(getFieldEditorParent()).notifyListeners(SWT.Selection,
+						selectionEvent);
 			}
 			protected void doStore() {
 				getPreferenceStore().setValue(getPreferenceName(), !getBooleanValue());
 			}
-		});
+		};
+		addField(contents);
+		regex = new StringFieldEditor(ICVSUIConstants.PREF_SYNCVIEW_REGEX_FILTER_PATTERN,
+				CVSUIMessages.ComparePreferencePage_5,
+				getFieldEditorParent());
+		addField(regex);
+		GridData data = new GridData();
+		data.horizontalIndent = 20;
+		regex.getLabelControl(getFieldEditorParent()).setLayoutData(data);
+		regex.setEnabled(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS), getFieldEditorParent());
 		addField(new BooleanFieldEditor(
 				ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG,
 				CVSUIMessages.ComparePreferencePage_3,
@@ -84,4 +110,8 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 		}
 	}
 
+	public void propertyChange(PropertyChangeEvent event) {
+		super.propertyChange(event);
+		regex.setEnabled(!contents.getBooleanValue(), getFieldEditorParent());
+	}
 }

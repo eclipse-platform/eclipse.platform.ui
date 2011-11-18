@@ -17,18 +17,19 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.diff.provider.DiffTree;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoFilter;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -38,11 +39,14 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
 import org.eclipse.team.internal.core.mapping.GroupProgressMonitor;
+import org.eclipse.team.internal.core.subscribers.ContentComparisonDiffFilter;
 import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler;
+import org.eclipse.team.internal.ui.synchronize.RegexDiffFilter;
 
-public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
+public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext implements IPreferenceChangeListener {
 
 	public static final class ChangeSetSubscriberScopeManager extends SubscriberScopeManager {
 		private final boolean consultSets;
@@ -79,10 +83,84 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		mergeContext.initialize();
 		return mergeContext;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.SubscriberMergeContext#getDiffFilter()
+	 */
+	protected DiffFilter getDiffFilter() {
+		final DiffFilter contentFilter = createContentFilter();
+		final DiffFilter regexFilter = createRegexFilter();
+		if (contentFilter != null && regexFilter != null) {
+			return new DiffFilter() {
+				public boolean select(IDiff diff, IProgressMonitor monitor) {
+					return !contentFilter.select(diff, monitor)
+							&& !regexFilter.select(diff, monitor);
+				}
+			};
+		} else if (contentFilter != null) {
+			return new DiffFilter() {
+				public boolean select(IDiff diff, IProgressMonitor monitor) {
+					return !contentFilter.select(diff, monitor);
+				}
+			};
+		} else if (regexFilter != null) {
+			return new DiffFilter() {
+				public boolean select(IDiff diff, IProgressMonitor monitor) {
+					return !regexFilter.select(diff, monitor);
+				}
+			};
+		}
+		return null;
+	}
+
 	protected WorkspaceSubscriberContext(CVSWorkspaceSubscriber subscriber, ISynchronizationScopeManager manager, int type) {
 		super(subscriber, manager);
 		this.type = type;
+		((IEclipsePreferences) CVSUIPlugin.getPlugin().getInstancePreferences().node("")).addPreferenceChangeListener(this); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.SubscriberMergeContext#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		((IEclipsePreferences) CVSUIPlugin.getPlugin().getInstancePreferences().node("")).removePreferenceChangeListener(this); //$NON-NLS-1$
+	}
+
+	private boolean isConsiderContents() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS);
+	}
+
+	private DiffFilter createContentFilter() {
+		if (isConsiderContents()) {
+			// Return a filter that selects any diffs whose contents are not equal
+			return new ContentComparisonDiffFilter(false);
+		}
+		return null;
+	}
+
+	private DiffFilter createRegexFilter() {
+		if (isConsiderContents()) {
+			String pattern = CVSUIPlugin.getPlugin().getPreferenceStore().getString(
+					ICVSUIConstants.PREF_SYNCVIEW_REGEX_FILTER_PATTERN);
+			if (pattern != null && !pattern.equals("")) { //$NON-NLS-1$
+				return new RegexDiffFilter(pattern);
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
+	 */
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (event.getKey().equals(ICVSUIConstants.PREF_CONSIDER_CONTENTS) || event.getKey().equals(ICVSUIConstants.PREF_SYNCVIEW_REGEX_FILTER_PATTERN)) {
+			SubscriberDiffTreeEventHandler handler = getHandler();
+			if (handler != null) {
+				handler.setFilter(getDiffFilter());
+				handler.reset();
+			}
+		}
 	}
 
 	public void markAsMerged(IDiff[] nodes, boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
@@ -211,7 +289,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		IFileRevision remote = getRemote(node);
 		if (variant != null && remote != null && remote instanceof IFileRevision) {
 			String ci1 = variant.getContentIdentifier();
-			String ci2 = ((IFileRevision)remote).getContentIdentifier();
+			String ci2 = remote.getContentIdentifier();
 			if (!ci1.equals(ci2)) {
 				throw new CVSException(NLS.bind(CVSUIMessages.WorkspaceSubscriberContext_0, resource.getFullPath().toString()));
 			}

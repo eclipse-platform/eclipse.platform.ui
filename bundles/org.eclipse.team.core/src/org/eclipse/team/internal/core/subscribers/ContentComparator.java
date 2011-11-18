@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,81 +10,43 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * This is an internal class that is used by the <code>ContentComparisonSyncInfoFilter</code>
- * to compare the contents of the local and remote resources
+ * This is an internal class that is used by the
+ * {@link org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter}
+ * and {@link ContentComparisonDiffFilter} to compare the contents of the local
+ * and remote resources.
  */
-public class ContentComparator {
-
-	private boolean ignoreWhitespace = false;
+public class ContentComparator extends AbstractContentComparator{
 
 	public ContentComparator(boolean ignoreWhitespace) {
-		this.ignoreWhitespace = ignoreWhitespace;
-	}
-		
-	public boolean compare(Object e1, Object e2, IProgressMonitor monitor) {
-		InputStream is1 = null;
-		InputStream is2 = null;
-		try {
-			monitor.beginTask(null, 100);
-			is1 = getContents(e1, Policy.subMonitorFor(monitor, 50));
-			is2 = getContents(e2, Policy.subMonitorFor(monitor, 50));
-			return contentsEqual(is1, is2, shouldIgnoreWhitespace());
-		} catch(TeamException e) {
-			TeamPlugin.log(e);
-			return false;
-		} finally {
-			try {
-				try {
-					if (is1 != null) {
-						is1.close();
-					}
-				} finally {
-					if (is2 != null) {
-						is2.close();
-					}
-				}
-			} catch (IOException e) {
-				// Ignore
-			}
-			monitor.done();
-		}
-	}
-
-	protected boolean shouldIgnoreWhitespace() {
-		return ignoreWhitespace;
+		super(ignoreWhitespace);
 	}
 
 	/**
 	 * Returns <code>true</code> if both input streams byte contents is
 	 * identical.
 	 * 
-	 * @param input1
+	 * @param is1
 	 *                   first input to contents compare
-	 * @param input2
+	 * @param is2
 	 *                   second input to contents compare
 	 * @return <code>true</code> if content is equal
 	 */
-	private boolean contentsEqual(InputStream is1, InputStream is2, boolean ignoreWhitespace) {
+	protected boolean contentsEqual(IProgressMonitor monitor, InputStream is1,
+			InputStream is2, boolean ignoreWhitespace) {
 		try {
 			if (is1 == is2)
 				return true;
-
-			if (is1 == null && is2 == null) // no byte contents
+			// no byte contents
+			if (is1 == null && is2 == null)
 				return true;
-
-			if (is1 == null || is2 == null) // only one has
-														 // contents
+			// only one has contents
+			if (is1 == null || is2 == null)
 				return false;
 
 			while (true) {
@@ -98,7 +60,6 @@ public class ContentComparator {
 					return true;
 				if (c1 != c2)
 					break;
-
 			}
 		} catch (IOException ex) {
 		} finally {
@@ -123,24 +84,5 @@ public class ContentComparator {
 		if (c == -1)
 			return false;
 		return Character.isWhitespace((char) c);
-	}
-
-	private InputStream getContents(Object resource, IProgressMonitor monitor) throws TeamException {
-		try {
-			if (resource instanceof IFile) {
-				return new BufferedInputStream(((IFile) resource).getContents());
-			} else if(resource instanceof IResourceVariant) {
-				IResourceVariant remote = (IResourceVariant)resource;
-				if (!remote.isContainer()) {
-					return new BufferedInputStream(remote.getStorage(monitor).getContents());
-				}
-			} else if(resource instanceof IFileRevision) {
-				IFileRevision remote = (IFileRevision)resource;
-				return new BufferedInputStream(remote.getStorage(monitor).getContents());
-			}
-			return null;
-		} catch (CoreException e) {
-			throw TeamException.asTeamException(e);
-		}
 	}
 }

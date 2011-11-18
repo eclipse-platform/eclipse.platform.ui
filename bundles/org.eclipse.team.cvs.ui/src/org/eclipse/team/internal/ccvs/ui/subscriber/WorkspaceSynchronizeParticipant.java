@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,16 @@ import java.util.Set;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
@@ -33,7 +37,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 
-public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipant implements IChangeSetProvider {
+public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipant implements IChangeSetProvider, IPreferenceChangeListener {
 
 	public static final String ID = "org.eclipse.team.cvs.ui.cvsworkspace-participant"; //$NON-NLS-1$
 
@@ -188,8 +192,61 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 	public WorkspaceSynchronizeParticipant(ISynchronizeScope scope) {
 		super(scope);
 		setSubscriber(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+		SyncInfoFilter filter = createSyncInfoFilter();
+		if (filter != null) {
+			setSyncInfoFilter(filter);
+		}
+		((IEclipsePreferences) CVSUIPlugin.getPlugin().getInstancePreferences().node("")).addPreferenceChangeListener(this); //$NON-NLS-1$
 	}
-	
+
+	private boolean isConsiderContents() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS);
+	}
+
+	private SyncInfoFilter contentComparison = new SyncInfoFilter() {
+		private SyncInfoFilter contentCompare = new SyncInfoFilter.ContentComparisonSyncInfoFilter();
+		public boolean select(SyncInfo info, IProgressMonitor monitor) {
+			// Want to select infos whose contents do not match
+			return !contentCompare.select(info, monitor);
+		}
+	};
+
+	private SyncInfoFilter createSyncInfoFilter() {
+		final SyncInfoFilter regexFilter = createRegexFilter();
+		if (isConsiderContents() && regexFilter != null) {
+			return new SyncInfoFilter() {
+				public boolean select(SyncInfo info, IProgressMonitor monitor) {
+					return contentComparison.select(info, monitor)
+							&& !regexFilter.select(info, monitor);
+				}
+			};
+		} else if (isConsiderContents()) {
+			return new SyncInfoFilter() {
+				public boolean select(SyncInfo info, IProgressMonitor monitor) {
+					return contentComparison.select(info, monitor);
+				}
+			};
+		} else if (regexFilter != null) {
+			return new SyncInfoFilter() {
+				public boolean select(SyncInfo info, IProgressMonitor monitor) {
+					// want to select infos which contain at least one unmatched difference
+					return !regexFilter.select(info, monitor);
+				}
+			};
+		}
+		return null;
+	}
+
+	private SyncInfoFilter createRegexFilter() {
+		if (isConsiderContents()) {
+			String pattern = CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_SYNCVIEW_REGEX_FILTER_PATTERN);
+			if (pattern != null && !pattern.equals("")) { //$NON-NLS-1$
+				return new RegexSyncInfoFilter(pattern);
+			}
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
@@ -272,5 +329,23 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
     public void refresh(IResource[] resources, IWorkbenchPartSite site) {
         refresh(resources, getShortTaskName(), getLongTaskName(resources), site);
     }
-    
+
+	public void dispose() {
+		super.dispose();
+		((IEclipsePreferences) CVSUIPlugin.getPlugin().getInstancePreferences().node("")).removePreferenceChangeListener(this); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
+	 */
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (event.getKey().equals(ICVSUIConstants.PREF_CONSIDER_CONTENTS) || event.getKey().equals(ICVSUIConstants.PREF_SYNCVIEW_REGEX_FILTER_PATTERN)) {
+			SyncInfoFilter filter = createSyncInfoFilter();
+			if (filter != null) {
+				setSyncInfoFilter(filter);
+			} else {
+				setSyncInfoFilter(new FastSyncInfoFilter());
+			}
+		}
+	}
 }

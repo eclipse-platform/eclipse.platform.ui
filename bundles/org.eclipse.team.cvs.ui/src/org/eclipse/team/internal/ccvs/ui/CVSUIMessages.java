@@ -48,7 +48,6 @@ public class CVSUIMessages extends NLS {
 	public static String CommitWizard_13;
 	public static String CommitWizard_8;
 	public static String CommitWizard_9;
-	public static String ComparePreferencePage_8;
 	public static String CreatePatchAction_0;
 	public static String CreatePatchAction_1;
 	public static String CVSHistoryPage_CollapseAllAction;
@@ -1011,7 +1010,10 @@ public class CVSUIMessages extends NLS {
 	public static String ComparePreferencePage_2;
 	public static String ComparePreferencePage_3;
 	public static String ComparePreferencePage_4;
+	public static String ComparePreferencePage_5;
 	public static String ComparePreferencePage_6;
+	public static String ComparePreferencePage_7;
+	public static String ComparePreferencePage_8;
 
 	public static String FileModificationValidator_3;
 	public static String FileModificationValidator_4;
@@ -1152,7 +1154,6 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryFilterDialog_showLocalRevisions;
 	public static String CVSHistoryTableProvider_base;
 	public static String CVSHistoryTableProvider_currentVersion;
-	public static String ComparePreferencePage_7;
 	public static String WorkspaceTraversalAction_0;
 	public static String OutgoingChangesDialog_0;
 	public static String OutgoingChangesDialog_1;

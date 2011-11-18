@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,9 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
@@ -31,7 +32,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 
-public class CompareParticipant extends CVSParticipant implements IPropertyChangeListener {
+public class CompareParticipant extends CVSParticipant implements IPreferenceChangeListener {
 	
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_1"; //$NON-NLS-1$
 	public static final String NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_2"; //$NON-NLS-1$
@@ -70,18 +71,56 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 		}
 	};
 	
+	private SyncInfoFilter createSyncInfoFilter() {
+		final SyncInfoFilter regexFilter = createRegexFilter();
+		if (isConsiderContents() && regexFilter != null) {
+			return new SyncInfoFilter() {
+				public boolean select(SyncInfo info, IProgressMonitor monitor) {
+					return contentComparison.select(info, monitor)
+							&& !regexFilter.select(info, monitor);
+				}
+			};
+		} else if (isConsiderContents()) {
+			return new SyncInfoFilter() {
+				public boolean select(SyncInfo info, IProgressMonitor monitor) {
+					return contentComparison.select(info, monitor);
+				}
+			};
+		} else if (regexFilter != null) {
+			return new SyncInfoFilter() {
+				public boolean select(SyncInfo info, IProgressMonitor monitor) {
+					// want to select infos which contain at least one unmatched difference
+					return !regexFilter.select(info, monitor);
+				}
+			};
+		}
+		return null;
+	}
+
+	private boolean isConsiderContents() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS);
+	}
+
+	private SyncInfoFilter createRegexFilter() {
+		if (isConsiderContents()) {
+			String pattern = CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_SYNCVIEW_REGEX_FILTER_PATTERN);
+			if (pattern != null && !pattern.equals("")) { //$NON-NLS-1$
+				return new RegexSyncInfoFilter(pattern);
+			}
+		}
+		return null;
+	}
+
 	public CompareParticipant(CVSCompareSubscriber subscriber) {
 	    setSubscriber(subscriber);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#setSubscriber(org.eclipse.team.core.subscribers.Subscriber)
 	 */
 	protected void setSubscriber(Subscriber subscriber) {
 		super.setSubscriber(subscriber);
-		if (CVSUIPlugin.getPlugin().getPluginPreferences().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS)) {
-			setSyncInfoFilter(contentComparison);
-		}
+		setSyncInfoFilter(createSyncInfoFilter());
 		try {
 			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(CVSCompareSubscriber.ID);
 			setInitializationData(descriptor);
@@ -90,7 +129,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 		} catch (CoreException e) {
 			CVSUIPlugin.log(e);
 		}
-		CVSUIPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(this);
+		((IEclipsePreferences) CVSUIPlugin.getPlugin().getInstancePreferences().node("")).addPreferenceChangeListener(this); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -170,17 +209,18 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	 */
 	public void dispose() {
 		super.dispose();
-		CVSUIPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(this);
+		((IEclipsePreferences) CVSUIPlugin.getPlugin().getInstancePreferences().node("")).removePreferenceChangeListener(this); //$NON-NLS-1$
 		getCVSCompareSubscriber().dispose();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(ICVSUIConstants.PREF_CONSIDER_CONTENTS)) {
-			if (CVSUIPlugin.getPlugin().getPluginPreferences().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS)) {
-				setSyncInfoFilter(contentComparison);
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (event.getKey().equals(ICVSUIConstants.PREF_CONSIDER_CONTENTS) || event.getKey().equals(ICVSUIConstants.PREF_SYNCVIEW_REGEX_FILTER_PATTERN)) {
+			SyncInfoFilter filter = createSyncInfoFilter();
+			if (filter != null) {
+				setSyncInfoFilter(filter);
 			} else {
 				setSyncInfoFilter(new FastSyncInfoFilter());
 			}
