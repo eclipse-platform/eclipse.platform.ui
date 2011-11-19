@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.io.ByteArrayInputStream;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -2836,5 +2837,35 @@ public class IProjectTest extends ResourceTest {
 
 		// it should not be hidden
 		assertTrue("4.0", !hiddenProject.isHidden());
+	}
+
+	public void testProjectDeletion_Bug347220() throws CoreException {
+		String projectName = getUniqueString();
+
+		IProject project = getWorkspace().getRoot().getProject(projectName);
+		IFolder folder = project.getFolder(getUniqueString());
+		IFile file = folder.getFile(getUniqueString());
+		ensureExistsInWorkspace(new IResource[] {project, folder, file}, true);
+		project.open(getMonitor());
+
+		// modify the file to create an entry in the history
+		file.setContents(new ByteArrayInputStream(getRandomString().getBytes()), true, true, getMonitor());
+
+		// delete the project and check that its metadata is also deleted
+		project.delete(true, getMonitor());
+		IPath p = ((Workspace) getWorkspace()).getMetaArea().locationFor(project);
+		assertFalse("1.0", p.toFile().exists());
+
+		IProject otherProject = getWorkspace().getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(new IResource[] {otherProject}, true);
+		otherProject.open(getMonitor());
+
+		// try to rename a project using the name of the deleted project
+		IProjectDescription desc = getWorkspace().newProjectDescription(projectName);
+		try {
+			otherProject.move(desc, true, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
 	}
 }

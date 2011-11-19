@@ -354,10 +354,10 @@ public class Project extends Container implements IProject {
 
 	public void deleteResource(boolean convertToPhantom, MultiStatus status) throws CoreException {
 		super.deleteResource(convertToPhantom, status);
-		// Delete the project metadata.
-		workspace.getMetaArea().delete(this);
 		// Clear the history store.
 		clearHistory(null);
+		// Delete the project metadata.
+		workspace.getMetaArea().delete(this);
 	}
 
 	protected void fixupAfterMoveSource() throws CoreException {
