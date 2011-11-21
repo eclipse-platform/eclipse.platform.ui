@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,7 +145,7 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 			}
 		}
 
-		assertEquals(1, application.getHandlers().size());
+		assertTrue(application.getHandlers().size() > 0);
 		assertSame(application.getCommands().get(0), application.getHandlers()
 				.get(0).getCommand());
 		assertEquals(2, application.getCommands().get(0).getParameters().size());

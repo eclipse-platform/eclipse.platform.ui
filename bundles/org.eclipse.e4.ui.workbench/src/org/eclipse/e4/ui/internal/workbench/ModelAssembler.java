@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2011 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -192,8 +193,8 @@ public class ModelAssembler {
 	}
 
 	private void runProcessor(IConfigurationElement ce) {
-		IEclipseContext localContext = context.createChild();
-		IContributionFactory factory = localContext.get(IContributionFactory.class);
+		IEclipseContext localContext = EclipseContextFactory.create();
+		IContributionFactory factory = context.get(IContributionFactory.class);
 
 		for (IConfigurationElement ceEl : ce.getChildren("element")) { //$NON-NLS-1$
 			String id = ceEl.getAttribute("id"); //$NON-NLS-1$
@@ -218,9 +219,8 @@ public class ModelAssembler {
 		try {
 			Object o = factory
 					.create("platform:/plugin/" + ce.getContributor().getName() + "/" + ce.getAttribute("class"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-					localContext);
-			ContextInjectionFactory.invoke(o, Execute.class, localContext);
-			localContext.dispose();
+							context, localContext);
+			ContextInjectionFactory.invoke(o, Execute.class, context, localContext);
 		} catch (Exception e) {
 			logger.warn(e, "Could not run processor"); //$NON-NLS-1$
 		}
