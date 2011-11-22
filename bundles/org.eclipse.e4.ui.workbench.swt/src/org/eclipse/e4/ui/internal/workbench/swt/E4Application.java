@@ -126,7 +126,7 @@ public class E4Application implements IApplication {
 		// platform menus, etc. See
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=329456#c14
 		IProduct product = Platform.getProduct();
-		if (product.getName() != null) {
+		if (product != null && product.getName() != null) {
 			Display.setAppName(product.getName());
 		}
 		Display display = getApplicationDisplay();
