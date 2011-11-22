@@ -1711,7 +1711,7 @@ M4 = Platform-specific fourth key
       </command>
       <command
             categoryId="org.eclipse.debug.ui.category.run"
-            description="%ActionDefinition.disconnect.discrption"
+            description="%ActionDefinition.disconnect.description"
             id="org.eclipse.debug.ui.commands.Disconnect"
             defaultHandler="org.eclipse.debug.internal.ui.commands.actions.DisconnectCommandHandler"
             name="%ActionDefinition.disconnect.name">
