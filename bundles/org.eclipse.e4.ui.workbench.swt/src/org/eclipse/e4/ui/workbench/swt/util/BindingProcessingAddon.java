@@ -180,8 +180,10 @@ public class BindingProcessingAddon {
 		TriggerSequence sequence = null;
 		sequence = bindingService.createSequence(keySequence);
 
-		if (cmd == null || sequence == null) {
-			System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$
+		if (cmd == null) {
+			System.err.println("Failed to find command for binding: " + binding); //$NON-NLS-1$
+		} else if(sequence == null) {
+			System.err.println("Failed to map binding: " + binding); //$NON-NLS-1$
 		} else {
 			try {
 				String schemeId = null;
