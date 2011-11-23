@@ -190,6 +190,26 @@ public class ICDialog extends StatusDialog implements IShellProvider, Listener, 
 		this.updateStatus(status);
 	}
 	
+	private boolean areFieldsValid()
+	{
+		if (nameText!=null && nameText.getText().equals(""))  //$NON-NLS-1$
+			return false;
+		else if (hrefText!=null)
+		{
+			try {
+				String href = hrefText.getText();
+				new URL(href);
+
+				if (!href.matches(".*\\://.+/.+")) //$NON-NLS-1$
+					return false;
+									
+			} catch (MalformedURLException e) {
+				return false;
+			}
+		}	
+		return true;
+	}
+	
 	private void testConnection()
 	{
 		IC testIC;
@@ -210,10 +230,10 @@ public class ICDialog extends StatusDialog implements IShellProvider, Listener, 
 			status = new Status(IStatus.WARNING,"org.eclipse.help.ui",Messages.TestConnectionDialog_13); //$NON-NLS-1$
 		}
 
-		
+
 		updateStatus(status);
 
-		this.getOKButton().setEnabled(true);
+		this.getOKButton().setEnabled(areFieldsValid());
 		this.getCancelButton().setEnabled(true);
 		
 	}
