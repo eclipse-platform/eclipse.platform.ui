@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,14 +39,16 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
 /*
@@ -603,17 +605,22 @@ public class CVSProviderTest extends EclipseTest {
 		
 	}
     
+	private void setOnlyLookAtTimestamps(boolean b) {
+		CVSUIPlugin.getPlugin().getPreferenceStore().setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, !b);
+	}
+
     public void testUpdateWithNoChange() throws TeamException, CoreException {
         IProject project = createProject(new String[] { "a.txt"});
         setContentsAndEnsureModified(project.getFile("a.txt"), "contents");
         commitProject(project);
+        setOnlyLookAtTimestamps(true);
         // set the contents to the same value but ensure the local timestamp is different
         setContentsAndEnsureModified(project.getFile("a.txt"), "contents");
         // Update and ensure file timestamp is what is was before out edit
         updateProject(project, null, false);
         Date modDate = CVSWorkspaceRoot.getCVSFileFor(project.getFile("a.txt")).getSyncInfo().getTimeStamp();
         assertEquals("Timestamp was not properly reset", modDate, CVSWorkspaceRoot.getCVSFileFor(project.getFile("a.txt")).getTimeStamp());
-        
+        setOnlyLookAtTimestamps(false);
     }
     
     public void testBinaryAddition() throws CoreException {

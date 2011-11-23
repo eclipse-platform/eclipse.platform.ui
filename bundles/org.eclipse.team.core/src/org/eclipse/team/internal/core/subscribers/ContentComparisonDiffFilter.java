@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,8 @@ public class ContentComparisonDiffFilter extends DiffFilter {
 	public boolean select(IDiff diff, IProgressMonitor monitor) {
 		IFileRevision remote = SyncInfoToDiffConverter.getRemote(diff);
 		IResource local = ResourceDiffTree.getResourceFor(diff);
-		if (local == null || local.getType() != IResource.FILE) return true;
+		if (local == null) return true;
+		if (local.getType() != IResource.FILE) return false;
 		if (remote == null) return !local.exists();
 		if (!local.exists()) return false;
 		return compareContents((IFile)local, remote, monitor);

@@ -206,6 +206,9 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 	private SyncInfoFilter contentComparison = new SyncInfoFilter() {
 		private SyncInfoFilter contentCompare = new SyncInfoFilter.ContentComparisonSyncInfoFilter();
 		public boolean select(SyncInfo info, IProgressMonitor monitor) {
+			IResource local = info.getLocal();
+			// don't select folders
+			if (local.getType() != IResource.FILE) return false;
 			// Want to select infos whose contents do not match
 			return !contentCompare.select(info, monitor);
 		}
