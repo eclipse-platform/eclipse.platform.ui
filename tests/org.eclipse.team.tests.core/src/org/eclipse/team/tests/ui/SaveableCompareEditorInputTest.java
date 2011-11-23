@@ -19,8 +19,11 @@ import java.util.List;
 import junit.framework.Test;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareViewerSwitchingPane;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
+import org.eclipse.compare.internal.CompareEditor;
+import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.MergeSourceViewer;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -33,12 +36,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.mapping.AbstractCompareInput;
 import org.eclipse.team.internal.ui.mapping.CompareInputChangeNotifier;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.team.internal.ui.synchronize.SaveablesCompareEditorInput;
 import org.eclipse.team.tests.core.TeamTest;
 import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
 import org.eclipse.ui.PlatformUI;
@@ -49,17 +54,21 @@ public class SaveableCompareEditorInputTest extends TeamTest {
 		return suite(SaveableCompareEditorInputTest.class);
 	}
 
+	private static final String COMPARE_EDITOR = CompareUIPlugin.PLUGIN_ID
+			+ ".CompareEditor"; //$NON-NLS-1$
+	
 	private IFile file1;
 	private IFile file2;
 	private String appendFileContents = "_append";
 	private String fileContents1 = "FileContents";
 	private String fileContents2 = "FileContents2";
 	private TestLogListener logListener = new TestLogListener();
+	private IProject project;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		IProject project = createProject("Project_", new String[] {
+		project = createProject("Project_", new String[] {
 				"File1.txt", "File2.txt" });
 
 		file1 = project.getFile("File1.txt");
@@ -106,7 +115,8 @@ public class SaveableCompareEditorInputTest extends TeamTest {
 
 	private class TestLogListener implements ILogListener {
 		public void logging(IStatus status, String plugin) {
-			fail(status.getMessage());
+			if (status.getSeverity() == IStatus.ERROR)
+				fail(status.getMessage());
 		}
 	}
 
@@ -323,5 +333,99 @@ public class SaveableCompareEditorInputTest extends TeamTest {
 		 * not checking if changes were saved because in this case saving is not
 		 * handled, see javadoc to SaveableCompareEditorInput.
 		 */
+	}
+	
+	private void verifyModifyAndSaveBothSidesOfCompareEditor(String extention)
+			throws InterruptedException, InvocationTargetException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, NoSuchFieldException, CoreException {
+
+		// create files to compare
+		IFile file1 = project.getFile("CompareFile1." + extention);
+		IFile file2 = project.getFile("CompareFile2." + extention);
+		file1.create(new ByteArrayInputStream(fileContents1.getBytes()), true,
+				null);
+		file2.create(new ByteArrayInputStream(fileContents2.getBytes()), true,
+				null);
+
+		// prepare comparison
+		SaveablesCompareEditorInput input = new SaveablesCompareEditorInput(
+				null, SaveablesCompareEditorInput.createFileElement(file1),
+				SaveablesCompareEditorInput.createFileElement(file2),
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+						.getActivePage());
+		input.run(null);
+
+		// open CompareEditor
+		CompareEditor editor = (CompareEditor) PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage()
+				.openEditor(input, COMPARE_EDITOR, true);
+
+		CompareViewerSwitchingPane pane = (CompareViewerSwitchingPane) ReflectionUtils
+				.getField(input, "fContentInputPane", true);
+
+		Viewer viewer = pane.getViewer();
+
+		MergeSourceViewer left = (MergeSourceViewer) ReflectionUtils.getField(
+				viewer, "fLeft", true);
+		MergeSourceViewer right = (MergeSourceViewer) ReflectionUtils.getField(
+				viewer, "fRight", true);
+
+		// modify both sides of CompareEditor
+		StyledText leftText = left.getSourceViewer().getTextWidget();
+		StyledText rightText = right.getSourceViewer().getTextWidget();
+		leftText.append(appendFileContents);
+		rightText.append(appendFileContents);
+
+		// save both sides
+		editor.doSave(null);
+
+		assertFalse(editor.isDirty());
+
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.closeEditor(editor, false);
+
+		// validate if both sides where saved
+		assertTrue(compareContent(new ByteArrayInputStream(
+				(fileContents1 + appendFileContents).getBytes()),
+				file1.getContents()));
+		assertTrue(compareContent(new ByteArrayInputStream(
+				(fileContents2 + appendFileContents).getBytes()),
+				file2.getContents()));
+	}
+
+	public void testModifyAndSaveBothSidesOfCompareEditorHtml()
+			throws IllegalArgumentException, SecurityException,
+			InterruptedException, InvocationTargetException,
+			IllegalAccessException, NoSuchFieldException, CoreException {
+		verifyModifyAndSaveBothSidesOfCompareEditor("html");
+	}
+
+	public void testModifyAndSaveBothSidesOfCompareEditorTxt()
+			throws IllegalArgumentException, SecurityException,
+			InterruptedException, InvocationTargetException,
+			IllegalAccessException, NoSuchFieldException, CoreException {
+		verifyModifyAndSaveBothSidesOfCompareEditor("txt");
+	}
+
+	public void testModifyAndSaveBothSidesOfCompareEditorJava()
+			throws IllegalArgumentException, SecurityException,
+			InterruptedException, InvocationTargetException,
+			IllegalAccessException, NoSuchFieldException, CoreException {
+		verifyModifyAndSaveBothSidesOfCompareEditor("java");
+	}
+
+	public void testModifyAndSaveBothSidesOfCompareEditorXml()
+			throws IllegalArgumentException, SecurityException,
+			InterruptedException, InvocationTargetException,
+			IllegalAccessException, NoSuchFieldException, CoreException {
+		verifyModifyAndSaveBothSidesOfCompareEditor("xml");
+	}
+
+	public void testModifyAndSaveBothSidesOfCompareEditorProperties()
+			throws IllegalArgumentException, SecurityException,
+			InterruptedException, InvocationTargetException,
+			IllegalAccessException, NoSuchFieldException, CoreException {
+		verifyModifyAndSaveBothSidesOfCompareEditor("properties");
 	}
 }
