@@ -2155,7 +2155,10 @@
             <iterate
                   ifEmpty="false"
                   operator="and">
-               <instanceof value="org.eclipse.ui.internal.views.markers.MarkerEntry"/>
+               <or>
+                  <instanceof value="org.eclipse.ui.internal.views.markers.MarkerCategory"/>
+                  <instanceof value="org.eclipse.ui.internal.views.markers.MarkerEntry"/>
+               </or>
                <test
                      forcePluginActivation="false"
                      property="org.eclipse.ui.ide.editable">
@@ -2241,7 +2244,7 @@
             id="org.eclipse.ui.ide.editable"
             namespace="org.eclipse.ui.ide"
             properties="editable"
-            type="org.eclipse.ui.internal.views.markers.MarkerEntry">
+            type="org.eclipse.ui.internal.views.markers.MarkerSupportItem">
       </propertyTester>
       <propertyTester
             class="org.eclipse.ui.internal.views.markers.MarkersViewPropertyTester"

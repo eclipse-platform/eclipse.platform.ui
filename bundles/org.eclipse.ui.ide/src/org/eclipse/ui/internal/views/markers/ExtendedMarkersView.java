@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrew Gvozdev -  Bug 364039 - Add "Delete All Markers"
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
@@ -891,11 +892,18 @@ public class ExtendedMarkersView extends ViewPart {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
 			Iterator elements = structured.iterator();
-			Collection result = new ArrayList();
+			Collection result = new HashSet();
 			while (elements.hasNext()) {
 				MarkerSupportItem next = (MarkerSupportItem) elements.next();
-				if (next.isConcrete())
+				if (next.isConcrete()) {
 					result.add(((MarkerEntry) next).getMarker());
+				} else {
+					MarkerSupportItem[] children = next.getChildren();
+					for (int i = 0; i < children.length; i++) {
+						if (children[i].isConcrete())
+							result.add(((MarkerEntry) children[i]).getMarker());
+					}
+				}
 			}
 			if (result.isEmpty())
 				return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;

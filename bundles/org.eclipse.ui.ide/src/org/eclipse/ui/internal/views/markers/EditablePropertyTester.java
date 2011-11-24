@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrew Gvozdev -  Bug 364039 - Add "Delete All Markers"
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IMarker;
@@ -37,9 +42,27 @@ public class EditablePropertyTester extends PropertyTester {
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		if (property.equals(EDITABLE)) {
-			IMarker marker = ((MarkerEntry) receiver).getMarker();
-			if (marker != null)
-				return marker.getAttribute(IMarker.USER_EDITABLE, true);
+			MarkerSupportItem item = (MarkerSupportItem) receiver;
+			Set/*<IMarker>*/ markers = new HashSet();
+			if (item.isConcrete()) {
+				markers.add(((MarkerEntry) receiver).getMarker());
+			} else {
+				MarkerSupportItem[] children = item.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					if (children[i].isConcrete())
+						markers.add(((MarkerEntry) children[i]).getMarker());
+				}
+			}
+
+			if (!markers.isEmpty()) {
+				Iterator elements = markers.iterator();
+				while (elements.hasNext()) {
+					IMarker marker = (IMarker) elements.next();
+					if (!marker.getAttribute(IMarker.USER_EDITABLE, true))
+						return false;
+				}
+				return true;
+			}
 		}
 		return false;
 	}
