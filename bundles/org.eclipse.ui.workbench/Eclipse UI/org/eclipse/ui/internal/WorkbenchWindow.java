@@ -130,6 +130,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
+import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
@@ -2226,6 +2227,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		serviceLocator.registerService(LegacyActionPersistence.class, actionPersistence);
 		actionPersistence.read();
 
+		IContextService cxs = ContextInjectionFactory
+				.make(ContextService.class, model.getContext());
+		serviceLocator.registerService(IContextService.class, cxs);
 	}
 
 	public final Object getService(final Class key) {
