@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Helmut J. Haigermoser -  Bug 359838 - The "Workspace Unavailable" error
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
@@ -209,7 +210,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	                MessageDialog.openError(
 	                        shell,
 	                        IDEWorkbenchMessages.IDEApplication_workspaceCannotLockTitle,
-	                        IDEWorkbenchMessages.IDEApplication_workspaceCannotLockMessage);
+	                        NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceCannotLockMessage, workspaceDirectory.getAbsolutePath()));
                 } else {
                 	MessageDialog.openError(
                 			shell, 
@@ -263,7 +264,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
             // by this point it has been determined that the workspace is
             // already in use -- force the user to choose again
             MessageDialog.openError(shell, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle, 
-                    IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage);
+                    NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()));
         }
     }
 
