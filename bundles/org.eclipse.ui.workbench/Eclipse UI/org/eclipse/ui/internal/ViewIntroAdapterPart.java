@@ -13,6 +13,13 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -20,13 +27,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * Simple view that will wrap an <code>IIntroPart</code>.
@@ -41,25 +49,62 @@ public final class ViewIntroAdapterPart extends ViewPart {
 
     private boolean handleZoomEvents = true;
 
+	private IEventBroker eventBroker;
+
+	private EventHandler zoomChangeListener = new EventHandler() {
+		public void handleEvent(Event event) {
+			if (!handleZoomEvents)
+				return;
+
+			Object changedObj = event.getProperty(EventTags.ELEMENT);
+			if (!(changedObj instanceof MPartStack))
+				return;
+
+			if (changedObj != getIntroStack())
+				return;
+
+			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
+			String tag = (String) event.getProperty(UIEvents.EventTags.NEW_VALUE);
+			String oldVal = (String) event.getProperty(UIEvents.EventTags.OLD_VALUE);
+
+			if (UIEvents.EventTypes.ADD.equals(eventType)) {
+				if (IPresentationEngine.MAXIMIZED.equals(tag)) {
+					setStandby(false);
+				}
+			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
+				if (IPresentationEngine.MAXIMIZED.equals(oldVal)) {
+					setStandby(true);
+				}
+			}
+		}
+	};
+
+
     /**
      * Adds a listener that toggles standby state if the view pane is zoomed. 
      */
-    private void addPaneListener() {
-        IWorkbenchPartSite site = getSite();
-        if (site instanceof PartSite) {        
-            final WorkbenchPartReference ref = ((WorkbenchPartReference)((PartSite) site).getPartReference()); 
-            ref.addInternalPropertyListener(
-                    new IPropertyListener() {
-                        public void propertyChanged(Object source, int propId) {
-                            if (handleZoomEvents) {
-                                if (propId == WorkbenchPartReference.INTERNAL_PROPERTY_ZOOMED) {
-							// setStandby(!ref.getPane().isZoomed());
-                                }
-                            }
-                        }
-                    });
-        }
+    private void addZoomListener() {
+		ViewSite site = (ViewSite) getViewSite();
+		MPart introModelPart = site.getModel();
+		if (introModelPart == null || introModelPart.getContext() == null)
+			return;
+
+		eventBroker = introModelPart.getContext().get(IEventBroker.class);
+		String topic = UIEvents.buildTopic(UIEvents.ApplicationElement.TOPIC,
+				UIEvents.ApplicationElement.TAGS);
+		eventBroker.subscribe(topic, zoomChangeListener);
     }
+
+	private MPartStack getIntroStack() {
+		ViewSite site = (ViewSite) getViewSite();
+
+		MPart introModelPart = site.getModel();
+		MUIElement introPartParent = introModelPart.getCurSharedRef().getParent();
+		if (introPartParent instanceof MPartStack)
+			return (MPartStack) introPartParent;
+
+		return null;
+	}
 
     /**
      * Forces the standby state of the intro part.
@@ -95,7 +140,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
     public void createPartControl(Composite parent) {
-        addPaneListener();
+        addZoomListener();
         introPart.createPartControl(parent);
     }
 
@@ -103,6 +148,8 @@ public final class ViewIntroAdapterPart extends ViewPart {
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
     public void dispose() {
+		eventBroker.unsubscribe(zoomChangeListener);
+
     	setBarVisibility(true);
         super.dispose();
         getSite().getWorkbenchWindow().getWorkbench().getIntroManager()

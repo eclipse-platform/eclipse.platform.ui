@@ -133,6 +133,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (parent.getSelectedElement() == changedElement)
 					parent.setSelectedElement(null);
 
+				// Un-maximize the element before tearing it down
+				if (changedElement.getTags().contains(MAXIMIZED))
+					changedElement.getTags().remove(MAXIMIZED);
+
 				// Note that the 'removeGui' protocol calls 'childRemoved'
 				removeGui(changedElement);
 			}

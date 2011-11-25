@@ -167,6 +167,7 @@ import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
+import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.menus.FocusControlSourceProvider;
@@ -1371,6 +1372,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 		initializeFonts();
 		initializeColors();
 		initializeApplicationColors();
+
+		IIntroRegistry introRegistry = WorkbenchPlugin.getDefault().getIntroRegistry();
+		if (introRegistry.getIntroCount() > 0) {
+			IProduct product = Platform.getProduct();
+			if (product != null) {
+				introDescriptor = (IntroDescriptor) introRegistry.getIntroForProduct(product
+						.getId());
+			}
+		}
 
 		// now that the workbench is sufficiently initialized, let the advisor
 		// have a turn.

@@ -16,11 +16,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.intro.IntroMessages;
@@ -185,7 +191,39 @@ public class WorkbenchIntroManager implements IIntroManager {
 			return;
 		}
 
+		ViewIntroAdapterPart viewIntroAdapterPart = getViewIntroAdapterPart();
+		if (viewIntroAdapterPart == null) {
+			return;
+		}
 
+		MPartStack introStack = getIntroStack(viewIntroAdapterPart);
+		if (introStack == null)
+			return;
+
+		boolean isMaximized = isIntroMaximized(viewIntroAdapterPart);
+		if (!isMaximized && !standby)
+			introStack.getTags().add(IPresentationEngine.MAXIMIZED);
+		else if (isMaximized && standby)
+			introStack.getTags().remove(IPresentationEngine.MAXIMIZED);
+	}
+
+	private MPartStack getIntroStack(ViewIntroAdapterPart introAdapter) {
+		ViewSite site = (ViewSite) introAdapter.getViewSite();
+
+		MPart introModelPart = site.getModel();
+		MUIElement introPartParent = introModelPart.getCurSharedRef().getParent();
+		if (introPartParent instanceof MPartStack)
+			return (MPartStack) introPartParent;
+
+		return null;
+	}
+
+	private boolean isIntroMaximized(ViewIntroAdapterPart introAdapter) {
+		MPartStack introStack = getIntroStack(introAdapter);
+		if (introStack == null)
+			return false;
+
+		return introStack.getTags().contains(IPresentationEngine.MAXIMIZED);
     }
 
     /*
@@ -203,7 +241,7 @@ public class WorkbenchIntroManager implements IIntroManager {
 			return false;
 		}
 
-		return false;
+		return !isIntroMaximized(viewIntroAdapterPart);
     }
 
     /* (non-Javadoc)
@@ -218,6 +256,23 @@ public class WorkbenchIntroManager implements IIntroManager {
      * cannot be found.
      */
     /*package*/ViewIntroAdapterPart getViewIntroAdapterPart() {
+		IWorkbenchWindow[] windows = this.workbench.getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			WorkbenchWindow window = (WorkbenchWindow) windows[i];
+			MUIElement introPart = window.modelService
+.find(IIntroConstants.INTRO_VIEW_ID,
+					window.getModel());
+			if (introPart instanceof MPlaceholder) {
+				MPlaceholder introPH = (MPlaceholder) introPart;
+				MPart introModelPart = (MPart) introPH.getRef();
+				CompatibilityView compatView = (CompatibilityView) introModelPart.getObject();
+				if (compatView != null) {
+					Object obj = compatView.getPart();
+					if (obj instanceof ViewIntroAdapterPart)
+						return (ViewIntroAdapterPart) obj;
+				}
+			}
+		}
         return null;
     }
 

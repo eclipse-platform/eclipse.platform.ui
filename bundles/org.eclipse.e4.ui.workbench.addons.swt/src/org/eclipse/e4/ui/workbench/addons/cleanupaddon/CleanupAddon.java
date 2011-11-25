@@ -208,10 +208,6 @@ public class CleanupAddon {
 					if (curParent.getShell() != curParent)
 						curParent.getShell().layout(new Control[] { curParent }, SWT.DEFER);
 
-					// Always leave the perspective composite in the presentation
-					if ((Object) parent instanceof MPerspective)
-						return;
-
 					// Always leave Window's in the presentation
 					if ((Object) parent instanceof MWindow)
 						return;
