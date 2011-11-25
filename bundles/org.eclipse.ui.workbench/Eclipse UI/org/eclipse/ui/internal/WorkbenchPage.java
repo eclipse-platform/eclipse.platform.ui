@@ -3037,20 +3037,41 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private void updatePerspectiveActionSets(MPerspective currentPerspective,
 			MPerspective newPerspective) {
-		List<String> oldIds = ModeledPageLayout.getIds(currentPerspective,
+		List<String> oldTemp = ModeledPageLayout.getIds(currentPerspective,
 				ModeledPageLayout.ACTION_SET_TAG);
-		List<String> newIds = ModeledPageLayout.getIds(newPerspective,
+		List<String> newTemp = ModeledPageLayout.getIds(newPerspective,
 				ModeledPageLayout.ACTION_SET_TAG);
-		oldIds.removeAll(newIds);
 
-		EContextService contextService = window.getContext().get(EContextService.class);
-		// deactivate action sets that are no longer valid
-		for (String id : oldIds) {
-			contextService.deactivateContext(id);
-		}
-		// activate the new ones
-		for (String id : newIds) {
-			contextService.activateContext(id);
+		// remove action sets that are visible in both perspectives so that a
+		// unique set is created
+		List<String> oldActionSets = new ArrayList<String>(oldTemp);
+		oldActionSets.removeAll(newTemp);
+		List<String> newActionSets = new ArrayList<String>(newTemp);
+		newActionSets.removeAll(oldTemp);
+
+		IContextService contextService = window.getContext().get(IContextService.class);
+		try {
+			contextService.deferUpdates(true);
+
+			// deactivate action sets that are no longer valid
+			for (String oldId : oldActionSets) {
+				IActionSetDescriptor actionSet = WorkbenchPlugin.getDefault()
+						.getActionSetRegistry().findActionSet(oldId);
+				if (actionSet != null) {
+					actionSets.hideAction(actionSet);
+				}
+			}
+
+			// activate the new ones
+			for (String newId : newActionSets) {
+				IActionSetDescriptor actionSet = WorkbenchPlugin.getDefault()
+						.getActionSetRegistry().findActionSet(newId);
+				if (actionSet != null) {
+					actionSets.showAction(actionSet);
+				}
+			}
+		} finally {
+			contextService.deferUpdates(false);
 		}
 	}
 
@@ -3891,6 +3912,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		return references;
+	}
+
+	void updatePerspectiveActionSets() {
+		updatePerspectiveActionSets(null, getPerspectiveStack().getSelectedElement());
 	}
 
 	void fireInitialPartVisibilityEvents() {

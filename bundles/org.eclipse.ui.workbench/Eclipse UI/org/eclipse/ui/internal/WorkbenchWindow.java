@@ -527,6 +527,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		page.setPerspective(perspective);
 		if (newWindow) {
 			page.fireInitialPartVisibilityEvents();
+		} else {
+			page.updatePerspectiveActionSets();
 		}
 		firePageActivated();
 
