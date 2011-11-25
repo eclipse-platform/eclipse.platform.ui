@@ -91,6 +91,7 @@ import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -594,7 +595,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		partService.setPage(page);
 
+		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+		boolean enableAnimations = preferenceStore
+				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
+		preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
 		getWindowAdvisor().openIntro();
+		preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, enableAnimations);
 
 		getShell().setData(this);
 		workbench.getHelpSystem().setHelp(getShell(), IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
