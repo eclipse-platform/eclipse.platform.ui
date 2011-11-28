@@ -303,7 +303,9 @@ public class MinMaxAddon {
 			final Shell winShell = (Shell) window.getWidget();
 			winShell.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					winShell.layout(true, true);
+					if (!winShell.isDisposed()) {
+						winShell.layout(true, true);
+					}
 				}
 			});
 		}
