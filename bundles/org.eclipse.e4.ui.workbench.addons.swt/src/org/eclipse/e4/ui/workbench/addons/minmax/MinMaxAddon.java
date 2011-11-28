@@ -525,6 +525,10 @@ public class MinMaxAddon {
 	}
 
 	void minimize(MUIElement element) {
+		// Can't minimize a non-rendered element
+		if (!element.isToBeRendered())
+			return;
+
 		createTrim(element);
 		element.setVisible(false);
 		adjustCTFButtons(element);
@@ -537,6 +541,9 @@ public class MinMaxAddon {
 		MWindow window = modelService.getTopLevelWindowFor(element);
 		String trimId = element.getElementId() + getMinimizedElementSuffix(element);
 		MToolControl trimStack = (MToolControl) modelService.find(trimId, window);
+		if (trimStack == null)
+			return;
+		
 		TrimStack ts = (TrimStack) trimStack.getObject();
 		ts.restoreStack();
 
@@ -545,6 +552,9 @@ public class MinMaxAddon {
 	}
 
 	void maximize(final MUIElement element) {
+		if (!element.isToBeRendered())
+			return;
+
 		MWindow win = getWindowFor(element);
 		MPerspective persp = modelService.getActivePerspective(win);
 
@@ -573,7 +583,7 @@ public class MinMaxAddon {
 		List<MPartStack> stacks = modelService.findElements(persp == null ? win : persp, null,
 				MPartStack.class, null, EModelService.PRESENTATION);
 		for (MPartStack theStack : stacks) {
-			if (theStack == element)
+			if (theStack == element || !theStack.isToBeRendered())
 				continue;
 
 			// Exclude stacks in DW's
@@ -591,7 +601,7 @@ public class MinMaxAddon {
 		// Find the editor 'area'
 		if (persp != null) {
 			MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA, persp);
-			if (element != eaPlaceholder && eaPlaceholder != null) {
+			if (element != eaPlaceholder && eaPlaceholder != null && eaPlaceholder.isToBeRendered()) {
 				eaPlaceholder.getTags().add(MINIMIZED_BY_ZOOM);
 				eaPlaceholder.getTags().add(MINIMIZED);
 			}
