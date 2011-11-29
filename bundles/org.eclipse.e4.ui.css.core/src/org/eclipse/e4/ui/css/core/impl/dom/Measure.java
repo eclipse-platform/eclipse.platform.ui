@@ -113,6 +113,8 @@ public class Measure extends CSSValueImpl {
 		case LexicalUnit.SAC_EM:
 		case LexicalUnit.SAC_INCH:
 			return String.valueOf(value.getFloatValue()) + value.getDimensionUnitText();
+		case LexicalUnit.SAC_URI:
+			return "url(" + value.getStringValue() + ")";
 		}
 		return value.getStringValue();
 	}

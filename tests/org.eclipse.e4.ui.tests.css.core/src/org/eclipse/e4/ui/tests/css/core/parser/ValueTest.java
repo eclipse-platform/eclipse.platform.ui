@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.css.core.impl.dom.Measure;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
+import org.w3c.dom.css.CSSValueList;
 
 public class ValueTest extends TestCase {
 
@@ -78,8 +79,24 @@ public class ValueTest extends TestCase {
 		CSSValue value = engine.parsePropertyValue("url(./somepath/picture.gif)");
 		assertTrue(value instanceof Measure);
 		assertEquals(((Measure) value).getPrimitiveType(), CSSPrimitiveValue.CSS_URI);
-		assertEquals( "./somepath/picture.gif", value.getCssText() );
+		assertEquals("url(./somepath/picture.gif)", value.getCssText());
 	}
 	
-	;	
+	public void testList() throws Exception {
+		CSSValue value = engine.parsePropertyValue("34 34 34");
+		assertTrue(value instanceof CSSValueList);
+		assertEquals(((CSSValueList) value).getCssValueType(),
+				CSSValue.CSS_VALUE_LIST);
+		assertEquals(3, ((CSSValueList) value).getLength());
+		assertTrue(((CSSValueList) value).item(0) instanceof Measure);
+		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
+				((Measure) ((CSSValueList) value).item(0)).getPrimitiveType());
+		assertTrue(((CSSValueList) value).item(1) instanceof Measure);
+		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
+				((Measure) ((CSSValueList) value).item(1)).getPrimitiveType());
+		assertTrue(((CSSValueList) value).item(2) instanceof Measure);
+		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
+				((Measure) ((CSSValueList) value).item(2)).getPrimitiveType());
+		assertEquals("34 34 34", value.getCssText());
+	}
 }

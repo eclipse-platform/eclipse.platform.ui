@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.w3c.css.sac.LexicalUnit;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSValue;
@@ -54,12 +53,12 @@ public class CSSValueListImpl extends AbstractCSSNode implements CSSValueList {
 	 * @see org.w3c.dom.css.CSSValue#getCssText()
 	 */
 	public String getCssText() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (CSSValue value : values) {
-			buffer.append(value.toString());
+			buffer.append(value.getCssText());
 			buffer.append(" ");
 		}
-		return buffer.toString();
+		return buffer.toString().trim();
 	}
 
 	/*

@@ -40,8 +40,17 @@ public class CSSStyleDeclarationImpl extends AbstractCSSNode implements CSSStyle
 	 * @see org.w3c.dom.css.CSSStyleDeclaration#getCSSText()
 	 */
 	public String getCssText() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");		
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < properties.size(); i++) {
+			CSSProperty property = properties.get(i);
+			sb.append(property.getName()).append(": ");
+			sb.append(property.getValue().getCssText());
+			sb.append(";");
+			if (i < properties.size() - 1) {
+				sb.append("\n");
+			}
+		}
+		return sb.toString();
 	}
 
 	/*
