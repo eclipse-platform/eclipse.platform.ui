@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,6 @@ public class EmbeddedBrowser {
 	private static String initialTitle = getWindowTitle();
 	private Shell shell;
 	private Browser browser;
-	private Browser externalBrowser;
 	private Composite statusBar;
 	private Label statusBarText;
 	private Label statusBarSeparator;
@@ -380,22 +379,20 @@ public class EmbeddedBrowser {
 		shell.forceActive();
 	}
 	private void displayURLExternal(WindowEvent e) {
-		if (externalBrowser == null) {
-			final Shell externalShell = new Shell(shell, SWT.NONE);
-			externalBrowser = new Browser(externalShell, SWT.NONE);
-			externalBrowser.addLocationListener(new LocationAdapter() {
-				public void changing(final LocationEvent e) {
-					e.doit = false;
-					try {
-						BaseHelpSystem.getHelpBrowser(true).displayURL(e.location);
-					}
-					catch (Throwable t) {
-						String msg = "Error opening external Web browser"; //$NON-NLS-1$
-						HelpUIPlugin.logError(msg, t);
-					}
+		final Shell externalShell = new Shell(shell, SWT.NONE);
+		Browser externalBrowser = new Browser(externalShell, SWT.NONE);
+		externalBrowser.addLocationListener(new LocationAdapter() {
+			public void changing(final LocationEvent e) {
+				e.doit = false;
+				try {
+					BaseHelpSystem.getHelpBrowser(true).displayURL(e.location);
 				}
-			});
-		}
+				catch (Throwable t) {
+					String msg = "Error opening external Web browser"; //$NON-NLS-1$
+					HelpUIPlugin.logError(msg, t);
+				}
+			}
+		});
 		e.browser = externalBrowser;
 	}
 	public boolean isDisposed() {
