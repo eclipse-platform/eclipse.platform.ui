@@ -14,6 +14,8 @@ package org.eclipse.jface.viewers;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Policy;
 
 /**
@@ -121,34 +123,32 @@ public class ViewerComparator {
 			return cat1 - cat2;
 		}
     	
-        String name1;
-        String name2;
-
-        if (viewer == null || !(viewer instanceof ContentViewer)) {
-            name1 = e1.toString();
-            name2 = e2.toString();
-        } else {
-            IBaseLabelProvider prov = ((ContentViewer) viewer)
-                    .getLabelProvider();
-            if (prov instanceof ILabelProvider) {
-                ILabelProvider lprov = (ILabelProvider) prov;
-                name1 = lprov.getText(e1);
-                name2 = lprov.getText(e2);
-            } else {
-                name1 = e1.toString();
-                name2 = e2.toString();
-            }
-        }
-        if (name1 == null) {
-			name1 = "";//$NON-NLS-1$
-		}
-        if (name2 == null) {
-			name2 = "";//$NON-NLS-1$
-		}
+        String name1 = getLabel(viewer, e1);
+        String name2 = getLabel(viewer, e2);
 
         // use the comparator to compare the strings
         return getComparator().compare(name1, name2);
     }
+    
+	private String getLabel(Viewer viewer, Object e1) {
+		String name1;
+		if (viewer == null || !(viewer instanceof ContentViewer)) {
+			name1 = e1.toString();
+		} else {
+			IBaseLabelProvider prov = ((ContentViewer) viewer)
+					.getLabelProvider();
+			if (prov instanceof ILabelProvider) {
+				ILabelProvider lprov = (ILabelProvider) prov;
+				name1 = lprov.getText(e1);
+			} else {
+				name1 = e1.toString();
+			}
+		}
+		if (name1 == null) {
+			name1 = "";//$NON-NLS-1$
+		}
+		return name1;
+	}
 
     /**
      * Returns whether this viewer sorter would be affected 
@@ -181,11 +181,24 @@ public class ViewerComparator {
      * @param viewer the viewer
      * @param elements the elements to sort
      */
-    public void sort(final Viewer viewer, Object[] elements) {
-        Arrays.sort(elements, new Comparator() {
-            public int compare(Object a, Object b) {
-                return ViewerComparator.this.compare(viewer, a, b);
-            }
-        });
-    }	
+	public void sort(final Viewer viewer, Object[] elements) {
+		try {
+			Arrays.sort(elements, new Comparator() {
+				public int compare(Object a, Object b) {
+					return ViewerComparator.this.compare(viewer, a, b);
+				}
+			});
+		} catch (IllegalArgumentException e) {
+			String msg = "Workaround for comparator violation:\n\t- set system property java.util.Arrays.useLegacyMergeSort=true\n\t- use a 1.6 JRE "  //$NON-NLS-1$
+					+ "\nmessage: " + e.getLocalizedMessage() //$NON-NLS-1$
+					+ "\nthis: " + getClass().getName() //$NON-NLS-1$
+					+ "\ncomparator: " + comparator.getClass().getName() //$NON-NLS-1$
+					+ "\narray:"; //$NON-NLS-1$
+			for (int i = 0; i < elements.length; i++) {
+				msg += "\n\t" + getLabel(viewer, elements[i]); //$NON-NLS-1$
+			}
+			Policy.getLog().log(new Status(IStatus.ERROR, "org.eclipse.jface", msg)); //$NON-NLS-1$
+			throw e;
+		}
+	}
 }
