@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.css.core.impl.dom.parsers;
 
 import java.io.IOException;
 import java.util.Stack;
-
 import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleDeclarationImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSValueFactory;
@@ -124,11 +123,16 @@ public class AbstractCSSParser implements CSSParser {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#parseSelectors(org.w3c.css.sac.InputSource)
+	 * @see
+	 * org.eclipse.e4.ui.css.core.dom.parsers.CSSParser#parseSelectors(org.w3c
+	 * .css.sac.InputSource)
 	 */
 	public SelectorList parseSelectors(InputSource source) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		ExtendedDocumentHandler documentHandler = getDocumentHandlerFactory()
+				.makeDocumentHandler();
+		Parser parser = getParser();
+		parser.setDocumentHandler(documentHandler);
+		return parser.parseSelectors(source);
 	}
 
 	/*

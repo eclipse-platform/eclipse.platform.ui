@@ -13,13 +13,16 @@ package org.eclipse.e4.ui.css.core.engine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-
+import java.util.Map;
+import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.w3c.css.sac.InputSource;
+import org.w3c.css.sac.Selector;
+import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
@@ -143,6 +146,54 @@ public interface CSSEngine {
 	 * @throws IOException
 	 */
 	public CSSValue parsePropertyValue(InputSource source) throws IOException;
+
+	/*--------------- Apply styles -----------------*/
+
+	/**
+	 * Parse Selectors from String value.
+	 * 
+	 * @param text
+	 * @return
+	 * @throws IOException
+	 */
+	public SelectorList parseSelectors(String text) throws IOException;
+
+	/**
+	 * Parse Selectors from InputSource value.
+	 * 
+	 * @param source
+	 * @return
+	 * @throws IOException
+	 */
+	public SelectorList parseSelectors(InputSource source) throws IOException;
+
+	/**
+	 * Parse Selectors from InputStream.
+	 * 
+	 * @param stream
+	 * @return
+	 * @throws IOException
+	 */
+	public SelectorList parseSelectors(InputStream stream) throws IOException;
+
+	/**
+	 * Parse Selectors from String value.
+	 * 
+	 * @param reader
+	 * @return
+	 * @throws IOException
+	 */
+	public SelectorList parseSelectors(Reader reader) throws IOException;
+
+	/**
+	 * Check if the <code>selector</code> matches the object <code>node</code>.
+	 * 
+	 * @param selector
+	 * @param element
+	 * @param pseudo
+	 * @return
+	 */
+	public boolean matches(Selector selector, Object node, String pseudo);
 
 	/*--------------- Apply styles -----------------*/
 
@@ -447,7 +498,7 @@ public interface CSSEngine {
 			throws Exception;
 
 	/**
-	 * Get the w3c {@link Element} which wrap Oqbject <code>node</code>.
+	 * Get the w3c {@link Element} which wrap Object <code>node</code>.
 	 * 
 	 * @param node
 	 * @return
@@ -461,6 +512,15 @@ public interface CSSEngine {
 	 * @return
 	 */
 	public CSSElementContext getCSSElementContext(Object node);
+
+	/**
+	 * Return the set of property names and handlers for the provided node.
+	 * 
+	 * @param node
+	 * @return the property names and handlers
+	 */
+	public Map<String, ICSSPropertyHandler> getCSSPropertyHandlers(
+			CSSStylableElement node);
 
 	/**
 	 * Return array of CSS property name of the CSS <code>property</code>.

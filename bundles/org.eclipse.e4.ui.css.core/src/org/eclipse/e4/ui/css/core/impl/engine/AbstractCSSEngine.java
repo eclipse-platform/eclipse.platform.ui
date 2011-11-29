@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -45,6 +46,7 @@ import org.eclipse.e4.ui.css.core.impl.dom.CSSRuleListImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
+import org.eclipse.e4.ui.css.core.impl.sac.ExtendedSelector;
 import org.eclipse.e4.ui.css.core.resources.CSSResourcesHelpers;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
 import org.eclipse.e4.ui.css.core.util.impl.resources.ResourcesLocatorManager;
@@ -283,6 +285,59 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		CSSStyleDeclaration styleDeclaration = parser
 				.parseStyleDeclaration(source);
 		return styleDeclaration;
+	}
+
+	/*--------------- Parse CSS Selector -----------------*/
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.core.css.engine.CSSEngine#parseSelectors(java.lang.
+	 * String)
+	 */
+	public SelectorList parseSelectors(String selector) throws IOException {
+		Reader reader = new StringReader(selector);
+		return parseSelectors(reader);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.core.css.engine.CSSEngine#parseSelectors(java.io.Reader
+	 * )
+	 */
+	public SelectorList parseSelectors(Reader reader) throws IOException {
+		InputSource source = new InputSource();
+		source.setCharacterStream(reader);
+		return parseSelectors(source);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.core.css.engine.CSSEngine#parseSelectors(java.io.
+	 * InputStream)
+	 */
+	public SelectorList parseSelectors(InputStream stream) throws IOException {
+		InputSource source = new InputSource();
+		source.setByteStream(stream);
+		return parseSelectors(source);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.core.css.engine.CSSEngine#parseSelectors(org.w3c.css
+	 * .sac.InputSource)
+	 */
+	public SelectorList parseSelectors(InputSource source) throws IOException {
+		checkInputSource(source);
+		CSSParser parser = makeCSSParser();
+		SelectorList list = parser.parseSelectors(source);
+		return list;
 	}
 
 	/*--------------- Parse CSS Property Value-----------------*/
@@ -803,6 +858,33 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		return handlers;
 	}
 
+	/**
+	 * Return the set of property names and handlers for the provided node.
+	 * 
+	 * @param node
+	 * @return the property names and handlers
+	 */
+	public Map<String, ICSSPropertyHandler> getCSSPropertyHandlers(
+			CSSStylableElement node) {
+		Map<String, ICSSPropertyHandler> handlerMap = new HashMap<String, ICSSPropertyHandler>();
+		Class<?> clazz = node.getClass();
+		while (clazz != Object.class) {
+			if (propertyHandlerMap.containsKey(clazz.getName())) {
+				@SuppressWarnings("unchecked")
+				Map<String, ICSSPropertyHandler> clazzHandlers = (Map<String, ICSSPropertyHandler>) propertyHandlerMap
+						.get(clazz.getName());
+				for (Entry<String, ICSSPropertyHandler> entry : clazzHandlers
+						.entrySet()) {
+					if (!handlerMap.containsKey(entry.getKey())) {
+						handlerMap.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			clazz = clazz.getSuperclass();
+		}
+		return handlerMap;
+	}
+
 	/*--------------- Dynamic pseudo classes -----------------*/
 
 	public IElementProvider getElementProvider() {
@@ -834,12 +916,10 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			elt = elementProvider.getElement(element, this);
 		} else if (elementProvider == null) {
 			Object tmp = widgetsMap.get(element.getClass().getName());
-			if (tmp == null) {
-				Class parent = element.getClass();
-				do {
+			Class parent = element.getClass();
+			while (tmp == null && parent != Object.class) {
 					parent = parent.getSuperclass();
 					tmp = widgetsMap.get(parent.getName());
-				} while (tmp == null && parent != Object.class);
 			}
 			if(tmp != null && tmp instanceof IElementProvider) {
 				elt = ((IElementProvider)tmp).getElement(element, this);
@@ -911,6 +991,21 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		if (elementsContext == null)
 			elementsContext = new HashMap();
 		return elementsContext;
+	}
+
+	public boolean matches(Selector selector, Object element, String pseudoElt) {
+		Element elt = getElement(element);
+		if (elt == null) {
+			return false;
+		}
+		if (selector instanceof ExtendedSelector) {
+			ExtendedSelector extendedSelector = (ExtendedSelector) selector;
+			return extendedSelector.match(elt, pseudoElt);
+		} else {
+			// TODO : selector is not batik ExtendedSelector,
+			// Manage this case...
+		}
+		return false;
 	}
 
 	/*--------------- Error Handler -----------------*/

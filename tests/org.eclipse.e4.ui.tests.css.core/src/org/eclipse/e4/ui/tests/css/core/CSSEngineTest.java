@@ -4,6 +4,7 @@ import java.util.AbstractCollection;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,20 +12,16 @@ import junit.framework.TestCase;
 
 import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
-import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.impl.dom.parsers.CSSParserImpl;
-import org.eclipse.e4.ui.css.core.impl.engine.AbstractCSSEngine;
+import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
+import org.eclipse.e4.ui.tests.css.core.util.TestElement;
+import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class EngineProviderTest extends TestCase {
-	private static class TestCSSEngine extends AbstractCSSEngine {
-		public CSSParser makeCSSParser() {
-			return new CSSParserImpl();
-		}
-	
+public class CSSEngineTest extends TestCase {
+	private static class TestCSSEngine extends CSSEngineImpl {
 		public void setWidgetProvider(Class clazz, IElementProvider provider) {
 			widgetsMap.put(clazz.getName(), provider);
 		}
@@ -104,4 +101,18 @@ public class EngineProviderTest extends TestCase {
 		element = engine.getElement(new HashSet());
 		assertTrue(element instanceof SetElement);
 	}
+
+	public void testSelectorMatch() throws Exception {
+		TestCSSEngine engine = new TestCSSEngine();
+		SelectorList list = engine.parseSelectors("Date");
+		engine.setElementProvider(new IElementProvider() {
+			public Element getElement(Object element, CSSEngine engine) {
+				return new TestElement(element.getClass().getSimpleName(),
+						engine);
+			}
+		});
+		assertFalse(engine.matches(list.item(0), new Object(), null));
+		assertTrue(engine.matches(list.item(0), new Date(), null));
+	}
+
 }
