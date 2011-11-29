@@ -51,7 +51,7 @@ public class DnDAddon {
 
 	@PostConstruct
 	void hookListeners() {
-		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET);
+		String topic = UIEvents.UIElement.WIDGET;
 		eventBroker.subscribe(topic, null, installHook, false);
 	}
 

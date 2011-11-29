@@ -95,8 +95,7 @@ public class ContextProcessingAddon {
 				}
 			}
 		};
-		broker.subscribe(UIEvents.buildTopic(UIEvents.BindingContext.TOPIC,
-				UIEvents.BindingContext.CHILDREN), additionHandler);
+		broker.subscribe(UIEvents.BindingContext.TOPIC_CHILDREN, additionHandler);
 	}
 
 	private void unregsiterModelListeners() {

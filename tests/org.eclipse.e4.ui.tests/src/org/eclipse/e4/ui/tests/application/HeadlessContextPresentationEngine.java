@@ -117,9 +117,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.CHILDREN), childHandler);
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN,
+				childHandler);
 
 		activeChildHandler = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -142,9 +141,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.SELECTEDELEMENT), activeChildHandler);
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT,
+				activeChildHandler);
 
 		toBeRenderedHandler = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -161,8 +159,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED,
+				toBeRenderedHandler);
 	}
 
 	private void adjustPlaceholders(MUIElement element) {

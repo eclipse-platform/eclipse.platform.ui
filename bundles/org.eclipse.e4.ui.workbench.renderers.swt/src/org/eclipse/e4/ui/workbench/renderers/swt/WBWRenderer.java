@@ -229,8 +229,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
-				shellUpdater);
+		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL, shellUpdater);
 
 		visibilityHandler = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -261,8 +260,8 @@ public class WBWRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.VISIBLE), visibilityHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_VISIBLE,
+				visibilityHandler);
 
 		sizeHandler = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -307,8 +306,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Window.TOPIC),
-				sizeHandler);
+		eventBroker.subscribe(UIEvents.Window.TOPIC_ALL, sizeHandler);
 
 		childHandler = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -340,9 +338,8 @@ public class WBWRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.CHILDREN), childHandler);
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN,
+				childHandler);
 	}
 
 	@PreDestroy

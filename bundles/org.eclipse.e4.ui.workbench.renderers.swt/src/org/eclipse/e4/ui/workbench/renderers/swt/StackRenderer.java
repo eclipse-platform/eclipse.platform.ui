@@ -285,8 +285,7 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
-				itemUpdater);
+		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL, itemUpdater);
 
 		dirtyUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -332,9 +331,6 @@ public class StackRenderer extends LazyStackRenderer {
 				}
 			}
 		};
-
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Dirtyable.TOPIC,
-				UIEvents.Dirtyable.DIRTY), dirtyUpdater);
 
 		viewMenuUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -393,11 +389,9 @@ public class StackRenderer extends LazyStackRenderer {
 				}
 			}
 		};
-
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.VISIBLE), viewMenuUpdater);
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.TOBERENDERED), viewMenuUpdater);
+		eventBroker.subscribe(UIEvents.Dirtyable.TOPIC_DIRTY, dirtyUpdater);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_VISIBLE, viewMenuUpdater);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED, viewMenuUpdater);
 	}
 
 	/**

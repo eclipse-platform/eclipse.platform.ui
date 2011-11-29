@@ -317,14 +317,9 @@ public class TrimStack {
 
 	@PostConstruct
 	void addListeners() {
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.CHILDREN), childrenHandler);
-		eventBroker.subscribe(
-				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
-				toBeRenderedHandler);
-		eventBroker.subscribe(
-				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
-				widgetHandler);
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED, toBeRenderedHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, widgetHandler);
 		eventBroker.subscribe(UIEvents.UILifeCycle.BRINGTOTOP, openHandler);
 		eventBroker.subscribe(UIEvents.UILifeCycle.ACTIVATE, closeHandler);
 	}

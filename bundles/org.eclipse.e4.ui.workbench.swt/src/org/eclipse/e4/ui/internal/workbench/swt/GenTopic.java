@@ -62,6 +62,12 @@ public class GenTopic implements IApplication {
 		}
 	}
 
+	private static final String interfaceDeclaration = "\n\tpublic static interface %s {";
+	private static final String deprecatedTopicDeclaration = "\n\n\t@Deprecated\n\tpublic static final String ALL = \"org/eclipse/e4/ui/model/%s/%s\"; //$NON-NLS-1$\n";
+	private static final String topicAllDeclaration = "\n\tpublic static final String TOPIC_ALL = \"org/eclipse/e4/ui/model/%s/%s/*\"; //$NON-NLS-1$";
+	private static final String topicAttributeDeclaration = "\n\tpublic static final String TOPIC_%S = \"org/eclipse/e4/ui/model/%s/%s/%s/*\"; //$NON-NLS-1$";
+	private static final String attributeDeclaration = "\n\tpublic static final String %S = \"%s\"; //$NON-NLS-1$";
+
 	private void processEClass(EClass eClass) {
 		EList<EStructuralFeature> features = eClass.getEStructuralFeatures();
 		if (features.isEmpty()) {
@@ -70,19 +76,30 @@ public class GenTopic implements IApplication {
 		String pkgName = eClass.getEPackage().getName();
 		String className = eClass.getName();
 		System.out.print("\r\r\t@SuppressWarnings(\"javadoc\")");
+		System.out.print(String.format(interfaceDeclaration, className));
+		System.out.print("\n\n\t//Topics that can be subscribed to");
+		System.out.print(String.format(deprecatedTopicDeclaration, pkgName,
+				className));
 		System.out
-				.print("\n\tpublic static interface " + className + " {" //$NON-NLS-1$ //$NON-NLS-2$
-						+ "\n\t\tpublic static final String TOPIC = UIModelTopicBase + \"/" //$NON-NLS-1$
-						+ pkgName + '/' + className + "\"; //$NON-NLS-1$"); //$NON-NLS-1$
+				.print(String.format(topicAllDeclaration, pkgName, className));
+
 		Set<String> names = new TreeSet<String>();
 		for (EStructuralFeature feature : features) {
 			names.add(feature.getName());
 		}
+
 		for (String name : names) {
-			System.out.print("\n\t\tpublic static final String " //$NON-NLS-1$
-					+ name.toUpperCase() + " = \""); //$NON-NLS-1$
-			System.out.print(name + "\"; //$NON-NLS-1$"); //$NON-NLS-1$
+			System.out.print(String.format(topicAttributeDeclaration, name,
+					pkgName, className, name));
 		}
+
+		System.out.print("\n"); //$NON-NLS-1$
+		System.out
+				.print("\n\t//Attributes that can be tested in event handlers");
+		for (String name : names) {
+			System.out.print(String.format(attributeDeclaration, name, name));
+		}
+
 		System.out.print("\n\t}"); //$NON-NLS-1$
 	}
 

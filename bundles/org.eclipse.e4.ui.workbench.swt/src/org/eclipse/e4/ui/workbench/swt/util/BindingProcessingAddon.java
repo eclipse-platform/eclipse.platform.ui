@@ -181,8 +181,9 @@ public class BindingProcessingAddon {
 		sequence = bindingService.createSequence(keySequence);
 
 		if (cmd == null) {
-			System.err.println("Failed to find command for binding: " + binding); //$NON-NLS-1$
-		} else if(sequence == null) {
+			System.err
+					.println("Failed to find command for binding: " + binding); //$NON-NLS-1$
+		} else if (sequence == null) {
 			System.err.println("Failed to map binding: " + binding); //$NON-NLS-1$
 		} else {
 			try {
@@ -374,19 +375,15 @@ public class BindingProcessingAddon {
 				}
 			}
 		};
-		broker.subscribe(UIEvents.buildTopic(
-				UIEvents.BindingTableContainer.TOPIC,
-				UIEvents.BindingTableContainer.BINDINGTABLES), additionHandler);
-		broker.subscribe(UIEvents.buildTopic(UIEvents.BindingTable.TOPIC,
-				UIEvents.BindingTable.BINDINGS), additionHandler);
-		broker.subscribe(UIEvents.buildTopic(UIEvents.KeyBinding.TOPIC,
-				UIEvents.KeyBinding.COMMAND), additionHandler);
-		broker.subscribe(UIEvents.buildTopic(UIEvents.KeyBinding.TOPIC,
-				UIEvents.KeyBinding.PARAMETERS), additionHandler);
-		broker.subscribe(UIEvents.buildTopic(UIEvents.KeySequence.TOPIC,
-				UIEvents.KeySequence.KEYSEQUENCE), additionHandler);
-		broker.subscribe(UIEvents.buildTopic(UIEvents.ApplicationElement.TOPIC,
-				UIEvents.ApplicationElement.TAGS), additionHandler);
+		broker.subscribe(UIEvents.BindingTableContainer.TOPIC_BINDINGTABLES,
+				additionHandler);
+		broker.subscribe(UIEvents.BindingTable.TOPIC_BINDINGS, additionHandler);
+		broker.subscribe(UIEvents.KeyBinding.TOPIC_COMMAND, additionHandler);
+		broker.subscribe(UIEvents.KeyBinding.TOPIC_PARAMETERS, additionHandler);
+		broker.subscribe(UIEvents.KeySequence.TOPIC_KEYSEQUENCE,
+				additionHandler);
+		broker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS,
+				additionHandler);
 
 		contextHandler = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -400,8 +397,7 @@ public class BindingProcessingAddon {
 				}
 			}
 		};
-		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC,
-				UIEvents.Context.CONTEXT), contextHandler);
+		broker.subscribe(UIEvents.Context.TOPIC_CONTEXT, contextHandler);
 	}
 
 	private void unregsiterModelListeners() {

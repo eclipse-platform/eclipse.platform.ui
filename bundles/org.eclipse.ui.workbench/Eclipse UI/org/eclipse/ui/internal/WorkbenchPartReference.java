@@ -207,7 +207,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
 	public void subscribe() {
 		IEventBroker broker = windowContext.get(IEventBroker.class);
-		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
+		broker.subscribe(UIEvents.Context.TOPIC_CONTEXT,
 				createContextEventHandler());
 	}
 

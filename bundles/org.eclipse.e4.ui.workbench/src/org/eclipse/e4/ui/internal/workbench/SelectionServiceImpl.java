@@ -92,9 +92,7 @@ public class SelectionServiceImpl implements ESelectionService {
 
 	@PostConstruct
 	void postConstruct() {
-		eventBroker
-				.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
-						eventHandler);
+		eventBroker.subscribe(UIEvents.Context.TOPIC_CONTEXT, eventHandler);
 
 		for (MPart part : partService.getParts()) {
 			track(part);

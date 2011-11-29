@@ -277,14 +277,9 @@ public class CleanupAddon {
 
 	@PostConstruct
 	void init(IEclipseContext context) {
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.CHILDREN), childrenHandler);
-		eventBroker.subscribe(
-				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
-				renderingChangeHandler);
-		eventBroker.subscribe(
-				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.VISIBLE),
-				visibilityChangeHandler);
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED, renderingChangeHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_VISIBLE, visibilityChangeHandler);
 	}
 
 	@PreDestroy

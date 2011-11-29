@@ -414,20 +414,12 @@ public class MinMaxAddon {
 
 	@PostConstruct
 	void hookListeners() {
-		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET);
-		eventBroker.subscribe(topic, widgetListener);
-		topic = UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.CHILDREN);
-		eventBroker.subscribe(topic, perspectiveRemovedListener);
-		topic = UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.SELECTEDELEMENT);
-		eventBroker.subscribe(topic, perspectiveChangeListener);
-		topic = UIEvents.buildTopic(UIEvents.ApplicationElement.TOPIC,
-				UIEvents.ApplicationElement.TAGS);
-		eventBroker.subscribe(topic, tagChangeListener);
-		topic = UIEvents.buildTopic(UIEvents.ApplicationElement.TOPIC,
-				UIEvents.ApplicationElement.ELEMENTID);
-		eventBroker.subscribe(topic, idChangeListener);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, widgetListener);
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, perspectiveRemovedListener);
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT,
+				perspectiveChangeListener);
+		eventBroker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS, tagChangeListener);
+		eventBroker.subscribe(UIEvents.ApplicationElement.TOPIC_ELEMENTID, idChangeListener);
 
 		eventBroker.subscribe(UIEvents.UILifeCycle.PERSPECTIVE_SAVED, perspSavedListener);
 		eventBroker.subscribe(UIEvents.UILifeCycle.PERSPECTIVE_OPENED, perspOpenedListener);

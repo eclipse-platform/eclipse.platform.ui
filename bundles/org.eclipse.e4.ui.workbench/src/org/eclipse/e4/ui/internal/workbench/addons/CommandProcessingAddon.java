@@ -85,12 +85,8 @@ public class CommandProcessingAddon {
 				}
 			}
 		};
-		broker.subscribe(
-				UIEvents.buildTopic(UIEvents.Application.TOPIC, UIEvents.Application.COMMANDS),
-				additionHandler);
-		broker.subscribe(
-				UIEvents.buildTopic(UIEvents.Application.TOPIC, UIEvents.Application.CATEGORIES),
-				additionHandler);
+		broker.subscribe(UIEvents.Application.TOPIC_COMMANDS, additionHandler);
+		broker.subscribe(UIEvents.Application.TOPIC_CATEGORIES, additionHandler);
 	}
 
 	private void unregsiterModelListeners() {

@@ -214,11 +214,8 @@ public abstract class CompatibilityPart {
 
 	@PostConstruct
 	public void create() {
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.WIDGET), widgetSetHandler);
-		eventBroker.subscribe(
-				UIEvents.buildTopic(UIEvents.Contribution.TOPIC, UIEvents.Contribution.OBJECT),
-				objectSetHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, widgetSetHandler);
+		eventBroker.subscribe(UIEvents.Contribution.TOPIC_OBJECT, objectSetHandler);
 
 		WorkbenchPartReference reference = getReference();
 

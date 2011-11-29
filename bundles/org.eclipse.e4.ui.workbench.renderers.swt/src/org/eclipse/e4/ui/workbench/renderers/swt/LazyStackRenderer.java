@@ -76,9 +76,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		// will call this method
 		eventBroker.unsubscribe(lazyLoader);
 
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.SELECTEDELEMENT), lazyLoader);
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT,
+				lazyLoader);
 	}
 
 	/**

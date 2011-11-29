@@ -112,9 +112,7 @@ class DnDManager {
 			}
 		};
 
-		eventBroker.subscribe(
-				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
-				stackWidgetHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, stackWidgetHandler);
 
 		getDragShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {

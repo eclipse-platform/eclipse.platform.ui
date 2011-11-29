@@ -168,8 +168,7 @@ public class PartServiceImpl implements EPartService {
 
 	@PostConstruct
 	void postConstruct() {
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.SELECTEDELEMENT), selectedHandler);
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, selectedHandler);
 		constructed = true;
 		partActivationHistory = new PartActivationHistory(this, modelService);
 		if (activePart != null) {

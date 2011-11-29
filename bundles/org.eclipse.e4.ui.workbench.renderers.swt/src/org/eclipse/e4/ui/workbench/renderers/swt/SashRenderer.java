@@ -56,8 +56,8 @@ public class SashRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.GenericTile.TOPIC,
-				UIEvents.GenericTile.HORIZONTAL), sashOrientationHandler);
+		eventBroker.subscribe(UIEvents.GenericTile.TOPIC_HORIZONTAL,
+				sashOrientationHandler);
 
 		sashWeightHandler = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -72,8 +72,8 @@ public class SashRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.CONTAINERDATA), sashWeightHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_CONTAINERDATA,
+				sashWeightHandler);
 	}
 
 	/**

@@ -2341,13 +2341,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		broker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
+		broker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, selectionHandler);
 		broker.subscribe(UIEvents.UILifeCycle.BRINGTOTOP, bringToTopHandler);
-		broker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
+		broker.subscribe(UIEvents.UIElement.TOPIC_WIDGET,
 				areaWidgetHandler);
 		broker.subscribe(
-				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
+UIEvents.UIElement.TOPIC_TOBERENDERED,
 				referenceRemovalEventHandler);
 
 		MPerspectiveStack perspectiveStack = getPerspectiveStack();

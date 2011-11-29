@@ -590,9 +590,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			// HandledContributionItem.toolItemUpdater.addWindowRunnable(menuUpdater);
 		}
 
-		eventBroker.subscribe(
-				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
-				windowWidgetHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, windowWidgetHandler);
 
 		partService.setPage(page);
 

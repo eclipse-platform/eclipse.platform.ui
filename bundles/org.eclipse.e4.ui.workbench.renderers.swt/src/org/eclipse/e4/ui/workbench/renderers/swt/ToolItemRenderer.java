@@ -136,13 +136,9 @@ public class ToolItemRenderer extends SWTPartRenderer {
 
 	@PostConstruct
 	public void init() {
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
-				itemUpdater);
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Item.TOPIC,
-				UIEvents.Item.SELECTED), selectionUpdater);
-		eventBroker
-				.subscribe(UIEvents.buildTopic(UIEvents.Item.TOPIC,
-						UIEvents.Item.ENABLED), enabledUpdater);
+		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL, itemUpdater);
+		eventBroker.subscribe(UIEvents.Item.TOPIC_SELECTED, selectionUpdater);
+		eventBroker.subscribe(UIEvents.Item.TOPIC_ENABLED, enabledUpdater);
 	}
 
 	@PreDestroy

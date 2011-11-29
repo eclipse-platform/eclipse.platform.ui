@@ -93,11 +93,8 @@ public class AreaRenderer extends SWTPartRenderer {
 
 	@PostConstruct
 	void init() {
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
-				itemUpdater);
-		eventBroker
-				.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-						UIElement.WIDGET), widgetListener);
+		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL, itemUpdater);
+		eventBroker.subscribe(UIElement.TOPIC_WIDGET, widgetListener);
 	}
 
 	@PreDestroy

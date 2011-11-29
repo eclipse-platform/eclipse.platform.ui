@@ -90,9 +90,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 			return;
 
 		eventBroker = introModelPart.getContext().get(IEventBroker.class);
-		String topic = UIEvents.buildTopic(UIEvents.ApplicationElement.TOPIC,
-				UIEvents.ApplicationElement.TAGS);
-		eventBroker.subscribe(topic, zoomChangeListener);
+		eventBroker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS, zoomChangeListener);
     }
 
 	private MPartStack getIntroStack() {

@@ -134,41 +134,6 @@ public class UIEvents {
 	}
 
 	/**
-	 * Method for constructing a topic string to subscribe to.
-	 * 
-	 * @param topic
-	 * @return a topic that will match all model changes for the given topic.
-	 */
-	public static String buildTopic(String topic) {
-		return topic + TOPIC_SEP + ALL_SUB_TOPICS;
-	}
-
-	/**
-	 * Method for constructing a topic string to subscribe to.
-	 * 
-	 * @param topic
-	 * @param attributeName
-	 *            the UI model attribute to match
-	 * @return a topic that will match a particular attribute for a particular model element
-	 */
-	public static String buildTopic(String topic, String attributeName) {
-		return topic + TOPIC_SEP + attributeName + TOPIC_SEP + ALL_SUB_TOPICS;
-	}
-
-	/**
-	 * Method for constructing a topic string to subscribe to.
-	 * 
-	 * @param topic
-	 * @param attributeName
-	 * @param eventType
-	 * @return a topic that will match a particular eventType for a particular attribute of a
-	 *         particular model element
-	 */
-	public static String buildTopic(String topic, String attributeName, String eventType) {
-		return topic + TOPIC_SEP + attributeName + TOPIC_SEP + eventType;
-	}
-
-	/**
 	 * Publish the topic to the changedElements global event bus. The changedElement is added the
 	 * the EventTags.ELEMENT tag.
 	 * 
@@ -217,6 +182,33 @@ public class UIEvents {
 		return eventBroker.send(topic, argMap);
 	}
 
+	@SuppressWarnings("javadoc")
+	@Deprecated
+	/**
+	 * @deprecated Subscribe to an all attribute events on a topic using the TOPIC_ALL constant directly
+	 */
+	public static String buildTopic(String topic) {
+		return topic + TOPIC_SEP + ALL_SUB_TOPICS;
+	}
+
+	@SuppressWarnings("javadoc")
+	@Deprecated
+	/**
+	 * @deprecated Subscribe to an attribute event by using the TOPIC_<attribute> constant directly 
+	 */
+	public static String buildTopic(String topic, String attrName) {
+		return topic + TOPIC_SEP + attrName + TOPIC_SEP + ALL_SUB_TOPICS;
+	}
+
+	@SuppressWarnings("javadoc")
+	@Deprecated
+	/**
+	 * @deprecated Subscribing to a particular event type on a topic attribute is not longer supported
+	 */
+	public static String buildTopic(String topic, String attrName, String eventType) {
+		return topic + TOPIC_SEP + attrName + TOPIC_SEP + eventType;
+	}
+
 	/*************************************************************************************
 	 * GENERATED CODE!!
 	 * 
@@ -228,7 +220,18 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface BindingContext {
-		public static final String TOPIC = UIModelTopicBase + "/commands/BindingContext"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/BindingContext"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/BindingContext/*"; //$NON-NLS-1$
+		public static final String TOPIC_CHILDREN = "org/eclipse/e4/ui/model/commands/BindingContext/children/*"; //$NON-NLS-1$
+		public static final String TOPIC_DESCRIPTION = "org/eclipse/e4/ui/model/commands/BindingContext/description/*"; //$NON-NLS-1$
+		public static final String TOPIC_NAME = "org/eclipse/e4/ui/model/commands/BindingContext/name/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CHILDREN = "children"; //$NON-NLS-1$
 		public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 		public static final String NAME = "name"; //$NON-NLS-1$
@@ -236,34 +239,85 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface BindingTable {
-		public static final String TOPIC = UIModelTopicBase + "/commands/BindingTable"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/BindingTable"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/BindingTable/*"; //$NON-NLS-1$
+		public static final String TOPIC_BINDINGCONTEXT = "org/eclipse/e4/ui/model/commands/BindingTable/bindingContext/*"; //$NON-NLS-1$
+		public static final String TOPIC_BINDINGS = "org/eclipse/e4/ui/model/commands/BindingTable/bindings/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String BINDINGCONTEXT = "bindingContext"; //$NON-NLS-1$
 		public static final String BINDINGS = "bindings"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface BindingTableContainer {
-		public static final String TOPIC = UIModelTopicBase + "/commands/BindingTableContainer"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/BindingTableContainer"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/BindingTableContainer/*"; //$NON-NLS-1$
+		public static final String TOPIC_BINDINGTABLES = "org/eclipse/e4/ui/model/commands/BindingTableContainer/bindingTables/*"; //$NON-NLS-1$
+		public static final String TOPIC_ROOTCONTEXT = "org/eclipse/e4/ui/model/commands/BindingTableContainer/rootContext/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String BINDINGTABLES = "bindingTables"; //$NON-NLS-1$
 		public static final String ROOTCONTEXT = "rootContext"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Bindings {
-		public static final String TOPIC = UIModelTopicBase + "/commands/Bindings"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/Bindings"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/Bindings/*"; //$NON-NLS-1$
+		public static final String TOPIC_BINDINGCONTEXTS = "org/eclipse/e4/ui/model/commands/Bindings/bindingContexts/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String BINDINGCONTEXTS = "bindingContexts"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Category {
-		public static final String TOPIC = UIModelTopicBase + "/commands/Category"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/Category"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/Category/*"; //$NON-NLS-1$
+		public static final String TOPIC_DESCRIPTION = "org/eclipse/e4/ui/model/commands/Category/description/*"; //$NON-NLS-1$
+		public static final String TOPIC_NAME = "org/eclipse/e4/ui/model/commands/Category/name/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 		public static final String NAME = "name"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Command {
-		public static final String TOPIC = UIModelTopicBase + "/commands/Command"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/Command"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/Command/*"; //$NON-NLS-1$
+		public static final String TOPIC_CATEGORY = "org/eclipse/e4/ui/model/commands/Command/category/*"; //$NON-NLS-1$
+		public static final String TOPIC_COMMANDNAME = "org/eclipse/e4/ui/model/commands/Command/commandName/*"; //$NON-NLS-1$
+		public static final String TOPIC_DESCRIPTION = "org/eclipse/e4/ui/model/commands/Command/description/*"; //$NON-NLS-1$
+		public static final String TOPIC_PARAMETERS = "org/eclipse/e4/ui/model/commands/Command/parameters/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CATEGORY = "category"; //$NON-NLS-1$
 		public static final String COMMANDNAME = "commandName"; //$NON-NLS-1$
 		public static final String DESCRIPTION = "description"; //$NON-NLS-1$
@@ -272,7 +326,18 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface CommandParameter {
-		public static final String TOPIC = UIModelTopicBase + "/commands/CommandParameter"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/CommandParameter"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/CommandParameter/*"; //$NON-NLS-1$
+		public static final String TOPIC_NAME = "org/eclipse/e4/ui/model/commands/CommandParameter/name/*"; //$NON-NLS-1$
+		public static final String TOPIC_OPTIONAL = "org/eclipse/e4/ui/model/commands/CommandParameter/optional/*"; //$NON-NLS-1$
+		public static final String TOPIC_TYPEID = "org/eclipse/e4/ui/model/commands/CommandParameter/typeId/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String NAME = "name"; //$NON-NLS-1$
 		public static final String OPTIONAL = "optional"; //$NON-NLS-1$
 		public static final String TYPEID = "typeId"; //$NON-NLS-1$
@@ -280,39 +345,102 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface Handler {
-		public static final String TOPIC = UIModelTopicBase + "/commands/Handler"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/Handler"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/Handler/*"; //$NON-NLS-1$
+		public static final String TOPIC_COMMAND = "org/eclipse/e4/ui/model/commands/Handler/command/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String COMMAND = "command"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface HandlerContainer {
-		public static final String TOPIC = UIModelTopicBase + "/commands/HandlerContainer"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/HandlerContainer"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/HandlerContainer/*"; //$NON-NLS-1$
+		public static final String TOPIC_HANDLERS = "org/eclipse/e4/ui/model/commands/HandlerContainer/handlers/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String HANDLERS = "handlers"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface KeyBinding {
-		public static final String TOPIC = UIModelTopicBase + "/commands/KeyBinding"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/KeyBinding"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/KeyBinding/*"; //$NON-NLS-1$
+		public static final String TOPIC_COMMAND = "org/eclipse/e4/ui/model/commands/KeyBinding/command/*"; //$NON-NLS-1$
+		public static final String TOPIC_PARAMETERS = "org/eclipse/e4/ui/model/commands/KeyBinding/parameters/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String COMMAND = "command"; //$NON-NLS-1$
 		public static final String PARAMETERS = "parameters"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface KeySequence {
-		public static final String TOPIC = UIModelTopicBase + "/commands/KeySequence"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/KeySequence"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/KeySequence/*"; //$NON-NLS-1$
+		public static final String TOPIC_KEYSEQUENCE = "org/eclipse/e4/ui/model/commands/KeySequence/keySequence/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String KEYSEQUENCE = "keySequence"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Parameter {
-		public static final String TOPIC = UIModelTopicBase + "/commands/Parameter"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/commands/Parameter"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/Parameter/*"; //$NON-NLS-1$
+		public static final String TOPIC_NAME = "org/eclipse/e4/ui/model/commands/Parameter/name/*"; //$NON-NLS-1$
+		public static final String TOPIC_VALUE = "org/eclipse/e4/ui/model/commands/Parameter/value/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String NAME = "name"; //$NON-NLS-1$
 		public static final String VALUE = "value"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface PartDescriptor {
-		public static final String TOPIC = UIModelTopicBase + "/basic/PartDescriptor"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/basic/PartDescriptor"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/basic/PartDescriptor/*"; //$NON-NLS-1$
+		public static final String TOPIC_ALLOWMULTIPLE = "org/eclipse/e4/ui/model/basic/PartDescriptor/allowMultiple/*"; //$NON-NLS-1$
+		public static final String TOPIC_CATEGORY = "org/eclipse/e4/ui/model/basic/PartDescriptor/category/*"; //$NON-NLS-1$
+		public static final String TOPIC_CLOSEABLE = "org/eclipse/e4/ui/model/basic/PartDescriptor/closeable/*"; //$NON-NLS-1$
+		public static final String TOPIC_CONTRIBUTIONURI = "org/eclipse/e4/ui/model/basic/PartDescriptor/contributionURI/*"; //$NON-NLS-1$
+		public static final String TOPIC_DESCRIPTION = "org/eclipse/e4/ui/model/basic/PartDescriptor/description/*"; //$NON-NLS-1$
+		public static final String TOPIC_DIRTYABLE = "org/eclipse/e4/ui/model/basic/PartDescriptor/dirtyable/*"; //$NON-NLS-1$
+		public static final String TOPIC_MENUS = "org/eclipse/e4/ui/model/basic/PartDescriptor/menus/*"; //$NON-NLS-1$
+		public static final String TOPIC_TOOLBAR = "org/eclipse/e4/ui/model/basic/PartDescriptor/toolbar/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String ALLOWMULTIPLE = "allowMultiple"; //$NON-NLS-1$
 		public static final String CATEGORY = "category"; //$NON-NLS-1$
 		public static final String CLOSEABLE = "closeable"; //$NON-NLS-1$
@@ -325,13 +453,33 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface PartDescriptorContainer {
-		public static final String TOPIC = UIModelTopicBase + "/basic/PartDescriptorContainer"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/basic/PartDescriptorContainer"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/basic/PartDescriptorContainer/*"; //$NON-NLS-1$
+		public static final String TOPIC_DESCRIPTORS = "org/eclipse/e4/ui/model/basic/PartDescriptorContainer/descriptors/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String DESCRIPTORS = "descriptors"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Application {
-		public static final String TOPIC = UIModelTopicBase + "/application/Application"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/application/Application"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/Application/*"; //$NON-NLS-1$
+		public static final String TOPIC_ADDONS = "org/eclipse/e4/ui/model/application/Application/addons/*"; //$NON-NLS-1$
+		public static final String TOPIC_CATEGORIES = "org/eclipse/e4/ui/model/application/Application/categories/*"; //$NON-NLS-1$
+		public static final String TOPIC_COMMANDS = "org/eclipse/e4/ui/model/application/Application/commands/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String ADDONS = "addons"; //$NON-NLS-1$
 		public static final String CATEGORIES = "categories"; //$NON-NLS-1$
 		public static final String COMMANDS = "commands"; //$NON-NLS-1$
@@ -339,7 +487,19 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface ApplicationElement {
-		public static final String TOPIC = UIModelTopicBase + "/application/ApplicationElement"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/application/ApplicationElement"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/ApplicationElement/*"; //$NON-NLS-1$
+		public static final String TOPIC_CONTRIBUTORURI = "org/eclipse/e4/ui/model/application/ApplicationElement/contributorURI/*"; //$NON-NLS-1$
+		public static final String TOPIC_ELEMENTID = "org/eclipse/e4/ui/model/application/ApplicationElement/elementId/*"; //$NON-NLS-1$
+		public static final String TOPIC_TAGS = "org/eclipse/e4/ui/model/application/ApplicationElement/tags/*"; //$NON-NLS-1$
+		public static final String TOPIC_TRANSIENTDATA = "org/eclipse/e4/ui/model/application/ApplicationElement/transientData/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CONTRIBUTORURI = "contributorURI"; //$NON-NLS-1$
 		public static final String ELEMENTID = "elementId"; //$NON-NLS-1$
 		public static final String TAGS = "tags"; //$NON-NLS-1$
@@ -348,7 +508,18 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface Contribution {
-		public static final String TOPIC = UIModelTopicBase + "/application/Contribution"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/application/Contribution"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/Contribution/*"; //$NON-NLS-1$
+		public static final String TOPIC_CONTRIBUTIONURI = "org/eclipse/e4/ui/model/application/Contribution/contributionURI/*"; //$NON-NLS-1$
+		public static final String TOPIC_OBJECT = "org/eclipse/e4/ui/model/application/Contribution/object/*"; //$NON-NLS-1$
+		public static final String TOPIC_PERSISTEDSTATE = "org/eclipse/e4/ui/model/application/Contribution/persistedState/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CONTRIBUTIONURI = "contributionURI"; //$NON-NLS-1$
 		public static final String OBJECT = "object"; //$NON-NLS-1$
 		public static final String PERSISTEDSTATE = "persistedState"; //$NON-NLS-1$
@@ -356,34 +527,85 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface StringToObjectMap {
-		public static final String TOPIC = UIModelTopicBase + "/application/StringToObjectMap"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/application/StringToObjectMap"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/StringToObjectMap/*"; //$NON-NLS-1$
+		public static final String TOPIC_KEY = "org/eclipse/e4/ui/model/application/StringToObjectMap/key/*"; //$NON-NLS-1$
+		public static final String TOPIC_VALUE = "org/eclipse/e4/ui/model/application/StringToObjectMap/value/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String KEY = "key"; //$NON-NLS-1$
 		public static final String VALUE = "value"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface StringToStringMap {
-		public static final String TOPIC = UIModelTopicBase + "/application/StringToStringMap"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/application/StringToStringMap"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/StringToStringMap/*"; //$NON-NLS-1$
+		public static final String TOPIC_KEY = "org/eclipse/e4/ui/model/application/StringToStringMap/key/*"; //$NON-NLS-1$
+		public static final String TOPIC_VALUE = "org/eclipse/e4/ui/model/application/StringToStringMap/value/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String KEY = "key"; //$NON-NLS-1$
 		public static final String VALUE = "value"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Perspective {
-		public static final String TOPIC = UIModelTopicBase + "/advanced/Perspective"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/advanced/Perspective"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/advanced/Perspective/*"; //$NON-NLS-1$
+		public static final String TOPIC_WINDOWS = "org/eclipse/e4/ui/model/advanced/Perspective/windows/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String WINDOWS = "windows"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Placeholder {
-		public static final String TOPIC = UIModelTopicBase + "/advanced/Placeholder"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/advanced/Placeholder"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/advanced/Placeholder/*"; //$NON-NLS-1$
+		public static final String TOPIC_CLOSEABLE = "org/eclipse/e4/ui/model/advanced/Placeholder/closeable/*"; //$NON-NLS-1$
+		public static final String TOPIC_REF = "org/eclipse/e4/ui/model/advanced/Placeholder/ref/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CLOSEABLE = "closeable"; //$NON-NLS-1$
 		public static final String REF = "ref"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Part {
-		public static final String TOPIC = UIModelTopicBase + "/basic/Part"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/basic/Part"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/basic/Part/*"; //$NON-NLS-1$
+		public static final String TOPIC_CLOSEABLE = "org/eclipse/e4/ui/model/basic/Part/closeable/*"; //$NON-NLS-1$
+		public static final String TOPIC_DESCRIPTION = "org/eclipse/e4/ui/model/basic/Part/description/*"; //$NON-NLS-1$
+		public static final String TOPIC_MENUS = "org/eclipse/e4/ui/model/basic/Part/menus/*"; //$NON-NLS-1$
+		public static final String TOPIC_TOOLBAR = "org/eclipse/e4/ui/model/basic/Part/toolbar/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CLOSEABLE = "closeable"; //$NON-NLS-1$
 		public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 		public static final String MENUS = "menus"; //$NON-NLS-1$
@@ -392,13 +614,37 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface TrimmedWindow {
-		public static final String TOPIC = UIModelTopicBase + "/basic/TrimmedWindow"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/basic/TrimmedWindow"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/basic/TrimmedWindow/*"; //$NON-NLS-1$
+		public static final String TOPIC_TRIMBARS = "org/eclipse/e4/ui/model/basic/TrimmedWindow/trimBars/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String TRIMBARS = "trimBars"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Window {
-		public static final String TOPIC = UIModelTopicBase + "/basic/Window"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/basic/Window"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/basic/Window/*"; //$NON-NLS-1$
+		public static final String TOPIC_HEIGHT = "org/eclipse/e4/ui/model/basic/Window/height/*"; //$NON-NLS-1$
+		public static final String TOPIC_MAINMENU = "org/eclipse/e4/ui/model/basic/Window/mainMenu/*"; //$NON-NLS-1$
+		public static final String TOPIC_SHAREDELEMENTS = "org/eclipse/e4/ui/model/basic/Window/sharedElements/*"; //$NON-NLS-1$
+		public static final String TOPIC_WIDTH = "org/eclipse/e4/ui/model/basic/Window/width/*"; //$NON-NLS-1$
+		public static final String TOPIC_WINDOWS = "org/eclipse/e4/ui/model/basic/Window/windows/*"; //$NON-NLS-1$
+		public static final String TOPIC_X = "org/eclipse/e4/ui/model/basic/Window/x/*"; //$NON-NLS-1$
+		public static final String TOPIC_Y = "org/eclipse/e4/ui/model/basic/Window/y/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String HEIGHT = "height"; //$NON-NLS-1$
 		public static final String MAINMENU = "mainMenu"; //$NON-NLS-1$
 		public static final String SHAREDELEMENTS = "sharedElements"; //$NON-NLS-1$
@@ -410,7 +656,18 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface Context {
-		public static final String TOPIC = UIModelTopicBase + "/ui/Context"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/ui/Context"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/Context/*"; //$NON-NLS-1$
+		public static final String TOPIC_CONTEXT = "org/eclipse/e4/ui/model/ui/Context/context/*"; //$NON-NLS-1$
+		public static final String TOPIC_PROPERTIES = "org/eclipse/e4/ui/model/ui/Context/properties/*"; //$NON-NLS-1$
+		public static final String TOPIC_VARIABLES = "org/eclipse/e4/ui/model/ui/Context/variables/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CONTEXT = "context"; //$NON-NLS-1$
 		public static final String PROPERTIES = "properties"; //$NON-NLS-1$
 		public static final String VARIABLES = "variables"; //$NON-NLS-1$
@@ -418,51 +675,134 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface CoreExpression {
-		public static final String TOPIC = UIModelTopicBase + "/ui/CoreExpression"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/ui/CoreExpression"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/CoreExpression/*"; //$NON-NLS-1$
+		public static final String TOPIC_COREEXPRESSION = "org/eclipse/e4/ui/model/ui/CoreExpression/coreExpression/*"; //$NON-NLS-1$
+		public static final String TOPIC_COREEXPRESSIONID = "org/eclipse/e4/ui/model/ui/CoreExpression/coreExpressionId/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String COREEXPRESSION = "coreExpression"; //$NON-NLS-1$
 		public static final String COREEXPRESSIONID = "coreExpressionId"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Dirtyable {
-		public static final String TOPIC = UIModelTopicBase + "/ui/Dirtyable"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/ui/Dirtyable"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/Dirtyable/*"; //$NON-NLS-1$
+		public static final String TOPIC_DIRTY = "org/eclipse/e4/ui/model/ui/Dirtyable/dirty/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String DIRTY = "dirty"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface ElementContainer {
-		public static final String TOPIC = UIModelTopicBase + "/ui/ElementContainer"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/ui/ElementContainer"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/ElementContainer/*"; //$NON-NLS-1$
+		public static final String TOPIC_CHILDREN = "org/eclipse/e4/ui/model/ui/ElementContainer/children/*"; //$NON-NLS-1$
+		public static final String TOPIC_SELECTEDELEMENT = "org/eclipse/e4/ui/model/ui/ElementContainer/selectedElement/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CHILDREN = "children"; //$NON-NLS-1$
 		public static final String SELECTEDELEMENT = "selectedElement"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface GenericTile {
-		public static final String TOPIC = UIModelTopicBase + "/ui/GenericTile"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/ui/GenericTile"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/GenericTile/*"; //$NON-NLS-1$
+		public static final String TOPIC_HORIZONTAL = "org/eclipse/e4/ui/model/ui/GenericTile/horizontal/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String HORIZONTAL = "horizontal"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface GenericTrimContainer {
-		public static final String TOPIC = UIModelTopicBase + "/ui/GenericTrimContainer"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/ui/GenericTrimContainer"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/GenericTrimContainer/*"; //$NON-NLS-1$
+		public static final String TOPIC_SIDE = "org/eclipse/e4/ui/model/ui/GenericTrimContainer/side/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String SIDE = "side"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface Input {
-		public static final String TOPIC = UIModelTopicBase + "/ui/Input"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/ui/Input"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/Input/*"; //$NON-NLS-1$
+		public static final String TOPIC_INPUTURI = "org/eclipse/e4/ui/model/ui/Input/inputURI/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String INPUTURI = "inputURI"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface SnippetContainer {
-		public static final String TOPIC = UIModelTopicBase + "/ui/SnippetContainer"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/ui/SnippetContainer"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/SnippetContainer/*"; //$NON-NLS-1$
+		public static final String TOPIC_SNIPPETS = "org/eclipse/e4/ui/model/ui/SnippetContainer/snippets/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String SNIPPETS = "snippets"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface UIElement {
-		public static final String TOPIC = UIModelTopicBase + "/ui/UIElement"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/ui/UIElement"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/UIElement/*"; //$NON-NLS-1$
+		public static final String TOPIC_ACCESSIBILITYPHRASE = "org/eclipse/e4/ui/model/ui/UIElement/accessibilityPhrase/*"; //$NON-NLS-1$
+		public static final String TOPIC_CONTAINERDATA = "org/eclipse/e4/ui/model/ui/UIElement/containerData/*"; //$NON-NLS-1$
+		public static final String TOPIC_CURSHAREDREF = "org/eclipse/e4/ui/model/ui/UIElement/curSharedRef/*"; //$NON-NLS-1$
+		public static final String TOPIC_ONTOP = "org/eclipse/e4/ui/model/ui/UIElement/onTop/*"; //$NON-NLS-1$
+		public static final String TOPIC_PARENT = "org/eclipse/e4/ui/model/ui/UIElement/parent/*"; //$NON-NLS-1$
+		public static final String TOPIC_RENDERER = "org/eclipse/e4/ui/model/ui/UIElement/renderer/*"; //$NON-NLS-1$
+		public static final String TOPIC_TOBERENDERED = "org/eclipse/e4/ui/model/ui/UIElement/toBeRendered/*"; //$NON-NLS-1$
+		public static final String TOPIC_VISIBLE = "org/eclipse/e4/ui/model/ui/UIElement/visible/*"; //$NON-NLS-1$
+		public static final String TOPIC_VISIBLEWHEN = "org/eclipse/e4/ui/model/ui/UIElement/visibleWhen/*"; //$NON-NLS-1$
+		public static final String TOPIC_WIDGET = "org/eclipse/e4/ui/model/ui/UIElement/widget/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String ACCESSIBILITYPHRASE = "accessibilityPhrase"; //$NON-NLS-1$
 		public static final String CONTAINERDATA = "containerData"; //$NON-NLS-1$
 		public static final String CURSHAREDREF = "curSharedRef"; //$NON-NLS-1$
@@ -477,7 +817,18 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface UILabel {
-		public static final String TOPIC = UIModelTopicBase + "/ui/UILabel"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/ui/UILabel"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/UILabel/*"; //$NON-NLS-1$
+		public static final String TOPIC_ICONURI = "org/eclipse/e4/ui/model/ui/UILabel/iconURI/*"; //$NON-NLS-1$
+		public static final String TOPIC_LABEL = "org/eclipse/e4/ui/model/ui/UILabel/label/*"; //$NON-NLS-1$
+		public static final String TOPIC_TOOLTIP = "org/eclipse/e4/ui/model/ui/UILabel/tooltip/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String ICONURI = "iconURI"; //$NON-NLS-1$
 		public static final String LABEL = "label"; //$NON-NLS-1$
 		public static final String TOOLTIP = "tooltip"; //$NON-NLS-1$
@@ -485,7 +836,18 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface HandledItem {
-		public static final String TOPIC = UIModelTopicBase + "/menu/HandledItem"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/HandledItem"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/HandledItem/*"; //$NON-NLS-1$
+		public static final String TOPIC_COMMAND = "org/eclipse/e4/ui/model/menu/HandledItem/command/*"; //$NON-NLS-1$
+		public static final String TOPIC_PARAMETERS = "org/eclipse/e4/ui/model/menu/HandledItem/parameters/*"; //$NON-NLS-1$
+		public static final String TOPIC_WBCOMMAND = "org/eclipse/e4/ui/model/menu/HandledItem/wbCommand/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String COMMAND = "command"; //$NON-NLS-1$
 		public static final String PARAMETERS = "parameters"; //$NON-NLS-1$
 		public static final String WBCOMMAND = "wbCommand"; //$NON-NLS-1$
@@ -493,7 +855,18 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface Item {
-		public static final String TOPIC = UIModelTopicBase + "/menu/Item"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/Item"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/Item/*"; //$NON-NLS-1$
+		public static final String TOPIC_ENABLED = "org/eclipse/e4/ui/model/menu/Item/enabled/*"; //$NON-NLS-1$
+		public static final String TOPIC_SELECTED = "org/eclipse/e4/ui/model/menu/Item/selected/*"; //$NON-NLS-1$
+		public static final String TOPIC_TYPE = "org/eclipse/e4/ui/model/menu/Item/type/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String ENABLED = "enabled"; //$NON-NLS-1$
 		public static final String SELECTED = "selected"; //$NON-NLS-1$
 		public static final String TYPE = "type"; //$NON-NLS-1$
@@ -501,94 +874,232 @@ public class UIEvents {
 
 	@SuppressWarnings("javadoc")
 	public static interface Menu {
-		public static final String TOPIC = UIModelTopicBase + "/menu/Menu"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/Menu"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/Menu/*"; //$NON-NLS-1$
+		public static final String TOPIC_ENABLED = "org/eclipse/e4/ui/model/menu/Menu/enabled/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String ENABLED = "enabled"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface MenuContribution {
-		public static final String TOPIC = UIModelTopicBase + "/menu/MenuContribution"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/MenuContribution"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/MenuContribution/*"; //$NON-NLS-1$
+		public static final String TOPIC_PARENTID = "org/eclipse/e4/ui/model/menu/MenuContribution/parentId/*"; //$NON-NLS-1$
+		public static final String TOPIC_POSITIONINPARENT = "org/eclipse/e4/ui/model/menu/MenuContribution/positionInParent/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String PARENTID = "parentId"; //$NON-NLS-1$
 		public static final String POSITIONINPARENT = "positionInParent"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface MenuContributions {
-		public static final String TOPIC = UIModelTopicBase + "/menu/MenuContributions"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/MenuContributions"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/MenuContributions/*"; //$NON-NLS-1$
+		public static final String TOPIC_MENUCONTRIBUTIONS = "org/eclipse/e4/ui/model/menu/MenuContributions/menuContributions/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String MENUCONTRIBUTIONS = "menuContributions"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface MenuElement {
-		public static final String TOPIC = UIModelTopicBase + "/menu/MenuElement"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/MenuElement"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/MenuElement/*"; //$NON-NLS-1$
+		public static final String TOPIC_MNEMONICS = "org/eclipse/e4/ui/model/menu/MenuElement/mnemonics/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String MNEMONICS = "mnemonics"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface OpaqueMenuItem {
-		public static final String TOPIC = UIModelTopicBase + "/menu/OpaqueMenuItem"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/OpaqueMenuItem"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/OpaqueMenuItem/*"; //$NON-NLS-1$
+		public static final String TOPIC_OPAQUEITEM = "org/eclipse/e4/ui/model/menu/OpaqueMenuItem/opaqueItem/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String OPAQUEITEM = "opaqueItem"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface OpaqueMenuSeparator {
-		public static final String TOPIC = UIModelTopicBase + "/menu/OpaqueMenuSeparator"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/OpaqueMenuSeparator"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/OpaqueMenuSeparator/*"; //$NON-NLS-1$
+		public static final String TOPIC_OPAQUEITEM = "org/eclipse/e4/ui/model/menu/OpaqueMenuSeparator/opaqueItem/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String OPAQUEITEM = "opaqueItem"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface OpaqueToolItem {
-		public static final String TOPIC = UIModelTopicBase + "/menu/OpaqueToolItem"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/OpaqueToolItem"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/OpaqueToolItem/*"; //$NON-NLS-1$
+		public static final String TOPIC_OPAQUEITEM = "org/eclipse/e4/ui/model/menu/OpaqueToolItem/opaqueItem/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String OPAQUEITEM = "opaqueItem"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface RenderedMenu {
-		public static final String TOPIC = UIModelTopicBase + "/menu/RenderedMenu"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/RenderedMenu"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/RenderedMenu/*"; //$NON-NLS-1$
+		public static final String TOPIC_CONTRIBUTIONMANAGER = "org/eclipse/e4/ui/model/menu/RenderedMenu/contributionManager/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CONTRIBUTIONMANAGER = "contributionManager"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface RenderedMenuItem {
-		public static final String TOPIC = UIModelTopicBase + "/menu/RenderedMenuItem"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/RenderedMenuItem"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/RenderedMenuItem/*"; //$NON-NLS-1$
+		public static final String TOPIC_CONTRIBUTIONITEM = "org/eclipse/e4/ui/model/menu/RenderedMenuItem/contributionItem/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CONTRIBUTIONITEM = "contributionItem"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface RenderedToolBar {
-		public static final String TOPIC = UIModelTopicBase + "/menu/RenderedToolBar"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/RenderedToolBar"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/RenderedToolBar/*"; //$NON-NLS-1$
+		public static final String TOPIC_CONTRIBUTIONMANAGER = "org/eclipse/e4/ui/model/menu/RenderedToolBar/contributionManager/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String CONTRIBUTIONMANAGER = "contributionManager"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface ToolBarContribution {
-		public static final String TOPIC = UIModelTopicBase + "/menu/ToolBarContribution"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/ToolBarContribution"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/ToolBarContribution/*"; //$NON-NLS-1$
+		public static final String TOPIC_PARENTID = "org/eclipse/e4/ui/model/menu/ToolBarContribution/parentId/*"; //$NON-NLS-1$
+		public static final String TOPIC_POSITIONINPARENT = "org/eclipse/e4/ui/model/menu/ToolBarContribution/positionInParent/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String PARENTID = "parentId"; //$NON-NLS-1$
 		public static final String POSITIONINPARENT = "positionInParent"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface ToolBarContributions {
-		public static final String TOPIC = UIModelTopicBase + "/menu/ToolBarContributions"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/ToolBarContributions"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/ToolBarContributions/*"; //$NON-NLS-1$
+		public static final String TOPIC_TOOLBARCONTRIBUTIONS = "org/eclipse/e4/ui/model/menu/ToolBarContributions/toolBarContributions/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String TOOLBARCONTRIBUTIONS = "toolBarContributions"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface ToolItem {
-		public static final String TOPIC = UIModelTopicBase + "/menu/ToolItem"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/ToolItem"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/ToolItem/*"; //$NON-NLS-1$
+		public static final String TOPIC_MENU = "org/eclipse/e4/ui/model/menu/ToolItem/menu/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String MENU = "menu"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface TrimContribution {
-		public static final String TOPIC = UIModelTopicBase + "/menu/TrimContribution"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/TrimContribution"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/TrimContribution/*"; //$NON-NLS-1$
+		public static final String TOPIC_PARENTID = "org/eclipse/e4/ui/model/menu/TrimContribution/parentId/*"; //$NON-NLS-1$
+		public static final String TOPIC_POSITIONINPARENT = "org/eclipse/e4/ui/model/menu/TrimContribution/positionInParent/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String PARENTID = "parentId"; //$NON-NLS-1$
 		public static final String POSITIONINPARENT = "positionInParent"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
 	public static interface TrimContributions {
-		public static final String TOPIC = UIModelTopicBase + "/menu/TrimContributions"; //$NON-NLS-1$
+
+		// Topics that can be subscribed to
+
+		@Deprecated
+		public static final String ALL = "org/eclipse/e4/ui/model/menu/TrimContributions"; //$NON-NLS-1$
+
+		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/TrimContributions/*"; //$NON-NLS-1$
+		public static final String TOPIC_TRIMCONTRIBUTIONS = "org/eclipse/e4/ui/model/menu/TrimContributions/trimContributions/*"; //$NON-NLS-1$
+
+		// Attributes that can be tested in event handlers
 		public static final String TRIMCONTRIBUTIONS = "trimContributions"; //$NON-NLS-1$
 	}
 }

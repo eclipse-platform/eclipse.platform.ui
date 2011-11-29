@@ -256,14 +256,12 @@ public class PerspectiveSwitcher {
 
 	@PostConstruct
 	void init() {
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.CHILDREN), childrenHandler);
 		eventBroker.subscribe(
-				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
+UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED,
 				toBeRenderedHandler);
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, selectionHandler);
+		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL,
 				labelHandler);
 
 	}

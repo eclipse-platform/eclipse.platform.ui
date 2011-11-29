@@ -1579,8 +1579,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	private final void initializeE4Services() {
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.CHILDREN), new EventHandler() {
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
 					if (UIEvents.EventTypes.REMOVE.equals(event
@@ -1598,8 +1597,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 			}
 		});
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
-				UIEvents.ElementContainer.SELECTEDELEMENT), new EventHandler() {
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
 					if (UIEvents.EventTypes.SET.equals(event
@@ -1622,8 +1620,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// watch for parts' "toBeRendered" attribute being flipped to true, if
 		// they need to be rendered, then they need a corresponding 3.x
 		// reference
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.TOBERENDERED), new EventHandler() {
+		eventBroker.subscribe(
+UIEvents.UIElement.TOPIC_TOBERENDERED, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				if (Boolean.TRUE.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE))) {
 					Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -1638,7 +1636,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// watch for parts' contexts being set, once they've been set, we need
 		// to inject the ViewReference/EditorReference into the context
 		eventBroker.subscribe(
-				UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
+UIEvents.Context.TOPIC_CONTEXT,
 				new EventHandler() {
 					public void handleEvent(org.osgi.service.event.Event event) {
 						Object element = event.getProperty(UIEvents.EventTags.ELEMENT);

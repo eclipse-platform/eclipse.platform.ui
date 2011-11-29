@@ -434,21 +434,18 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		// Hook up the widget life-cycle subscriber
 		if (eventBroker != null) {
-			eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-					UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
-			eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-					UIEvents.UIElement.VISIBLE), visibilityHandler);
-			eventBroker.subscribe(UIEvents.buildTopic(
-					UIEvents.ElementContainer.TOPIC,
-					UIEvents.ElementContainer.CHILDREN), childrenHandler);
-			eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Window.TOPIC,
-					UIEvents.Window.WINDOWS), windowsHandler);
-			eventBroker.subscribe(UIEvents.buildTopic(
-					UIEvents.Perspective.TOPIC, UIEvents.Perspective.WINDOWS),
+			eventBroker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED,
+					toBeRenderedHandler);
+			eventBroker.subscribe(UIEvents.UIElement.TOPIC_VISIBLE,
+					visibilityHandler);
+			eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN,
+					childrenHandler);
+			eventBroker
+					.subscribe(UIEvents.Window.TOPIC_WINDOWS, windowsHandler);
+			eventBroker.subscribe(UIEvents.Perspective.TOPIC_WINDOWS,
 					windowsHandler);
-			eventBroker.subscribe(UIEvents.buildTopic(
-					UIEvents.TrimmedWindow.TOPIC,
-					UIEvents.TrimmedWindow.TRIMBARS), trimHandler);
+			eventBroker.subscribe(UIEvents.TrimmedWindow.TOPIC_TRIMBARS,
+					trimHandler);
 		}
 	}
 
