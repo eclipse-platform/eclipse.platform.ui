@@ -70,17 +70,25 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationDialog {
 		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATION_EDIT_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
-		int status = shouldSaveCurrentConfig();
-		if(status != IDialogConstants.CANCEL_ID) {
-			if(status != ID_DISCARD_BUTTON) {
-				if(status == IDialogConstants.YES_ID) {
-					getTabViewer().handleApplyPressed();
+		switch (buttonId) {
+			case ID_LAUNCH_BUTTON: {
+				int status = shouldSaveCurrentConfig();
+				if (status == IDialogConstants.YES_ID) {
+					okPressed();
 				}
+				setReturnCode(OK);
+				if (status != IDialogConstants.CANCEL_ID) {
+					close();
+				}
+				break;
+			}
+			case ID_CANCEL_BUTTON: {
 				cancelPressed();
+				break;
 			}
 		}
 	}
