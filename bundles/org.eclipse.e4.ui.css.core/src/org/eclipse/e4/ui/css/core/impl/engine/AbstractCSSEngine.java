@@ -841,11 +841,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 					tmp = widgetsMap.get(parent.getName());
 				} while (tmp == null && parent != Object.class);
 			}
-			//found && parentClass != ElementAdapter.class
-			elementProvider = (IElementProvider) tmp;
-			// Looks like this can be NULL see bug 338756
-			if( elementProvider != null ) {
-				elt = elementProvider.getElement(element, this);	
+			if(tmp != null && tmp instanceof IElementProvider) {
+				elt = ((IElementProvider)tmp).getElement(element, this);
 			}
 		}
 		if (elt != null) {

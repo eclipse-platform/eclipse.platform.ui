@@ -25,6 +25,7 @@ public class CssCoreTestSuite extends TestSuite {
 		addTestSuite(StyleRuleTest.class);
 		addTestSuite(ViewCSSTest.class);
 		addTestSuite(ValueTest.class);
+		addTestSuite(EngineProviderTest.class);
 		// $JUnit-END$
 	}
 }
