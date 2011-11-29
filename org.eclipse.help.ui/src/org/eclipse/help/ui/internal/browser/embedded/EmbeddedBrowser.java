@@ -391,6 +391,11 @@ public class EmbeddedBrowser {
 					String msg = "Error opening external Web browser"; //$NON-NLS-1$
 					HelpUIPlugin.logError(msg, t);
 				}
+				externalShell.getDisplay().asyncExec(new Runnable() {
+				    public void run() {
+				        externalShell.dispose();
+				    }
+				});				
 			}
 		});
 		e.browser = externalBrowser;
