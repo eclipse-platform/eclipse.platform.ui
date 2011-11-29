@@ -30,6 +30,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.widgets.CTabFolder;
@@ -41,6 +44,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
@@ -107,6 +111,13 @@ public class StackRenderer extends LazyStackRenderer {
 	private EventHandler itemUpdater;
 
 	private EventHandler dirtyUpdater;
+
+	/**
+	 * An event handler for listening to changes to the state of view menus and
+	 * its child menu items. Depending on what state these items are in, the
+	 * view menu should or should not be rendered in the tab folder.
+	 */
+	private EventHandler viewMenuUpdater;
 
 	private boolean ignoreTabSelChanges = false;
 
@@ -324,6 +335,93 @@ public class StackRenderer extends LazyStackRenderer {
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Dirtyable.TOPIC,
 				UIEvents.Dirtyable.DIRTY), dirtyUpdater);
+
+		viewMenuUpdater = new EventHandler() {
+			public void handleEvent(Event event) {
+				Object objElement = event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+
+				// Ensure that this event is for a MMenuItem
+				if (!(objElement instanceof MMenuElement)) {
+					return;
+				}
+
+				EObject parent = ((EObject) objElement).eContainer();
+				while (parent instanceof MMenuElement) {
+					MUIElement element = (MUIElement) parent;
+					if (!element.isToBeRendered() || !element.isVisible()) {
+						return;
+					}
+
+					objElement = parent;
+					parent = parent.eContainer();
+				}
+
+				// if we're a view menu, the parent element is a part
+				if (!(parent instanceof MPart)) {
+					return;
+				}
+
+				MPart element = (MPart) parent;
+				MUIElement parentElement = element.getParent();
+				if (parentElement == null) {
+					MPlaceholder placeholder = element.getCurSharedRef();
+					if (placeholder == null) {
+						return;
+					}
+
+					parentElement = placeholder.getParent();
+					if (parentElement == null) {
+						return;
+					}
+				}
+
+				Object widget = parentElement.getWidget();
+				if (widget instanceof CTabFolder) {
+					Boolean newValue = (Boolean) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					CTabFolder folder = (CTabFolder) widget;
+					if (newValue.booleanValue()) {
+						if (getViewMenuTB(folder) == null) {
+							disposeViewMenu(folder);
+							setupMenuButton(element, folder);
+							layoutTopRight(folder);
+						}
+					} else if (!isMenuVisible((MMenu) objElement)) {
+						disposeViewMenu(folder);
+					}
+				}
+			}
+		};
+
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.VISIBLE), viewMenuUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.TOBERENDERED), viewMenuUpdater);
+	}
+
+	/**
+	 * Determines if the menu provided or any one of its children should be
+	 * rendered.
+	 * 
+	 * @param menu
+	 *            the menu to determine if it should be displayed in the tab
+	 *            folder
+	 * @return <tt>true</tt> if the menu should be drawn in the tab folder,
+	 *         <tt>false</tt> otherwise
+	 */
+	private boolean isMenuVisible(MMenu menu) {
+		if (menu.isToBeRendered() && menu.isVisible()) {
+			for (MMenuElement element : menu.getChildren()) {
+				if (element.isToBeRendered() && element.isVisible()) {
+					return true;
+				} else if (element instanceof MMenu
+						&& isMenuVisible((MMenu) element)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	protected void updateTab(CTabItem cti, MPart part, String attName,
@@ -356,6 +454,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		eventBroker.unsubscribe(itemUpdater);
 		eventBroker.unsubscribe(dirtyUpdater);
+		eventBroker.unsubscribe(viewMenuUpdater);
 	}
 
 	private String getLabel(MUILabel itemPart, String newName) {
@@ -426,10 +525,20 @@ public class StackRenderer extends LazyStackRenderer {
 		return (Composite) ctf.getData(TOP_RIGHT);
 	}
 
-	public void clearTR(CTabFolder ctf) {
+	/**
+	 * Disposes of the view menu associated with the given tab folder.
+	 * 
+	 * @param ctf
+	 *            the tab folder to clear of its view menu
+	 */
+	public void disposeViewMenu(CTabFolder ctf) {
 		ToolBar vmTB = getViewMenuTB(ctf);
 		if (vmTB != null && !vmTB.isDisposed())
 			vmTB.dispose();
+	}
+
+	public void clearTR(CTabFolder ctf) {
+		disposeViewMenu(ctf);
 
 		MToolBar viewTBModel = getViewTB(ctf);
 		if (viewTBModel != null && viewTBModel.getWidget() != null)
@@ -454,7 +563,16 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		setupMenuButton(part, ctf);
+		layoutTopRight(ctf);
+	}
 
+	/**
+	 * Asks the specified tab folder to layout its top right control.
+	 * 
+	 * @param ctf
+	 *            the tab folder that should be laid out
+	 */
+	public void layoutTopRight(CTabFolder ctf) {
 		Composite trComp = getTRComposite(ctf);
 		if (trComp.getChildren().length > 0) {
 			trComp.setVisible(true);
@@ -464,7 +582,7 @@ public class StackRenderer extends LazyStackRenderer {
 			trComp.setVisible(false);
 		}
 
-		trComp.layout();
+		trComp.pack();
 		ctf.layout();
 	}
 
@@ -749,11 +867,19 @@ public class StackRenderer extends LazyStackRenderer {
 		adjustTR(ctf, part);
 	}
 
-	private void setupMenuButton(MPart part, CTabFolder ctf) {
+	/**
+	 * Creates a view menu for the given part in the contained tab folder.
+	 * 
+	 * @param part
+	 *            the part that should have its view menu created
+	 * @param ctf
+	 *            the containing tab folder
+	 */
+	public void setupMenuButton(MPart part, CTabFolder ctf) {
 		MMenu viewMenu = getViewMenu(part);
 
 		// View menu (if any)
-		if (viewMenu != null) {
+		if (viewMenu != null && hasVisibleMenuItems(viewMenu, part)) {
 			showMenuButton(part, ctf, viewMenu);
 		} else {
 			// hide the menu's TB
@@ -850,7 +976,7 @@ public class StackRenderer extends LazyStackRenderer {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-		if (!(menu.getData() instanceof MenuManager)) {
+		if (!menu.isDisposed() && !(menu.getData() instanceof MenuManager)) {
 			menu.dispose();
 		}
 	}
@@ -1045,10 +1171,73 @@ public class StackRenderer extends LazyStackRenderer {
 			return null;
 		}
 		for (MMenu menu : part.getMenus()) {
-			if (menu.getTags().contains(TAG_VIEW_MENU) && menu.isToBeRendered()) {
+			if (menu.getTags().contains(TAG_VIEW_MENU)) {
 				return menu;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Determine whether the given view menu has any visible menu items.
+	 * 
+	 * @param viewMenu
+	 *            the view menu to check
+	 * @param part
+	 *            the view menu's parent part
+	 * @return <tt>true</tt> if the specified view menu has visible children,
+	 *         <tt>false</tt> otherwise
+	 */
+	private boolean hasVisibleMenuItems(MMenu viewMenu, MPart part) {
+		if (!viewMenu.isToBeRendered() || !viewMenu.isVisible()) {
+			return false;
+		}
+
+		for (MMenuElement menuElement : viewMenu.getChildren()) {
+			if (menuElement.isToBeRendered() && menuElement.isVisible()) {
+				if (menuElement instanceof MOpaqueMenuItem) {
+					IContributionItem item = (IContributionItem) ((MOpaqueMenuItem) menuElement)
+							.getOpaqueItem();
+					if (item != null && item.isVisible()) {
+						return true;
+					}
+				} else if (menuElement instanceof MOpaqueMenuSeparator) {
+					IContributionItem item = (IContributionItem) ((MOpaqueMenuSeparator) menuElement)
+							.getOpaqueItem();
+					if (item != null && item.isVisible()) {
+						return true;
+					}
+				} else {
+					return true;
+				}
+			}
+		}
+
+		Object menuRenderer = viewMenu.getRenderer();
+		if (menuRenderer instanceof MenuManagerRenderer) {
+			MenuManager manager = ((MenuManagerRenderer) menuRenderer)
+					.getManager(viewMenu);
+			if (manager != null && manager.isVisible()) {
+				return true;
+			}
+		}
+
+		Control control = (Control) part.getWidget();
+		Menu menu = (Menu) renderer.createGui(viewMenu, control.getShell(),
+				part.getContext());
+		if (menu != null) {
+			menuRenderer = viewMenu.getRenderer();
+			if (menuRenderer instanceof MenuManagerRenderer) {
+				MenuManagerRenderer menuManagerRenderer = (MenuManagerRenderer) menuRenderer;
+				MenuManager manager = menuManagerRenderer.getManager(viewMenu);
+				if (manager != null) {
+					// remark ourselves as dirty so that the menu will be
+					// reconstructed
+					manager.markDirty();
+				}
+			}
+			return menu.getItemCount() != 0;
+		}
+		return false;
 	}
 }
