@@ -20,9 +20,6 @@ import org.eclipse.core.internal.utils.FileUtil;
  * failure writing this stream happens.
  * Basically, the new contents are written to a temporary location.
  * If everything goes OK, it is moved to the right place.
- * The user has the option to define the temporary location or 
- * it will be created in the default-temporary directory
- * (see java.io.File for details).
  */
 public class SafeFileOutputStream extends OutputStream {
 	protected File temp;
@@ -31,12 +28,19 @@ public class SafeFileOutputStream extends OutputStream {
 	protected boolean failed;
 	protected static final String EXTENSION = ".bak"; //$NON-NLS-1$
 
+	/**
+	 * Creates an output stream on a file at the given location
+	 * @param file The file to be written to
+	 */
 	public SafeFileOutputStream(File file) throws IOException {
 		this(file.getAbsolutePath(), null);
 	}
 
 	/**
-	 * If targetPath is null, the file will be created in the default-temporary directory.
+	 * Creates an output stream on a file at the given location
+	 * @param targetPath The file to be written to
+	 * @param tempPath The temporary location to use, or <code>null</code> to
+	 * use the same location as the target path but with a different extension.
 	 */
 	public SafeFileOutputStream(String targetPath, String tempPath) throws IOException {
 		failed = false;
