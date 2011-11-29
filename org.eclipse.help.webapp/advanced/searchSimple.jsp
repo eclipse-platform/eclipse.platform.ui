@@ -208,7 +208,8 @@ function onloadHandler(e)
 <body dir="<%=direction%>" onload="onloadHandler()"  onunload="closeAdvanced()">
 
 	<form  name="searchForm"   onsubmit="doSearch()">
-		<table id="searchTable" align="<%=isRTL?"right":"left"%>" valign="middle" cellspacing="0" cellpadding="0" border="0">
+	<div role="search">
+		<table id="searchTable" align="<%=isRTL?"right":"left"%>" valign="middle" cellspacing="0" cellpadding="0" border="0" role="presentation">
 			<tr nowrap  valign="middle">
 				<td <%=isRTL?"nowrap":""%>>
 					<label id="searchLabel" for="searchWord" accesskey="<%=ServletResources.getAccessKey("SearchLabel", request)%>">
@@ -228,6 +229,7 @@ function onloadHandler(e)
 			</tr>
 
 		</table>
+	</div>
 	</form>		
 
 </body>

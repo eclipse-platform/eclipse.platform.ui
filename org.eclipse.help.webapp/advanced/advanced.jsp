@@ -182,8 +182,8 @@ function onloadHandler()
 <body dir="<%=direction%>" onload="onloadHandler()">
 
 <form name="searchForm" onsubmit="doAdvancedSearch()">
-<div style="overflow:auto;height:250px;">
-	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
+<div style="overflow:auto;height:250px;" role="search">
+	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center role="presentation">
 		<tr><td style="padding:0px 10px;"><label for="searchWord"><%=ServletResources.getString("SearchExpression", request)%></label>
 		</td></tr>
 		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value="<%=UrlUtil.htmlEncode(data.getSearchWord())%>" maxlength=256 alt="<%=ServletResources.getString("SearchExpression", request)%>" title="<%=ServletResources.getString("SearchExpression", request)%>">
