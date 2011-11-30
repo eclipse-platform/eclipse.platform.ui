@@ -15,12 +15,13 @@ import java.util.Locale;
 
 import javax.servlet.http.Cookie;
 
-import org.eclipse.core.runtime.Platform;
+import junit.framework.TestCase;
+
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
-import junit.framework.TestCase;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Tests for locale related code in UrlUtil
@@ -50,7 +51,7 @@ public class LocaleTest extends TestCase {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		MockServletRequest req = new MockServletRequest();
 		req.setLocale(new Locale("de"));
-		req.getParameterMap().put("lang", "es");
+		req.getParameterMap().put("lang", new String[] { "es" });
 		String locale = UrlUtil.getLocale(req, null);
 		assertEquals("es", locale);
 	}
@@ -61,7 +62,7 @@ public class LocaleTest extends TestCase {
 		MockServletRequest req = new MockServletRequest();
 		req.setLocale(new Locale("de"));
 		req.setCookies(new Cookie[] {new Cookie("lang", "it")});
-		req.getParameterMap().put("lang", "es");
+		req.getParameterMap().put("lang", new String[] { "es" });
 		String locale = UrlUtil.getLocale(req, null);
 		assertEquals("es", locale);
 	}

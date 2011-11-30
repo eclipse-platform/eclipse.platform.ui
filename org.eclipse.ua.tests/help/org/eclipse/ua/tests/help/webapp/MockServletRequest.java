@@ -42,7 +42,7 @@ import javax.servlet.http.Part;
 public class MockServletRequest implements HttpServletRequest {
 	
 	private Locale locale;
-	private Map parameterMap = new HashMap();
+	private Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 	private Cookie[] cookies = new Cookie[0];
 	private String pathInfo = null;
 
@@ -77,12 +77,12 @@ public class MockServletRequest implements HttpServletRequest {
 		return null;
 	}
 
-	public Enumeration getHeaderNames() {
+	public Enumeration<String> getHeaderNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Enumeration getHeaders(String arg0) {
+	public Enumeration<String> getHeaders(String arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -184,7 +184,7 @@ public class MockServletRequest implements HttpServletRequest {
 		return null;
 	}
 
-	public Enumeration getAttributeNames() {
+	public Enumeration<String> getAttributeNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -233,20 +233,21 @@ public class MockServletRequest implements HttpServletRequest {
 	}
 
 
-	public Enumeration getLocales() {
+	public Enumeration<Locale> getLocales() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public String getParameter(String arg0) {
-		return (String)parameterMap.get(arg0);
+		String[] values= parameterMap.get(arg0);
+		return values != null ? parameterMap.get(arg0)[0] : null;
 	}
 
-	public Map getParameterMap() {
+	public Map<String, String[]> getParameterMap() {
 		return parameterMap;
 	}
 
-	public Enumeration getParameterNames() {
+	public Enumeration<String> getParameterNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}
