@@ -586,7 +586,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			return;
 		}
 		AbstractGroupMarker marker = null;
-		if (itemModel.isVisible()) {
+		if (itemModel.isVisible()
+				&& !itemModel.getTags().contains(
+						MenuManagerRenderer.GROUP_MARKER)) {
 			marker = new Separator();
 			marker.setId(itemModel.getElementId());
 		} else {

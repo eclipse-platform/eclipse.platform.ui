@@ -345,6 +345,8 @@ public class MenuAdditionCacheEntry {
 		element.setElementId(name);
 		if (!MenuHelper.isSeparatorVisible(sepAddition)) {
 			element.setToBeRendered(false);
+			element.setVisible(false);
+			element.getTags().add(MenuManagerRenderer.GROUP_MARKER);
 		}
 		return element;
 	}
