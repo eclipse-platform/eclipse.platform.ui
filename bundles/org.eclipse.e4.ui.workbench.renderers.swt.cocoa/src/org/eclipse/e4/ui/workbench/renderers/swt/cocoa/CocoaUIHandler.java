@@ -393,8 +393,7 @@ public class CocoaUIHandler {
 				}
 			}
 		};
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.WIDGET), shellListener);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, shellListener);
 
 		// this listener is handling the Eclipse 4.0 compatibility case,
 		// where the window is created without a main menu or trim first,
@@ -414,8 +413,7 @@ public class CocoaUIHandler {
 				}
 			}
 		};
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Window.TOPIC,
-				UIEvents.Window.MAINMENU), menuListener);
+		eventBroker.subscribe(UIEvents.Window.TOPIC_MAINMENU, menuListener);
 
 		// watch for new menu contributions
 		menuContributionListener = new EventHandler() {
@@ -428,9 +426,7 @@ public class CocoaUIHandler {
 				}
 			}
 		};
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.MenuContributions.TOPIC,
-				UIEvents.MenuContributions.MENUCONTRIBUTIONS),
+		eventBroker.subscribe(UIEvents.MenuContributions.TOPIC_MENUCONTRIBUTIONS,
 				menuContributionListener);
 
 		// watch for command changes
@@ -448,8 +444,7 @@ public class CocoaUIHandler {
 				}
 			}
 		};
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Application.TOPIC,
-				UIEvents.Application.COMMANDS), commandListener);
+		eventBroker.subscribe(UIEvents.Application.TOPIC_COMMANDS, commandListener);
 
 	}
 
