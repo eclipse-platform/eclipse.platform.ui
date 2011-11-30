@@ -72,10 +72,18 @@ public class EclipseConnector {
 
 	public void transfer(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
+		
+		// URL
+		String pathInfo = req.getPathInfo();
+		if (pathInfo == null)
+			return;
+		if (pathInfo.startsWith("/")) //$NON-NLS-1$
+			pathInfo = pathInfo.substring(1);
+		String query = req.getQueryString();
+		String url = query == null ? pathInfo : (pathInfo + "?" + query); //$NON-NLS-1$
+
 		try {
-			String url = getURL(req);
-			if (url == null)
-				return;
+	        
 		    //System.out.println("Transfer " + url); //$NON-NLS-1$
 			// Redirect if the request includes PLUGINS_ROOT and is not a content request
 			int index = url.lastIndexOf(HelpURLConnection.PLUGINS_ROOT);
@@ -94,9 +102,8 @@ public class EclipseConnector {
 			if (lowerCaseuRL.startsWith("jar:") //$NON-NLS-1$
 					|| lowerCaseuRL.startsWith("platform:") //$NON-NLS-1$
 					|| (lowerCaseuRL.startsWith("file:") && UrlUtil.wasOpenedFromHelpDisplay(url))) { //$NON-NLS-1$
-				int i = url.indexOf('?');
-				if (i != -1)
-					url = url.substring(0, i);
+				url = pathInfo; // without query
+				
 				// ensure the file is only accessed from a local installation
 				if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER
 						|| !UrlUtil.isLocalRequest(req)) {
@@ -201,7 +208,7 @@ public class EclipseConnector {
 			is.close();
 
 		} catch (Exception e) {
-			String msg = "Error processing help request " + getURL(req); //$NON-NLS-1$
+			String msg = "Error processing help request " + url; //$NON-NLS-1$
 			HelpWebappPlugin.logError(msg, e);
 		}
 	}
@@ -347,34 +354,6 @@ public class EclipseConnector {
 		return con;
 	}
 
-	/**
-	 * Extracts the url from a request
-	 */
-	private String getURL(HttpServletRequest req) {
-		String query = ""; //$NON-NLS-1$
-		boolean firstParam = true;
-		for (Enumeration params = req.getParameterNames(); params
-				.hasMoreElements();) {
-			String param = (String) params.nextElement();
-			String[] values = req.getParameterValues(param);
-			if (values == null)
-				continue;
-			for (int i = 0; i < values.length; i++) {
-				if (firstParam) {
-					query += "?" + param + "=" + values[i]; //$NON-NLS-1$ //$NON-NLS-2$
-					firstParam = false;
-				} else
-					query += "&" + param + "=" + values[i]; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-
-		// the request contains the eclipse url help: or search:
-		String url = req.getPathInfo() + query;
-		if (url.startsWith("/")) //$NON-NLS-1$
-			url = url.substring(1);
-		return url;
-	}
-	
 	public static void setNotFoundCallout(INotFoundCallout callout) {
 		notFoundCallout = callout;
 	}
