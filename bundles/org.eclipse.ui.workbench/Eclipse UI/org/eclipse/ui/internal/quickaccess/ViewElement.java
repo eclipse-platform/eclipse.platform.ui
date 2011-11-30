@@ -42,10 +42,19 @@ public class ViewElement extends QuickAccessElement {
 		this.window = window;
 		this.viewDescriptor = descriptor;
 
+		imageDescriptor = createImageDescriptor();
+	}
+
+	private ImageDescriptor createImageDescriptor() {
+		String iconURI = viewDescriptor.getIconURI();
+		if (iconURI == null) {
+			return null;
+		}
+
 		try {
-			imageDescriptor = ImageDescriptor.createFromURL(new URL(descriptor.getIconURI()));
+			return ImageDescriptor.createFromURL(new URL(iconURI));
 		} catch (MalformedURLException e) {
-			imageDescriptor = null;
+			return null;
 		}
 	}
 
