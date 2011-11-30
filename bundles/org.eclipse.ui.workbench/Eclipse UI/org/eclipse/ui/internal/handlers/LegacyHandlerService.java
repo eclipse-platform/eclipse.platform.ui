@@ -553,7 +553,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 * @see org.eclipse.ui.handlers.IHandlerService#getCurrentState()
 	 */
 	public IEvaluationContext getCurrentState() {
-		return evalContext;
+		return new EvaluationContext(evalContext, evalContext.getDefaultVariable());
 	}
 
 	/*
