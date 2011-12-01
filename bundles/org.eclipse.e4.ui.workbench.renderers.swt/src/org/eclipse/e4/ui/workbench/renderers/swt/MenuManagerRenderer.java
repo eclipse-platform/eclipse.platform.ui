@@ -438,7 +438,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		if (!record.mergeIntoModel()) {
 			return false;
 		}
-		if (menuBar || ((EObject) menuModel).eContainer() instanceof MPart) {
+		if (menuBar || isPartMenu(menuModel)) {
 			final IEclipseContext parentContext = modelService
 					.getContainingContext(menuModel);
 			parentContext.runAndTrack(new RunAndTrack() {
@@ -451,6 +451,13 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			});
 		}
 		return true;
+	}
+
+	private boolean isPartMenu(MMenu menuModel) {
+		// don't want popup menus as their visibility does not need to be
+		// tracked by a separate RunAndTrack
+		return !(menuModel instanceof MPopupMenu)
+				&& ((EObject) menuModel).eContainer() instanceof MPart;
 	}
 
 	public ArrayList<ContributionRecord> getList(MMenuElement item) {
