@@ -13,17 +13,46 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.IRequest;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy2;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewerFilter;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -31,54 +60,1072 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @since 3.3
  */
-public class TreeModelContentProvider extends ModelContentProvider implements ITreeModelContentProvider {
-	
-	/**
-	 * Re-filters any filtered children of the given parent element.
-	 * 
-	 * @param path parent element
-	 */
-	protected void refilterChildren(TreePath path) {
-		if (getViewer() != null) {
-			int[] filteredChildren = getFilteredChildren(path);
-			if (filteredChildren != null) {
-				for (int i = 0; i < filteredChildren.length; i++) {
-					doUpdateElement(path, filteredChildren[i]);
-				}
-			}
-		}
-	}
-	
-	protected synchronized void doUpdateChildCount(TreePath path) {
+public class TreeModelContentProvider implements ITreeModelContentProvider, IContentProvider, IModelChangedListener {
+
+    /**
+     * Tree model viewer that this content provider is used with.
+     */
+    private IInternalTreeModelViewer fViewer;
+
+    /**
+     * Mask used to filter delta updates coming from the model.
+     */
+    private int fModelDeltaMask = ~0;
+
+    /**
+     * Map tree paths to model proxy responsible for element
+     * 
+     * Used to install different model proxy instances for one element depending
+     * on the tree path.
+     */
+    private Map fTreeModelProxies = new HashMap(); // tree model proxy by
+                                                   // element tree path
+
+    /**
+     * Map element to model proxy responsible for it.
+     * 
+     * Used to install a single model proxy which is responsible for all
+     * instances of an element in the model tree.
+     */
+    private Map fModelProxies = new HashMap(); // model proxy by element
+
+    /**
+     * Map of nodes that have been filtered from the viewer.
+     */
+    private FilterTransform fTransform = new FilterTransform();
+
+    /**
+     * Model listeners
+     */
+    private ListenerList fModelListeners = new ListenerList();
+
+    /**
+     * Viewer update listeners
+     */
+    private ListenerList fUpdateListeners = new ListenerList();
+
+    /**
+     * Map of updates in progress: element path -> list of requests
+     */
+    private Map fRequestsInProgress = new HashMap();
+
+    /**
+     * Map of dependent requests waiting for parent requests to complete:
+     * element path -> list of requests
+     */
+    private Map fWaitingRequests = new HashMap();
+
+    private List fCompletedUpdates = new ArrayList();
+    
+    private Runnable fCompletedUpdatesJob;
+
+    private ViewerStateTracker fStateTracker = new ViewerStateTracker(this);
+    
+    /**
+     * Update type constants
+     */
+    static final int UPDATE_SEQUENCE_BEGINS = 0;
+
+    static final int UPDATE_SEQUENCE_COMPLETE = 1;
+
+    static final int UPDATE_BEGINS = 2;
+
+    static final int UPDATE_COMPLETE = 3;
+
+
+    /**
+     * Constant for an empty tree path.
+     */
+    static final TreePath EMPTY_TREE_PATH = new TreePath(new Object[] {});
+
+    // debug flags
+    public static String DEBUG_PRESENTATION_ID = null;
+    public static boolean DEBUG_CONTENT_PROVIDER = false;
+    public static boolean DEBUG_UPDATE_SEQUENCE = false;
+    public static boolean DEBUG_DELTAS = false;
+    public static boolean DEBUG_TEST_PRESENTATION_ID(IPresentationContext context) {
+        if (context == null) {
+            return true;
+        }
+        return DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(context.getId());
+    }
+    
+    static {
+        DEBUG_PRESENTATION_ID = Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/presentationId"); //$NON-NLS-1$
+        if (!DebugUIPlugin.DEBUG || "".equals(DEBUG_PRESENTATION_ID)) { //$NON-NLS-1$
+            DEBUG_PRESENTATION_ID = null;
+        }
+        DEBUG_CONTENT_PROVIDER = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+            Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/contentProvider")); //$NON-NLS-1$
+        DEBUG_UPDATE_SEQUENCE = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+            Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/updateSequence")); //$NON-NLS-1$
+        ViewerStateTracker.DEBUG_STATE_SAVE_RESTORE = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+            Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/stateSaveRestore")); //$NON-NLS-1$
+        DEBUG_DELTAS = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+            Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/deltas")); //$NON-NLS-1$
+    }
+
+    public void dispose() {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        
+        // cancel pending updates
+        Iterator iterator = fRequestsInProgress.values().iterator();
+        while (iterator.hasNext()) {
+            List requests = (List) iterator.next();
+            Iterator reqIter = requests.iterator();
+            while (reqIter.hasNext()) {
+                ((IRequest) reqIter.next()).cancel();
+            }
+        }
+        fWaitingRequests.clear();
+
+        fStateTracker.dispose();
+        fModelListeners.clear();
+        fUpdateListeners.clear();
+        disposeAllModelProxies();
+        
+        synchronized(this) {
+            fViewer = null;
+        }
+    }
+
+    /**
+     * @return Returns whether the content provider is disposed.
+     */
+    boolean isDisposed() {
+        synchronized(this) {
+            return fViewer == null;
+        }
+    }
+
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        synchronized(this) {
+            fViewer = (IInternalTreeModelViewer) viewer;
+        }
+        
+        Assert.isTrue( fViewer.getDisplay().getThread() == Thread.currentThread() );
+
+        if (oldInput != null) {
+            fStateTracker.saveViewerState(oldInput);
+        }
+    }
+    
+    public void postInputChanged(IInternalTreeModelViewer viewer, Object oldInput, Object newInput) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        
+        cancelSubtreeUpdates(TreePath.EMPTY);
+        disposeAllModelProxies();
+        cancelSubtreeUpdates(TreePath.EMPTY);
+        fTransform.clear();
+        if (newInput != null) {
+            installModelProxy(newInput, TreePath.EMPTY);
+            fStateTracker.restoreViewerState(newInput);
+        }
+    }
+
+    public void addViewerUpdateListener(IViewerUpdateListener listener) {
+        fUpdateListeners.add(listener);
+    }
+
+    public void removeViewerUpdateListener(IViewerUpdateListener listener) {
+        fUpdateListeners.remove(listener);
+    }
+
+    public void addStateUpdateListener(IStateUpdateListener listener) {
+        fStateTracker.addStateUpdateListener(listener);
+    }
+
+    public void preserveState(TreePath path) {
+        fStateTracker.appendToPendingStateDelta(path);        
+    }
+    
+    public void removeStateUpdateListener(IStateUpdateListener listener) {
+        fStateTracker.removeStateUpdateListener(listener);
+    }
+
+    public void addModelChangedListener(IModelChangedListener listener) {
+        fModelListeners.add(listener);
+    }
+
+    public void removeModelChangedListener(IModelChangedListener listener) {
+        fModelListeners.remove(listener);
+    }
+    
+    public void cancelRestore(final TreePath path, final int flags) {
+        fStateTracker.cancelRestore(path, flags);
+    }
+
+    public boolean setChecked(TreePath path, boolean checked) {
+        IModelProxy elementProxy = getElementProxy(path);
+        if (elementProxy instanceof ICheckboxModelProxy) {
+            return ((ICheckboxModelProxy) elementProxy).setChecked(getPresentationContext(), getViewer().getInput(), path, checked);
+        }                               
+        return false;
+    }
+    
+    /**
+     * Installs the model proxy for the given element into this content provider
+     * if not already installed.
+     * @param input the input to install the model proxy on
+     * @param path the {@link TreePath} to install the proxy for
+     */
+    private void installModelProxy(Object input, TreePath path) {
+        
+        if (!fTreeModelProxies.containsKey(path) && !fModelProxies.containsKey(path.getLastSegment())) {
+            Object element = path.getSegmentCount() != 0 ? path.getLastSegment() : input;
+            IModelProxy proxy = null;
+            IModelProxyFactory2 modelProxyFactory2 = ViewerAdapterService.getModelProxyFactory2(element);
+            if (modelProxyFactory2 != null) {
+                proxy = modelProxyFactory2.createTreeModelProxy(input, path, getPresentationContext());
+                if (proxy != null) {
+                    fTreeModelProxies.put(path, proxy);
+                }
+            }
+            if (proxy == null) {
+                IModelProxyFactory modelProxyFactory = ViewerAdapterService.getModelProxyFactory(element);
+                if (modelProxyFactory != null) {
+                    proxy = modelProxyFactory.createModelProxy(element, getPresentationContext());
+                    if (proxy != null) {
+                        fModelProxies.put(element, proxy);
+                    }
+                }
+            }
+
+            if (proxy instanceof IModelProxy2) {
+                proxy.addModelChangedListener(this);
+                ((IModelProxy2)proxy).initialize(getViewer());
+            } else if (proxy != null) {
+                final IModelProxy finalProxy = proxy;
+                Job job = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
+                    protected IStatus run(IProgressMonitor monitor) {
+                        if (!monitor.isCanceled()) {
+                            IPresentationContext context = null;
+                            Viewer viewer = null;
+                            synchronized (TreeModelContentProvider.this) {
+                                if (!isDisposed()) {
+                                    context = getPresentationContext();
+                                    viewer = (Viewer) getViewer();
+                                }
+                            }
+                            if (viewer != null && context != null && !finalProxy.isDisposed()) {
+                                finalProxy.init(context);
+                                finalProxy.addModelChangedListener(TreeModelContentProvider.this);
+                                finalProxy.installed(viewer);
+                            }
+                        }
+                        return Status.OK_STATUS;
+                    }
+
+                    public boolean shouldRun() {
+                        return !isDisposed();
+                    }
+                };
+                job.setSystem(true);
+                job.schedule();
+            }
+        }
+    }
+
+    /**
+     * Finds the model proxy that an element with a given path is associated with.
+     * @param path Path of the elemnt.
+     * @return Element's model proxy.
+     */
+    private IModelProxy getElementProxy(TreePath path) {
+        while (path != null) {
+            IModelProxy proxy = (IModelProxy) fTreeModelProxies.get(path);
+            if (proxy != null) {
+                return proxy;
+            }
+
+            Object element = path.getSegmentCount() == 0 ? getViewer().getInput() : path.getLastSegment();
+            proxy = (IModelProxy) fModelProxies.get(element);
+            if (proxy != null) {
+                return proxy;
+            }
+
+            path = path.getParentPath();
+        }
+        return null;
+    }
+
+    /**
+     * Uninstalls each model proxy
+     */
+    private void disposeAllModelProxies() {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        
+        Iterator updatePolicies = fModelProxies.values().iterator();
+        while (updatePolicies.hasNext()) {
+            IModelProxy proxy = (IModelProxy) updatePolicies.next();
+            proxy.dispose();
+        }
+        fModelProxies.clear();
+
+        updatePolicies = fTreeModelProxies.values().iterator();
+        while (updatePolicies.hasNext()) {
+            IModelProxy proxy = (IModelProxy) updatePolicies.next();
+            proxy.dispose();
+        }
+        fTreeModelProxies.clear();
+    }
+    
+    /**
+     * Uninstalls the model proxy installed for the given element, if any.
+     * @param path the {@link TreePath} to dispose the model proxy for
+     */
+    private void disposeModelProxy(TreePath path) {
+        IModelProxy proxy = (IModelProxy) fTreeModelProxies.remove(path);
+        if (proxy != null) {
+            proxy.dispose();
+        }
+        proxy = (IModelProxy) fModelProxies.remove(path.getLastSegment());
+        if (proxy != null) {
+            proxy.dispose();
+        }
+    }    
+    
+    public void modelChanged(final IModelDelta delta, final IModelProxy proxy) {
+        Display display = null;
+
+        // Check if the viewer is still available, i.e. if the content provider
+        // is not disposed.
+        synchronized(this) {
+            if (fViewer != null && !proxy.isDisposed()) {
+                display = fViewer.getDisplay();
+            }
+        }
+        if (display != null) {
+            // If we're in display thread, process the delta immediately to 
+            // avoid "skid" in processing events.
+            if (Thread.currentThread().equals(display.getThread())) {
+                doModelChanged(delta, proxy);
+            }
+            else {
+                fViewer.getDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        doModelChanged(delta, proxy);
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Executes the mdoel proxy in UI thread.
+     * @param delta Delta to process
+     * @param proxy Proxy that fired the delta.
+     */
+    private void doModelChanged(IModelDelta delta, IModelProxy proxy) {
+        if (!proxy.isDisposed()) {
+            if (DEBUG_DELTAS && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                DebugUIPlugin.debug("RECEIVED DELTA: " + delta.toString()); //$NON-NLS-1$
+            }
+
+            updateModel(delta, getModelDeltaMask());
+
+            // Initiate model update sequence before notifying of the model changed. 
+            trigger(null);
+            
+            // Call model listeners after updating the viewer model.
+            Object[] listeners = fModelListeners.getListeners();
+            for (int i = 0; i < listeners.length; i++) {
+                ((IModelChangedListener) listeners[i]).modelChanged(delta, proxy);
+            }
+        }
+    }
+    
+    public void setModelDeltaMask(int mask) {
+        fModelDeltaMask = mask;
+    }
+
+    public int getModelDeltaMask() {
+        return fModelDeltaMask;
+    }
+
+    public void updateModel(IModelDelta delta, int mask) {
+        IModelDelta[] deltaArray = new IModelDelta[] { delta };
+        updateNodes(deltaArray, mask & (IModelDelta.REMOVED | IModelDelta.UNINSTALL));
+        updateNodes(deltaArray, mask & ITreeModelContentProvider.UPDATE_MODEL_DELTA_FLAGS
+            & ~(IModelDelta.REMOVED | IModelDelta.UNINSTALL));
+        updateNodes(deltaArray, mask & ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
+        
+        fStateTracker.checkIfRestoreComplete();
+    }
+
+    /**
+     * Returns a tree path for the node including the root element.
+     * 
+     * @param node
+     *            model delta
+     * @return corresponding tree path
+     */
+    TreePath getFullTreePath(IModelDelta node) {
+        ArrayList list = new ArrayList();
+        while (node.getParentDelta() != null) {
+            list.add(0, node.getElement());
+            node = node.getParentDelta();
+        }
+        return new TreePath(list.toArray());
+    }
+
+    /**
+     * Returns a tree path for the node, *not* including the root element.
+     * 
+     * @param node
+     *            model delta
+     * @return corresponding tree path
+     */
+    TreePath getViewerTreePath(IModelDelta node) {
+        ArrayList list = new ArrayList();
+        IModelDelta parentDelta = node.getParentDelta();
+        while (parentDelta != null) {
+            list.add(0, node.getElement());
+            node = parentDelta;
+            parentDelta = node.getParentDelta();
+        }
+        return new TreePath(list.toArray());
+    }
+
+    /**
+     * Returns the viewer this content provider is working for.
+     * 
+     * @return viewer
+     */
+    protected IInternalTreeModelViewer getViewer() {
+        synchronized(this) {
+            return fViewer;
+        }
+    }
+
+    public int viewToModelIndex(TreePath parentPath, int index) {
+        return fTransform.viewToModelIndex(parentPath, index);
+    }
+
+    public int viewToModelCount(TreePath parentPath, int count) {
+        return fTransform.viewToModelCount(parentPath, count);
+    }
+
+    public int modelToViewIndex(TreePath parentPath, int index) {
+        return fTransform.modelToViewIndex(parentPath, index);
+    }
+
+    public int modelToViewChildCount(TreePath parentPath, int count) {
+        return fTransform.modelToViewCount(parentPath, count);
+    }
+
+    public boolean areTreeModelViewerFiltersApplicable(Object parentElement) {
+        ViewerFilter[] filters = fViewer.getFilters();
+        if (filters.length > 0) {
+            for (int j = 0; j < filters.length; j++) {
+                if (filters[j] instanceof TreeModelViewerFilter &&
+                    ((TreeModelViewerFilter)filters[j]).isApplicable(fViewer, parentElement)) 
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean shouldFilter(Object parentElementOrTreePath, Object element) {
+        ViewerFilter[] filters = fViewer.getFilters();
+        if (filters.length > 0) {
+            for (int j = 0; j < filters.length; j++) {
+                if (filters[j] instanceof TreeModelViewerFilter) {
+                    // Skip the filter if not applicable to parent element
+                    Object parentElement = parentElementOrTreePath instanceof TreePath 
+                        ? ((TreePath)parentElementOrTreePath).getLastSegment() : parentElementOrTreePath;
+                    if (parentElement == null) parentElement = fViewer.getInput();
+                    if (!((TreeModelViewerFilter)filters[j]).isApplicable(fViewer, parentElement)) {
+                        continue;
+                    }
+                }
+                
+                if (!(filters[j].select((Viewer) fViewer, parentElementOrTreePath, element))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void unmapPath(TreePath path) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        fTransform.clear(path);
+        cancelSubtreeUpdates(path);
+    }
+
+    
+    boolean addFilteredIndex(TreePath parentPath, int index, Object element) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        return fTransform.addFilteredIndex(parentPath, index, element);
+    }
+
+    void removeElementFromFilters(TreePath parentPath, int index) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        fTransform.removeElementFromFilters(parentPath, index);
+    }
+
+    boolean removeElementFromFilters(TreePath parentPath, Object element) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        return fTransform.removeElementFromFilters(parentPath, element);
+    }
+
+    void setModelChildCount(TreePath parentPath, int childCount) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        fTransform.setModelChildCount(parentPath, childCount);
+    }
+
+    boolean isFiltered(TreePath parentPath, int index) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        return fTransform.isFiltered(parentPath, index);
+    }
+
+    int[] getFilteredChildren(TreePath parent) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        return fTransform.getFilteredChildren(parent);
+    }
+
+    void clearFilteredChild(TreePath parent, int modelIndex) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        fTransform.clear(parent, modelIndex);
+    }
+
+    void clearFilters(TreePath parent) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        fTransform.clear(parent);
+    }
+
+    /**
+     * Notification an update request has started
+     * 
+     * @param update the update to notify about
+     */
+    void updateStarted(ViewerUpdateMonitor update) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+        
+        boolean begin = fRequestsInProgress.isEmpty();
+        List requests = (List) fRequestsInProgress.get(update.getSchedulingPath());
+        if (requests == null) {
+            requests = new ArrayList();
+            fRequestsInProgress.put(update.getSchedulingPath(), requests);
+        }
+        requests.add(update);
+        if (begin) {
+            if (DEBUG_UPDATE_SEQUENCE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                System.out.println("MODEL SEQUENCE BEGINS"); //$NON-NLS-1$
+            }
+            notifyUpdate(UPDATE_SEQUENCE_BEGINS, null);
+        }
+        if (DEBUG_UPDATE_SEQUENCE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+            System.out.println("\tBEGIN - " + update); //$NON-NLS-1$
+        }
+        notifyUpdate(UPDATE_BEGINS, update);
+    }
+
+    /**
+     * Notification an update request has completed
+     * 
+     * @param updates the updates to notify
+     */
+    void updatesComplete(final List updates) {
+    	for (int i = 0; i < updates.size(); i++) {
+    		ViewerUpdateMonitor update = (ViewerUpdateMonitor)updates.get(i);
+	        notifyUpdate(UPDATE_COMPLETE, update);
+	        if (DEBUG_UPDATE_SEQUENCE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+	            System.out.println("\tEND - " + update); //$NON-NLS-1$
+	        }
+    	}
+    	
+    	// Wait a single cycle to allow viewer to queue requests triggered by completed updates.
+        getViewer().getDisplay().asyncExec(new Runnable() {
+            public void run() {
+                if (isDisposed()) return;
+
+            	for (int i = 0; i < updates.size(); i++) {
+            		ViewerUpdateMonitor update = (ViewerUpdateMonitor)updates.get(i);
+	                
+            		// Search for update in list using identity test.  Otherwise a completed canceled
+            		// update may trigger removal of up-to-date running update on the same element.
+	                List requests = (List) fRequestsInProgress.get(update.getSchedulingPath());
+	            	boolean found = false;
+	            	if (requests != null) {
+    	            	for (int j = 0; j < requests.size(); j++) {
+    	            		if (requests.get(j) == update) {
+    	            			found = true;
+    	            			requests.remove(j);
+    	            			break;
+    	            		}
+    	            	}
+	            	}
+	            	
+	            	if (found) {
+	                    // Trigger may initiate new updates, so wait to remove requests array from 
+	                    // fRequestsInProgress map.  This way updateStarted() will not send a 
+	                    // redundant "UPDATE SEQUENCE STARTED" notification.
+	                    trigger(update.getSchedulingPath());
+	                    if (requests.isEmpty()) {
+	                        fRequestsInProgress.remove(update.getSchedulingPath());
+	                    }
+	            	} else {
+	            		// Update may be removed from in progress list if it was canceled by schedule().
+	                    Assert.isTrue( update.isCanceled() );
+	            	}
+            	}
+                if (fRequestsInProgress.isEmpty() && fWaitingRequests.isEmpty()) {
+                    if (DEBUG_UPDATE_SEQUENCE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                        System.out.println("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
+                    }
+                    notifyUpdate(UPDATE_SEQUENCE_COMPLETE, null);
+                }            	
+            }
+        });
+            
+    }
+    
+    /**
+     * @return Returns true if there are outstanding updates in the viewer.
+     */
+    boolean areRequestsPending() {
+        return !fRequestsInProgress.isEmpty() || !fWaitingRequests.isEmpty();
+    }
+
+    /**
+     * @return Returns the state tracker for the content provider.
+     */
+    ViewerStateTracker getStateTracker() {
+        return fStateTracker;
+    }
+    
+    /**
+     * Notifies listeners about given update.
+     * @param type Type of update to call listeners with.
+     * @param update Update to notify about.
+     */
+    private void notifyUpdate(final int type, final IViewerUpdate update) {
+        if (!fUpdateListeners.isEmpty()) {
+            Object[] listeners = fUpdateListeners.getListeners();
+            for (int i = 0; i < listeners.length; i++) {
+                final IViewerUpdateListener listener = (IViewerUpdateListener) listeners[i];
+                SafeRunner.run(new ISafeRunnable() {
+                    public void run() throws Exception {
+                        switch (type) {
+                        case UPDATE_SEQUENCE_BEGINS:
+                            listener.viewerUpdatesBegin();
+                            break;
+                        case UPDATE_SEQUENCE_COMPLETE:
+                            listener.viewerUpdatesComplete();
+                            break;
+                        case UPDATE_BEGINS:
+                            listener.updateStarted(update);
+                            break;
+                        case UPDATE_COMPLETE:
+                            listener.updateComplete(update);
+                            break;
+                        }
+                    }
+
+                    public void handleException(Throwable exception) {
+                        DebugUIPlugin.log(exception);
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Cancels outstanding updates for the element at given path and its 
+     * children.
+     * @param path Path of element.
+     */
+    private void cancelSubtreeUpdates(TreePath path) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
+        
+        Iterator iterator = fRequestsInProgress.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Entry entry = (Entry) iterator.next();
+            TreePath entryPath = (TreePath) entry.getKey();
+            if (entryPath.startsWith(path, null)) {
+                List requests = (List) entry.getValue();
+                Iterator reqIter = requests.iterator();
+                while (reqIter.hasNext()) {
+                    // Cancel update and remove from requests list.  Removing from 
+                    // fRequestsInProgress ensures that isRequestBlocked() won't be triggered 
+                    // by a canceled update.
+                    ((IRequest) reqIter.next()).cancel();
+                    reqIter.remove();
+                }
+            }
+        }
+        List purge = new ArrayList();
+        iterator = fWaitingRequests.keySet().iterator();
+        while (iterator.hasNext()) {
+            TreePath entryPath = (TreePath) iterator.next();
+            if (entryPath.startsWith(path, null)) {
+                purge.add(entryPath);
+            }
+        }
+        iterator = purge.iterator();
+        while (iterator.hasNext()) {
+            fWaitingRequests.remove(iterator.next());
+        }
+        
+        fStateTracker.cancelStateSubtreeUpdates(path);
+    }
+
+    /**
+     * Returns whether this given request should be run, or should wait for
+     * parent update to complete.
+     * 
+     * @param update the update the schedule
+     */
+    private void schedule(final ViewerUpdateMonitor update) {
+        TreePath schedulingPath = update.getSchedulingPath();
+        List requests = (List) fWaitingRequests.get(schedulingPath);
+        if (requests == null) {
+            requests = new LinkedList();
+            requests.add(update);
+            fWaitingRequests.put(schedulingPath, requests);
+
+            List inProgressList = (List)fRequestsInProgress.get(schedulingPath);
+            if (inProgressList != null) {
+                int staleUpdateIndex = inProgressList.indexOf(update);
+                if (staleUpdateIndex >= 0) {
+                    // Cancel update and remove from requests list.  Removing from 
+                    // fRequestsInProgress ensures that isRequestBlocked() won't be triggered 
+                    // by a canceled update.
+                    ViewerUpdateMonitor staleUpdate = (ViewerUpdateMonitor)inProgressList.remove(staleUpdateIndex);
+                    staleUpdate.cancel();
+                    // Note: Do not reset the inProgressList to null.  This would cause the 
+                    // updateStarted() method to think that a new update sequence is 
+                    // being started.  Since there are waiting requests for this scheduling 
+                    // path, the list will be cleaned up later. 
+                }
+            }
+            if (inProgressList == null || inProgressList.isEmpty()) {
+                getViewer().getDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        trigger(update.getSchedulingPath());
+                    }
+                });
+            }
+        } else {
+            // there are waiting requests: coalesce with existing request and add to list
+            requests.add(coalesce(requests, update));
+        }
+    }
+    
+    /**
+     * Tries to coalesce the given request with any request in the list.  If a match is found, 
+     * the resulting request is then coalesced again with candidates in list.
+     * @param requests List of waiting requests to coalesce with 
+     * @param toCoalesce request to coalesce
+     * @return Returns either the coalesced request.  If no match was found it returns the 
+     * toCoalesce parameter request.  Either way the returned request needs to be added to the 
+     * waiting requests list.  
+     */
+    private ViewerUpdateMonitor coalesce(List requests, ViewerUpdateMonitor toCoalesce) {
+        Iterator reqIter = requests.iterator();
+        while (reqIter.hasNext()) {
+            ViewerUpdateMonitor waiting = (ViewerUpdateMonitor) reqIter.next();
+            if (waiting.coalesce(toCoalesce)) {
+                requests.remove(waiting);
+                // coalesced with existing request, done
+                // try to coalesce the combined requests with other waiting requests
+                return coalesce(requests, waiting);
+            }
+        }
+        return toCoalesce;
+    }
+
+    /**
+     * Returns whether there are outstanding ChildrenUpdate updates for the given path.
+     * This method is expected to be called during processing of a ChildrenRequest, 
+     * therefore one running children request is ignored.
+     * @param path Path of element to check.
+     * @return True if there are outstanding children updates for given element.
+     */
+    boolean areChildrenUpdatesPending(TreePath path) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
+        
+        List requests = (List) fWaitingRequests.get(path);
+        if (requests != null) {
+            for (int i = 0; i < requests.size(); i++) {
+                if (requests.get(i) instanceof ChildrenUpdate) {
+                    return true;
+                }
+            }
+        }
+        requests = (List) fRequestsInProgress.get(path);
+        if (requests != null) {
+            int numChildrenUpdateRequests = 0;
+            for (int i = 0; i < requests.size(); i++) {
+                if (requests.get(i) instanceof ChildrenUpdate) {
+                    if (++numChildrenUpdateRequests > 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Triggers waiting requests based on the given request that just 
+     * completed.  
+     * <p>
+     * Requests are processed in order such that updates to 
+     * children are delayed until updates for parent elements are completed.
+     * This allows the expansion/selection state of the elements to be 
+     * properly restored as new elements are retreived from model.  
+     * </p>
+     * 
+     * @param The schedulingPath path or requests to start processing.  May 
+     * be <code>null</code> to start the shortest path request.
+     */
+    private void trigger(TreePath schedulingPath) {
+        if (fWaitingRequests.isEmpty()) {
+            return;
+        }
+        List waiting = (List) fWaitingRequests.get(schedulingPath);
+        if (waiting == null) {
+            // no waiting, update the entry with the shortest path
+            int length = Integer.MAX_VALUE;
+            Iterator entries = fWaitingRequests.entrySet().iterator();
+            Entry candidate = null;
+            while (entries.hasNext()) {
+                Entry entry = (Entry) entries.next();
+                TreePath key = (TreePath) entry.getKey();
+                if (key.getSegmentCount() < length && !isRequestBlocked(key)) {
+                    candidate = entry;
+                    length = key.getSegmentCount();
+                }
+            }
+            if (candidate != null) {
+                startHighestPriorityRequest((TreePath) candidate.getKey(), (List) candidate.getValue());
+            }
+        } else if (!isRequestBlocked(schedulingPath)) {
+            // start the highest priority request
+            startHighestPriorityRequest(schedulingPath, waiting);
+        }
+    }
+
+    /**
+     * Returns true if there are running requests for any parent element of 
+     * the given tree path. 
+     * @param requestPath Path of element to check.
+     * @return Returns true if requests are running.
+     */
+    private boolean isRequestBlocked(TreePath requestPath) {
+        TreePath parentPath = requestPath;
+        List parentRequests = (List)fRequestsInProgress.get(parentPath); 
+        while (parentRequests == null || parentRequests.isEmpty()) {
+            parentPath = parentPath.getParentPath();
+            if (parentPath == null) {
+                // no running requests: start request
+                return false;
+            }
+            parentRequests = (List)fRequestsInProgress.get(parentPath);
+        }
+        return true;
+    }
+    
+    /**
+     * @param key the {@link TreePath}
+     * @param waiting the list of waiting requests
+     */
+    private void startHighestPriorityRequest(TreePath key, List waiting) {
+        int priority = 4;
+        ViewerUpdateMonitor next = null;
+        Iterator requests = waiting.iterator();
+        while (requests.hasNext()) {
+            ViewerUpdateMonitor vu = (ViewerUpdateMonitor) requests.next();
+            if (vu.getPriority() < priority) {
+                next = vu;
+                priority = next.getPriority();
+            }
+        }
+        if (next != null) {
+            waiting.remove(next);
+            if (waiting.isEmpty()) {
+                fWaitingRequests.remove(key);
+            }
+            next.start();
+        }
+    }
+
+    /**
+     * Returns the element corresponding to the given tree path.
+     * 
+     * @param path
+     *            tree path
+     * @return model element
+     */
+    protected Object getElement(TreePath path) {
+        if (path.getSegmentCount() > 0) {
+            return path.getLastSegment();
+        }
+        return getViewer().getInput();
+    }
+
+    /**
+     * Reschedule any children updates in progress for the given parent that
+     * have a start index greater than the given index. An element has been
+     * removed at this index, invalidating updates in progress.
+     * 
+     * @param parentPath
+     *            view tree path to parent element
+     * @param modelIndex
+     *            index at which an element was removed
+     */
+    private void rescheduleUpdates(TreePath parentPath, int modelIndex) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
+        
+        List requests = (List) fRequestsInProgress.get(parentPath);
+        List reCreate = null;
+        if (requests != null) {
+            Iterator iterator = requests.iterator();
+            while (iterator.hasNext()) {
+                IViewerUpdate update = (IViewerUpdate) iterator.next();
+                if (update instanceof IChildrenUpdate) {
+                    IChildrenUpdate childrenUpdate = (IChildrenUpdate) update;
+                    if (childrenUpdate.getOffset() > modelIndex) {
+                        // Cancel update and remove from requests list.  Removing from 
+                        // fRequestsInProgress ensures that isRequestBlocked() won't be triggered 
+                        // by a canceled update.
+                        childrenUpdate.cancel();
+                        iterator.remove();
+                        if (reCreate == null) {
+                            reCreate = new ArrayList();
+                        }
+                        reCreate.add(childrenUpdate);
+                        if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                            System.out.println("canceled update in progress handling REMOVE: " + childrenUpdate); //$NON-NLS-1$
+                        }
+                    }
+                }
+            }
+        }
+        requests = (List) fWaitingRequests.get(parentPath);
+        if (requests != null) {
+            Iterator iterator = requests.iterator();
+            while (iterator.hasNext()) {
+                IViewerUpdate update = (IViewerUpdate) iterator.next();
+                if (update instanceof IChildrenUpdate) {
+                    IChildrenUpdate childrenUpdate = (IChildrenUpdate) update;
+                    if (childrenUpdate.getOffset() > modelIndex) {
+                        ((ChildrenUpdate) childrenUpdate).setOffset(childrenUpdate.getOffset() - 1);
+                        if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                            System.out.println("modified waiting update handling REMOVE: " + childrenUpdate); //$NON-NLS-1$
+                        }
+                    }
+                }
+            }
+        }
+        // re-schedule canceled updates at new position.
+        // have to do this last else the requests would be waiting and
+        // get modified.
+        if (reCreate != null) {
+            Iterator iterator = reCreate.iterator();
+            while (iterator.hasNext()) {
+                IChildrenUpdate childrenUpdate = (IChildrenUpdate) iterator.next();
+                int start = childrenUpdate.getOffset() - 1;
+                int end = start + childrenUpdate.getLength();
+                for (int i = start; i < end; i++) {
+                    doUpdateElement(parentPath, i);
+                }
+            }
+        }
+    }
+    
+	private void doUpdateChildCount(TreePath path) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
+        
 		Object element = getElement(path);
 		IElementContentProvider contentAdapter = ViewerAdapterService.getContentProvider(element);
 		if (contentAdapter != null) {
-			ChildrenCountUpdate request = new ChildrenCountUpdate(this, getViewer().getInput(), path, element, contentAdapter, getPresentationContext());
+			ChildrenCountUpdate request = new ChildrenCountUpdate(this, getViewer().getInput(), path, element, contentAdapter);
 			schedule(request);
 		}
 	}	
 	
-	protected synchronized void doUpdateElement(TreePath parentPath, int modelIndex) {
+	void doUpdateElement(TreePath parentPath, int modelIndex) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
+        
 		Object parent = getElement(parentPath);
 		IElementContentProvider contentAdapter = ViewerAdapterService.getContentProvider(parent);
 		if (contentAdapter != null) {
-			ChildrenUpdate request = new ChildrenUpdate(this, getViewer().getInput(), parentPath, parent, modelIndex, contentAdapter, getPresentationContext());
+			ChildrenUpdate request = new ChildrenUpdate(this, getViewer().getInput(), parentPath, parent, modelIndex, contentAdapter);
 			schedule(request);
 		}			
 	}	
 	
-	protected synchronized void doUpdateHasChildren(TreePath path) {
+	private void doUpdateHasChildren(TreePath path) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
+        
 		Object element = getElement(path);
 		IElementContentProvider contentAdapter = ViewerAdapterService.getContentProvider(element);
 		if (contentAdapter != null) {
-			HasChildrenUpdate request = new HasChildrenUpdate(this, getViewer().getInput(), path, element, contentAdapter, getPresentationContext());
+			HasChildrenUpdate request = new HasChildrenUpdate(this, getViewer().getInput(), path, element, contentAdapter);
 			schedule(request);
 		}
 	}		
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#getPresentationContext()
+	/**
+	 * Checks if there are outstanding updates that may replace the element 
+	 * at given path. 
+	 * @param path Path of element to check.
+	 * @return Returns true if there are outsanding updates.
 	 */
+    boolean areElementUpdatesPending(TreePath path) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
+        
+        TreePath parentPath = path.getParentPath();
+        List requests = (List) fWaitingRequests.get(path);
+        if (requests != null) {
+            for (int i = 0; i < requests.size(); i++) {
+                ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                if (update instanceof ChildrenUpdate) {
+                    return true;
+                }
+            }
+        }
+        requests = (List) fWaitingRequests.get(parentPath);
+        if (requests != null) {
+            for (int i = 0; i < requests.size(); i++) {
+                ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                if (update.containsUpdate(path)) {
+                    return true;
+                }
+            }
+        }
+        requests = (List) fRequestsInProgress.get(path);
+        if (requests != null) {
+            for (int i = 0; i < requests.size(); i++) {
+                ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                if (update instanceof ChildrenUpdate) {
+                    return true;
+                }
+            }
+        }
+        requests = (List) fRequestsInProgress.get(parentPath);
+        if (requests != null) {
+            for (int i = 0; i < requests.size(); i++) {
+                ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
+                if (update.getElement().equals(path.getLastSegment())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+	
+    /**
+     * Returns the presentation context for this content provider.
+     * 
+     * @return presentation context
+     */
 	protected IPresentationContext getPresentationContext() {
 	    ITreeModelViewer viewer = getViewer();
 	    if (viewer != null) {
@@ -87,10 +1134,67 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	    return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleAdd(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
-	 */
-	protected void handleAdd(IModelDelta delta) {
+    /**
+     * Updates the viewer with the following deltas.
+     * 
+     * @param nodes Model deltas to be processed.
+     * @param mask the model delta mask
+     * @see IModelDelta for a list of masks
+     */
+    private void updateNodes(IModelDelta[] nodes, int mask) {
+        for (int i = 0; i < nodes.length; i++) {
+            IModelDelta node = nodes[i];
+            int flags = node.getFlags() & mask;
+
+            if ((flags & IModelDelta.ADDED) != 0) {
+                handleAdd(node);
+            }
+            if ((flags & IModelDelta.REMOVED) != 0) {
+                handleRemove(node);
+            }
+            if ((flags & IModelDelta.CONTENT) != 0) {
+                handleContent(node);
+            }
+            if ((flags & IModelDelta.STATE) != 0) {
+                handleState(node);
+            }
+            if ((flags & IModelDelta.INSERTED) != 0) {
+                handleInsert(node);
+            }
+            if ((flags & IModelDelta.REPLACED) != 0) {
+                handleReplace(node);
+            }
+            if ((flags & IModelDelta.INSTALL) != 0) {
+                handleInstall(node);
+            }
+            if ((flags & IModelDelta.UNINSTALL) != 0) {
+                handleUninstall(node);
+            }
+            if ((flags & IModelDelta.EXPAND) != 0) {
+                handleExpand(node);
+            }
+            if ((flags & IModelDelta.COLLAPSE) != 0) {
+                handleCollapse(node);
+            }
+            if ((flags & IModelDelta.SELECT) != 0) {
+                handleSelect(node);
+            }
+            if ((flags & IModelDelta.REVEAL) != 0) {
+                handleReveal(node);
+            }
+            updateNodes(node.getChildDeltas(), mask);
+        }
+    }
+
+    protected void handleInstall(IModelDelta delta) {
+        installModelProxy(getViewer().getInput(), getFullTreePath(delta));
+    }
+
+    protected void handleUninstall(IModelDelta delta) {
+        disposeModelProxy(getFullTreePath(delta));
+    }	
+	
+ 	protected void handleAdd(IModelDelta delta) {
 		IModelDelta parentDelta = delta.getParentDelta();
 		TreePath parentPath = getViewerTreePath(parentDelta);
 		Object element = delta.getElement();
@@ -122,7 +1226,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 				getViewer().replace(parentPath, viewIndex, element);
 				TreePath childPath = parentPath.createChildPath(element);
 				updateHasChildren(childPath);
-				restorePendingStateOnUpdate(childPath, modelIndex, false, false, false);
+				fStateTracker.restorePendingStateOnUpdate(childPath, modelIndex, false, false, false);
 			}	        
 		} else {
 			if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
@@ -135,7 +1239,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleContent(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
 	 */
-	protected void handleContent(IModelDelta delta) {
+ 	protected void handleContent(IModelDelta delta) {
 		if (delta.getParentDelta() == null && delta.getChildCount() == 0) {
 			// if the delta is for the root, ensure the root still matches viewer input
 			if (!delta.getElement().equals(getViewer().getInput())) {
@@ -144,14 +1248,13 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		}
 		TreePath treePath = getViewerTreePath(delta);
 		cancelSubtreeUpdates(treePath);
-		appendToPendingStateDelta(treePath);
 		getViewer().refresh(getElement(treePath));
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#handleCollapse(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta)
 	 */
-	protected void handleCollapse(IModelDelta delta) {
+ 	protected void handleCollapse(IModelDelta delta) {
 		TreePath elementPath = getViewerTreePath(delta);
 		getViewer().setExpandedState(elementPath, false);
         cancelRestore(elementPath, IModelDelta.EXPAND);
@@ -160,7 +1263,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleExpand(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
 	 */
-	protected void handleExpand(IModelDelta delta) {
+ 	protected void handleExpand(IModelDelta delta) {
 		// expand each parent, then this node
 		IModelDelta parentDelta = delta.getParentDelta();
 		if (parentDelta != null) {
@@ -181,10 +1284,14 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		}
 	}
 	
-	protected void expand(IModelDelta delta) {
+ 	/**
+ 	 * Expands the element pointed to by given delta.
+ 	 * @param delta Delta that points to the element to expand.
+ 	 */
+	private void expand(IModelDelta delta) {
 		int childCount = delta.getChildCount();
 		int modelIndex = delta.getIndex();
-		ITreeModelContentProviderTarget treeViewer = getViewer();
+		IInternalTreeModelViewer treeViewer = getViewer();
 		TreePath elementPath = getViewerTreePath(delta);
 		if (modelIndex >= 0) {
 			TreePath parentPath = elementPath.getParentPath();
@@ -227,9 +1334,10 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	 * @param parentPath viewer tree path to parent element
 	 * @param element element to insert
 	 * @param modelIndex index of the element in the model
-	 * @return
+	 * @return Returns the view index of the newly inserted element
+     * or -1 if not inserted.
 	 */
-	protected int unfilterElement(TreePath parentPath, Object element, int modelIndex) {
+	private int unfilterElement(TreePath parentPath, Object element, int modelIndex) {
 		// Element is filtered - if no longer filtered, insert the element
 		if (shouldFilter(parentPath, element)) {
 			if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
@@ -253,23 +1361,17 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleInsert(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
-	 */
 	protected void handleInsert(IModelDelta delta) {
 		// TODO: filters
 		getViewer().insert(getViewerTreePath(delta.getParentDelta()), delta.getElement(), delta.getIndex());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleRemove(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
-	 */
 	protected void handleRemove(IModelDelta delta) {
 		if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("handleRemove(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		IModelDelta parentDelta = delta.getParentDelta();
-		ITreeModelContentProviderTarget treeViewer = getViewer();
+		IInternalTreeModelViewer treeViewer = getViewer();
 		TreePath parentPath = getViewerTreePath(parentDelta);
 		Object element = delta.getElement();
 		if (removeElementFromFilters(parentPath, element)) {
@@ -333,20 +1435,43 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		getViewer().refresh(parentDelta.getElement());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleReplace(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
-	 */
 	protected void handleReplace(IModelDelta delta) {
 		TreePath parentPath = getViewerTreePath(delta.getParentDelta());
-		getViewer().replace(parentPath, delta.getIndex(), delta.getElement());
+		int index = delta.getIndex();
+		if (index < 0) {
+		    index = fTransform.indexOfFilteredElement(parentPath, delta.getElement());
+		}
+		if (index >= 0) {
+		    boolean filtered = isFiltered(parentPath, index);
+		    boolean shouldFilter = shouldFilter(parentPath, delta.getReplacementElement());
+		    
+		    // Update the filter transform
+		    if (filtered) {
+                clearFilteredChild(parentPath, index);
+		    }
+		    if (shouldFilter) {
+		        addFilteredIndex(parentPath, index, delta.getElement());
+		    }
+		    
+		    // Update the viewer
+		    if (filtered) {
+		        if (!shouldFilter) {
+		            getViewer().insert(parentPath, delta.getReplacementElement(), modelToViewIndex(parentPath, index));
+		        } 
+		        //else do nothing
+		    } else {
+		        if (shouldFilter) {
+		            getViewer().remove(parentPath, modelToViewIndex(parentPath, index));
+		        } else {
+		            getViewer().replace(parentPath, delta.getIndex(), delta.getReplacementElement());
+		        }
+		    }
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleSelect(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
-	 */
 	protected void handleSelect(IModelDelta delta) {
 		int modelIndex = delta.getIndex();
-		ITreeModelContentProviderTarget treeViewer = getViewer();
+		IInternalTreeModelViewer treeViewer = getViewer();
 		// check if selection is allowed
 		IStructuredSelection candidate = new TreeSelection(getViewerTreePath(delta));
 		if ((delta.getFlags() & IModelDelta.FORCE) == 0 && 
@@ -382,16 +1507,10 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleState(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
-	 */
 	protected void handleState(IModelDelta delta) {
 		getViewer().update(delta.getElement());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#handleReveal(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta)
-	 */
 	protected void handleReveal(IModelDelta delta) {
 		IModelDelta parentDelta = delta.getParentDelta();
 		if (parentDelta != null) {
@@ -401,9 +1520,13 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		}
 	}
 	
-	protected void reveal(IModelDelta delta) {
+	/**
+	 * Reveals the element pointed to by given delta.
+	 * @param delta Delta pointing to the element to reveal.
+	 */
+	private void reveal(IModelDelta delta) {
 		int modelIndex = delta.getIndex();
-		ITreeModelContentProviderTarget treeViewer = getViewer();
+		IInternalTreeModelViewer treeViewer = getViewer();
 		TreePath elementPath = getViewerTreePath(delta);
 		if (modelIndex >= 0) {
 			TreePath parentPath = elementPath.getParentPath();
@@ -433,90 +1556,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 			}
 		}
 	}	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#buildViewerState(org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta)
-	 */
-	protected void buildViewerState(ModelDelta delta) {
-        ITreeModelContentProviderTarget viewer = getViewer();
-        viewer.saveElementState(EMPTY_TREE_PATH, delta, IModelDelta.SELECT | IModelDelta.EXPAND);
-		
-		// Add memento for top item if it is mapped to an element.  The reveal memento
-		// is in its own path to avoid requesting unnecessary data when restoring it.
-		TreePath topElementPath = viewer.getTopElementPath();
-		if (topElementPath != null) {
-			ModelDelta parentDelta = delta;
-			TreePath parentPath = EMPTY_TREE_PATH;
-			for (int i = 0; i < topElementPath.getSegmentCount(); i++) {
-			    Object element = topElementPath.getSegment(i);
-			    int index = viewer.findElementIndex(parentPath, element);
-                ModelDelta childDelta = parentDelta.getChildDelta(element);
-                if (childDelta == null) {
-                    parentDelta = parentDelta.addNode(element, index, IModelDelta.NO_CHANGE);
-                } else {
-                    parentDelta = childDelta;
-                }
-                parentPath = parentPath.createChildPath(element);
-			}
-            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.REVEAL);
-		}
-	}
-
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#doInitialRestore()
-	 */
-    protected void doInitialRestore(ModelDelta delta) {
-        // Find the reveal delta and mark nodes on its path 
-        // to reveal as elements are updated.
-        markRevealDelta(delta);
-        
-        // Restore visible items.  
-        // Note (Pawel Piech): the initial list of items is normally 
-        // empty, so in most cases the code below does not do anything.
-        // Instead doRestore() is called when various updates complete.
-        int count = getViewer().getChildCount(TreePath.EMPTY);
-        for (int i = 0; i < count; i++) {
-            Object data = getViewer().getChildElement(TreePath.EMPTY, i);
-            if (data != null) {
-                restorePendingStateOnUpdate(new TreePath(new Object[]{data}), i, false, false, false);
-            }
-        }
-        
-    }
-
-    /**
-     * Finds the delta with the reveal flag, then it walks up this 
-     * delta and marks all the parents of it with the reveal flag.
-     * These flags are then used by the restore logic to restore
-     * and reveal all the nodes leading up to the element that should
-     * be ultimately at the top.
-     * @return The node just under the rootDelta which contains
-     * the reveal flag.  <code>null</code> if no reveal flag was found.
-     */
-    private ModelDelta markRevealDelta(ModelDelta rootDelta) {
-        final ModelDelta[] revealDelta = new ModelDelta[1];
-        IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
-            public boolean visit(IModelDelta delta, int depth) {
-                if ( (delta.getFlags() & IModelDelta.REVEAL) != 0) {
-                    revealDelta[0] = (ModelDelta)delta;
-                }
-                // Keep recursing only if we haven't found our delta yet.
-                return revealDelta[0] == null;
-            }
-        };
-        
-        rootDelta.accept(visitor);
-        if (revealDelta[0] != null) {
-            ModelDelta parentDelta = (ModelDelta)revealDelta[0].getParentDelta(); 
-            while(parentDelta.getParentDelta() != null) {
-                revealDelta[0] = parentDelta;
-                revealDelta[0].setFlags(revealDelta[0].getFlags() | IModelDelta.REVEAL);
-                parentDelta = (ModelDelta)parentDelta.getParentDelta();
-            }
-        }
-        return revealDelta[0];
-    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#getParents(java.lang.Object)
@@ -528,20 +1568,21 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateChildCount(org.eclipse.jface.viewers.TreePath, int)
 	 */
-	public synchronized void updateChildCount(TreePath treePath, int currentChildCount) {
+	public void updateChildCount(TreePath treePath, int currentChildCount) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
+        
 		if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("updateChildCount(" + getElement(treePath) + ", " + currentChildCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		refilterChildren(treePath);
-		//re-filter children when asked to update the child count for an element (i.e.
-		// when refreshing, see if filtered children are still filtered)
 		doUpdateChildCount(treePath);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateElement(org.eclipse.jface.viewers.TreePath, int)
 	 */
-	public synchronized void updateElement(TreePath parentPath, int viewIndex) {
+	public void updateElement(TreePath parentPath, int viewIndex) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+	    
 		int modelIndex = viewToModelIndex(parentPath, viewIndex);
 		if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("updateElement("+ getElement(parentPath) + ", " + viewIndex + ") > modelIndex = " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -552,7 +1593,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateHasChildren(org.eclipse.jface.viewers.TreePath)
 	 */
-	public synchronized void updateHasChildren(TreePath path) {
+	public void updateHasChildren(TreePath path) {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+	    
 		if (DEBUG_CONTENT_PROVIDER && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("updateHasChildren(" + getElement(path)); //$NON-NLS-1$
 		}
@@ -560,198 +1603,58 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	}
 
 	/**
-	 * @param delta
+	 * Schedules given update to be performed on the viewer.
+	 * Updates are queued up if they are completed in the same 
+	 * UI cycle.
+	 * @param update Update to perform.
 	 */
-	void restorePendingStateNode(final ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized) {
-		final TreePath treePath = getViewerTreePath(delta);
-		final ITreeModelContentProviderTarget viewer = getViewer();
-
-        // Attempt to expand the node only if the children are known.
-		if (knowsHasChildren) {
-		    if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
-	            if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-	                System.out.println("\tRESTORE EXPAND: " + treePath.getLastSegment()); //$NON-NLS-1$
-	            }
-    			viewer.expandToLevel(treePath, 1);
-                delta.setFlags(delta.getFlags() & ~IModelDelta.EXPAND);
-		    }
-            if ((delta.getFlags() & IModelDelta.COLLAPSE) != 0) {
-                if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                    System.out.println("\tRESTORE COLLAPSE: " + treePath.getLastSegment()); //$NON-NLS-1$
-                }
-                // Check auto-expand before collapsing an element (bug 335734)
-                int autoexpand = getViewer().getAutoExpandLevel();
-                if (autoexpand != ITreeModelViewer.ALL_LEVELS && autoexpand < (treePath.getSegmentCount() + 1)) {
-                    getViewer().setExpandedState(treePath, false);
-                }
-                delta.setFlags(delta.getFlags() & ~IModelDelta.COLLAPSE);
-            }
-		}
-		
-		if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
-            delta.setFlags(delta.getFlags() & ~IModelDelta.SELECT);
-            if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                System.out.println("\tRESTORE SELECT: " + treePath.getLastSegment()); //$NON-NLS-1$
-            }
-            ITreeSelection currentSelection = (ITreeSelection)viewer.getSelection();
-            if (currentSelection == null || currentSelection.isEmpty()) {
-                viewer.setSelection(new TreeSelection(treePath), false, false);
-            } else {
-                TreePath[] currentPaths = currentSelection.getPaths();
-                boolean pathInSelection = false;
-                for (int i = 0; i < currentPaths.length; i++) {
-                    if (currentPaths[i].equals(treePath)) {
-                        pathInSelection = true;
-                        break;
-                    }
-                }
-                // Only set the selection if the element is not yet in 
-                // selection.  Otherwise the setSelection() call will 
-                // update selection listeners needlessly. 
-                if (!pathInSelection) {
-                    TreePath[] newPaths = new TreePath[currentPaths.length + 1];
-                    System.arraycopy(currentPaths, 0, newPaths, 0, currentPaths.length);
-                    newPaths[newPaths.length - 1] = treePath;
-                    viewer.setSelection(new TreeSelection(newPaths), false, false);
-                }
-            }
-		}
-		
-        if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {
-            delta.setFlags(delta.getFlags() & ~IModelDelta.REVEAL);
-            // Look for the reveal flag in the child deltas.  If 
-            // A child delta has the reveal flag, do not set the 
-            // top element yet.
-            boolean setTopItem = true;
-            IModelDelta[] childDeltas = delta.getChildDeltas();
-            for (int i = 0; i < childDeltas.length; i++) {
-                IModelDelta childDelta = childDeltas[i];
-                int modelIndex = childDelta.getIndex();
-                if (modelIndex >= 0 && (childDelta.getFlags() & IModelDelta.REVEAL) != 0) {
-                    setTopItem = false;
-                }
-            }
-            
-            if (setTopItem) { 
-            	Assert.isTrue(fPendingSetTopItem == null);
-                final TreePath parentPath = treePath.getParentPath();
-                
-                // listen when current updates are complete and only 
-                // then do the REVEAL
-                fPendingSetTopItem = new IPendingRevealDelta() {
-                	// Revealing some elements can trigger expanding some of elements
-                	// that have been just revealed. Therefore, we have to check one 
-                	// more time after the new triggered updates are completed if we
-                	// have to set again the top index
-                	private int counter = 0;
-                	private Object modelInput = fPendingState.getElement();
-                	
-					public void viewerUpdatesBegin() {
-					}
-
-					public void viewerUpdatesComplete() {
-						// assume that fRequestsInProgress is empty if we got here
-						Assert.isTrue(fRequestsInProgress.isEmpty());
-                    	
-						final Display viewerDisplay = viewer.getDisplay();
-                    	if (fWaitingRequests.isEmpty() && !viewerDisplay.isDisposed()) {
-                    		viewerDisplay.asyncExec(new Runnable() {
-		                        public void run() {
-		                        	if (TreeModelContentProvider.this.isDisposed()) {
-		                        		return;
-		                        	}
-		                        	
-		                        	TreePath topPath = viewer.getTopElementPath();
-		                        	if (!treePath.equals(topPath)) {
-						                int index = viewer.findElementIndex(parentPath, treePath.getLastSegment());
-						                if (index >= 0) { 
-						                    if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-						                        System.out.println("\tRESTORE REVEAL: " + treePath.getLastSegment()); //$NON-NLS-1$
-						                    }
-						                    viewer.reveal(parentPath, index);
-						                    
-						                }
-		                        	}
-		                        }
-		                    });
-                    		
-							counter++;
-							// in case the pending state was already set to null, we assume that
-							// all others elements are restored, so we don't expect that REVEAL will
-							// trigger other updates
-							if (counter > 1 || fPendingState == null) {
-		                        dispose();		                        
-							}
-                    	}
-
-					}
-
-					public void updateStarted(IViewerUpdate update) {
-					}
-
-					public void updateComplete(IViewerUpdate update) {
-					}
-					
-					public ModelDelta getDelta() {
-						return delta;
-					}
-
-					public void dispose() {
-						// remove myself as viewer update listener
-                        viewer.removeViewerUpdateListener(this);
-                        
-                        // top item is set
-                        fPendingSetTopItem = null;
-                        
-                        if (fPendingState == null) {
-                            if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                                System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
-                            }
-                            notifyStateUpdate(modelInput, STATE_RESTORE_SEQUENCE_COMPLETE, null);
-                        } else {
-                            checkIfRestoreComplete();
-                        }
-                    }
-                	
-                };
-                viewer.addViewerUpdateListener(fPendingSetTopItem);
-            }            
-		}
-
-        // If we know the child count of the element, look for the reveal 
-        // flag in the child deltas.  For the children with reveal flag start 
-        // a new update.  
-        // If the child delta's index is out of range, strip the reveal flag
-        // since it is no longer applicable.
-        if (knowsChildCount) {
-            int childCount = viewer.getChildCount(treePath);
-            if (childCount >= 0) {
-		        ModelDelta[] childDeltas = (ModelDelta[])delta.getChildDeltas();
-		        for (int i = 0; i < childDeltas.length; i++) {
-		            ModelDelta childDelta = childDeltas[i];
-		            int modelIndex = childDelta.getIndex();
-    	            if (modelIndex >= 0 && (childDelta.getFlags() & IModelDelta.REVEAL) != 0) {
-    	            	if (modelIndex < childCount) {
-    	            		doUpdateElement(treePath, modelIndex);
-    	            	} else {
-    		            	childDelta.setFlags(childDelta.getFlags() & ~IModelDelta.REVEAL);
-    	            	}	    	            
-    	            }
-		        }
-            }
-        }
-        
-        // Some children of this element were just updated.  If all its 
-        // children are now realized, clear out any elements that still 
-        // have flags, because they represent elements that were removed.
-        if ((checkChildrenRealized && getElementChildrenRealized(treePath)) ||
-             (knowsHasChildren && !viewer.getHasChildren(treePath)) ) 
-        {
-            if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                System.out.println("\tRESTORE CONTENT: " + treePath.getLastSegment()); //$NON-NLS-1$
-            }
-            delta.setFlags(delta.getFlags() & ~IModelDelta.CONTENT);            
-        }
+	void scheduleViewerUpdate(ViewerUpdateMonitor update) {
+	    Display display;
+	    synchronized(this) {
+	        if (isDisposed()) return;
+	        display = getViewer().getDisplay();
+	        fCompletedUpdates.add(update);
+            if (fCompletedUpdatesJob == null) {
+	            fCompletedUpdatesJob = new Runnable() {
+	                public void run() {
+	                    if (!isDisposed()) {
+	                        performUpdates();
+	                    }
+	                }
+	            };
+	            display.asyncExec(fCompletedUpdatesJob);
+	        }
+	    }
 	}
 
+	/**
+	 * Perform the updates pointed to by given array on the viewer.
+	 */
+	private void performUpdates() {
+        Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
+	    
+        List jobCompletedUpdates;
+        synchronized(TreeModelContentProvider.this) {
+            if (isDisposed()) {
+                return;
+            }
+            jobCompletedUpdates = fCompletedUpdates;
+            fCompletedUpdatesJob = null;
+            fCompletedUpdates = new ArrayList();
+        }
+        // necessary to check if viewer is disposed
+        try {
+	        for (int i = 0; i < jobCompletedUpdates.size(); i++) {
+	        	ViewerUpdateMonitor completedUpdate = (ViewerUpdateMonitor)jobCompletedUpdates.get(i);
+                if (!completedUpdate.isCanceled() && !isDisposed()) {
+                    IStatus status = completedUpdate.getStatus();
+                    if (status == null || status.isOK()) {
+                        completedUpdate.performUpdate();
+                    }
+                } 
+	        }
+        } finally {
+            updatesComplete(jobCompletedUpdates);
+        }        
+	}
 }

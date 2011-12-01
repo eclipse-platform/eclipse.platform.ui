@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,10 @@ import org.eclipse.debug.internal.ui.viewers.model.ViewerInputUpdate;
  * Service to compute a viewer input from a source object
  * for a given presentation context.
  * <p>
- * This class may be instantiated. Not intended to be subclassed.
+ * This class may be instantiated, but it not intended to be sub-classed.
  * </p>
  * @since 3.4
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ViewerInputService {
 	
@@ -55,8 +56,8 @@ public class ViewerInputService {
 	/**
 	 * Constructs a viewer input service for the given requester and presentation context.
 	 * 
+     * @param viewer for which inputs are required
 	 * @param requestor client requesting viewer inputs 
-	 * @param context context for which inputs are required
 	 */
 	public ViewerInputService(TreeModelViewer viewer, IViewerInputRequestor requestor) {
 		fRequestor = requestor;

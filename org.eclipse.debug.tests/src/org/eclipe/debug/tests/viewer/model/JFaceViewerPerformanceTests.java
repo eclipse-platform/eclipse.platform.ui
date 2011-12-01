@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.swt.SWT;
@@ -26,7 +26,7 @@ public class JFaceViewerPerformanceTests extends PerformanceTests {
         super(name);
     }
 
-    protected ITreeModelContentProviderTarget createViewer(Display display, Shell shell) {
+    protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
         return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer"));
     }
     

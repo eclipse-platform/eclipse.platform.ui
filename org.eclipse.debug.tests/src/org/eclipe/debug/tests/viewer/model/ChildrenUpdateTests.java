@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.ChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.ILabelUpdateListener;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.TreeModelContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -23,11 +23,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerLabel;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -42,8 +45,8 @@ public class ChildrenUpdateTests extends TestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#getViewer()
 		 */
-		protected ITreeModelContentProviderTarget getViewer() {
-			return new ITreeModelContentProviderTarget(){
+		protected IInternalTreeModelViewer getViewer() {
+			return new IInternalTreeModelViewer(){
 			
 				public void setSelection(ISelection selection) {}
 				public void removeSelectionChangedListener(ISelectionChangedListener listener) {}
@@ -113,7 +116,10 @@ public class ChildrenUpdateTests extends TestCase {
 				public ViewerFilter[] getFilters() {
 					return null;
 				}
-			
+
+				public void addFilter(ViewerFilter filter) {}
+				public void setFilters(ViewerFilter[] filters) {}
+				
 				public boolean getExpandedState(Object elementOrTreePath) {
 					return false;
 				}
@@ -143,6 +149,27 @@ public class ChildrenUpdateTests extends TestCase {
                 public boolean getElementChildrenRealized(TreePath parentPath) {
                     return false;
                 }
+                
+                public boolean getElementChecked(TreePath path) {
+                    return false;
+                }
+                
+                public boolean getElementGrayed(TreePath path) {
+                    return false;
+                }
+                
+                public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
+                }
+
+                public TreePath[] getElementPaths(Object element) {
+                    return null;
+                }
+                public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
+                    FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds) {
+                }
+                public String[] getVisibleColumns() {
+                    return null;
+                }                
 			};
 		}
 	}
@@ -164,23 +191,23 @@ public class ChildrenUpdateTests extends TestCase {
 	public void testCoalesce () {
 		Object element = new Object();
 		TreeModelContentProvider cp = getContentProvider();
-		ChildrenUpdate update1 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 1, null, null);
-		ChildrenUpdate update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 2, null, null);
+		ChildrenUpdate update1 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 1, null);
+		ChildrenUpdate update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 2, null);
 		assertTrue("Should coalesce", update1.coalesce(update2));
 		assertEquals("Wrong offset", 1, update1.getOffset());
 		assertEquals("Wrong length", 2, update1.getLength());
 		
-		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 3, null, null);
+		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 3, null);
 		assertTrue("Should coalesce", update1.coalesce(update2));
 		assertEquals("Wrong offset", 1, update1.getOffset());
 		assertEquals("Wrong length", 3, update1.getLength());
 		
-		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 2, null, null);
+		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 2, null);
 		assertTrue("Should coalesce", update1.coalesce(update2));
 		assertEquals("Wrong offset", 1, update1.getOffset());
 		assertEquals("Wrong length", 3, update1.getLength());		
 		
-		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 5, null, null);
+		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 5, null);
 		assertFalse("Should not coalesce", update1.coalesce(update2));
 		assertEquals("Wrong offset", 1, update1.getOffset());
 		assertEquals("Wrong length", 3, update1.getLength());

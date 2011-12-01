@@ -12,7 +12,7 @@ package org.eclipe.debug.tests.viewer.model;
 
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -20,13 +20,13 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * @since 3.6
  */
-public class JFaceViewerContentTests extends ContentTests {
+public class VirtualViewerFilterTests extends FilterTests {
     
-    public JFaceViewerContentTests(String name) {
+    public VirtualViewerFilterTests(String name) {
         super(name);
     }
 
     protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
-        return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer"));
+        return new VirtualTreeModelViewer(fDisplay, SWT.VIRTUAL, new PresentationContext("TestViewer"), new VisibleVirtualItemValidator(0, 100));
     }
 }

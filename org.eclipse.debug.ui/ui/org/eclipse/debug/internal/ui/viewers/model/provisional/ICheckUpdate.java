@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009 Texas Instruments and others
+ * Copyright (c) 2009, 2011 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,8 @@ public interface ICheckUpdate extends ILabelUpdate {
     /**
      * Sets the check state of the tree node.
      * 
-     * @param checked
-     * @param grayed
+     * @param checked Whether element should be checked.
+     * @param grayed Whether element should be grayed out.
      */
     public void setChecked(boolean checked, boolean grayed);
     

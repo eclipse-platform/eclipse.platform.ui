@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,10 +26,8 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  * </ul> 
  * </p>
  * <p>
- * Clients are not intended to implement this interface directly. Instead, clients
- * creating and firing model deltas should create instances of
- * {@link org.eclipse.debug.internal.ui.viewers.update.ModelDelta}.
- * </p>
+ * @noimplement Clients are not intended to implement this interface directly. Instead, clients
+ * creating and firing model deltas should create instances of {@link ModelDelta}.
  * </p>
  * @since 3.2
  */
@@ -185,7 +183,7 @@ public interface IModelDelta {
 	/**
 	 * Accepts the given visitor.
 	 * 
-	 * @param visitor
+	 * @param visitor delta visitor to accept
 	 * @since 3.3
 	 */
 	public void accept(IModelDeltaVisitor visitor);

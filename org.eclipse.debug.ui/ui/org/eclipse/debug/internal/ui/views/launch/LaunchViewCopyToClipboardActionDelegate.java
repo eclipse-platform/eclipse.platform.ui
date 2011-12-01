@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -24,7 +25,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipboardActionDelegate {
 
-    protected TreeItem[] getPrunedSelection() {
+    protected TreeItem[] getSelectedItems(TreeModelViewer clientViewer) {
         LaunchView view = (LaunchView)getView();
         if (view.isBreadcrumbVisible()) {
             ISelection selection = getSelection();
@@ -33,15 +34,15 @@ public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipbo
                 if (!selection.isEmpty()) {
                     path = ((ITreeSelection)selection).getPaths()[0];
                 }
-                return getSelectedItems((InternalTreeModelViewer)getViewer(), path);
+                return getSelectedItemsInTreeViewer((TreeModelViewer)getViewer(), path);
             }
             return new TreeItem[0];
         } else {
-            return super.getPrunedSelection();
+            return super.getSelectedItems(clientViewer);
         }
     }
     
-    private TreeItem[] getSelectedItems(InternalTreeModelViewer viewer, TreePath path) {
+    private TreeItem[] getSelectedItemsInTreeViewer(TreeModelViewer viewer, TreePath path) {
         Widget item = viewer.findItem(path);
         if (item instanceof TreeItem) {
             return new TreeItem[] { (TreeItem)item };

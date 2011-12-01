@@ -10,18 +10,27 @@
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.junit.Assert;
 
 /**
  * Tests to verify that the viewer property updates following changes in the 
@@ -181,7 +190,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         model.postDelta(delta);
         
         if (validate) {
-            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_UPDATES_COMPLETE | LABEL_UPDATES_COMPLETE)) 
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_SEQUENCE_COMPLETE | LABEL_SEQUENCE_COMPLETE)) 
                 if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
             model.validateData(fViewer, TreePath.EMPTY);                
         } else {
@@ -198,7 +207,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         model.postDelta(delta);
         
         if (validate) {
-            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_UPDATES_COMPLETE | LABEL_UPDATES_COMPLETE)) 
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_SEQUENCE_COMPLETE | LABEL_SEQUENCE_COMPLETE)) 
                 if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
             model.validateData(fViewer, TreePath.EMPTY);                
         } else {
@@ -229,6 +238,33 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         addElement(model, "1-new", 1, true);
         removeElement(model, 3, true);
         addElement(model, "4-new", 4, true);
+    }
+
+    /**
+     * This test verifies that when the viewer processes a delta that causes viewer 
+     * updates it initiates the model update sequence before it finishes processing 
+     * the delta.
+     */
+    public void testNotifyUpdatesTartedOnModelChanged() throws InterruptedException {
+        TestModel model = TestModel.simpleSingleLevel();
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY);
+
+        // Refresh the viewer so that updates are generated.
+        fListener.reset();
+        model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
+    
+        // Wait for the delta to be processed.
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        
+        Assert.assertTrue( fListener.isFinished(CONTENT_SEQUENCE_STARTED) );
     }
 
 
@@ -326,4 +362,186 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
     }
 
 
+    /**
+     * This test forces the viewer to cancel updates then process them at once.
+     * <p>
+     * - Wait until CHILDREN COUNT update started then refresh<br>
+     * - Process queued updates in order.<br>
+     * </p>
+     */
+    public void testCanceledUpdates1() throws InterruptedException {
+        TestModel model = TestModel.simpleSingleLevel();
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY);
+
+        
+        model.setQeueueingUpdate(true);
+        
+        for (int i = 0; i < 5; i++) {
+            // Refresh the viewer so that updates are generated.
+            fListener.reset();
+            model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
+    
+            // Wait for the delta to be processed.
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES_STARTED)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+    
+        }
+        
+        model.setQeueueingUpdate(false);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        
+    }
+    
+    /**
+     * This test forces the viewer to cancel updates then process them at once.
+     * <p>
+     * - Wait until CHILDREN COUNT update started then refresh<br>
+     * - Process queued updates in REVERSE order.<br>
+     * </p>
+     */
+    public void testCanceledUpdates2() throws InterruptedException {
+        TestModel model = TestModel.simpleSingleLevel();
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY);
+
+        
+        model.setQeueueingUpdate(true);
+        
+        for (int i = 0; i < 5; i++) {
+            // Refresh the viewer so that updates are generated.
+            fListener.reset();
+            model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
+    
+            // Wait for the delta to be processed.
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES_STARTED)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+    
+        }
+        
+        List updates = new ArrayList(model.getQueuedUpdates());
+        model.getQueuedUpdates().clear();
+        for (int i = updates.size() - 1; i >= 0; i--) {
+            model.processUpdate((IViewerUpdate)updates.get(i));
+        }
+        
+        model.setQeueueingUpdate(false);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+    }
+    
+    /**
+     * This test forces the viewer to cancel updates then process them at once.
+     * <p>
+     * - Wait until CHILDREN update started then refresh<br>
+     * - Process queued updates in order.<br>
+     * </p>
+     */
+    public void testCanceledUpdates3() throws InterruptedException {
+        TestModel model = TestModel.simpleSingleLevel();
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY);
+
+        
+        model.setQeueueingUpdate(true);
+        
+        for (int i = 0; i < 5; i++) {
+            // Refresh the viewer so that updates are generated.
+            fListener.reset();
+            model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
+    
+            // Wait for the delta to be processed.
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILDREN_UPDATES_STARTED)) {
+                completeQueuedUpdatesOfType(model, IChildrenCountUpdate.class);
+                completeQueuedUpdatesOfType(model, IHasChildrenUpdate.class);
+                if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            }
+        }
+        
+        model.setQeueueingUpdate(false);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        
+    }
+    
+    /**
+     * This test forces the viewer to cancel updates then process them at once.
+     * <p>
+     * - Wait until CHILDREN update started then refresh<br>
+     * - Process queued updates in REVERSE order.<br>
+     * </p>
+     */
+    public void testCanceledUpdates4() throws InterruptedException {
+        TestModel model = TestModel.simpleSingleLevel();
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY);
+
+        
+        model.setQeueueingUpdate(true);
+        
+        for (int i = 0; i < 5; i++) {
+            // Refresh the viewer so that updates are generated.
+            fListener.reset();
+            model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
+    
+            // Wait for the delta to be processed.
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILDREN_UPDATES_STARTED)) {
+                completeQueuedUpdatesOfType(model, IChildrenCountUpdate.class);
+                completeQueuedUpdatesOfType(model, IHasChildrenUpdate.class);
+                if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            }
+    
+        }
+        
+        List updates = new ArrayList(model.getQueuedUpdates());
+        model.getQueuedUpdates().clear();
+        for (int i = updates.size() - 1; i >= 0; i--) {
+            model.processUpdate((IViewerUpdate)updates.get(i));
+        }
+        
+        model.setQeueueingUpdate(false);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+    }
+    
+    private void completeQueuedUpdatesOfType(TestModel model, Class updateClass) {
+        List updatesToComplete = new LinkedList();
+        
+        for (Iterator itr = model.getQueuedUpdates().iterator(); itr.hasNext();) {
+            IViewerUpdate update = (IViewerUpdate)itr.next();
+            if (updateClass.isInstance(update)) {
+                updatesToComplete.add(update);
+                itr.remove();
+            }
+        }        
+        if (updatesToComplete != null) {
+            for (Iterator itr = updatesToComplete.iterator(); itr.hasNext();) {
+                model.processUpdate((IViewerUpdate)itr.next());
+            }
+        }
+    }
+    
 }

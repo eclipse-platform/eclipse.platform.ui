@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public interface IElementEditor {
 	 * if none.
 	 * 
 	 * @param context presentation context
-	 * @param id column id
+	 * @param columnId column id
 	 * @param element object to be edited
 	 * @param parent parent control to create the cell editor in
 	 * @return cell editor or <code>null</code>
@@ -36,6 +36,8 @@ public interface IElementEditor {
 	/**
 	 * Returns a cell modifier for the specified element in the given context
 	 * or <code>null</code> if none.
+	 * @param context Presentation context
+	 * @param element Model element.
 	 * 
 	 * @return cell modifier or <code>null</code>
 	 */

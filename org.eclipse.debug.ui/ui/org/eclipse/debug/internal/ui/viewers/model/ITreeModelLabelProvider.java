@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 
 /**
- * {@link TreeModelViewer} label provider interface.  In addition to 
+ * {@link InternalTreeModelViewer} label provider interface.  In addition to 
  * implementing this interface, the label provider for the TreeModelViewer
  * must also extend CellLabelProvider.    
  * 
@@ -28,15 +28,23 @@ import org.eclipse.swt.graphics.RGB;
  */
 public interface ITreeModelLabelProvider extends IBaseLabelProvider {
 
+    /**
+     * Requests an label update label of the given element.
+     * @param elementPath Element to update.
+     * @return true if element label provider is found and update will 
+     * be requested.
+     */
     public boolean update(TreePath elementPath);
     
     /**
      * Registers the specified listener for view label update notifications.
+     * @param listener Listener to add
      */
     public void addLabelUpdateListener(ILabelUpdateListener listener);
     
     /**
      * Removes the specified listener from view label update notifications.
+     * @param listener Listener to remove
      */
     public void removeLabelUpdateListener(ILabelUpdateListener listener);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems and others.
+ * Copyright (c) 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.viewers.model;
+package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,20 +18,22 @@ import java.util.TreeMap;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * Virtual item, which is analogous to the SWT's tree item.
+ * Virtual item, which is analogous to the SWT's tree item.  This class is used
+ * by the {@link VirtualTreeModelViewer}. 
  * 
- * @since 3.5
+ * @see VirtualTreeModelViewer
+ * @since 3.8
  */
-class VirtualItem {
+public class VirtualItem {
 
     // Data keys for display attributes of an item.
-    static String LABEL_KEY = "LABEL_KEY"; //$NON-NLS-1$
-    static String IMAGE_KEY = "IMAGE_KEY"; //$NON-NLS-1$
-    static String FONT_KEY = "FONT_KEY"; //$NON-NLS-1$
-    static String FOREGROUND_KEY = "FOREGROUND_KEY"; //$NON-NLS-1$
-    static String BACKGROUND_KEY = "BACKGROUND_KEY"; //$NON-NLS-1$
+    public static String LABEL_KEY = "LABEL_KEY"; //$NON-NLS-1$
+    public static String IMAGE_KEY = "IMAGE_KEY"; //$NON-NLS-1$
+    public static String FONT_KEY = "FONT_KEY"; //$NON-NLS-1$
+    public static String FOREGROUND_KEY = "FOREGROUND_KEY"; //$NON-NLS-1$
+    public static String BACKGROUND_KEY = "BACKGROUND_KEY"; //$NON-NLS-1$
     
-    static String ELEMENT_DATA_KEY = "element"; //$NON-NLS-1$
+    public static String ELEMENT_DATA_KEY = "element"; //$NON-NLS-1$
     
     /**
      * Index object of a tree item. It allows the indexes to be modified
@@ -103,7 +105,7 @@ class VirtualItem {
     private boolean fExpanded = false;
 
     /**
-     * The cound of child items.  <code>-1</code> indicates that the count 
+     * The count of child items.  <code>-1</code> indicates that the count 
      * is not known.
      */
     private int fItemCount = -1;
@@ -134,41 +136,49 @@ class VirtualItem {
      */
     private boolean fDisposed = false;
     
-    
-    VirtualItem(VirtualItem parent, Index index) {
+
+    /**
+     * Virtual item constructor.
+     * @param parent parent virtual item
+     * @param index index of the item in the parent
+     */
+    public VirtualItem(VirtualItem parent, Index index) {
         fParent = parent;
         fIndex = index;
     }
 
-    void setNeedsCountUpdate() {
-        fNeedsCountUpdate = true;
-        fItemCount = -1;
-    }
-
-    void setNeedsLabelUpdate() {
-        fNeedsLabelUpdate = true;
-    }
-
-    void setNeedsDataUpdate() {
-        fNeedsDataUpdate = true;
-    }
-    
-    void clear(Index index) {
+    /**
+     * Clears the child item at the given index. 
+     * @param index index of item to clear.
+     */
+    public void clear(Index index) {
         VirtualItem item = (VirtualItem)fItems.remove(index);
         if (item != null) {
             item.dispose();
         }
     }
     
-    VirtualItem getParent() {
+    /**
+     * Returns the parent item.
+     * @return parent item.
+     */
+    public VirtualItem getParent() {
         return fParent;
     }
     
-    Index getIndex() {
+    /**
+     * @return Returns the index of this item.
+     */
+    public Index getIndex() {
         return fIndex;
     }
     
-    VirtualItem findItem(Object element) {
+    /**
+     * Finds the given item in the child items of this element.
+     * @param element Data object of the item to be found.
+     * @return Item if found, <code>null</code> if not.
+     */
+    public VirtualItem findItem(Object element) {
         for (Iterator itr = fItems.values().iterator(); itr.hasNext();) {
             VirtualItem next = (VirtualItem)itr.next();
             Object nextData = next.getData();
@@ -179,35 +189,81 @@ class VirtualItem {
         return null;
     }
     
-    boolean needsDataUpdate() {
+    /**
+     * @return Returns whether the data element of this item is stale.
+     */
+    public boolean needsDataUpdate() {
         return fNeedsDataUpdate;
     }
 
-    void clearNeedsDataUpdate() {
+    /**
+     * Marks the item as having a stale data item.
+     */
+    public void setNeedsDataUpdate() {
+        fNeedsDataUpdate = true;
+    }
+    
+    /**
+     * Clears the stale status of the item's data element.
+     */
+    public void clearNeedsDataUpdate() {
         fNeedsDataUpdate = false;
     }
 
-    boolean needsCountUpdate() {
+    /**
+     * @return Returns whether the item has stale item count.
+     */
+    public boolean needsCountUpdate() {
         return fNeedsCountUpdate;
     }
+    
+    /**
+     * Marks the item as having a stale child count.  
+     */
+    public void setNeedsCountUpdate() {
+        fNeedsCountUpdate = true;
+        fItemCount = -1;
+    }
 
-    void clearNeedsCountUpdate() {
+    /**
+     * Clears the stale status of the item's child count.
+     */
+    public void clearNeedsCountUpdate() {
         fNeedsCountUpdate = false;
     }
 
-    boolean needsLabelUpdate() {
+    /**
+     * @return Returns whether the item has stale label.
+     */
+    public boolean needsLabelUpdate() {
         return fNeedsLabelUpdate;
     }
     
-    void clearNeedsLabelUpdate() {
+    /**
+     * Marks the item as having a stale label data.  
+     */
+    public void setNeedsLabelUpdate() {
+        fNeedsLabelUpdate = true;
+    }
+
+    /**
+     * Clears the stale status of the item's label.
+     */
+    public void clearNeedsLabelUpdate() {
         fNeedsLabelUpdate = false;
     }
     
-    boolean isDisposed() {
+    /**
+     * @return Returns whether the item has been disposed.
+     */
+    public boolean isDisposed() {
         return fDisposed;
     }
     
-    void dispose() {
+    /**
+     * Disposes the item.
+     */
+    public void dispose() {
         fData.clear();
         for (Iterator itr = fItems.values().iterator(); itr.hasNext();) {
             ((VirtualItem)itr.next()).dispose();
@@ -218,23 +274,43 @@ class VirtualItem {
         findTree().fireItemDisposed(this);
     }
 
-    Object getData (String key) {
+    /**
+     * @param key Key to retrieve data for.
+     * @return Returns item data corresponding to given key. 
+     */
+    public Object getData (String key) {
         return fData.get(key);
     }
     
-    void setData(String key, Object data) {
+    /**
+     * Sets given data element for given key.
+     * @param key Key for data.
+     * @param data Data value.
+     */
+    public void setData(String key, Object data) {
         fData.put(key, data);
     }
 
-    void setData(Object data) {
+    /**
+     * Sets the item's data element. 
+     * @param data Item's new element.
+     */
+    public void setData(Object data) {
         fData.put(ELEMENT_DATA_KEY, data);
     }
     
-    Object getData () {
+    /**
+     * @return Returns item's data element.
+     */
+    public Object getData () {
         return fData.get(ELEMENT_DATA_KEY);
     }
-    
-    void setExpanded(boolean expanded) {
+
+    /**
+     * Marks the given item as expanded or collapsed.
+     * @param expanded If true, item will be marked as expanded.
+     */
+    public void setExpanded(boolean expanded) {
         if (fExpanded == expanded) {
             return;
         }
@@ -255,11 +331,18 @@ class VirtualItem {
         }
     }
     
-    boolean getExpanded() {
+    /**
+     * @return Returns item's expanded state.
+     */
+    public boolean getExpanded() {
         return fExpanded;
     }
 
-    void setHasItems(boolean hasChildren) {
+    /**
+     * Sets the flag indicating whether item has child items.
+     * @param hasChildren Set to true if child has items.
+     */
+    public void setHasItems(boolean hasChildren) {
         fHasItems = hasChildren;
         if (!fHasItems) {
             if (getItemCount() != 0) {
@@ -270,11 +353,18 @@ class VirtualItem {
         }
     }
     
-    boolean hasItems() {
+    /**
+     * @return Returns true if item has child items.
+     */
+    public boolean hasItems() {
         return fHasItems;
     }
     
-    void setItemCount(int count) {
+    /**
+     * Sets the item's child count.
+     * @param count Child count.
+     */
+    public void setItemCount(int count) {
         fItemCount = count;
         for (Iterator itr = fItems.entrySet().iterator(); itr.hasNext();) {
             Map.Entry entry = (Map.Entry)itr.next();
@@ -299,11 +389,20 @@ class VirtualItem {
         }
     }
     
-    int getItemCount() {
+    /**
+     * @return  Returns item's child count.
+     */
+    public int getItemCount() {
         return fItemCount;
     }
     
-    VirtualItem getItem(Index index) {
+    /**
+     * Returns the child item at given index.  Child item is created if needed.  
+     * 
+     * @param index Index of the child item.
+     * @return Child item.
+     */
+    public VirtualItem getItem(Index index) {
         ensureItems();
         
         VirtualItem item = (VirtualItem)fItems.get(index); 
@@ -314,7 +413,10 @@ class VirtualItem {
         return item;
     }
     
-    boolean childrenNeedDataUpdate() {
+    /**
+     * @return Returns true if any of the child items need a data update.
+     */
+    public boolean childrenNeedDataUpdate() {
         if (getItemCount() == 0) {
             return false;
         }
@@ -330,11 +432,23 @@ class VirtualItem {
         return false;
     }
     
-    VirtualItem[] getItems() {
+    /**
+     * Returns an array of current child items.  The returned array contains 
+     * only the items that have been created.  It may not contain as many items as the 
+     * item count. 
+     *  
+     * @return Child items array.
+     */
+    public VirtualItem[] getItems() {
         return (VirtualItem[]) fItems.values().toArray(new VirtualItem[fItems.size()]);
     }
     
-    VirtualItem addItem(int position) {
+    /**
+     * Adds a child item at the given index position.
+     * @param position The index position to inser the new item at.
+     * @return Returns the added item.
+     */
+    public VirtualItem addItem(int position) {
         if (!fHasItems) {
             fHasItems = true;
         }
@@ -360,7 +474,11 @@ class VirtualItem {
         return newChild;
     }
     
-    void remove(Index position) {
+    /**
+     * Removes the item at the given index.
+     * @param position Index of the item to remove.
+     */
+    public void remove(Index position) {
         fItemCount--;
         if (fItemCount < 0) {
             fHasItems = false;

@@ -25,17 +25,20 @@ abstract class MementoUpdate extends Request implements IViewerUpdate {
 	private Object fElement;
 	private TreePath fElementPath;
 	private IMemento fMemento;
-	protected ModelContentProvider fProvider;
+	protected TreeModelContentProvider fProvider;
 	protected Object fViewerInput;
 	
 	/**
 	 * Constructs a viewer state request.
+     * @param provider the content provider to use for the update
+     * @param viewerInput the current input
+     * @param elementPath the path of the element to update
+     * @param element the element to update
+     * @param memento Memento to update
+     * @param context the presentation context
 	 * 
-	 * @param viewer viewer
-	 * @param element element
-	 * @param memento memento
 	 */
-	public MementoUpdate(ModelContentProvider provider, Object viewerInput, IPresentationContext context, Object element, TreePath elementPath, IMemento memento) {
+	public MementoUpdate(TreeModelContentProvider provider, Object viewerInput, IPresentationContext context, Object element, TreePath elementPath, IMemento memento) {
 		fContext = context;
 		fElement = element;
 		fElementPath = elementPath;
@@ -69,7 +72,7 @@ abstract class MementoUpdate extends Request implements IViewerUpdate {
 		return fMemento;
 	}
 	
-	public ModelContentProvider getContentProvider() {
+	public TreeModelContentProvider getContentProvider() {
 		return fProvider;
 	}
 

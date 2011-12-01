@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,8 @@ import org.eclipse.swt.graphics.RGB;
 
 /**
  * Context sensitive label update request for an element.
- * <p>
- * Clients are not intended to implement this interface.
- * </p> 
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.3
  */
 public interface ILabelUpdate extends IViewerUpdate {
@@ -36,7 +35,7 @@ public interface ILabelUpdate extends IViewerUpdate {
 	/**
 	 * Sets the text of the label of the specified column. Cannot be <code>null</code>.
 	 * 
-	 * @param text
+	 * @param text to set to viewer
 	 * @param columnIndex column index (0 when no columns)
 	 */
     public void setLabel(String text, int columnIndex);
@@ -44,7 +43,7 @@ public interface ILabelUpdate extends IViewerUpdate {
     /**
      * Sets the font of the label.
      * 
-     * @param fontData
+     * @param fontData to set to viewer
      * @param columnIndex column index (0 when no columns)
      */
     public void setFontData(FontData fontData, int columnIndex);
@@ -52,7 +51,7 @@ public interface ILabelUpdate extends IViewerUpdate {
     /**
      * Sets the image of the label.
      * 
-     * @param image
+     * @param image to set to viewer
      * @param columnIndex column index (0 when no columns)
      */
     public void setImageDescriptor(ImageDescriptor image, int columnIndex);
@@ -60,7 +59,7 @@ public interface ILabelUpdate extends IViewerUpdate {
     /**
      * Sets the foreground color of the label.
      * 
-     * @param foreground
+     * @param foreground to set to viewer
      * @param columnIndex column index (0 when no columns)
      */
     public void setForeground(RGB foreground, int columnIndex);
@@ -68,7 +67,7 @@ public interface ILabelUpdate extends IViewerUpdate {
     /**
      * Sets the background color of the label.
      * 
-     * @param background
+     * @param background to set to viewer
      * @param columnIndex column index (0 when no columns)
      */
     public void setBackground(RGB background, int columnIndex);

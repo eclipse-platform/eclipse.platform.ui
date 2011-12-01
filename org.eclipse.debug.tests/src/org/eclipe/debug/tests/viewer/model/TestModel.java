@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import junit.framework.Assert;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelCheckProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
@@ -34,10 +35,13 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactor
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * Test model for the use in unit tests.  This test model contains a set of 
@@ -158,7 +162,8 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     private TreePath fRootPath = TreePath.EMPTY;
     private ModelProxy fModelProxy;
     private IModelSelectionPolicy fModelSelectionPolicy;
-    
+    private boolean fQueueingUpdates = false;
+    private List fQueuedUpdates = new LinkedList();
     
     /**
      * Constructor private.  Use static factory methods instead. 
@@ -207,46 +212,109 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         return depth;
     }
     
-    public void update(IHasChildrenUpdate[] updates) {
-        for (int i = 0; i < updates.length; i++) {
-            TestElement element = (TestElement)updates[i].getElement();
-            updates[i].setHasChilren(element.getChildren().length > 0);
-            updates[i].done();
+    public void setQeueueingUpdate(boolean queueingUpdates) {
+        fQueueingUpdates = queueingUpdates;
+        if (!fQueueingUpdates) {
+            processQueuedUpdates();
         }
+    }
+    
+    public List getQueuedUpdates() {
+        return fQueuedUpdates;
+    }
+    
+    public void processQueuedUpdates() {
+        List updates = new ArrayList(fQueuedUpdates);
+        fQueuedUpdates.clear();
+        for (int i = 0; i < updates.size(); i++) {
+            processUpdate((IViewerUpdate)updates.get(i));
+        }
+    }
+    
+    public void processUpdate(IViewerUpdate update) {
+        if (update instanceof IHasChildrenUpdate) {
+            doUpdate((IHasChildrenUpdate)update);
+        } else if (update instanceof IChildrenCountUpdate) {
+            doUpdate((IChildrenCountUpdate)update);
+        } else if (update instanceof IChildrenUpdate) {
+            doUpdate((IChildrenUpdate)update);
+        } else if (update instanceof ILabelUpdate) {
+            doUpdate((ILabelUpdate)update);
+        } 
+    }
+    
+    public void update(IHasChildrenUpdate[] updates) {
+        if (fQueueingUpdates) {
+            fQueuedUpdates.addAll(Arrays.asList(updates));
+        } else {
+            for (int i = 0; i < updates.length; i++) {
+                doUpdate(updates[i]);
+            }
+        }
+    }
+
+    private void doUpdate(IHasChildrenUpdate update) {
+        TestElement element = (TestElement)update.getElement();
+        update.setHasChilren(element.getChildren().length > 0);
+        update.done();
     }
     
     public void update(IChildrenCountUpdate[] updates) {
-        for (int i = 0; i < updates.length; i++) {
-            TestElement element = (TestElement)updates[i].getElement();
-            updates[i].setChildCount(element.getChildren().length);
-            updates[i].done();
+        if (fQueueingUpdates) {
+            fQueuedUpdates.addAll(Arrays.asList(updates));
+        } else {
+            for (int i = 0; i < updates.length; i++) {
+                doUpdate(updates[i]);
+            }
         }
+    }
+
+    private void doUpdate(IChildrenCountUpdate update) {
+        TestElement element = (TestElement)update.getElement();
+        update.setChildCount(element.getChildren().length);
+        update.done();
     }
     
     public void update(IChildrenUpdate[] updates) {
-        for (int i = 0; i < updates.length; i++) {
-            TestElement element = (TestElement)updates[i].getElement();
-            int endOffset = updates[i].getOffset() + updates[i].getLength();
-            for (int j = updates[i].getOffset(); j < endOffset; j++) {
-                if (j < element.getChildren().length) {
-                    updates[i].setChild(element.getChildren()[j], j);
-                }
+        if (fQueueingUpdates) {
+            fQueuedUpdates.addAll(Arrays.asList(updates));
+        } else {
+            for (int i = 0; i < updates.length; i++) {
+                doUpdate(updates[i]);
             }
-            updates[i].done();
         }
+    }
+
+    private void doUpdate(IChildrenUpdate update) {
+        TestElement element = (TestElement)update.getElement();
+        int endOffset = update.getOffset() + update.getLength();
+        for (int j = update.getOffset(); j < endOffset; j++) {
+            if (j < element.getChildren().length) {
+                update.setChild(element.getChildren()[j], j);
+            }
+        }
+        update.done();
     }
     
     public void update(ILabelUpdate[] updates) {
-        for (int i = 0; i < updates.length; i++) {
-            TestElement element = (TestElement)updates[i].getElement();
-            updates[i].setLabel(element.getLabel(), 0);
-            if (updates[i] instanceof ICheckUpdate && 
-                Boolean.TRUE.equals(updates[i].getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK))) 
-            {
-                ((ICheckUpdate)updates[i]).setChecked(element.getChecked(), element.getGrayed());
+        if (fQueueingUpdates) {
+            fQueuedUpdates.addAll(Arrays.asList(updates));
+        } else {
+            for (int i = 0; i < updates.length; i++) {
+                doUpdate(updates[i]);
             }
-            updates[i].done();
-        }        
+        }
+    }
+
+    private void doUpdate(ILabelUpdate update) {
+        TestElement element = (TestElement)update.getElement();
+        update.setLabel(element.getLabel(), 0);
+        if (update instanceof ICheckUpdate && 
+            Boolean.TRUE.equals(update.getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK))) 
+        {
+            ((ICheckUpdate)update).setChecked(element.getChecked(), element.getGrayed());
+        }
+        update.done();
     }
     
     public final static String ELEMENT_MEMENTO_ID = "id";
@@ -326,24 +394,32 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     public void validateData(ITreeModelViewer viewer, TreePath path) {
         validateData(viewer, path, false);
     }
-
+    
     public void validateData(ITreeModelViewer _viewer, TreePath path, boolean expandedElementsOnly) {
-        ITreeModelContentProviderTarget viewer = (ITreeModelContentProviderTarget)_viewer;
+    	validateData(_viewer, path, expandedElementsOnly, TestModelUpdatesListener.EMPTY_FILTER_ARRAY);
+    }
+    
+    public void validateData(ITreeModelViewer _viewer, TreePath path, boolean expandedElementsOnly, ViewerFilter[] filters) {
+        IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)_viewer;
         TestElement element = getElement(path);
         if ( Boolean.TRUE.equals(_viewer.getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK)) ) {
-            ITreeModelCheckProviderTarget checkTarget = (ITreeModelCheckProviderTarget)_viewer;  
-            Assert.assertEquals(element.getChecked(), checkTarget.getElementChecked(path));
-            Assert.assertEquals(element.getGrayed(), checkTarget.getElementGrayed(path));
+            Assert.assertEquals(element.getChecked(), viewer.getElementChecked(path));
+            Assert.assertEquals(element.getGrayed(), viewer.getElementGrayed(path));
         }
         
         if (!expandedElementsOnly || path.getSegmentCount() == 0 || viewer.getExpandedState(path) ) {
             TestElement[] children = element.getChildren();
-            Assert.assertEquals(children.length, viewer.getChildCount(path));
 
+            int viewerIndex = 0;
             for (int i = 0; i < children.length; i++) {
-                Assert.assertEquals(children[i], viewer.getChildElement(path, i));
-                validateData(viewer, path.createChildPath(children[i]), expandedElementsOnly);
+            	if (TestModelUpdatesListener.isFiltered(children[i], filters)) {
+            		continue;
+            	}
+                Assert.assertEquals(children[i], viewer.getChildElement(path, viewerIndex));
+                validateData(viewer, path.createChildPath(children[i]), expandedElementsOnly, filters);
+            	viewerIndex++;
             }
+            Assert.assertEquals(viewerIndex, viewer.getChildCount(path));            
         } else if (!viewer.getExpandedState(path)) {
             // If element not expanded, verify the plus sign.
             Assert.assertEquals(viewer.getHasChildren(path), element.getChildren().length > 0);
@@ -590,17 +666,28 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     
     public static TestModel simpleSingleLevel() {
         TestModel model = new TestModel();
-        model.setRoot( new TestElement(model, "root", new TestElement[] {
-            new TestElement(model, "1", true, true, new TestElement[0]),
-            new TestElement(model, "2", true, false, new TestElement[0]),
-            new TestElement(model, "3", false, true, new TestElement[0]),
-            new TestElement(model, "4", false, false, new TestElement[0]),
-            new TestElement(model, "5", new TestElement[0]),
-            new TestElement(model, "6", new TestElement[0])
-        }) );
+        model.setRoot( new TestElement(model, "root", makeSingleLevelModelElements(model, 6, "")));
         return model;
     }
+
+    public static TestElement[] makeSingleLevelModelElements(TestModel model, int length, String prefix) {
+        TestElement[] elements = new TestElement[length];
+        for (int i = 1; i <= length; i++) {
+            String name = prefix + i;
+            elements[i - 1] = new TestElement(model, name, new TestElement[0]);
+        }
+        return elements;
+    }    
     
+    public static TestElement[] makeMultiLevelElements(TestModel model, int depth, String prefix) {
+        TestElement[] elements = new TestElement[depth];
+        for (int i = 0; i < depth; i++) {
+            String name = prefix + i;
+            elements[i] = new TestElement(model, name, makeMultiLevelElements(model, i, name + "."));
+        }
+        return elements;
+    }    
+
     public static TestModel simpleMultiLevel() {
         TestModel model = new TestModel();
         model.setRoot( new TestElement(model, "root", new TestElement[] {

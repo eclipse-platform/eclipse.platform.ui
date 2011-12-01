@@ -44,7 +44,6 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 	/**
 	 * @param viewerInput input at the time the request was made
 	 * @param elementPath element the label is for
-	 * @param item item the label is for
 	 * @param provider label provider to callback to 
 	 * @param columnIds column identifiers or <code>null</code>
 	 * @param context presentation context
@@ -152,7 +151,7 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 	/**
 	 * Applies settings to viewer cell
 	 */
-	public void update() {
+	public void performUpdate() {
 	    fProvider.setElementData(fElementPath, fNumColumns, fLabels, fImageDescriptors, fFontDatas, fForegrounds, fBackgrounds, fChecked, fGrayed);
 
 		fProvider.updateComplete(this);

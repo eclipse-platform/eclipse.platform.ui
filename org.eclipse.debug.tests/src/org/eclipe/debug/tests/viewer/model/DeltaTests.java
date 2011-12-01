@@ -18,9 +18,9 @@ import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -61,7 +61,7 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         fShell.open ();
     }
 
-    abstract protected ITreeModelContentProviderTarget createViewer(Display display, Shell shell);
+    abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
     
     /**
      * @throws java.lang.Exception
@@ -189,6 +189,38 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
+    public void testRefreshCoalesceStruct() throws InterruptedException {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        
+        // Create a single level model and add a single child to each element.
+        TestModel model = TestModel.simpleSingleLevel();
+        TestElement[] rootChildren = model.getRootElement().getChildren(); 
+        for (int i = 0; i < rootChildren.length; i++) {
+            model.setElementChildren(
+                new TreePath(new Object[] { rootChildren[i]} ), 
+                new TestElement[] { new TestElement(model, i + ".1", new TestElement[0]) });
+        }
+        
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY);
+        
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
+        model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        
+        model.validateData(fViewer, TreePath.EMPTY);
+        Assert.assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
+    }
+    
+    
     public void testInsert() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
@@ -378,12 +410,12 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         fListener.reset();
         fListener.setFailOnRedundantUpdates(false);
         model.postDelta(rootDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_UPDATES_COMPLETE)) 
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_SEQUENCE_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Update the elements that were added.
         fListener.reset();
-        fListener.addUpdates((ITreeModelContentProviderTarget)fViewer, TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
+        fListener.addUpdates((IInternalTreeModelViewer)fViewer, TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
         rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.CONTENT);
         model.getElementDelta(rootDelta, model.findElement("1.1"), true).setFlags(IModelDelta.CONTENT);
         model.getElementDelta(rootDelta, model.findElement("1.2"), true).setFlags(IModelDelta.CONTENT);
@@ -395,9 +427,9 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         
         fListener.reset(parentPath, model.getElement(parentPath), 1, false, true);
-        ((ITreeModelContentProviderTarget)fViewer).expandToLevel(parentPath, 1);
+        ((IInternalTreeModelViewer)fViewer).expandToLevel(parentPath, 1);
 
-        while (fListener.isFinished(CONTENT_UPDATES_STARTED) && !fListener.isFinished(CONTENT_UPDATES_COMPLETE)) 
+        while (fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         model.validateData(fViewer, parentPath);
@@ -421,17 +453,17 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         // Expand elment "2"
         TreePath parentPath = model.findElement("2");
         fListener.reset(parentPath, model.getElement(parentPath), 1, false, true);
-        ((ITreeModelContentProviderTarget)fViewer).expandToLevel(parentPath, 1);
+        ((IInternalTreeModelViewer)fViewer).expandToLevel(parentPath, 1);
 
-        while (fListener.isFinished(CONTENT_UPDATES_STARTED) && !fListener.isFinished(CONTENT_UPDATES_COMPLETE)) 
+        while (fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Collapse back element "2"
-        ((ITreeModelContentProviderTarget)fViewer).setExpandedState(parentPath, false);
+        ((IInternalTreeModelViewer)fViewer).setExpandedState(parentPath, false);
         
         // Update the children of element "2".
         fListener.reset();
-        fListener.addUpdates((ITreeModelContentProviderTarget)fViewer, TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
+        fListener.addUpdates((IInternalTreeModelViewer)fViewer, TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
         ModelDelta rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.CONTENT);
         model.getElementDelta(rootDelta, model.findElement("2.1"), true).setFlags(IModelDelta.CONTENT);
         model.getElementDelta(rootDelta, model.findElement("2.2"), true).setFlags(IModelDelta.CONTENT);
@@ -443,9 +475,9 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Expand back element "2"
         fListener.reset(parentPath, model.getElement(parentPath), 1, false, true);
-        ((ITreeModelContentProviderTarget)fViewer).expandToLevel(parentPath, 1);
+        ((IInternalTreeModelViewer)fViewer).expandToLevel(parentPath, 1);
 
-        while (fListener.isFinished(CONTENT_UPDATES_STARTED) && !fListener.isFinished(CONTENT_UPDATES_COMPLETE)) 
+        while (fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         model.validateData(fViewer, parentPath, true);
@@ -533,7 +565,7 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Validate the expansion state BEFORE posting the delta.
         
-        ITreeModelContentProviderTarget contentProviderViewer = (ITreeModelContentProviderTarget)fViewer; 
+        IInternalTreeModelViewer contentProviderViewer = (IInternalTreeModelViewer)fViewer; 
         Assert.assertFalse(contentProviderViewer.getExpandedState(path_root_3));
         Assert.assertFalse(contentProviderViewer.getExpandedState(path_root_3_2));
         Assert.assertFalse(contentProviderViewer.getExpandedState(path_root_3_2_2));
@@ -588,13 +620,13 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Validate the expansion state BEFORE posting the delta.
         
-        ITreeModelContentProviderTarget contentProviderViewer = (ITreeModelContentProviderTarget)fViewer; 
+        IInternalTreeModelViewer contentProviderViewer = (IInternalTreeModelViewer)fViewer; 
         Assert.assertFalse(contentProviderViewer.getExpandedState(path_root_3));
         
         model.postDelta(deltaRoot);
         while (true) {
             if (fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
-                if (fListener.isFinished(CONTENT_UPDATES_COMPLETE | LABEL_UPDATES_COMPLETE) ) {
+                if (fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_SEQUENCE_COMPLETE) ) {
                     break;
                 }
             }

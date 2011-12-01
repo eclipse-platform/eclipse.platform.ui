@@ -12,36 +12,26 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
-import org.eclipse.debug.internal.core.commands.Request;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
@@ -87,7 +77,7 @@ import org.eclipse.ui.IMemento;
  * @since 3.3
  */
 public class InternalTreeModelViewer extends TreeViewer 
-    implements ITreeModelViewer,  ITreeModelContentProviderTarget, ITreeModelLabelProviderTarget, ITreeModelCheckProviderTarget
+    implements IInternalTreeModelViewer, org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer
 {
 	
 	private IPresentationContext fContext;
@@ -271,734 +261,6 @@ public class InternalTreeModelViewer extends TreeViewer
 	
 	private CellModifierProxy fCellModifier;
 	
-	/**
-	 * A handle to an element in a model.
-	 */
-	class VirtualElement {
-		/**
-		 * Tree item associated with the element, or <code>null</code> for the root element
-		 */
-		private TreeItem fItem;
-		
-		/**
-		 * Model element (can be <code>null</code> until retrieved)
-		 */
-		private Object fElement;
-						
-		/**
-		 * Associated label update or <code>null</code> if the element was already
-		 * present in the tree. 
-		 */
-		private VirtualLabelUpdate fLabel;
-		
-		/**
-		 * Children elements or <code>null</code> if none
-		 */
-		private VirtualElement[] fChildren = null;
-		
-		/**
-		 * Whether this element would be filtered from the viewer
-		 */
-		private boolean fFiltered = false;
-		
-		/**
-		 * Listens for update when populating this virtual element in the tree viewer
-		 */
-		class UpdateListener implements IViewerUpdateListener {
-			
-			/**
-			 * The parent pending update 
-			 */
-			private TreePath fParentPath;
-			
-			/**
-			 * The child index pending update
-			 */
-			private int fIndex;
-			
-			/**
-			 * Whether the update has completed
-			 */
-			private boolean fDone = false;
-
-			/**
-			 * Constructs a new listener waiting 
-			 * @param parentPath the parent path
-			 * @param childIndex the current child index
-			 */
-			UpdateListener(TreePath parentPath, int childIndex) {
-				fParentPath = parentPath;
-				fIndex = childIndex;
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener#updateComplete(org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
-			 */
-			public void updateComplete(IViewerUpdate update) {
-				if (update instanceof IChildrenUpdate) {
-					IChildrenUpdate cu = (IChildrenUpdate) update;
-					if (cu.getElementPath().equals(fParentPath)) {
-						if (fIndex >= cu.getOffset() && fIndex <= (cu.getOffset() + cu.getLength())) {
-							fDone = true;
-						}
-					}
-				}
-			}
-			
-			/**
-			 * Returns whether the update has completed.
-			 * 
-			 * @return whether the update has completed
-			 */
-			boolean isComplete() {
-				return fDone;
-			}
-			
-			public void updateStarted(IViewerUpdate update) {
-			}
-			public void viewerUpdatesBegin() {
-			}
-			public void viewerUpdatesComplete() {
-			}			
-		}
-		
-		/**
-		 * Constructs a new virtual element for the given tree item and all
-		 * of its expanded children. Has to be called in the UI thread. 
-		 * The model is used to count unrealized elements.
-		 * 
-		 * Note only never re-use objects already in the tree as they may be out
-		 * of synch.
-		 * 
-		 * @param item tree item
-		 * @param model virtual model
-		 * @param root subtree to consider or <code>null</code> if all
-		 * @param indexes children to consider or <code>null</code>
-		 */
-		VirtualElement(TreeItem item, VirtualModel model, TreePath root, int[] indexes) {
-			fItem = item;
-			model.incVirtual();
-			if (item.getExpanded()) {
-				TreeItem[] items = item.getItems();
-				fChildren = createChildren(items, model, root, indexes);
-			}
-		}
-		
-		/**
-		 * Constructs a new virtual element for the given tree and all expanded
-		 * children. The model is passed in to count unrealized elements.
-		 * 
-		 * @param tree tree
-		 * @param model virtual model
-		 * @param root subtree scope or <code>null</code> for all
-		 * @param indexes child indexes to consider or <code>null</code>
-		 */
-		VirtualElement(Tree tree, VirtualModel model, TreePath root, int[] indexes) {
-			fElement = tree.getData();
-			TreeItem[] items = tree.getItems();
-			if (items.length > 0) {
-				fChildren = createChildren(items, model, root, indexes);
-			}
-		}
-		
-		/**
-		 * Creates and returns children elements.
-		 * 
-		 * @param items tree items
-		 * @param model model
-		 * @param root subtree to consider or all if <code>null</code>
-		 * @param indexes children of the root to consider or <code>null</code>
-		 * @return children
-		 */
-		private VirtualElement[] createChildren(TreeItem[] items, VirtualModel model, TreePath root, int[] indexes) {
-			VirtualElement[] kids = new VirtualElement[items.length];
-			if (root == null || root.getSegmentCount() == 0) {
-				if (indexes == null) {
-					for (int i = 0; i < items.length; i++) {
-						kids[i] = new VirtualElement(items[i], model, null, null); 
-					}
-				} else {
-					for (int i = 0; i < indexes.length; i++) {
-						int index = indexes[i];
-						kids[index] = new VirtualElement(items[index], model, null, null);
-					}
-				}
-			} else {
-				for (int i = 0; i < items.length; i++) {
-					TreeItem treeItem = items[i];
-					if (treeItem.getData() != null) {
-						TreePath path = getTreePathFromItem(treeItem);
-						if (root.startsWith(path, null)) {
-							if (root.getSegmentCount() > path.getSegmentCount()) {
-								kids[i] = new VirtualElement(treeItem, model, root, indexes);
-							} else {
-								kids[i] = new VirtualElement(treeItem, model, null, indexes);
-							}
-							break;
-						}
-					}
-				}
-			}			
-			return kids;
-		}
-		
-		/**
-		 * Returns whether this element would be filtered from the viewer.
-		 * 
-		 * @return whether filtered
-		 */
-		public boolean isFiltered() {
-			return fFiltered;
-		}
-		
-		/**
-		 * Causes the tree item associated with this model element to be realized.
-		 * Must be called in the UI thread.
-		 * 
-		 * @return tree path to associated element, or <code>null</code> if the operation
-		 * fails
-		 */
-		public TreePath realize() {
-			if (fItem.getData() != null) {
-				return getTreePathFromItem(fItem);
-			}
-			int index = -1;
-			TreePath parentPath = null;
-			if (fItem.getParentItem() == null) {
-				index = getTree().indexOf(fItem);
-				parentPath = TreePath.EMPTY;
-			} else {
-				index = fItem.getParentItem().indexOf(fItem);
-				parentPath = getTreePathFromItem(fItem.getParentItem());
-			}
-			UpdateListener listener = new UpdateListener(parentPath, index);
-			addViewerUpdateListener(listener);
-			((ILazyTreePathContentProvider)getContentProvider()).updateElement(parentPath, index);
-			Display display = getTree().getDisplay();
-			while (!listener.isComplete()) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
-				}
-			}
-			removeViewerUpdateListener(listener);
-			if (fItem.getData() != null) {
-				return getTreePathFromItem(fItem);
-			} 
-			return null;
-		}	
-		
-		/**
-		 * Schedules updates to retrieve unrealized children of this node.
-		 * 
-		 * @param parentPath path to this element
-		 * @param model model 
-		 */
-		void retrieveChildren(TreePath parentPath, VirtualModel model) {
-			VirtualChildrenUpdate update = null;
-			if (fChildren != null) {
-				int prevModelIndex = Integer.MAX_VALUE;
-				for (int i = 0; i < fChildren.length; i++) {
-					VirtualElement element = fChildren[i];
-					if (element == null) {
-						if (update != null) {
-							// non-consecutive updates, schedule and keep going
-							model.scheduleUpdate(update);
-							update = null;
-						}
-					} else {
-						int modelIndex = ((ITreeModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, i);
-						if (update == null) {
-							update = new VirtualChildrenUpdate(parentPath, this, model);
-						} else if ((modelIndex - prevModelIndex) > 1) {
-							// non-consecutive updates, schedule and keep going
-							model.scheduleUpdate(update);
-							update = new VirtualChildrenUpdate(parentPath, this, model);
-						}
-						update.add(modelIndex);
-						prevModelIndex = modelIndex;
-					}
-				}
-			}
-			if (update != null) {
-				model.scheduleUpdate(update);
-			}
-		}
-		
-		/**
-		 * Sets the underlying model object.
-		 * @param data the model object
-		 */
-		void setElement(Object data) {
-			fElement = data;
-		}
-		
-		/**
-		 * Sets the label update associated with this element
-		 * 
-		 * @param update the new label update
-		 */
-		void setLabelUpdate(VirtualLabelUpdate update) {
-			fLabel = update;
-		}
-
-		/**
-		 * Returns the image for this element or <code>null</code> if none
-		 * 
-		 * @return image or <code>null</code> if none
-		 */
-		public Image getImage() {
-			if (fLabel == null) {
-				return fItem.getImage();
-			} else {
-				return ((ITreeModelLabelProvider)getLabelProvider()).getImage(fLabel.fImage);
-			}
-		}
-
-		/**
-		 * Returns the labels for the element - one for each column requested.
-		 * 
-		 * @return column labels
-		 */
-		public String[] getLabel() {
-		    if (fLabel == null) {
-		        String[] visibleColumns = getVisibleColumns();
-		        String[] label = new String[visibleColumns == null ? 1 : visibleColumns.length];
-		        for (int i = 0; i < label.length; i++) {
-		            label[i] = fItem.getText(i);
-		        }
-		        return label;
-		    }
-			return fLabel.fText;
-
-		}
-		
-		/**
-		 * Returns the children of this element or <code>null</code> if none.
-		 * 
-		 * @return children or <code>null</code> if none
-		 */
-		public VirtualElement[] getChildren() {
-			return fChildren;
-		}
-		
-	}
-	
-	/**
-	 * Common function for virtual updates.
-	 */
-	class VirtualUpdate extends Request implements IViewerUpdate {
-		
-		/**
-		 * Path to the element being updated, or EMPTY for viewer input.
-		 */
-		private TreePath fPath;
-		
-		/**
-		 * Element being updated.
-		 */
-		VirtualElement fVirtualElement;
-		
-		/**
-		 * Associated virtual model
-		 */
-		VirtualModel fModel = null;
-		
-		/**
-		 * Creates a new update based for the given element and model
-		 * @param model the backing model
-		 * @param element the element to update
-		 * @param elementPath the path of the element
-		 */
-		public VirtualUpdate(VirtualModel model, VirtualElement element, TreePath elementPath) {
-			fPath = elementPath;
-			fModel = model;
-			fVirtualElement = element;
-		}
-		
-		/**
-		 * Returns the associated virtual element.
-		 * 
-		 * @return virtual element
-		 */
-		protected VirtualElement getVirtualElement() {
-			return fVirtualElement;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElement()
-		 */
-		public Object getElement() {
-			if (fPath.getSegmentCount() == 0) {
-				return getViewerInput();
-			}
-			return fPath.getLastSegment();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
-		 */
-		public TreePath getElementPath() {
-			return fPath;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getPresentationContext()
-		 */
-		public IPresentationContext getPresentationContext() {
-			return InternalTreeModelViewer.this.getPresentationContext();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
-		 */
-		public Object getViewerInput() {
-			return InternalTreeModelViewer.this.getInput();
-		}
-		
-	}
-	
-	/**
-	 * Represents all expanded items in this viewer's tree. The model is virtual - i.e. not
-	 * all items have their associated model elements/labels retrieved from the model. The
-	 * model can be populated in a non-UI thread.
-	 */
-	class VirtualModel {
-		
-		/**
-		 * Update requests in progress (children updates and label updates)
-		 */
-		private List fPendingUpdates = new ArrayList();
-		
-		/**
-		 * Whether population has been canceled.
-		 */
-		private boolean fCanceled = false;
-		
-		/**
-		 * Root element in the model.
-		 */
-		private VirtualElement fRoot = null;
-		
-		/**
-		 * Progress monitor to use during retrieval of virtual elements
-		 */
-		private IProgressMonitor fMonitor = null;
-		
-		/**
-		 * Column IDs to generate labels for or <code>null</code> if no columns.
-		 */
-		private String[] fColumnIds;
-				
-		/**
-		 * Count of the number of virtual (unrealized) elements in this model
-		 * when it was created.
-		 */
-		private int fVirtualCount = 0;
-				
-		/**
-		 * Creates a virtual model for this tree viewer limited to the given
-		 * subtrees. Includes the entire model if root is <code>null</code>.
-		 * 
-		 * @param root limits model to given subtree scope, or <code>null</code>
-		 * @param childIndexes children of the root to consider or <code>null</code>
-		 */
-		VirtualModel(TreePath root, int[] childIndexes) {
-			fRoot = new VirtualElement(getTree(), this, root, childIndexes);
-		}
-		
-		/** 
-		 * Increments the counter of virtual elements in the model.
-		 */
-		void incVirtual() {
-			fVirtualCount++;
-		}
-		
-		/**
-		 * update progress monitor
-		 * 
-		 * @param work the number of units worked
-		 */
-		void worked(int work) {
-			fMonitor.worked(work);
-		}
-		
-		/**
-		 * Schedules a children update.
-		 * @param update the update to schedule
-		 */
-		private synchronized void scheduleUpdate(IChildrenUpdate update) {
-			Object element = update.getElement();
-			if (element == null) {
-				element = getInput();
-			}
-			IElementContentProvider provider = ViewerAdapterService.getContentProvider(element);
-			if (provider != null) {
-				fPendingUpdates.add(update);
-				provider.update(new IChildrenUpdate[]{update});
-			}
-		}	
-		
-		/**
-		 * Populates this models elements that have not yet been retrieved from the model,
-		 * returning all elements in the model, or <code>null</code> if canceled.
-		 * 
-		 * @param monitor progress monitor for progress reporting and for checking if canceled
-		 * @param taskName used in progress monitor, for example "Find..."
-		 * @param columnIds labels to generate or <code>null</code> if no columns are to be used
-		 * @return model elements or <code>null</code> if canceled
-		 */
-		public VirtualElement populate(IProgressMonitor monitor, String taskName, String[] columnIds) {
-			fMonitor = monitor;
-			fColumnIds = columnIds;
-			monitor.beginTask(taskName, fVirtualCount * 2);
-			boolean done = false;
-			fRoot.retrieveChildren(TreePath.EMPTY, this);
-			synchronized (this) {
-				done = fPendingUpdates.isEmpty();
-			}
-			while (!done) {
-				synchronized (this) {
-					try {
-						wait(500);
-					} catch (InterruptedException e) {
-					}
-				}
-				if (monitor.isCanceled()) {
-					cancel();
-					return null;
-				}
-				synchronized (this) {
-					done = fPendingUpdates.isEmpty();
-				}	
-			}
-			monitor.done();
-			return fRoot;
-		}
-		
-		/**
-		 * Cancels all pending updates.
-		 */
-		void cancel() {
-			synchronized (this) {
-				fCanceled = true;
-				Iterator iterator = fPendingUpdates.iterator();
-				while (iterator.hasNext()) {
-					IViewerUpdate update = (IViewerUpdate) iterator.next();
-					update.cancel();
-				}
-				fPendingUpdates.clear();
-			}
-		}
-		private synchronized boolean isCanceled() {
-			return fCanceled;
-		}
-		
-		/**
-		 * Notification the given children update is complete. Schedules associated label
-		 * updates if the request or the population of the model has not been canceled.
-		 * 
-		 * @param update completed children update request
-		 */
-		synchronized void done(VirtualChildrenUpdate update) {
-			if (!isCanceled()) {
-				fPendingUpdates.remove(update);
-				if (!update.isCanceled()) {
-					VirtualElement[] children = update.fVirtualElement.fChildren;
-					TreePath parent = update.getElementPath();
-					IElementLabelProvider provider = null;
-					List requests = new ArrayList();
-					int start = update.getOffset();
-					int end = start + update.getLength();
-					for (int i = start; i < end; i++) {
-						int viewIndex = ((ITreeModelContentProvider)getContentProvider()).modelToViewIndex(parent, i);
-						VirtualElement proxy = children[viewIndex];
-						if (proxy.fFiltered) {
-							fMonitor.worked(1); // don't need the label, this one is already done
-						} else {
-							Object element = proxy.fElement;
-							if (element != null) { // null indicates other updates coming later
-								VirtualLabelUpdate labelUpdate = new VirtualLabelUpdate(update.fModel, proxy, parent.createChildPath(element));
-								proxy.setLabelUpdate(labelUpdate);
-								IElementLabelProvider next = ViewerAdapterService.getLabelProvider(element);
-								if (next != null) {
-									fPendingUpdates.add(labelUpdate);
-								}
-								if (provider == null) {
-									provider = next;
-									requests.add(labelUpdate);
-								} else if (next != null) {
-									if (provider.equals(next)) {
-										requests.add(labelUpdate);
-									} else {
-										// schedule queued requests, label provider has changed
-										provider.update((ILabelUpdate[])requests.toArray(new ILabelUpdate[requests.size()]));
-										requests.clear();
-										requests.add(labelUpdate);
-										provider = next;
-									}
-								}
-							}
-						}
-					}
-					if (provider != null && !requests.isEmpty()) {
-						provider.update((ILabelUpdate[])requests.toArray(new ILabelUpdate[requests.size()]));
-					}					
-				}
-				notifyAll();
-			}
-		}
-		
-		/**
-		 * Notification the given label update is complete. Updates progress reporting
-		 * and updates pending updates.
-		 * 
-		 * @param update label update that was completed
-		 */
-		synchronized void done(VirtualLabelUpdate update) {
-			if (!isCanceled()) {
-				fPendingUpdates.remove(update);
-				fMonitor.worked(1);
-			}
-			if (fPendingUpdates.isEmpty()) {
-				notifyAll();
-			}
-		}
-	}
-	
-	/**
-	 * Request to update a range of children.
-	 */
-	class VirtualChildrenUpdate extends VirtualUpdate implements IChildrenUpdate {
-		
-		private int fOffset = -1;
-		private int fLength = 0;
-		
-		/**
-		 * @param parentPath the parent path
-		 * @param parent the parent element
-		 * @param model the model
-		 */
-		public VirtualChildrenUpdate(TreePath parentPath, VirtualElement parent, VirtualModel model) {
-			super(model, parent, parentPath);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getLength()
-		 */
-		public int getLength() {
-			return fLength;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getOffset()
-		 */
-		public int getOffset() {
-			return fOffset;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#setChild(java.lang.Object, int)
-		 */
-		public void setChild(Object child, int offset) {
-			int viewIndex = ((ITreeModelContentProvider)getContentProvider()).modelToViewIndex(getElementPath(), offset);
-			VirtualElement virtualChild = getVirtualElement().fChildren[viewIndex];
-			virtualChild.setElement(child);
-			ITreeModelContentProvider provider = (ITreeModelContentProvider) getContentProvider();
-			virtualChild.fFiltered = provider.shouldFilter(getElementPath(), child);
-			if (!virtualChild.fFiltered) {
-				virtualChild.retrieveChildren(getElementPath().createChildPath(child), fModel);
-			}
-			fModel.worked(1);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.core.commands.Request#done()
-		 */
-		public void done() {
-			fModel.done(this);
-		}
-
-		/**
-		 * @param i the new offset
-		 */
-		void add(int i) {
-			if (fOffset == -1) {
-				fOffset = i;
-			}
-			fLength++;
-		}
-		
-	}
-	
-	class VirtualLabelUpdate extends VirtualUpdate implements ILabelUpdate {
-		
-		/**
-		 * Constructs a label request for the given element;
-		 * @param coordinator  the model
-		 * @param element the element to update
-		 * @param elementPath the element path
-		 */
-		public VirtualLabelUpdate(VirtualModel coordinator, VirtualElement element, TreePath elementPath) {
-			super(coordinator, element, elementPath);
-		}
-
-		private String[] fText;
-		private ImageDescriptor fImage;
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#getColumnIds()
-		 */
-		public String[] getColumnIds() {
-			return fModel.fColumnIds;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#setBackground(org.eclipse.swt.graphics.RGB, int)
-		 */
-		public void setBackground(RGB background, int columnIndex) {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#setFontData(org.eclipse.swt.graphics.FontData, int)
-		 */
-		public void setFontData(FontData fontData, int columnIndex) {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#setForeground(org.eclipse.swt.graphics.RGB, int)
-		 */
-		public void setForeground(RGB foreground, int columnIndex) {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#setImageDescriptor(org.eclipse.jface.resource.ImageDescriptor, int)
-		 */
-		public void setImageDescriptor(ImageDescriptor image, int columnIndex) {
-			fImage = image;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#setLabel(java.lang.String, int)
-		 */
-		public void setLabel(String text, int columnIndex) {
-			if (fText == null) {
-				if (getColumnIds() == null) {
-					fText = new String[1];
-				} else {
-					fText = new String[getColumnIds().length];
-				}
-			}
-			fText[columnIndex] = text;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.core.commands.Request#done()
-		 */
-		public void done() {
-			fModel.done(this);
-		}
-
-	}
 	
 	/**
 	 * @param parent the parent composite
@@ -1192,7 +454,7 @@ public class InternalTreeModelViewer extends TreeViewer
 		if (widget instanceof Item) {
 			widget.setData(TREE_PATH_KEY, getTreePathFromItem((Item)widget));
 		} else {
-			widget.setData(TREE_PATH_KEY, ModelContentProvider.EMPTY_TREE_PATH);
+			widget.setData(TREE_PATH_KEY, TreeModelContentProvider.EMPTY_TREE_PATH);
 		}
 	}
 	
@@ -1237,12 +499,13 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
 	protected void inputChanged(Object input, Object oldInput) {
-        ((ITreeModelContentProvider)getContentProvider()).inputAboutToChange(this, oldInput, input);
-        // Clear items map now that we've called inputAboutToChange.
+        // Clear items map now that ITreeModelContentProvider.inputChanged() was already called.
         // Bug 326917
         super.unmapAllElements();
+		((ITreeModelContentProvider)getContentProvider()).postInputChanged(this, oldInput, input);
 		super.inputChanged(input, oldInput);
-		resetColumns(input);
+		
+		resetColumns(input);		
 	}
 
 	/**
@@ -1362,6 +625,27 @@ public class InternalTreeModelViewer extends TreeViewer
 			refreshColumns();
 		}
 	}	
+
+	protected void internalRefresh(Object element, boolean updateLabels) {
+	    ITreeModelContentProvider contentProvider = (ITreeModelContentProvider)getContentProvider(); 
+	    
+        if (element == null) {
+            internalRefresh(getControl(), getRoot(), true, updateLabels);
+            contentProvider.preserveState(TreePath.EMPTY);
+        } else {
+            Widget[] items = findItems(element);
+            if (items.length != 0) {
+                for (int i = 0; i < items.length; i++) {
+                    if (items[i] instanceof TreeItem) {
+                        contentProvider.preserveState(getTreePathFromItem((TreeItem)items[i]));
+                    } else {
+                        contentProvider.preserveState(TreePath.EMPTY);
+                    }
+                }
+            }
+        }
+	    super.internalRefresh(element, updateLabels);
+	}
 	
     /**
      * Refreshes the columns in the view, based on the viewer input.
@@ -1845,22 +1129,6 @@ public class InternalTreeModelViewer extends TreeViewer
 		}
 	}
 	
-	/**
-	 * Collects all expanded items from this tree viewer and returns them as part of
-	 * a virtual model. This must be called in a UI thread to traverse the tree items.
-	 * The model can the be populated in a non-UI thread.
-	 * 
-	 * Alternatively a root element can be specified with a set of child indexes to
-	 * consider. All children of the specified children are added to the model.
-	 * 
-	 * @param root subtree to consider or <code>null</code> if all
-	 * @param childIndexes indexes of root element to consider, or <code>null</code> if all
-	 * @return virtual model
-	 */
-	VirtualModel buildVirtualModel(TreePath root, int[] childIndexes) {
-		return new VirtualModel(root, childIndexes);
-	}
-		
 	public void addLabelUpdateListener(ILabelUpdateListener listener) {
 	    ((ITreeModelLabelProvider)getLabelProvider()).addLabelUpdateListener(listener);
 	}
@@ -2479,6 +1747,19 @@ public class InternalTreeModelViewer extends TreeViewer
         return false;
     }
     
+    public TreePath[] getElementPaths(Object element) {
+        Widget[] items = internalFindItems(element);
+        TreePath[] paths = new TreePath[items.length];
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] instanceof Tree) {
+                paths[i] = TreePath.EMPTY;
+            } else {
+                paths[i] = getTreePathFromItem((Item)items[i]);
+            }
+        }
+        return paths;
+    }
+    
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
@@ -2495,11 +1776,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	
 	            if (event.detail == SWT.CHECK) {
 	                boolean checked = item.getChecked();	            	
-	            	boolean accepted = false;
-	        		IModelProxy elementProxy = ((TreeModelContentProvider) contentProvider).getElementProxy(path);
-	        		if (elementProxy instanceof ICheckboxModelProxy) {
-	        			accepted = ((ICheckboxModelProxy) elementProxy).setChecked(getPresentationContext(), getInput(), path, checked);
-	        		}	            		
+	            	boolean accepted = ((ITreeModelContentProvider) contentProvider).setChecked(path, checked);
 	
 	        	    // if the listen rejects the change or there is not ICheckboxModelProxy, than revert the check state
 	            	if (!accepted) {

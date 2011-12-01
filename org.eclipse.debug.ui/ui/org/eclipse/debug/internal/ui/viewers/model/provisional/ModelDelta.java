@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,16 +11,14 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
-
-
-
 /**
  * A model delta. Used to create model deltas.
  * <p>
- * Clients may instantiate this class; not intended to be subclassed.
+ * Clients may instantiate this class; not intended to be sub-classed.
  * </p>
- * @see org.eclipse.debug.internal.ui.viewers.IModelDelta
+ * @see IModelDelta
  * @since 3.2
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class ModelDelta implements IModelDelta {
 
@@ -332,7 +330,7 @@ public class ModelDelta implements IModelDelta {
 	/**
 	 * Sets this delta's element
 	 * 
-	 * @param element
+	 * @param element element to set
 	 */
 	public void setElement(Object element) {
 		fElement = element;
@@ -341,7 +339,7 @@ public class ModelDelta implements IModelDelta {
 	/**
 	 * Sets this delta's flags.
 	 * 
-	 * @param flags
+	 * @param flags new flags to set
 	 */
 	public void setFlags(int flags) {
 		fFlags = flags;
@@ -350,7 +348,7 @@ public class ModelDelta implements IModelDelta {
     /**
      * Sets this delta's index
      * 
-     * @param index
+     * @param index new index to set.
      * @since 3.6
      */
     public void setIndex(int index) {
@@ -360,7 +358,7 @@ public class ModelDelta implements IModelDelta {
 	/**
      * Sets this delta's child count.
      * 
-     * @param count
+     * @param count New child count to set.
      */
     public void setChildCount(int count) {
         fChildCount = count;

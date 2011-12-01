@@ -19,12 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -43,7 +41,6 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * @since 3.3
@@ -52,7 +49,11 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
     implements ITreeModelLabelProvider, IModelChangedListener 
 {
 	
-	private ITreeModelLabelProviderTarget fViewer;
+	private IInternalTreeModelViewer fViewer;
+
+	/**
+	 * Note: access this variable should be synchronized with <code>this</code>.
+	 */
 	private List fComplete;
 	
 	/**
@@ -84,23 +85,15 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	/**
 	 * Updates waiting to be sent to the label provider.  The map contains
 	 * lists of updates, keyed using the provider. 
-     * <p>
-     * Note: this variable should only be accessed inside a synchronized section
-     * using the enclosing label provider instance.
-     * </p>
 	 */
 	private Map fPendingUpdates = new HashMap();
 	
 	/**
-	 * A job that will send the label update requests.
+	 * A runnable that will send the label update requests.
 	 * This variable allows the job to be canceled and re-scheduled if 
 	 * new updates are requested.  
-	 * <p>
-	 * Note: this variable should only be accessed inside a synchronized section
-	 * using the enclosing label provider instance.
-	 * </p>
 	 */
-	private UIJob fPendingUpdatesJob;
+	private Runnable fPendingUpdatesRunnable;
 	
 	/**
 	 * List of updates in progress
@@ -111,7 +104,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
      * Delta visitor actively cancels the outstanding label updates for 
      * elements that are changed and are about to be updated.
      */
-    class Visitor implements IModelDeltaVisitor {
+    class CancelPendingUpdatesVisitor implements IModelDeltaVisitor {
         /* (non-Javadoc)
          * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor#visit(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta, int)
          */
@@ -130,12 +123,13 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
     /**
      * Delta visitor
      */
-    private Visitor fVisitor = new Visitor();
+    private CancelPendingUpdatesVisitor fCancelPendingUpdatesVisitor = new CancelPendingUpdatesVisitor();
 	
 	/**
 	 * Constructs a new label provider on the given display
+	 * @param viewer Viewer that this label provieer is used with.
 	 */
-	public TreeModelLabelProvider(ITreeModelLabelProviderTarget viewer) {
+	public TreeModelLabelProvider(IInternalTreeModelViewer viewer) {
 		fViewer = viewer;
 		fViewer.addModelChangedListener(this);
 	}
@@ -210,20 +204,38 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
 	public void dispose() {
+        Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
+        
 	    fViewer.removeModelChangedListener(this);
-		synchronized (fUpdatesInProgress) {
-			Iterator updatesInProgress = fUpdatesInProgress.iterator();
-			while (updatesInProgress.hasNext()) {
-				ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
-				currentUpdate.cancel();			
-			}
+	    fViewer = null;
+	    
+	    List complete = null;
+	    synchronized(this) {
+	        complete = fComplete;
+	        fComplete = null;
+	    }
+	    if (complete != null) {
+            for (Iterator itr = complete.iterator(); itr.hasNext();) {
+                ((ILabelUpdate)itr.next()).cancel();
+            }
+	    }
+	    
+		Iterator updatesInProgress = fUpdatesInProgress.iterator();
+		while (updatesInProgress.hasNext()) {
+			ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
+			currentUpdate.cancel();			
 		}
-		synchronized (this) {
-			if (fPendingUpdatesJob != null) {
-				fPendingUpdatesJob.cancel();
-				fPendingUpdatesJob = null;
-			}
+
+		if (fPendingUpdatesRunnable != null) {
+			fPendingUpdatesRunnable = null;
 		}
+		for (Iterator itr = fPendingUpdates.values().iterator(); itr.hasNext();) {
+		    List updateList = (List)itr.next();
+		    for (Iterator listItr = updateList.iterator(); listItr.hasNext();) {
+		        ((LabelUpdate)listItr.next()).cancel();
+		    }
+		}
+		fPendingUpdates.clear();
 		Iterator images = fImageCache.values().iterator();
 		while (images.hasNext()) {
 			Image image = (Image) images.next();
@@ -248,11 +260,17 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		super.dispose();
 	}
 
-	public synchronized void update(ViewerCell cell) {
+	private boolean isDisposed() {
+	    return fViewer == null;
+	}
+	
+	public void update(ViewerCell cell) {
 		// NOT USED - the viewer updates each row instead 
 	}	
 	
-	public synchronized boolean update(TreePath elementPath) {
+	public boolean update(TreePath elementPath) {
+        Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
+	    
 	    cancelPathUpdates(elementPath);
 	    
 		String[] visibleColumns = fViewer.getVisibleColumns();
@@ -265,17 +283,13 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		        fPendingUpdates.put(presentation, updates);
 		    }
 		    updates.add(new LabelUpdate(fViewer.getInput(), elementPath, this, visibleColumns, fViewer.getPresentationContext()));
-		    if (fPendingUpdatesJob != null) {
-		    	fPendingUpdatesJob.cancel();
-		    }
-		    fPendingUpdatesJob = new UIJob(fViewer.getDisplay(), "Schedule Pending Label Updates") { //$NON-NLS-1$
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					 startRequests(this);
-					 return Status.OK_STATUS;
-				}
-			};
-			fPendingUpdatesJob.setSystem(true);
-			fPendingUpdatesJob.schedule();
+		    fPendingUpdatesRunnable = new Runnable() {
+		        public void run() {
+		            if (isDisposed()) return;
+                    startRequests(this);
+		        }
+		    };
+		    fViewer.getDisplay().asyncExec(fPendingUpdatesRunnable);
 			return true;
 		} else {
 		    return false;
@@ -284,15 +298,16 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	
 	/**
      * Cancel any outstanding updates that are running for this element. 
+	 * @param elementPath Element to cancel updates for.
      */
-    protected void cancelPathUpdates(TreePath elementPath) {
-       synchronized (fUpdatesInProgress) {
-            Iterator updatesInProgress = fUpdatesInProgress.iterator();
-            while (updatesInProgress.hasNext()) {
-                ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
-                if (elementPath.equals(currentUpdate.getElementPath())) {
-                    currentUpdate.cancel();
-                }
+    private void cancelPathUpdates(TreePath elementPath) {
+        Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
+        
+        Iterator updatesInProgress = fUpdatesInProgress.iterator();
+        while (updatesInProgress.hasNext()) {
+            ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
+            if (elementPath.equals(currentUpdate.getElementPath())) {
+                currentUpdate.cancel();
             }
         }
     }
@@ -300,41 +315,46 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
     /**
      * Sets the element's display information in the viewer.
      * 
+     * @param path Element path. 
+     * @param numColumns Number of columns in the data.
+     * @param labels Array of labels.  The array cannot to be 
+     * <code>null</code>, but values within the array may be.
+     * @param images Array of image descriptors, may be <code>null</code>.
+     * @param fontDatas Array of fond data objects, may be <code>null</code>.
+     * @param foregrounds Array of RGB values for foreground colors, may be 
+     * <code>null</code>.
+     * @param backgrounds Array of RGB values for background colors, may be 
+     * <code>null</code>.
+     * @param checked Whether given item should be checked.
+     * @param grayed Whether given item's checkbox shoudl be grayed.
      * @see ITreeModelLabelProviderTarget#setElementData(TreePath, int, String[], ImageDescriptor[], FontData[], RGB[], RGB[])
      * @see ITreeModelCheckProviderTarget#setElementChecked(TreePath, boolean, boolean)
      */
-    protected void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
+    void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
         FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds, boolean checked, boolean grayed) 
     {
         fViewer.setElementData(path, numColumns, labels, images, fontDatas, foregrounds, backgrounds);
-        
-        if (fViewer instanceof ITreeModelCheckProviderTarget)
-            ((ITreeModelCheckProviderTarget) fViewer).setElementChecked(path, checked, grayed);
+        fViewer.setElementChecked(path, checked, grayed);
     }
 
     
-	private void startRequests(UIJob updateJob) {
-	    // Avoid calling providers inside a synchronized section.  Instead 
-	    // copy the updates map into a new variable. 
-	    Map updates = null;
-	    synchronized(this) {
-	        if (updateJob == fPendingUpdatesJob) {
-    	        updates = fPendingUpdates;
-    	        fPendingUpdates = new HashMap();
-    	        fPendingUpdatesJob = null;
-	        }
-	    }
+	private void startRequests(Runnable runnable) {
+        if (runnable != fPendingUpdatesRunnable) {
+            return;
+        }
 
-	    if (updates != null) {
-            for (Iterator itr = updates.keySet().iterator(); itr.hasNext();) {
-                IElementLabelProvider presentation = (IElementLabelProvider)itr.next();
-                List list = (List)updates.get(presentation);
+	    if (!fPendingUpdates.isEmpty()) {
+            for (Iterator itr = fPendingUpdates.keySet().iterator(); itr.hasNext();) {
+                IElementLabelProvider provider = (IElementLabelProvider)itr.next();
+                List list = (List)fPendingUpdates.get(provider);
                 for (Iterator listItr = list.iterator(); listItr.hasNext();) {
                     updateStarted((ILabelUpdate)listItr.next());
                 }
-                presentation.update( (ILabelUpdate[])list.toArray(new ILabelUpdate[list.size()]) );
+                provider.update( (ILabelUpdate[])list.toArray(new ILabelUpdate[list.size()]) );
             }
 	    }
+	    fPendingUpdates.clear();
+	    fPendingUpdatesRunnable = null;
 	}
 	
     /**
@@ -345,28 +365,26 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
     * @param searchFullPath flag whether to look for the element in the full path
     * of the update
     */
-   protected void cancelElementUpdates(Object element, boolean searchFullPath) {
-       synchronized (fUpdatesInProgress) {
-           Iterator updatesInProgress = fUpdatesInProgress.iterator();
-             while (updatesInProgress.hasNext()) {
-                ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
-                
-                if (searchFullPath) {
-                    if (element.equals(fViewer.getInput())) {
-                        currentUpdate.cancel();
-                    } else {
-                        TreePath updatePath = currentUpdate.getElementPath();
-                        for (int i = 0; i < updatePath.getSegmentCount(); i++) {
-                            if (element.equals(updatePath.getSegment(i))) {
-                                currentUpdate.cancel();
-                                break; // Exit the for loop, stay in the while loop
-                            }                         
-                        }
-                    }
+   private void cancelElementUpdates(Object element, boolean searchFullPath) {
+       Iterator updatesInProgress = fUpdatesInProgress.iterator();
+         while (updatesInProgress.hasNext()) {
+            ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
+            
+            if (searchFullPath) {
+                if (element.equals(fViewer.getInput())) {
+                    currentUpdate.cancel();
                 } else {
-                    if (element.equals(currentUpdate.getElement())) {
-                        currentUpdate.cancel();
+                    TreePath updatePath = currentUpdate.getElementPath();
+                    for (int i = 0; i < updatePath.getSegmentCount(); i++) {
+                        if (element.equals(updatePath.getSegment(i))) {
+                            currentUpdate.cancel();
+                            break; // Exit the for loop, stay in the while loop
+                        }                         
                     }
+                }
+            } else {
+                if (element.equals(currentUpdate.getElement())) {
+                    currentUpdate.cancel();
                 }
             }
         }
@@ -377,39 +395,40 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	 * 
 	 * @return presentation context
 	 */
-	protected IPresentationContext getPresentationContext() {
+	private IPresentationContext getPresentationContext() {
 		return fViewer.getPresentationContext();
 	}
 
     /**
      * A label update is complete.
      * 
-     * @param update
+     * @param update Update that is to be completed.
      */
-    protected synchronized void complete(ILabelUpdate update) {
-		if (update.isCanceled()){
-			updateComplete(update);
-		} else {
-			if (fComplete == null) {
-				fComplete = new ArrayList();
-				UIJob job = new UIJob(getDisplay(), "Label Updates") { //$NON-NLS-1$
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						LabelUpdate[] updates = null;
-						synchronized (TreeModelLabelProvider.this) {
-							updates = (LabelUpdate[]) fComplete.toArray(new LabelUpdate[fComplete.size()]);
-							fComplete = null;
-						}
-						for (int i = 0; i < updates.length; i++) {
-							updates[i].update();
-						}
-						return Status.OK_STATUS;
-					}
-				};
-				job.setSystem(true);
-				job.schedule(10L);
-			}
-			fComplete.add(update);
+    synchronized void complete(ILabelUpdate update) {
+        if (fViewer == null) return;
+        
+		if (fComplete == null) {
+			fComplete = new LinkedList();
+			fViewer.getDisplay().asyncExec(new Runnable() {
+			    public void run() {
+			        if (isDisposed()) return;
+                    List updates = null;
+                    synchronized (TreeModelLabelProvider.this) {
+                        updates = fComplete;
+                        fComplete = null;
+                    }
+                    for (Iterator itr = updates.iterator(); itr.hasNext();) {
+                        LabelUpdate itrUpdate = (LabelUpdate)itr.next();
+                        if (itrUpdate.isCanceled()) {
+                            updateComplete(itrUpdate);
+                        } else {
+                            itrUpdate.performUpdate();
+                        }
+                    }
+			    }
+			});
 		}
+		fComplete.add(update);
     }
     
 	public void addLabelUpdateListener(ILabelUpdateListener listener) {
@@ -423,50 +442,47 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	/**
 	 * Notification an update request has started
 	 * 
-	 * @param update
+	 * @param update Update that was started
 	 */
 	void updateStarted(ILabelUpdate update) {
-		boolean begin = false;
-		synchronized (fUpdatesInProgress) {
-			begin = fUpdatesInProgress.isEmpty();
-			fUpdatesInProgress.add(update);
-		}
+	    Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());
+	    
+		boolean begin = fUpdatesInProgress.isEmpty();
+		fUpdatesInProgress.add(update);
+		
 		if (begin) {
-			if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+			if (TreeModelContentProvider.DEBUG_UPDATE_SEQUENCE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println("LABEL SEQUENCE BEGINS"); //$NON-NLS-1$
 			}
-			notifyUpdate(ModelContentProvider.UPDATE_SEQUENCE_BEGINS, null);
+			notifyUpdate(TreeModelContentProvider.UPDATE_SEQUENCE_BEGINS, null);
 		}
-        if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+        if (TreeModelContentProvider.DEBUG_UPDATE_SEQUENCE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("\tBEGIN - " + update); //$NON-NLS-1$
 		}
-		notifyUpdate(ModelContentProvider.UPDATE_BEGINS, update);
+		notifyUpdate(TreeModelContentProvider.UPDATE_BEGINS, update);
 	}
 	
 	/**
 	 * Notification an update request has completed
 	 * 
-	 * @param update
+	 * @param update Update that completed.
 	 */
 	void updateComplete(ILabelUpdate update) {
-		boolean end = false;
-		synchronized (fUpdatesInProgress) {
-			fUpdatesInProgress.remove(update);
-			end = fUpdatesInProgress.isEmpty();
-		}
-        if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+		fUpdatesInProgress.remove(update);
+		
+        if (TreeModelContentProvider.DEBUG_UPDATE_SEQUENCE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("\tEND - " + update); //$NON-NLS-1$
 		}
-		notifyUpdate(ModelContentProvider.UPDATE_COMPLETE, update);
-		if (end) {
-            if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE && ModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+		notifyUpdate(TreeModelContentProvider.UPDATE_COMPLETE, update);
+		if (fUpdatesInProgress.isEmpty()) {
+            if (TreeModelContentProvider.DEBUG_UPDATE_SEQUENCE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println("LABEL SEQUENCE ENDS"); //$NON-NLS-1$
 			}
-			notifyUpdate(ModelContentProvider.UPDATE_SEQUENCE_COMPLETE, null);
+			notifyUpdate(TreeModelContentProvider.UPDATE_SEQUENCE_COMPLETE, null);
 		}
 	}
 	
-	protected void notifyUpdate(final int type, final ILabelUpdate update) {
+	private void notifyUpdate(final int type, final ILabelUpdate update) {
 		if (!fLabelListeners.isEmpty()) {
 			Object[] listeners = fLabelListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -474,16 +490,16 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {
 						switch (type) {
-							case ModelContentProvider.UPDATE_SEQUENCE_BEGINS:
+							case TreeModelContentProvider.UPDATE_SEQUENCE_BEGINS:
 								listener.labelUpdatesBegin();
 								break;
-							case ModelContentProvider.UPDATE_SEQUENCE_COMPLETE:
+							case TreeModelContentProvider.UPDATE_SEQUENCE_COMPLETE:
 								listener.labelUpdatesComplete();
 								break;
-							case ModelContentProvider.UPDATE_BEGINS:
+							case TreeModelContentProvider.UPDATE_BEGINS:
 								listener.labelUpdateStarted(update);
 								break;
-							case ModelContentProvider.UPDATE_COMPLETE:
+							case TreeModelContentProvider.UPDATE_COMPLETE:
 								listener.labelUpdateComplete(update);
 								break;
 						}
@@ -496,9 +512,8 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		}
 	}
 
- 
 	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
-	    delta.accept(fVisitor);
+	    delta.accept(fCancelPendingUpdatesVisitor);
     }
 	
 }

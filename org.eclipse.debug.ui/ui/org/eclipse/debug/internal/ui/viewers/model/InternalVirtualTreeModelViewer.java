@@ -17,13 +17,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import org.eclipse.debug.internal.ui.viewers.model.VirtualItem.Index;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
@@ -31,9 +31,15 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IVirtualItemListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IVirtualItemValidator;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem.Index;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTree;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -59,10 +65,9 @@ import org.eclipse.ui.IMemento;
  * @since 3.5
  */
 public class InternalVirtualTreeModelViewer extends Viewer 
-    implements VirtualTree.IVirtualItemListener, 
+    implements IVirtualItemListener, 
                ITreeModelViewer, 
-               ITreeModelContentProviderTarget, 
-               ITreeModelLabelProviderTarget
+               IInternalTreeModelViewer
 {
 
     /**
@@ -91,6 +96,11 @@ public class InternalVirtualTreeModelViewer extends Viewer
      */
     private static final String TREE_PATH_KEY = "TREE_PATH_KEY"; //$NON-NLS-1$
 
+    /**
+     * Viewer filters currently configured for viewer.
+     */
+    private ViewerFilter[] fFilters = new ViewerFilter[0];
+    
     /**
      * The display that this virtual tree viewer is associated with. It is used
      * for access to the UI thread.
@@ -178,10 +188,10 @@ public class InternalVirtualTreeModelViewer extends Viewer
      */
     private Runnable fValidateRunnable;
     
-    public InternalVirtualTreeModelViewer(Display display, int style, IPresentationContext context) {        
+    public InternalVirtualTreeModelViewer(Display display, int style, IPresentationContext context, IVirtualItemValidator itemValidator) {        
         fDisplay = display;
         fContext = context;        
-        fTree = new VirtualTree(style);
+        fTree = new VirtualTree(style, itemValidator);
         fTree.addItemListener(this);
         
         fContentProvider = new TreeModelContentProvider();
@@ -208,12 +218,13 @@ public class InternalVirtualTreeModelViewer extends Viewer
 
     public void setInput(Object input) {
         Object oldInput = fInput;
-        getContentProvider().inputAboutToChange(this, oldInput  , input);
-        fItemsMap.clear();
         getContentProvider().inputChanged(this, oldInput, input);
+        fItemsMap.clear();
         fInput = input;
+        getContentProvider().postInputChanged(this, oldInput  , input);
         fTree.setData(fInput);
-        inputChanged(oldInput, fInput);
+        fTree.setSelection(EMPTY_ITEMS_ARRAY);
+        inputChanged(fInput, oldInput);
         refresh();
     }
 
@@ -265,7 +276,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         validate();
     }
 
-    VirtualTree getTree() {
+    public VirtualTree getTree() {
         return fTree;
     }
     
@@ -376,8 +387,66 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return selection;
     }
 
+//    private VirtualTreeSelection adjustSelectionForReplace(VirtualTreeSelection selection, VirtualItem item, 
+//        Object element, Object parentElement) 
+//    {
+//        if (selection.getItems().containsKey(item)) {
+//            if (item.getData() == null) {
+//                // The current item was selected, but its data is null.
+//                // The data will be replaced by the given element, so to keep
+//                // it selected, we have to add it to the selection.
+//
+//                // set the element temporarily so that we can call getTreePathFromItem
+//                item.setData(element);
+//                TreePath path = getTreePathFromItem(item);
+//                item.setData(null);
+//
+//                Map map = new LinkedHashMap(selection.getItems());
+//                map.put(item, path);
+//                TreePath[] paths = new TreePath[selection.getPaths().length + 1];
+//                int i = 0;
+//                for (Iterator itr = map.values().iterator(); itr.hasNext();) {
+//                    TreePath nextPath = (TreePath)itr.next();
+//                    if (nextPath != null) {
+//                        paths[i++] = nextPath;
+//                    }
+//                }
+//                return new VirtualTreeSelection(map, paths);
+//            } else if (!item.getData().equals(element)) {
+//                // The current item was selected by the new element is 
+//                // different than the previous element in the item.
+//                // Remove this item from selection.
+//                Map map = new LinkedHashMap(selection.getItems());
+//                map.remove(item);
+//                TreePath[] paths = new TreePath[selection.getPaths().length - 1];
+//                int i = 0;
+//                for (Iterator itr = map.values().iterator(); itr.hasNext();) {
+//                    TreePath nextPath = (TreePath)itr.next();
+//                    if (nextPath != null) {
+//                        paths[i++] = nextPath;
+//                    }
+//                }
+//                return new VirtualTreeSelection(map, paths);                
+//            }
+//        }
+//        if (item.getData() != null || selection.getItems().size() == selection.size() || parentElement == null) {
+//            // Don't do anything - we are not seeing an instance of bug 185673
+//            return selection;
+//        }
+//        if (item.getData() == null && selection.getItems().containsKey(item)) {
+//        }
+//        // The item was not selected, return the given selection
+//        return selection;
+//    }
+
     
     public void reveal(TreePath path, final int index) {
+        VirtualItem parentItem = findItem(path);
+        if (parentItem != null && parentItem.getItemCount() >= index) {
+            VirtualItem revealItem = parentItem.getItem(new Index(index));
+            getTree().showItem(revealItem);
+            getTree().validate();
+        }
         // TODO: implement reveal()
     }
 
@@ -425,6 +494,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
 
     private void refresh(VirtualItem item) {
+        getContentProvider().preserveState(getTreePathFromItem(item));
+        
         if (!item.needsDataUpdate()) {
             if (item.getParent() != null) {
                 item.setNeedsLabelUpdate();
@@ -488,7 +559,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         fAutoExpandToLevel = level;
     }
     
-    private VirtualItem findItem(TreePath path) {
+    public VirtualItem findItem(TreePath path) {
         VirtualItem item = fTree;
         if (path.getSegmentCount() == 0) {
             return fTree;
@@ -503,7 +574,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
 
     static private final VirtualItem[] EMPTY_ITEMS_ARRAY = new VirtualItem[0];
 
-    private VirtualItem[] findItems(Object elementOrTreePath) {
+    public VirtualItem[] findItems(Object elementOrTreePath) {
         if (elementOrTreePath instanceof TreePath) {
             VirtualItem item = findItem((TreePath) elementOrTreePath);
             return item == null ? EMPTY_ITEMS_ARRAY : new VirtualItem[] { item };
@@ -626,8 +697,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         if (fNotifyUnmap) {
             // TODO: should we update the filter with the "new non-identical element"?
             IContentProvider provider = getContentProvider();
-            if (provider instanceof ModelContentProvider) {
-                ((ModelContentProvider) provider).unmapPath((TreePath) item.getData(TREE_PATH_KEY));
+            if (provider instanceof TreeModelContentProvider) {
+                ((TreeModelContentProvider) provider).unmapPath((TreePath) item.getData(TREE_PATH_KEY));
             }
         }
 
@@ -820,11 +891,18 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
         VirtualItem[] items = fTree.getSelection();
         ArrayList list = new ArrayList(items.length);
+        Map map = new LinkedHashMap(items.length * 4/3);
+
         for (int i = 0; i < items.length; i++) {
+            TreePath path = null;
+            
             if (items[i].getData() != null) {
-                list.add(getTreePathFromItem(items[i]));
+                path = getTreePathFromItem(items[i]);
+                list.add(path);
             }
+            map.put(items[i], path);
         }
+        //return new VirtualTreeSelection(map, (TreePath[]) list.toArray(new TreePath[list.size()]));
         return new TreeSelection((TreePath[]) list.toArray(new TreePath[list.size()]));
     }
     
@@ -929,9 +1007,9 @@ public class InternalVirtualTreeModelViewer extends Viewer
      * Returns whether the candidate selection should override the current
      * selection.
      * 
-     * @param current
-     * @param curr
-     * @return
+     * @param current Current selection in viewer
+     * @param candidate New potential selection requested by model.
+     * @return true if candidate selection should be set to viewer.
      */
     public boolean overrideSelection(ISelection current, ISelection candidate) {
         IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(current, getPresentationContext());
@@ -944,11 +1022,19 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return !selectionPolicy.isSticky(current, getPresentationContext());
     }
 
-    private static ViewerFilter[] EMPTY_FILTER_ARRAY = new ViewerFilter[0];
-    
     public ViewerFilter[] getFilters() {
-        // TODO: Add filter support
-        return EMPTY_FILTER_ARRAY;
+    	return fFilters;
+    }
+    
+    public void addFilter(ViewerFilter filter) {
+    	ViewerFilter[] newFilters = new ViewerFilter[fFilters.length + 1];
+    	System.arraycopy(fFilters, 0, newFilters, 0, fFilters.length);
+    	newFilters[fFilters.length] = filter;
+    	fFilters = newFilters;
+    }
+    
+    public void setFilters(ViewerFilter[] filters) {
+    	fFilters = filters;
     }
     
     public void dispose() {
@@ -981,7 +1067,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     /**
      * Configures the columns for the given viewer input.
      * 
-     * @param input
+     * @param input new viewer input
      */
     private void resetColumns(Object input) {
         if (input != null) {
@@ -1019,8 +1105,6 @@ public class InternalVirtualTreeModelViewer extends Viewer
         
     /**
      * Configures the columns based on the current settings.
-     * 
-     * @param input
      */
     protected void configureColumns() {
         if (fColumnPresentation != null) {
@@ -1063,9 +1147,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
     
     /**
-     * Returns whether columns are being displayed currently.
-     * 
-     * @return
+     * @return Returns true if columns are being displayed currently. 
      */
     public boolean isShowColumns() {
         if (fColumnPresentation != null) {
@@ -1094,7 +1176,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     /**
      * Creates new columns for the given presentation.
      * 
-     * @param presentation
+     * @param presentation presentation context to build columns for.
      */
     protected void buildColumns(IColumnPresentation presentation) {
         PresentationContext presentationContext = (PresentationContext) getPresentationContext();
@@ -1158,9 +1240,6 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }   
     
-    
-
-
     /**
      * Returns the current column presentation for this viewer, or <code>null</code>
      * if none.
@@ -1174,7 +1253,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     /**
      * Save viewer state into the given memento.
      * 
-     * @param memento
+     * @param memento Memento to write state to.
      */
     public void saveState(IMemento memento) {
         if (!fShowColumns.isEmpty()) {
@@ -1210,7 +1289,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     /**
      * Initializes viewer state from the memento
      * 
-     * @param memento
+     * @param memento Memento to read state from.
      */
     public void initState(IMemento memento) {
         IMemento[] mementos = memento.getChildren(SHOW_COLUMNS);
@@ -1342,7 +1421,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         VirtualItem parent = findItem(path);
        
         if (parent != null) {
-            delta.setChildCount(((ModelContentProvider)getContentProvider()).viewToModelCount(path, parent.getItemCount()));
+            delta.setChildCount(((TreeModelContentProvider)getContentProvider()).viewToModelCount(path, parent.getItemCount()));
             if (parent.getExpanded()) {
                 if ((flagsToSave & IModelDelta.EXPAND) != 0) {
                     delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
@@ -1381,9 +1460,9 @@ public class InternalVirtualTreeModelViewer extends Viewer
                 flags = flags | IModelDelta.SELECT;
             }
             if (expanded || flags != IModelDelta.NO_CHANGE) {
-                int modelIndex = ((ModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, item.getIndex().intValue());
+                int modelIndex = ((TreeModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, item.getIndex().intValue());
                 TreePath elementPath = parentPath.createChildPath(element);
-                int numChildren = ((ModelContentProvider)getContentProvider()).viewToModelCount(elementPath, item.getItemCount());
+                int numChildren = ((TreeModelContentProvider)getContentProvider()).viewToModelCount(elementPath, item.getItemCount());
                 ModelDelta childDelta = delta.addNode(element, modelIndex, flags, numChildren);
                 if (expanded) {
                     VirtualItem[] items = item.getItems();
@@ -1432,7 +1511,17 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return null;
     }
 
-    private String getText(VirtualItem item, int columnIdx) {
+    public TreePath[] getElementPaths(Object element) {
+        VirtualItem[] items = findItems(element);
+        TreePath[] paths = new TreePath[items.length];
+        for (int i = 0; i < items.length; i++) {
+            paths[i] = getTreePathFromItem(items[i]);
+       }
+        return paths;
+    }
+    
+
+    public String getText(VirtualItem item, int columnIdx) {
         String[] texts = (String[])item.getData(VirtualItem.LABEL_KEY);
         if (texts != null && texts.length > columnIdx) {
             return texts[columnIdx];
@@ -1440,7 +1529,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return null;
     }
 
-    private Image getImage(VirtualItem item, int columnIdx) {
+    public Image getImage(VirtualItem item, int columnIdx) {
         ImageDescriptor[] imageDescriptors = (ImageDescriptor[]) item.getData(VirtualItem.IMAGE_KEY);
         if (imageDescriptors != null && imageDescriptors.length > columnIdx) {
             return getLabelProvider().getImage(imageDescriptors[columnIdx]);
@@ -1448,7 +1537,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return null;
     }
 
-    private Font getFont(VirtualItem item, int columnIdx) {
+    public Font getFont(VirtualItem item, int columnIdx) {
         FontData[] fontDatas = (FontData[]) item.getData(VirtualItem.FONT_KEY);
         if (fontDatas != null) {
             return getLabelProvider().getFont(fontDatas[columnIdx]);
@@ -1478,4 +1567,20 @@ public class InternalVirtualTreeModelViewer extends Viewer
     public void clearSelectionQuiet() {
     	getTree().setSelection(EMPTY_ITEMS_ARRAY);
     }
+    
+    public boolean getElementChecked(TreePath path) {
+        // Not supported
+        return false;
+    }
+    
+    public boolean getElementGrayed(TreePath path) {
+        // Not supported
+        return false;
+    }
+    
+    public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
+        // Not supported
+    }
+    
+    
 }

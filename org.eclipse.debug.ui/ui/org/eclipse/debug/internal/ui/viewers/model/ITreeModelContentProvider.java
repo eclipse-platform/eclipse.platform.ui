@@ -15,6 +15,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewerFilter;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
@@ -85,6 +87,20 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
     public int modelToViewIndex(TreePath parentPath, int index);
 
     /**
+     * Returns whether the children of given element should be filtered.
+     * <p>This method is used to determine whether any of the registered filters
+     * that extend {@link TreeModelViewerFilter} are applicable to the given 
+     * element.  If so, then children of given element should be filtered 
+     * prior to populating them in the viewer.  
+     * 
+     * @param parentElement
+     *            the parent element 
+     * @return whether there are any {@link TreeModelViewerFilter} filters 
+     * applicable to given parent
+     */
+    public boolean areTreeModelViewerFiltersApplicable(Object parentElement);        
+    
+    /**
      * Returns whether the given element is filtered.
      * 
      * @param parentElementOrTreePath
@@ -98,7 +114,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
     /**
      * Notification the given element is being unmapped.
      * 
-     * @param path
+     * @param path Path to unmap
      */
     public void unmapPath(TreePath path);
 
@@ -107,7 +123,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * coming from the model.  Any delta flags which are hidden by the mask
      * will be ignored.
      *  
-     * @param the bit mask for <code>IModelDelta</code> flags
+     * @param mask for <code>IModelDelta</code> flags
      * 
      * @since 3.6
      */
@@ -135,11 +151,13 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
 
     /**
      * Registers the specified listener for view update notifications.
+     * @param listener Listener to add
      */
     public void addViewerUpdateListener(IViewerUpdateListener listener);
     
     /**
      * Removes the specified listener from update notifications.
+     * @param listener Listener to remove
      */
     public void removeViewerUpdateListener(IViewerUpdateListener listener);
     
@@ -147,23 +165,34 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * Registers the given listener for model delta notification.
      * This listener is called immediately after the viewer processes
      * the delta.  
+     * @param listener Listener to add
      */
     public void addModelChangedListener(IModelChangedListener listener);
     
     /**
      * Removes the given listener from model delta notification.
+     * @param listener Listener to remove
      */
     public void removeModelChangedListener(IModelChangedListener listener);
     
+    /**
+     * Causes the content provider to save the expansion and selection state
+     * of given element.  The state is then restored as the tree is lazily
+     * re-populated.
+     * @param path Path of the element to save.
+     */
+    public void preserveState(TreePath path);
 
     /**
      * Registers the specified listener for state update notifications.
+     * @param listener Listener to add
      * @since 3.6
      */
     public void addStateUpdateListener(IStateUpdateListener listener);
 
     /**
      * Removes the specified listener from state update notifications.
+     * @param listener Listener to remove
      * @since 3.6
      */
     public void removeStateUpdateListener(IStateUpdateListener listener);
@@ -196,13 +225,24 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
     
     /**
      * Notifies the content provider that a client called {@link Viewer#setInput(Object)}, 
-     * and the viewer input is about to change.  
+     * and the viewer input is changed. 
+     * This method is guaranteed to be called after {@link IContentProvider#inputChanged(Viewer, Object, Object)} 
      *  
      * @param viewer The viewer that uses this content provider.
      * @param oldInput Old input object.
      * @param newInput New input object.
      * 
-     * @since 3.7
+     * @since 3.8
      */
-    public void inputAboutToChange(ITreeModelContentProviderTarget viewer, Object oldInput, Object newInput);
+    public void postInputChanged(IInternalTreeModelViewer viewer, Object oldInput, Object newInput);
+    
+    /**
+     * Notifies the receiver that the given element has had its 
+     * checked state modified in the viewer.
+     * 
+     * @param path Path of the element that had its checked state changed
+     * @param checked The new checked state of the element
+     * @return false if the check state should not change
+     */
+    public boolean setChecked(TreePath path, boolean checked);
 }

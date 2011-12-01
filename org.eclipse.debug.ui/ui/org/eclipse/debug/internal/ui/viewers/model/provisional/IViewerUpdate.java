@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,8 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * A context sensitive viewer update request.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.3
  */
 public interface IViewerUpdate extends IRequest {

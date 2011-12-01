@@ -12,7 +12,7 @@ package org.eclipe.debug.tests.viewer.model;
 
 import junit.framework.TestCase;
 
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
 import org.eclipse.swt.SWT;

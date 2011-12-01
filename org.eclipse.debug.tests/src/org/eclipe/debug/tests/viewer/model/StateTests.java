@@ -19,9 +19,9 @@ import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -86,8 +86,8 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         }
     }
     
-    protected ITreeModelContentProviderTarget getCTargetViewer() {
-        return (ITreeModelContentProviderTarget)fViewer;
+    protected IInternalTreeModelViewer getInternalViewer() {
+        return (IInternalTreeModelViewer)fViewer;
     }
     
     public void testUpdateViewer() throws InterruptedException {
@@ -138,7 +138,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fListener.addLabelUpdate(path3);
         
         fViewer.updateViewer(updateDelta);
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | LABEL_UPDATES)) 
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_UPDATES)) 
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Extract the new state from viewer
@@ -189,7 +189,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
      *     (size).1
      *       (size).1.1
      */
-    private TestModel alternatingSubsreesModel(int size) {
+    static TestModel alternatingSubsreesModel(int size) {
         TestModel model = new TestModel();
         
         TestElement[] elements = new TestElement[size];
@@ -207,7 +207,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         return model;
     }
 
-    private boolean areTreeSelectionsEqual(ITreeSelection sel1, ITreeSelection sel2) {
+    static boolean areTreeSelectionsEqual(ITreeSelection sel1, ITreeSelection sel2) {
         Set sel1Set = new HashSet();
         sel1Set.addAll( Arrays.asList(sel1.getPaths()) );
         
@@ -217,9 +217,9 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         return sel1Set.equals(sel2Set);
     }
     
-    private void expandAlternateElements(TestModel model, boolean waitForAllUpdates) throws InterruptedException {
-        fListener.reset(); 
-        fListener.setFailOnRedundantUpdates(false);
+    static void expandAlternateElements(TestModelUpdatesListener listener, TestModel model, boolean waitForAllUpdates) throws InterruptedException {
+        listener.reset(); 
+        listener.setFailOnRedundantUpdates(false);
         
         TestElement rootElement = model.getRootElement();
         TestElement[] children = rootElement.getChildren();
@@ -237,7 +237,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
             int index = i;
             while (element.getChildren().length != 0) {
                 TreePath elementPath = model.findElement(element.getLabel());
-                fListener.addUpdates(
+                listener.addUpdates(
                     elementPath, element, 1, 
                     CHILD_COUNT_UPDATES | (waitForAllUpdates ? CHILDREN_UPDATES : 0) );
                 delta = delta.addNode(element, index, IModelDelta.EXPAND, element.getChildren().length);
@@ -247,8 +247,8 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         }
         model.postDelta(rootDelta);
 
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!listener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE)) 
+            if (!Display.getDefault().readAndDispatch ()) Thread.sleep(0);
     }
     
     public void testPreserveExpandedOnRemove() throws InterruptedException {
@@ -265,7 +265,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
 
-        expandAlternateElements(model, true);
+        expandAlternateElements(fListener, model, true);
         
         // Set a selection in view
         TreeSelection originalSelection = new TreeSelection(model.findElement("5.1"));
@@ -282,13 +282,13 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("4")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 
@@ -306,7 +306,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
 
-        expandAlternateElements(model, true);
+        expandAlternateElements(fListener, model, true);
         
         // Set a selection in view
         TreeSelection originalSelection = new TreeSelection(model.findElement("5.1"));
@@ -326,15 +326,15 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("1.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("4")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("1.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 
@@ -352,7 +352,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
 
-        expandAlternateElements(model, true);
+        expandAlternateElements(fListener, model, true);
         
         // Set a selection in view
         // Set a selection in view
@@ -366,7 +366,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         
         // Note: Re-expanding nodes causes redundant updates.
         fListener.reset(false, false);
-        fListener.addUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
+        fListener.addUpdates(getInternalViewer(), TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
         
         // Create the delta which has nodes with CONTENT flag set at multiple levels. 
         ModelDelta rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.CONTENT);
@@ -380,14 +380,18 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("4")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
+        
+        // Note: in past it was observed sub-optimal coalescing in this test due 
+        // to scattered update requests from viewer.
+        Assert.assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
     }
 
 
@@ -424,7 +428,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Note: Re-expanding nodes causes redundant updates.
         fListener.reset(false, false);
-        fListener.addUpdates(getCTargetViewer(), elementPath, model.getElement(elementPath), -1, ALL_UPDATES_COMPLETE);
+        fListener.addUpdates(getInternalViewer(), elementPath, model.getElement(elementPath), -1, ALL_UPDATES_COMPLETE);
         
         // Post the sub-tree update
         model.postDelta(rootDelta);
@@ -433,16 +437,16 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
         // On windows, getExpandedState() may return true for an element with no children:
         // Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.0 - new")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.2")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.3")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.2")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.3")) == true);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 
-    public void _X_testPreserveExpandedOnContentStress() throws InterruptedException {
+    public void testPreserveExpandedOnContentStress() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(6);
 
@@ -456,7 +460,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
 
-        expandAlternateElements(model, true);
+        expandAlternateElements(fListener, model, true);
         
         // Set a selection in view
 //        TreeSelection originalSelection = new TreeSelection(
@@ -473,20 +477,20 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
             
             // Note: Re-expanding nodes causes redundant updates.
             fListener.reset(false, false);
-            fListener.addUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE); 
+            fListener.addUpdates(getInternalViewer(), TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE); 
             model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
             while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) 
                 if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
             // Validate data
             model.validateData(fViewer, TreePath.EMPTY, true);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("4")) == false);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5")) == true);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5.1")) == true);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
             Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
             
             // Update the model again
@@ -494,25 +498,25 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
             
             // Note: Re-expanding nodes causes redundant updates.
             fListener.reset(false, false);
-            fListener.addUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE); 
+            fListener.addUpdates(getInternalViewer(), TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE); 
             model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
             while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) 
                 if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
             // Validate data
             model.validateData(fViewer, TreePath.EMPTY, true);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("4")) == false);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5")) == true);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5.1")) == true);
-            Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+            Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
             Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
         }
     }
 
-    public void _X_testPreserveLargeModelOnContent() throws InterruptedException {
+    public void testPreserveLargeModelOnContent() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel(100);
 
@@ -523,10 +527,10 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 //        model.validateData(fViewer, TreePath.EMPTY, true);
 
-        expandAlternateElements(model, false);
+        expandAlternateElements(fListener, model, false);
         
         // Set a selection in view
         TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
@@ -539,16 +543,16 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         // Note: Re-expanding nodes causes redundant updates.
         fListener.reset(false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Validate data
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("4")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
         
         // Update the model again
@@ -557,16 +561,16 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         // Note: Re-expanding nodes causes redundant updates.
         fListener.reset(false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Validate data
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("4")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
     
@@ -675,7 +679,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Check to make sure that the state restore didn't change the selection.
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == false);
     }
 
     public void testPreserveExpandDeltaAfterContent() throws InterruptedException {
@@ -716,7 +720,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Check to make sure that the state restore didn't change the selection.
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
     }
 
     
@@ -735,7 +739,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Expand some, but not all elements
-        expandAlternateElements(model, true);
+        expandAlternateElements(fListener, model, true);
 
         // Set a selection in view
         fViewer.setSelection(new TreeSelection(new TreePath[] { model.findElement("5.1"), model.findElement("5.1.1"), model.findElement("6.1.1") } ));
@@ -746,7 +750,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset(false, false);
-        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
+        fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
         fViewer.setInput(null);
         while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
@@ -796,7 +800,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset(true, false);
-        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
+        fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
         while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
@@ -807,6 +811,93 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         // Note: disable redundant updates because the reveal delta triggers one.
         fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, false, false);
         // TODO: add state updates somehow?
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+
+        // Extract the restored state from viewer
+        ModelDelta restoredState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, restoredState, IModelDelta.EXPAND | IModelDelta.SELECT);
+
+        if (!deltaMatches(originalState, restoredState)) {
+            Assert.fail("Expected:\n" + originalState.toString() + "\nGot:\n" + restoredState);
+        }
+    }
+
+    public void testSaveAndRestoreInputInstance() throws InterruptedException {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        TestModel model = alternatingSubsreesModel(6);
+
+        // NOTE: WE ARE NOT EXPANDING ANY CHILDREN
+        
+        // Create the listener, only check the first level
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY, true);
+
+        // Expand some, but not all elements
+        expandAlternateElements(fListener, model, true);
+
+        // Set a selection in view
+        fViewer.setSelection(new TreeSelection(new TreePath[] { model.findElement("5.1"), model.findElement("5.1.1"), model.findElement("6.1.1") } ));
+        
+        // Extract the original state from viewer
+        ModelDelta originalState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, originalState, IModelDelta.EXPAND | IModelDelta.SELECT);
+
+        // Do not reset to null, just reset input to the same object.
+        
+        // Set the viewer input back to the model.  When view updates are complete
+        // the viewer 
+        // Note: disable redundant updates because the reveal delta triggers one.
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, false, false);
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+
+        // Extract the restored state from viewer
+        ModelDelta restoredState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, restoredState, IModelDelta.EXPAND | IModelDelta.SELECT);
+
+        if (!deltaMatches(originalState, restoredState)) {
+            Assert.fail("Expected:\n" + originalState.toString() + "\nGot:\n" + restoredState);
+        }
+    }
+
+    public void testSaveAndRestoreInputInstanceEquals() throws InterruptedException {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        TestModel model = alternatingSubsreesModel(6);
+
+        // NOTE: WE ARE NOT EXPANDING ANY CHILDREN
+        
+        // Create the listener, only check the first level
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY, true);
+
+        // Expand some, but not all elements
+        expandAlternateElements(fListener, model, true);
+
+        // Set a selection in view
+        fViewer.setSelection(new TreeSelection(new TreePath[] { model.findElement("5.1"), model.findElement("5.1.1"), model.findElement("6.1.1") } ));
+        
+        // Extract the original state from viewer
+        ModelDelta originalState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, originalState, IModelDelta.EXPAND | IModelDelta.SELECT);
+
+        // Create a copy of the input object and set it to model. 
+        TestElement newRoot = new TestElement(model, model.getRootElement().getID(), model.getRootElement().getChildren());
+        model.setRoot(newRoot);
+        
+        // Set the viewer input back to the model.  When view updates are complete
+        // the viewer 
+        // Note: disable redundant updates because the reveal delta triggers one.
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, false, false);
+        
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
@@ -831,9 +922,9 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
-        expandAlternateElements(model, false);
+        expandAlternateElements(fListener, model, false);
         
         // Set a selection in view
         TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
@@ -846,7 +937,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset();
-        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
+        fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
         while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
@@ -857,18 +948,18 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         // Note: disable redundant updates because the reveal delta triggers one.
         fListener.reset();
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Validate data (only select visible elements).
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("1.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("4")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("1.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 
@@ -888,9 +979,9 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
-        expandAlternateElements(model, false);
+        expandAlternateElements(fListener, model, false);
         
         // Set a selection in view
         TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
@@ -903,7 +994,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset();
-        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
+        fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
         while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
@@ -922,18 +1013,18 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fViewer.setInput(model.getRootElement());
         
         // MONITOR FOR THE STATE RESTORE TO COMPLETE   
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE| STATE_RESTORE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE| STATE_RESTORE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Validate data
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("1.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("4")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("1.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
     
@@ -998,9 +1089,39 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Check to make sure that the state restore didn't change the selection.
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == false);
         Assert.assertEquals(new TreeSelection(model.findElement("1")), fViewer.getSelection());
     }
+
+    /**
+     * Test for bug 359859.<br>
+     * This test verifies that RESTORE state is handled after SAVE previous state was completed
+     */
+    public void testSaveRestoreOrder() throws InterruptedException {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        TestModel model = TestModel.simpleMultiLevel();
+
+        // Expand all
+        fViewer.setAutoExpandLevel(-1);
+        
+        // Create the listener.
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY, true);
+        
+        // a new similar model
+        TestModel copyModel = TestModel.simpleMultiLevel();
+        
+        // Trigger save - restore sequence.
+        fListener.reset();
+        fListener.expectRestoreAfterSaveComplete();
+        fViewer.setInput(copyModel.getRootElement());
+        while (!fListener.isFinished(STATE_RESTORE_STARTED)) Thread.sleep(0);
+        Assert.assertTrue("RESTORE started before SAVE to complete", fListener.isFinished(STATE_SAVE_COMPLETE));        
+    }    
 
 }

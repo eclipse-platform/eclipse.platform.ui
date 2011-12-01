@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,8 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 /**
  * Context sensitive children update request for a parent and subrange of its
  * children.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.3
  */
 public interface IChildrenUpdate extends IViewerUpdate {
@@ -40,9 +39,7 @@ public interface IChildrenUpdate extends IViewerUpdate {
 	 * Sets the child for this request's parent at the given offset.
 	 * 
 	 * @param child child
-	 * @param index child offset
-	 * 
-	 * TODO: what to do with <code>null</code>
+	 * @param offset child offset
 	 */
 	public void setChild(Object child, int offset); 	
 }

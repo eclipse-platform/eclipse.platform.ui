@@ -19,12 +19,12 @@ import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.layout.FillLayout;
@@ -65,7 +65,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         fShell.open ();
     }
 
-    abstract protected ITreeModelContentProviderTarget createViewer(Display display, Shell shell);
+    abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
     
     /**
      * @throws java.lang.Exception
@@ -107,6 +107,8 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         
         model.validateData(fViewer, TreePath.EMPTY);
+        
+        Assert.assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
     }
 
     public void testSimpleMultiLevel() throws InterruptedException {
@@ -122,6 +124,8 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         model.validateData(fViewer, TreePath.EMPTY);
+        
+        Assert.assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 3) );
     }
     
     /**
@@ -342,5 +346,4 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         }
         return expectedChildren.isEmpty();
     }
-        
 }

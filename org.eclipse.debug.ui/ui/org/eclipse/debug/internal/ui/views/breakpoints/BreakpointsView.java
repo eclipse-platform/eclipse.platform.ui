@@ -69,9 +69,9 @@ import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganize
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointUIConstants;
 import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointsViewInput;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;

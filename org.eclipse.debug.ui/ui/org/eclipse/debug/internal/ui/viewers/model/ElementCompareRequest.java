@@ -11,14 +11,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * @since 3.3
@@ -33,20 +30,29 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
     private boolean fCheckChildrenRealized;
 	
 	
-	/**
-	 * @param context
-	 * @param element
-	 * @param memento
-	 */
-	public ElementCompareRequest(ModelContentProvider provider, Object viewerInput, Object element, 
+    /**
+     * @param provider the content provider to use for the update
+     * @param viewerInput the current input
+     * @param element the element to update
+     * @param elementPath the path of the element to update
+     * @param memento Memento to encode result into
+     * @param delta Delta to write the result comparison into.
+     * @param modelIndex Index of element to compare.
+     * @param knowsHasChildren Flag indicating whether provider knows the has 
+     * children state of element. 
+     * @param knowsChildCount Flag indicating whether provider knows the 
+     * child count state of element.
+     * @param checkChildrenRealized Flag indicating if any realized children should be checked
+     */
+	public ElementCompareRequest(TreeModelContentProvider provider, Object viewerInput, Object element, 
 	    TreePath elementPath, IMemento memento, ModelDelta delta, int modelIndex, 
-	    boolean hasChildren, boolean knowsChildCount, boolean checkChildrenRealized) 
+	    boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized) 
 	{
 		super(provider, viewerInput, provider.getPresentationContext(), element, elementPath, memento);
 		fProvider = provider;
 		fDelta = delta;
 		fModelIndex = modelIndex;
-		fKnowsHasChildren = hasChildren;
+		fKnowsHasChildren = knowsHasChildren;
 		fKnowsChildCount = knowsChildCount;
 		fCheckChildrenRealized = checkChildrenRealized;
 	}
@@ -62,17 +68,19 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
 	public void done() {
-			UIJob job = new UIJob("restore delta") { //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if (!isCanceled()) {
-					fProvider.compareFinished(ElementCompareRequest.this, fDelta);
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.setSystem(true);
-		job.schedule();
-	}
+        ITreeModelViewer viewer = getContentProvider().getViewer();
+        if (viewer == null) return;  // disposed
+        if (viewer.getDisplay().getThread() == Thread.currentThread()) {
+            fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
+        } else {
+            viewer.getDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    if (getContentProvider().isDisposed()) return;
+                    fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
+                }
+            });
+        }
+	}	    
 	
 	public boolean isEqual() {
 		return fEqual;
@@ -86,6 +94,7 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 		return fModelIndex;
 	}
 
+	
 	void setKnowsHasChildren(boolean hasChildren) {
 		fKnowsHasChildren = hasChildren;
 	}

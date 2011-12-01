@@ -17,6 +17,7 @@ import org.eclipe.debug.tests.viewer.model.ColumnPresentationTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerCheckTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerContentTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerDeltaTests;
+import org.eclipe.debug.tests.viewer.model.JFaceViewerFilterTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerLazyTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerSelectionTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerStateTests;
@@ -53,6 +54,7 @@ public class LocalSuite extends TestSuite {
 		addTest(new TestSuite(JFaceViewerUpdateTests.class));
         addTest(new TestSuite(JFaceViewerLazyTests.class));
         addTest(new TestSuite(JFaceViewerTopIndexTests.class));
+        addTest(new TestSuite(JFaceViewerFilterTests.class));
         addTest(new TestSuite(ColumnPresentationTests.class));
 	}
 }

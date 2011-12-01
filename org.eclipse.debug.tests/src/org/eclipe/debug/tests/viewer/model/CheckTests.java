@@ -14,8 +14,8 @@ import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.layout.FillLayout;
@@ -57,7 +57,7 @@ abstract public class CheckTests extends TestCase {
         fShell.open ();
     }
 
-    abstract protected ITreeModelContentProviderTarget createViewer(Display display, Shell shell);
+    abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
     
     /**
      * @throws java.lang.Exception

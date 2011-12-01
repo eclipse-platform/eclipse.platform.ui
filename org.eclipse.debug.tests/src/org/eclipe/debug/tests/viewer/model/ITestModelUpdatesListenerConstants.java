@@ -17,11 +17,11 @@ package org.eclipe.debug.tests.viewer.model;
  */
 public interface ITestModelUpdatesListenerConstants {
     
-    public static final int LABEL_UPDATES_COMPLETE =       0X00000001;
-    public static final int CONTENT_UPDATES_COMPLETE =     0X00000002;
-    public static final int CONTENT_UPDATES_STARTED =      0X00020000;
+    public static final int LABEL_SEQUENCE_COMPLETE =       0X00000001;
+    public static final int CONTENT_SEQUENCE_COMPLETE =     0X00000002;
+    public static final int CONTENT_SEQUENCE_STARTED =      0X00020000;
     public static final int LABEL_UPDATES =                0X00000004;
-    public static final int LABEL_UPDATES_STARTED =        0X00040000;
+    public static final int LABEL_SEQUENCE_STARTED =        0X00040000;
     public static final int HAS_CHILDREN_UPDATES =         0X00000008;
     public static final int HAS_CHILDREN_UPDATES_STARTED = 0X00080000;
     public static final int CHILD_COUNT_UPDATES =          0X00000010;
@@ -40,11 +40,11 @@ public interface ITestModelUpdatesListenerConstants {
     public static final int VIEWER_UPDATES_RUNNING =       0X00001000;
     public static final int LABEL_UPDATES_RUNNING =        0X00002000;
 
-    public static final int VIEWER_UPDATES_STARTED = HAS_CHILDREN_UPDATES_STARTED | CHILD_COUNT_UPDATES_STARTED | CHILDREN_UPDATES_STARTED; 
+    public static final int ALL_VIEWER_UPDATES_STARTED = HAS_CHILDREN_UPDATES_STARTED | CHILD_COUNT_UPDATES_STARTED | CHILDREN_UPDATES_STARTED; 
 
-    public static final int LABEL_COMPLETE = LABEL_UPDATES_COMPLETE | LABEL_UPDATES | LABEL_UPDATES_RUNNING;
+    public static final int LABEL_COMPLETE = LABEL_SEQUENCE_COMPLETE | LABEL_UPDATES | LABEL_UPDATES_RUNNING;
     public static final int CONTENT_COMPLETE = 
-        CONTENT_UPDATES_COMPLETE | HAS_CHILDREN_UPDATES | CHILD_COUNT_UPDATES | CHILDREN_UPDATES | VIEWER_UPDATES_RUNNING;
+        CONTENT_SEQUENCE_COMPLETE | HAS_CHILDREN_UPDATES | CHILD_COUNT_UPDATES | CHILDREN_UPDATES | VIEWER_UPDATES_RUNNING;
     
     public static final int ALL_UPDATES_COMPLETE = LABEL_COMPLETE | CONTENT_COMPLETE | MODEL_PROXIES_INSTALLED | LABEL_UPDATES_RUNNING | VIEWER_UPDATES_RUNNING;
 }

@@ -25,6 +25,7 @@ import org.eclipe.debug.tests.viewer.model.FilterTransformTests;
 import org.eclipe.debug.tests.viewer.model.PresentationContextTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerContentTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerDeltaTests;
+import org.eclipe.debug.tests.viewer.model.VirtualViewerFilterTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerLazyModeTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerSelectionTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerStateTests;
@@ -62,6 +63,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(VirtualViewerSelectionTests.class));
 		addTest(new TestSuite(VirtualViewerStateTests.class));
 		addTest(new TestSuite(VirtualViewerUpdateTests.class));
+        addTest(new TestSuite(VirtualViewerFilterTests.class));
 		
 		// Viewer neutral tests
 		addTest(new TestSuite(FilterTransformTests.class));

@@ -11,24 +11,22 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.internal.core.commands.Request;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.3
  */
 public abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
 
-	private ModelContentProvider fContentProvider;
+	private TreeModelContentProvider fContentProvider;
 	
 	/**
 	 * Element's tree path
@@ -71,42 +69,23 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
      */
     private IPresentationContext fContext;
 
-    
-    protected WorkbenchJob fViewerUpdateJob;
-    
     /**
      * Constructs an update for the given content provider
      * 
      * @param contentProvider content provider
+     * @param viewerInput Viewer input for update
      * @param elementPath path to associated model element - empty for root element
      * @param element associated model element
+     * @param elementContentProvider Content provider for this update.
+     * @param context Presentation contest for this update
      */
-    public ViewerUpdateMonitor(ModelContentProvider contentProvider, Object viewerInput, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
+    public ViewerUpdateMonitor(TreeModelContentProvider contentProvider, Object viewerInput, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
     	fContext = context;
     	fViewerInput = viewerInput;
     	fElementContentProvider = elementContentProvider;
         fContentProvider = contentProvider;
         fElement = element;
         fElementPath = elementPath;
-        // serialize updates per viewer
-        fViewerUpdateJob =  new WorkbenchJob(contentProvider.getViewer().getDisplay(), "Asynchronous viewer update") { //$NON-NLS-1$
-            public IStatus runInUIThread(IProgressMonitor monitor) {
-                // necessary to check if viewer is disposed
-                try {
-                    if (!isCanceled() && !getContentProvider().isDisposed()) {
-                        IStatus status = getStatus();
-                        if (status == null || status.isOK()) {
-                            performUpdate();
-                        }
-                    }
-                } finally {
-                    getContentProvider().updateComplete(ViewerUpdateMonitor.this);
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        fViewerUpdateJob.setRule(getUpdateSchedulingRule());
-        fViewerUpdateJob.setSystem(true);
     }
     
     /**
@@ -123,7 +102,7 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
      * 
      * @return the model content provider this update is being performed for
      */
-    protected ModelContentProvider getContentProvider() {
+    protected TreeModelContentProvider getContentProvider() {
         return fContentProvider;
     }   
     
@@ -152,18 +131,14 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
     /**
      * Returns whether this request is done yet.
      * 
-     * @return
+     * @return True if this update is done.
      */
     protected synchronized boolean isDone() {
     	return fDone;
     }
 
     protected void scheduleViewerUpdate() {
-        if(!isCanceled()) {
-            fViewerUpdateJob.schedule();
-        } else {
-        	getContentProvider().updateComplete(this);
-        }
+        getContentProvider().scheduleViewerUpdate(this);
     }
     
     /**
@@ -205,6 +180,9 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	/**
 	 * Returns whether this update or any coalesced updates is for an 
 	 * element at the given path.
+	 * @param path Element path to check.
+	 * @return True if this update contains the given update path.
+	 * 
      * @since 3.6
 	 */
 	abstract boolean containsUpdate(TreePath path);
@@ -212,7 +190,7 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	/**
 	 * Starts this request. Subclasses must override startRequest().
 	 */
-	final void start() {
+	protected void start() {
 		synchronized (this) {
 			if (fStarted) {
 				return;
@@ -273,4 +251,51 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	public boolean isDelegated() {
 		return fIsDelegated;
 	}
+	
+	public boolean equals(Object obj) {
+	    if (obj instanceof ViewerUpdateMonitor) {
+	        return doEquals((ViewerUpdateMonitor)obj);
+	    }
+	    return false;
+	}
+
+	public int hashCode() {
+	    return doHashCode();
+	}
+	
+	/**
+	 * Checks whether the given update is equal as this.  The update is equal if it's 
+	 * the same type of update and its updating the same elements.
+	 * @param update Update to compare to.
+	 * @return True if the given update is equals
+     * @since 3.8
+	 */
+	abstract protected boolean doEquals(ViewerUpdateMonitor update);
+	
+	/**
+	 * Calculates the hash code of the given update using the same parameters as doEquals().
+	 * @return Update's hash code.
+     * @since 3.8
+	 */
+    abstract protected int doHashCode();
+    
+    /**
+     * Executes the given runnable in the UI thread.  If method is called in 
+     * UI thread, then runnable is executed immediately, otherwise it's executed
+     * using <code>Display.asyncExec()</code>.  Runnable is not executed if update is 
+     * canceled or content provider is disposed.
+     * @since 3.8
+     */
+	protected void execInDisplayThread(Runnable runnable) {
+   	    ITreeModelViewer viewer = getContentProvider().getViewer();
+   	    if (viewer != null  && !isCanceled()) {
+   	    	Display display = viewer.getDisplay();
+   	    	if (Thread.currentThread() == display.getThread()) {
+   	    		runnable.run();
+   	    	} else {
+   	    		display.asyncExec(runnable);
+   	    	}
+	    }
+	}
+
 }

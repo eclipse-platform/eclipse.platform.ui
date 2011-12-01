@@ -10,28 +10,35 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
+import org.eclipse.debug.internal.ui.viewers.model.ViewerStateTracker.IElementMementoCollector;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IMemento;
 
 /**
+ * Request for element memento.
+ * 
  * @since 3.3
  */
 class ElementMementoRequest extends MementoUpdate implements IElementMementoRequest {
 	
-	private IMementoManager fManager;
+	private IElementMementoCollector fManager;
 	private ModelDelta fDelta;
 
 	/**
-	 * @param context
-	 * @param element
-	 * @param memento
+     * @param provider the content provider to use for the update
+     * @param viewerInput the current input
+     * @param collector Collector to report the result to
+     * @param element the element to update
+     * @param elementPath the path of the element to update
+	 * @param memento Memento to encode result into
+	 * @param delta Delta to write the result comparison into.
 	 */
-	public ElementMementoRequest(ModelContentProvider provider, Object viewerInput, IMementoManager manager, IPresentationContext context, Object element, TreePath elementPath, IMemento memento, ModelDelta delta) {
-		super(provider, viewerInput, context, element, elementPath, memento);
-		fManager = manager;
+	public ElementMementoRequest(TreeModelContentProvider provider, Object viewerInput, IElementMementoCollector collector, Object element, TreePath elementPath, IMemento memento, ModelDelta delta) {
+		super(provider, viewerInput, provider.getPresentationContext(), element, elementPath, memento);
+		fManager = collector;
 		fDelta = delta;
 	}
 
@@ -39,11 +46,29 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
 	public void done() {
-		if (!isCanceled() && (getStatus() == null || getStatus().isOK())) {
-			// replace the element with a memento
-			fDelta.setElement(getMemento());
+		
+		ITreeModelViewer viewer = getContentProvider().getViewer();
+		if (viewer == null) return;  // disposed
+		if (viewer.getDisplay().getThread() == Thread.currentThread()) {
+		    doComplete();
+		} else {
+		    viewer.getDisplay().asyncExec(new Runnable() {
+		        public void run() {
+		            doComplete();
+		        }
+		    });
 		}
-		fManager.requestComplete(this);
+		
+	}
+	
+	private void doComplete() {
+        if (getContentProvider().isDisposed()) return;
+        
+        if (!isCanceled() && (getStatus() == null || getStatus().isOK())) {
+            // replace the element with a memento
+            fDelta.setElement(getMemento());
+        }
+        fManager.requestComplete(ElementMementoRequest.this);
 	}
 
 	public String toString() {

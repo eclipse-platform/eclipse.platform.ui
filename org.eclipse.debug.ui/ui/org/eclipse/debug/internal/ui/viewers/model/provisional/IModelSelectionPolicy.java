@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,12 +34,11 @@ import org.eclipse.jface.viewers.ISelection;
 public interface IModelSelectionPolicy {
 	
 	/**
-	 * Returns whether the given selection is contained in
-	 * this model.
+	 * Returns whether the given selection is contained in this model.
 	 * 
-	 * @param selection
-	 * @param context
-	 * @return
+	 * @param selection Selection to check
+	 * @param context Presentation context of the viewer.
+	 * @return true if selection is contained in model.
 	 */
 	public boolean contains(ISelection selection, IPresentationContext context);
 	
@@ -48,10 +47,10 @@ public interface IModelSelectionPolicy {
 	 * existing selection. The policy is only asked about selections
 	 * that it contains.
 	 * 
-	 * @param existing
-	 * @param candidate
-	 * @param context
-	 * @return
+	 * @param existing Existing selection to check. 
+	 * @param candidate New proposed selection.
+	 * @param context Presentation context of viewer.
+	 * @return true if candidate selection should be set to viewer
 	 */
 	public boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context);
 
@@ -59,9 +58,9 @@ public interface IModelSelectionPolicy {
 	 * Returns whether the given selection should be maintained in the
 	 * face of a selection attempt from a different model.
 	 *  
-	 * @param selection
-	 * @param context
-	 * @return
+	 * @param selection selection to test
+	 * @param context Presentation context of viewer.
+	 * @return true if selection is sticky
 	 */
 	public boolean isSticky(ISelection selection, IPresentationContext context);
 	

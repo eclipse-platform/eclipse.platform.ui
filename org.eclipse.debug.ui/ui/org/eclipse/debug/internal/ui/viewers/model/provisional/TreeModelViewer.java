@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.ui.IMemento;
 /**
  * A tree viewer for a model.
  * <p>
- * Style flags supported by this viewer are the same as for {@link TreeViewer}, 
+ * Style flags supported by this viewer are the same as for {@link org.eclipse.jface.viewers.TreeViewer}, 
  * except:
  * <ul>
  * <li>SWT.VIRTUAL - Indicates that the viewer should be in lazy mode.  This 
@@ -117,7 +117,7 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	/**
 	 * Initializes viewer state from the memento
 	 * 
-	 * @param memento
+     * @param memento the {@link IMemento} to read from
 	 */
 	public void initState(IMemento memento) {
 		super.initState(memento);
@@ -126,17 +126,15 @@ public class TreeModelViewer extends InternalTreeModelViewer {
 	/**
 	 * Save viewer state into the given memento.
 	 * 
-	 * @param memento
+     * @param memento the {@link IMemento} to save to
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 	}
 	
-	/**
-	 * Returns whether columns are being displayed currently.
-	 * 
-	 * @return
-	 */
+    /**
+     * @return Returns true if columns are being displayed currently. 
+     */
 	public boolean isShowColumns() {
 		return super.isShowColumns();
 	}	

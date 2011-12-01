@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems and others.
+ * Copyright (c) 2008, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,15 +31,37 @@ import org.eclipse.ui.IMemento;
  * </ul>
  * </p>
  * @since 3.5
- * @noextend
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
     
 
+    /**
+     * Creates a virtual tree model viewer.
+     * @param display Display used by the viewer to call the data providers
+     * on the UI thread.
+     * @param style Stlye flags.
+     * @param context Viewer's presentation context.
+     */
     public VirtualTreeModelViewer(Display display, int style, IPresentationContext context) {
-        super(display, style, context);
+        super(display, style, context, null);
     }
     
+    /**
+     * Creates a virtual tree model viewer.
+     * @param display Display used by the viewer to call the data providers
+     * on the UI thread.
+     * @param style style flags.
+     * @param context Viewer's presentation context.
+     * @param validator Optional validator that is used to determine which items should be 
+     * considered visible when SWT.VIRTUAL style is used.  If <code>null</code> then the 
+     * standard validator is used that updates only the selected items.
+     * 
+     * @since 3.8
+     */
+    public VirtualTreeModelViewer(Display display, int style, IPresentationContext context, IVirtualItemValidator validator) {
+        super(display, style, context, validator);
+    }
 
     /**
      * Returns this viewer's presentation context.
@@ -119,7 +141,7 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
     /**
      * Initializes viewer state from the memento
      * 
-     * @param memento
+     * @param memento the {@link IMemento} to read from
      */
     public void initState(IMemento memento) {
         super.initState(memento);
@@ -128,17 +150,15 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
     /**
      * Save viewer state into the given memento.
      * 
-     * @param memento
+     * @param memento the {@link IMemento} to save to
      */
     public void saveState(IMemento memento) {
         super.saveState(memento);
     }
     
     /**
-     * Returns whether columns are being displayed currently.
-     * 
-     * @return
-     */
+     * @return Returns true if columns are being displayed currently. 
+     */    
     public boolean isShowColumns() {
         return super.isShowColumns();
     }   
@@ -172,4 +192,15 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
     public ViewerLabel getElementLabel(TreePath path, String columnId) {
         return super.getElementLabel(path, columnId);
     }
+    
+    public VirtualItem[] findItems(Object elementOrTreePath) {
+        return super.findItems(elementOrTreePath);
+    }
+    
+    public VirtualItem findItem(TreePath path) {
+        return super.findItem(path);
+    }
+
+    
+    
 }
