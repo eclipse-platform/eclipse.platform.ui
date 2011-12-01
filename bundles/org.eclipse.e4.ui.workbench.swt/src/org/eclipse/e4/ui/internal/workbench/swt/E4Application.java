@@ -46,6 +46,7 @@ import org.eclipse.e4.ui.internal.workbench.ActivePartLookupFunction;
 import org.eclipse.e4.ui.internal.workbench.DefaultLoggerProvider;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.ExceptionHandler;
+import org.eclipse.e4.ui.internal.workbench.ModelServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.PlaceholderResolver;
 import org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.ResourceHandler;
@@ -467,6 +468,8 @@ public class E4Application implements IApplication {
 		appContext
 				.set(Logger.class.getName(), ContextInjectionFactory.make(
 						WorkbenchLogger.class, appContext));
+
+		appContext.set(EModelService.class, new ModelServiceImpl(appContext));
 
 		appContext.set(EPlaceholderResolver.class, new PlaceholderResolver());
 

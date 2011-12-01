@@ -468,4 +468,34 @@ public interface EModelService {
 	 * @return <code>true</code> iff the element is the last visible stack
 	 */
 	public boolean isLastEditorStack(MUIElement stack);
+
+	/**
+	 * Allows an element to be rendered in an arbitrary UI container (I.e. SWT Composite).
+	 * 
+	 * @param element
+	 *            The element to be rendered.
+	 * @param hostWindow
+	 *            The MWindow the element is being hosted under. Must be non-nulland rendered.
+	 * @param uiContainer
+	 *            The UI container acting as the rendered element's parent. Must be non-null.
+	 * @param hostContext
+	 *            The IEclipseContext to use for hosting the element. Must be non-null.
+	 */
+	public void hostElement(MUIElement element, MWindow hostWindow, Object uiContainer,
+			IEclipseContext hostContext);
+
+	/**
+	 * Tests whether the given element is being 'hosted'. This method is used to allow UI Elements
+	 * to act as if they are contained within a given MWindow even though the element is not
+	 * actually structurally contained in that window's UI Model.
+	 * 
+	 * @param element
+	 *            The element to test. Must be non-null.
+	 * @param hostWindow
+	 *            The window to test the element against. Must be non-null.
+	 * 
+	 * @return <code>true</code> iff the given element or one of its ancestors is currently being
+	 *         hosted in the given MWindow.
+	 */
+	public boolean isHostedElement(MUIElement element, MWindow hostWindow);
 }

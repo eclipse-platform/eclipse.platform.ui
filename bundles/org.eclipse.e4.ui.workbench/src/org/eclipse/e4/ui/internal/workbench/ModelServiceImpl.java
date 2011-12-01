@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -41,16 +42,56 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  *
  */
 public class ModelServiceImpl implements EModelService {
+	private static String HOSTED_ELEMENT = "HostedElement"; //$NON-NLS-1$
+
+	// Cleans up after a hosted element is disposed
+	private EventHandler hostedElementHandler = new EventHandler() {
+
+		public void handleEvent(Event event) {
+			final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
+			if (!changedElement.getTags().contains(HOSTED_ELEMENT))
+				return;
+
+			if (changedElement.getWidget() != null)
+				return;
+
+			EObject eObj = (EObject) changedElement;
+			if (!(eObj.eContainer() instanceof MWindow))
+				return;
+
+			MWindow hostingWindow = (MWindow) eObj.eContainer();
+			hostingWindow.getSharedElements().remove(changedElement);
+			changedElement.getTags().remove(HOSTED_ELEMENT);
+		}
+	};
+
+	/**
+	 * This is a singleton service. One instance is used throughout the running application
+	 * 
+	 * @param appContext
+	 *            The applicationContext to get teh eventBroker from
+	 */
+	public ModelServiceImpl(IEclipseContext appContext) {
+		if (appContext == null)
+			return;
+
+		IEventBroker eventBroker = appContext.get(IEventBroker.class);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, hostedElementHandler);
+	}
+
 	/**
 	 * Determine if the element passes the matching test for all non-null parameters.
 	 * 
@@ -983,5 +1024,40 @@ public class ModelServiceImpl implements EModelService {
 				count++;
 		}
 		return count < 2 && stack.isToBeRendered();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#hostElement(org.eclipse.e4.ui.model.
+	 * application.ui.MUIElement, org.eclipse.e4.ui.model.application.ui.basic.MWindow,
+	 * java.lang.Object, org.eclipse.e4.core.contexts.IEclipseContext)
+	 */
+	public void hostElement(MUIElement element, MWindow hostWindow, Object uiContainer,
+			IEclipseContext hostContext) {
+		// This is subtle; unless the element is hooked into the model it won't fire events
+		hostWindow.getSharedElements().add(element);
+		element.getTags().add(HOSTED_ELEMENT);
+
+		IPresentationEngine renderer = hostWindow.getContext().get(IPresentationEngine.class);
+		renderer.createGui(element, uiContainer, hostContext);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#isHostedElement(org.eclipse.e4.ui.model
+	 * .application.ui.MUIElement, org.eclipse.e4.ui.model.application.ui.basic.MWindow)
+	 */
+	public boolean isHostedElement(MUIElement element, MWindow hostWindow) {
+		MUIElement curElement = element;
+		while (curElement != null && !curElement.getTags().contains(HOSTED_ELEMENT))
+			curElement = curElement.getParent();
+
+		if (curElement == null)
+			return false;
+
+		return hostWindow.getSharedElements().contains(curElement);
 	}
 }
