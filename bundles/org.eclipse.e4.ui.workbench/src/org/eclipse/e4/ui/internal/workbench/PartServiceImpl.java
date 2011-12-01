@@ -405,6 +405,8 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private boolean isInContainer(MUIElement element) {
+		if (modelService.isHostedElement(element, getWindow()))
+			return true;
 		List<MUIElement> allPerspectiveElements = modelService.findElements(workbenchWindow, null,
 				MUIElement.class, null, EModelService.PRESENTATION);
 		return allPerspectiveElements.contains(element);

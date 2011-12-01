@@ -1052,8 +1052,13 @@ public class ModelServiceImpl implements EModelService {
 	 */
 	public boolean isHostedElement(MUIElement element, MWindow hostWindow) {
 		MUIElement curElement = element;
-		while (curElement != null && !curElement.getTags().contains(HOSTED_ELEMENT))
-			curElement = curElement.getParent();
+		while (curElement != null && !curElement.getTags().contains(HOSTED_ELEMENT)) {
+			if (curElement.getCurSharedRef() != null) {
+				curElement = curElement.getCurSharedRef();
+			} else {
+				curElement = curElement.getParent();
+			}
+		}
 
 		if (curElement == null)
 			return false;
