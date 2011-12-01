@@ -22,7 +22,7 @@ public abstract class PreferencePageEnhancer {
 	public static TweakKey KEY = new Tweaklets.TweakKey(PreferencePageEnhancer.class);
 
 	static {
-		Tweaklets.setDefault(PreferencePageEnhancer.KEY, new TabBehaviourMRU());
+		Tweaklets.setDefault(PreferencePageEnhancer.KEY, new DummyPrefPageEnhancer());
 	}
 
 	public abstract void createContents(Composite parent);
