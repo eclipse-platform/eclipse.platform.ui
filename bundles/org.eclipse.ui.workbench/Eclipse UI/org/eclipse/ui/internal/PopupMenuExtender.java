@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -464,13 +465,20 @@ public class PopupMenuExtender implements IMenuListener2,
 			}
 		}
 
-		IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);
-		AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
-		if (obj instanceof MenuManagerRenderer) {
-			MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
-			renderer.cleanUp(menuModel);
+		if (modelPart == null || menuModel == null) {
+			return;
 		}
-
+		IEclipseContext modelContext = modelPart.getContext();
+		if (modelContext != null) {
+			IRendererFactory factory = modelContext.get(IRendererFactory.class);
+			if (factory != null) {
+				AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
+				if (obj instanceof MenuManagerRenderer) {
+					MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
+					renderer.cleanUp(menuModel);
+				}
+			}
+		}
 	}
 
 	/**
