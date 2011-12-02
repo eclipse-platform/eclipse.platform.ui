@@ -45,6 +45,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
@@ -84,6 +85,7 @@ public class SearchField {
 	private LinkedList<QuickAccessElement> previousPicksList = new LinkedList<QuickAccessElement>();
 	private int dialogHeight = -1;
 	private int dialogWidth = -1;
+	private Control previousFocusControl;
 
 	@PostConstruct
 	void createWidget(final Composite parent, MApplication application, MWindow window) {
@@ -153,6 +155,8 @@ public class SearchField {
 				if (commandProvider.getContextSnapshot() == null) {
 					commandProvider.setSnapshot(hs.createContextSnapshot(true));
 				}
+
+				previousFocusControl = (Control) e.getSource();
 			}
 		});
 		shell.addFocusListener(new FocusListener() {
@@ -178,6 +182,8 @@ public class SearchField {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ESC) {
 					text.setText(""); //$NON-NLS-1$
+					if (previousFocusControl != null && !previousFocusControl.isDisposed())
+						previousFocusControl.setFocus();
 				}
 			}
 		});
@@ -296,7 +302,8 @@ public class SearchField {
 		shell.layout();
 	}
 
-	public void activate() {
+	public void activate(Control previousFocusControl) {
+		this.previousFocusControl = previousFocusControl;
 		if (!shell.isVisible()) {
 			layoutShell();
 			shell.setVisible(true);

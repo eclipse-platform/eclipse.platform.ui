@@ -51,14 +51,11 @@ public class QuickAccessHandler extends AbstractHandler {
 			control = (Control) searchField.getWidget();
 		}
 		if (control != null) {
+			Control previousFocusControl = control.getDisplay().getFocusControl();
 			control.setFocus();
 			SearchField field = (SearchField) searchField.getObject();
-			field.activate();
+			field.activate(previousFocusControl);
 		}
-
-// final PopupDialog popupDialog = new QuickAccessDialog(window,
-		// executionEvent.getCommand());
-		// popupDialog.open();
 		return null;
 	}
 
