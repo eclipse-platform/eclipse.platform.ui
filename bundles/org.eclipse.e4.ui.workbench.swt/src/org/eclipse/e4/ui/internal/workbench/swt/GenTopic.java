@@ -63,7 +63,7 @@ public class GenTopic implements IApplication {
 	}
 
 	private static final String interfaceDeclaration = "\n\tpublic static interface %s {";
-	private static final String deprecatedTopicDeclaration = "\n\n\t@Deprecated\n\tpublic static final String ALL = \"org/eclipse/e4/ui/model/%s/%s\"; //$NON-NLS-1$\n";
+	private static final String deprecatedTopicDeclaration = "\n\n\t@Deprecated\n\tpublic static final String TOPIC = \"org/eclipse/e4/ui/model/%s/%s\"; //$NON-NLS-1$\n";
 	private static final String topicAllDeclaration = "\n\tpublic static final String TOPIC_ALL = \"org/eclipse/e4/ui/model/%s/%s/*\"; //$NON-NLS-1$";
 	private static final String topicAttributeDeclaration = "\n\tpublic static final String TOPIC_%S = \"org/eclipse/e4/ui/model/%s/%s/%s/*\"; //$NON-NLS-1$";
 	private static final String attributeDeclaration = "\n\tpublic static final String %S = \"%s\"; //$NON-NLS-1$";

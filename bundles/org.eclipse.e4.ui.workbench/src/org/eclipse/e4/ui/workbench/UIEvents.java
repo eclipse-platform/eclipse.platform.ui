@@ -224,7 +224,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/BindingContext"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/BindingContext"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/BindingContext/*"; //$NON-NLS-1$
 		public static final String TOPIC_CHILDREN = "org/eclipse/e4/ui/model/commands/BindingContext/children/*"; //$NON-NLS-1$
@@ -243,7 +243,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/BindingTable"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/BindingTable"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/BindingTable/*"; //$NON-NLS-1$
 		public static final String TOPIC_BINDINGCONTEXT = "org/eclipse/e4/ui/model/commands/BindingTable/bindingContext/*"; //$NON-NLS-1$
@@ -260,7 +260,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/BindingTableContainer"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/BindingTableContainer"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/BindingTableContainer/*"; //$NON-NLS-1$
 		public static final String TOPIC_BINDINGTABLES = "org/eclipse/e4/ui/model/commands/BindingTableContainer/bindingTables/*"; //$NON-NLS-1$
@@ -277,7 +277,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/Bindings"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/Bindings"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/Bindings/*"; //$NON-NLS-1$
 		public static final String TOPIC_BINDINGCONTEXTS = "org/eclipse/e4/ui/model/commands/Bindings/bindingContexts/*"; //$NON-NLS-1$
@@ -292,7 +292,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/Category"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/Category"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/Category/*"; //$NON-NLS-1$
 		public static final String TOPIC_DESCRIPTION = "org/eclipse/e4/ui/model/commands/Category/description/*"; //$NON-NLS-1$
@@ -309,7 +309,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/Command"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/Command"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/Command/*"; //$NON-NLS-1$
 		public static final String TOPIC_CATEGORY = "org/eclipse/e4/ui/model/commands/Command/category/*"; //$NON-NLS-1$
@@ -330,7 +330,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/CommandParameter"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/CommandParameter"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/CommandParameter/*"; //$NON-NLS-1$
 		public static final String TOPIC_NAME = "org/eclipse/e4/ui/model/commands/CommandParameter/name/*"; //$NON-NLS-1$
@@ -349,7 +349,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/Handler"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/Handler"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/Handler/*"; //$NON-NLS-1$
 		public static final String TOPIC_COMMAND = "org/eclipse/e4/ui/model/commands/Handler/command/*"; //$NON-NLS-1$
@@ -364,7 +364,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/HandlerContainer"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/HandlerContainer"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/HandlerContainer/*"; //$NON-NLS-1$
 		public static final String TOPIC_HANDLERS = "org/eclipse/e4/ui/model/commands/HandlerContainer/handlers/*"; //$NON-NLS-1$
@@ -379,7 +379,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/KeyBinding"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/KeyBinding"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/KeyBinding/*"; //$NON-NLS-1$
 		public static final String TOPIC_COMMAND = "org/eclipse/e4/ui/model/commands/KeyBinding/command/*"; //$NON-NLS-1$
@@ -396,7 +396,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/KeySequence"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/KeySequence"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/KeySequence/*"; //$NON-NLS-1$
 		public static final String TOPIC_KEYSEQUENCE = "org/eclipse/e4/ui/model/commands/KeySequence/keySequence/*"; //$NON-NLS-1$
@@ -411,7 +411,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/commands/Parameter"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/commands/Parameter"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/commands/Parameter/*"; //$NON-NLS-1$
 		public static final String TOPIC_NAME = "org/eclipse/e4/ui/model/commands/Parameter/name/*"; //$NON-NLS-1$
@@ -428,7 +428,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/basic/PartDescriptor"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/basic/PartDescriptor"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/basic/PartDescriptor/*"; //$NON-NLS-1$
 		public static final String TOPIC_ALLOWMULTIPLE = "org/eclipse/e4/ui/model/basic/PartDescriptor/allowMultiple/*"; //$NON-NLS-1$
@@ -457,7 +457,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/basic/PartDescriptorContainer"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/basic/PartDescriptorContainer"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/basic/PartDescriptorContainer/*"; //$NON-NLS-1$
 		public static final String TOPIC_DESCRIPTORS = "org/eclipse/e4/ui/model/basic/PartDescriptorContainer/descriptors/*"; //$NON-NLS-1$
@@ -472,7 +472,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/application/Application"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/application/Application"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/Application/*"; //$NON-NLS-1$
 		public static final String TOPIC_ADDONS = "org/eclipse/e4/ui/model/application/Application/addons/*"; //$NON-NLS-1$
@@ -491,7 +491,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/application/ApplicationElement"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/application/ApplicationElement"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/ApplicationElement/*"; //$NON-NLS-1$
 		public static final String TOPIC_CONTRIBUTORURI = "org/eclipse/e4/ui/model/application/ApplicationElement/contributorURI/*"; //$NON-NLS-1$
@@ -512,7 +512,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/application/Contribution"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/application/Contribution"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/Contribution/*"; //$NON-NLS-1$
 		public static final String TOPIC_CONTRIBUTIONURI = "org/eclipse/e4/ui/model/application/Contribution/contributionURI/*"; //$NON-NLS-1$
@@ -531,7 +531,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/application/StringToObjectMap"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/application/StringToObjectMap"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/StringToObjectMap/*"; //$NON-NLS-1$
 		public static final String TOPIC_KEY = "org/eclipse/e4/ui/model/application/StringToObjectMap/key/*"; //$NON-NLS-1$
@@ -548,7 +548,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/application/StringToStringMap"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/application/StringToStringMap"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/StringToStringMap/*"; //$NON-NLS-1$
 		public static final String TOPIC_KEY = "org/eclipse/e4/ui/model/application/StringToStringMap/key/*"; //$NON-NLS-1$
@@ -565,7 +565,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/advanced/Perspective"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/advanced/Perspective"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/advanced/Perspective/*"; //$NON-NLS-1$
 		public static final String TOPIC_WINDOWS = "org/eclipse/e4/ui/model/advanced/Perspective/windows/*"; //$NON-NLS-1$
@@ -580,7 +580,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/advanced/Placeholder"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/advanced/Placeholder"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/advanced/Placeholder/*"; //$NON-NLS-1$
 		public static final String TOPIC_CLOSEABLE = "org/eclipse/e4/ui/model/advanced/Placeholder/closeable/*"; //$NON-NLS-1$
@@ -597,7 +597,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/basic/Part"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/basic/Part"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/basic/Part/*"; //$NON-NLS-1$
 		public static final String TOPIC_CLOSEABLE = "org/eclipse/e4/ui/model/basic/Part/closeable/*"; //$NON-NLS-1$
@@ -618,7 +618,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/basic/TrimmedWindow"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/basic/TrimmedWindow"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/basic/TrimmedWindow/*"; //$NON-NLS-1$
 		public static final String TOPIC_TRIMBARS = "org/eclipse/e4/ui/model/basic/TrimmedWindow/trimBars/*"; //$NON-NLS-1$
@@ -633,7 +633,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/basic/Window"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/basic/Window"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/basic/Window/*"; //$NON-NLS-1$
 		public static final String TOPIC_HEIGHT = "org/eclipse/e4/ui/model/basic/Window/height/*"; //$NON-NLS-1$
@@ -660,7 +660,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/ui/Context"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/Context"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/Context/*"; //$NON-NLS-1$
 		public static final String TOPIC_CONTEXT = "org/eclipse/e4/ui/model/ui/Context/context/*"; //$NON-NLS-1$
@@ -679,7 +679,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/ui/CoreExpression"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/CoreExpression"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/CoreExpression/*"; //$NON-NLS-1$
 		public static final String TOPIC_COREEXPRESSION = "org/eclipse/e4/ui/model/ui/CoreExpression/coreExpression/*"; //$NON-NLS-1$
@@ -696,7 +696,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/ui/Dirtyable"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/Dirtyable"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/Dirtyable/*"; //$NON-NLS-1$
 		public static final String TOPIC_DIRTY = "org/eclipse/e4/ui/model/ui/Dirtyable/dirty/*"; //$NON-NLS-1$
@@ -711,7 +711,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/ui/ElementContainer"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/ElementContainer"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/ElementContainer/*"; //$NON-NLS-1$
 		public static final String TOPIC_CHILDREN = "org/eclipse/e4/ui/model/ui/ElementContainer/children/*"; //$NON-NLS-1$
@@ -728,7 +728,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/ui/GenericTile"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/GenericTile"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/GenericTile/*"; //$NON-NLS-1$
 		public static final String TOPIC_HORIZONTAL = "org/eclipse/e4/ui/model/ui/GenericTile/horizontal/*"; //$NON-NLS-1$
@@ -743,7 +743,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/ui/GenericTrimContainer"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/GenericTrimContainer"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/GenericTrimContainer/*"; //$NON-NLS-1$
 		public static final String TOPIC_SIDE = "org/eclipse/e4/ui/model/ui/GenericTrimContainer/side/*"; //$NON-NLS-1$
@@ -758,7 +758,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/ui/Input"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/Input"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/Input/*"; //$NON-NLS-1$
 		public static final String TOPIC_INPUTURI = "org/eclipse/e4/ui/model/ui/Input/inputURI/*"; //$NON-NLS-1$
@@ -773,7 +773,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/ui/SnippetContainer"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/SnippetContainer"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/SnippetContainer/*"; //$NON-NLS-1$
 		public static final String TOPIC_SNIPPETS = "org/eclipse/e4/ui/model/ui/SnippetContainer/snippets/*"; //$NON-NLS-1$
@@ -788,7 +788,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/ui/UIElement"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/UIElement"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/UIElement/*"; //$NON-NLS-1$
 		public static final String TOPIC_ACCESSIBILITYPHRASE = "org/eclipse/e4/ui/model/ui/UIElement/accessibilityPhrase/*"; //$NON-NLS-1$
@@ -821,7 +821,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/ui/UILabel"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/ui/UILabel"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/UILabel/*"; //$NON-NLS-1$
 		public static final String TOPIC_ICONURI = "org/eclipse/e4/ui/model/ui/UILabel/iconURI/*"; //$NON-NLS-1$
@@ -840,7 +840,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/HandledItem"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/HandledItem"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/HandledItem/*"; //$NON-NLS-1$
 		public static final String TOPIC_COMMAND = "org/eclipse/e4/ui/model/menu/HandledItem/command/*"; //$NON-NLS-1$
@@ -859,7 +859,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/Item"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/Item"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/Item/*"; //$NON-NLS-1$
 		public static final String TOPIC_ENABLED = "org/eclipse/e4/ui/model/menu/Item/enabled/*"; //$NON-NLS-1$
@@ -878,7 +878,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/Menu"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/Menu"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/Menu/*"; //$NON-NLS-1$
 		public static final String TOPIC_ENABLED = "org/eclipse/e4/ui/model/menu/Menu/enabled/*"; //$NON-NLS-1$
@@ -893,7 +893,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/MenuContribution"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/MenuContribution"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/MenuContribution/*"; //$NON-NLS-1$
 		public static final String TOPIC_PARENTID = "org/eclipse/e4/ui/model/menu/MenuContribution/parentId/*"; //$NON-NLS-1$
@@ -910,7 +910,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/MenuContributions"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/MenuContributions"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/MenuContributions/*"; //$NON-NLS-1$
 		public static final String TOPIC_MENUCONTRIBUTIONS = "org/eclipse/e4/ui/model/menu/MenuContributions/menuContributions/*"; //$NON-NLS-1$
@@ -925,7 +925,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/MenuElement"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/MenuElement"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/MenuElement/*"; //$NON-NLS-1$
 		public static final String TOPIC_MNEMONICS = "org/eclipse/e4/ui/model/menu/MenuElement/mnemonics/*"; //$NON-NLS-1$
@@ -940,7 +940,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/OpaqueMenuItem"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/OpaqueMenuItem"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/OpaqueMenuItem/*"; //$NON-NLS-1$
 		public static final String TOPIC_OPAQUEITEM = "org/eclipse/e4/ui/model/menu/OpaqueMenuItem/opaqueItem/*"; //$NON-NLS-1$
@@ -955,7 +955,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/OpaqueMenuSeparator"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/OpaqueMenuSeparator"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/OpaqueMenuSeparator/*"; //$NON-NLS-1$
 		public static final String TOPIC_OPAQUEITEM = "org/eclipse/e4/ui/model/menu/OpaqueMenuSeparator/opaqueItem/*"; //$NON-NLS-1$
@@ -970,7 +970,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/OpaqueToolItem"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/OpaqueToolItem"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/OpaqueToolItem/*"; //$NON-NLS-1$
 		public static final String TOPIC_OPAQUEITEM = "org/eclipse/e4/ui/model/menu/OpaqueToolItem/opaqueItem/*"; //$NON-NLS-1$
@@ -985,7 +985,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/RenderedMenu"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/RenderedMenu"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/RenderedMenu/*"; //$NON-NLS-1$
 		public static final String TOPIC_CONTRIBUTIONMANAGER = "org/eclipse/e4/ui/model/menu/RenderedMenu/contributionManager/*"; //$NON-NLS-1$
@@ -1000,7 +1000,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/RenderedMenuItem"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/RenderedMenuItem"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/RenderedMenuItem/*"; //$NON-NLS-1$
 		public static final String TOPIC_CONTRIBUTIONITEM = "org/eclipse/e4/ui/model/menu/RenderedMenuItem/contributionItem/*"; //$NON-NLS-1$
@@ -1015,7 +1015,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/RenderedToolBar"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/RenderedToolBar"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/RenderedToolBar/*"; //$NON-NLS-1$
 		public static final String TOPIC_CONTRIBUTIONMANAGER = "org/eclipse/e4/ui/model/menu/RenderedToolBar/contributionManager/*"; //$NON-NLS-1$
@@ -1030,7 +1030,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/ToolBarContribution"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/ToolBarContribution"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/ToolBarContribution/*"; //$NON-NLS-1$
 		public static final String TOPIC_PARENTID = "org/eclipse/e4/ui/model/menu/ToolBarContribution/parentId/*"; //$NON-NLS-1$
@@ -1047,7 +1047,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/ToolBarContributions"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/ToolBarContributions"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/ToolBarContributions/*"; //$NON-NLS-1$
 		public static final String TOPIC_TOOLBARCONTRIBUTIONS = "org/eclipse/e4/ui/model/menu/ToolBarContributions/toolBarContributions/*"; //$NON-NLS-1$
@@ -1062,7 +1062,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/ToolItem"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/ToolItem"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/ToolItem/*"; //$NON-NLS-1$
 		public static final String TOPIC_MENU = "org/eclipse/e4/ui/model/menu/ToolItem/menu/*"; //$NON-NLS-1$
@@ -1077,7 +1077,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/TrimContribution"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/TrimContribution"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/TrimContribution/*"; //$NON-NLS-1$
 		public static final String TOPIC_PARENTID = "org/eclipse/e4/ui/model/menu/TrimContribution/parentId/*"; //$NON-NLS-1$
@@ -1094,7 +1094,7 @@ public class UIEvents {
 		// Topics that can be subscribed to
 
 		@Deprecated
-		public static final String ALL = "org/eclipse/e4/ui/model/menu/TrimContributions"; //$NON-NLS-1$
+		public static final String TOPIC = "org/eclipse/e4/ui/model/menu/TrimContributions"; //$NON-NLS-1$
 
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/menu/TrimContributions/*"; //$NON-NLS-1$
 		public static final String TOPIC_TRIMCONTRIBUTIONS = "org/eclipse/e4/ui/model/menu/TrimContributions/trimContributions/*"; //$NON-NLS-1$
