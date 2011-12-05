@@ -774,6 +774,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 					legacyModel.setVisible(childManager.isVisible());
 					linkModelToManager(legacyModel, childManager);
 					modelChildren.add(dest, legacyModel);
+					reconcileManagerToModel(childManager, legacyModel);
 				} else {
 					if (childModel instanceof MOpaqueMenu) {
 						oldMenus.remove(childModel);
