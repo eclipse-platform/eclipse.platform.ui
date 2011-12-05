@@ -83,12 +83,17 @@ public class ThemeEngine implements IThemeEngine {
 					try {
 						String version = ce.getAttribute("os_version");
 						if (version == null) version ="";
+						String basestylesheeturi = ce
+								.getAttribute("basestylesheeturi");
+						if (!basestylesheeturi.startsWith("platform:/plugin/")) {
+							basestylesheeturi = "platform:/plugin/"
+									+ ce.getContributor().getName() + "/"
+									+ basestylesheeturi;
+						}
 						registerTheme(
 								ce.getAttribute("id") + version,
-								ce.getAttribute("label"),
-								"platform:/plugin/" + ce.getContributor().getName()
-										+ "/"
-										+ ce.getAttribute("basestylesheeturi"), version);						
+								ce.getAttribute("label"), basestylesheeturi,
+								version);
 					} catch (IllegalArgumentException e1) {
 						//TODO Can we somehow use logging?
 						e1.printStackTrace();
