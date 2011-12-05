@@ -99,4 +99,29 @@ public class ValueTest extends TestCase {
 				((Measure) ((CSSValueList) value).item(2)).getPrimitiveType());
 		assertEquals("34 34 34", value.getCssText());
 	}
+
+	public void testCommaSeparatedList() throws Exception {
+		CSSValue value = engine.parsePropertyValue("34, 34, 34");
+		assertTrue(value instanceof CSSValueList);
+		CSSValueList list = (CSSValueList) value;
+		assertEquals(list.getCssValueType(), CSSValue.CSS_VALUE_LIST);
+		assertEquals(5, list.getLength());
+		// FIXME: see comments in bug 278139
+		for (int i = 0; i < list.getLength(); i++) {
+			assertTrue(list.item(i) instanceof Measure);
+		}
+		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
+				((Measure) list.item(0)).getPrimitiveType());
+		assertEquals(CSSPrimitiveValue.CSS_CUSTOM,
+				((Measure) list.item(1)).getPrimitiveType());
+		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
+				((Measure) list.item(2)).getPrimitiveType());
+		assertEquals(CSSPrimitiveValue.CSS_CUSTOM,
+				((Measure) list.item(3)).getPrimitiveType());
+		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
+				((Measure) list.item(4)).getPrimitiveType());
+		// use String#matches() as there may be white-space differences
+		assertTrue(value.getCssText().matches("34\\s*,\\s*34\\s*,\\s*34"));
+	}
+
 }

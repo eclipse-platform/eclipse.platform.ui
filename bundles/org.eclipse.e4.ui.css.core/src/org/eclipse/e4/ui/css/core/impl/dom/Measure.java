@@ -102,6 +102,9 @@ public class Measure extends CSSValueImpl {
 	 * @see org.w3c.dom.css.CSSValue#getCssText()
 	 */
 	public String getCssText() {
+		// TODO: All LexicalUnit.SAC_OPERATOR_* except for COMMA left undone for
+		// now as it's not even clear whether they should be treated as measures
+		// see bug #278139
 		switch (value.getLexicalUnitType()) {
 		case LexicalUnit.SAC_INTEGER:
 			return String.valueOf(value.getIntegerValue());
@@ -115,6 +118,8 @@ public class Measure extends CSSValueImpl {
 			return String.valueOf(value.getFloatValue()) + value.getDimensionUnitText();
 		case LexicalUnit.SAC_URI:
 			return "url(" + value.getStringValue() + ")";
+		case LexicalUnit.SAC_OPERATOR_COMMA:
+			return ",";
 		}
 		return value.getStringValue();
 	}
