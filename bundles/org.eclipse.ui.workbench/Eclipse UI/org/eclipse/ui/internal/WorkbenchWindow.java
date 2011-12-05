@@ -138,6 +138,7 @@ import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.layout.ITrimManager;
+import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.MenuHelper;
@@ -598,7 +599,17 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		boolean enableAnimations = preferenceStore
 				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
 		preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
+
+		// Hack!! don't show the intro if there's more than one open perspective
+		List<MPerspective> persps = modelService
+				.findElements(model, null, MPerspective.class, null);
+		if (persps.size() > 1) {
+			PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_INTRO,
+					false);
+			PrefUtil.saveAPIPrefs();
+		}
 		getWindowAdvisor().openIntro();
+
 		preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, enableAnimations);
 
 		getShell().setData(this);
@@ -1842,6 +1853,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private ISelectionService selectionService;
 
+	private ITrimManager trimManager;
 
 	final void addActionSetsListener(final IActionSetsListener listener) {
 		if (actionSetListeners == null) {
@@ -2195,7 +2207,47 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getTrimManager()
 	 */
 	public ITrimManager getTrimManager() {
-		return null;
+		if (trimManager == null) {
+			// HACK !! Add a 'null' trim manager...this is specifically in place
+			// to prevent an NPE when using Intro's 'Go to Workbench' handling
+			// See Bug 365625 for details...
+			trimManager = new ITrimManager() {
+				public void addTrim(int areaId, IWindowTrim trim) {
+				}
+
+				public void addTrim(int areaId, IWindowTrim trim, IWindowTrim beforeMe) {
+				}
+
+				public void removeTrim(IWindowTrim toRemove) {
+				}
+
+				public IWindowTrim getTrim(String id) {
+					return null;
+				}
+
+				public int[] getAreaIds() {
+					return null;
+				}
+
+				public List getAreaTrim(int areaId) {
+					return null;
+				}
+
+				public void updateAreaTrim(int id, List trim, boolean removeExtra) {
+				}
+
+				public List getAllTrim() {
+					return null;
+				}
+
+				public void setTrimVisible(IWindowTrim trim, boolean visible) {
+				}
+
+				public void forceLayout() {
+				}
+			};
+		}
+		return trimManager;
 	}
 
 	/**
