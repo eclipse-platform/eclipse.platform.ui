@@ -272,9 +272,10 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.window.showContextMenu"
-            sequence="CTRL+SHIFT+F10"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="SHIFT+F10"/>
       <key
             commandId="org.eclipse.ui.window.showSystemMenu"
             sequence="M3+-"
