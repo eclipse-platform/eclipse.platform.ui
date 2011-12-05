@@ -184,7 +184,7 @@ public class WorkbenchAdapterFactory implements IAdapterFactory {
      * Returns the IUndoContext for an object.
      */
     protected Object getUndoContext(Object o) {
-        if (o instanceof IWorkspace) {
+		if (o instanceof IWorkspace && !PlatformUI.getWorkbench().isClosing()) {
             return PlatformUI.getWorkbench().getOperationSupport().getUndoContext();
         }
         return null;
