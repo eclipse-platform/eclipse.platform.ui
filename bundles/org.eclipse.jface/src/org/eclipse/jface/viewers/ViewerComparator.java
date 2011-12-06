@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.util.Policy;
 
 /**
@@ -192,7 +193,7 @@ public class ViewerComparator {
 			String msg = "Workaround for comparator violation:\n\t- set system property java.util.Arrays.useLegacyMergeSort=true\n\t- use a 1.6 JRE "  //$NON-NLS-1$
 					+ "\nmessage: " + e.getLocalizedMessage() //$NON-NLS-1$
 					+ "\nthis: " + getClass().getName() //$NON-NLS-1$
-					+ "\ncomparator: " + comparator.getClass().getName() //$NON-NLS-1$
+					+ "\ncomparator: " + (comparator != null ? comparator.getClass().getName() : null) //$NON-NLS-1$
 					+ "\narray:"; //$NON-NLS-1$
 			for (int i = 0; i < elements.length; i++) {
 				msg += "\n\t" + getLabel(viewer, elements[i]); //$NON-NLS-1$
