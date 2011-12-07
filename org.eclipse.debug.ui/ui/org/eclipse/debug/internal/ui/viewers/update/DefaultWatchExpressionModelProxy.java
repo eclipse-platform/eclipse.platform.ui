@@ -25,6 +25,7 @@ import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
@@ -57,7 +58,9 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
     				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
     				for (int i = 0; i < workbenchWindows.length; i++) {
     					IWorkbenchWindow window = workbenchWindows[i];
-    					if (viewer.getControl().getShell().equals(window.getShell())) {
+    					// Virtual viewer may have a null control.
+    					Control control = viewer.getControl(); 
+    					if (control != null && control.getShell().equals(window.getShell())) {
     						fWindow = window;
     						break;
     					}

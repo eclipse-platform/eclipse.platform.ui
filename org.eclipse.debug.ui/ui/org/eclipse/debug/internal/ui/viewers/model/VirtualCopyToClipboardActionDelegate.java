@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.debug.internal.ui.viewers.model;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -213,12 +214,25 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	private class ItemsToCopyVirtualItemValidator implements IVirtualItemValidator {
 	    
 	    Set fItemsToCopy = Collections.EMPTY_SET;
+	    Set fItemsToValidate = Collections.EMPTY_SET;
 	    
 	    public boolean isItemVisible(VirtualItem item) {
-	        return fItemsToCopy.contains(item);
+	        return fItemsToValidate.contains(item);
 	    }
 	    
 	    public void showItem(VirtualItem item) {
+	    }
+	    
+	    void setItemsToCopy(Set itemsToCopy) {
+	        fItemsToCopy = itemsToCopy;
+	        fItemsToValidate = new HashSet();
+	        for (Iterator itr = itemsToCopy.iterator(); itr.hasNext();) {
+	            VirtualItem itemToCopy = (VirtualItem)itr.next();
+	            while (itemToCopy != null) {
+	                fItemsToValidate.add(itemToCopy);
+	                itemToCopy = itemToCopy.getParent();
+	            }
+	        }	   
 	    }
 	}
 	
@@ -260,7 +274,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
                 }
             }
         }
-        validator.fItemsToCopy = vSelection;
+        validator.setItemsToCopy(vSelection);
         virtualViewer.getTree().validate();
         return virtualViewer;
 	}
