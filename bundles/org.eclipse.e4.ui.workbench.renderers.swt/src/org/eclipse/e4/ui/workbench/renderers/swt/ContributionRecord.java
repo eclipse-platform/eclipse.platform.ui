@@ -65,10 +65,7 @@ public class ContributionRecord {
 					item, exprContext);
 			item.setVisible(currentVisibility);
 		}
-		MenuManager manager = getManagerForModel();
-		if (manager != null) {
-			manager.markDirty();
-		}
+		getManagerForModel().markDirty();
 	}
 
 	public void collectInfo(ExpressionInfo info) {
