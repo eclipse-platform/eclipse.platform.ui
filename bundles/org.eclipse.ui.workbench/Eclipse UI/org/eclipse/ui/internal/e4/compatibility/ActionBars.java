@@ -13,12 +13,10 @@ package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.widgets.CTabFolder;
-import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -112,29 +110,7 @@ public class ActionBars extends SubActionBars {
 				}
 			}
 		}
-
-		MUIElement parent = getParentModel();
-		if (parent != null) {
-			Object renderer = parent.getRenderer();
-			if (renderer instanceof StackRenderer) {
-				StackRenderer stackRenderer = (StackRenderer) renderer;
-				CTabFolder folder = (CTabFolder) parent.getWidget();
-				stackRenderer.disposeViewMenu(folder);
-				stackRenderer.setupMenuButton(part, folder);
-				stackRenderer.layoutTopRight(folder);
-			}
-		}
-
 		super.updateActionBars();
-	}
-
-	private MUIElement getParentModel() {
-		MElementContainer<MUIElement> parent = part.getParent();
-		if (parent == null) {
-			MPlaceholder placeholder = part.getCurSharedRef();
-			return placeholder == null ? null : placeholder.getParent();
-		}
-		return parent;
 	}
 
 	private Control getPackParent(Control control) {
