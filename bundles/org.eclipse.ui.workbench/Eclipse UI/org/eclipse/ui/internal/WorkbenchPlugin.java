@@ -620,8 +620,13 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
     public IWorkbenchOperationSupport getOperationSupport() {
-		return (IWorkbenchOperationSupport) e4Context.get(IWorkbenchOperationSupport.class
-				.getName());
+		IWorkbenchOperationSupport op = e4Context.get(IWorkbenchOperationSupport.class);
+		if (op == null) {
+			// we're in shutdown, but some plugins get this in their stop()
+			// methods. In 3.x we just return a bogus one, so here it is
+			op = new WorkbenchOperationSupport();
+		}
+		return op;
     }
     
 
