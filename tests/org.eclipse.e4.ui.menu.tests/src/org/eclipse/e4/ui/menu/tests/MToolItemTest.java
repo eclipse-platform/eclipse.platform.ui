@@ -195,13 +195,13 @@ public class MToolItemTest extends TestCase {
 		IContributionItem[] tbItems = tbm.getItems();
 		assertEquals(7, tbItems.length);
 
-		assertEquals("group2", tbItems[0].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb5", tbItems[1].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb4", tbItems[2].getId());
-		assertEquals("group1", tbItems[3].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb3", tbItems[4].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb2", tbItems[5].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb1", tbItems[6].getId());
+		assertEquals("group1", tbItems[0].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb1", tbItems[1].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb2", tbItems[2].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb3", tbItems[3].getId());
+		assertEquals("group2", tbItems[4].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb4", tbItems[5].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb5", tbItems[6].getId());
 	}
 
 	public void testFileItemContributionVisibility() throws Exception {
