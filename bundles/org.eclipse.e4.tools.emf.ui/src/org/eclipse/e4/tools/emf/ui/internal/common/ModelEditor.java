@@ -113,6 +113,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartMenuEd
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPerspectiveControlEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPerspectiveWindowsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VRootBindingContexts;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VSnippetsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VToolBarContributionsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VTrimContributionsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowControlEditor;
@@ -236,6 +237,7 @@ public class ModelEditor {
 	public static final String VIRTUAL_MENUELEMENTS = ModelEditor.class.getName() + ".VIRTUAL_MENUELEMENTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_ROOT_CONTEXTS = ModelEditor.class.getName() + ".VIRTUAL_ROOT_CONTEXTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PERSPECTIVE_CONTROLS = ModelEditor.class.getName() + "VIRTUAL_PERSPECTIVE_CONTROLS"; //$NON-NLS-1$
+	public static final String VIRTUAL_SNIPPETS = ModelEditor.class.getName() + "VIRTUAL_SNIPPETS"; //$NON-NLS-1$
 
 	private static final int VERTICAL_RULER_WIDTH = 20;
 
@@ -880,6 +882,7 @@ public class ModelEditor {
 		registerVirtualEditor(VIRTUAL_PARAMETERS, ContextInjectionFactory.make(VItemParametersEditor.class, context));
 		registerVirtualEditor(VIRTUAL_ROOT_CONTEXTS, ContextInjectionFactory.make(VRootBindingContexts.class, context));
 		registerVirtualEditor(VIRTUAL_PERSPECTIVE_CONTROLS, ContextInjectionFactory.make(VPerspectiveControlEditor.class, context));
+		registerVirtualEditor(VIRTUAL_SNIPPETS, ContextInjectionFactory.make(VSnippetsEditor.class, context));
 	}
 
 	private void registerVirtualEditor(String id, AbstractComponentEditor editor) {

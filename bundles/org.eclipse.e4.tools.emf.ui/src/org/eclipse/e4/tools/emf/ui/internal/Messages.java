@@ -48,6 +48,7 @@ public class Messages {
 	public String ApplicationEditor_Windows;
 	public String ApplicationEditor_Addons;
 	public String ApplicationEditor_MenuContributions;
+	public String ApplicationEditor_Snippets;
 	public String ApplicationEditor_ToolBarContributions;
 	public String ApplicationEditor_TrimContributions;
 	public String ApplicationEditor_RootContexts;
@@ -425,6 +426,8 @@ public class Messages {
 	public String VPartDescriptor_TreeLabelDescription;
 	public String VPartDescriptor_Descriptors;
 	public String VPartDescriptor_AddPartDescriptor;
+
+	public String VSnippetsEditor_Snippets;
 
 	public String VToolBarContributionsEditor_Contributions;
 	public String VToolBarContributionsEditor_TreeLabelDescription;

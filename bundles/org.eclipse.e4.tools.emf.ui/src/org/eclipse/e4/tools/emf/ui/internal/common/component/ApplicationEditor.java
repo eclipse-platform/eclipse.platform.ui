@@ -95,6 +95,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private IListProperty MENU_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
 	private IListProperty TOOLBAR_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
 	private IListProperty TRIM_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
+	private IListProperty APPLICATION__SNIPPETS = EMFProperties.list(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS);
 	private IListProperty APPLICATION__CATEGORIES = EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES);
 
 	private IListProperty BINDING_TABLE_CONTAINER__ROOT_CONTEXT = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
@@ -306,6 +307,12 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TRIM_CONTRIBUTIONS, TRIM_CONTRIBUTIONS, element, Messages.ApplicationEditor_TrimContributions) {
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+		});
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_SNIPPETS, APPLICATION__SNIPPETS, element, Messages.ApplicationEditor_Snippets) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
