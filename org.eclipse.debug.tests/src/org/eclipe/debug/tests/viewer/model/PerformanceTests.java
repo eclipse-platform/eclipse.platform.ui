@@ -267,7 +267,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         TestModel model = new TestModel();
         model.setRoot( new TestElement(model, "root", new TestElement[0] ) ); 
         int numElements = (int)Math.pow(2, getTestModelDepth());
-        model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, 1000, "model."));
+        model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, numElements, "model."));
         
         fViewer.setAutoExpandLevel(-1);
 
