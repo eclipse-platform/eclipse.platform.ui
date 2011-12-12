@@ -12,11 +12,10 @@ package org.eclipse.ui.tests.zoom;
 
 import junit.framework.Assert;
 
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.internal.PartPane;
-import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.PartStack;
 
 public class ShowViewTest extends ZoomTestCase {
     public ShowViewTest(String name) {
@@ -70,10 +69,11 @@ public class ShowViewTest extends ZoomTestCase {
         Assert.assertTrue(isZoomed(unstackedView));
         
         // Ensure that the new part was brought to the top of the stack
-        PartPane pane = ((PartSite) newPart.getSite()).getPane();
-        PartStack stack = (PartStack)pane.getContainer();
+        MUIElement partParent = getPartParent(unstackedView);
+        assertTrue(partParent instanceof MPartStack);
         
-        Assert.assertTrue(stack.getSelection() == pane);
+        MPartStack stack = (MPartStack) partParent;
+        Assert.assertTrue(stack.getSelectedElement() == getPartModel(unstackedView));
     }
     
     /** 
@@ -91,10 +91,11 @@ public class ShowViewTest extends ZoomTestCase {
         Assert.assertTrue(isZoomed(unstackedView));
         
         // Ensure that the new part was brought to the top of the stack
-        PartPane pane = ((PartSite) newPart.getSite()).getPane();
-        PartStack stack = (PartStack)pane.getContainer();
+        MUIElement partParent = getPartParent(newPart);
+        assertTrue(partParent instanceof MPartStack);
         
-        Assert.assertTrue(stack.getSelection() == pane);
+        MPartStack stack = (MPartStack) partParent;
+        Assert.assertTrue(stack.getSelectedElement() == getPartModel(newPart));
     }
     /** 
      * <p>Test: Zoom an editor, create a new view using the IWorkbenchPage.VIEW_VISIBLE mode</p>
@@ -108,10 +109,11 @@ public class ShowViewTest extends ZoomTestCase {
         Assert.assertTrue(page.getActivePart() == editor1);
         
         // Ensure that the new part was brought to the top of the stack
-        PartPane pane = ((PartSite) newPart.getSite()).getPane();
-        PartStack stack = (PartStack)pane.getContainer();
+        MUIElement partParent = getPartParent(newPart);
+        assertTrue(partParent instanceof MPartStack);
         
-        Assert.assertTrue(stack.getSelection() == pane);
+        MPartStack stack = (MPartStack) partParent;
+        Assert.assertTrue(stack.getSelectedElement() == getPartModel(newPart));
     }
         
     /** 

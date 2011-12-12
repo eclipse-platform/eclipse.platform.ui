@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.zoom;
 
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 
 public abstract class ActivateTest extends ZoomTestCase {
@@ -86,38 +85,7 @@ public abstract class ActivateTest extends ZoomTestCase {
         assertZoomed(stacked1);
         assertActive(stacked1);
     }
-    
-    /** 
-     * <p>Test: Zoom a pane then create a new fast view with the VIEW_ACTIVATE mode</p>
-     * <p>Expected result: the original pane remains zoomed</p> 
-     */
-    public void testCreateFastView() {
-        IWorkbenchPart zoomedPart = getStackedPart1();
-        
-        close(fastView);
-        zoom(zoomedPart);
-        fastView = showFastView(ZoomPerspectiveFactory.FASTVIEW1);
-        
-        assertZoomed(zoomedPart);
-        assertActive(fastView);
-    }
-
-    /** 
-     * <p>Test: Zoom a pane, then turn the fast view back into a regular view</p>
-     * <p>Expected result: the original pane remains zoomed</p> 
-     */
-    public void testRestoreFastView() {
-        IWorkbenchPart zoomedPart = getStackedPart1();
-        
-        zoom(zoomedPart);
-        
-        // Restore the fast view. Shouldn't have any effect on zoom.
-        page.removeFastView((IViewReference)page.getReference(fastView));
-
-        assertZoomed(zoomedPart);
-        assertActive(zoomedPart);
-    }
-    
+     
     /**
      * <p>Test: Zoom a pane, then reset perspective.</p>
      * <p>Expected result: the page unzooms but the original pane remains active</p>

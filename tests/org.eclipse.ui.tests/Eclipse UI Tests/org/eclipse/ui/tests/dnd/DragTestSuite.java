@@ -168,7 +168,7 @@ public class DragTestSuite extends AutoTestSuite {
             new ViewDropTarget(dragSource, probView, SWT.TOP),
 
             // Fast view bar
-            new FastViewBarDropTarget(dragSource),
+            null, //new FastViewBarDropTarget(dragSource),
 
             // View tabs
             new ViewTabDropTarget(dragSource, resNav), 
@@ -226,6 +226,9 @@ public class DragTestSuite extends AutoTestSuite {
             TestDropLocation[] dropTargets) {
 
         for (int destId = 0; destId < dropTargets.length; destId++) {
+        	if (dropTargets[destId] == null)
+        		continue;
+        	
             DragTest newTest = new DragTest(dragSource, dropTargets[destId], getLog());
             addTest(newTest);
         }

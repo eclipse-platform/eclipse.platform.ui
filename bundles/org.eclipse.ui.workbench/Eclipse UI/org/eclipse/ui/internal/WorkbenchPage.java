@@ -2560,8 +2560,10 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 	 * @see org.eclipse.ui.IWorkbenchPage#isPageZoomed()
 	 */
     public boolean isPageZoomed() {
-		// FIXME compat: the page is not zoomed :-)
-		return false;
+		List<String> maxTag = new ArrayList<String>();
+		maxTag.add(IPresentationEngine.MAXIMIZED);
+		List<Object> maxElements = modelService.findElements(window, null, null, maxTag);
+		return maxElements.size() > 0;
     }
     
 

@@ -15,28 +15,24 @@ import junit.framework.Assert;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockEditorPart;
-import org.eclipse.ui.tests.dnd.DragOperations;
-import org.eclipse.ui.tests.dnd.EditorAreaDropTarget;
-import org.eclipse.ui.tests.dnd.ExistingWindowProvider;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -74,7 +70,8 @@ public class ZoomTestCase extends UITestCase {
      * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
      */
     protected void doTearDown() throws Exception {
-        page.testInvariants();
+    	// Ensure that the model is sane
+        // page.testInvariants();
         
         super.doTearDown();
 
@@ -117,8 +114,8 @@ public class ZoomTestCase extends UITestCase {
             editor3 = page.openEditor(new FileEditorInput(file3),
                     MockEditorPart.ID2);
 
-            DragOperations
-        		.drag(editor3, new EditorAreaDropTarget(new ExistingWindowProvider(window), SWT.RIGHT), false);
+//            DragOperations
+//        		.drag(editor3, new EditorAreaDropTarget(new ExistingWindowProvider(window), SWT.RIGHT), false);
         } catch (PartInitException e) {
         } catch (CoreException e) {
         }
@@ -126,7 +123,7 @@ public class ZoomTestCase extends UITestCase {
         stackedView1 = findView(ZoomPerspectiveFactory.STACK1_VIEW1);
         stackedView2 = findView(ZoomPerspectiveFactory.STACK1_VIEW2);
         unstackedView = findView(ZoomPerspectiveFactory.UNSTACKED_VIEW1);
-        fastView = findView(ZoomPerspectiveFactory.FASTVIEW1);
+//        fastView = findView(ZoomPerspectiveFactory.FASTVIEW1);
     }
 
     // zooms the given part
@@ -135,7 +132,7 @@ public class ZoomTestCase extends UITestCase {
             throw new NullPointerException();
         page.activate(part);
         page.toggleZoom(page.getReference(part));
-        Assert.assertTrue(page.isZoomed());
+        Assert.assertTrue(page.isPageZoomed());
         Assert.assertTrue(isZoomed(part));
     }
 
@@ -149,51 +146,47 @@ public class ZoomTestCase extends UITestCase {
         } catch (PartInitException e) {
         }
     }
+    
+    // show the given view as a regular view
+    protected IViewPart showRegularView(String id, int mode) {
+        try {
+            IViewPart view = page.showView(id, null, mode);
+            return view;
+        } catch (PartInitException e) {
+        }
+        return null;
+    }
 
     protected IViewPart findView(String id) {
         IViewPart view = page.findView(id);
         assertNotNull("View " + id + " not found", view);
         return view;
     }
+
+    protected MPart getPartModel(IWorkbenchPart part) {
+        PartSite site = (PartSite) part.getSite();
+        return site.getModel();
+    }
     
-    // show the given view as a regular view
-    protected IViewPart showRegularView(String id, int mode) {
-        try {
-            IViewPart view = page.showView(id, null, mode);
-            IViewReference ref = (IViewReference) page.getReference(view);
-            if (page.isFastView(ref))
-                page.removeFastView(ref);
-            return view;
-        } catch (PartInitException e) {
-        }
-        return null;
+    protected MUIElement getPartParent(IWorkbenchPart part) {
+        MPart partModel = getPartModel(part);
+        
+        MUIElement partParent = partModel.getParent();
+        if (partParent == null && partModel.getCurSharedRef() != null)
+        	partParent = partModel.getCurSharedRef().getParent();
+        
+        return partParent;
     }
-
-    // show the given view
-    protected IViewPart showFastView(String id) {
-        try {
-            IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-        	
-            int oldMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
-			store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
-			
-            IViewPart view = page.showView(id);
-            IViewReference ref = (IViewReference) page.getReference(view);
-            page.addFastView(ref);
-            Assert.assertTrue(page.isFastView(ref));
-            store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, oldMode);
-            return view;
-        } catch (PartInitException e) {
-        }
-        return null;
-    }
-
+    
     // returns whether this part is zoomed
     protected boolean isZoomed(IWorkbenchPart part) {
-        PartSite site = (PartSite) part.getSite();
-        PartPane pane = site.getPane();
+        MUIElement partParent = getPartParent(part);
         
-        return pane.isZoomed();
+        if (partParent instanceof MPartStack) {
+        	return partParent.getTags().contains(IPresentationEngine.MAXIMIZED);
+        }
+        							
+        return false;
     }
     
     /**
@@ -250,7 +243,7 @@ public class ZoomTestCase extends UITestCase {
     
     // returns true if the page is not zoomed, false otherwise
     protected boolean isZoomed() {
-        return page.isZoomed();
+        return page.isPageZoomed();
     }
     
     public void close(IWorkbenchPart part) {

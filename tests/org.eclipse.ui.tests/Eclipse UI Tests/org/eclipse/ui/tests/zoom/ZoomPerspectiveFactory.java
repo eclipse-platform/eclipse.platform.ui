@@ -42,6 +42,6 @@ public class ZoomPerspectiveFactory implements IPerspectiveFactory {
         
         layout.addView(UNSTACKED_VIEW1,  IPageLayout.TOP, 0.5f, IPageLayout.ID_EDITOR_AREA);
         
-        layout.addFastView(FASTVIEW1);
+//        layout.addFastView(FASTVIEW1);
     }
 }
