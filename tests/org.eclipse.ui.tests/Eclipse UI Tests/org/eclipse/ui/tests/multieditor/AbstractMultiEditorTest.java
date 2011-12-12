@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -94,7 +95,8 @@ public class AbstractMultiEditorTest extends UITestCase {
 			setupErrorListener();
 			Event event = new Event();
 			event.type = SWT.Activate;
-			((PartSite) part.getSite()).getPane().handleEvent(event);
+			((Control) ((PartSite) part.getSite()).getModel().getWidget())
+					.setFocus();
 
 			assertTrue("Nothing should have been logged",
 					fErrorListener.messages.isEmpty());

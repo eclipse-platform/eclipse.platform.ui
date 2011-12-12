@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,11 +25,11 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -42,8 +42,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.EditorSashContainer;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IContributedContentsView;
@@ -217,11 +217,8 @@ public class MultiEditorTest extends UITestCase {
 		assertTrue(editor instanceof MultiEditor);
 		MultiEditor multiEditor = (MultiEditor) editor;
 		
-		EditorSashContainer container = (EditorSashContainer) page
-				.getEditorPresentation().getLayoutPart();
-		// retrieve the SWT CTabFolder
-		CTabFolder tabFolder = (CTabFolder) container.getActiveWorkbook()
-				.getControl();
+		CTabFolder tabFolder = (CTabFolder) ((WorkbenchPartReference<?>) page
+				.getReference(multiEditor)).getModel().getParent().getWidget();
 		// index is 0 since we want the editor that's behind in the editor
 		// stack, 1 should be the second one that we activated
 		CTabItem item = tabFolder.getItem(0);
