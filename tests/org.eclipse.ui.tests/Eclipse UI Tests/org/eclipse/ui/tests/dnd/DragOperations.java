@@ -10,21 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
+import junit.framework.Assert;
+
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.LayoutPart;
 import org.eclipse.ui.internal.PartPane;
-import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.PartStack;
-import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.TestDropLocation;
@@ -49,12 +46,13 @@ public class DragOperations {
             boolean wholeFolder) {
         DragUtil.forceDropLocation(target);
 
-        PartSite site = (PartSite) part.getSite();
-        PartPane pane = site.getPane();
-        PartStack parent = ((PartStack) (pane.getContainer()));
+//        PartSite site = (PartSite) part.getSite();
+//        PartPane pane = site.getPane();
+//        PartStack parent = ((PartStack) (pane.getContainer()));
+//
+//        parent.paneDragStart(wholeFolder ? null : pane, Display.getDefault().getCursorLocation(), false);
 
-        parent.paneDragStart(wholeFolder ? null : pane, Display.getDefault().getCursorLocation(), false);
-
+        Assert.fail("DND needs some updating");
         DragUtil.forceDropLocation(null);
     }
 
@@ -65,24 +63,24 @@ public class DragOperations {
      * @return
      */
     public static String getName(IEditorPart editor) {
-        PartPane pane = ((EditorSite) editor.getSite()).getPane();
-        IWorkbenchPartReference ref = pane.getPartReference();
+        IWorkbenchPage page = editor.getSite().getPage();
+        IWorkbenchPartReference ref = page.getReference(editor);
         return ref.getPartName();
     }
 
     public static PartPane getPane(IEditorPart editor) {
-        return ((EditorSite) editor.getSite()).getPane();
+        return null;
     }
 
     public static PartPane getPane(IViewPart view) {
-        return ((ViewSite) view.getSite()).getPane();
+        return null;
     }
 
     public static Rectangle getDisplayBounds(PartPane pane) {
-        LayoutPart parent = ((LayoutPart) (pane.getContainer()));
-        Rectangle bounds = DragUtil.getDisplayBounds(parent.getControl());
+//        LayoutPart parent = ((LayoutPart) (pane.getContainer()));
+//        Rectangle bounds = DragUtil.getDisplayBounds(parent.getControl());
 
-        return bounds;
+        return new Rectangle(0, 0, 0, 0);
     }
 
     public static Point getLocation(PartPane pane, int side) {
@@ -96,8 +94,9 @@ public class DragOperations {
      * @return
      */
     public static Point getPointInEditorArea(WorkbenchPage page, int side) {
-        return DragOperations.getPoint(DragUtil.getDisplayBounds(page
-                .getEditorPresentation().getLayoutPart().getControl()), side);
+//        return DragOperations.getPoint(DragUtil.getDisplayBounds(page
+//                .getEditorPresentation().getLayoutPart().getControl()), side);
+    	return new Point(0, 0);
     }
 
     public static Point getPoint(Rectangle bounds, int side) {
@@ -149,8 +148,8 @@ public class DragOperations {
     public static String getLayoutDescription(WorkbenchPage page) {
         StringBuffer buf = new StringBuffer();
 
-        page.getActivePerspective().describeLayout(buf);
-
+        //page.getActivePerspective().describeLayout(buf);
+        buf.append("this layout still not quite described - TODO");
         // Test result -- this will be a value in the resulting map
         return buf.toString();
     }

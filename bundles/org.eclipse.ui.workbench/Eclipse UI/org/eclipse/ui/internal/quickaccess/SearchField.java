@@ -33,6 +33,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -96,6 +98,25 @@ public class SearchField {
 		text = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
 		GridDataFactory.fillDefaults().hint(130, SWT.DEFAULT).applyTo(text);
 		text.setMessage(QuickAccessMessages.QuickAccess_EnterSearch);
+
+		parent.getShell().addControlListener(new ControlListener() {
+			public void controlResized(ControlEvent e) {
+				closeDropDown();
+			}
+
+			public void controlMoved(ControlEvent e) {
+				closeDropDown();
+			}
+
+			private void closeDropDown() {
+				if (shell.isDisposed() || text.isDisposed() || !shell.isVisible())
+					return;
+
+				quickAccessContents.doClose();
+				text.setText(""); //$NON-NLS-1$
+				quickAccessContents.resetProviders();
+			}
+		});
 
 		hookUpSelectAll();
 

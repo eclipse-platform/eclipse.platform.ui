@@ -28,7 +28,6 @@ import org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite;
 import org.eclipse.ui.tests.encoding.EncodingTestSuite;
 import org.eclipse.ui.tests.fieldassist.FieldAssistTestSuite;
 import org.eclipse.ui.tests.filteredtree.FilteredTreeTests;
-import org.eclipse.ui.tests.harness.util.TweakletCheckTest;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
@@ -67,7 +66,6 @@ public class UiTestSuite extends TestSuite {
     public UiTestSuite() {
     	// run the StartupTest first, since we need to check early that the tests 
     	// run only after early startup has completed (bug 93518).
-    	addTest(new TweakletCheckTest());
     	addTest(new TestSuite(StartupTest.class));
         addTest(new UIAutomatedSuite());
         addTest(new ApiTestSuite());

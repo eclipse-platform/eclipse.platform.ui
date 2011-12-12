@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
-import org.eclipse.swt.widgets.Display;
+import junit.framework.Assert;
+
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.internal.PartPane;
-import org.eclipse.ui.internal.ViewSite;
-import org.eclipse.ui.internal.ViewStack;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -74,17 +72,17 @@ public class ViewDragSource extends TestDragSource {
         IViewPart part = getPart();
 
         WorkbenchPage page = getPage();
-        PartPane pane = ((ViewSite) part.getSite()).getPane();
         if (maximized) {
-            page.toggleZoom(pane.getPartReference());
+            page.toggleZoom(page.getReference(part));
         }
         
         DragUtil.forceDropLocation(target);
-        ViewStack parent = ((ViewStack) (pane.getContainer()));
-        
-        PartPane presentablePart = wholeFolder ? null : pane;
-        parent.paneDragStart(presentablePart, Display.getDefault()
-                .getCursorLocation(), false);
+//        ViewStack parent = ((ViewStack) (pane.getContainer()));
+//        
+//        PartPane presentablePart = wholeFolder ? null : pane;
+//        parent.paneDragStart(presentablePart, Display.getDefault()
+//                .getCursorLocation(), false);
+        Assert.fail("DND needs updated");
 
         DragUtil.forceDropLocation(null);
     }

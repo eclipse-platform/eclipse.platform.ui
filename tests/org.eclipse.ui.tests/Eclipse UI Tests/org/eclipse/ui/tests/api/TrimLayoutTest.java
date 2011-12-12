@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.api;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.ui.IMemento;
@@ -90,6 +89,7 @@ public class TrimLayoutTest extends UITestCase {
 		validateDefaultBottomLayout(trimManager);
 		
 		// Capture the ids of the 1st and 3rd elements
+		@SuppressWarnings("rawtypes")
 		List trim = trimManager.getAreaTrim(SWT.BOTTOM);		
 		String id1 = ((IWindowTrim) trim.get(1)).getId();
 		String id3 = ((IWindowTrim) trim.get(3)).getId();
@@ -117,6 +117,7 @@ public class TrimLayoutTest extends UITestCase {
 		validateDefaultBottomLayout(trimManager);
 		
 		// Capture the ids of the 1st and 3rd elements
+		@SuppressWarnings("rawtypes")
 		List trim = trimManager.getAreaTrim(SWT.BOTTOM);		
 		String id0 = ((IWindowTrim) trim.get(0)).getId();
 		String id3 = ((IWindowTrim) trim.get(3)).getId();
@@ -146,6 +147,7 @@ public class TrimLayoutTest extends UITestCase {
 		validateDefaultBottomLayout(trimManager);
 
 		// Remove the Heap Status
+		@SuppressWarnings("rawtypes")
 		List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
 		int hsIndex = getIndexOf(trim, "org.eclipse.ui.internal.HeapStatus");
 		trim.remove(hsIndex);
@@ -175,6 +177,7 @@ public class TrimLayoutTest extends UITestCase {
 		trimManager.addTrim(ITrimManager.TOP, trimList);
 		window.getShell().layout();
 
+		@SuppressWarnings("rawtypes")
 		List trim = trimManager.getAreaTrim(ITrimManager.TOP);
 		validatePositions(TOP_TRIM_LIST, trim);
 	}
@@ -204,6 +207,7 @@ public class TrimLayoutTest extends UITestCase {
 		trimManager.addTrim(ITrimManager.TOP, buttonTrim, trim);
 		window.getShell().layout();
 
+		@SuppressWarnings("rawtypes")
 		List topTrim = trimManager.getAreaTrim(ITrimManager.TOP);
 		validatePositions(TOP_BUTTON_TRIM, topTrim);
 	}
@@ -218,8 +222,8 @@ public class TrimLayoutTest extends UITestCase {
 
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
-		IStatus rc = window.saveState(state);
-		assertEquals(IStatus.OK, rc.getSeverity());
+//		IStatus rc = window.saveState(state);
+//		assertEquals(IStatus.OK, rc.getSeverity());
 
 		IMemento trim = state.getChild(IWorkbenchConstants.TAG_TRIM);
 		assertNotNull(trim);
@@ -248,10 +252,10 @@ public class TrimLayoutTest extends UITestCase {
 		// Create a memento and write the state to it...
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
-		IStatus rc = window.saveState(state);
+//		IStatus rc = window.saveState(state);
 		
 		// Did the save work?
-		assertEquals(IStatus.OK, rc.getSeverity());
+//		assertEquals(IStatus.OK, rc.getSeverity());
 		
 		// Does it have the right info?
 		IMemento trimMemento = state.getChild(IWorkbenchConstants.TAG_TRIM);
@@ -284,9 +288,13 @@ public class TrimLayoutTest extends UITestCase {
 		children[3].putString(IMemento.TAG_ID, id0);
 
 		// Restore the trim from the modified state
-		window.restoreState(state, window.getActivePage().getPerspective());
+//		window.restoreState(state, window.getActivePage().getPerspective());
+		// FIXME: windowRestoreState was a compile error
+		fail("window.restoreState() was a compile error");
+
 		window.getShell().layout(true, true);
 
+		@SuppressWarnings("rawtypes")
 		List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
 		assertTrue("Restore has wrong layout", getIndexOf(trim, id0) == 3);
 		assertTrue("Restore has wrong layout", getIndexOf(trim, id3) == 0);
@@ -307,8 +315,13 @@ public class TrimLayoutTest extends UITestCase {
 
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
-		IStatus rc = window.saveState(state);
-		assertEquals(IStatus.OK, rc.getSeverity());
+		
+//		IStatus rc = window.saveState(state);
+		
+		// FIXME: window.saveState() was a compile error
+		fail("window.saveState() was a compile error");
+		
+//		assertEquals(IStatus.OK, rc.getSeverity());
 		IMemento trim = state.getChild(IWorkbenchConstants.TAG_TRIM);
 		assertNotNull(trim);
 
@@ -335,9 +348,15 @@ public class TrimLayoutTest extends UITestCase {
 		IMemento left = trim.createChild(IWorkbenchConstants.TAG_TRIM_AREA,
 				new Integer(SWT.LEFT).toString());
 		left.createChild(IWorkbenchConstants.TAG_TRIM_ITEM, id);
-		window.restoreState(state, window.getActivePage().getPerspective());
+		
+//		window.restoreState(state, window.getActivePage().getPerspective());
+		
+		// FIXME: window.restoreState() was a compile error
+		fail("window.restoreState() was a compile error");
+
 		window.getShell().layout(true, true);
 
+		@SuppressWarnings("rawtypes")
 		List windowTrim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
 		assertEquals(bottomTrimCount-1, windowTrim.size());
 
@@ -369,6 +388,7 @@ public class TrimLayoutTest extends UITestCase {
 	 * @param pos2
 	 *            position 2, from 0
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void swapPostition(List trim, int pos1, int pos2) {
 		Object tmp = trim.get(pos1);
 		trim.set(pos1, trim.get(pos2));
@@ -382,6 +402,7 @@ public class TrimLayoutTest extends UITestCase {
 	 * @param id The id of the trim to get the index of
 	 * @return The zero-based index or -1 if not found
 	 */
+	@SuppressWarnings("rawtypes")
 	private int getIndexOf(List trimIds, String id) {
 		int index = 0;
 		for (Iterator iterator = trimIds.iterator(); iterator.hasNext();) {
@@ -402,6 +423,7 @@ public class TrimLayoutTest extends UITestCase {
 	 * for the bottom trim area
 	 */
 	private void validateDefaultBottomLayout(ITrimManager trimManager) {
+		@SuppressWarnings("rawtypes")
 		List descs = trimManager.getAreaTrim(SWT.BOTTOM);
 
 		// Must have at least 4 elements
@@ -431,6 +453,7 @@ public class TrimLayoutTest extends UITestCase {
 	 * @param retrievedIDs
 	 *            the current IDs in order.
 	 */
+	@SuppressWarnings("rawtypes")
 	private void validatePositions(String[] expectedIDs, List retrievedIDs) {
 		assertEquals("Number of trim items don't match", expectedIDs.length,
 				retrievedIDs.size());

@@ -17,15 +17,15 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService.SiteUpdateJob;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
-import org.eclipse.ui.tests.helpers.TestFacade;
 
 /**
  * @since 3.5
@@ -76,7 +76,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		forceUpdate();		
 		processEvents();
 		
-		Cursor cursor = ((TestFacade) Tweaklets.get(TestFacade.KEY)).getPaneControl(site).getCursor();
+		Cursor cursor = ((Control) ((PartSite)site).getModel().getWidget()).getCursor();
 		assertNotNull(cursor);
 		
 		jobWithCursor.cancel();
@@ -90,7 +90,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		processEvents();
 		forceUpdate();
 		processEvents();
-		cursor = ((TestFacade) Tweaklets.get(TestFacade.KEY)).getPaneControl(site).getCursor();
+		cursor = ((Control) ((PartSite)site).getModel().getWidget()).getCursor();
 		assertNull(cursor); // no jobs, no cursor
 
 		// Now fire two jobs, first one with cursor & delay, the second one without any cursor or delay
@@ -113,7 +113,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		
 		forceUpdate();
 		processEvents();
-		cursor = ((TestFacade) Tweaklets.get(TestFacade.KEY)).getPaneControl(site).getCursor();
+		cursor = ((Control) ((PartSite)site).getModel().getWidget()).getCursor();
 		assertNull(cursor); // jobWithoutCursor is scheduled to run first - no cursor now
 		
 		while(jobWithCursor.getState() != Job.RUNNING) {
@@ -127,7 +127,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 
 		forceUpdate();		
 		processEvents();
-		cursor = ((TestFacade) Tweaklets.get(TestFacade.KEY)).getPaneControl(site).getCursor();
+		cursor = ((Control) ((PartSite)site).getModel().getWidget()).getCursor();
 		assertNotNull(cursor); // both running now - cursor should be set
 	}
 

@@ -11,11 +11,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
-import org.eclipse.ui.tests.helpers.TestFacade;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 
 /**
@@ -33,16 +29,20 @@ public final class ViewUtils {
         return false;
     }
 
-    public static boolean isCloseable(IViewPart part) {
-        IWorkbenchPartSite viewSite = part.getSite();
-        IViewReference ref = (IViewReference) viewSite.getPage().getReference(part);
-        return ((TestFacade)Tweaklets.get(TestFacade.KEY)).isClosableInPerspective(ref);
+    @SuppressWarnings("unused")
+	public static boolean isCloseable(IViewPart part) {
+//        IWorkbenchPartSite viewSite = part.getSite();
+//        IViewReference ref = (IViewReference) viewSite.getPage().getReference(part);
+        // FIXME: Facade claimed closeable perspectives where not supported
+        return false;
     }
 
-    public static boolean isMoveable(IViewPart part) {
-    	IWorkbenchPartSite viewSite = part.getSite();
-        IViewReference ref = (IViewReference) viewSite.getPage().getReference(part);
-        return ((TestFacade)Tweaklets.get(TestFacade.KEY)).isMoveableInPerspective(ref);
+    @SuppressWarnings("unused")
+	public static boolean isMoveable(IViewPart part) {
+//    	IWorkbenchPartSite viewSite = part.getSite();
+//        IViewReference ref = (IViewReference) viewSite.getPage().getReference(part);
+        // FIXME: Facade claimed moveable perspectives where not supported
+        return false;
     }
 
     public static boolean isSticky(IViewPart part) {

@@ -16,10 +16,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
-import org.eclipse.ui.tests.helpers.TestFacade;
 
 /**
  * Tests the IPageService class.
@@ -51,7 +49,6 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 				IPageService.class);
 
 		assertTrue(fWindow != slaveService);
-		((TestFacade) Tweaklets.get(TestFacade.KEY)).isSlavePageService(slaveService);
 
 		perspEventReceived = false;
 		slaveService.addPerspectiveListener(this);

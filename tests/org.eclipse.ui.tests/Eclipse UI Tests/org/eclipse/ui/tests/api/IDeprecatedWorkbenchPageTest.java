@@ -23,14 +23,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
-import org.eclipse.ui.tests.helpers.TestFacade;
 
 public class IDeprecatedWorkbenchPageTest extends UITestCase {
 
@@ -40,8 +38,6 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 
 	private IProject proj;
 	
-	private TestFacade facade;
-
 	public IDeprecatedWorkbenchPageTest(String testName) {
 		super(testName);
 	}
@@ -50,7 +46,6 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		super.doSetUp();
 		fWin = openTestWindow();
 		fActivePage = fWin.getActivePage();
-		facade = (TestFacade) Tweaklets.get(TestFacade.KEY);
 	}
 
 	protected void doTearDown() throws Exception {
@@ -805,29 +800,40 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	public void testShowActionSet() {
 		String id = MockActionDelegate.ACTION_SET_ID;
 
-		int totalBefore = facade.getActionSetCount(fActivePage);
+//		int totalBefore = facade.getActionSetCount(fActivePage);
+		// FIXME: No implementation
+		fail("facade.getActionSetCount() had no implementation");
+
 		fActivePage.showActionSet(id);
 
-		facade.assertActionSetId(fActivePage, id, true);
+//		facade.assertActionSetId(fActivePage, id, true);
 
 		// check that the method does not add an invalid action set to itself
 		id = IConstants.FakeID;
 		fActivePage.showActionSet(id);
 
-		facade.assertActionSetId(fActivePage, id, false);
-		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
+//		facade.assertActionSetId(fActivePage, id, false);
+		// FIXME: No implementation
+		fail("facade.assertActionSetId() had no implementation");
+
+//		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
 	}
 
 	public void testHideActionSet() {
-		int totalBefore = facade.getActionSetCount(fActivePage);
+//		int totalBefore = facade.getActionSetCount(fActivePage);
+		// FIXME: No implementation
+
+		fail("facade.getActionSetCount() had no implementation");
 
 		String id = MockWorkbenchWindowActionDelegate.SET_ID;
 		fActivePage.showActionSet(id);
-		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
+//		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
 
 		fActivePage.hideActionSet(id);
-		assertEquals(facade.getActionSetCount(fActivePage), totalBefore);
+//		assertEquals(facade.getActionSetCount(fActivePage), totalBefore);
 
-		facade.assertActionSetId(fActivePage, id, false);
+//		facade.assertActionSetId(fActivePage, id, false);
+		
+		fail("facade.assertActionSetId() had no implementation");
 	}
 }

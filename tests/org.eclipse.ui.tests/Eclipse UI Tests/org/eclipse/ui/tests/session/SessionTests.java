@@ -18,7 +18,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.jface.util.Util;
-import org.eclipse.ui.tests.harness.util.TweakletCheckTest;
 import org.eclipse.ui.tests.markers.MarkersViewColumnSizeTest;
 import org.eclipse.ui.tests.statushandlers.StatusHandlerConfigurationSuite;
 import org.eclipse.ui.tests.statushandlers.StatusHandlingConfigurationTest;
@@ -39,7 +38,6 @@ public class SessionTests extends TestSuite {
 	 * 
 	 */
 	public SessionTests() {
-		addTweakletCheck();
 		addHandlerStateTests();
 		addIntroTests();
 		addEditorTests();
@@ -70,13 +68,6 @@ public class SessionTests extends TestSuite {
 		//actually we do not care which workspace is used
 		addTest(new StatusHandlerConfigurationSuite("themeSessionTests",
 				StatusHandlingConfigurationTest.class));
-	}
-
-	/**
-	 * 
-	 */
-	private void addTweakletCheck() {
-		addTest(new TweakletCheckTest());
 	}
 
 	/**

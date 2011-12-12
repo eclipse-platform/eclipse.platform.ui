@@ -23,24 +23,19 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.EditorSelectionDialog;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.dialogs.TypeFilteringDialog;
-import org.eclipse.ui.internal.Perspective;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
 import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
 import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
-import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
@@ -90,25 +85,26 @@ public class UIDialogs extends TestCase {
     }
 
     public void testEditActionSetsDialog() {
-        Dialog dialog;
-        Perspective persp = null;
-        //Test perspective: use current perspective of test case
-        try { /*
-         * fixme: should try to get current perspective, or default;
-         * currently only
-         */
-            WorkbenchWindow window = (WorkbenchWindow) getWorkbench().getActiveWorkbenchWindow();
-            persp = new Perspective((PerspectiveDescriptor) getWorkbench()
-                    .getPerspectiveRegistry().getPerspectives()[0],
-                    (WorkbenchPage) window.getActivePage());
-            dialog = window.createCustomizePerspectiveDialog(persp);
-        } catch (WorkbenchException e) {
-            dialog = null;
-        }
-        DialogCheck.assertDialog(dialog, this);
-        if (persp != null) {
-            persp.dispose();
-        }
+    	fail("CustomizePerspectiveDialog not implemented");
+//        Dialog dialog;
+//        Object persp = null;
+//        //Test perspective: use current perspective of test case
+//        try { /*
+//         * fixme: should try to get current perspective, or default;
+//         * currently only
+//         */
+//            WorkbenchWindow window = (WorkbenchWindow) getWorkbench().getActiveWorkbenchWindow();
+//            persp = new Perspective((PerspectiveDescriptor) getWorkbench()
+//                    .getPerspectiveRegistry().getPerspectives()[0],
+//                    (WorkbenchPage) window.getActivePage());
+//            dialog = window.createCustomizePerspectiveDialog(persp);
+//        } catch (WorkbenchException e) {
+//            dialog = null;
+//        }
+//        DialogCheck.assertDialog(dialog, this);
+//        if (persp != null) {
+//            persp.dispose();
+//        }
     }
 
     public void testEditorSelection() {
@@ -163,14 +159,15 @@ public class UIDialogs extends TestCase {
     
     // see bug 211350
     public void testLoadNotExistingPerspective() throws IOException{
-    	final String fakePerspectivID = "fakeperspetive";
-		PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin
-				.getDefault().getPerspectiveRegistry();
-		try {
-			reg.getCustomPersp(fakePerspectivID);
-		} catch (WorkbenchException e) {
-			assertTrue(e.getStatus().getMessage().indexOf(fakePerspectivID) != -1);
-		}
+    	fail("PerspectiveRegistry.getCustomPersp not implemented");
+//    	final String fakePerspectivID = "fakeperspetive";
+//		PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin
+//				.getDefault().getPerspectiveRegistry();
+//		try {
+//			reg.getCustomPersp(fakePerspectivID);
+//		} catch (WorkbenchException e) {
+//			assertTrue(e.getStatus().getMessage().indexOf(fakePerspectivID) != -1);
+//		}
     }
 
     public void testSelectPerspective() {

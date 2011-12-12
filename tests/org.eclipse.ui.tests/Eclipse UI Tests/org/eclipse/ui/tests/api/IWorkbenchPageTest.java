@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,7 +60,6 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
@@ -70,7 +68,6 @@ import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
-import org.eclipse.ui.tests.helpers.TestFacade;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 
@@ -133,10 +130,6 @@ public class IWorkbenchPageTest extends UITestCase {
 		}
 	};
 
-	private TestFacade facade;
-
-
-
 	public IWorkbenchPageTest(String testName) {
 		super(testName);
 	}
@@ -147,7 +140,6 @@ public class IWorkbenchPageTest extends UITestCase {
 		fActivePage = fWin.getActivePage();
 		logStatus = null;
 		logCount = 0;
-		facade = (TestFacade) Tweaklets.get(TestFacade.KEY);
 		Platform.addLogListener(openAndHideListener);
 	}
 
@@ -198,7 +190,7 @@ public class IWorkbenchPageTest extends UITestCase {
 
 			assertNotNull(sets);
 			assertEquals(2, sets.length);
-			Set realSet = new HashSet(Arrays.asList(sets));
+			Set<IWorkingSet> realSet = new HashSet<IWorkingSet>(Arrays.asList(sets));
 			assertTrue(realSet.contains(set1));
 			assertTrue(realSet.contains(set2));
 
@@ -971,10 +963,14 @@ public class IWorkbenchPageTest extends UITestCase {
 				new String[] { "init", "createPartControl", "setFocus" }));
 		assertTrue(!view.equals(view2));
 
-		IViewReference ref = (IViewReference) fActivePage.getReference(view);
-		IViewReference ref2 = (IViewReference) fActivePage.getReference(view2);
-		facade.addFastView(fActivePage, ref);
-		facade.addFastView(fActivePage, ref2);
+//		IViewReference ref = (IViewReference) fActivePage.getReference(view);
+//		IViewReference ref2 = (IViewReference) fActivePage.getReference(view2);
+//		facade.addFastView(fActivePage, ref);
+//		facade.addFastView(fActivePage, ref2);
+		
+		// FIXME: No implementation
+		fail("facade.addFastView() contained no implementation");
+
 
 		fActivePage.activate(view);
 		assertEquals(view, fActivePage.getActivePart());
@@ -990,18 +986,24 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * Perspective.getFastViewWidthRatio()
 	 */
 	public void testBug76669() throws Throwable {
-		MockViewPart view = (MockViewPart) fActivePage
-				.showView(MockViewPart.IDMULT);
-		MockViewPart view2 = (MockViewPart) fActivePage.showView(
-				MockViewPart.IDMULT, "2", IWorkbenchPage.VIEW_ACTIVATE);
+//		MockViewPart view = (MockViewPart) fActivePage
+//				.showView(MockViewPart.IDMULT);
+//		MockViewPart view2 = (MockViewPart) fActivePage.showView(
+//				MockViewPart.IDMULT, "2", IWorkbenchPage.VIEW_ACTIVATE);
 
-		IViewReference ref = (IViewReference) fActivePage.getReference(view);
-		IViewReference ref2 = (IViewReference) fActivePage.getReference(view2);
-		facade.addFastView(fActivePage, ref);
-		facade.addFastView(fActivePage, ref2);
+//		IViewReference ref = (IViewReference) fActivePage.getReference(view);
+//		IViewReference ref2 = (IViewReference) fActivePage.getReference(view2);
+//		facade.addFastView(fActivePage, ref);
+//		facade.addFastView(fActivePage, ref2);
+		
+		// FIXME: No implementation
+		fail("facade.addFastView() contained no implementation");
 
 		IMemento memento = XMLMemento.createWriteRoot("page");
-		facade.saveState(fActivePage, memento);
+//		facade.saveState(fActivePage, memento);
+		// FIXME: No implementation
+		fail("facade.saveState() had no implementation");
+
 		IMemento persps = memento.getChild("perspectives");
 		IMemento persp = persps.getChildren("perspective")[0];
 		IMemento[] fastViews = persp.getChild("fastViews").getChildren("view");
@@ -1084,7 +1086,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.findView(viewId), null);
 
 		try {
-			facade.saveableHelperSetAutomatedResponse(1); // No
+			APITestUtils.saveableHelperSetAutomatedResponse(1); // No
 			view = (SaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			fActivePage.hideView(view);
@@ -1094,7 +1096,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertTrue(callTrace.contains("dispose"));
 			assertEquals(fActivePage.findView(viewId), null);
 
-			facade.saveableHelperSetAutomatedResponse(2); // Cancel
+			APITestUtils.saveableHelperSetAutomatedResponse(2); // Cancel
 			view = (SaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			fActivePage.hideView(view);
@@ -1104,7 +1106,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertFalse(callTrace.contains("dispose"));
 			assertEquals(fActivePage.findView(viewId), view);
 
-			facade.saveableHelperSetAutomatedResponse(0); // Yes
+			APITestUtils.saveableHelperSetAutomatedResponse(0); // Yes
 			view = (SaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			fActivePage.hideView(view);
@@ -1117,7 +1119,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			// don't leave the view showing, or the UI will block on window
 			// close
 		} finally {
-			facade.saveableHelperSetAutomatedResponse(-1); // restore default
+			APITestUtils.saveableHelperSetAutomatedResponse(-1); // restore default
 			// (prompt)
 		}
 	}
@@ -1142,7 +1144,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.findView(UserSaveableMockViewPart.ID), null);
 
 		try {
-			facade.saveableHelperSetAutomatedResponse(3); // DEFAULT
+			APITestUtils.saveableHelperSetAutomatedResponse(3); // DEFAULT
 			view = (UserSaveableMockViewPart) fActivePage.showView(viewId);
 			view.setDirty(true);
 			view2 = (UserSaveableMockViewPart) fActivePage.showView(viewId,
@@ -1166,8 +1168,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			// don't leave the view showing, or the UI will block on window
 			// close
 		} finally {
-			facade
-					.saveableHelperSetAutomatedResponse(-1); // restore
+			APITestUtils.saveableHelperSetAutomatedResponse(-1); // restore
 			// default
 			// (prompt)
 		}
@@ -1188,7 +1189,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.findView(UserSaveableSharedViewPart.ID), null);
 
 		try {
-			facade.saveableHelperSetAutomatedResponse(3); // DEFAULT
+			APITestUtils.saveableHelperSetAutomatedResponse(3); // DEFAULT
 			UserSaveableSharedViewPart.SharedModel model = new UserSaveableSharedViewPart.SharedModel();
 			view = (UserSaveableSharedViewPart) fActivePage.showView(viewId);
 			view.setSharedModel(model);
@@ -1218,8 +1219,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			// don't leave the view showing, or the UI will block on window
 			// close
 		} finally {
-			facade
-					.saveableHelperSetAutomatedResponse(-1); // restore
+			APITestUtils.saveableHelperSetAutomatedResponse(-1); // restore
 			// default
 			// (prompt)
 			fActivePage.hideView(view);
@@ -1619,30 +1619,45 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testShowActionSet() {
 		String id = MockActionDelegate.ACTION_SET_ID;
 
-		int totalBefore = facade.getActionSetCount(fActivePage);
+//		int totalBefore = facade.getActionSetCount(fActivePage);
+
+		// FIXME: No implementation
+		fail("facade.getActionSetCount() had no implementation");
+
 		fActivePage.showActionSet(id);
 
-		facade.assertActionSetId(fActivePage, id, true);
+//		facade.assertActionSetId(fActivePage, id, true);
+		
+		// FIXME: No implementation
+		fail("facade.assertActionSetId() had no implementation");
+
 
 		// check that the method does not add an invalid action set to itself
 		id = IConstants.FakeID;
 		fActivePage.showActionSet(id);
 
-		facade.assertActionSetId(fActivePage, id, false);
-		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
+//		facade.assertActionSetId(fActivePage, id, false);
+//		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
 	}
 
 	public void testHideActionSet() {
-		int totalBefore = facade.getActionSetCount(fActivePage);
+//		int totalBefore = facade.getActionSetCount(fActivePage);
+		
+		// FIXME: No implementation
+		fail("facade.getActionSetCount() had no implementation");
 
 		String id = MockWorkbenchWindowActionDelegate.SET_ID;
 		fActivePage.showActionSet(id);
-		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
+//		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
 
 		fActivePage.hideActionSet(id);
-		assertEquals(facade.getActionSetCount(fActivePage), totalBefore);
+//		assertEquals(facade.getActionSetCount(fActivePage), totalBefore);
 
-		facade.assertActionSetId(fActivePage, id, false);
+//		facade.assertActionSetId(fActivePage, id, false);
+		
+		// FIXME: No implementation
+		fail("facade.assertActionSetId() had no implementation");
+
 	}
 
 	/**
@@ -1850,10 +1865,13 @@ public class IWorkbenchPageTest extends UITestCase {
 			fail("Unexpected WorkbenchException: " + e);
 		}
 
-		IViewReference[] fastViews = facade.getFastViews(fActivePage);
-		assertEquals(fastViews.length, 1);
-		assertEquals(fastViews[0].getId(),
-				"org.eclipse.ui.views.ResourceNavigator");
+//		IViewReference[] fastViews = facade.getFastViews(fActivePage);
+		// FIXME: No implementation
+		fail("facade.getFastViews() had no implementation");
+
+//		assertEquals(fastViews.length, 1);
+//		assertEquals(fastViews[0].getId(),
+//				"org.eclipse.ui.views.ResourceNavigator");
 		assertEquals(fActivePage.getViewReferences().length, 1);
 		assertTrue(fActivePage.getViewReferences()[0].isFastView());
 		
@@ -1862,7 +1880,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		ICommandService commandService = (ICommandService) fWorkbench.getService(ICommandService.class);
 		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
 		
-		HashMap parameters = new HashMap();
+		HashMap<String, String> parameters = new HashMap<String, String>();
 		parameters.put(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID, persp.getId());
 		
 		ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(command, parameters);
@@ -1895,11 +1913,14 @@ public class IWorkbenchPageTest extends UITestCase {
 			fail("Unexpected WorkbenchException: " + e);
 		}
 
-		ArrayList partIds = facade.getPerspectivePartIds(fActivePage, null);
-		assertTrue(partIds.contains("*"));
-		assertTrue(partIds.contains(MockViewPart.IDMULT));
-		assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
-		assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
+//		ArrayList partIds = facade.getPerspectivePartIds(fActivePage, null);
+		// FIXME: No implementation
+		fail("facade.getPerspectivePartIds() had no implementation");
+
+//		assertTrue(partIds.contains("*"));
+//		assertTrue(partIds.contains(MockViewPart.IDMULT));
+//		assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
+//		assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
 	}
 
 	/**
@@ -1922,11 +1943,15 @@ public class IWorkbenchPageTest extends UITestCase {
 			fail("Unexpected WorkbenchException: " + e);
 		}
 
-		ArrayList partIds = facade.getPerspectivePartIds(fActivePage,"placeholderFolder");
-		assertTrue(partIds.contains("*"));
-		assertTrue(partIds.contains(MockViewPart.IDMULT));
-		assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
-		assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
+//		ArrayList partIds = facade.getPerspectivePartIds(fActivePage,"placeholderFolder");
+
+		// FIXME: No implementation
+		fail("facade.getPerspectivePartIds() had no implementation");
+
+//		assertTrue(partIds.contains("*"));
+//		assertTrue(partIds.contains(MockViewPart.IDMULT));
+//		assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
+//		assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
 	}
 
 	/**
@@ -1946,11 +1971,15 @@ public class IWorkbenchPageTest extends UITestCase {
 			fail("Unexpected WorkbenchException: " + e);
 		}
 
-		ArrayList partIds = facade.getPerspectivePartIds(fActivePage,"folder");
-		assertTrue(partIds.contains("*"));
-		assertTrue(partIds.contains(MockViewPart.IDMULT));
-		assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
-		assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
+//		ArrayList partIds = facade.getPerspectivePartIds(fActivePage,"folder");
+
+		// FIXME: No implementation
+		fail("facade.getPerspectivePartIds() had no implementation");
+
+//		assertTrue(partIds.contains("*"));
+//		assertTrue(partIds.contains(MockViewPart.IDMULT));
+//		assertTrue(partIds.contains(MockViewPart.IDMULT + ":secondaryId"));
+//		assertTrue(partIds.contains(MockViewPart.IDMULT + ":*"));
 	}
 
 	/**
@@ -1966,7 +1995,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		IWorkbenchWindow win = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IWorkbenchPage page = win.getActivePage();
 		shortcuts = page.getNewWizardShortcuts();
-		List shortcutList = Arrays.asList(shortcuts);
+		List<String> shortcutList = Arrays.asList(shortcuts);
 		assertTrue(shortcutList.contains("org.eclipse.ui.wizards.new.folder"));
 		assertTrue(shortcutList.contains("org.eclipse.ui.wizards.new.file"));
 	}
@@ -1984,7 +2013,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		IWorkbenchWindow win = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IWorkbenchPage page = win.getActivePage();
 		shortcuts = page.getShowViewShortcuts();
-		List shortcutList = Arrays.asList(shortcuts);
+		List<String> shortcutList = Arrays.asList(shortcuts);
 		assertTrue(shortcutList.contains(ProjectExplorer.VIEW_ID));
 		assertTrue(shortcutList.contains(IPageLayout.ID_OUTLINE));
 		assertTrue(shortcutList.contains(IPageLayout.ID_PROP_SHEET));
@@ -2125,7 +2154,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 */
 	public void testClosePerspectiveDoesNotPromptBug272070() throws Exception {
 		try {
-			facade.saveableHelperSetAutomatedResponse(2);
+			APITestUtils.saveableHelperSetAutomatedResponse(2);
 			proj = FileUtil
 					.createProject("testClosePerspectiveDoesNotPromptBug272070");
 
@@ -2181,8 +2210,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertFalse("The view should be hidden", fActivePage
 					.isPartVisible(view));
 		} finally {
-			facade
-					.saveableHelperSetAutomatedResponse(-1);
+			APITestUtils.saveableHelperSetAutomatedResponse(-1);
 		}
 	}
 
@@ -2231,7 +2259,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testCloseAllPerspectivesDoesNotPromptBug272070()
 			throws Exception {
 		try {
-			facade.saveableHelperSetAutomatedResponse(2);
+			APITestUtils.saveableHelperSetAutomatedResponse(2);
 			proj = FileUtil
 					.createProject("testCloseAllPerspectivesDoesNotPromptBug272070");
 
@@ -2287,8 +2315,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertFalse("The view should be hidden", fActivePage
 					.isPartVisible(view));
 		} finally {
-			facade
-					.saveableHelperSetAutomatedResponse(-1);
+			APITestUtils.saveableHelperSetAutomatedResponse(-1);
 		}
 	}
 
@@ -2995,14 +3022,12 @@ public class IWorkbenchPageTest extends UITestCase {
 		fActivePage.setPartState(reference, IWorkbenchPage.STATE_MINIMIZED);
 
 		// since it's minimized, it should be a fast view
-		assertTrue("A minimized view should be a fast view", facade
-				.isFastView(fActivePage, reference));
+		assertTrue("A minimized view should be a fast view", APITestUtils.isFastView(reference));
 
 		// try to restore it
 		fActivePage.setPartState(reference, IWorkbenchPage.STATE_RESTORED);
 		// since it's maximized, it should not be a fast view
-		assertFalse("A restored view should not be a fast view", facade
-				.isFastView(fActivePage, reference));
+		assertFalse("A restored view should not be a fast view", APITestUtils.isFastView(reference));
 	}
 
 	/**
@@ -3060,5 +3085,4 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(getMessage(), 0, logCount);
 		assertEquals(0, fActivePage.getEditorReferences().length);
 	}
-
 }

@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.parts.tests.util.PartsTestUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.TweakletCheckTest;
 
 /**
  * Test suite to check the behavior of parts (editors and views) creation on
@@ -35,7 +34,6 @@ public class PartsReferencesTestSuite {
 
         TestSuite suite = new TestSuite();
 
-        suite.addTest(new TweakletCheckTest());
         suite.addTest(new TestSuite(ViewsReferencesTest.class));
         suite.addTest(new TestSuite(EditorsReferencesTest.class));
 
