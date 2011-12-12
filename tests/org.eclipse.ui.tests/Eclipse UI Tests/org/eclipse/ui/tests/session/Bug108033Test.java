@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
@@ -20,10 +27,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ViewSite;
-import org.eclipse.ui.internal.ViewStack;
-import org.eclipse.ui.internal.presentations.PresentablePart;
-import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
-import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * Bug 108033 Need a test to ensure that view tab order is the same on start up
@@ -94,18 +97,34 @@ public class Bug108033Test extends TestCase {
 		IViewPart problemView = instantiateViews();
 
 		ViewSite site = (ViewSite) problemView.getSite();
-		ViewStack stack = (ViewStack) site.getPane().getContainer();
+		MElementContainer<MUIElement> stack = getParent(site.getModel());
+		
+		verifyOrder(stack, new String[] { "Tasks", "Progress", "Problems" });
+		moveTab(stack, problemView, 0);
 
-		TabbedStackPresentation pres = (TabbedStackPresentation) stack
-				.getTestPresentation();
-
-		verifyOrder(pres, new String[] { "Tasks", "Progress", "Problems" });
-		IPresentablePart part = getPresentablePart(site);
-		assertNotNull(part);
-
-		pres.moveTab(part, 0);
-
-		verifyOrder(pres, new String[] { "Problems", "Tasks", "Progress" });
+		verifyOrder(stack, new String[] { "Problems", "Tasks", "Progress" });
+	}
+	
+	// TBD should this be in the ModelService or PartService?
+	private MElementContainer<MUIElement> getParent(MUIElement element) {
+		MElementContainer<MUIElement> parent = element.getParent();
+		if (parent != null)
+			return parent;
+		MPlaceholder placeholder = element.getCurSharedRef();
+		if (placeholder != null)
+			return placeholder.getParent();
+		return null;
+	}
+	
+	private void moveTab(MElementContainer<MUIElement> stack, IViewPart viewPart, int indexTo) {
+		ViewSite site = (ViewSite) viewPart.getSite();
+		MPart part = site.getModel();
+		List<MUIElement> children = stack.getChildren();
+		int indexFrom = children.indexOf(part);
+		assertTrue(indexFrom >= 0);
+		children.remove(part);
+		children.add(indexTo, part);
+		stack.setSelectedElement(part);
 	}
 
 	/**
@@ -119,12 +138,9 @@ public class Bug108033Test extends TestCase {
 		IViewPart problemView = instantiateViews();
 
 		ViewSite site = (ViewSite) problemView.getSite();
-		ViewStack stack = (ViewStack) site.getPane().getContainer();
+		MElementContainer<MUIElement> stack = getParent(site.getModel());
 
-		TabbedStackPresentation pres = (TabbedStackPresentation) stack
-				.getTestPresentation();
-
-		verifyOrder(pres, new String[] { "Problems", "Tasks", "Progress" });
+		verifyOrder(stack, new String[] { "Problems", "Tasks", "Progress" });
 	}
 
 	/**
@@ -152,31 +168,15 @@ public class Bug108033Test extends TestCase {
 	 * @param order
 	 *            the expected order
 	 */
-	private void verifyOrder(TabbedStackPresentation pres, String[] order) {
-		IPresentablePart[] tabs = pres.getPartList();
-		assertEquals("Different number of tabs", order.length, tabs.length);
-		for (int i = 0; i < tabs.length; ++i) {
-			assertEquals("Failed on tab " + i, order[i], tabs[i].getName());
+	private void verifyOrder(MElementContainer<MUIElement> stack, String[] order) {
+		List<MUIElement> children = stack.getChildren();
+		assertEquals("Different number of tabs", order.length, children.size());
+		for (int i = 0; i < children.size(); ++i) {
+			MUIElement child = children.get(i);
+			if (child instanceof MPlaceholder)
+				child = ((MPlaceholder) child).getRef();
+			assertEquals("Failed on tab " + i, order[i], ((MUILabel)child).getLabel());
 		}
 	}
 
-	/**
-	 * Get the presentable part for the view (view site).
-	 * 
-	 * @param site
-	 *            the site of the view we want
-	 * @return it's presentable part.
-	 */
-	private IPresentablePart getPresentablePart(ViewSite site) {
-		IPresentablePart[] partList = (IPresentablePart[]) ((ViewStack) site
-				.getPane().getContainer()).getPresentableParts().toArray(
-				new IPresentablePart[0]);
-		for (int i = 0; i < partList.length; i++) {
-			IPresentablePart part = partList[i];
-			if (((PresentablePart) part).getPane() == site.getPane()) {
-				return part;
-			}
-		}
-		return null;
-	}
 }

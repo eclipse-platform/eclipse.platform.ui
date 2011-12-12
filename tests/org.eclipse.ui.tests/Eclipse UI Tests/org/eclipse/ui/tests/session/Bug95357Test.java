@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -24,7 +27,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.EditorStack;
 import org.eclipse.ui.tests.api.SessionEditorPart;
 import org.eclipse.ui.tests.dnd.DragOperations;
 import org.eclipse.ui.tests.dnd.EditorDropTarget;
@@ -147,10 +149,8 @@ public class Bug95357Test extends TestCase {
 		DragOperations.drag(current, new EditorDropTarget(
 				new ExistingWindowProvider(fWin), 0, SWT.BOTTOM), false);
 
-		EditorStack firstStack = (EditorStack) ((EditorSite) last
-				.getEditorSite()).getPane().getContainer();
-		EditorStack secondStack = (EditorStack) ((EditorSite) current
-				.getEditorSite()).getPane().getContainer();
+		MElementContainer<MUIElement> firstStack = getParent(((EditorSite) last.getEditorSite()).getModel());
+		MElementContainer<MUIElement> secondStack = getParent(((EditorSite) current.getEditorSite()).getModel());
 
 		for (int i = startAt; i < itsFilename.length; ++i) {
 			fActivePage.activate(last);
@@ -158,10 +158,21 @@ public class Bug95357Test extends TestCase {
 			current = IDE.openEditor(fActivePage, FileUtil.createFile(
 					itsFilename[i], fProject), true);
 		}
-		assertEquals(Bug95357Test.FILE_MAX / 2, firstStack.getItemCount());
-		assertEquals(Bug95357Test.FILE_MAX / 2, secondStack.getItemCount());
+		assertEquals(Bug95357Test.FILE_MAX / 2, firstStack.getChildren().size());
+		assertEquals(Bug95357Test.FILE_MAX / 2, secondStack.getChildren().size());
 	}
 
+	// TBD should this be in the ModelService or PartService?
+	private MElementContainer<MUIElement> getParent(MUIElement element) {
+		MElementContainer<MUIElement> parent = element.getParent();
+		if (parent != null)
+			return parent;
+		MPlaceholder placeholder = element.getCurSharedRef();
+		if (placeholder != null)
+			return placeholder.getParent();
+		return null;
+	}
+	
 	/**
 	 * Multiple editors in 2 stacks - part 2 of 2. 2 of the editors should have
 	 * been instantiated. The rest should still be inactive.
