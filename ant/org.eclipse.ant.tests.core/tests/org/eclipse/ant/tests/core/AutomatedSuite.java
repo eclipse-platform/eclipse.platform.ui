@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.ant.tests.core.tests.FrameworkTests;
 import org.eclipse.ant.tests.core.tests.OptionTests;
 import org.eclipse.ant.tests.core.tests.ProjectTests;
+import org.eclipse.ant.tests.core.tests.PropertyTests;
 import org.eclipse.ant.tests.core.tests.TargetTests;
 import org.eclipse.ant.tests.core.tests.TaskTests;
 import org.eclipse.ant.tests.core.tests.TypeTests;
@@ -52,5 +53,6 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(OptionTests.class));
 		addTest(new TestSuite(TaskTests.class));
 		addTest(new TestSuite(TypeTests.class));
+		addTest(new TestSuite(PropertyTests.class));
 	}
 }
