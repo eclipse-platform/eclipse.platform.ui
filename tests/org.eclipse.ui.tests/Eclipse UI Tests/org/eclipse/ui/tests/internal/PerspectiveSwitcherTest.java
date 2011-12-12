@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.tests.internal;
 
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -79,7 +80,7 @@ public class PerspectiveSwitcherTest extends UITestCase {
 		WorkbenchWindow window = (WorkbenchWindow) fWorkbench
 				.getActiveWorkbenchWindow();
 		assertNotNull("We should have a perspective bar in the beginning", //$NON-NLS-1$
-				window.getPerspectiveBar());
+				getPerspectiveSwitcher(window));
 
 		// turn off the 'Open Perspective' item
 		apiPreferenceStore.setValue(
@@ -97,7 +98,11 @@ public class PerspectiveSwitcherTest extends UITestCase {
 		// not get propagated, hence, we need to check here
 		assertNotNull(
 				"The perspective bar should have been created successfully", //$NON-NLS-1$
-				window.getPerspectiveBar());
+				getPerspectiveSwitcher(window));
 	}
-
+	
+	private static Object getPerspectiveSwitcher(WorkbenchWindow window) {
+		EModelService modelService = (EModelService) window.getService(EModelService.class);
+		return modelService.find("PerspectiveSwitcher", window.getModel());
+	}
 }

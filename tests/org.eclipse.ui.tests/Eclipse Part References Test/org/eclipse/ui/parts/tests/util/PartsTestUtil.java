@@ -15,12 +15,21 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.PartPane;
-import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 
 /**
  * Utility class for the parts test suite.
@@ -120,14 +129,41 @@ public class PartsTestUtil {
      * Determines if the part is zoomed.
      * 
      * @param part
-     *            The pat.
+     *            The part.
      * @return true if zoomed.
+     * 
+     * Logic modeled after WorkbenchPage.toggleZoom(IWorkbenchPartReference ref)
      */
     public static boolean isZoomed(IWorkbenchPart part) {
-        PartSite site = (PartSite) part.getSite();
-        PartPane pane = site.getPane();
-        return pane.isZoomed();
+    	IWorkbenchPage page = part.getSite().getPage();
+    	IWorkbenchPartReference ref = page.getReference(part);
+    	EModelService modelService = (EModelService) part.getSite().getService(EModelService.class);
+    	
+    	MUIElement element = getActiveElement(page, modelService, ref);
+   		return element.getTags().contains(IPresentationEngine.MAXIMIZED);
     }
+    
+    // Copied from WorkbenchPage
+	private static MUIElement getActiveElement(IWorkbenchPage page, EModelService modelService, IWorkbenchPartReference ref) {
+		MUIElement element = null;
+
+		MPerspective curPersp = modelService.getActivePerspective(((WorkbenchPage) page).getWindowModel());
+		MPlaceholder eaPH = (MPlaceholder) modelService.find(IPageLayout.ID_EDITOR_AREA, curPersp);
+		MPart model = ((WorkbenchPartReference) ref).getModel();
+		MPlaceholder placeholder = model.getCurSharedRef();
+
+		switch (modelService.getElementLocation(placeholder == null ? model : placeholder)) {
+		case EModelService.IN_ACTIVE_PERSPECTIVE:
+			MUIElement parent = placeholder == null ? model.getParent() : placeholder.getParent();
+			if (parent instanceof MPartStack) {
+				element = parent;
+			}
+			break;
+		case EModelService.IN_SHARED_AREA:
+			element = eaPH;
+			break;
+		}
+		return element;
+	}
 
 }
-
