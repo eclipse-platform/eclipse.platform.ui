@@ -217,7 +217,7 @@ public class MultiEditorTest extends UITestCase {
 		assertTrue(editor instanceof MultiEditor);
 		MultiEditor multiEditor = (MultiEditor) editor;
 		
-		CTabFolder tabFolder = (CTabFolder) ((WorkbenchPartReference<?>) page
+		CTabFolder tabFolder = (CTabFolder) ((WorkbenchPartReference) page
 				.getReference(multiEditor)).getModel().getParent().getWidget();
 		// index is 0 since we want the editor that's behind in the editor
 		// stack, 1 should be the second one that we activated
