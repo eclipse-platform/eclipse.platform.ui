@@ -210,6 +210,23 @@ public class SearchField {
 		});
 	}
 
+	public Table getTable() {
+		return quickAccessContents.getTable();
+	}
+
+	public Text getFilterText() {
+		return text;
+	}
+
+	public void close() {
+		shell.setVisible(false);
+	}
+
+	public void toggleShowAllMatches() {
+		quickAccessContents.toggleShowAllMatches();
+		quickAccessContents.refresh(text.getText().toLowerCase());
+	}
+
 	private void hookUpSelectAll() {
 		final IEclipseContext windowContext = window.getContext();
 		IFocusService focus = windowContext.get(IFocusService.class);

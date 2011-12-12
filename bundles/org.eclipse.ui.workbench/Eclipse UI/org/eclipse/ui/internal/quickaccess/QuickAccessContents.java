@@ -536,4 +536,12 @@ public abstract class QuickAccessContents {
 		}
 	}
 
+	public void toggleShowAllMatches() {
+		showAllMatches = !showAllMatches;
+	}
+
+	public Table getTable() {
+		return table;
+	}
+
 }
