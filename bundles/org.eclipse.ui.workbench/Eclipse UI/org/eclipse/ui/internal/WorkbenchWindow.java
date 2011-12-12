@@ -1699,13 +1699,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 	}
 
-	private Set<?> menuRestrictions = new HashSet<Object>();
+	private Set<Object> menuRestrictions = new HashSet<Object>();
 
 	private Boolean valueOf(boolean result) {
 		return result ? Boolean.TRUE : Boolean.FALSE;
 	}
 
-	public Set<?> getMenuRestrictions() {
+	public Set<Object> getMenuRestrictions() {
 		return menuRestrictions;
 	}
 
