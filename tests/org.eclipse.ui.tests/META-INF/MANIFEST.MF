@@ -26,12 +26,25 @@ Require-Bundle: org.eclipse.core.runtime.compatibility,
  org.eclipse.jface.databinding,
  org.eclipse.ui.navigator.resources,
  org.eclipse.core.runtime,
+ org.eclipse.e4.core.services,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.ui.workbench.swt;bundle-version="0.9.1",
+ org.eclipse.e4.ui.di;bundle-version="0.9.0",
+ org.eclipse.e4.ui.css.swt.theme;bundle-version="0.9.0",
+ org.eclipse.e4.ui.bindings;bundle-version="0.9.0",
+ org.eclipse.e4.ui.css.swt;bundle-version="0.9.1",
+ org.eclipse.e4.ui.css.core;bundle-version="0.9.0",
  org.eclipse.e4.ui.model.workbench;bundle-version="0.10.0",
- org.eclipse.e4.core.contexts;bundle-version="1.0.0",
- org.eclipse.e4.ui.workbench;bundle-version="0.10.1"
+ org.eclipse.e4.ui.workbench;bundle-version="0.10.1",
+ org.eclipse.e4.core.commands;bundle-version="0.10.0",
+ org.eclipse.e4.core.di.extensions;bundle-version="0.10.0",
+ org.eclipse.e4.ui.services;bundle-version="0.10.0",
+ org.eclipse.e4.ui.widgets;bundle-version="0.11.0",
+ org.eclipse.e4.ui.workbench.addons.swt;bundle-version="0.10.0",
+ org.eclipse.e4.ui.workbench.renderers.swt;bundle-version="0.10.0"
 Eclipse-AutoStart: true
 Plugin-Class: org.eclipse.ui.tests.TestPlugin
-Import-Package: org.eclipse.e4.ui.bindings.keys;resolution:=optional
 Export-Package: org.eclipse.ui.tests.api,
  org.eclipse.ui.tests.menus
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
