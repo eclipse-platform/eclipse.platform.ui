@@ -142,7 +142,7 @@ public abstract class QuickAccessContents {
 	 */
 	abstract void updateFeedback(boolean filterTextEmpty, boolean showAllMatches);
 
-	protected void toggleShowAllMatches() {
+	public void toggleShowAllMatches() {
 		showAllMatches = !showAllMatches;
 		refresh(filterText.getText().toLowerCase());
 	}
@@ -534,10 +534,6 @@ public abstract class QuickAccessContents {
 		for (QuickAccessProvider provider : providers) {
 			provider.reset();
 		}
-	}
-
-	public void toggleShowAllMatches() {
-		showAllMatches = !showAllMatches;
 	}
 
 	public Table getTable() {

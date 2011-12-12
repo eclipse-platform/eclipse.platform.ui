@@ -224,7 +224,6 @@ public class SearchField {
 
 	public void toggleShowAllMatches() {
 		quickAccessContents.toggleShowAllMatches();
-		quickAccessContents.refresh(text.getText().toLowerCase());
 	}
 
 	private void hookUpSelectAll() {
