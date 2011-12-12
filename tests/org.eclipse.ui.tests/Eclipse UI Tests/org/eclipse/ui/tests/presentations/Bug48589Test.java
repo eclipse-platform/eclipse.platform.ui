@@ -18,12 +18,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.EditorSashContainer;
-import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -74,9 +76,13 @@ public final class Bug48589Test extends UITestCase {
                 textFile, true);
         
         // Get the current title of the text editor.
-        final WorkbenchPage page = (WorkbenchPage) window.getActivePage();
-        final EditorSashContainer container = (EditorSashContainer) page.getEditorPresentation().getLayoutPart();
-        final CTabFolder tabFolder = (CTabFolder) container.getActiveWorkbook().getControl();
+        EModelService modelService = (EModelService) window.getService(EModelService.class);
+        MArea area = modelService.findElements(((WorkbenchWindow)window).getModel() , null, MArea.class, null).get(0);
+        MPartStack partStack = modelService.findElements(area, null, MPartStack.class, null).get(0);
+        assertTrue(partStack.getWidget() instanceof CTabFolder);
+        
+        
+        final CTabFolder tabFolder = (CTabFolder) partStack.getWidget();
         final CTabItem item = tabFolder.getItem(0);
         final String actualTitle = item.getText();
         
