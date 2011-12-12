@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.eclipse.core.expressions.ExpressionInfo;
@@ -45,6 +46,28 @@ public class ContributionRecord {
 
 	public MenuManager getManagerForModel() {
 		return renderer.getManager(menuModel);
+	}
+
+	public MMenuContribution getMenuContribution() {
+		return menuContribution;
+	}
+
+	/**
+	 * Access to analyze for tests. For Looking, not touching!
+	 * 
+	 * @return the shared elements collection
+	 */
+	public Collection<MMenuElement> getSharedElements() {
+		return sharedElements;
+	}
+
+	/**
+	 * Access to analyze for tests. For Looking, not touching!
+	 * 
+	 * @return the generated elements collection
+	 */
+	public Collection<MMenuElement> getGeneratedElements() {
+		return generatedElements;
 	}
 
 	/**

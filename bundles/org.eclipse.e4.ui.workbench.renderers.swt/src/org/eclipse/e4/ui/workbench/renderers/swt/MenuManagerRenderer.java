@@ -734,6 +734,17 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	}
 
 	/**
+	 * Search the records for testing. Look, but don't touch!
+	 * 
+	 * @return the array of active ContributionRecords.
+	 */
+	public ContributionRecord[] getContributionRecords() {
+		HashSet<ContributionRecord> records = new HashSet<ContributionRecord>(
+				modelContributionToRecord.values());
+		return records.toArray(new ContributionRecord[records.size()]);
+	}
+
+	/**
 	 * @param menuManager
 	 * @param menuModel
 	 */

@@ -12,17 +12,20 @@ package org.eclipse.ui.tests.dynamicplugins;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.IRegistryChangeListener;
-
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.workbench.renderers.swt.ContributionRecord;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
+import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.IAction;
-
-import org.eclipse.ui.internal.PluginActionSet;
 import org.eclipse.ui.internal.WWinPluginAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
-import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.leaks.LeakTests;
 
@@ -81,24 +84,50 @@ public class ActionSetTests extends DynamicTestCase implements
     }
 
     private void findInPresentation(WorkbenchWindow window,
-            WWinPluginAction[] action, boolean[] found) {
-        IActionSet[] sets = window.getActionPresentation().getActionSets();
+			WWinPluginAction[] action, boolean[] found) {
+		IRendererFactory factory = (IRendererFactory) window
+				.getService(IRendererFactory.class);
+		MWindow mwindow = window.getModel();
+		AbstractPartRenderer obj = factory.getRenderer(mwindow.getMainMenu(),
+				null);
+		if (!(obj instanceof MenuManagerRenderer)) {
+			return;
+		}
 
-        for (int i = 0; i < sets.length; i++) {
-            if (((PluginActionSet) sets[i]).getDesc().getId().equals(
-                "org.eclipse.newActionSet1.newActionSet2")) {
-                found[0] = true;
-                IAction[] pluginActions = ((PluginActionSet) sets[i])
-                    .getPluginActions();
-                for (int j = 0; j < pluginActions.length; j++) {
-                    if (pluginActions[j].getId().equals(
-                        "org.eclipse.ui.tests.action1"))
-                        action[0] = (WWinPluginAction) pluginActions[j];
-                }
-                break;
-            }
-        }
-    }
+		ContributionRecord[] records = ((MenuManagerRenderer) obj)
+				.getContributionRecords();
+		for (int i = 0; i < records.length; i++) {
+			ContributionRecord rec = records[i];
+			String id = rec.getMenuContribution().getElementId();
+			if (id != null
+					&& id.startsWith("org.eclipse.newActionSet1.newActionSet2")) {
+				found[0] = true;
+				Collection<MMenuElement> elements = rec.getGeneratedElements();
+				for (MMenuElement element : elements) {
+					if ("org.eclipse.ui.tests.action1".equals(element
+							.getElementId())) {
+						// FIXME return the plugin action
+						action[0] = new WWinPluginAction(null, window,
+								element.getElementId(), IAction.AS_PUSH_BUTTON);
+					}
+				}
+			}
+		}
+//		for (int i = 0; i < sets.length; i++) {
+//			if (((PluginActionSet) sets[i]).getDesc().getId()
+//					.equals("org.eclipse.newActionSet1.newActionSet2")) {
+//				found[0] = true;
+//				IAction[] pluginActions = ((PluginActionSet) sets[i])
+//						.getPluginActions();
+//				for (int j = 0; j < pluginActions.length; j++) {
+//					if (pluginActions[j].getId().equals(
+//							"org.eclipse.ui.tests.action1"))
+//						action[0] = (WWinPluginAction) pluginActions[j];
+//				}
+//				break;
+//			}
+//		}
+	}
 
     /**
      * @return

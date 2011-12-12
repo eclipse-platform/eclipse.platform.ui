@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
@@ -64,8 +66,10 @@ public class PerspectiveTests extends DynamicTestCase {
 		window.getActivePage().setPerspective(desc);
 
 		removeBundle();
-		assertNull(((WorkbenchPage) window.getActivePage())
-				.findPerspective(desc));
+		MPerspective persp = findPerspective(window, desc.getId());
+		assertNull(persp);
+		
+
 		assertFalse(window.getActivePage().getPerspective().getId().equals(
 				desc.getId()));
 		assertEquals(IDE.RESOURCE_PERSPECTIVE_ID, window.getActivePage()
@@ -89,13 +93,20 @@ public class PerspectiveTests extends DynamicTestCase {
 				reg.findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID));
 
 		removeBundle();
-		assertNull(((WorkbenchPage) window.getActivePage())
-				.findPerspective(desc));
+		MPerspective persp = findPerspective(window, PERSPECTIVE_ID);
+		assertNull(persp);
 
-		assertFalse(window.getActivePage().getPerspective().getId().equals(
-				PERSPECTIVE_ID));
+		assertFalse(window.getActivePage().getPerspective().getId()
+				.equals(PERSPECTIVE_ID));
 		assertEquals(IDE.RESOURCE_PERSPECTIVE_ID, window.getActivePage()
 				.getPerspective().getId());
+	}
+	
+	private MPerspective findPerspective(IWorkbenchWindow window, String id) {
+		EModelService modelService = (EModelService) window
+				.getService(EModelService.class);
+		return (MPerspective) modelService.find(id,
+				((WorkbenchWindow) window).getModel());
 	}
 
 	/*
