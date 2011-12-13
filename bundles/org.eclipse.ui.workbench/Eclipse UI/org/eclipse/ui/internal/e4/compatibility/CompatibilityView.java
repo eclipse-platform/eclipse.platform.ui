@@ -171,12 +171,19 @@ public class CompatibilityView extends CompatibilityPart {
 				ToolBarManagerRenderer tbmr = (ToolBarManagerRenderer) apr;
 				tbmr.clearModelToManager(toolbar, tbm);
 				// remove opaque mappings
-				for (MToolBarElement element : toolbar.getChildren()) {
+				List<MToolBarElement> children = toolbar.getChildren();
+				for (int i = 0; i < children.size(); i++) {
+					MToolBarElement element = children.get(i);
 					if (element instanceof MOpaqueToolItem) {
 						IContributionItem item = tbmr.getContribution(element);
 						if (item != null) {
 							tbmr.clearModelToContribution(element, item);
 						}
+						// clear the reference
+						((MOpaqueToolItem) element).setOpaqueItem(null);
+						// remove the opaque item
+						children.remove(i);
+						i--;
 					}
 				}
 			}
