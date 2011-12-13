@@ -12,13 +12,18 @@
 package org.eclipse.ui.internal;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import org.eclipse.core.runtime.CoreException;
+import javax.annotation.PreDestroy;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.jface.menus.AbstractTrimWidget;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IWorkbenchWidget;
 
 /**
@@ -26,24 +31,50 @@ import org.eclipse.ui.menus.IWorkbenchWidget;
  *
  */
 public class LegacyTrim {
-	@Inject
-	EModelService modelService;
 
-	@Inject
-	IWorkbenchWindow iwbw;
+	private IWorkbenchWidget widget;
 
 	@PostConstruct
-	void createWidget(Composite parent, MToolControl toolControl) {
+	void createWidget(IWorkbenchWindow iwbw, Composite parent, MToolControl toolControl) {
 		IConfigurationElement ice = ((WorkbenchWindow) iwbw).getICEFor(toolControl);
 		if (ice == null)
 			return;
 
-		IWorkbenchWidget widget;
-		try {
-			widget = (IWorkbenchWidget) ice.createExecutableExtension("class"); //$NON-NLS-1$
+		parent = new Composite(parent, SWT.NONE);
+		parent.setLayout(new RowLayout());
+
+		widget = (IWorkbenchWidget) Util.safeLoadExecutableExtension(ice,
+				IWorkbenchRegistryConstants.ATT_CLASS, IWorkbenchWidget.class);
+		widget.init(iwbw);
+		if (widget instanceof AbstractTrimWidget) {
+			((AbstractTrimWidget) widget).fill(parent, SWT.DEFAULT, getSide(toolControl));
+		} else {
 			widget.fill(parent);
-		} catch (CoreException e) {
-			e.printStackTrace();
 		}
+	}
+
+	@PreDestroy
+	void destroy() {
+		if (widget != null) {
+			widget.dispose();
+			widget = null;
+		}
+	}
+
+	private int getSide(MUIElement element) {
+		MUIElement parent = element.getParent();
+		if (parent instanceof MTrimBar) {
+			switch (((MTrimBar) parent).getSide()) {
+			case BOTTOM:
+				return SWT.BOTTOM;
+			case LEFT:
+				return SWT.LEFT;
+			case RIGHT:
+				return SWT.RIGHT;
+			case TOP:
+				return SWT.TOP;
+			}
+		}
+		return parent == null ? SWT.DEFAULT : getSide(parent);
 	}
 }
