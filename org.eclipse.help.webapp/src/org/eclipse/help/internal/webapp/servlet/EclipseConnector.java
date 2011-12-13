@@ -21,7 +21,6 @@ import java.io.Writer;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Enumeration;
 import java.util.Locale;
 
 import javax.servlet.ServletContext;
@@ -285,10 +284,10 @@ public class EclipseConnector {
 	 */
 	private void transferContent(InputStream inputStream, OutputStream out)
 			throws IOException {
+		// Prepare the input stream for reading
+		BufferedInputStream dataStream = new BufferedInputStream(
+				inputStream);
 		try {
-			// Prepare the input stream for reading
-			BufferedInputStream dataStream = new BufferedInputStream(
-					inputStream);
 
 			// Create a fixed sized buffer for reading.
 			// We could create one with the size of availabe data...
@@ -302,6 +301,10 @@ public class EclipseConnector {
 			}
 		} catch (Exception e) {
 		}
+		
+		try{
+			dataStream.close();
+		}catch(Exception e){}
 	}
 
 	/**
