@@ -14,22 +14,35 @@ package org.eclipse.ui.internal.e4.compatibility;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.EditorActionBars;
 import org.eclipse.ui.internal.EditorReference;
 import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.part.MultiEditorInput;
 
 public class CompatibilityEditor extends CompatibilityPart {
 
 	public static final String MODEL_ELEMENT_ID = "org.eclipse.e4.ui.compatibility.editor"; //$NON-NLS-1$
 
 	private EditorReference reference;
+
+	@Inject
+	private EModelService modelService;
 
 	@Inject
 	CompatibilityEditor(MPart part, EditorReference ref) {
@@ -39,6 +52,37 @@ public class CompatibilityEditor extends CompatibilityPart {
 		if (!part.getTags().contains(EPartService.REMOVE_ON_HIDE_TAG)) {
 			part.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
 		}
+	}
+
+	@Override
+	IWorkbenchPart createPart(WorkbenchPartReference reference) throws PartInitException {
+		IWorkbenchPart part = super.createPart(reference);
+		IEditorInput input = ((EditorReference) reference).getEditorInput();
+		if (input instanceof MultiEditorInput && part instanceof MultiEditor) {
+			IWorkbenchPage page = reference.getPage();
+			MPart model = getModel();
+			MWindow window = modelService.getTopLevelWindowFor(model);
+			IEditorRegistry registry = model.getContext().get(IEditorRegistry.class);
+			MultiEditorInput multiEditorInput = (MultiEditorInput) input;
+			IEditorInput[] inputs = multiEditorInput.getInput();
+			String[] editorIds = multiEditorInput.getEditors();
+			IEditorPart[] editors = new IEditorPart[editorIds.length];
+			for (int i = 0; i < editorIds.length; i++) {
+				EditorDescriptor innerDesc = (EditorDescriptor) registry.findEditor(editorIds[i]);
+				if (innerDesc == null) {
+					throw new PartInitException(NLS.bind(
+							WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorIds[i]));
+				}
+
+				EditorReference innerReference = new EditorReference(window.getContext(), page,
+						model, inputs[i], innerDesc, null);
+				editors[i] = (IEditorPart) innerReference.createPart();
+				innerReference.initialize(editors[i]);
+			}
+
+			((MultiEditor) part).setChildren(editors);
+		}
+		return part;
 	}
 
 	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {

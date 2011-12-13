@@ -58,7 +58,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	private String descriptorId;
 	private IMemento editorState;
 
-	EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
+	public EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
 			IEditorInput input, EditorDescriptor descriptor, IMemento editorState) {
 		super(windowContext, page, part);
 		this.input = input;

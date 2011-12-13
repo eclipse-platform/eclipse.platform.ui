@@ -212,6 +212,11 @@ public abstract class CompatibilityPart {
 		return beingDisposed;
 	}
 
+	IWorkbenchPart createPart(WorkbenchPartReference reference) throws PartInitException {
+		// ask our reference to instantiate the part through the registry
+		return reference.createPart();
+	}
+
 	@PostConstruct
 	public void create() {
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, widgetSetHandler);
@@ -220,8 +225,7 @@ public abstract class CompatibilityPart {
 		WorkbenchPartReference reference = getReference();
 
 		try {
-			// ask our reference to instantiate the part through the registry
-			wrapped = reference.createPart();
+			wrapped = createPart(reference);
 			// invoke init methods
 			reference.initialize(wrapped);
 		} catch (PartInitException e) {
