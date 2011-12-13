@@ -86,7 +86,7 @@ public class CompatibilityView extends CompatibilityPart {
 	 * (org.eclipse.ui.IWorkbenchPart, org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	protected void createPartControl(IWorkbenchPart legacyPart, Composite parent) {
+	protected boolean createPartControl(IWorkbenchPart legacyPart, Composite parent) {
 		part.getContext().set(IViewPart.class, (IViewPart) legacyPart);
 
 		// Some views (i.e. Console) require that the actual ToolBar be
@@ -142,6 +142,8 @@ public class CompatibilityView extends CompatibilityPart {
 			((ToolBarManagerRenderer) apr).linkModelToManager(toolbar, tbm);
 			((ToolBarManagerRenderer) apr).reconcileManagerToModel(tbm, toolbar);
 		}
+
+		return true;
 	}
 
 	@Override

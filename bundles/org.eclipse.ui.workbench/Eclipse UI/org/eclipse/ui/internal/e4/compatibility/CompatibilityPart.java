@@ -117,7 +117,7 @@ public abstract class CompatibilityPart {
 
 	public abstract WorkbenchPartReference getReference();
 
-	protected void createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
+	protected boolean createPartControl(final IWorkbenchPart legacyPart, Composite parent) {
 		try {
 			legacyPart.createPartControl(parent);
 		} catch (RuntimeException e) {
@@ -149,6 +149,7 @@ public abstract class CompatibilityPart {
 				WorkbenchPlugin.log("Unable to initialize error part", ex.getStatus()); //$NON-NLS-1$
 			}
 		}
+		return true;
 	}
 
 	@Focus
@@ -217,6 +218,32 @@ public abstract class CompatibilityPart {
 		return reference.createPart();
 	}
 
+	boolean handlePartInitException(PartInitException e) {
+		WorkbenchPartReference reference = getReference();
+		reference.invalidate();
+		if (wrapped instanceof IEditorPart) {
+			try {
+				wrapped.dispose();
+			} catch (Exception ex) {
+				// client code may have errors so we need to catch it
+				logger.error(ex);
+			}
+		}
+		internalDisposeSite();
+
+		alreadyDisposed = false;
+		WorkbenchPlugin.log("Unable to create part", e.getStatus()); //$NON-NLS-1$
+
+		wrapped = reference.createErrorPart(e.getStatus());
+		try {
+			reference.initialize(wrapped);
+		} catch (PartInitException ex) {
+			WorkbenchPlugin.log("Unable to initialize error part", ex.getStatus()); //$NON-NLS-1$
+			return false;
+		}
+		return true;
+	}
+
 	@PostConstruct
 	public void create() {
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, widgetSetHandler);
@@ -229,25 +256,7 @@ public abstract class CompatibilityPart {
 			// invoke init methods
 			reference.initialize(wrapped);
 		} catch (PartInitException e) {
-			reference.invalidate();
-			if (wrapped instanceof IEditorPart) {
-				try {
-					wrapped.dispose();
-				} catch (Exception ex) {
-					// client code may have errors so we need to catch it
-					logger.error(ex);
-				}
-			}
-			internalDisposeSite();
-
-			alreadyDisposed = false;
-			WorkbenchPlugin.log("Unable to create part", e.getStatus()); //$NON-NLS-1$
-
-			wrapped = reference.createErrorPart(e.getStatus());
-			try {
-				reference.initialize(wrapped);
-			} catch (PartInitException ex) {
-				WorkbenchPlugin.log("Unable to initialize error part", ex.getStatus()); //$NON-NLS-1$
+			if (!handlePartInitException(e)) {
 				return;
 			}
 		}
@@ -257,7 +266,9 @@ public abstract class CompatibilityPart {
 
 		Composite parent = new Composite(composite, SWT.NONE);
 		parent.setLayout(new FillLayout());
-		createPartControl(wrapped, parent);
+		if (!createPartControl(wrapped, parent)) {
+			return;
+		}
 
 		part.setLabel(computeLabel());
 		part.setTooltip(wrapped.getTitleToolTip());
