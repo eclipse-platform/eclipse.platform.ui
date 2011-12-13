@@ -27,6 +27,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -587,6 +588,7 @@ public class MenuPopulationTest extends MenuTestCase {
 			
 			PopupMenuExtender popupMenuExtender = null;
 			MenuManager manager = null;
+			Menu contextMenu = null;
 			try {
 	
 				window.getActivePage().showView("org.eclipse.ui.tests.workbenchpart.EmptyView");
@@ -605,20 +607,38 @@ public class MenuPopulationTest extends MenuTestCase {
 				manager = new MenuManager();
 				manager.setRemoveAllWhenShown(true);
 				popupMenuExtender = new PopupMenuExtender(activePart.getSite().getId(), manager, null, activePart);
-				popupMenuExtender.menuAboutToShow(manager);
+				
+				Shell windowShell = window.getShell();
+				contextMenu = manager.createContextMenu(windowShell);
+
+				Event showEvent = new Event();
+				showEvent.widget = contextMenu;
+				showEvent.type = SWT.Show;
+
+				contextMenu.notifyListeners(SWT.Show, showEvent);
+
+				Event hideEvent = new Event();
+				hideEvent.widget = contextMenu;
+				hideEvent.type = SWT.Hide;
+
+				contextMenu.notifyListeners(SWT.Hide, hideEvent);
 				
 				assertPrivatePopups(manager);
 				
 				manager.removeAll();
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				
-				popupMenuExtender.menuAboutToShow(manager);
+				contextMenu.notifyListeners(SWT.Show, showEvent);
+				contextMenu.notifyListeners(SWT.Hide, hideEvent);
 
 				assertPrivatePopups(manager);
 				
 			}finally {
 				if(popupMenuExtender != null)
 					popupMenuExtender.dispose();
+				if (contextMenu!=null) {
+					contextMenu.dispose();
+				}
 				if(manager != null)
 					manager.dispose();
 			}

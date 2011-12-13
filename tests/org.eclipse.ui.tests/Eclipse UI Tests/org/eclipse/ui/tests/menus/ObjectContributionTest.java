@@ -34,6 +34,10 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -337,53 +341,73 @@ public final class ObjectContributionTest extends UITestCase {
 		 * trying to fill this menu. It seems to be loading a bunch of plug-ins,
 		 * and doing class loading.
 		 */
-		extender.menuAboutToShow(fakeMenuManager);
 
-		extender.dispose();
+		Shell windowShell = window.getShell();
+		Menu contextMenu = fakeMenuManager.createContextMenu(windowShell);
 
-		// Check to see if the appropriate object contributions are present.
-		final IContributionItem[] items = fakeMenuManager.getItems();
-		Set seenCommands = new HashSet(Arrays.asList(commandIds));
-		List commands = new ArrayList(Arrays.asList(commandIds));
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem contributionItem = items[i];
-			// Step 1: test the selection
-			if (selectionType != null) {
-				IContributionItem item = contributionItem;
-				if (item instanceof SubContributionItem) {
-					item = ((SubContributionItem) contributionItem)
-							.getInnerItem();
-				}
-				if (item instanceof PluginActionContributionItem) {
-					// Verify that the selection passed to the action has been
-					// converted
-					ISelection s = null;
-					if (s instanceof IStructuredSelection) {
-						for (Iterator it = ((IStructuredSelection) s)
-								.iterator(); it.hasNext();) {
-							Object element = it.next();
-							assertTrue(name + " selection not converted",
-									selectionType.isInstance(element));
+		Event showEvent = new Event();
+		showEvent.widget = contextMenu;
+		showEvent.type = SWT.Show;
+
+		contextMenu.notifyListeners(SWT.Show, showEvent);
+
+		Event hideEvent = new Event();
+		hideEvent.widget = contextMenu;
+		hideEvent.type = SWT.Hide;
+
+		contextMenu.notifyListeners(SWT.Hide, hideEvent);
+
+		try {
+			// Check to see if the appropriate object contributions are present.
+			final IContributionItem[] items = fakeMenuManager.getItems();
+			Set seenCommands = new HashSet(Arrays.asList(commandIds));
+			List commands = new ArrayList(Arrays.asList(commandIds));
+			for (int i = 0; i < items.length; i++) {
+				IContributionItem contributionItem = items[i];
+				// Step 1: test the selection
+				if (selectionType != null) {
+					IContributionItem item = contributionItem;
+					if (item instanceof SubContributionItem) {
+						item = ((SubContributionItem) contributionItem)
+								.getInnerItem();
+					}
+					if (item instanceof PluginActionContributionItem) {
+						// Verify that the selection passed to the action has
+						// been
+						// converted
+						ISelection s = null;
+						if (s instanceof IStructuredSelection) {
+							for (Iterator it = ((IStructuredSelection) s)
+									.iterator(); it.hasNext();) {
+								Object element = it.next();
+								assertTrue(name + " selection not converted",
+										selectionType.isInstance(element));
+							}
 						}
 					}
 				}
-			}
-			// Step 2: remember that we saw this element
-			String id = contributionItem.getId();
-			if (existance) {
-				boolean removed = commands.remove(id);
-				if (seenCommands.contains(id) && !removed) {
-					fail(name + " item duplicated in the context menu: " + id);
+				// Step 2: remember that we saw this element
+				String id = contributionItem.getId();
+				if (existance) {
+					boolean removed = commands.remove(id);
+					if (seenCommands.contains(id) && !removed) {
+						fail(name + " item duplicated in the context menu: "
+								+ id);
+					}
+				} else {
+					assertTrue(
+							name + " item should not be in the context menu",
+							!commands.contains(id));
 				}
-			} else {
-				assertTrue(name + " item should not be in the context menu",
-						!commands.contains(id));
 			}
-		}
 
-		if (existance && !commands.isEmpty()) {
-			fail(name + " Missing " + commands.toString()
-					+ " from context menu.");
+			if (existance && !commands.isEmpty()) {
+				fail(name + " Missing " + commands.toString()
+						+ " from context menu.");
+			}
+		} finally {
+			extender.dispose();
+			contextMenu.dispose();
 		}
 	}
 }
