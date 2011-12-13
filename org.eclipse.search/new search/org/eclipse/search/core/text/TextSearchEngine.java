@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.search.core.text;
 
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.core.resources.IFile;
 
+import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.core.text.TextSearchVisitor;
 import org.eclipse.search.internal.ui.SearchPlugin;
+
 
 /**
  * A {@link TextSearchEngine} searches the content of a workspace file resources
@@ -83,5 +85,28 @@ public abstract class TextSearchEngine {
 	 * @return the status containing information about problems in resources searched.
 	 */
 	public abstract IStatus search(IFile[] scope, TextSearchRequestor requestor, Pattern searchPattern, IProgressMonitor monitor);
+
+
+	/**
+	 * Creates a pattern for the given search string and the given options.
+	 * 
+	 * @param pattern the search pattern. If <code>isRegex</code> is:
+	 *            <ul>
+	 *            <li><code>false</code>: a string including '*' and '?' wildcards and '\' for
+	 *            escaping the literals '*', '?' and '\'</li>
+	 *            <li><code>true</code>: a regex as specified by {@link Pattern} plus "\R" denoting
+	 *            a line delimiter (platform independent)</li>
+	 *            </ul>
+	 * @param isRegex <code>true</code> if the given string follows the {@link Pattern} including
+	 *            "\R"
+	 * @param isCaseSensitive Set to <code>true</code> to create a case insensitive pattern
+	 * @return the created pattern
+	 * @throws PatternSyntaxException if "\R" is at an illegal position
+	 * @see Pattern
+	 * @since 3.8
+	 */
+	public static Pattern createPattern(String pattern, boolean isCaseSensitive, boolean isRegex) throws PatternSyntaxException {
+		return PatternConstructor.createPattern(pattern, isRegex, true, isCaseSensitive, false);
+	}
 
 }
