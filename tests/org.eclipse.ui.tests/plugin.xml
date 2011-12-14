@@ -1874,13 +1874,17 @@
             id="org.eclipse.ui.tests.contexts.ViewPart"
             name="View Part Context"
             parentId="org.eclipse.ui.contexts.window"/>
-      <context
+      <context 
             id="org.eclipse.ui.tests.contexts.WorkbenchWindow"
             name="WorkbenchWindow Part Context"
             parentId="org.eclipse.ui.contexts.window"/>
       <context
             id="org.eclipse.ui.tests.contexts.Page"
             name="Page Context"
+            parentId="org.eclipse.ui.contexts.window"/>
+      <context
+            id="org.eclipse.ui.tests.contexts.Bug74990"
+            name="Bug74990 Context"
             parentId="org.eclipse.ui.contexts.window"/>
       <context
             id="org.eclipse.ui.tests.multipageeditor.contextEditor"
