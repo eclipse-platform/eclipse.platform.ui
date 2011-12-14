@@ -515,6 +515,27 @@ public class VirtualItem {
     }
     
     public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        toStringItem(buffer, "");
+        return buffer.toString();
+    }
+    
+    void toStringItem(StringBuffer buffer, String indent) {
+        buffer.append(indent);
+        buffer.append(toStringElement());
+        buffer.append("\n");
+        indent = indent + "  ";
+        for (int i = 0; i < fItemCount; i++) {
+            VirtualItem item = (VirtualItem)fItems.get(new Integer(i));
+            if (item != null) {
+                toStringItem(buffer, indent);
+            } else {
+                buffer.append("<no item>\n");
+            }
+        }
+    }
+    
+    private String toStringElement() {
         String[] label = (String[])fData.get(LABEL_KEY);
         if (label != null && label.length != 0) {
             return label[0];
@@ -523,6 +544,6 @@ public class VirtualItem {
         if (data != null) {
             return data.toString();
         }
-        return super.toString();
+        return "<no data>";
     }
 }

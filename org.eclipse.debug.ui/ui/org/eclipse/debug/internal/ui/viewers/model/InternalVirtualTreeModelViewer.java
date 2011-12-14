@@ -1582,5 +1582,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         // Not supported
     }
     
-    
+    public String toString() {
+        return getTree().toString();
+    }
 }
