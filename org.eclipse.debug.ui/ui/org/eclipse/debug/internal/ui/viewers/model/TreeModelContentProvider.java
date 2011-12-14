@@ -166,6 +166,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     }
 
     public void dispose() {
+        if (fViewer == null) return;
+        
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
         
         // cancel pending updates
