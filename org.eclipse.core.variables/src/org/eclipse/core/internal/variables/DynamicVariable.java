@@ -51,7 +51,11 @@ public class DynamicVariable extends StringVariable implements IDynamicVariable 
 				throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind("Contributed context variable resolver for {0} must be an instance of IContextVariableResolver.",new String[]{getName()}), null)); //$NON-NLS-1$
 			}
 		}
-		return fResolver.resolveValue(this, argument);
+		try {
+		    return fResolver.resolveValue(this, argument);
+		} catch (RuntimeException e) {
+            throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind("Error while evaluating variable {0}.",new String[]{getName()}), e)); //$NON-NLS-1$
+		}
 	}
 
 	/**
