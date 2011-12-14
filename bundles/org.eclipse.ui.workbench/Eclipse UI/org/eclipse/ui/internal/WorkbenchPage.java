@@ -3470,7 +3470,7 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
         }
     }
 
-	private MUIElement getActiveElement(IWorkbenchPartReference ref) {
+	public MUIElement getActiveElement(IWorkbenchPartReference ref) {
 		MUIElement element = null;
 
 		MPerspective curPersp = modelService.getActivePerspective(window);
