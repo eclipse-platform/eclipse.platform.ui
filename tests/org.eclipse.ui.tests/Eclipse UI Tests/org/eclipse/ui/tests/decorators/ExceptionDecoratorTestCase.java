@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,6 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase
      * Sets up the hierarchy.
      */
     protected void doSetUp() throws Exception {
-        super.doSetUp();
         //reset the static fields so that the decorators will fail
         HeavyNullImageDecorator.fail = true;
         HeavyNullTextDecorator.fail = true;
@@ -64,6 +63,7 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase
                 light = definitions[i];
             }
         }
+        super.doSetUp();
     } /* (non-Javadoc)
      * @see org.eclipse.ui.tests.navigator.LightweightDecoratorTestCase#doTearDown()
      */
