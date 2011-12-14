@@ -42,7 +42,7 @@ public class ViewerInputService {
 	
 	private IViewerInputRequestor fRequestor = null;
 	
-	private TreeModelViewer fViewer;
+	private ITreeModelViewer fViewer;
 	
 	private IViewerInputRequestor fProxyRequest = new IViewerInputRequestor() {
 		public void viewerInputComplete(final IViewerInputUpdate update) {
@@ -59,7 +59,7 @@ public class ViewerInputService {
      * @param viewer for which inputs are required
 	 * @param requestor client requesting viewer inputs 
 	 */
-	public ViewerInputService(TreeModelViewer viewer, IViewerInputRequestor requestor) {
+	public ViewerInputService(ITreeModelViewer viewer, IViewerInputRequestor requestor) {
 		fRequestor = requestor;
 		fViewer = viewer;
 	}
