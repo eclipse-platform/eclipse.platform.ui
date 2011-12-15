@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,26 +19,28 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 
+
 /**
  * Control which is capable of displaying parts of a refactoring history.
  * <p>
- * Clients of this interface should call <code>createControl</code> before
- * calling <code>setInput</code>.
+ * Clients of this interface should call {@link #createControl()} before calling
+ * {@link #setInput(RefactoringHistory)}.
  * </p>
  * <p>
  * An instanceof of a refactoring history control may be obtained by calling
- * {@link RefactoringUI#createRefactoringHistoryControl(org.eclipse.swt.widgets.Composite, RefactoringHistoryControlConfiguration)}.
+ * {@link RefactoringUI#createRefactoringHistoryControl(org.eclipse.swt.widgets.Composite, RefactoringHistoryControlConfiguration)}
+ * .
  * </p>
  * <p>
  * Note: this interface is not intended to be implemented by clients.
  * </p>
- *
+ * 
  * @see RefactoringHistoryControlConfiguration
  * @see RefactoringHistoryContentProvider
  * @see RefactoringHistoryLabelProvider
- *
+ * 
  * @since 3.2
- *
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
