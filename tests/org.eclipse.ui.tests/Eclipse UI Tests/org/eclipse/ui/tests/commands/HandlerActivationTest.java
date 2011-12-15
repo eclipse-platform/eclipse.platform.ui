@@ -36,6 +36,7 @@ import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.MakeHandlersGo;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
@@ -168,7 +169,7 @@ public class HandlerActivationTest extends UITestCase {
 			NotEnabledException, NotHandledException {
 		ActTestHandler handler = (ActTestHandler) testHandlers.get(handlerId);
 		int count = handler.executionCount;
-		cmd.executeWithChecks(new ExecutionEvent());
+		cmd.executeWithChecks(handlerService.createExecutionEvent(cmd, null));
 		assertEquals("The handler count should be incremented", count + 1,
 				handler.executionCount);
 	}
@@ -203,6 +204,7 @@ public class HandlerActivationTest extends UITestCase {
 		if (!cmd.isDefined()) {
 			Category cat = commandService.getCategory(CATEGORY_ID);
 			cmd.define("Test Handler", "Test handler activation", cat);
+			cmd.setHandler(new MakeHandlersGo(getWorkbench(), CMD_ID));
 		}
 
 	}
@@ -292,7 +294,7 @@ public class HandlerActivationTest extends UITestCase {
 
 		ActTestHandler handler1 = (ActTestHandler) testHandlers.get(H1);
 		int count = handler1.executionCount;
-		cmd.executeWithChecks(new ExecutionEvent());
+		cmd.executeWithChecks(handlerService.createExecutionEvent(cmd, null));
 		assertEquals("The handler count should be correct", count + 1,
 				handler1.executionCount);
 

@@ -22,6 +22,7 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -87,8 +88,9 @@ public final class Bug74990Test extends UITestCase {
 					.showView("org.eclipse.ui.tests.api.MockViewPart");
 			page.activate(openedView);
 			while (fWorkbench.getDisplay().readAndDispatch()) {
-				// Read the event queue
+				((Workbench)fWorkbench).getContext().processWaiting();
 			}
+			
 			assertTrue("The MockViewPart command should be handled",
 					testCommand.isHandled());
 

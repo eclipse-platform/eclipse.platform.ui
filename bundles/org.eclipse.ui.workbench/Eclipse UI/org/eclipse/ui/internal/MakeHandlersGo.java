@@ -14,21 +14,28 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.handlers.E4HandlerProxy;
 
 public class MakeHandlersGo extends AbstractHandler {
 
 	private IWorkbench workbench;
+	private String commandId;
 
-	public MakeHandlersGo(IWorkbench wb) {
+	public MakeHandlersGo(IWorkbench wb, String commandId) {
 		workbench = wb;
+		this.commandId = commandId;
 	}
 	/*
 	 * (non-Javadoc)
@@ -69,4 +76,23 @@ public class MakeHandlersGo extends AbstractHandler {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.AbstractHandler#isHandled()
+	 */
+	@Override
+	public boolean isHandled() {
+		EHandlerService service = (EHandlerService) workbench.getService(EHandlerService.class);
+		if (service == null) {
+			return false;
+		}
+		IEclipseContext ctx = (IEclipseContext) workbench.getService(IEclipseContext.class);
+		Object handler = HandlerServiceImpl.lookUpHandler(ctx, commandId);
+		if (handler instanceof E4HandlerProxy) {
+			IHandler h = ((E4HandlerProxy) handler).getHandler();
+			return h == null ? false : h.isHandled();
+		}
+		return handler != null;
+	}
 }

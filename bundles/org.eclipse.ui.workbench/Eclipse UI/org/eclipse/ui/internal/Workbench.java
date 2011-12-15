@@ -1808,12 +1808,10 @@ UIEvents.Context.TOPIC_CONTEXT,
 		appContext.set(ICommandService.class.getName(), service);
 		service.readRegistry();
 
-		MakeHandlersGo allHandlers = new MakeHandlersGo(this);
-
 		Command[] cmds = commandManager.getAllCommands();
 		for (int i = 0; i < cmds.length; i++) {
 			Command cmd = cmds[i];
-			cmd.setHandler(allHandlers);
+			cmd.setHandler(new MakeHandlersGo(this, cmd.getId()));
 		}
 
 		return service;

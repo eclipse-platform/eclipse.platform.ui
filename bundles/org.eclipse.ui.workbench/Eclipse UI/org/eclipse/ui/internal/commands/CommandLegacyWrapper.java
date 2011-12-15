@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -27,6 +26,7 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.keys.KeySequenceBinding;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.keys.KeySequence;
@@ -99,9 +99,12 @@ final class CommandLegacyWrapper implements ICommand {
 	public final Object execute(Map parameterValuesByName)
 			throws ExecutionException, NotHandledException {
 		try {
+			IHandlerService service = (IHandlerService) PlatformUI.getWorkbench().getService(
+					IHandlerService.class);
+
 			return command.execute(new ExecutionEvent(command,
 					(parameterValuesByName == null) ? Collections.EMPTY_MAP
-							: parameterValuesByName, null, null));
+									: parameterValuesByName, null, service.getCurrentState()));
 		} catch (final org.eclipse.core.commands.ExecutionException e) {
 			throw new ExecutionException(e);
 		} catch (final org.eclipse.core.commands.NotHandledException e) {
