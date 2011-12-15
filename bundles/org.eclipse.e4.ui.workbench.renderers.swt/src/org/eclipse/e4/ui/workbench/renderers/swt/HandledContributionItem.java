@@ -467,21 +467,23 @@ public class HandledContributionItem extends ContributionItem {
 			IEclipseContext context = getContext(item);
 			EBindingService bs = (EBindingService) context
 					.get(EBindingService.class.getName());
-			ParameterizedCommand cmd = handledItem.getWbCommand();
-			if (cmd == null) {
-				cmd = generateParameterizedCommand(handledItem, context);
-			}
-			TriggerSequence sequence = bs.getBestSequenceFor(handledItem
-					.getWbCommand());
-			if (sequence != null) {
-				if (text == null) {
-					try {
-						text = cmd.getName();
-					} catch (NotDefinedException e) {
-						return null;
-					}
+			if (bs != null) {
+				ParameterizedCommand cmd = handledItem.getWbCommand();
+				if (cmd == null) {
+					cmd = generateParameterizedCommand(handledItem, context);
 				}
-				text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
+				TriggerSequence sequence = bs.getBestSequenceFor(handledItem
+						.getWbCommand());
+				if (sequence != null) {
+					if (text == null) {
+						try {
+							text = cmd.getName();
+						} catch (NotDefinedException e) {
+							return null;
+						}
+					}
+					text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
+				}
 			}
 			return text;
 		}
