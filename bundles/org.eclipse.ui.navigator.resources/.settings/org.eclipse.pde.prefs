@@ -1,7 +1,7 @@
 #Thu Aug 14 02:41:03 PDT 2008
 compilers.f.unresolved-features=1
 compilers.f.unresolved-plugins=1
-compilers.incompatible-environment=1
+compilers.incompatible-environment=0
 compilers.p.build=1
 compilers.p.deprecated=0
 compilers.p.discouraged-class=1
