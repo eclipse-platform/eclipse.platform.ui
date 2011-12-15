@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -338,18 +338,9 @@ public class InternalSearchUI {
 	}
 
 	public void showSearchResult(SearchView searchView, ISearchResult result, boolean openInNew) {
-		if (openInNew) {
-			boolean isPinned= searchView.isPinned();
-			searchView.setPinned(true);
-			try {
-				SearchView newPart= (SearchView) getSearchViewManager().activateSearchView(true);
-				showSearchResult(newPart, result);
-			} finally {
-				searchView.setPinned(isPinned);
-			}
-		} else {
-			showSearchResult(searchView, result);
-		}
+		if (openInNew)
+			searchView= (SearchView)getSearchViewManager().activateSearchView(true, openInNew);
+		showSearchResult(searchView, result);
 	}
 
 	private void showSearchResult(SearchView searchView, ISearchResult result) {
