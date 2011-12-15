@@ -968,6 +968,28 @@ public class PartRenderingEngine implements IPresentationEngine {
 									.getName()));
 				}
 
+				IEventLoopAdvisor advisor = runContext.getActiveLeaf().get(
+						IEventLoopAdvisor.class);
+				if (advisor == null) {
+					advisor = new IEventLoopAdvisor() {
+						public void eventLoopIdle(Display display) {
+							display.sleep();
+						}
+
+						public void eventLoopException(Throwable exception) {
+							StatusReporter statusReporter = (StatusReporter) appContext
+									.get(StatusReporter.class.getName());
+							if (statusReporter != null) {
+								statusReporter.show(StatusReporter.ERROR,
+										"Internal Error", exception);
+							} else {
+								if (logger != null) {
+									logger.error(exception);
+								}
+							}
+						}
+					};
+				}
 				// Spin the event loop until someone disposes the display
 				while (((testShell != null && !testShell.isDisposed()) || (!theApp
 						.getChildren().isEmpty() && someAreVisible(theApp
@@ -978,14 +1000,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 							runContext.processWaiting();
 							if (spinOnce)
 								return;
-							display.sleep();
+							advisor.eventLoopIdle(display);
 						}
 					} catch (ThreadDeath th) {
 						throw th;
 					} catch (Exception ex) {
-						handle(ex, runContext);
+						handle(ex, advisor);
 					} catch (Error err) {
-						handle(err, runContext);
+						handle(err, advisor);
 					}
 				}
 				if (!spinOnce) {
@@ -993,9 +1015,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 			}
 
-			private void handle(Throwable ex, final IEclipseContext appContext) {
+			private void handle(Throwable ex, IEventLoopAdvisor advisor) {
 				try {
-					safeHandle(ex, appContext);
+					advisor.eventLoopException(ex);
 				} catch (Throwable t) {
 					if (t instanceof ThreadDeath) {
 						throw (ThreadDeath) t;
@@ -1003,20 +1025,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 					// couldn't handle the exception, print to console
 					t.printStackTrace();
-				}
-			}
-
-			private void safeHandle(Throwable ex,
-					final IEclipseContext appContext) {
-				StatusReporter statusReporter = (StatusReporter) appContext
-						.get(StatusReporter.class.getName());
-				if (statusReporter != null) {
-					statusReporter.show(StatusReporter.ERROR, "Internal Error",
-							ex);
-				} else {
-					if (logger != null) {
-						logger.error(ex);
-					}
 				}
 			}
 		});

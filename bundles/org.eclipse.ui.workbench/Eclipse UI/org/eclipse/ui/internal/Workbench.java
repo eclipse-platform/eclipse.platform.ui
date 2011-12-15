@@ -63,6 +63,7 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
+import org.eclipse.e4.ui.internal.workbench.swt.IEventLoopAdvisor;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
@@ -425,7 +426,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *            specializes this workbench instance
 	 * @since 3.0
 	 */
-	private Workbench(Display display, WorkbenchAdvisor advisor, MApplication app,
+	private Workbench(Display display, final WorkbenchAdvisor advisor, MApplication app,
 			IEclipseContext appContext) {
 		super();
 		StartupThreading.setWorkbench(this);
@@ -443,6 +444,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		appContext.set(getClass().getName(), this);
 		appContext.set(IWorkbench.class.getName(), this);
+		appContext.set(IEventLoopAdvisor.class, new IEventLoopAdvisor() {
+			public void eventLoopIdle(Display display) {
+				advisor.eventLoopIdle(display);
+			}
+
+			public void eventLoopException(Throwable exception) {
+				advisor.eventLoopException(exception);
+			}
+		});
 
 		// for dynamic UI [This seems to be for everything that isn't handled by
 		// some
