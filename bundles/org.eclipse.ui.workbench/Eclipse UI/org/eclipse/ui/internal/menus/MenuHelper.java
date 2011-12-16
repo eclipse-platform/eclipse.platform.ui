@@ -1002,25 +1002,14 @@ public class MenuHelper {
 			return null;
 		}
 
+		// Attempt to retrieve URIs from the descriptor and convert into a more
+		// durable form in case it's to be persisted
 		String string = descriptor.toString();
 		if (string.startsWith("URLImageDescriptor(")) { //$NON-NLS-1$
 			string = string.substring("URLImageDescriptor(".length()); //$NON-NLS-1$
 			string = string.substring(0, string.length() - 1);
 
-			BundleContext ctxt = FrameworkUtil.getBundle(WorkbenchWindow.class).getBundleContext();
-
-			try {
-				URI uri = new URI(string);
-				String host = uri.getHost();
-				String bundleId = host.substring(0, host.indexOf('.'));
-				Bundle bundle = ctxt.getBundle(Long.parseLong(bundleId));
-				StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
-				builder.append(bundle.getSymbolicName());
-				builder.append(uri.getPath());
-				return builder.toString();
-			} catch (URISyntaxException e) {
-				// ignored
-			}
+			return rewriteDurableURL(string);
 		} else if (descriptor.getClass().toString().endsWith("FileImageDescriptor")) { //$NON-NLS-1$
 			Class<?> sourceClass = getLocation(descriptor);
 			if (sourceClass == null) {
@@ -1042,9 +1031,42 @@ public class MenuHelper {
 
 			// construct the URL
 			URL url = FileLocator.find(bundle, new Path(parentPath).append(path), null);
-			return url == null ? null : url.toString();
+			return url == null ? null : rewriteDurableURL(url.toString());
 		}
 		return null;
+	}
+
+	/**
+	 * Rewrite certain types of URLs to more durable forms, as these URLs may
+	 * may be persisted in the model.
+	 * 
+	 * @param url
+	 *            the url
+	 * @return the rewritten URL
+	 */
+	private static String rewriteDurableURL(String url) {
+		// Rewrite bundleentry and bundleresource entries as they are
+		// invalidated on -clean or a bundle remove, . These Platform URIs are
+		// of the form:
+		// bundleentry://<bundle-id>.XXX/path/to/file
+		// bundleresource://<bundle-id>.XXX/path/to/file
+		if (!url.startsWith("bundleentry:") && !url.startsWith("bundleresource:")) { //$NON-NLS-1$ //$NON-NLS-2$
+			return url;
+		}
+
+		BundleContext ctxt = FrameworkUtil.getBundle(WorkbenchWindow.class).getBundleContext();
+		try {
+			URI uri = new URI(url);
+			String host = uri.getHost();
+			String bundleId = host.substring(0, host.indexOf('.'));
+			Bundle bundle = ctxt.getBundle(Long.parseLong(bundleId));
+			StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
+			builder.append(bundle.getSymbolicName());
+			builder.append(uri.getPath());
+			return builder.toString();
+		} catch (URISyntaxException e) {
+			return url;
+		}
 	}
 
 	private static String getIconURI(String commandId, IEclipseContext workbench) {
