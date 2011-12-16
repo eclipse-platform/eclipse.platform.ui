@@ -21,6 +21,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class CommandParameterTypeTest extends UITestCase {
@@ -102,7 +103,8 @@ public class CommandParameterTypeTest extends UITestCase {
 		// execute the command and check the result
 		ParameterizedCommand pCommand = new ParameterizedCommand(command,
 				parameterizations);
-		Integer result = (Integer) pCommand.executeWithChecks(null, null);
+		IHandlerService hs = (IHandlerService) getWorkbench().getService(IHandlerService.class);
+		Integer result = (Integer) pCommand.executeWithChecks(null, hs.getCurrentState());
 		assertEquals(difference, result.intValue());
 	}
 	

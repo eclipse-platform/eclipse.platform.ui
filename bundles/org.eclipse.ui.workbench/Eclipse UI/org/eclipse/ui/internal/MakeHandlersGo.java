@@ -11,12 +11,17 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -51,8 +56,7 @@ public class MakeHandlersGo extends AbstractHandler {
 		if (obj instanceof IEvaluationContext) {
 			IHandlerService hs = (IHandlerService) workbench.getService(IHandlerService.class);
 			if (hs != null) {
-				ParameterizedCommand pcmd = ParameterizedCommand.generateCommand(
-						event.getCommand(), event.getParameters());
+				ParameterizedCommand pcmd = generateCommand(event);
 				if (pcmd != null) {
 					Event e = null;
 					if (event.getTrigger() instanceof Event) {
@@ -76,6 +80,25 @@ public class MakeHandlersGo extends AbstractHandler {
 		return null;
 	}
 
+	private ParameterizedCommand generateCommand(ExecutionEvent event) {
+		Command cmd = event.getCommand();
+		if (event.getParameters().isEmpty()) {
+			return new ParameterizedCommand(cmd, null);
+		}
+		ArrayList<Parameterization> parms = new ArrayList<Parameterization>();
+		Iterator i = event.getParameters().entrySet().iterator();
+		try {
+			while (i.hasNext()) {
+				Map.Entry entry = (Map.Entry) i.next();
+				parms.add(new Parameterization(cmd.getParameter((String) entry.getKey()),
+						(String) entry.getValue()));
+			}
+			return new ParameterizedCommand(cmd, parms.toArray(new Parameterization[parms.size()]));
+		} catch (NotDefinedException e) {
+			WorkbenchPlugin.log(e);
+		}
+		return null;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
