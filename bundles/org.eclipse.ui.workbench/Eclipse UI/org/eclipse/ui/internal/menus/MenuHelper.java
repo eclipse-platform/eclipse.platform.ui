@@ -62,6 +62,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.renderers.swt.DirectContributionItem;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
@@ -800,7 +801,7 @@ public class MenuHelper {
 	}
 
 	public static MToolItem createToolItem(MApplication application, ActionContributionItem item) {
-		IAction action = item.getAction();
+		final IAction action = item.getAction();
 		String id = action.getActionDefinitionId();
 		if (id != null) {
 			for (MCommand command : application.getCommands()) {
@@ -845,7 +846,7 @@ public class MenuHelper {
 				}
 			}
 		} else {
-			MDirectToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
+			final MDirectToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
 			String itemId = item.getId();
 			toolItem.setElementId(itemId);
 			String iconURI = getIconURI(action.getImageDescriptor(), application.getContext());
@@ -867,6 +868,9 @@ public class MenuHelper {
 			} else {
 				toolItem.setIconURI(iconURI);
 			}
+			if (action.getToolTipText() != null) {
+				toolItem.setTooltip(action.getToolTipText());
+			}
 
 			switch (action.getStyle()) {
 			case IAction.AS_CHECK_BOX:
@@ -883,6 +887,30 @@ public class MenuHelper {
 			}
 			toolItem.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
 			toolItem.setObject(new DirectProxy(action));
+			toolItem.setEnabled(action.isEnabled());
+
+			final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					String property = event.getProperty();
+					if (property.equals(IAction.ENABLED)) {
+						toolItem.setEnabled(action.isEnabled());
+					} else if (property.equals(IAction.CHECKED)) {
+						toolItem.setSelected(action.isChecked());
+					} else if (property.equals(IAction.TEXT)) {
+						toolItem.setLabel(action.getText());
+					} else if (property.equals(IAction.TOOL_TIP_TEXT)) {
+						toolItem.setLabel(action.getToolTipText());
+					}
+				}
+			};
+			// property listener is removed in
+			// DirectContributionItem#handleWidgetDispose()
+			action.addPropertyChangeListener(propertyListener);
+			toolItem.getTransientData().put(DirectContributionItem.DISPOSABLE, new Runnable() {
+						public void run() {
+							action.removePropertyChangeListener(propertyListener);
+						}
+					});
 			return toolItem;
 		}
 		return null;
