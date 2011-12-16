@@ -167,7 +167,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * Set the proxy connection method that is to be used when a 
 	 * repository location has the ext connection method. This is
 	 * usefull with the extssh connection method as it can be used to 
-	 * kepp the sandbox compatible with the command line client.
+	 * keep the sandbox compatible with the command line client.
 	 * @param string
 	 */
 	public static void setExtConnectionMethodProxy(String string) {
@@ -1137,7 +1137,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 
 	/*
-	 * Replace all occurances of oldString with newString
+	 * Replace all occurrences of oldString with newString
 	 */
 	private String stringReplace(String string, String oldString, String newString) {
 		int index = string.toLowerCase().indexOf(oldString);

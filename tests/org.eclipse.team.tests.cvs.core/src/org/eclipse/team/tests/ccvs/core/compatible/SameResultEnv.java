@@ -43,10 +43,10 @@ import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
  * in files and messages to the consol.
  * 
  * No own tests should be placed here, instead you should
- * instanciate this testcase in order to make your test from
+ * instantiate this testcase in order to make your test from
  * another suite.
  * The class is final, because you need to be able to open
- * two (or more) different enviorments to test certain things.
+ * two (or more) different environments to test certain things.
  */
 public final class SameResultEnv extends JUnitTestCase {
 	private IProject referenceProject;
@@ -62,7 +62,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	
 	/**
 	 * Always to be called in the setUp of the testCase that wants to 
-	 * use the same-result Enviorment.
+	 * use the same-result environment.
 	 */
 	public void setUp() throws Exception {
 		super.setUp();
@@ -86,7 +86,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	
 	/**
 	 * Always to be called in the tearDown of the testCase that wants to 
-	 * use the same-result Enviorment.
+	 * use the same-result environment.
 	 */
 	public void tearDown() throws Exception {
 		// we deliberately don't clean up test projects to simplify debugging
@@ -175,7 +175,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	}
 	
 	/**
-	 * Set up both of the repos on the cvs-server(s) with a filestructre
+	 * Set up both of the repos on the cvs-server(s) with a file structure
 	 * resulting for your input in the parameter createResources.
 	 */
 	public void magicSetUpRepo(String projectName, String[] createResources)
@@ -204,7 +204,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	 * Create a file with random-content in both, the reference client and 
 	 * the eclipse-client.
 	 * 
-	 * @param relativeFileName is the relative path as allways in the 
+	 * @param relativeFileName is the relative path as always in the 
 	           class used for access
 	 */
 	public void createRandomFile(String relativeFileName)
@@ -231,7 +231,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	}
 	
 	/**
-	 * Read from the file (check that we have acctually got the same
+	 * Read from the file (check that we have actually got the same
 	 * content in both versions
 	 */
 	public String[] readFromFile(String relativeFileName)
@@ -275,7 +275,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	}
 	
 	/**
-	 * Append a String to an file (acctally to both of the files, that are going
+	 * Append a String to an file (actually to both of the files, that are going
 	 * to have the same content)
 	 */
 	public void appendToFile(String relativeFileName, String[] contents)
@@ -290,7 +290,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	}
 	
 		/**
-	 * Append a String to an file (acctally to both of the files, that are going
+	 * Append a String to an file (actually to both of the files, that are going
 	 * to have the same content)
 	 */
 	public void prefixToFile(String relativeFileName, String[] contents)
@@ -305,7 +305,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	}
 	
 	/**
-	 * Write to the file (acctally to both of the files, that are going
+	 * Write to the file (actually to both of the files, that are going
 	 * to have the same content)
 	 */
 	public void writeToFile(String relativeFileName, String[] contents)
@@ -325,7 +325,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	}	
 
 	/**
-	 * Deep compare of two ManagedResources (most likly folders).
+	 * Deep compare of two ManagedResources (most likely folders).
 	 * Passwords are ignored.
 	 * 
 	 * @param ignoreTimestamp if true timestamps of
@@ -352,7 +352,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	
 	/**
 	 * Assert that two CVSFile's are equal by comparing the content
-	 * and the metainformation out of the ResourceSync.
+	 * and the meta information out of the ResourceSync.
 	 */
 	private static void assertEquals(ICVSFile mFile1, ICVSFile mFile2) throws CVSException {
 		
@@ -368,7 +368,7 @@ public final class SameResultEnv extends JUnitTestCase {
 			byte[] buffer1 = new byte[(int)mFile1.getSize()];
 			byte[] buffer2 = new byte[(int)mFile2.getSize()];
 			// This is not the right way to do it, because the Stream
-			// may read less than the whoole file
+			// may read less than the whole file
 			in1.read(buffer1);
 			in2.read(buffer2);
 			in1.close();
@@ -379,7 +379,7 @@ public final class SameResultEnv extends JUnitTestCase {
 			throw new CVSException("Error in TestCase");
 		}
 
-		// We can not do the ceck, because the reference client does
+		// We can not do the check, because the reference client does
 		// check out dirty files ?!?
 		// assertEquals(mFile1.isDirty(),mFile2.isDirty());
 		
@@ -401,7 +401,7 @@ public final class SameResultEnv extends JUnitTestCase {
 		assertEquals(info1.isMerged(), info2.isMerged());
 		assertEquals(info1.isMergedWithConflicts(), info2.isMergedWithConflicts());
 		
-		// Ensure that timestamps are written using same timezone.
+		// Ensure that timestamps are written using same time zone.
 		// assertTimestampEquals(info1.getTimeStamp(), info2.getTimeStamp());
 		
 		// We are not able to check for the permissions, as the reference-client doesn't save them
@@ -409,9 +409,9 @@ public final class SameResultEnv extends JUnitTestCase {
 	
 	/**
 	 * Assert that two CVSFile's are equal. First the 
-	 * metainformation out of the FolderSync for this 
+	 * meta information out of the FolderSync for this 
 	 * folder is compared, then the amount of children is 
-	 * checked and finally the recussion is started to
+	 * checked and finally the recursion is started to
 	 * compare the children of this folder.
 	 */
 	private static void assertEquals(ICVSFolder mFolder1, 
@@ -450,8 +450,8 @@ public final class SameResultEnv extends JUnitTestCase {
 	
 	/**
 	 * Sets whether Exceptions that are thrown in the execution of both of the clients are
-	 * catched or thrown to the upper level. If the exceptions are catched the result of the 
-	 * reference-client and this client are compared as if the execution succseded.
+	 * caught or thrown to the upper level. If the exceptions are caught the result of the 
+	 * reference-client and this client are compared as if the execution succeeded.
 	 */
 	public void setIgnoreExceptions(boolean ignoreExceptions) {
 		this.ignoreExceptions = ignoreExceptions;

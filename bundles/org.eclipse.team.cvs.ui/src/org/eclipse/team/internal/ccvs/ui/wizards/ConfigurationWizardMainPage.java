@@ -321,7 +321,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	}
 
 	/*
-	 * Create a Proeprties node that contains everything needed to create a repository location
+	 * Create a Properties node that contains everything needed to create a repository location
 	 */
 	private Properties createProperties() {
 		Properties result = new Properties();
@@ -337,9 +337,9 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	}
 
 	/**
-	 * Crate a new location with the information entered on the page.
-	 * The location will exists and can be sed for connecting but is not
-	 * registered for persistance. This method must be called from the UI
+	 * Create a new location with the information entered on the page.
+	 * The location will exists and can be set for connecting but is not
+	 * registered for persistence. This method must be called from the UI
 	 * thread.
 	 * @return a location or <code>null</code>
 	 * @throws CVSException
