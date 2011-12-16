@@ -25,6 +25,7 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -99,6 +100,24 @@ public class MakeHandlersGo extends AbstractHandler {
 		}
 		return null;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
+	 */
+	@Override
+	public boolean isEnabled() {
+		EHandlerService hs = (EHandlerService) workbench.getService(EHandlerService.class);
+		ECommandService cs = (ECommandService) workbench.getService(ECommandService.class);
+		Command command = cs.getCommand(commandId);
+		if (hs == null) {
+			return false;
+		}
+		setBaseEnabled(hs.canExecute(new ParameterizedCommand(command, null)));
+		return super.isEnabled();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
