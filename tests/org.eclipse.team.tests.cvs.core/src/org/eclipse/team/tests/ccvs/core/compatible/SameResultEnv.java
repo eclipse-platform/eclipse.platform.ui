@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.tests.ccvs.core.*;
+import org.eclipse.team.tests.ccvs.core.CommandLineCVSClient;
+import org.eclipse.team.tests.ccvs.core.EclipseCVSClient;
+import org.eclipse.team.tests.ccvs.core.ICVSClient;
+import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 
 /**
@@ -447,18 +462,21 @@ public final class SameResultEnv extends JUnitTestCase {
 	 *         when you insert ":pserver:nkrambro:password@fiji:/home/nkrambro/repo"
 	 */
 	public static String removePassword(String root) {
-		StringTokenizer tok = new StringTokenizer(root, ":@", true);
+		int indexOfHostSeparator = root.lastIndexOf("@", root.length());
+		String hostAndPath = root.substring(indexOfHostSeparator);
+		root = root.substring(0, indexOfHostSeparator);
+		StringTokenizer tok = new StringTokenizer(root, ":", true);
 		StringBuffer filteredRoot = new StringBuffer();
 		int colonCounter = 3;
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
-			if ("@".equals(token)) colonCounter = -1;
 			if (":".equals(token)) {
 				if (--colonCounter == 0) continue; // skip colon
 			}
 			if (colonCounter == 0) continue; // skip password
 			filteredRoot.append(token);
 		}
+		filteredRoot.append(hostAndPath);
 		return filteredRoot.toString();
 	}
 }

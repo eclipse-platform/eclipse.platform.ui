@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,7 +125,7 @@ public class FolderSyncInfo {
 	private String getRootDirectory() throws CVSException {
 		try {
 			String root = getRoot();
-			int index = root.indexOf(CVSRepositoryLocation.HOST_SEPARATOR);
+			int index = root.lastIndexOf(CVSRepositoryLocation.HOST_SEPARATOR);
 			if (index == -1) {
 				// If the username is missing, we have to find the third ':'.
 				index = root.indexOf(CVSRepositoryLocation.COLON);

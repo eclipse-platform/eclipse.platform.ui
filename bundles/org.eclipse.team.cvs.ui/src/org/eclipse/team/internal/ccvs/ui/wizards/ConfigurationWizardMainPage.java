@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -570,7 +570,8 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		if (user.length() == 0) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, CVSUIMessages.ConfigurationWizardMainPage_1, null);
 		}
-		if ((user.indexOf('@') != -1) || (user.indexOf(':') != -1)) {
+		// removed the @ sign check since, so the UI can allow full kerberos names
+		if (user.indexOf(':') != -1) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS,
 					CVSUIMessages.ConfigurationWizardMainPage_invalidUserName, null);
 		}
