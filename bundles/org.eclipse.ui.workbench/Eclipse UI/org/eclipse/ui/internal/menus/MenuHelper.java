@@ -26,6 +26,8 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Path;
@@ -750,7 +752,7 @@ public class MenuHelper {
 					menuItem.setMnemonics(data.mnemonic);
 				}
 				if (data.icon != null) {
-					menuItem.setIconURI(getIconURI(data.icon));
+					menuItem.setIconURI(getIconURI(data.icon, application.getContext()));
 				} else {
 					menuItem.setIconURI(getIconURI(id, application.getContext()));
 				}
@@ -773,7 +775,7 @@ public class MenuHelper {
 
 				String iconURI = null;
 				if (data.icon != null) {
-					iconURI = getIconURI(data.icon);
+					iconURI = getIconURI(data.icon, application.getContext());
 				}
 				if (iconURI == null) {
 					iconURI = getIconURI(id, application.getContext());
@@ -807,7 +809,8 @@ public class MenuHelper {
 					toolItem.setCommand(command);
 					toolItem.setContributorURI(command.getContributorURI());
 
-					String iconURI = getIconURI(action.getImageDescriptor());
+					String iconURI = getIconURI(action.getImageDescriptor(),
+							application.getContext());
 					if (iconURI == null) {
 						iconURI = getIconURI(id, application.getContext());
 						if (iconURI == null) {
@@ -845,7 +848,7 @@ public class MenuHelper {
 			MDirectToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
 			String itemId = item.getId();
 			toolItem.setElementId(itemId);
-			String iconURI = getIconURI(action.getImageDescriptor());
+			String iconURI = getIconURI(action.getImageDescriptor(), application.getContext());
 			if (iconURI == null) {
 				if (itemId == null) {
 					if (action.getText() != null) {
@@ -894,7 +897,8 @@ public class MenuHelper {
 					MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
 					menuItem.setCommand(command);
 					menuItem.setLabel(command.getCommandName());
-					menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+					menuItem.setIconURI(getIconURI(action.getImageDescriptor(),
+							application.getContext()));
 
 					switch (action.getStyle()) {
 					case IAction.AS_CHECK_BOX:
@@ -930,7 +934,8 @@ public class MenuHelper {
 					} else {
 						menuItem.setLabel(command.getCommandName());
 					}
-					menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+					menuItem.setIconURI(getIconURI(action.getImageDescriptor(),
+							application.getContext()));
 
 					switch (action.getStyle()) {
 					case IAction.AS_CHECK_BOX:
@@ -958,7 +963,7 @@ public class MenuHelper {
 			}
 			String itemId = item.getId();
 			menuItem.setElementId(itemId == null ? id : itemId);
-			menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+			menuItem.setIconURI(getIconURI(action.getImageDescriptor(), application.getContext()));
 			switch (action.getStyle()) {
 			case IAction.AS_CHECK_BOX:
 				menuItem.setType(ItemType.CHECK);
@@ -997,7 +1002,7 @@ public class MenuHelper {
 		}
 	}
 
-	private static String getIconURI(ImageDescriptor descriptor) {
+	private static String getIconURI(ImageDescriptor descriptor, IEclipseContext context) {
 		if (descriptor == null) {
 			return null;
 		}
@@ -1032,6 +1037,28 @@ public class MenuHelper {
 			// construct the URL
 			URL url = FileLocator.find(bundle, new Path(parentPath).append(path), null);
 			return url == null ? null : rewriteDurableURL(url.toString());
+		} else {
+			if (descriptor instanceof IAdaptable) {
+				Object o = ((IAdaptable) descriptor).getAdapter(URL.class);
+				if (o != null) {
+					return rewriteDurableURL(o.toString());
+				}
+				o = ((IAdaptable) descriptor).getAdapter(URI.class);
+				if (o != null) {
+					return rewriteDurableURL(o.toString());
+				}
+			}
+			IAdapterManager adapter = context.get(IAdapterManager.class);
+			if (adapter != null) {
+				Object o = adapter.getAdapter(descriptor, URL.class);
+				if (o != null) {
+					return rewriteDurableURL(o.toString());
+				}
+				o = adapter.getAdapter(descriptor, URI.class);
+				if (o != null) {
+					return rewriteDurableURL(o.toString());
+				}
+			}
 		}
 		return null;
 	}
@@ -1076,6 +1103,6 @@ public class MenuHelper {
 
 		ICommandImageService imageService = workbench.get(ICommandImageService.class);
 		ImageDescriptor descriptor = imageService.getImageDescriptor(commandId);
-		return getIconURI(descriptor);
+		return getIconURI(descriptor, workbench);
 	}
 }
