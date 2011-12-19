@@ -9,4 +9,4 @@ heapdump.*
 core.*
 Snap.*
 target/
-
+.DS_Store
