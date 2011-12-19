@@ -842,7 +842,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		// Ensure that any pending 'Close' event are flushed
 		// before opening any dialogs
-		while (Display.getCurrent().readAndDispatch())
+		final boolean[] boundingAsynchDone = { false };
+		Display display = getShell().getDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				boundingAsynchDone[0] = true;
+			}
+		});
+		while (!boundingAsynchDone[0] && display.readAndDispatch())
 			;
 
 		// let the advisor or other interested parties
