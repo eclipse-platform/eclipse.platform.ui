@@ -1357,6 +1357,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
+		e4Context.set("org.eclipse.core.runtime.Platform", Platform.class); //$NON-NLS-1$
 		final EvaluationService evaluationService = new EvaluationService(e4Context);
 
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
