@@ -144,7 +144,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 			return e4Context;
 		}
 
-		Object service = e4Context.get(key.getName());
+		Object service = e4Context.getLocal(key.getName());
 		if (service == null) {
 			// this scenario can happen when we dispose the service locator
 			// after the window has been removed, in that case the window's
@@ -173,6 +173,9 @@ public final class ServiceLocator implements IDisposable, INestable,
 			}
 			if (service == null) {
 				service = factoryParent.getService(key);
+				if (service == null) {
+					service = e4Context.get(key);
+				}
 			} else {
 				registerService(key, service, true);
 			}
