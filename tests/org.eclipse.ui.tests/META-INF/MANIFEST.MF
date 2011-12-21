@@ -32,4 +32,4 @@ Import-Package: org.eclipse.e4.ui.bindings.keys;resolution:=optional
 Export-Package: org.eclipse.ui.tests.api,
  org.eclipse.ui.tests.helpers,
  org.eclipse.ui.tests.menus
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
