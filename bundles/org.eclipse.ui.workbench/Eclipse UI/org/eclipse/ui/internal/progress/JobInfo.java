@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - Fix for Bug 123169 [Progress] NPE from JobInfo
+ *     Martin W. Kirst <martin.kirst@s1998.tu-chemnitz.de> - jUnit test for Bug 361121 [Progress] DetailedProgressViewer's comparator violates its general contract
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
@@ -53,7 +54,7 @@ public class JobInfo extends JobTreeElement {
      * 
      * @param enclosingJob
      */
-    JobInfo(Job enclosingJob) {
+	protected JobInfo(Job enclosingJob) {
         this.job = enclosingJob;
     }
 
@@ -154,10 +155,12 @@ public class JobInfo extends JobTreeElement {
 			}
         }
 
+        // If equal prio, order by names
         if (job.getPriority() == job2.getPriority()) {
             return job.getName().compareTo(job2.getName());
         }
 
+        // order by priority
         if (job.getPriority() > job2.getPriority()) {
 			return -1;
 		}
@@ -181,15 +184,16 @@ public class JobInfo extends JobTreeElement {
 			return 1;
 		}
 
-        if (element.getJob().getState() == getJob().getState()) {
+		int thisState = getJob().getState();
+		int anotherState = element.getJob().getState();
+
+		// if equal job state, compare other job attributes
+		if (thisState == anotherState) {
 			return compareJobs(element);
 		}
 
-        if (getJob().getState() == Job.RUNNING) {
-			return -1;
-		}
-        return 1;
-
+		// ordering by job states, Job.RUNNING should be ordered first
+		return (thisState > anotherState ? -1 : (thisState == anotherState ? 0 : 1));
     }
 
     /**
