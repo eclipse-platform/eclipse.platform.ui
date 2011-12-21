@@ -17,7 +17,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use this annotation to tag methods that need to be executed.
+ * Use this annotation to tag methods that determine if this object's {@link Execute} method
+ * can be called. The tagged method must return Boolean value. 
  * <p>
  * This annotation must not be applied to more than one method per class. If several class
  * methods are tagged with this annotation, only one of them will be called.
