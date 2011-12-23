@@ -12,18 +12,20 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.handlers.CollapseAllHandler;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * CollapseAllAction
  */
-public class CollapseAllAction extends Action {
+public class CollapseAllAction extends Action implements IUpdate {
 	
-	private TreeViewer fViewer;
+	private TreeModelViewer fViewer;
 	
-	public CollapseAllAction(TreeViewer viewer) {
+	public CollapseAllAction(TreeModelViewer viewer) {
 		super(ActionMessages.CollapseAllAction_0, DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COLLAPSE_ALL));
 		setToolTipText(ActionMessages.CollapseAllAction_0);
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COLLAPSE_ALL));
@@ -39,4 +41,7 @@ public class CollapseAllAction extends Action {
 		fViewer.collapseAll();
 	}
 
+	public void update() {
+	    setEnabled( fViewer.getInput() != null && fViewer.getChildCount(TreePath.EMPTY) > 0 );
+	}
 }

@@ -313,7 +313,7 @@ public class VirtualFindAction extends Action implements IUpdate {
 	}
 	
 	public void update() {
-		setEnabled(fClientViewer.getInput() != null);
+	    setEnabled( fClientViewer.getInput() != null && fClientViewer.getChildCount(TreePath.EMPTY) > 0 );
 	}
 	
 }

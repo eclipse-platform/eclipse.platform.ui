@@ -83,6 +83,7 @@ import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextProvider;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -132,10 +133,11 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.texteditor.IUpdate;
 
 public class LaunchView extends AbstractDebugView 
     implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IShowInTarget, IShowInSource, 
-    IShowInTargetList, IPartListener2, IViewerUpdateListener, IContextManagerListener 
+    IShowInTargetList, IPartListener2, IViewerUpdateListener, IContextManagerListener, IModelChangedListener
 {
 	
 	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings"; //$NON-NLS-1$
@@ -861,7 +863,8 @@ public class LaunchView extends AbstractDebugView
 				fPresentationContext);
         
         viewer.addSelectionChangedListener(fTreeViewerSelectionChangedListener);
-        viewer.addViewerUpdateListener(this);        
+        viewer.addViewerUpdateListener(this);
+        viewer.addModelChangedListener(this);
         
 		viewer.setInput(DebugPlugin.getDefault().getLaunchManager());
 		//setEventHandler(new LaunchViewEventHandler(this));
@@ -1080,6 +1083,7 @@ public class LaunchView extends AbstractDebugView
 		if (viewer != null) {
 			viewer.removeSelectionChangedListener(fTreeViewerSelectionChangedListener);
             ((TreeModelViewer)viewer).removeViewerUpdateListener(this);
+            ((TreeModelViewer)viewer).removeModelChangedListener(this);
 		}
 		if (fPresentationContext != null) {
 		    fPresentationContext.dispose();
@@ -1446,8 +1450,14 @@ public class LaunchView extends AbstractDebugView
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IViewerUpdateListener#updateComplete(org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
      */
     public void updateComplete(IViewerUpdate update) {
+        if (!update.isCanceled()) {
+            if (TreePath.EMPTY.equals(update.getElementPath())) {
+                updateFindAction();
+            }
+        }
     }
 
+    
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IViewerUpdateListener#updateStarted(org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
      */
@@ -1476,6 +1486,17 @@ public class LaunchView extends AbstractDebugView
         }       
     }   
 	
+    public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+        updateFindAction();
+    }
+    
+    private void updateFindAction() {
+        IAction action= getAction(FIND_ACTION);
+        if (action instanceof IUpdate) {
+            ((IUpdate) action).update();
+        }
+    }
+    
     /**
      * Returns whether the breadcrumb viewer is currently visible in the view.
      * 

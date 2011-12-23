@@ -11,10 +11,18 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
@@ -26,7 +34,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 /**
  * 
  */
-public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActionDelegate2 {
+public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActionDelegate2, IViewerUpdateListener, IModelChangedListener  {
 	
 	private AbstractDebugView fView;
 	
@@ -41,6 +49,11 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
 		if (hs != null) {
 			hs.activateHandler(CollapseAllHandler.COMMAND_ID, new ActionHandler(fAction));
 		}
+        IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
+        if (viewer != null) {
+            viewer.addViewerUpdateListener(this);
+            viewer.addModelChangedListener(this);
+        }		
 	}
 
 	/* (non-Javadoc)
@@ -60,6 +73,11 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
+        ITreeModelViewer viewer = (ITreeModelViewer)fView.getViewer();
+        if (viewer != null) {
+            viewer.removeViewerUpdateListener(this);
+            viewer.removeModelChangedListener(this);
+        }
 	}
 
 	/* (non-Javadoc)
@@ -77,4 +95,31 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
 		run(action);
 	}
 
+    public void viewerUpdatesBegin() {
+    }
+
+    public void viewerUpdatesComplete() {
+    }
+
+    public void updateStarted(IViewerUpdate update) {
+    }
+    
+    public void updateComplete(IViewerUpdate update) {
+          if (!update.isCanceled()) {
+              if (TreePath.EMPTY.equals(update.getElementPath())) {
+                  update();
+              }
+          }        
+    }
+    
+    private void update() {
+        IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
+        if (viewer != null && fAction != null) {
+            fAction.setEnabled(viewer.getInput() != null && viewer.getChildCount(TreePath.EMPTY) > 0);
+        }
+    }
+    
+    public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+        update();
+    }	
 }
