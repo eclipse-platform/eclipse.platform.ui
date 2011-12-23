@@ -253,9 +253,15 @@
    <extension
          point="org.eclipse.team.core.bundleImporters">
       <importer
-            class="org.eclipse.team.internal.ccvs.core.CvsBundleImporterDelegate"
+            id="org.eclipse.team.core.cvs.importer"
             name="%cvsBundleImporter"
-            id="org.eclipse.team.core.cvs.importer">
+            repository="org.eclipse.team.cvs.core.cvsnature">
+         <supports
+               prefix="scm:cvs:">
+         </supports>
+         <supports
+               prefix="scm:cvs|">
+         </supports>
       </importer>
    </extension>
 </plugin>

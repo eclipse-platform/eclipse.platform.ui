@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.importing;
 
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.ScmUrlImportDescription;
-import org.eclipse.team.core.importing.provisional.IBundleImporter;
-import org.eclipse.team.core.importing.provisional.IBundleImporterDelegate;
+import org.eclipse.team.core.importing.provisional.*;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
@@ -58,7 +58,25 @@ public class BundleImporterExtension implements IBundleImporter {
 	 */
 	private synchronized IBundleImporterDelegate getDelegate() throws CoreException {
 		if (delegate == null) {
-			delegate = (IBundleImporterDelegate) element.createExecutableExtension("class"); //$NON-NLS-1$
+			delegate =  new BundleImporterDelegate() {
+				private Set supportedValues;
+				private RepositoryProviderType providerType;
+				protected Set getSupportedValues() {
+					if (supportedValues == null) {
+						IConfigurationElement[] supported = element.getChildren("supported"); //$NON-NLS-1$
+						supportedValues = new HashSet(supported.length);
+						for (int i = 0; i < supported.length; i++) {
+							supportedValues.add(supported[i].getAttribute("value")); //$NON-NLS-1$
+						}
+					}
+					return supportedValues;
+				}
+				protected RepositoryProviderType getProviderType() {
+					if (providerType == null)
+						providerType = RepositoryProviderType.getProviderType(element.getAttribute("repository")); //$NON-NLS-1$
+					return providerType;
+				}
+			};
 		}
 		return delegate;
 	}

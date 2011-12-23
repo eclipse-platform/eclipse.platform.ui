@@ -38,10 +38,10 @@ import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.ScmUrlImportDescription;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.importing.provisional.BundleImporterDelegate;
 import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CvsBundleImporterDelegate;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSScmUrlImportWizardPage;
 import org.eclipse.team.internal.ui.ProjectSetImporter;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -294,7 +294,7 @@ public class ProjectSetImporterTests extends EclipseTest {
 
 		Map[] manifests = new Map[1];
 		Map map = new HashMap();
-		map.put(CvsBundleImporterDelegate.ECLIPSE_SOURCE_REFERENCES, s);
+		map.put(BundleImporterDelegate.ECLIPSE_SOURCE_REFERENCES, s);
 		manifests[0] = map;
 
 		ScmUrlImportDescription[] descriptions = cvsBundleImporter.validateImport(manifests);
