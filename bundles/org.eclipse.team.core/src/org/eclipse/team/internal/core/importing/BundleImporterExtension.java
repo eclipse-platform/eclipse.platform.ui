@@ -63,10 +63,10 @@ public class BundleImporterExtension implements IBundleImporter {
 				private RepositoryProviderType providerType;
 				protected Set getSupportedValues() {
 					if (supportedValues == null) {
-						IConfigurationElement[] supported = element.getChildren("supported"); //$NON-NLS-1$
+						IConfigurationElement[] supported = element.getChildren("supports"); //$NON-NLS-1$
 						supportedValues = new HashSet(supported.length);
 						for (int i = 0; i < supported.length; i++) {
-							supportedValues.add(supported[i].getAttribute("value")); //$NON-NLS-1$
+							supportedValues.add(supported[i].getAttribute("prefix")); //$NON-NLS-1$
 						}
 					}
 					return supportedValues;
