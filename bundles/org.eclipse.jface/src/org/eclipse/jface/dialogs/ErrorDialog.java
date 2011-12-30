@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  * 		IBM Corporation - initial API and implementation 
  * 		Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should
  * 			be activated and used by other components.
+ *      Krzysztof Daniel <krzysztof.daniel@gmail.com> Bug 96373 - [ErrorHandling] 
+ *          ErrorDialog details area becomes huge with multi-line strings
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -57,11 +59,6 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * Static to prevent opening of error dialogs for automated testing.
 	 */
 	public static boolean AUTOMATED_MODE = false;
-
-	/**
-	 * Reserve room for this many list items.
-	 */
-	private static final int LIST_ITEM_COUNT = 7;
 
 	/**
 	 * The nesting indent.
@@ -319,7 +316,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL
 				| GridData.GRAB_VERTICAL);
-		data.heightHint = list.getItemHeight() * LIST_ITEM_COUNT;
+		data.heightHint = 150;
 		data.horizontalSpan = 2;
 		list.setLayoutData(data);
 		list.setFont(parent.getFont());
@@ -609,22 +606,26 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * pressing the details button.
 	 */
 	private void toggleDetailsArea() {
+		boolean opened = false;
 		Point windowSize = getShell().getSize();
-		Point oldSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		if (listCreated) {
 			list.dispose();
 			listCreated = false;
 			detailsButton.setText(IDialogConstants.SHOW_DETAILS_LABEL);
+			opened = false;
 		} else {
 			list = createDropDownList((Composite) getContents());
 			detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
 			getContents().getShell().layout();
+			opened = true;
 		}
 		Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		getShell()
-				.setSize(
-						new Point(windowSize.x, windowSize.y
-								+ (newSize.y - oldSize.y)));
+		int diffY = newSize.y - windowSize.y;
+		// increase the dialog height if details were opened and such increase is necessary
+		// decrease the dialog height if details were closed and empty space appeared
+		if ((opened && diffY > 0) || (!opened && diffY < 0)) {
+			getShell().setSize(new Point(windowSize.x, windowSize.y + (diffY)));
+		}
 	}
 
 	/**
