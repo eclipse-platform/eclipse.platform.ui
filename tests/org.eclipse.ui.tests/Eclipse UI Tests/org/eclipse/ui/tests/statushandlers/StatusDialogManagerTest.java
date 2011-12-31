@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Krzysztof Daniel <krzysztof.daniel@gmail.com> - bug 355030
  ******************************************************************************/
 
 package org.eclipse.ui.tests.statushandlers;
@@ -955,6 +956,29 @@ public class StatusDialogManagerTest extends TestCase {
 		selectTable(table, 1);
 		while(Display.getCurrent().readAndDispatch() && (StatusDialogUtil.getStatusShell() != null));
 		assertNotNull(StatusDialogUtil.getSupportLink());
+	}
+	
+	public void testProvidingCustomSupportAreaProvider() {
+		final boolean[] consulted = new boolean[]{false};
+		AbstractStatusAreaProvider customProvider = new AbstractStatusAreaProvider() {
+			
+			public Control createSupportArea(Composite parent,
+					StatusAdapter statusAdapter) {
+				//intentionally does nothing as this provider
+				//is not valid for any status
+				return null;
+			}
+
+			public boolean validFor(StatusAdapter statusAdapter) {
+				consulted[0] = true;
+				return false;
+			}
+		};
+		
+		wsdm.setSupportAreaProvider(customProvider);
+		StatusAdapter sa = createStatusAdapter(MESSAGE_1);
+		wsdm.addStatusAdapter(sa, false);
+		assertTrue("Custom support area provider should be consulted", consulted[0]);
 	}
 	
 
