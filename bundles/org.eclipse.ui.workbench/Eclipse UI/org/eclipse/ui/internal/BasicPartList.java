@@ -86,7 +86,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 	protected TableViewer createTableViewer(Composite parent, int style) {
 		Table table = new Table(parent, SWT.SINGLE | (style & ~SWT.MULTI));
-		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		table.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 		TableViewer tableViewer = new TableViewer(table);
 		tableViewer.addFilter(new NamePatternFilter());
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
