@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,6 +156,8 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 			Label label = (Label) c.getChildren()[0];
 			if (description == null)
 				description = ""; //$NON-NLS-1$
+			// hide the label if there is no text to show
+			label.setVisible(!description.equals("")); //$NON-NLS-1$
 			label.setText(description);
 			label.setToolTipText(description);
 			c.layout();
@@ -178,8 +180,9 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 						Label label = (Label) composite.getChildren()[0];
 						Control partCtrl = composite.getChildren()[1];
 
-						int labelHeight = label.computeSize(bounds.width,
-								SWT.DEFAULT).y;
+						// if the label is not visible, give it a zero size
+						int labelHeight = label.isVisible() ? label
+								.computeSize(bounds.width, SWT.DEFAULT).y : 0;
 						label.setBounds(0, 0, bounds.width, labelHeight);
 
 						partCtrl.setBounds(0, labelHeight, bounds.width,
