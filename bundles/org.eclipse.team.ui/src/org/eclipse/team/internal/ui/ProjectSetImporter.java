@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,9 +84,9 @@ public class ProjectSetImporter {
 			} else {
 				UIProjectSetSerializationContext context = new UIProjectSetSerializationContext(shell, filename);
 				List errors = new ArrayList();
-				ArrayList referenceStrings = new ArrayList();
 			  	IMemento[] providers = xmlMemento.getChildren("provider"); //$NON-NLS-1$
 			  	for (int i = 0; i < providers.length; i++) {
+					ArrayList referenceStrings= new ArrayList();
 					IMemento[] projects = providers[i].getChildren("project"); //$NON-NLS-1$
 					for (int j = 0; j < projects.length; j++) {
 						referenceStrings.add(projects[j].getString("reference")); //$NON-NLS-1$
@@ -110,22 +110,17 @@ public class ProjectSetImporter {
                     		if (allProjects != null)
                     			newProjects.addAll(Arrays.asList(allProjects));
                     	}
-                    	referenceStrings.clear();
                     } catch (TeamException e) {
                         errors.add(e);
                     }
 				}
 			  	if (!errors.isEmpty()) {
-				    if (errors.size() == 1) {
-				        throw (TeamException)errors.get(0);
-				    } else {
-				        TeamException[] exceptions = (TeamException[]) errors.toArray(new TeamException[errors.size()]);
-				        IStatus[] status = new IStatus[exceptions.length];
-				        for (int i = 0; i < exceptions.length; i++) {
-                            status[i] = exceptions[i].getStatus();
-                        }
-				        throw new TeamException(new MultiStatus(TeamUIPlugin.ID, 0, status, TeamUIMessages.ProjectSetImportWizard_1, null)); 
-				    }
+					TeamException[] exceptions= (TeamException[])errors.toArray(new TeamException[errors.size()]);
+					IStatus[] status= new IStatus[exceptions.length];
+					for (int i= 0; i < exceptions.length; i++) {
+						status[i]= exceptions[i].getStatus();
+					}
+					throw new TeamException(new MultiStatus(TeamUIPlugin.ID, 0, status, TeamUIMessages.ProjectSetImportWizard_1, null));
 				}
 			  	
 			  	//try working sets
