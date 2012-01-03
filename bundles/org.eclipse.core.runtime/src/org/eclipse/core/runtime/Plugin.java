@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,7 +243,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
 	 */
 	public final URL find(IPath path) {
-		return FileLocator.find(bundle, path, null);
+		return FileLocator.find(getBundle(), path, null);
 	}
 
 	/**
@@ -261,7 +261,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
 	 */
 	public final URL find(IPath path, Map override) {
-		return FileLocator.find(bundle, path, override);
+		return FileLocator.find(getBundle(), path, override);
 	}
 
 	/**
@@ -278,7 +278,7 @@ public abstract class Plugin implements BundleActivator {
 		if (descriptor != null)
 			return descriptor;
 
-		return initializeDescriptor(bundle.getSymbolicName());
+		return initializeDescriptor(getBundle().getSymbolicName());
 	}
 
 	/**
@@ -288,7 +288,7 @@ public abstract class Plugin implements BundleActivator {
 	 * XXX change this into a LogMgr service that would keep track of the map. See if it can be a service factory.
 	 */
 	public final ILog getLog() {
-		return InternalPlatform.getDefault().getLog(bundle);
+		return InternalPlatform.getDefault().getLog(getBundle());
 	}
 
 	/**
@@ -310,7 +310,7 @@ public abstract class Plugin implements BundleActivator {
 	 *  XXX Investigate the usage of a service factory (see also platform.getStateLocation)
 	 */
 	public final IPath getStateLocation() throws IllegalStateException {
-		return InternalPlatform.getDefault().getStateLocation(bundle, true);
+		return InternalPlatform.getDefault().getStateLocation(getBundle(), true);
 	}
 
 	/**
@@ -351,19 +351,19 @@ public abstract class Plugin implements BundleActivator {
 	 * of preference values (strings, booleans, etc).
 	 */
 	public final Preferences getPluginPreferences() {
+		final Bundle bundleCopy = getBundle();
 		if (preferences != null) {
 			if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
-				InternalPlatform.message("Plugin preferences already loaded for: " + bundle.getSymbolicName()); //$NON-NLS-1$
+				InternalPlatform.message("Plugin preferences already loaded for: " + bundleCopy.getSymbolicName()); //$NON-NLS-1$
 			return preferences;
 		}
 
 		if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
-			InternalPlatform.message("Loading preferences for plugin: " + bundle.getSymbolicName()); //$NON-NLS-1$
+			InternalPlatform.message("Loading preferences for plugin: " + bundleCopy.getSymbolicName()); //$NON-NLS-1$
 
 		// Performance: isolate PreferenceForwarder into an inner class so that it mere presence
 		// won't force the PreferenceForwarder class to be loaded (which triggers Preferences plugin
 		// activation).
-		final Bundle bundleCopy = bundle;
 		final Preferences[] preferencesCopy = new Preferences[1];
 		Runnable innerCall = new Runnable() {
 			public void run() {
@@ -487,9 +487,10 @@ public abstract class Plugin implements BundleActivator {
 	 * XXX deprecate use the service and cache as needed
 	 */
 	public boolean isDebugging() {
-		if (bundle == null)
+		Bundle debugBundle = getBundle();
+		if (debugBundle == null)
 			return debug;
-		String key = bundle.getSymbolicName() + "/debug"; //$NON-NLS-1$
+		String key = debugBundle.getSymbolicName() + "/debug"; //$NON-NLS-1$
 		// first check if platform debugging is enabled
 		final DebugOptions debugOptions = getDebugOptions();
 		if (debugOptions == null)
@@ -510,7 +511,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @deprecated use {@link FileLocator#openStream(Bundle, IPath, boolean)}
 	 */
 	public final InputStream openStream(IPath file) throws IOException {
-		return FileLocator.openStream(bundle, file, false);
+		return FileLocator.openStream(getBundle(), file, false);
 	}
 
 	/**
@@ -532,7 +533,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @deprecated use {@link FileLocator#openStream(Bundle, IPath, boolean)}
 	 */
 	public final InputStream openStream(IPath file, boolean substituteArgs) throws IOException {
-		return FileLocator.openStream(bundle, file, substituteArgs);
+		return FileLocator.openStream(getBundle(), file, substituteArgs);
 	}
 
 	/**
@@ -549,11 +550,12 @@ public abstract class Plugin implements BundleActivator {
 	 * XXX deprecate use the service and cache as needed
 	 */
 	public void setDebugging(boolean value) {
-		if (bundle == null) {
+		Bundle debugBundle = getBundle();
+		if (debugBundle == null) {
 			this.debug = value;
 			return;
 		}
-		String key = bundle.getSymbolicName() + "/debug"; //$NON-NLS-1$
+		String key = debugBundle.getSymbolicName() + "/debug"; //$NON-NLS-1$
 		final DebugOptions options = getDebugOptions();
 		if (options == null)
 			this.debug = value;
@@ -571,10 +573,11 @@ public abstract class Plugin implements BundleActivator {
 	 * @return Either the DebugOptions instance or <code>null</code> if this plug-in does not have a bundle
 	 */
 	private DebugOptions getDebugOptions() {
-		if (bundle == null)
+		Bundle debugBundle = getBundle();
+		if (debugBundle == null)
 			return null;
 		if (debugTracker == null) {
-			BundleContext context = bundle.getBundleContext();
+			BundleContext context = debugBundle.getBundleContext();
 			if (context == null)
 				return null;
 			debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
@@ -697,8 +700,11 @@ public abstract class Plugin implements BundleActivator {
 	 * for debugging purposes only.
 	 */
 	public String toString() {
-		String name = bundle.getSymbolicName();
-		return name == null ? new Long(bundle.getBundleId()).toString() : name;
+		Bundle myBundle = getBundle();
+		if (myBundle == null)
+			return ""; //$NON-NLS-1$
+		String name = myBundle.getSymbolicName();
+		return name == null ? new Long(myBundle.getBundleId()).toString() : name;
 	}
 
 	/**
@@ -820,6 +826,11 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 3.0
 	 */
 	public final Bundle getBundle() {
-		return bundle;
+		if (bundle != null)
+			return bundle;
+		ClassLoader cl = getClass().getClassLoader();
+		if (cl instanceof BundleReference)
+			return ((BundleReference) cl).getBundle();
+		return null;
 	}
 }
