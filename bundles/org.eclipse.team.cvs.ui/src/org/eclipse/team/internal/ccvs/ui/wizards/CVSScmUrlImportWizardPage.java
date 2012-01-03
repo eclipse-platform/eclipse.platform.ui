@@ -231,7 +231,8 @@ public class CVSScmUrlImportWizardPage extends WizardPage implements IScmUrlImpo
 				} else if (params[k].startsWith("version=")) { //$NON-NLS-1$
 					// ignore
 				} else {
-					sb.append(params[k]);
+					if (params[k] != null && !params[k].equals("")) //$NON-NLS-1$
+						sb.append(';').append(params[k]);
 				}
 			}
 		} else {
