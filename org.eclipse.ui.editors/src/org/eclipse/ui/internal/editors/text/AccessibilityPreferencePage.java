@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -463,6 +463,11 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		fOverlayStore.loadDefaults();
 
 		initializeFields();
+
+		for (Iterator iterator= fMasterSlaveListeners.iterator(); iterator.hasNext();) {
+			SelectionListener listener= (SelectionListener)iterator.next();
+			listener.widgetSelected(null);
+		}
 
 		super.performDefaults();
 	}
