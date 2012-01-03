@@ -27,10 +27,13 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
+import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -43,6 +46,9 @@ public class ViewRegistry implements IViewRegistry {
 
 	@Inject
 	private IExtensionRegistry extensionRegistry;
+
+	@Inject
+	private IWorkbench workbench;
 
 	private Map<String, IViewDescriptor> descriptors = new HashMap<String, IViewDescriptor>();
 
@@ -98,7 +104,10 @@ public class ViewRegistry implements IViewRegistry {
 					descriptor.setContributionURI(CompatibilityPart.COMPATIBILITY_VIEW_URI);
 
 					String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-					if (iconURI != null && !iconURI.startsWith("platform:/plugin/")) { //$NON-NLS-1$
+					if (iconURI == null) {
+						descriptor.setIconURI(MenuHelper.getImageUrl(workbench.getSharedImages()
+								.getImageDescriptor(ISharedImages.IMG_DEF_VIEW)));
+					} else if (!iconURI.startsWith("platform:/plugin/")) { //$NON-NLS-1$
 						StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
 						builder.append(element.getNamespaceIdentifier()).append('/');
 
