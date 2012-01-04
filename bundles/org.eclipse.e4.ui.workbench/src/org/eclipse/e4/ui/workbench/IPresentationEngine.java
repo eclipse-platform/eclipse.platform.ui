@@ -77,6 +77,11 @@ public interface IPresentationEngine {
 	public static String MINIMIZED_BY_ZOOM = "MinimizedByZoom"; //$NON-NLS-1$
 
 	/**
+	 * This is a <b>Boolean</b> preference used to control animations in the application
+	 */
+	public static final String ANIMATIONS_ENABLED = "Animations Enabled"; //$NON-NLS-1$
+
+	/**
 	 * Creates and returns the UI element for the given model element.
 	 * 
 	 * @param element

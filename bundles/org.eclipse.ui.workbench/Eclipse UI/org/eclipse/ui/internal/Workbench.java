@@ -97,7 +97,9 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
@@ -1590,6 +1592,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	private final void initializeE4Services() {
+		// track the workbench preference and update the eclipse context with
+		// the new value
+		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS.equals(event.getProperty())) {
+					e4Context.set(IPresentationEngine.ANIMATIONS_ENABLED, event.getNewValue());
+				}
+			}
+		});
+
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {

@@ -19,6 +19,8 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.internal.workbench.swt.AnimationEngine;
+import org.eclipse.e4.ui.internal.workbench.swt.FaderAnimationFeedback;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -45,8 +47,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.AnimationEngine;
-import org.eclipse.ui.internal.FaderAnimationFeedback;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -123,7 +123,7 @@ public class MinMaxAddon {
 			MTrimBar bar = (MTrimBar) ((MUIElement) tcElement.getParent());
 			int sideVal = bar.getSide().getValue();
 			int index = bar.getChildren().indexOf(tcElement);
-			return stack.getElementId() + ' ' + sideVal + ' ' + index + "#";
+			return stack.getElementId() + ' ' + sideVal + ' ' + index + "#"; //$NON-NLS-1$
 		}
 	};
 
@@ -535,7 +535,7 @@ public class MinMaxAddon {
 		MToolControl trimStack = (MToolControl) modelService.find(trimId, window);
 		if (trimStack == null)
 			return;
-		
+
 		TrimStack ts = (TrimStack) trimStack.getObject();
 		ts.restoreStack();
 
@@ -552,7 +552,7 @@ public class MinMaxAddon {
 
 		Shell hostShell = (Shell) modelService.getTopLevelWindowFor(element).getWidget();
 		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
-		AnimationEngine engine = new AnimationEngine(fader, 300);
+		AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
 		engine.schedule();
 
 		List<String> maxTag = new ArrayList<String>();
@@ -630,7 +630,7 @@ public class MinMaxAddon {
 
 		Shell hostShell = (Shell) win.getWidget();
 		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
-		AnimationEngine engine = new AnimationEngine(fader, 300);
+		AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
 		engine.schedule();
 
 		List<MPartStack> stacks = modelService.findElements(win, null, MPartStack.class, null,
