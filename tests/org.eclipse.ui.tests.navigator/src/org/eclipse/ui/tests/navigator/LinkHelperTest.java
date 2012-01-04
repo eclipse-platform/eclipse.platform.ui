@@ -62,7 +62,8 @@ public class LinkHelperTest extends NavigatorTestBase {
 			DisplayHelper.sleep(100000000);
 	}
 
-	public void testLinkHelperEditorActivation() throws Exception {
+	// FIXME disabled for https://bugs.eclipse.org/bugs/show_bug.cgi?id=322891
+	public void XXXtestLinkHelperEditorActivation() throws Exception {
 		System.out.println("EditorActivation start");
 		
 		_commonNavigator.setLinkingEnabled(false);
