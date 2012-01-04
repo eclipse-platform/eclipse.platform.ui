@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -30,18 +31,18 @@ import org.eclipse.jface.internal.text.html.HTML2TextReader;
 import org.eclipse.jface.text.TextPresentation;
 
 
-public class HTML2TextReaderTester extends TestCase {
+public class HTML2TextReaderTest extends TestCase {
 
 	private static final boolean DEBUG= false;
 
 	private static final String LD= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	public HTML2TextReaderTester(String name) {
+	public HTML2TextReaderTest(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		return new TestSuite(HTML2TextReaderTester.class);
+		return new TestSuite(HTML2TextReaderTest.class);
 	}
 
 	private void verify(String input, String expectedOutput, int styleRangeCount) throws IOException {
@@ -121,6 +122,16 @@ public class HTML2TextReaderTester extends TestCase {
 		String string= "<p>Something.<p>Something more.";
 		String expected= LD + "Something." + LD + "Something more.";
 		verify(string, expected, 0);
+	}
+
+	public void testBug367378() throws IOException {
+		verify("<head>", "", 0);
+		verify("<head>some styles</html>", "", 0);
+
+		char[] cb= new char[20];
+		StringReader reader= new StringReader("<head>");
+		new HTML2TextReader(reader, null).read(cb);
+		assertTrue(Arrays.equals(new char[20], cb));
 	}
 
 	public void testComments() throws Exception {

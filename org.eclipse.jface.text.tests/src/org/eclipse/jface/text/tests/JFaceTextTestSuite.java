@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class JFaceTextTestSuite extends TestSuite {
 
 	public static Test suite() {
 		TestSuite suite= new TestSuite("Test Suite for org.eclipse.jface.text"); //$NON-NLS-1$
-		suite.addTest(HTML2TextReaderTester.suite());
+		suite.addTest(HTML2TextReaderTest.suite());
 		suite.addTest(TextHoverPopupTest.suite());
 		suite.addTest(TextPresentationTest.suite());
 		suite.addTest(DefaultUndoManagerTest.suite());
