@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Danail Nachev <d.nachev@gmail.com> - http://bugs.eclipse.org/348608
  *******************************************************************************/
 package org.eclipse.jface.text.link;
 
@@ -64,6 +65,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
+
 
 /**
  * The UI for linked mode. Detects events that influence behavior of the linked mode
@@ -629,12 +631,6 @@ public class LinkedModeUI {
 	private boolean fSimple;
 
 	/**
-	 * Tells whether colored labels support is enabled.
-	 * @since 3.4
-	 */
-	private boolean fIsColoredLabelsSupportEnabled= false;
-
-	/**
 	 * Creates a new UI on the given model and the set of viewers. The model
 	 * must provide a tab stop sequence with a non-empty list of tab stops.
 	 *
@@ -705,7 +701,6 @@ public class LinkedModeUI {
 		fAssistant.addProposalListener(fProposalListener);
 		// TODO find a way to set up content assistant.
 //		fAssistant.setDocumentPartitioning(IJavaPartitions.JAVA_PARTITIONING);
-		fAssistant.enableColoredLabels(fIsColoredLabelsSupportEnabled);
 		fCaretPosition.delete();
 	}
 
@@ -1286,7 +1281,7 @@ public class LinkedModeUI {
 	 * @since 3.4
 	 */
 	public void enableColoredLabels(boolean isEnabled) {
-		fIsColoredLabelsSupportEnabled= isEnabled;
+		fAssistant.enableColoredLabels(isEnabled);
 	}
 
 }
