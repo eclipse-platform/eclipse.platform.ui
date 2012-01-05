@@ -38,7 +38,7 @@ public final class Bug73756Test extends UITestCase {
 
 	private static String MESSAGE = MessageFormat.format(Util.translateString(
 			RESOURCE_BUNDLE, "undefinedCommand.WarningMessage", null), //$NON-NLS-1$
-			new String[] { CMD_ID });
+			(Object[]) new String[] { CMD_ID });
 
 	private static String PLUGIN_ID = "org.eclipse.jface";
 
