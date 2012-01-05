@@ -102,9 +102,9 @@ public class TextControlView extends ViewPart {
 
 	public void updateEnabledState() throws Exception {
 		Method method = TextActionHandler.class.getDeclaredMethod(
-				"updateActionsEnableState", null);
+				"updateActionsEnableState", (Class) null);
 		method.setAccessible(true);
-		method.invoke(delegator, null);
+		method.invoke(delegator, (Object) null);
 	}
 
 	private Action getAction(String fieldName) throws Exception {
