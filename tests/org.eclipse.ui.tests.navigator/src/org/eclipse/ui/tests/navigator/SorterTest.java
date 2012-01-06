@@ -299,9 +299,9 @@ public class SorterTest extends NavigatorTestBase {
 
 		TreeItem addedParent;
 		
-		addedParent = items[_projectInd].getItem(1);
+		addedParent = items[_projectInd].getItem(3);
 		assertEquals("BlueParent", addedParent.getText());
-		addedParent = items[_projectInd].getItem(0);
+		addedParent = items[_projectInd].getItem(2);
 		assertEquals("BlueAddedParent", addedParent.getText());
 		
 		// The sorter for TEST_CONTENT_SORTER_MODEL_OVERRIDE sorts the model
