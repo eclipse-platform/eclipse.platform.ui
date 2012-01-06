@@ -1,0 +1,2 @@
+^Revert "Bug 341259: .JFace. Add debug flag to find bad content providers that return multiple equal children"$
+^Bug 341259: .JFace. Add debug flag to find bad content providers that return multiple equal children$
