@@ -123,7 +123,7 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 
 			switch (whoknows) {
 			case BOTH_UNDERSTAND:
-				sorter = sourceOfLvalue.getSequenceNumber() > sourceOfRvalue.getSequenceNumber() ? sorterService
+				sorter = sourceOfLvalue.getSequenceNumber() < sourceOfRvalue.getSequenceNumber() ? sorterService
 						.findSorter(sourceOfLvalue, parent, e1, e2)
 						: sorterService.findSorter(sourceOfRvalue, parent, e1, e2);
 				break;
