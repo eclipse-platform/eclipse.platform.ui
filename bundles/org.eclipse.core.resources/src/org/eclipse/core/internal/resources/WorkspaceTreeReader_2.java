@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Baltasar Belyavsky (Texas Instruments) - [361675] Order mismatch when saving/restoring workspace trees
  *     Broadcom Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
@@ -95,18 +96,22 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 			readPluginsSavedStates(input, savedStates, pluginsToBeLinked, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 			workspace.getSaveManager().setPluginsSavedState(savedStates);
 
+			int treeIndex = pluginsToBeLinked.size();
+
 			List<BuilderPersistentInfo> buildersToBeLinked = new ArrayList<BuilderPersistentInfo>(20);
 			readBuildersPersistentInfo(null, input, buildersToBeLinked, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 			final ElementTree[] trees = readTrees(Path.ROOT, input, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
 			linkPluginsSavedStateToTrees(pluginsToBeLinked, trees, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-			linkBuildersToTrees(buildersToBeLinked, trees, pluginsToBeLinked.size(), Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+			linkBuildersToTrees(buildersToBeLinked, trees, treeIndex, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 			// Since 3.7: Read the per-configuration trees if available
 			if (input.available() > 0) {
+				treeIndex += buildersToBeLinked.size();
+
 				buildersToBeLinked.clear();
 				readBuildersPersistentInfo(null, input, buildersToBeLinked, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-				linkBuildersToTrees(buildersToBeLinked, trees, 0, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+				linkBuildersToTrees(buildersToBeLinked, trees, treeIndex, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 				for (Iterator<BuilderPersistentInfo> it = builderInfos.iterator(); it.hasNext();)
 					it.next().setConfigName(input.readUTF());
@@ -139,18 +144,21 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 			// Read the version 2 part of the file, but don't set the builder info in
 			// the projects. It is stored in builderInfos instead.
 
+			int treeIndex = 0;
+			
 			List<BuilderPersistentInfo> buildersToBeLinked = new ArrayList<BuilderPersistentInfo>(20);
 			readBuildersPersistentInfo(project, input, buildersToBeLinked, Policy.subMonitorFor(monitor, 1));
 
 			ElementTree[] trees = readTrees(project.getFullPath(), input, Policy.subMonitorFor(monitor, 8));
-			linkBuildersToTrees(buildersToBeLinked, trees, 0, Policy.subMonitorFor(monitor, 1));
+			linkBuildersToTrees(buildersToBeLinked, trees, treeIndex, Policy.subMonitorFor(monitor, 1));
 
 			// Since 3.7: Read the additional builder information
 			if (input.available() > 0) {
+				treeIndex += buildersToBeLinked.size();
 
 				List<BuilderPersistentInfo> infos = new ArrayList<BuilderPersistentInfo>(5);
 				readBuildersPersistentInfo(project, input, infos, Policy.subMonitorFor(monitor, 1));
-				linkBuildersToTrees(infos, trees, 0, Policy.subMonitorFor(monitor, 1));
+				linkBuildersToTrees(infos, trees, treeIndex, Policy.subMonitorFor(monitor, 1));
 
 				for (Iterator<BuilderPersistentInfo> it = builderInfos.iterator(); it.hasNext();)
 					it.next().setConfigName(input.readUTF());

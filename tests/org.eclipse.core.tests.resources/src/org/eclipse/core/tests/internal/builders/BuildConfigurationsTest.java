@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2010 Broadcom Corporation and others. All rights reserved.
+ * Copyright (c) 2010, 2012 Broadcom Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  * Broadcom Corporation - initial API and implementation
+ * Baltasar Belyavsky (Texas Instruments) - [361675] Order mismatch when saving/restoring workspace trees
  ******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
@@ -13,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.tests.resources.ResourceDeltaVerifier;
 
 /**
  * These tests exercise the project buildConfigs functionality which allows a different
@@ -114,6 +116,64 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 		incrementalBuild(4, project0, variant0, false, 0, 0);
 		incrementalBuild(5, project0, variant1, false, 0, 0);
 		incrementalBuild(6, project0, variant2, false, 0, 0);
+	}
+
+	/**
+	 * Tests that deltas are restored in the correct order per variant when a project is closed then opened.
+	 */
+	public void testCloseAndOpenProject_Bug361675() throws CoreException {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject tempProject = root.getProject("BuildVariantTest_pTemp");
+		IFile tempFile0 = tempProject.getFile("File0");
+		IFile tempFile1 = tempProject.getFile("File1");
+		IResource[] resources = {tempProject, tempFile0, tempFile1};
+		ensureExistsInWorkspace(resources, true);
+		setupProject(tempProject);
+
+		try {
+			ConfigurationBuilder.clearStats();
+
+			tempFile0.setContents(getRandomContents(), true, true, getMonitor());
+			tempFile1.setContents(getRandomContents(), true, true, getMonitor());
+			incrementalBuild(1, tempProject, variant0, true, 1, IncrementalProjectBuilder.FULL_BUILD);
+			incrementalBuild(2, tempProject, variant1, true, 1, IncrementalProjectBuilder.FULL_BUILD);
+			incrementalBuild(3, tempProject, variant2, true, 1, IncrementalProjectBuilder.FULL_BUILD);
+
+			tempFile0.setContents(getRandomContents(), true, true, getMonitor());
+			incrementalBuild(4, tempProject, variant1, true, 2, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+
+			tempFile1.setContents(getRandomContents(), true, true, getMonitor());
+			incrementalBuild(5, tempProject, variant2, true, 2, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+
+			tempProject.close(getMonitor());
+			ConfigurationBuilder.clearStats();
+			tempProject.open(getMonitor());
+
+			// verify variant0 - both File0 and File1 are expected to have changed since it was last built
+			incrementalBuild(6, tempProject, variant0, true, 1, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+			ConfigurationBuilder builder0 = ConfigurationBuilder.getBuilder(tempProject.getBuildConfig(variant0));
+			assertNotNull("6.10", builder0);
+			ResourceDeltaVerifier verifier0 = new ResourceDeltaVerifier();
+			verifier0.addExpectedChange(tempFile0, tempProject, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+			verifier0.addExpectedChange(tempFile1, tempProject, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+			verifier0.verifyDelta(builder0.deltaForLastBuild);
+			assertTrue("6.11: " + verifier0.getMessage(), verifier0.isDeltaValid());
+
+			// verify variant1 - only File1 is expected to have changed since it was last built
+			incrementalBuild(7, tempProject, variant1, true, 1, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+			ConfigurationBuilder builder1 = ConfigurationBuilder.getBuilder(tempProject.getBuildConfig(variant1));
+			assertNotNull("7.10", builder1);
+			ResourceDeltaVerifier verifier1 = new ResourceDeltaVerifier();
+			verifier1.addExpectedChange(tempFile1, tempProject, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+			verifier1.verifyDelta(builder1.deltaForLastBuild);
+			assertTrue("7.11: " + verifier1.getMessage(), verifier1.isDeltaValid());
+
+			// verify variant2 - no changes are expected since it was last built
+			incrementalBuild(8, tempProject, variant2, false, 0, 0);
+
+		} finally {
+			tempProject.delete(true, getMonitor());
+		}
 	}
 
 	/**

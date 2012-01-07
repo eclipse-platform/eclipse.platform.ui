@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,10 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
- * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
- * Broadcom Corporation - ongoing development
+ *     Francis Lynch (Wind River) - [301563] Save and load tree snapshots
+ *     Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
+ *     Baltasar Belyavsky (Texas Instruments) - [361675] Order mismatch when saving/restoring workspace trees
+ *     Broadcom Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -1822,11 +1823,12 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * @param trees list of trees to be persisted
 	 * @param builderInfos list of builder infos; one per builder 
 	 * @param configNames configuration names persisted for builder infos above
-	 * @param additionalBuilderInfos remaining trees to be persisted for other configurations
+	 * @param additionalTrees remaining trees to be persisted for other configurations
+	 * @param additionalBuilderInfos remaining builder infos for other configurations
 	 * @param additionalConfigNames configuration names of the remaining per-configuration trees
 	 * @throws CoreException
 	 */
-	private void getTreesToSave(IProject project, List<ElementTree> trees, List<BuilderPersistentInfo> builderInfos, List<String> configNames, List<BuilderPersistentInfo> additionalBuilderInfos, List<String> additionalConfigNames) throws CoreException {
+	private void getTreesToSave(IProject project, List<ElementTree> trees, List<BuilderPersistentInfo> builderInfos, List<String> configNames, List<ElementTree> additionalTrees, List<BuilderPersistentInfo> additionalBuilderInfos, List<String> additionalConfigNames) throws CoreException {
 		if (project.isOpen()) {
 			String activeConfigName = project.getActiveBuildConfig().getName();
 			List<BuilderPersistentInfo> infos = workspace.getBuildManager().createBuildersPersistentInfo(project);
@@ -1846,13 +1848,12 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 						// TODO could probably do better by serializing the 'oldest' tree
 						builderInfos.add(info);
 						configNames.add(configName);
+						trees.add(info.getLastBuiltTree());
 					} else {
 						additionalBuilderInfos.add(info);
 						additionalConfigNames.add(configName);
+						additionalTrees.add(info.getLastBuiltTree());
 					}
-					// Add the builder's tree
-					ElementTree tree = info.getLastBuiltTree();
-					trees.add(tree);
 				}
 			}
 		}
@@ -1906,14 +1907,19 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 				List<BuilderPersistentInfo> builderInfos = new ArrayList<BuilderPersistentInfo>(projects.length * 2);
 				List<String> configNames = new ArrayList<String>(projects.length);
+				List<ElementTree> additionalTrees = new ArrayList<ElementTree>(projects.length * 2);
 				List<BuilderPersistentInfo> additionalBuilderInfos = new ArrayList<BuilderPersistentInfo>(projects.length * 2);
 				List<String> additionalConfigNames = new ArrayList<String>(projects.length);
 				for (int i = 0; i < projects.length; i++)
-					getTreesToSave(projects[i], trees, builderInfos, configNames, additionalBuilderInfos, additionalConfigNames);
+					getTreesToSave(projects[i], trees, builderInfos, configNames, additionalTrees, additionalBuilderInfos, additionalConfigNames);
 
 				// Save the version 2 builders info
 				writeBuilderPersistentInfo(output, builderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
 
+				// Builder infos of non-active configurations are persisted after the active 
+				// configuration's builder infos. So, their trees have to follow the same order.
+				trees.addAll(additionalTrees);
+				
 				// add the current tree in the list as the last tree in the chain
 				trees.add(current);
 
@@ -1976,10 +1982,15 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				List<BuilderPersistentInfo> builderInfos = new ArrayList<BuilderPersistentInfo>(5);
 				List<String> additionalConfigNames = new ArrayList<String>(5);
 				List<BuilderPersistentInfo> additionalBuilderInfos = new ArrayList<BuilderPersistentInfo>(5);
-				getTreesToSave(project, trees, builderInfos, configNames, additionalBuilderInfos, additionalConfigNames);
+				List<ElementTree> additionalTrees = new ArrayList<ElementTree>(5);
+				getTreesToSave(project, trees, builderInfos, configNames, additionalTrees, additionalBuilderInfos, additionalConfigNames);
 
 				// Save the version 2 builders info
 				writeBuilderPersistentInfo(output, builderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 20 / 100));
+
+				// Builder infos of non-active configurations are persisted after the active 
+				// configuration's builder infos. So, their trees have to follow the same order.
+				trees.addAll(additionalTrees);
 
 				// Add the current tree in the list as the last tree in the chain
 				trees.add(current);
