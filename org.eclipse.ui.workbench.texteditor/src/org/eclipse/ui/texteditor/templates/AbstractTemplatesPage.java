@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Dakshinamurthy Karra, IBM Corporation and others.
+ * Copyright (c) 2007, 2012 Dakshinamurthy Karra, IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1333,7 +1333,8 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Edits the selected template.
 	 */
 	private void editTemplate() {
-		Template oldTemplate= getSelectedTemplates()[0].getTemplate();
+		TemplatePersistenceData selectedTemplate= getSelectedTemplates()[0];
+		Template oldTemplate= selectedTemplate.getTemplate();
 		Template newTemplate= editTemplate(new Template(oldTemplate), true, true);
 		if (newTemplate != null) {
 			if (!newTemplate.getName().equals(oldTemplate.getName())
@@ -1346,7 +1347,8 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				refresh();
 				fTreeViewer.setSelection(new StructuredSelection(templateData), true);
 			} else {
-				getSelectedTemplates()[0].setTemplate(newTemplate);
+				selectedTemplate.setTemplate(newTemplate);
+				updatePatternViewer(newTemplate);
 			}
 		}
 		saveTemplateStore();
