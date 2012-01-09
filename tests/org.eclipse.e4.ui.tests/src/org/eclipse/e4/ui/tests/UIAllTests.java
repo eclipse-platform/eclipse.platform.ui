@@ -22,7 +22,6 @@ import org.eclipse.e4.ui.tests.application.ResourceHandlerTest;
 import org.eclipse.e4.ui.tests.application.StartupTestSuite;
 import org.eclipse.e4.ui.tests.reconciler.ModelReconcilerTestSuite;
 import org.eclipse.e4.ui.tests.workbench.Bug308317Test;
-import org.eclipse.e4.ui.tests.workbench.Bug318460Test;
 import org.eclipse.e4.ui.tests.workbench.ContextTest;
 import org.eclipse.e4.ui.tests.workbench.HandlerTest;
 import org.eclipse.e4.ui.tests.workbench.InjectionEventTest;
@@ -49,7 +48,6 @@ public class UIAllTests extends TestSuite {
 		addTest(StartupTestSuite.suite());
 		addTestSuite(Bug299755Test.class);
 		addTestSuite(Bug308220Test.class);
-		addTestSuite(Bug318460Test.class);
 		addTestSuite(Bug320857Test.class);
 		addTestSuite(PartRenderingEngineTests.class);
 		addTestSuite(SashRendererTest.class);

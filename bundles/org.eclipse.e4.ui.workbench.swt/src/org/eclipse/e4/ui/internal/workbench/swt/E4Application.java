@@ -24,11 +24,8 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -37,7 +34,6 @@ import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.ILoggerProvider;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.core.services.translation.TranslationProviderFactory;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.di.UISynchronize;
@@ -53,11 +49,8 @@ import org.eclipse.e4.ui.internal.workbench.ResourceHandler;
 import org.eclipse.e4.ui.internal.workbench.WorkbenchLogger;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.MContext;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
@@ -72,7 +65,6 @@ import org.eclipse.e4.ui.workbench.lifecycle.PreSave;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 import org.eclipse.emf.common.util.URI;
@@ -495,77 +487,78 @@ public class E4Application implements IApplication {
 		// setup for commands and handlers
 		appContext.set(IServiceConstants.ACTIVE_PART,
 				new ActivePartLookupFunction());
-		appContext.set(EPartService.PART_SERVICE_ROOT, new ContextFunction() {
-			private void log() {
-				StatusReporter statusReporter = (StatusReporter) appContext
-						.get(StatusReporter.class.getName());
-				statusReporter.report(new Status(IStatus.ERROR,
-						WorkbenchSWTActivator.PI_RENDERERS,
-						"Internal error, please post the trace to bug 315270",
-						new Exception()), StatusReporter.LOG);
-			}
-
-			@Override
-			public Object compute(IEclipseContext context) {
-				MContext perceivedRoot = (MContext) context.get(MWindow.class
-						.getName());
-				if (perceivedRoot == null) {
-					perceivedRoot = (MContext) context.get(MApplication.class
-							.getName());
-					if (perceivedRoot == null) {
-						IEclipseContext ctxt = appContext.getActiveChild();
-						if (ctxt == null) {
-							return null;
-						}
-						log();
-						return ctxt.get(MWindow.class);
-					}
-				}
-
-				IEclipseContext current = perceivedRoot.getContext();
-				if (current == null) {
-					IEclipseContext ctxt = appContext.getActiveChild();
-					if (ctxt == null) {
-						return null;
-					}
-					log();
-					return ctxt.get(MWindow.class);
-				}
-
-				IEclipseContext next = current.getActiveChild();
-				MPerspective candidate = null;
-				while (next != null) {
-					current = next;
-					MPerspective perspective = current.get(MPerspective.class);
-					if (perspective != null) {
-						candidate = perspective;
-					}
-					next = current.getActiveChild();
-				}
-
-				if (candidate != null) {
-					return candidate;
-				}
-
-				// we need to consider detached windows
-				MUIElement window = (MUIElement) current.get(MWindow.class
-						.getName());
-				if (window == null) {
-					IEclipseContext ctxt = appContext.getActiveChild();
-					if (ctxt == null) {
-						return null;
-					}
-					log();
-					return ctxt.get(MWindow.class);
-				}
-				MElementContainer<?> parent = window.getParent();
-				while (parent != null && !(parent instanceof MApplication)) {
-					window = parent;
-					parent = parent.getParent();
-				}
-				return window;
-			}
-		});
+		// appContext.set(EPartService.PART_SERVICE_ROOT, new ContextFunction()
+		// {
+		// private void log() {
+		// StatusReporter statusReporter = (StatusReporter) appContext
+		// .get(StatusReporter.class.getName());
+		// statusReporter.report(new Status(IStatus.ERROR,
+		// WorkbenchSWTActivator.PI_RENDERERS,
+		// "Internal error, please post the trace to bug 315270",
+		// new Exception()), StatusReporter.LOG);
+		// }
+		//
+		// @Override
+		// public Object compute(IEclipseContext context) {
+		// MContext perceivedRoot = (MContext) context.get(MWindow.class
+		// .getName());
+		// if (perceivedRoot == null) {
+		// perceivedRoot = (MContext) context.get(MApplication.class
+		// .getName());
+		// if (perceivedRoot == null) {
+		// IEclipseContext ctxt = appContext.getActiveChild();
+		// if (ctxt == null) {
+		// return null;
+		// }
+		// log();
+		// return ctxt.get(MWindow.class);
+		// }
+		// }
+		//
+		// IEclipseContext current = perceivedRoot.getContext();
+		// if (current == null) {
+		// IEclipseContext ctxt = appContext.getActiveChild();
+		// if (ctxt == null) {
+		// return null;
+		// }
+		// log();
+		// return ctxt.get(MWindow.class);
+		// }
+		//
+		// IEclipseContext next = current.getActiveChild();
+		// MPerspective candidate = null;
+		// while (next != null) {
+		// current = next;
+		// MPerspective perspective = current.get(MPerspective.class);
+		// if (perspective != null) {
+		// candidate = perspective;
+		// }
+		// next = current.getActiveChild();
+		// }
+		//
+		// if (candidate != null) {
+		// return candidate;
+		// }
+		//
+		// // we need to consider detached windows
+		// MUIElement window = (MUIElement) current.get(MWindow.class
+		// .getName());
+		// if (window == null) {
+		// IEclipseContext ctxt = appContext.getActiveChild();
+		// if (ctxt == null) {
+		// return null;
+		// }
+		// log();
+		// return ctxt.get(MWindow.class);
+		// }
+		// MElementContainer<?> parent = window.getParent();
+		// while (parent != null && !(parent instanceof MApplication)) {
+		// window = parent;
+		// parent = parent.getParent();
+		// }
+		// return window;
+		// }
+		// });
 
 		appContext.set(IServiceConstants.ACTIVE_SHELL,
 				new ActiveChildLookupFunction(IServiceConstants.ACTIVE_SHELL,
