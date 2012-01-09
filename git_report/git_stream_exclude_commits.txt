@@ -1,2 +1,4 @@
-^Revert "Bug 341259: .JFace. Add debug flag to find bad content providers that return multiple equal children"$
-^Bug 341259: .JFace. Add debug flag to find bad content providers that return multiple equal children$
+::1ccf0d32d8e29feb6145544e676e7185652bc28b::
+::cd262b7e5c739d251c551733085fd564376269be::
+::6d60bca262d8fbc2593d38e7d959b463f864d0ee::
+::5db1133ff083b9681fc1be6e85c4edf6a19b99ca::
