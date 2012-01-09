@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
-import junit.framework.TestCase;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.contributions.IContributionFactory;
-import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
-import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -25,51 +19,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 
-public class EModelServiceTest extends TestCase {
-
-	private IEclipseContext applicationContext;
-
-	private IPresentationEngine engine;
-
-	@Override
-	protected void setUp() throws Exception {
-		applicationContext = E4Application.createDefaultContext();
-		super.setUp();
-	}
-
-	protected String getEngineURI() {
-		return "platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		applicationContext.dispose();
-	}
-
-	private IPresentationEngine getEngine() {
-		if (engine == null) {
-			IContributionFactory contributionFactory = (IContributionFactory) applicationContext
-					.get(IContributionFactory.class.getName());
-			Object newEngine = contributionFactory.create(getEngineURI(),
-					applicationContext);
-			assertTrue(newEngine instanceof IPresentationEngine);
-			applicationContext.set(IPresentationEngine.class.getName(),
-					newEngine);
-
-			engine = (IPresentationEngine) newEngine;
-		}
-		return engine;
-	}
+public class EModelServiceTest extends UITest {
 
 	public void testGetPerspectiveFor_RegularElement() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		application.setContext(applicationContext);
-
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -99,10 +53,6 @@ public class EModelServiceTest extends TestCase {
 	}
 
 	public void testGetPerspectiveFor_SharedElement() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		application.setContext(applicationContext);
-
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -137,10 +87,6 @@ public class EModelServiceTest extends TestCase {
 	}
 
 	public void testGetPerspectiveFor_SharedElement2() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		application.setContext(applicationContext);
-
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -180,10 +126,6 @@ public class EModelServiceTest extends TestCase {
 	}
 
 	public void testBringToTop01() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		application.setContext(applicationContext);
-
 		MWindow windowA = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(windowA);
 		application.setSelectedElement(windowA);
@@ -206,10 +148,6 @@ public class EModelServiceTest extends TestCase {
 	}
 
 	public void testBringToTop02() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		application.setContext(applicationContext);
-
 		MWindow windowA = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(windowA);
 		application.setSelectedElement(windowA);
@@ -236,10 +174,6 @@ public class EModelServiceTest extends TestCase {
 	}
 
 	public void testBringToTop_Bug334411() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		application.setContext(applicationContext);
-
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);

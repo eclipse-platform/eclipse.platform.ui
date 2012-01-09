@@ -447,47 +447,50 @@ public class E4Application implements IApplication {
 		}
 	}
 
-	// FIXME We should have one place to setup the generic context stuff (see
-	// E4Application#createDefaultContext())
-	public static IEclipseContext createDefaultContext() {
-		// FROM: WorkbenchApplication
-		// parent of the global workbench context is an OSGi service
-		// context that can provide OSGi services
+	// TODO This should go into a different bundle
+	public static IEclipseContext createDefaultHeadlessContext() {
 		IEclipseContext serviceContext = E4Workbench.getServiceContext();
-		final IEclipseContext appContext = serviceContext
-				.createChild("WorkbenchContext"); //$NON-NLS-1$
 
-		// FROM: Workbench#createWorkbenchContext
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		ExceptionHandler exceptionHandler = new ExceptionHandler();
 		ReflectionContributionFactory contributionFactory = new ReflectionContributionFactory(
 				registry);
-		appContext.set(IContributionFactory.class.getName(),
-				contributionFactory);
+		serviceContext.set(IContributionFactory.class, contributionFactory);
+		serviceContext.set(IExceptionHandler.class, exceptionHandler);
+		serviceContext.set(IExtensionRegistry.class, registry);
+
+		// translation
+		String locale = Locale.getDefault().toString();
+		serviceContext.set(TranslationService.LOCALE, locale);
+		TranslationService bundleTranslationProvider = TranslationProviderFactory
+				.bundleTranslationService(serviceContext);
+		serviceContext.set(TranslationService.class, bundleTranslationProvider);
+
+		serviceContext.set(Adapter.class, ContextInjectionFactory.make(
+				EclipseAdapter.class, serviceContext));
+
+		// No default log provider available
+		if (serviceContext.get(ILoggerProvider.class) == null) {
+			serviceContext.set(ILoggerProvider.class, ContextInjectionFactory
+					.make(DefaultLoggerProvider.class, serviceContext));
+		}
+
+		return serviceContext;
+	}
+
+	// TODO This should go into a different bundle
+	public static IEclipseContext createDefaultContext() {
+		IEclipseContext serviceContext = createDefaultHeadlessContext();
+		final IEclipseContext appContext = serviceContext
+				.createChild("WorkbenchContext"); //$NON-NLS-1$
 
 		appContext
-				.set(Logger.class.getName(), ContextInjectionFactory.make(
+				.set(Logger.class, ContextInjectionFactory.make(
 						WorkbenchLogger.class, appContext));
 
 		appContext.set(EModelService.class, new ModelServiceImpl(appContext));
 
 		appContext.set(EPlaceholderResolver.class, new PlaceholderResolver());
-
-		// translation
-		String locale = Locale.getDefault().toString();
-		appContext.set(TranslationService.LOCALE, locale);
-		TranslationService bundleTranslationProvider = TranslationProviderFactory
-				.bundleTranslationService(appContext);
-		appContext.set(TranslationService.class, bundleTranslationProvider);
-
-		appContext.set(Adapter.class.getName(),
-				ContextInjectionFactory.make(EclipseAdapter.class, appContext));
-
-		// No default log provider available
-		if (appContext.get(ILoggerProvider.class) == null) {
-			appContext.set(ILoggerProvider.class, ContextInjectionFactory.make(
-					DefaultLoggerProvider.class, appContext));
-		}
 
 		// setup for commands and handlers
 		appContext.set(IServiceConstants.ACTIVE_PART,
@@ -564,43 +567,11 @@ public class E4Application implements IApplication {
 			}
 		});
 
-		// EHandlerService comes from a ContextFunction
-		// EContextService comes from a ContextFunction
-		appContext.set(IExceptionHandler.class.getName(), exceptionHandler);
-		appContext.set(IExtensionRegistry.class.getName(), registry);
-		// appContext.set(IServiceConstants.SELECTION,
-		// new ActiveChildOutputFunction(IServiceConstants.SELECTION));
-
-		// appContext.set(IServiceConstants.INPUT, new ContextFunction() {
-		// public Object compute(IEclipseContext context, Object[] arguments) {
-		// Class adapterType = null;
-		// if (arguments.length > 0 && arguments[0] instanceof Class) {
-		// adapterType = (Class) arguments[0];
-		// }
-		// Object newInput = null;
-		// Object newValue = context.get(IServiceConstants.SELECTION);
-		// if (adapterType == null || adapterType.isInstance(newValue)) {
-		// newInput = newValue;
-		// } else if (newValue != null && adapterType != null) {
-		// IAdapterManager adapters = (IAdapterManager) appContext
-		// .get(IAdapterManager.class.getName());
-		// if (adapters != null) {
-		// Object adapted = adapters.loadAdapter(newValue,
-		// adapterType.getName());
-		// if (adapted != null) {
-		// newInput = adapted;
-		// }
-		// }
-		// }
-		// return newInput;
-		// }
-		// });
 		appContext.set(IServiceConstants.ACTIVE_SHELL,
 				new ActiveChildLookupFunction(IServiceConstants.ACTIVE_SHELL,
 						E4Workbench.LOCAL_ACTIVE_SHELL));
 
-		// FROM: Workbench#initializeNullStyling
-		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
+		appContext.set(IStylingEngine.class, new IStylingEngine() {
 			public void setClassname(Object widget, String classname) {
 			}
 
@@ -619,13 +590,7 @@ public class E4Application implements IApplication {
 			}
 		});
 
-		// FROM: Workbench constructor
-		// workbenchContext.set(Workbench.class.getName(), this);
-		// workbenchContext.set(IWorkbench.class.getName(), this);
-		appContext.set(IExtensionRegistry.class.getName(), registry);
-		appContext.set(IContributionFactory.class.getName(),
-				contributionFactory);
-		appContext.set(IShellProvider.class.getName(), new IShellProvider() {
+		appContext.set(IShellProvider.class, new IShellProvider() {
 			public Shell getShell() {
 				return null;
 			}

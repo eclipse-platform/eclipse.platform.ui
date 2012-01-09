@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.tests.application;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,13 +21,10 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.UIEventPublisher;
-import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -38,55 +34,15 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
 import org.eclipse.emf.common.notify.Notifier;
 
-public class ESelectionServiceTest extends TestCase {
-
-	private IEclipseContext applicationContext;
-
-	private IPresentationEngine engine;
-
-	@Override
-	protected void setUp() throws Exception {
-		applicationContext = E4Application.createDefaultContext();
-
-		super.setUp();
-	}
-
-	protected String getEngineURI() {
-		return "platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		applicationContext.dispose();
-	}
-
-	private IPresentationEngine getEngine() {
-		if (engine == null) {
-			IContributionFactory contributionFactory = (IContributionFactory) applicationContext
-					.get(IContributionFactory.class.getName());
-			Object newEngine = contributionFactory.create(getEngineURI(),
-					applicationContext);
-			assertTrue(newEngine instanceof IPresentationEngine);
-			applicationContext.set(IPresentationEngine.class.getName(),
-					newEngine);
-
-			engine = (IPresentationEngine) newEngine;
-		}
-
-		return engine;
-	}
+public class ESelectionServiceTest extends UITest {
 
 	public void testGetSelection() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -100,7 +56,7 @@ public class ESelectionServiceTest extends TestCase {
 		partB.setElementId("partB"); //$NON-NLS-1$
 		window.getChildren().add(partB);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext contextA = partA.getContext();
@@ -139,8 +95,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testGetSelection_Id() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -154,7 +108,7 @@ public class ESelectionServiceTest extends TestCase {
 		partB.setElementId("partB"); //$NON-NLS-1$
 		window.getChildren().add(partB);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext contextA = partA.getContext();
@@ -191,8 +145,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testSelectionListener() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -206,7 +158,7 @@ public class ESelectionServiceTest extends TestCase {
 		partB.setElementId("partB"); //$NON-NLS-1$
 		window.getChildren().add(partB);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext contextB = partB.getContext();
@@ -248,8 +200,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testSelectionListener2() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -263,7 +213,7 @@ public class ESelectionServiceTest extends TestCase {
 		partB.setElementId("partB"); //$NON-NLS-1$
 		window.getChildren().add(partB);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext contextA = partA.getContext();
@@ -324,8 +274,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testSelectionListener3() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -339,7 +287,7 @@ public class ESelectionServiceTest extends TestCase {
 		partB.setElementId("partB"); //$NON-NLS-1$
 		window.getChildren().add(partB);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext contextA = partA.getContext();
@@ -383,13 +331,11 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testBug314538() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext windowContext = window.getContext();
@@ -451,8 +397,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testSelectionListener_Id() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -466,7 +410,7 @@ public class ESelectionServiceTest extends TestCase {
 		partB.setElementId("partB"); //$NON-NLS-1$
 		window.getChildren().add(partB);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext contextA = partA.getContext();
@@ -520,8 +464,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testSelectionListener_Id2() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -535,7 +477,7 @@ public class ESelectionServiceTest extends TestCase {
 		partB.setElementId("partB"); //$NON-NLS-1$
 		window.getChildren().add(partB);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext contextB = partB.getContext();
@@ -566,8 +508,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testSelectionListener_Id3() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -587,7 +527,7 @@ public class ESelectionServiceTest extends TestCase {
 		partStack.setSelectedElement(partB);
 		window.getChildren().add(partStack);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext windowContext = window.getContext();
@@ -660,8 +600,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testOnePartSelection() throws Exception {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -670,7 +608,7 @@ public class ESelectionServiceTest extends TestCase {
 		window.getChildren().add(part);
 		window.setSelectedElement(part);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		ProviderPart p = new ProviderPart();
@@ -687,8 +625,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testTwoPartHandlerExecute() throws Exception {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -699,7 +635,7 @@ public class ESelectionServiceTest extends TestCase {
 		window.getChildren().add(partB);
 		window.setSelectedElement(partA);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext windowContext = window.getContext();
@@ -764,8 +700,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testThreePartSelection() throws Exception {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -778,7 +712,7 @@ public class ESelectionServiceTest extends TestCase {
 		window.getChildren().add(partC);
 		window.setSelectedElement(partA);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext windowContext = window.getContext();
@@ -834,8 +768,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testPartOneTracksPartThree() throws Exception {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -849,7 +781,7 @@ public class ESelectionServiceTest extends TestCase {
 		window.getChildren().add(partC);
 		window.setSelectedElement(partA);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		final IEclipseContext partContextA = partA.getContext();
@@ -905,8 +837,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testPartOneTracksPartThree2() throws Exception {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -920,7 +850,7 @@ public class ESelectionServiceTest extends TestCase {
 		window.getChildren().add(partC);
 		window.setSelectedElement(partA);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		final IEclipseContext partContextA = partA.getContext();
@@ -994,8 +924,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testInjection() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -1006,7 +934,7 @@ public class ESelectionServiceTest extends TestCase {
 		window.getChildren().add(partB);
 		window.setSelectedElement(partA);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		IEclipseContext windowContext = window.getContext();
@@ -1049,8 +977,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testBug343003() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -1069,7 +995,7 @@ public class ESelectionServiceTest extends TestCase {
 		perspective.getChildren().add(partA);
 		perspective.setSelectedElement(partA);
 
-		initialize(applicationContext, application);
+		initialize();
 		getEngine().createGui(window);
 
 		window.getContext().get(EPartService.class).activate(partA);
@@ -1099,8 +1025,6 @@ public class ESelectionServiceTest extends TestCase {
 	}
 
 	public void testBug343984() throws Exception {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
@@ -1109,7 +1033,7 @@ public class ESelectionServiceTest extends TestCase {
 		window.getChildren().add(part);
 		window.setSelectedElement(part);
 
-		initialize(applicationContext, application);
+		initialize();
 		applicationContext.set(UISynchronize.class, new JobUISynchronizeImpl());
 		getEngine().createGui(window);
 
@@ -1130,8 +1054,7 @@ public class ESelectionServiceTest extends TestCase {
 		assertTrue(listener.success);
 	}
 
-	private void initialize(IEclipseContext applicationContext,
-			MApplication application) {
+	private void initialize() {
 		applicationContext.set(MApplication.class.getName(), application);
 		applicationContext.set(UISynchronize.class, new UISynchronize() {
 			@Override
