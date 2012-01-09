@@ -73,7 +73,6 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -508,12 +507,6 @@ public class E4Application implements IApplication {
 
 			public void setClassnameAndId(Object widget, String classname,
 					String id) {
-			}
-		});
-
-		appContext.set(IShellProvider.class, new IShellProvider() {
-			public Shell getShell() {
-				return null;
 			}
 		});
 
