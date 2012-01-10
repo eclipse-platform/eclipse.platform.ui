@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.internal.testing.ContributionInfoMessages;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
@@ -32,9 +33,11 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
+import org.eclipse.ui.internal.testing.ContributionInfoMessages;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
@@ -105,18 +108,26 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 		if (view != null) {
 			// Free action bars, pane, etc.
 			PartSite site = (PartSite) view.getSite();
-			ViewActionBars actionBars = (ViewActionBars) site.getActionBars();
+			IActionBars actionBars = site.getActionBars();
 			//
 			// 3.3 start
 			//
+
 			IMenuService menuService = (IMenuService) site
 					.getService(IMenuService.class);
-			menuService.releaseContributions((ContributionManager) site.getActionBars()
-					.getMenuManager());
-			menuService.releaseContributions((ContributionManager) site.getActionBars()
-					.getToolBarManager());
+			IMenuManager menuManager = actionBars.getMenuManager();
+			if (menuManager instanceof ContributionManager) {
+				menuService.releaseContributions((ContributionManager) menuManager);
+			}
+			IToolBarManager toolBarManager = actionBars.getToolBarManager();
+			if(toolBarManager instanceof ContributionManager)
+			{
+				menuService.releaseContributions((ContributionManager) toolBarManager);
+			}
 			// 3.3 end
-			actionBars.dispose();
+			if (actionBars instanceof SubActionBars) {
+				((SubActionBars) actionBars).dispose();
+			}
 			
 			// and now dispose the delegates since the
 			// PluginActionContributionItem
