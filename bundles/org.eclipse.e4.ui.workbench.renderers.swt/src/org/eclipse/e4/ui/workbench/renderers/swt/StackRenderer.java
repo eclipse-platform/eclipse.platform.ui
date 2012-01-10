@@ -849,7 +849,7 @@ public class StackRenderer extends LazyStackRenderer {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-		if (!(menu.getData() instanceof MenuManager)) {
+		if (!menu.isDisposed() && !(menu.getData() instanceof MenuManager)) {
 			menu.dispose();
 		}
 	}
