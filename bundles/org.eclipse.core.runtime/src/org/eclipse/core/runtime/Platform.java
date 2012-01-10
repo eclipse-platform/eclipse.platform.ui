@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.internal.runtime.auth.AuthorizationHandler;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
@@ -439,7 +438,6 @@ public final class Platform {
 	private static final String LINE_SEPARATOR_VALUE_LF = "\n"; //$NON-NLS-1$
 	private static final String LINE_SEPARATOR_VALUE_CRLF = "\r\n"; //$NON-NLS-1$
 	
-	private static boolean authNotAvailableLogged = false;
 
 	/**
 	 * Private constructor to block instance creation.
@@ -480,12 +478,7 @@ public final class Platform {
 	 * Consider using <code>ISecurePreferences#put(String, String, boolean)</code> as a replacement of this method.
 	 */
 	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
-		try {
-			AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
-		} catch (NoClassDefFoundError e) {
-			// The authorization code is not available so just log and continue
-			logAuthNotAvailable(e);
-		}
+		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
 	}
 
 	/** 
@@ -526,12 +519,7 @@ public final class Platform {
 	 * for data access and modifications.  
 	 */
 	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
-		try {
-			AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
-		} catch (NoClassDefFoundError e) {
-			// The authorization code is not available so just log and continue
-			logAuthNotAvailable(e);
-		}
+		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
 	}
 
 	/**
@@ -593,19 +581,7 @@ public final class Platform {
 	 * Consider using <code>ISecurePreferences#clear()</code> as a replacement of this method.
 	 */
 	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
-		try {
-			AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
-		} catch (NoClassDefFoundError e) {
-			// The authorization code is not available so just log and continue
-			logAuthNotAvailable(e);
-		}
-	}
-
-	private static void logAuthNotAvailable(Throwable e) {
-		if(authNotAvailableLogged)
-			return;
-		authNotAvailableLogged = true;
-		InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, Messages.auth_notAvailable, e));
+		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
 	}
 
 	/**
@@ -642,13 +618,7 @@ public final class Platform {
 	 * Consider using <code>ISecurePreferences#get(String, String)</code> as a replacement of this method.
 	 */
 	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		try {
-			return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
-		} catch (NoClassDefFoundError e) {
-			// The authorization code is not available so just log and continue
-			logAuthNotAvailable(e);
-		}
-		return null;
+		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
 	}
 
 	/**
@@ -828,13 +798,7 @@ public final class Platform {
 	 * for data access and modifications.  
 	 */
 	public static String getProtectionSpace(URL resourceUrl) {
-		try {
-			return AuthorizationHandler.getProtectionSpace(resourceUrl);
-		} catch (NoClassDefFoundError e) {
-			// The authorization code is not available so just log and continue
-			logAuthNotAvailable(e);
-		}
-		return null;
+		return AuthorizationHandler.getProtectionSpace(resourceUrl);
 	}
 
 	/** 

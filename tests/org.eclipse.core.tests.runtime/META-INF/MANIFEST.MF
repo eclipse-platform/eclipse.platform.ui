@@ -18,7 +18,6 @@ Export-Package: org.eclipse.core.tests.internal.preferences,
 Require-Bundle: org.eclipse.core.tests.harness;bundle-version="3.4.0",
  org.junit,
  org.eclipse.test.performance;resolution:=optional,
- org.eclipse.core.runtime.compatibility.auth,
  org.eclipse.core.runtime.compatibility
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
