@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.elements.adapters;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -55,7 +56,12 @@ public class WatchExpressionCellModifier implements ICellModifier {
 					    // characters escaped properly
 						String expressionText = DefaultLabelProvider.encodeEsacpedChars((String)value);
 						IWatchExpression expression = (IWatchExpression) element;
-						expression.setExpressionText(expressionText);
+						// Bug 345974 see ExpressionManagerContentProvider.AddNewExpressionElement.modify does not allow an empty string
+						if (expressionText.trim().length() > 0) {
+							expression.setExpressionText(expressionText);
+						} else {
+							DebugPlugin.getDefault().getExpressionManager().removeExpression(expression);
+						}
 					}
 				}
 	        }
