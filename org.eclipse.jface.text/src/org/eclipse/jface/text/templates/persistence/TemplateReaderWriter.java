@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.w3c.dom.Text;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.templates.Template;
+
 
 /**
  * Serializes templates as character or byte stream and reads the same format
@@ -210,13 +211,7 @@ public class TemplateReaderWriter {
 		} catch (ParserConfigurationException e) {
 			Assert.isTrue(false);
 		} catch (SAXException e) {
-			Throwable t= e.getCause();
-			if (t instanceof IOException)
-				throw (IOException) t;
-			else if (t != null)
-				throw new IOException(t.getMessage());
-			else
-				throw new IOException(e.getMessage());
+			throw (IOException)new IOException("Could not read template file").initCause(e); //$NON-NLS-1$
 		}
 
 		return null; // dummy
