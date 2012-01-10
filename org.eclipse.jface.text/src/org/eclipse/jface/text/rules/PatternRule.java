@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -191,7 +191,7 @@ public class PatternRule implements IPredicateRule {
 
 			int c= scanner.read();
 			if (c == fStartSequence[0]) {
-				if (sequenceDetected(scanner, fStartSequence, false)) {
+				if (sequenceDetected(scanner, fStartSequence, fBreaksOnEOF)) {
 					if (endSequenceDetected(scanner))
 						return fToken;
 				}
@@ -241,7 +241,7 @@ public class PatternRule implements IPredicateRule {
 				if (fEscapeContinuesLine) {
 					c= scanner.read();
 					for (int i= 0; i < fSortedLineDelimiters.length; i++) {
-						if (c == fSortedLineDelimiters[i][0] && sequenceDetected(scanner, fSortedLineDelimiters[i], true))
+						if (c == fSortedLineDelimiters[i][0] && sequenceDetected(scanner, fSortedLineDelimiters[i], fBreaksOnEOF))
 							break;
 					}
 				} else
@@ -249,12 +249,12 @@ public class PatternRule implements IPredicateRule {
 
 			} else if (fEndSequence.length > 0 && c == fEndSequence[0]) {
 				// Check if the specified end sequence has been found.
-				if (sequenceDetected(scanner, fEndSequence, true))
+				if (sequenceDetected(scanner, fEndSequence, fBreaksOnEOF))
 					return true;
 			} else if (fBreaksOnEOL) {
 				// Check for end of line since it can be used to terminate the pattern.
 				for (int i= 0; i < fSortedLineDelimiters.length; i++) {
-					if (c == fSortedLineDelimiters[i][0] && sequenceDetected(scanner, fSortedLineDelimiters[i], true))
+					if (c == fSortedLineDelimiters[i][0] && sequenceDetected(scanner, fSortedLineDelimiters[i], fBreaksOnEOF))
 						return true;
 				}
 			}
