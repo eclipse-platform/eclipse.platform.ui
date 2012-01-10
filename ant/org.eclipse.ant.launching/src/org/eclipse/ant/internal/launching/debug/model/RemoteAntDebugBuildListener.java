@@ -177,10 +177,10 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 	 * @param request debug command
 	 */
 	protected void sendRequest(String request) {
-		if (fRequestSocket == null) {
+		if (fRequestWriter == null) {
 			return;
 		}
-		synchronized (fRequestSocket) {
+		synchronized (fRequestWriter) {
 			fRequestWriter.println(request);
 		}		
 	}

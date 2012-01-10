@@ -337,13 +337,12 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	/**
 	 * Called when this debug target terminates.
 	 */
-	public void terminated() {
+	public synchronized void terminated() {
 		if(!fTerminated) {
 			fThreads= new IThread[0];
 			fTerminated = true;
 			fSuspended = false;
 			fController.terminate();
-			fController = null;
 			if (DebugPlugin.getDefault() != null) {
 				DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 				DebugPlugin.getDefault().removeDebugEventListener(this);
