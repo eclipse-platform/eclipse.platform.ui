@@ -31,7 +31,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IVirtualItemListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IVirtualItemValidator;
@@ -66,7 +65,7 @@ import org.eclipse.ui.IMemento;
  */
 public class InternalVirtualTreeModelViewer extends Viewer 
     implements IVirtualItemListener, 
-               ITreeModelViewer, 
+               org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer, 
                IInternalTreeModelViewer
 {
 
