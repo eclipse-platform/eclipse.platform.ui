@@ -1,4 +1,4 @@
-/lib/antsupportlib.jar
-/temp.folder
-/antsupport.jar
-/src_ant_bin
+lib
+temp.folder
+antsupport.jar
+src_ant_bin
