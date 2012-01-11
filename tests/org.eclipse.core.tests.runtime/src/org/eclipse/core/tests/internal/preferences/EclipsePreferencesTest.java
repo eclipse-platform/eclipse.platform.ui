@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1054,6 +1054,57 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			current = current.parent();
 		}
 		assertTrue("2.0." + count, count == 4);
+	}
+
+	/*
+	 * Bug 342709 - [prefs] Don't write date/timestamp comment in preferences file
+	 */
+	public void test_342709() {
+		// set some prefs
+		IEclipsePreferences root = Platform.getPreferencesService().getRootNode();
+		String one = getUniqueString();
+		String two = getUniqueString();
+		String three = getUniqueString();
+		String key = "key";
+		String value = "value";
+		Preferences node = root.node(TestScope.SCOPE).node(one).node(two).node(three);
+		node.put(key, value);
+
+		// save the prefs to disk
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.99", e);
+		}
+
+		assertTrue("2.0", node instanceof TestScope);
+
+		// read the file outside of the pref mechanism
+		IPath location = ((TestScope) node).getLocation();
+		Collection<String> lines = null;
+		try {
+			lines = read(location);
+		} catch (IOException e) {
+			fail("4.99", e);
+		}
+
+		// ensure there is no comment or timestamp in the file
+		for (String line : lines) {
+			assertFalse("3." + line, line.startsWith("#"));
+		}
+	}
+
+	public static Collection<String> read(IPath location) throws IOException {
+		Collection<String> result = new ArrayList<String>();
+		BufferedReader reader = new BufferedReader(new FileReader(location.toFile()));
+		String line;
+		try {
+			while ((line = reader.readLine()) != null)
+				result.add(line);
+		} finally {
+			reader.close();
+		}
+		return result;
 	}
 
 	/*

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.tests.harness.CoreTest;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -26,6 +27,13 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 	private String qualifier;
 	private int segmentCount;
 	private IEclipsePreferences loadLevel;
+
+	public static IPath baseLocation;
+	private IPath location;
+
+	static {
+		baseLocation = new CoreTest().getRandomLocation();
+	}
 
 	public TestScope() {
 		this(null, null);
@@ -65,7 +73,10 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 	}
 
 	public IPath getLocation() {
-		return null;
+		if (location == null) {
+			location = computeLocation(baseLocation, qualifier);
+		}
+		return location;
 	}
 
 	public String getName() {
