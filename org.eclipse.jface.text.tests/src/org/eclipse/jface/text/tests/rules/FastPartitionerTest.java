@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.tests.rules;
 
 import junit.framework.TestCase;
@@ -218,6 +217,42 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(offsets);
 
     }
+
+	public void testBug368219_1() throws Exception {
+		fPartitioner.disconnect();
+		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
+			{
+				IToken comment= new Token(COMMENT);
+				IPredicateRule[] rules= new IPredicateRule[] { new MultiLineRule("/*", "*/", comment) };
+				setPredicateRules(rules);
+			}
+		};
+		fPartitioner= createPartitioner(scanner);
+		fDoc.setDocumentPartitioner(fPartitioner);
+		fPartitioner.connect(fDoc);
+
+		fDoc.set("/**");
+		assertEqualPartition(0, 3, DEFAULT);
+
+	}
+
+	public void testBug368219_2() throws Exception {
+		fPartitioner.disconnect();
+		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
+			{
+				IToken comment= new Token(COMMENT);
+				IPredicateRule[] rules= new IPredicateRule[] { new MultiLineRule("/*", "*/", comment, (char)0, true) };
+				setPredicateRules(rules);
+			}
+		};
+		fPartitioner= createPartitioner(scanner);
+		fDoc.setDocumentPartitioner(fPartitioner);
+		fPartitioner.connect(fDoc);
+
+		fDoc.set("/**");
+		assertEqualPartition(0, 3, COMMENT);
+
+	}
 
 	private void assertComputePartitioning_InterleavingPartitions(int[] offsets) {
 		assertComputePartitioning_InterleavingPartitions(0, fDoc.getLength(), offsets, DEFAULT);
