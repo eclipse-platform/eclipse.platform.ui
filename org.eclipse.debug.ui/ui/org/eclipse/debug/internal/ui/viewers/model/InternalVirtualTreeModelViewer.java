@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems and others.
+ * Copyright (c) 2009, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1372,8 +1372,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
      */
     public void autoExpand(TreePath elementPath) {
         int level = getAutoExpandLevel();
-        if (level > 0 || level == ITreeModelViewer.ALL_LEVELS) {
-            if (level == ITreeModelViewer.ALL_LEVELS || level >= elementPath.getSegmentCount()) {
+        if (level > 0 || level == org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer.ALL_LEVELS) {
+            if (level == org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer.ALL_LEVELS || level >= elementPath.getSegmentCount()) {
                 expandToLevel(elementPath, 1);
             }
         }
