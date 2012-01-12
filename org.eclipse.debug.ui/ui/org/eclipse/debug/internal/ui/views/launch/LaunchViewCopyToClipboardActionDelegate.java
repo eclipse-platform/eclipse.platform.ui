@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
-import org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -29,12 +28,12 @@ public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipbo
         LaunchView view = (LaunchView)getView();
         if (view.isBreadcrumbVisible()) {
             ISelection selection = getSelection();
-            if (selection instanceof ITreeSelection && getViewer() instanceof InternalTreeModelViewer) {
+            if (selection instanceof ITreeSelection && getViewer() != null) {
                 TreePath path = TreePath.EMPTY;
                 if (!selection.isEmpty()) {
                     path = ((ITreeSelection)selection).getPaths()[0];
                 }
-                return getSelectedItemsInTreeViewer((TreeModelViewer)getViewer(), path);
+                return getSelectedItemsInTreeViewer(getViewer(), path);
             }
             return new TreeItem[0];
         } else {

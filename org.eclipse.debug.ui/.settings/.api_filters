@@ -32,6 +32,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="ui/org/eclipse/debug/internal/ui/viewers/model/InternalTreeModelViewer.java" type="org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer">
+        <filter comment="Known illegal extension for the async viewer support" id="571473929">
+            <message_arguments>
+                <message_argument value="TreeViewer"/>
+                <message_argument value="InternalTreeModelViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="ui/org/eclipse/debug/internal/ui/views/breakpoints/BreakpointsViewer.java" type="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer">
         <filter comment="Known illegal extension" id="571473929">
             <message_arguments>
