@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -698,7 +698,10 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				default:
 					if (0 <= ch && ch < 0x20) {
 						pattern.append("\\x"); //$NON-NLS-1$
-						pattern.append(Integer.toHexString(ch).toUpperCase());
+						String hexString= Integer.toHexString(ch).toUpperCase();
+						if (hexString.length() == 1)
+							pattern.append('0');
+						pattern.append(hexString);
 					} else {
 						pattern.append(ch);
 					}
