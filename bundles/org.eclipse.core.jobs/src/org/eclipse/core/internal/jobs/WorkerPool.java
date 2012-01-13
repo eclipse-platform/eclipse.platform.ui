@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -240,7 +240,7 @@ class WorkerPool {
 					manager.getLockManager().addLockThread(Thread.currentThread(), job.getRule());
 				}
 				//see if we need to wake another worker
-				if (manager.sleepHint() <= 0)
+				if (manager.sleepHint() < InternalJob.T_INFINITE)
 					jobQueued();
 			}
 		} finally {
