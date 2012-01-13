@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.jface.action.SubToolBarManager;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.internal.provisional.action.ToolBarContributionItem2;
 import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
@@ -267,14 +268,14 @@ public class EditorActionBars extends SubActionBars2 {
 				toolBarContributionItem = (IToolBarContributionItem) foundItem;
 				coolItemToolBarMgr = toolBarContributionItem.getToolBarManager();
 				if (coolItemToolBarMgr == null) {
-					coolItemToolBarMgr = new ToolBarManager2();
+					coolItemToolBarMgr = new ToolBarManager2(SWT.FLAT);
 					toolBarContributionItem = new ToolBarContributionItem2(coolItemToolBarMgr, type);
 					// Add editor item to group
 					coolBarManager.prependToGroup(IWorkbenchActionConstants.GROUP_EDITOR,
 							toolBarContributionItem);
 				}
 			} else {
-				coolItemToolBarMgr = new ToolBarManager2();
+				coolItemToolBarMgr = new ToolBarManager2(SWT.FLAT);
 				if ((coolBarManager instanceof ContributionManager)
 						&& (foundItem instanceof PlaceholderContributionItem)) {
 					PlaceholderContributionItem placeholder = (PlaceholderContributionItem) foundItem;
