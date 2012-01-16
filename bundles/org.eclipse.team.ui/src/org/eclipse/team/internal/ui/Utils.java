@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1132,21 +1132,28 @@ public class Utils {
 	}
 	
 	public static IEditorDescriptor[] getEditors(IFileRevision revision) {
+		String name= revision.getName();
 		IEditorRegistry registry = PlatformUI.getWorkbench()
 				.getEditorRegistry();
 		// so far only the revision name is used to find editors
-		return registry.getEditors(revision.getName()/*, getContentType(revision) */);
+		IEditorDescriptor[] editorDescs= registry.getEditors(name/* , getContentType(revision) */);
+		return IDE.overrideEditorAssociations(name, null, editorDescs);
 	}
 	
 	public static IEditorDescriptor getDefaultEditor(IFileRevision revision) {
+		String name= revision.getName();
 		// so far only the revision name is used to find the default editor
-		IEditorRegistry registry = PlatformUI.getWorkbench()
-				.getEditorRegistry();
-		return registry.getDefaultEditor(revision.getName()/*, getContentType(revision) */);
+		try {
+			return IDE.getEditorDescriptor(name);
+		} catch (PartInitException e) {
+			// Fallback to old way of getting the editor
+			IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
+			return registry.getDefaultEditor(name);
+		}
 	}
 
 	private static String getEditorId(FileRevisionEditorInput editorInput) {
-		String id = getEditorId(editorInput.getFileRevision().getName(), getContentType(editorInput));
+		String id= getEditorId(editorInput, getContentType(editorInput));
 		return id;
 	}
 
@@ -1184,9 +1191,11 @@ public class Utils {
 		return type;
 	}
 
-	private static String getEditorId(String fileName, IContentType type) {
+	private static String getEditorId(FileRevisionEditorInput editorInput, IContentType type) {
+		String fileName= editorInput.getFileRevision().getName();
 		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 		IEditorDescriptor descriptor = registry.getDefaultEditor(fileName, type);
+		IDE.overrideDefaultEditorAssociation(editorInput, type, descriptor);
 		String id;
 		if (descriptor == null || descriptor.isOpenExternal()) {
 			id = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$

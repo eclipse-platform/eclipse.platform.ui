@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -297,15 +297,15 @@ public class OpenWithMenu extends ContributionItem {
 		job.setSystem(true);
 		job.schedule();*/
 
-		createDefaultMenuItem(menu, fileRevision);
+		createDefaultMenuItem(menu, fileRevision, preferredEditor == null);
 
 		// add Other... menu item
 		createOtherMenuItem(menu);
 	}
 
-	public void createDefaultMenuItem(Menu menu, final IFileRevision revision) {
+	public void createDefaultMenuItem(Menu menu, final IFileRevision revision, boolean markAsSelected) {
 		final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
-		menuItem.setSelection(Utils.getDefaultEditor(revision) == null);
+		menuItem.setSelection(markAsSelected);
 		menuItem
 				.setText(TeamUIMessages.LocalHistoryPage_OpenWithMenu_DefaultEditorDescription);
 
