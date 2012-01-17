@@ -11,6 +11,7 @@
    <extension-point id="resourceFilters" name="%ExtPoint.resourceFilters" schema="schema/resourceFilters.exsd"/>
    <extension-point id="markerSupport" name="%ExtPoint.markerSupport" schema="schema/markerSupport.exsd"/>
    <extension-point id="filesystemSupport" name="%ExtPoint.fileSystemSupport" schema="schema/filesystemSupport.exsd"/>
+   <extension-point id="editorAssociationOverride" name="%ExtPoint.editorAssociationOverride" schema="schema/editorAssociationOverride.exsd"/>
 
    <extension
          point="org.eclipse.ui.importWizards">
@@ -2329,5 +2330,6 @@
             class="org.eclipse.ui.internal.about.AboutFeaturesPage"
             id="20.FeaturesPage">
           </page>
-       </extension>
+   </extension>
+
 </plugin>
