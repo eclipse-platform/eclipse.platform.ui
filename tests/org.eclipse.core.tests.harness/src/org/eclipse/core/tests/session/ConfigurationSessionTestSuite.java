@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 			"org.eclipse.core.contenttype", //
 			"org.eclipse.equinox.app", //
 			"org.eclipse.core.runtime.compatibility", //
-			"org.eclipse.core.runtime.compatibility.auth", //
 			"org.eclipse.update.configurator", //
 			"org.eclipse.core.tests.harness", //
 			"org.eclipse.jdt.junit.runtime", //
