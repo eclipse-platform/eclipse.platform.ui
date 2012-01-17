@@ -562,6 +562,7 @@ public class MenuHelper {
 		final MHandledToolItem item = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
 
 		String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
+		String pulldown = element.getAttribute("pulldown"); //$NON-NLS-1$
 		if (style == null || style.length() == 0) {
 			item.setType(ItemType.PUSH);
 		} else if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {
@@ -572,7 +573,8 @@ public class MenuHelper {
 			}
 		} else if (IWorkbenchRegistryConstants.STYLE_RADIO.equals(style)) {
 			item.setType(ItemType.RADIO);
-		} else if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
+		} else if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)
+				|| (pulldown != null && pulldown.equals("true"))) { //$NON-NLS-1$
 			MRenderedMenu menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
 			ECommandService cs = app.getContext().get(ECommandService.class);
 			final ParameterizedCommand parmCmd = cs.createCommand(cmdId, null);
