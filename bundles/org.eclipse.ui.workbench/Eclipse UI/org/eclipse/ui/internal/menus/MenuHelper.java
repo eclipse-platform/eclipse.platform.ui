@@ -401,6 +401,11 @@ public class MenuHelper {
 		return ItemType.PUSH;
 	}
 
+	public static boolean hasPulldownStyle(IConfigurationElement element) {
+		String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
+		return IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style);
+	}
+
 	public static boolean getRetarget(IConfigurationElement element) {
 		String r = element.getAttribute(IWorkbenchRegistryConstants.ATT_RETARGET);
 		return Boolean.valueOf(r);

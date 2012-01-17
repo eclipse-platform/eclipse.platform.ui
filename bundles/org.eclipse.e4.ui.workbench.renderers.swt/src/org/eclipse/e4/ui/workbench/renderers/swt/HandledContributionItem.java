@@ -45,6 +45,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
@@ -719,6 +720,18 @@ public class HandledContributionItem extends ContributionItem {
 					menu.setData(AbstractPartRenderer.OWNING_ME, menu);
 					return menu;
 				}
+			}
+		} else {
+			final IEclipseContext lclContext = getContext(model);
+			IPresentationEngine engine = lclContext
+					.get(IPresentationEngine.class);
+			obj = engine.createGui(mmenu, toolItem.getParent(), lclContext);
+			if (obj instanceof Menu) {
+				Menu menu = (Menu) obj;
+				// menu.setData(AbstractPartRenderer.OWNING_ME, menu);
+				return menu;
+			} else {
+				System.err.println("Rendering returned " + obj); //$NON-NLS-1$
 			}
 		}
 		return null;
