@@ -403,7 +403,6 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private void appendArrows(final CTabFolder tabFolder) {
-		tabFolder.setChevronVisible(false);
 		ToolBar navLeftBar = new ToolBar(tabFolder, SWT.FLAT);
 		ToolItem navLeftItem = new ToolItem(navLeftBar, SWT.PUSH);
 		navLeftItem.setText("<"); //$NON-NLS-1$
