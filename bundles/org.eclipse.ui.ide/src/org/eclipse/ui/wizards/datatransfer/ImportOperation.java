@@ -568,14 +568,22 @@ public class ImportOperation extends WorkspaceModifyOperation {
         }
 
         try {
+            if (createVirtualFolder || createLinks || createLinkFilesOnly) {
+	            if (targetResource.exists())
+	            	targetResource.delete(true, null);
+                targetResource.createLink(createRelativePath(
+                        new Path(provider
+                                .getFullPath(fileObject)), targetResource), 0, null);
+            } else {
             if (targetResource.exists()) {
+	            	if (targetResource.isLinked()) {
+		            	targetResource.delete(true, null);
+		            	targetResource.create(contentStream, false, null);
+	            	}
+	            	else
 				targetResource.setContents(contentStream,
                         IResource.KEEP_HISTORY, null);
-            } else {
-                if (createVirtualFolder || createLinks || createLinkFilesOnly)
-                    targetResource.createLink(createRelativePath(
-                            new Path(provider
-                                    .getFullPath(fileObject)), targetResource), 0, null);
+	            }
                 else
                     targetResource.create(contentStream, false, null);
             }
