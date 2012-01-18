@@ -64,7 +64,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			contribution = createFromBundle(bundle, context, staticContext, uri);
 		} else {
 			contribution = null;
-			Activator.log(LogService.LOG_ERROR, "Unable to retrive the bundle from the URI: " //$NON-NLS-1$
+			Activator.log(LogService.LOG_ERROR, "Unable to retrieve the bundle from the URI: " //$NON-NLS-1$
 					+ uriString);
 		}
 		return contribution;
