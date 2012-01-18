@@ -29,6 +29,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite2;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -69,7 +70,7 @@ import org.eclipse.ui.part.ViewPart;
  * 
  * @since 3.0
  */
-public class MemoryView extends ViewPart implements IMemoryRenderingSite {
+public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 	protected MemoryViewSelectionProvider fSelectionProvider;
 	private MemoryViewPartListener fPartListener;
@@ -853,5 +854,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	public int getViewPanesOrientation()
 	{
 		return fViewOrientation;
+	}
+
+	public void setContainerVisible(String id, boolean visible) {
+		showViewPane(visible, id);
 	}
 }
