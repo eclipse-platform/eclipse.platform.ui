@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 Keith Seitz and others.
+ * Copyright (c) 2000, 2012 Keith Seitz and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Keith Seitz (keiths@redhat.com) - initial implementation
  *     IBM Corporation - integration and code cleanup
+ *     Jan Opacki (jan.opacki@gmail.com) bug 307139
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -83,7 +84,7 @@ import com.ibm.icu.text.MessageFormat;
  * This class may be instantiated.
  * </p> 
  * @since 3.0
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
@@ -447,7 +448,12 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		String value= var.getValue();
 		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.EnvironmentTab_11); 
 		dialog.addTextField(NAME_LABEL, originalName, false);
-		dialog.addVariablesField(VALUE_LABEL, value, true);
+		if(value != null && value.indexOf(System.getProperty("line.separator")) > -1) {
+			dialog.addMultilinedVariablesField(VALUE_LABEL, value, true);
+		}
+		else {
+			dialog.addVariablesField(VALUE_LABEL, value, true);
+		}
 		
 		if (dialog.open() != Window.OK) {
 			return;
@@ -473,7 +479,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		environmentTable.getControl().setRedraw(false);
 		for (Iterator i = sel.iterator(); i.hasNext(); ) {
 			EnvironmentVariable var = (EnvironmentVariable) i.next();	
-		environmentTable.remove(var);
+			environmentTable.remove(var);
 		}
 		environmentTable.getControl().setRedraw(true);
 		updateAppendReplace();
@@ -591,7 +597,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
-		// do nothing when de-activated
+		// do nothing when deactivated
 	}
 	
 	/**

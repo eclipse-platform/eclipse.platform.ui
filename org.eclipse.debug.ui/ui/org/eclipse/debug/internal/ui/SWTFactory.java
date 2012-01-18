@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -571,6 +571,7 @@ public class SWTFactory {
 	 * Creates a Composite widget
 	 * @param parent the parent composite to add this composite to
 	 * @param font the font to set on the control
+	 * @param style the style bits for the composite. See {@link Composite} for details on supported style bits
 	 * @param columns the number of columns within the composite
 	 * @param hspan the horizontal span the composite should take up on the parent
 	 * @param fill the style for how this composite should fill into its parent

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan Opacki (jan.opacki@gmail.com) bug 307139
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -26,6 +27,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -41,6 +44,7 @@ public class MultipleInputDialog extends Dialog {
 	protected static final int TEXT = 100;
 	protected static final int BROWSE = 101;
 	protected static final int VARIABLE = 102;
+	protected static final int MULTILINE_VARIABLE = 103;
 	
 	protected Composite panel;
 	
@@ -104,6 +108,9 @@ public class MultipleInputDialog extends Dialog {
 				case VARIABLE:
 					createVariablesField(field.name, field.initialValue, field.allowsEmpty);
 					break;
+				case MULTILINE_VARIABLE:
+					createMultilineVariablesField(field.name, field.initialValue, field.allowsEmpty);
+					break;
 			}
 		}
 		
@@ -121,7 +128,10 @@ public class MultipleInputDialog extends Dialog {
 	public void addVariablesField(String labelText, String initialValue, boolean allowsEmpty) {
 		fieldList.add(new FieldSummary(VARIABLE, labelText, initialValue, allowsEmpty));
 	}
-
+	public void addMultilinedVariablesField(String labelText, String initialValue, boolean allowsEmpty) {
+		fieldList.add(new FieldSummary(MULTILINE_VARIABLE, labelText, initialValue, allowsEmpty));
+	}
+	
 	protected void createTextField(String labelText, String initialValue, boolean allowEmpty) { 
 		Label label = new Label(panel, SWT.NONE);
 		label.setText(labelText);
@@ -273,6 +283,72 @@ public class MultipleInputDialog extends Dialog {
 
 		controlList.add(text);
 				
+	}
+	
+	public void createMultilineVariablesField(String labelText, String initialValue, boolean allowEmpty) {
+		Label label = new Label(panel, SWT.NONE);
+		label.setText(labelText);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+		
+		final Text text = new Text(panel, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 300;
+		gd.heightHint = 4 * text.getLineHeight();
+		gd.horizontalSpan = 2;
+		text.setLayoutData(gd);
+		text.setData(FIELD_NAME, labelText);
+		
+		text.addTraverseListener(new TraverseListener () {
+  			public void keyTraversed(TraverseEvent e) {
+  				if(e.detail == SWT.TRAVERSE_RETURN && e.stateMask == SWT.SHIFT) {
+  					e.doit = true;
+  				}
+  			}
+  		});
+		
+		// make sure rows are the same height on both panels.
+		label.setSize(label.getSize().x, text.getSize().y); 
+		
+		if (initialValue != null) {
+			text.setText(initialValue);
+		}
+
+		if (!allowEmpty) {
+			validators.add(new Validator() {
+				public boolean validate() {
+					return !text.getText().equals(IInternalDebugCoreConstants.EMPTY_STRING);
+				}
+			});
+
+			text.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					validateFields();
+				}
+			});
+		}
+		Composite comp = SWTFactory.createComposite(panel, panel.getFont(), 1, 2, GridData.HORIZONTAL_ALIGN_END); 
+		GridLayout ld = (GridLayout)comp.getLayout();
+		ld.marginHeight = 1;
+		ld.marginWidth = 0;
+		ld.horizontalSpacing = 0;
+		Button button = createButton(comp, IDialogConstants.IGNORE_ID, DebugUIMessages.MultipleInputDialog_8, false);
+		
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+				int code = dialog.open();
+				if (code == IDialogConstants.OK_ID) {
+					String variable = dialog.getVariableExpression();
+					if (variable != null) {
+						text.insert(variable);
+					}
+				}
+			}
+		});
+
+		controlList.add(text);				
 	}
 	
 	/* (non-Javadoc)
