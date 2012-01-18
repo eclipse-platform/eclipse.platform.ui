@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
-import org.eclipse.e4.core.services.work.ISchedulingExecutor;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugTrace;
@@ -20,7 +19,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.log.LogService;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
@@ -34,7 +32,6 @@ public class Activator implements BundleActivator {
 	private static Activator activator;
 
 	private BundleContext context;
-	private ServiceRegistration executorTracker;
 	private ServiceTracker locationTracker;
 	private ServiceTracker pkgAdminTracker;
 
@@ -118,8 +115,6 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		activator = this;
 		this.context = context;
-		executorTracker = context.registerService(ISchedulingExecutor.SERVICE_NAME,
-				new JobExecutor(), null);
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -130,10 +125,6 @@ public class Activator implements BundleActivator {
 		if (locationTracker != null) {
 			locationTracker.close();
 			locationTracker = null;
-		}
-		if (executorTracker != null) {
-			executorTracker.unregister();
-			executorTracker = null;
 		}
 		if (debugTracker != null) {
 			trace = null;
