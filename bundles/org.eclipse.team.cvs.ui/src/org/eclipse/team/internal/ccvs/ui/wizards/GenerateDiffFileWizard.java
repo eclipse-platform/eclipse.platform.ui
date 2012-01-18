@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -207,13 +207,11 @@ public class GenerateDiffFileWizard extends Wizard {
 
 				//Open to whatever is selected in the workspace field
 				IPath existingWorkspacePath = new Path(wsPathText.getText());
-				if (existingWorkspacePath != null){
-					//Ensure that this workspace path is valid
-					IResource selectedResource = ResourcesPlugin.getWorkspace().getRoot().findMember(existingWorkspacePath);
-					if (selectedResource != null) {
-						wsTreeViewer.expandToLevel(selectedResource, 0);
-						wsTreeViewer.setSelection(new StructuredSelection(selectedResource));
-					}
+				//Ensure that this workspace path is valid
+				IResource selectedResource = ResourcesPlugin.getWorkspace().getRoot().findMember(existingWorkspacePath);
+				if (selectedResource != null) {
+					wsTreeViewer.expandToLevel(selectedResource, 0);
+					wsTreeViewer.setSelection(new StructuredSelection(selectedResource));
 				}
 
 				final Composite group = new Composite(composite, SWT.NONE);
@@ -446,7 +444,7 @@ public class GenerateDiffFileWizard extends Wizard {
 		}
 
 		/**
-		 * The following conditions must hold for the file system location to be valid:
+		 * The following conditions must hold for the workspace location to be valid:
 		 * - a parent must be selected in the workspace tree view
 		 * - the resource name must be valid
 		 */
