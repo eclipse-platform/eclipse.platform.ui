@@ -109,6 +109,10 @@ public class BasicPartList extends AbstractTableInformationControl {
 		List<Object> list = new ArrayList<Object>();
 		for (MUIElement element : input.getChildren()) {
 			if (element instanceof MPlaceholder) {
+				if (!element.isToBeRendered() || !element.isVisible()) {
+					continue;
+				}
+
 				element = ((MPlaceholder) element).getRef();
 			}
 
