@@ -161,12 +161,10 @@ final public class MenuPersistence extends RegistryPersistence {
 			final IConfigurationElement configElement = i.next();
 
 			if (isProgramaticContribution(configElement)) {
-				// newFactory = new ProxyMenuAdditionCacheEntry(
-				// configElement
-				// .getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
-				// configElement.getNamespaceIdentifier(), configElement);\
-				System.out.println("Programmatic Contribution Factories not supported"); //$NON-NLS-1$
-
+				MenuFactoryGenerator gen = new MenuFactoryGenerator(application, appContext,
+						configElement,
+						configElement.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI));
+				gen.mergeIntoModel(menuContributions, toolBarContributions, trimContributions);
 			} else {
 				MenuAdditionCacheEntry menuContribution = new MenuAdditionCacheEntry(application,
 						appContext, configElement,

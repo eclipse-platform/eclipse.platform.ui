@@ -744,6 +744,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		return records.toArray(new ContributionRecord[records.size()]);
 	}
 
+	public IEclipseContext getContext(MUIElement el) {
+		return super.getContext(el);
+	}
+
 	/**
 	 * @param menuManager
 	 * @param menuModel
