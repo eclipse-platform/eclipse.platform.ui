@@ -11,11 +11,14 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.util.Set;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.services.ServiceLocator;
@@ -121,5 +124,25 @@ public class WorkbenchMenuService implements IMenuService {
 		E4Util.unsupported("WorkbenchMenuService.updateManagers - time to update ... something"); //$NON-NLS-1$
 	}
 
+	/**
+	 * @param item
+	 * @param visibleWhen
+	 * @param restriction
+	 * @param createIdentifierId
+	 */
+	public void registerVisibleWhen(IContributionItem item, Expression visibleWhen,
+			Set restriction, String createIdentifierId) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @param item
+	 * @param restriction
+	 */
+	public void unregisterVisibleWhen(IContributionItem item, Set restriction) {
+		// TODO Auto-generated method stub
+
+	}
 
 }

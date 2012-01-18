@@ -13,9 +13,13 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
@@ -30,12 +34,17 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.MenuManager;
 
 public class ContributionRecord {
+	public static final String FACTORY = "ContributionFactory"; //$NON-NLS-1$
+	static final String STATIC_CONTEXT = "ContributionFactoryContext"; //$NON-NLS-1$
+
 	MMenu menuModel;
 	MMenuContribution menuContribution;
 	ArrayList<MMenuElement> generatedElements = new ArrayList<MMenuElement>();
 	HashSet<MMenuElement> sharedElements = new HashSet<MMenuElement>();
 	MenuManagerRenderer renderer;
 	boolean isVisible = true;
+	private IEclipseContext infoContext;
+	private Runnable factoryDispose;
 
 	public ContributionRecord(MMenu menuModel, MMenuContribution contribution,
 			MenuManagerRenderer renderer) {
@@ -140,8 +149,19 @@ public class ContributionRecord {
 			return false;
 		}
 
-		for (MMenuElement item : menuContribution.getChildren()) {
-			MMenuElement copy = (MMenuElement) EcoreUtil.copy((EObject) item);
+		final List<MMenuElement> copyElements;
+		if (menuContribution.getTransientData().get(FACTORY) != null) {
+			copyElements = mergeFactoryIntoModel();
+		} else {
+			copyElements = new ArrayList<MMenuElement>();
+			for (MMenuElement item : menuContribution.getChildren()) {
+				MMenuElement copy = (MMenuElement) EcoreUtil
+						.copy((EObject) item);
+				copyElements.add(copy);
+			}
+		}
+
+		for (MMenuElement copy : copyElements) {
 			if (copy instanceof MMenu) {
 				MMenu shared = findExistingMenu(copy.getElementId());
 				if (shared == null) {
@@ -174,6 +194,36 @@ public class ContributionRecord {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * @return
+	 */
+	private List<MMenuElement> mergeFactoryIntoModel() {
+		Object obj = menuContribution.getTransientData().get(FACTORY);
+		if (!(obj instanceof IContextFunction)) {
+			return Collections.EMPTY_LIST;
+		}
+		IEclipseContext staticContext = getStaticContext();
+		staticContext.remove(List.class);
+		factoryDispose = (Runnable) ((IContextFunction) obj)
+				.compute(staticContext);
+		return staticContext.get(List.class);
+	}
+
+	private IEclipseContext getStaticContext() {
+		if (infoContext == null) {
+			IEclipseContext parentContext = renderer.getContext(menuModel);
+			if (parentContext != null) {
+				infoContext = parentContext.createChild(STATIC_CONTEXT);
+			} else {
+				infoContext = EclipseContextFactory.create(STATIC_CONTEXT);
+			}
+			ContributionsAnalyzer.populateModelInterfaces(menuModel,
+					infoContext, menuModel.getClass().getInterfaces());
+			infoContext.set(MenuManagerRenderer.class, renderer);
+		}
+		return infoContext;
 	}
 
 	MMenu findExistingMenu(String id) {
@@ -211,6 +261,10 @@ public class ContributionRecord {
 			if (array.isEmpty()) {
 				menuModel.getChildren().remove(shared);
 			}
+		}
+		if (factoryDispose != null) {
+			factoryDispose.run();
+			factoryDispose = null;
 		}
 	}
 
