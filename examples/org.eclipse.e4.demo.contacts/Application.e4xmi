@@ -16,6 +16,12 @@
         <children xsi:type="menu:DirectMenuItem" xmi:id="_SeXUEu8EEd6FC9cDb6iV7g" elementId="_SeXUEu8EEd6FC9cDb6iV7g" label="%menuLabelDirectExit" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_SeXUE-8EEd6FC9cDb6iV7g" elementId="_SeXUE-8EEd6FC9cDb6iV7g" label="%menuLabelExit" command="contacts.exit"/>
       </children>
+      <children xsi:type="menu:Menu" xmi:id="_7xM0QEIiEeGeqfJPkAYvgA" label="%windowMenu">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_CSog8EIjEeGeqfJPkAYvgA" label="%menuLabelPreferences" command="_oKvyEEIiEeGeqfJPkAYvgA"/>
+      </children>
+      <children xsi:type="menu:Menu" xmi:id="_F9_YYEIjEeGeqfJPkAYvgA" label="%helpMenu">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_-SFcoEIiEeGeqfJPkAYvgA" label="%menuLabelAbout" command="_gMuLkEIiEeGeqfJPkAYvgA"/>
+      </children>
     </mainMenu>
     <trimBars xmi:id="_SeXUAu8EEd6FC9cDb6iV7g" elementId="_SeXUAu8EEd6FC9cDb6iV7g">
       <children xsi:type="menu:ToolBar" xmi:id="toolbar:org.eclipse.ui.main.toolbar" elementId="toolbar:org.eclipse.ui.main.toolbar">
@@ -30,8 +36,10 @@
   <handlers xmi:id="_SeXUGO8EEd6FC9cDb6iV7g" elementId="_SeXUGO8EEd6FC9cDb6iV7g" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler" command="contacts.save"/>
   <handlers xmi:id="_SeXUGe8EEd6FC9cDb6iV7g" elementId="_SeXUGe8EEd6FC9cDb6iV7g" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DeleteContactHandler" command="contacts.delete"/>
   <handlers xmi:id="_SeXUG=8EEd6FC9cDb6iV7g" elementId="_SeXUG=8EEd6FC9cDb6iV7g" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SwitchThemeHandler" command="contacts.switchTheme"/>
+  <handlers xmi:id="_fBxl8EIjEeGeqfJPkAYvgA" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.AboutHandler" command="_gMuLkEIiEeGeqfJPkAYvgA"/>
+  <handlers xmi:id="_jdnfIEIjEeGeqfJPkAYvgA" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.PreferencesHandler" command="_oKvyEEIiEeGeqfJPkAYvgA"/>
   <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="_SeXUEO8EEd6FC9cDb6iV7x" bindingContext="_SeXUHO8EEd6FC9cDb6iV7y">
-    <bindings xmi:id="_SeXUHu8EEd6FC9cDb6iV7g" elementId="_SeXUHu8EEd6FC9cDb6iV7g" keySequence="CTRL+S" command="contacts.save"/>
+    <bindings xmi:id="_SeXUHu8EEd6FC9cDb6iV7g" elementId="_SeXUHu8EEd6FC9cDb6iV7g" keySequence="M1+S" command="contacts.save"/>
     <bindings xmi:id="_SeXUH-8EEd6FC9cDb6iV7g" elementId="_SeXUH-8EEd6FC9cDb6iV7g" keySequence="Delete" command="contacts.delete"/>
     <bindings xmi:id="_SeXUIO8EEd6FC9cDb6iV7g" elementId="_SeXUIO8EEd6FC9cDb6iV7g" keySequence="CTRL+5 X" command="contacts.exit"/>
   </bindingTables>
@@ -39,12 +47,14 @@
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
   </rootContext>
-  <commands xmi:id="contacts.exit" elementId="contacts.exit" commandName="%menuLabelExit" description=""/>
-  <commands xmi:id="contacts.save" elementId="contacts.save" commandName="%menuLabelSave" description=""/>
-  <commands xmi:id="contacts.delete" elementId="contacts.delete" commandName="%menuLabelDelete" description=""/>
+  <commands xmi:id="contacts.exit" elementId="org.eclipse.ui.file.exit" commandName="%menuLabelExit" description=""/>
+  <commands xmi:id="contacts.save" elementId="org.eclipse.ui.file.save" commandName="%menuLabelSave" description=""/>
+  <commands xmi:id="contacts.delete" elementId="org.eclipse.ui.edit.delete" commandName="%menuLabelDelete" description=""/>
   <commands xmi:id="contacts.switchTheme" elementId="contacts.switchTheme" commandName="%menuLabelSwitchTheme" description="">
     <parameters xmi:id="contacts.commands.switchtheme.themeid" elementId="contacts.commands.switchtheme.themeid" name="Theme Id" typeId="" optional="false"/>
   </commands>
+  <commands xmi:id="_gMuLkEIiEeGeqfJPkAYvgA" elementId="org.eclipse.ui.help.aboutAction" commandName="%menuLabelAbout" description=""/>
+  <commands xmi:id="_oKvyEEIiEeGeqfJPkAYvgA" elementId="org.eclipse.ui.window.preferences" commandName="%menuLabelPreferences"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

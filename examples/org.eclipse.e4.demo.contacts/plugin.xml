@@ -6,10 +6,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.e4.ui.workbench.swt.E4Application"
-            name="E4 Contacs Demo">
+            name="E4 Contacts Demo">
          <property
                name="appName"
-               value="E4 Contacs Demo">
+               value="E4 Contacts Demo">
          </property>
          <property
                name="applicationXMI"

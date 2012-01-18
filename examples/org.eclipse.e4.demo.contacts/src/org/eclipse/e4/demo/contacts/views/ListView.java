@@ -95,18 +95,6 @@ public class ListView {
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 
-	@PreDestroy
-	void preDestroy() {
-		for (Object object : ContactsRepositoryFactory
-				.getContactsRepository().getAllContacts()) {
-			Contact contact = (Contact) object;
-			Image image = contact.getImage();
-			if (image != null) {
-				image.dispose();
-			}
-		}
-	}
-	
 	@Focus
 	void setFocus() {
 		contactsViewer.getControl().setFocus();

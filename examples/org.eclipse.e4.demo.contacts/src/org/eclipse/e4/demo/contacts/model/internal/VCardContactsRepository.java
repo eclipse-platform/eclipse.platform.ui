@@ -253,8 +253,7 @@ public class VCardContactsRepository implements IContactsRepository {
 					ByteArrayInputStream is = new ByteArrayInputStream(
 							imageBytes);
 					ImageData imageData = new ImageData(is);
-					contact
-							.setImage(new Image(Display.getCurrent(), imageData));
+					contact.setImage(imageData);
 					contact.setJpegString(jpegString);
 					continue;
 				}

@@ -14,7 +14,7 @@ package org.eclipse.e4.demo.contacts.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 
 public class Contact implements Cloneable {
 
@@ -37,7 +37,7 @@ public class Contact implements Cloneable {
 	private String phone = ""; //$NON-NLS-1$
 	private String mobile = ""; //$NON-NLS-1$
 	private String note = ""; //$NON-NLS-1$
-	private Image image;
+	private ImageData image;
 	private String jpegString = ""; //$NON-NLS-1$
 
 	public Contact() {
@@ -194,11 +194,11 @@ public class Contact implements Cloneable {
 		this.note = comment;
 	}
 
-	public Image getImage() {
+	public ImageData getImage() {
 		return image;
 	}
 
-	public void setImage(Image image) {
+	public void setImage(ImageData image) {
 		this.image = image;
 	}
 	

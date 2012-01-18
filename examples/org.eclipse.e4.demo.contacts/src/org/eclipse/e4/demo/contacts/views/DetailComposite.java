@@ -52,7 +52,7 @@ public class DetailComposite extends Composite {
 
 	private Label imageLabel;
 
-	private Image dummyPortrait;
+	private ImageData dummyPortrait;
 	private boolean generalGroup;
 
 	private final DataBindingContext dbc;
@@ -73,7 +73,7 @@ public class DetailComposite extends Composite {
 				"images/dummy.png"), null);
 		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(url);
 		if (imageDescriptor != null) {
-			dummyPortrait = imageDescriptor.createImage();
+			dummyPortrait = imageDescriptor.getImageData();
 		}
 
 		final GridLayout layout = new GridLayout(1, false);
@@ -118,18 +118,17 @@ public class DetailComposite extends Composite {
 
 		// Bind the image
 		final IObservableValue imageObservableValue = PojoObservables
-				.observeDetailValue(contactValue, "image", Image.class);
+				.observeDetailValue(contactValue, "image", ImageData.class);
 
 		this.scaledImage = new ComputedValue() {
 			private Image currentImage;
 
 			@Override
 			protected Object calculate() {
-				Image image = (Image) imageObservableValue.getValue();
-				if (image == null) {
-					image = dummyPortrait;
+				ImageData imageData = (ImageData) imageObservableValue.getValue();
+				if (imageData == null) {
+					imageData = dummyPortrait;
 				}
-				ImageData imageData = image.getImageData();
 				double ratio = imageData.height / 85.0;
 				int width = (int) (imageData.width / ratio);
 				int height = (int) (imageData.height / ratio);
@@ -158,7 +157,6 @@ public class DetailComposite extends Composite {
 
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				dummyPortrait.dispose();
 				scaledImage.dispose();
 			}
 		});
