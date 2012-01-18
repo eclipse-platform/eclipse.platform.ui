@@ -17,8 +17,8 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.RGB;
 
@@ -35,7 +35,7 @@ public class ExpressionLabelProvider extends VariableLabelProvider {
         if (element instanceof IErrorReportingExpression) {
             IErrorReportingExpression expression = (IErrorReportingExpression) element;
             if (expression.hasErrors()) {
-                if (columnId == null || columnId.equals(VariableColumnPresentation.COLUMN_VARIABLE_VALUE)) {
+                if (columnId == null || columnId.equals(IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE)) {
                     return new RGB(255, 0, 0);
                 }
             }
@@ -61,17 +61,17 @@ public class ExpressionLabelProvider extends VariableLabelProvider {
      * @param context presentation context specifying how to display the text
      * @param columnId the column to get the text for
      * @return the label text
-     * @throws CoreException
+     * @throws CoreException Error while retrieving data from model.
      * 
      * @since 3.6
      */
     private String getColumnText(IExpression expression, IValue value, IPresentationContext context, String columnId) throws CoreException {
-        if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnId)) {
+        if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnId)) {
             return getExpressionName(expression, context);
-        } else if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(columnId)) {
+        } else if (IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE.equals(columnId)) {
             return getExpressionValueText(expression, value, context);
-        } else if (VariableColumnPresentation.COLUMN_VALUE_TYPE.equals(columnId) ||
-                   VariableColumnPresentation.COLUMN_VARIABLE_TYPE.equals(columnId)) 
+        } else if (IDebugUIConstants.COLUMN_ID_VARIABLE_TYPE.equals(columnId) ||
+        		IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE_TYPE.equals(columnId)) 
         {
             if (value != null) {
                 return getValueTypeName(null, value, context);
@@ -85,6 +85,7 @@ public class ExpressionLabelProvider extends VariableLabelProvider {
      * 
      * @param expression expression to retrieve text for
      * @param context presentation context specifying how to display the text
+     * @return Returns the expression's text to show in the view's name column.
      * @exception CoreException in an error occurs
      * @since 3.6
      */
@@ -100,6 +101,7 @@ public class ExpressionLabelProvider extends VariableLabelProvider {
      * 
      * @param expression the expression
      * @param context associated presentation context
+     * @return Returns the watch expression's text to show in the view's name column.
      * @since 3.6
      */
     private String getWatchExpressionName(IWatchExpression expression, IPresentationContext context) {
@@ -131,7 +133,7 @@ public class ExpressionLabelProvider extends VariableLabelProvider {
      * @param value the value associated with the variable
      * @param context presentation context specifying how to display the text
      * @return string representing the expression's value 
-     * @throws CoreException
+     * @throws CoreException Error while retrieving data from model.
      * 
      * @since 3.6
      */

@@ -15,7 +15,6 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -67,7 +66,7 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
-		if (columnId == null || VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnId)) {
+		if (columnId == null || IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnId)) {
 			return super.getImageDescriptor(elementPath, presentationContext, columnId);
 		}
 		return null;
@@ -101,16 +100,16 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	 * @param context presentation context specifying how to display the text
 	 * @param columnId the column to get the text for
 	 * @return the label text
-	 * @throws CoreException
+	 * @throws CoreException Error while retrieving data from model.
 	 */
 	protected String getColumnText(IVariable variable, IValue value, IPresentationContext context, String columnId) throws CoreException {
-		if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnId)) {
+		if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnId)) {
 			return getVariableName(variable, context);
-		} else if (VariableColumnPresentation.COLUMN_VARIABLE_TYPE.equals(columnId)) {
+		} else if (IDebugUIConstants.COLUMN_ID_VARIABLE_TYPE.equals(columnId)) {
 			return getVariableTypeName(variable, context);
-		} else if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(columnId)) {
+		} else if (IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE.equals(columnId)) {
 			return getValueText(variable, value, context);
-		} else if (VariableColumnPresentation.COLUMN_VALUE_TYPE.equals(columnId)) {
+		} else if (IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE_TYPE.equals(columnId)) {
 			return getValueTypeName(variable, value, context);
 		}	
 		return null;
@@ -119,10 +118,10 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	/**
 	 * Returns the name of the given variable to display in <code>COLUMN_VARIABLE_NAME</code>.
 	 * 
-	 * @param variable
-	 * @param context
+	 * @param variable Variable to get the name for.
+	 * @param context View context.
 	 * @return variable name
-	 * @throws CoreException
+	 * @throws CoreException Error while retrieving data from model.
 	 */
 	protected String getVariableName(IVariable variable, IPresentationContext context) throws CoreException {
 		return variable.getName();
@@ -131,10 +130,10 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	/**
 	 * Returns the type name of the given variable to display in <code>COLUMN_VARIABLE_TYPE</code>.
 	 * 
-	 * @param variable
-	 * @param context
+	 * @param variable Variable to get the type for.
+	 * @param context View context.
 	 * @return variable type name
-	 * @throws CoreException
+	 * @throws CoreException Error while retrieving data from model.
 	 */
 	protected String getVariableTypeName(IVariable variable, IPresentationContext context) throws CoreException {
 		return variable.getReferenceTypeName();
@@ -143,11 +142,11 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	/**
 	 * Returns the label for the given value's type to display in <code>COLUMN_VARIABLE_VALUE</code>
 	 * 
-	 * @param variable
-	 * @param value
-	 * @param context
+	 * @param variable Variable to get the value type for.
+	 * @param value Variable value to get type label for.
+	 * @param context View context.
 	 * @return value label
-	 * @throws CoreException
+	 * @throws CoreException Error while retrieving data from model.
 	 */
 	protected String getValueTypeName(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
 		return value.getReferenceTypeName();
@@ -156,11 +155,11 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	/**
 	 * Returns the label for the given value to display in <code>COLUMN_VALUE_TYPE</code>
 	 * 
-	 * @param variable
-	 * @param value
-	 * @param context
+	 * @param variable Variable to get the value for.
+	 * @param value Variable value to get value label for.
+	 * @param context View context.
 	 * @return value label
-	 * @throws CoreException
+	 * @throws CoreException Error while retrieving data from model.
 	 */
 	protected String getValueText(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
 		return escapeSpecialChars(value.getValueString());

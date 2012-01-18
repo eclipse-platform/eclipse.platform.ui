@@ -22,19 +22,32 @@ public class VariableColumnPresentation extends AbstractColumnPresentation {
 	
 	/**
 	 * Constant identifier for the default variable column presentation.
+	 * @deprecated Replaced by {@link IDebugUIConstants#COLUMN_PRESENTATION_ID_VARIABLE}
 	 */
-	public final static String DEFAULT_VARIABLE_COLUMN_PRESENTATION = IDebugUIConstants.PLUGIN_ID + ".VARIALBE_COLUMN_PRESENTATION";  //$NON-NLS-1$
+	public final static String DEFAULT_VARIABLE_COLUMN_PRESENTATION = IDebugUIConstants.COLUMN_PRESENTATION_ID_VARIABLE;
 	
 	/**
 	 * Default column identifiers
+	 * @deprecated Replaced by {@link IDebugUIConstants#COLUMN_ID_VARIABLE_NAME}
 	 */
-	public final static String COLUMN_VARIABLE_NAME = DEFAULT_VARIABLE_COLUMN_PRESENTATION + ".COL_VAR_NAME"; //$NON-NLS-1$
-	public final static String COLUMN_VARIABLE_TYPE = DEFAULT_VARIABLE_COLUMN_PRESENTATION + ".COL_VAR_TYPE"; //$NON-NLS-1$
-	public final static String COLUMN_VARIABLE_VALUE = DEFAULT_VARIABLE_COLUMN_PRESENTATION + ".COL_VAR_VALUE"; //$NON-NLS-1$
-	public final static String COLUMN_VALUE_TYPE = DEFAULT_VARIABLE_COLUMN_PRESENTATION + ".COL_VALUE_TYPE"; //$NON-NLS-1$
+	public final static String COLUMN_VARIABLE_NAME = IDebugUIConstants.COLUMN_ID_VARIABLE_NAME;
+	/**
+	 * @deprecated Replaced by {@link IDebugUIConstants#COLUMN_ID_VARIABLE_TYPE}
+	 */
+	public final static String COLUMN_VARIABLE_TYPE = IDebugUIConstants.COLUMN_ID_VARIABLE_TYPE;
+	/**
+	 * @deprecated Replaced by {@link IDebugUIConstants#COLUMN_ID_VARIABLE_VALUE}
+	 */
+	public final static String COLUMN_VARIABLE_VALUE = IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE;
+	/**
+	 * @deprecated Replaced by {@link IDebugUIConstants#COLUMN_ID_VARIABLE_VALUE_TYPE}
+	 */
+	public final static String COLUMN_VALUE_TYPE = IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE_TYPE;
 	
-	private static final String[] ALL_COLUMNS = new String[]{COLUMN_VARIABLE_NAME, COLUMN_VARIABLE_TYPE, COLUMN_VARIABLE_VALUE, COLUMN_VALUE_TYPE};
-	private static final String[] INITIAL_COLUMNS = new String[]{COLUMN_VARIABLE_NAME, COLUMN_VARIABLE_VALUE}; 
+	private static final String[] ALL_COLUMNS = new String[]{IDebugUIConstants.COLUMN_ID_VARIABLE_NAME, 
+		IDebugUIConstants.COLUMN_ID_VARIABLE_TYPE, IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE, IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE_TYPE};
+	private static final String[] INITIAL_COLUMNS = new String[]{IDebugUIConstants.COLUMN_ID_VARIABLE_NAME, 
+		IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE}; 
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getColumns()
@@ -47,16 +60,16 @@ public class VariableColumnPresentation extends AbstractColumnPresentation {
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
 	 */
 	public String getHeader(String id) {
-		if (COLUMN_VARIABLE_TYPE.equals(id)) {
+		if (IDebugUIConstants.COLUMN_ID_VARIABLE_TYPE.equals(id)) {
 			return Messages.VariableColumnPresentation_0;
 		}
-		if (COLUMN_VARIABLE_NAME.equals(id)) {
+		if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(id)) {
 			return Messages.VariableColumnPresentation_1;
 		}
-		if (COLUMN_VARIABLE_VALUE.equals(id)) {
+		if (IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE.equals(id)) {
 			return Messages.VariableColumnPresentation_2;
 		}
-		if (COLUMN_VALUE_TYPE.equals(id)) {
+		if (IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE_TYPE.equals(id)) {
 			return Messages.VariableColumnPresentation_3;
 		}
 		return null;
@@ -66,7 +79,7 @@ public class VariableColumnPresentation extends AbstractColumnPresentation {
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getId()
 	 */
 	public String getId() {
-		return DEFAULT_VARIABLE_COLUMN_PRESENTATION;
+		return IDebugUIConstants.COLUMN_PRESENTATION_ID_VARIABLE;
 	}
 
 	/* (non-Javadoc)

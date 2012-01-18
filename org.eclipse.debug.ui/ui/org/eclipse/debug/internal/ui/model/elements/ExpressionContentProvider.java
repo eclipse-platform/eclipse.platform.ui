@@ -23,7 +23,6 @@ import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.ViewerAdapterService;
 import org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
@@ -64,7 +63,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
                     updateLabel(updates[i], 0);
                 } else {
                     for (int j = 0; j < columnIds.length; j++) {
-                        if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnIds[j])) {
+                        if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnIds[j])) {
                             updateLabel(updates[i], j);
                         } else {
                             updates[i].setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);

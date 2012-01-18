@@ -51,7 +51,7 @@ public class VariableColumnFactoryAdapter implements IColumnPresentationFactory 
 		    IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id)) 
 		{
 			if (element instanceof IStackFrame || element instanceof IExpressionManager) {
-				return VariableColumnPresentation.DEFAULT_VARIABLE_COLUMN_PRESENTATION;
+				return IDebugUIConstants.COLUMN_PRESENTATION_ID_VARIABLE;
 			}
 		}
 		return null;

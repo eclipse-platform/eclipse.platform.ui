@@ -23,7 +23,6 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -38,6 +37,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem.Index;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -185,8 +185,8 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
                 
                 // Try to find the name column.
                 for (int i = 0; i < clientColumns.length; i++) {
-                    if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(clientColumns[i])) {
-                        return new String[] { VariableColumnPresentation.COLUMN_VARIABLE_NAME }; 
+                    if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(clientColumns[i])) {
+                        return new String[] { IDebugUIConstants.COLUMN_ID_VARIABLE_NAME }; 
                     }
                 }
                 

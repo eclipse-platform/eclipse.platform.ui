@@ -22,7 +22,6 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -58,7 +57,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
                     updateLabel(updates[i], 0);
                 } else {
                     for (int j = 0; j < columnIds.length; j++) {
-                        if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnIds[j])) {
+                        if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnIds[j])) {
                             updateLabel(updates[i], j);
                         } else {
                             updates[i].setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);
@@ -90,7 +89,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
         }
         
         public boolean canModify(Object element, String property) {
-            return (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(property));
+            return (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(property));
         }
         
         public Object getValue(Object element, String property) {

@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.FindElementDialog;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -38,6 +37,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationConte
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -190,8 +190,8 @@ public class VirtualFindAction extends Action implements IUpdate {
 	            
 	            // Try to find the name column.
 	            for (int i = 0; i < clientColumns.length; i++) {
-	                if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(clientColumns[i])) {
-	                    return new String[] { VariableColumnPresentation.COLUMN_VARIABLE_NAME }; 
+	                if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(clientColumns[i])) {
+	                    return new String[] { IDebugUIConstants.COLUMN_ID_VARIABLE_NAME }; 
 	                }
 	            }
 	            

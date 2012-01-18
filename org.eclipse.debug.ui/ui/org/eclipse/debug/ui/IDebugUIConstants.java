@@ -1280,4 +1280,41 @@ public interface IDebugUIConstants {
 	 * @since 3.5
 	 */
 	public static final String DEBUG_CONTEXT_SOURCE_NAME = "debugContext"; //$NON-NLS-1$
+
+	
+	/**
+	 * ID for the default column layout for the variables, expressions 
+	 * and registers views.
+	 * 
+	 * @since 3.8
+	 */
+	public final static String COLUMN_PRESENTATION_ID_VARIABLE = IDebugUIConstants.PLUGIN_ID + ".VARIALBE_COLUMN_PRESENTATION";  //$NON-NLS-1$
+	
+	/**
+	 * Default ID for the "Name" column in the Variables views.
+	 * 
+	 * @since 3.8
+	 */
+	public final static String COLUMN_ID_VARIABLE_NAME = COLUMN_PRESENTATION_ID_VARIABLE + ".COL_VAR_NAME"; //$NON-NLS-1$
+	
+	/**
+	 * Default ID for the "Declared Type" column in the Variables views.
+	 * 
+	 * @since 3.8
+	 */
+	public final static String COLUMN_ID_VARIABLE_TYPE = COLUMN_PRESENTATION_ID_VARIABLE + ".COL_VAR_TYPE"; //$NON-NLS-1$
+	
+	/**
+	 * Default ID for the "Value" column in the Variables views.
+	 * 
+	 * @since 3.8
+	 */
+	public final static String COLUMN_ID_VARIABLE_VALUE = COLUMN_PRESENTATION_ID_VARIABLE + ".COL_VAR_VALUE"; //$NON-NLS-1$
+	
+	/**
+	 * Default ID for the "Actual Type" column in the Variables views.
+	 * 
+	 * @since 3.8
+	 */
+	public final static String COLUMN_ID_VARIABLE_VALUE_TYPE = COLUMN_PRESENTATION_ID_VARIABLE + ".COL_VALUE_TYPE"; //$NON-NLS-1$
 }

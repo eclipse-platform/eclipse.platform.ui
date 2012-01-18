@@ -11,9 +11,9 @@
 package org.eclipse.debug.internal.ui.actions.expressions;
 
 import org.eclipse.debug.core.model.IWatchExpression;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.expression.ExpressionView;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -75,7 +75,7 @@ public class EditWatchExpressinInPlaceAction extends Action implements ISelectio
     private int getExpressionColumnIndex() {
         Object[] columnProperties = fViewer.getColumnProperties();
         for (int i = 0; columnProperties != null && i < columnProperties.length; i++) {
-            if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnProperties[i])) {
+            if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnProperties[i])) {
                 return i;
             }
         }
