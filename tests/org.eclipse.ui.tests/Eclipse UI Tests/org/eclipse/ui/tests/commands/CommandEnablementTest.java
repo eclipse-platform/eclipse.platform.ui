@@ -21,6 +21,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.ICommandListener;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -30,6 +31,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -42,6 +46,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.handlers.E4HandlerProxy;
 import org.eclipse.ui.internal.handlers.HandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.WorkbenchSourceProvider;
@@ -339,7 +344,7 @@ public class CommandEnablementTest extends UITestCase {
 		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
 		assertTrue(cmd1.isHandled());
 		assertTrue(cmd1.isEnabled());
-		assertEquals(normalHandler1, cmd1.getHandler());
+		assertEquals(normalHandler1, getHandler(cmd1));
 		contextService.deactivateContext(contextActivation1);
 		assertFalse(cmd1.isHandled());
 		assertFalse(cmd1.isEnabled());
@@ -347,10 +352,23 @@ public class CommandEnablementTest extends UITestCase {
 		contextActivation2 = contextService.activateContext(CONTEXT_TEST2);
 		assertTrue(cmd1.isHandled());
 		assertTrue(cmd1.isEnabled());
-		assertEquals(normalHandler2, cmd1.getHandler());
+		assertEquals(normalHandler2, getHandler(cmd1));
 		contextService.deactivateContext(contextActivation2);
 		assertFalse(cmd1.isHandled());
 		assertFalse(cmd1.isEnabled());
+	}
+	
+	private IHandler getHandler(Command command) {
+		EHandlerService service = (EHandlerService) getWorkbench().getService(EHandlerService.class);
+		if (service == null) {
+			return null;
+		}
+		IEclipseContext ctx = (IEclipseContext) getWorkbench().getService(IEclipseContext.class);
+		Object handler = HandlerServiceImpl.lookUpHandler(ctx, command.getId());
+		if (handler instanceof E4HandlerProxy) {
+			return ((E4HandlerProxy) handler).getHandler();
+		}
+		return null;
 	}
 
 	public void testEventsForNormalHandlers() throws Exception {
@@ -363,6 +381,8 @@ public class CommandEnablementTest extends UITestCase {
 		activation2 = handlerService.activateHandler(CMD1_ID, normalHandler2,
 				new ActiveContextExpression(CONTEXT_TEST2,
 						new String[] { ISources.ACTIVE_CONTEXT_NAME }));
+		IEclipseContext ctx = (IEclipseContext) getWorkbench().getService(IEclipseContext.class);
+		ctx.processWaiting();
 
 		assertFalse(cmd1.isHandled());
 		assertFalse(cmd1.isEnabled());
@@ -374,7 +394,7 @@ public class CommandEnablementTest extends UITestCase {
 			enabledChangedCount++;
 			assertTrue(cmd1.isHandled());
 			assertTrue(cmd1.isEnabled());
-			assertEquals(normalHandler1, cmd1.getHandler());
+			assertEquals(normalHandler1, getHandler(cmd1));
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
 			contextService.deactivateContext(contextActivation1);
@@ -387,7 +407,7 @@ public class CommandEnablementTest extends UITestCase {
 			enabledChangedCount++;
 			assertTrue(cmd1.isHandled());
 			assertTrue(cmd1.isEnabled());
-			assertEquals(normalHandler2, cmd1.getHandler());
+			assertEquals(normalHandler2, getHandler(cmd1));
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
 			contextService.deactivateContext(contextActivation2);
@@ -420,7 +440,7 @@ public class CommandEnablementTest extends UITestCase {
 			contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
 			assertTrue(cmd1.isHandled());
 			assertFalse(cmd1.isEnabled());
-			assertEquals(disabledHandler1, cmd1.getHandler());
+			assertEquals(disabledHandler1, getHandler(cmd1));
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
 			contextService.deactivateContext(contextActivation1);
@@ -431,7 +451,7 @@ public class CommandEnablementTest extends UITestCase {
 			contextActivation2 = contextService.activateContext(CONTEXT_TEST2);
 			assertTrue(cmd1.isHandled());
 			assertFalse(cmd1.isEnabled());
-			assertEquals(disabledHandler2, cmd1.getHandler());
+			assertEquals(disabledHandler2, getHandler(cmd1));
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
 			contextService.deactivateContext(contextActivation2);
@@ -465,7 +485,7 @@ public class CommandEnablementTest extends UITestCase {
 
 			assertTrue(cmd1.isHandled());
 			assertTrue(cmd1.isEnabled());
-			assertEquals(eventHandler1, cmd1.getHandler());
+			assertEquals(eventHandler1, getHandler(cmd1));
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
 			eventHandler1.setEnabled(true);
@@ -623,7 +643,7 @@ public class CommandEnablementTest extends UITestCase {
 		assertTrue(cmd1.isHandled());
 		cmd1.setEnabled(snapshot);
 		assertTrue(cmd1.isEnabled());
-		assertEquals(contextHandler, cmd1.getHandler());
+		assertEquals(contextHandler, getHandler(cmd1));
 
 		snapshot.removeVariable(ISources.ACTIVE_PART_NAME);
 		assertTrue(cmd1.isHandled());
@@ -631,7 +651,7 @@ public class CommandEnablementTest extends UITestCase {
 		assertFalse(cmd1.isEnabled());
 		cmd1.setEnabled(handlerService.getCurrentState());
 		assertTrue(cmd1.isEnabled());
-		assertEquals(contextHandler, cmd1.getHandler());
+		assertEquals(contextHandler, getHandler(cmd1));
 
 		snapshot.addVariable(ISources.ACTIVE_PART_NAME, handlerService
 				.getCurrentState().getVariable(ISources.ACTIVE_PART_NAME));
@@ -639,7 +659,7 @@ public class CommandEnablementTest extends UITestCase {
 		assertTrue(cmd1.isEnabled());
 		cmd1.setEnabled(handlerService.getCurrentState());
 		assertTrue(cmd1.isEnabled());
-		assertEquals(contextHandler, cmd1.getHandler());
+		assertEquals(contextHandler, getHandler(cmd1));
 	}
 
 }

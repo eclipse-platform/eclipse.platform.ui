@@ -13,9 +13,7 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -27,14 +25,10 @@ import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.ui.workbench.IExceptionHandler;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.emf.common.notify.Notifier;
-import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class E4Workbench implements IWorkbench {
 	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
@@ -156,35 +150,6 @@ public class E4Workbench implements IWorkbench {
 		return appModel;
 	}
 
-	// FIXME We should have one place to setup the generic context stuff (see
-	// E4Application#createDefaultContext())
-	public static IEclipseContext createWorkbenchContext(final IEclipseContext applicationContext,
-			IExtensionRegistry registry, IExceptionHandler exceptionHandler,
-			IContributionFactory contributionFactory) {
-		Activator
-				.trace(Policy.DEBUG_CONTEXTS,
-						"createWorkbenchContext: initialize the workbench context with needed services", null); //$NON-NLS-1$
-		final IEclipseContext mainContext = applicationContext.createChild("WorkbenchContext"); //$NON-NLS-1$
-		mainContext.set(Logger.class.getName(),
-				ContextInjectionFactory.make(WorkbenchLogger.class, mainContext));
-
-		// setup for commands and handlers
-		if (contributionFactory != null) {
-			mainContext.set(IContributionFactory.class.getName(), contributionFactory);
-		}
-		mainContext.set(IServiceConstants.ACTIVE_PART, new ActivePartLookupFunction());
-		// EHandlerService comes from a ContextFunction
-		// EContextService comes from a ContextFunction
-		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
-		mainContext.set(IExtensionRegistry.class.getName(), registry);
-		mainContext.set(IServiceConstants.ACTIVE_SHELL, new ActiveChildLookupFunction(
-				IServiceConstants.ACTIVE_SHELL, null));
-
-		initializeNullStyling(mainContext);
-
-		return mainContext;
-	}
-
 	public static void processHierarchy(Object me) {
 		if (me instanceof MHandlerContainer) {
 			MContext contextModel = (MContext) me;
@@ -249,29 +214,4 @@ public class E4Workbench implements IWorkbench {
 		return context;
 	}
 
-	/*
-	 * For use when there is no real styling engine present. Has no behaviour but conforms to
-	 * IStylingEngine API.
-	 * 
-	 * @param appContext
-	 */
-	private static void initializeNullStyling(IEclipseContext appContext) {
-		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
-			public void setClassname(Object widget, String classname) {
-			}
-
-			public void setId(Object widget, String id) {
-			}
-
-			public void style(Object widget) {
-			}
-
-			public CSSStyleDeclaration getStyle(Object widget) {
-				return null;
-			}
-
-			public void setClassnameAndId(Object widget, String classname, String id) {
-			}
-		});
-	}
 }

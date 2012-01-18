@@ -218,7 +218,7 @@ public class ModelAssembler {
 
 		try {
 			Object o = factory
-					.create("platform:/plugin/" + ce.getContributor().getName() + "/" + ce.getAttribute("class"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+					.create("bundleclass://" + ce.getContributor().getName() + "/" + ce.getAttribute("class"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 							context, localContext);
 			ContextInjectionFactory.invoke(o, Execute.class, context, localContext);
 		} catch (Exception e) {

@@ -237,21 +237,20 @@ public class ContextsView {
 		MDirectToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
 		toolItem.setIconURI("platform:/plugin/org.eclipse.e4.core.contexts.debug/icons/full/obj16/target.gif");
 		toolItem.setTooltip(ContextMessages.targetButtonTooltip);
-		toolItem.setContributionURI("platform:/plugin/org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.FindTargetAction");
+		toolItem.setContributionURI("bundleclass://org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.FindTargetAction");
 		toolBar.getChildren().add(toolItem);
 
 		// refresh button
 		MDirectToolItem toolItem2 = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
 		toolItem2.setIconURI("platform:/plugin/org.eclipse.e4.core.contexts.debug/icons/full/obj16/refresh.gif");
 		toolItem2.setTooltip(ContextMessages.refreshButtonTooltip);
-		toolItem2.setContributionURI("platform:/plugin/org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.RefreshViewAction");
+		toolItem2.setContributionURI("bundleclass://org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.RefreshViewAction");
 		toolBar.getChildren().add(toolItem2);
 	}
 
 	@Inject
 	@Optional
-	public void setSelection(@EventTopic(SELECT_EVENT)
-	TreePath path) {
+	public void setSelection(@EventTopic(SELECT_EVENT) TreePath path) {
 		if (path == null)
 			return;
 		TreeSelection selection = new TreeSelection(path);
@@ -261,8 +260,7 @@ public class ContextsView {
 
 	@Inject
 	@Optional
-	public void setSelection(@EventTopic(REFRESH_EVENT)
-	Object data) {
+	public void setSelection(@EventTopic(REFRESH_EVENT) Object data) {
 		fullRefresh();
 	}
 

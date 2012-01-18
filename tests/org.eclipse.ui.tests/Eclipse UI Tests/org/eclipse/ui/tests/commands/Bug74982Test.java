@@ -22,6 +22,7 @@ import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NotHandledException;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -82,7 +83,7 @@ public final class Bug74982Test extends UITestCase {
         // Spin the event loop to make sure focus is set-up properly.
         final Display display = fWorkbench.getDisplay();
         while (display.readAndDispatch()) {
-        	// Do nothing
+        	((Workbench)fWorkbench).getContext().processWaiting();
         }
 
         // Get the select all command and execute it.

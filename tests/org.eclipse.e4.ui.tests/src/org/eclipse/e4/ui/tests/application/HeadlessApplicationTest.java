@@ -155,12 +155,22 @@ public abstract class HeadlessApplicationTest extends
 		context.set(IServiceConstants.ACTIVE_PART, parts[0]);
 
 		// the OSGi context should not have been affected by the recursion
-		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART));
+		assertNull(getRoot(context).get(IServiceConstants.ACTIVE_PART));
 
 		context.set(IServiceConstants.ACTIVE_PART, parts[1]);
 
 		// the OSGi context should not have been affected by the recursion
-		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART));
+		assertNull(getRoot(context).get(IServiceConstants.ACTIVE_PART));
+	}
+
+	private IEclipseContext getRoot(IEclipseContext context) {
+		IEclipseContext root = context;
+		while (true) {
+			context = context.getParent();
+			if (context == null)
+				return root;
+			root = context;
+		}
 	}
 
 	private void test_GetContext(MContext context) {
@@ -315,7 +325,7 @@ public abstract class HeadlessApplicationTest extends
 			part.setIconURI("platform:/plugin/" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
 					+ parts[i].getAttribute("icon")); //$NON-NLS-1$
-			part.setContributionURI("platform:/plugin/" //$NON-NLS-1$
+			part.setContributionURI("bundleclass://" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
 					+ parts[i].getAttribute("class")); //$NON-NLS-1$
 			String parentId = parts[i].getAttribute("parentId"); //$NON-NLS-1$

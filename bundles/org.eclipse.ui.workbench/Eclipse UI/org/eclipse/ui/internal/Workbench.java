@@ -63,6 +63,7 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
+import org.eclipse.e4.ui.internal.workbench.swt.IEventLoopAdvisor;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
@@ -96,7 +97,9 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
@@ -425,7 +428,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *            specializes this workbench instance
 	 * @since 3.0
 	 */
-	private Workbench(Display display, WorkbenchAdvisor advisor, MApplication app,
+	private Workbench(Display display, final WorkbenchAdvisor advisor, MApplication app,
 			IEclipseContext appContext) {
 		super();
 		StartupThreading.setWorkbench(this);
@@ -443,6 +446,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		appContext.set(getClass().getName(), this);
 		appContext.set(IWorkbench.class.getName(), this);
+		appContext.set(IEventLoopAdvisor.class, new IEventLoopAdvisor() {
+			public void eventLoopIdle(Display display) {
+				advisor.eventLoopIdle(display);
+			}
+
+			public void eventLoopException(Throwable exception) {
+				advisor.eventLoopException(exception);
+			}
+		});
 
 		// for dynamic UI [This seems to be for everything that isn't handled by
 		// some
@@ -1347,6 +1359,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
+		e4Context.set("org.eclipse.core.runtime.Platform", Platform.class); //$NON-NLS-1$
 		final EvaluationService evaluationService = new EvaluationService(e4Context);
 
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
@@ -1579,6 +1592,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	private final void initializeE4Services() {
+		// track the workbench preference and update the eclipse context with
+		// the new value
+		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS.equals(event.getProperty())) {
+					e4Context.set(IPresentationEngine.ANIMATIONS_ENABLED, event.getNewValue());
+				}
+			}
+		});
+
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
@@ -1798,12 +1822,10 @@ UIEvents.Context.TOPIC_CONTEXT,
 		appContext.set(ICommandService.class.getName(), service);
 		service.readRegistry();
 
-		MakeHandlersGo allHandlers = new MakeHandlersGo(this);
-
 		Command[] cmds = commandManager.getAllCommands();
 		for (int i = 0; i < cmds.length; i++) {
 			Command cmd = cmds[i];
-			cmd.setHandler(allHandlers);
+			cmd.setHandler(new MakeHandlersGo(this, cmd.getId()));
 		}
 
 		return service;

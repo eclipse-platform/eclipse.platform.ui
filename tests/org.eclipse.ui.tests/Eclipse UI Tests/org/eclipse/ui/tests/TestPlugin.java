@@ -17,7 +17,6 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -45,8 +44,7 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
     /**
      * The constructor.
      */
-    public TestPlugin(IPluginDescriptor descriptor) {
-        super(descriptor);
+    public TestPlugin() {
         plugin = this;
         try {
             resourceBundle = ResourceBundle
@@ -126,6 +124,7 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
     public void start(BundleContext context) throws Exception {
         TestInstallUtil.setContext(context);
         super.start(context);
+        earlyStartup();
         MenuBuilder.addMenuContribution();
     }
 

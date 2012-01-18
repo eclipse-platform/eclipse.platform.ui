@@ -837,7 +837,6 @@
             name="%command.save.name"
             description="%command.save.description"
             categoryId="org.eclipse.ui.category.file"
-            defaultHandler="org.eclipse.ui.internal.handlers.SaveHandler"
             id="org.eclipse.ui.file.save" />
       <command
             name="%command.saveAs.name"
@@ -848,7 +847,6 @@
       <command
             name="%command.saveAll.name"
             description="%command.saveAll.description"
-            defaultHandler="org.eclipse.ui.internal.handlers.SaveAllHandler"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.saveAll" />
       <command

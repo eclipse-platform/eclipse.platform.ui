@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.model.WorkbenchFile;
 
 /**
@@ -32,6 +33,10 @@ import org.eclipse.ui.internal.ide.model.WorkbenchFile;
  */
 public class ContentTypeDecorator implements ILightweightLabelDecorator {
 
+	private boolean fHasEditorAssociationOverridesComputed= false;
+
+	private boolean fHasEditorAssociationOverrides;
+
 	public void decorate(Object element, IDecoration decoration) {
 		if (!(element instanceof IFile))
 			return;
@@ -41,22 +46,30 @@ public class ContentTypeDecorator implements ILightweightLabelDecorator {
 		
 		IFile file = (IFile) element;
 		ImageDescriptor image = null;
-		IContentDescription contentDescription = null;
-		try {
-			Job.getJobManager().beginRule(file, null);
-			contentDescription = file.getContentDescription();
-		} catch (CoreException e) {
-			// We already have some kind of icon for this file so it's OK to not
-			// find a better icon.
-		} finally {
-			Job.getJobManager().endRule(file);
-		}
-		if (contentDescription != null) {
-			IContentType contentType = contentDescription.getContentType();
-			if (contentType != null) {
-				image = workbench.getEditorRegistry().getImageDescriptor(file.getName(), contentType);
+
+		if (hasEditorAssociationOverrides()) {
+			IEditorDescriptor d = IDE.getDefaultEditor(file);
+			image = d.getImageDescriptor();
+		} else {
+			IContentDescription contentDescription= null;
+			try {
+				Job.getJobManager().beginRule(file, null);
+				contentDescription= file.getContentDescription();
+			} catch (CoreException e) {
+				// We already have some kind of icon for this file so it's OK to not
+				// find a better icon.
+			} finally {
+				Job.getJobManager().endRule(file);
+			}
+
+			if (contentDescription != null) {
+				IContentType contentType = contentDescription.getContentType();
+				if (contentType != null) {
+					image= workbench.getEditorRegistry().getImageDescriptor(file.getName(), contentType);
+				}
 			}
 		}
+
 		// add the image descriptor as a session property so that it will be
 		// picked up by the workbench label provider upon the next update.
 		try {
@@ -80,6 +93,14 @@ public class ContentTypeDecorator implements ILightweightLabelDecorator {
 	}
 
 	public void removeListener(ILabelProviderListener listener) {
+	}
+
+	private boolean hasEditorAssociationOverrides() {
+		if (!fHasEditorAssociationOverridesComputed) {
+			fHasEditorAssociationOverrides = EditorAssociationOverrideDescriptor.getContributedEditorAssociationOverrides().length > 0;
+			fHasEditorAssociationOverridesComputed = true;
+		}
+		return fHasEditorAssociationOverrides;
 	}
 
 }

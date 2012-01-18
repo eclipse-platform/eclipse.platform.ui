@@ -21,6 +21,10 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
@@ -146,6 +150,39 @@ public class CompatibilityView extends CompatibilityPart {
 		return true;
 	}
 
+	private void clearOpaqueMenuItems(MenuManagerRenderer renderer, MMenu menu) {
+		List<MMenuElement> children = menu.getChildren();
+		for (int i = 0; i < children.size(); i++) {
+			MMenuElement child = children.get(i);
+			IContributionItem contribution = renderer.getContribution(child);
+			if (contribution != null) {
+				renderer.clearModelToContribution(child, contribution);
+			}
+
+			if (child instanceof MOpaqueMenuSeparator) {
+				((MOpaqueMenuSeparator) child).setOpaqueItem(null);
+				children.remove(i);
+				i--;
+			} else if (child instanceof MOpaqueMenuItem) {
+				((MOpaqueMenuItem) child).setOpaqueItem(null);
+				children.remove(i);
+				i--;
+			} else if (child instanceof MMenu) {
+				MMenu submenu = (MMenu) child;
+				MenuManager manager = renderer.getManager(submenu);
+				if (manager != null) {
+					renderer.clearModelToManager(submenu, manager);
+				}
+
+				if (child instanceof MOpaqueMenu) {
+					children.remove(i);
+					i--;
+				}
+				clearOpaqueMenuItems(renderer, submenu);
+			}
+		}
+	}
+
 	@Override
 	void disposeSite(PartSite site) {
 		IEclipseContext context = getModel().getContext();
@@ -156,8 +193,10 @@ public class CompatibilityView extends CompatibilityPart {
 			if (menu.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
 				AbstractPartRenderer apr = rendererFactory.getRenderer(menu, null);
 				if (apr instanceof MenuManagerRenderer) {
+					MenuManagerRenderer renderer = (MenuManagerRenderer) apr;
 					MenuManager mm = (MenuManager) actionBars.getMenuManager();
-					((MenuManagerRenderer) apr).clearModelToManager(menu, mm);
+					renderer.clearModelToManager(menu, mm);
+					clearOpaqueMenuItems(renderer, menu);
 				}
 				break;
 			}
@@ -171,12 +210,19 @@ public class CompatibilityView extends CompatibilityPart {
 				ToolBarManagerRenderer tbmr = (ToolBarManagerRenderer) apr;
 				tbmr.clearModelToManager(toolbar, tbm);
 				// remove opaque mappings
-				for (MToolBarElement element : toolbar.getChildren()) {
+				List<MToolBarElement> children = toolbar.getChildren();
+				for (int i = 0; i < children.size(); i++) {
+					MToolBarElement element = children.get(i);
 					if (element instanceof MOpaqueToolItem) {
 						IContributionItem item = tbmr.getContribution(element);
 						if (item != null) {
 							tbmr.clearModelToContribution(element, item);
 						}
+						// clear the reference
+						((MOpaqueToolItem) element).setOpaqueItem(null);
+						// remove the opaque item
+						children.remove(i);
+						i--;
 					}
 				}
 			}

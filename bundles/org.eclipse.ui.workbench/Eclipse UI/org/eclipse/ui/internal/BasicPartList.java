@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -86,8 +87,9 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 	protected TableViewer createTableViewer(Composite parent, int style) {
 		Table table = new Table(parent, SWT.SINGLE | (style & ~SWT.MULTI));
-		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		table.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 		TableViewer tableViewer = new TableViewer(table);
+		tableViewer.setComparator(new ViewerComparator());
 		tableViewer.addFilter(new NamePatternFilter());
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setLabelProvider(new BasicStackListLabelProvider());
@@ -107,6 +109,10 @@ public class BasicPartList extends AbstractTableInformationControl {
 		List<Object> list = new ArrayList<Object>();
 		for (MUIElement element : input.getChildren()) {
 			if (element instanceof MPlaceholder) {
+				if (!element.isToBeRendered() || !element.isVisible()) {
+					continue;
+				}
+
 				element = ((MPlaceholder) element).getRef();
 			}
 

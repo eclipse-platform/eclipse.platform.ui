@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.Comparator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
@@ -221,21 +222,27 @@ public class OpenWithMenu extends ContributionItem {
         };
         menuItem.addListener(SWT.Selection, listener);
     }
-    
+
     /* (non-Javadoc)
      * Fills the menu with perspective items.
      */
     public void fill(Menu menu, int index) {
-        IFile file = getFileResource();
+		final IFile file= getFileResource();
         if (file == null) {
             return;
         }
 
+		IContentType contentType= IDE.getContentType(file);
+		FileEditorInput editorInput= new FileEditorInput(file);
+
         IEditorDescriptor defaultEditor = registry
                 .findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID); // may be null
-        IEditorDescriptor preferredEditor = IDE.getDefaultEditor(file); // may be null
+		final IEditorDescriptor preferredEditor= IDE.getDefaultEditor(file); // may be null
 
-        Object[] editors = registry.getEditors(file.getName(), IDE.getContentType(file));
+		IEditorDescriptor[] editors= registry.getEditors(file.getName(), contentType);
+
+		editors= IDE.overrideEditorAssociations(editorInput, contentType, editors);
+
         Collections.sort(Arrays.asList(editors), comparer);
 
         boolean defaultFound = false;
@@ -245,7 +252,7 @@ public class OpenWithMenu extends ContributionItem {
         ArrayList alreadyMapped = new ArrayList();
 
         for (int i = 0; i < editors.length; i++) {
-            IEditorDescriptor editor = (IEditorDescriptor) editors[i];
+			IEditorDescriptor editor= editors[i];
             if (!alreadyMapped.contains(editor)) {
                 createMenuItem(menu, editor, preferredEditor);
                 if (defaultEditor != null
@@ -277,7 +284,7 @@ public class OpenWithMenu extends ContributionItem {
         if (descriptor != null) {
             createMenuItem(menu, descriptor, preferredEditor);
         }
-        createDefaultMenuItem(menu, file);
+		createDefaultMenuItem(menu, file, preferredEditor == null);
         
         // add Other... menu item
         createOtherMenuItem(menu);
@@ -340,14 +347,15 @@ public class OpenWithMenu extends ContributionItem {
     }
 
     /**
-     * Creates the menu item for clearing the current selection.
-     *
-     * @param menu the menu to add the item to
-     * @param file the file being edited
-     */
-    private void createDefaultMenuItem(Menu menu, final IFile file) {
+	 * Creates the menu item for clearing the current selection.
+	 * 
+	 * @param menu the menu to add the item to
+	 * @param file the file being edited
+	 * @param markAsSelected <code>true</code> if the item should marked as selected
+	 */
+	private void createDefaultMenuItem(Menu menu, final IFile file, boolean markAsSelected) {
         final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
-        menuItem.setSelection(IDE.getDefaultEditor(file) == null);
+		menuItem.setSelection(markAsSelected);
         menuItem.setText(IDEWorkbenchMessages.DefaultEditorDescription_name);
 
         Listener listener = new Listener() {

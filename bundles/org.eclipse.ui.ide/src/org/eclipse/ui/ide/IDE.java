@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
+import org.eclipse.ui.internal.ide.EditorAssociationOverrideDescriptor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.model.StandardPropertiesAdapterFactory;
@@ -143,6 +144,9 @@ public final class IDE {
 	 * lazily initialized on fist access.
 	 */
 	private static MarkerHelpRegistry markerHelpRegistry = null;
+
+	private static IEditorAssociationOverride[] editorAssociationOverrides;
+
 
 	/**
 	 * Standard shared images defined by the IDE. These are over and above the
@@ -864,12 +868,12 @@ public final class IDE {
 			throw new IllegalArgumentException();
 		}
 
-		IContentType contentType= null;
+		IContentType contentType = null;
 		try {
 			InputStream is = null;
 			try {
 				is = fileStore.openInputStream(EFS.NONE, null);
-				contentType= Platform.getContentTypeManager().findContentTypeFor(is, name);
+				contentType = Platform.getContentTypeManager().findContentTypeFor(is, name);
 			} finally {
 				if (is != null) {
 					is.close();
@@ -881,9 +885,102 @@ public final class IDE {
 			// continue without content type
 		}
 
-		IEditorRegistry editorReg= PlatformUI.getWorkbench().getEditorRegistry();
+		IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
 
-		return getEditorDescriptor(name, editorReg, editorReg.getDefaultEditor(name, contentType)).getId();
+		IEditorDescriptor defaultEditor = editorReg.getDefaultEditor(name, contentType);
+		defaultEditor = overrideDefaultEditorAssociation(new FileStoreEditorInput(fileStore), contentType, defaultEditor);
+		return getEditorDescriptor(name, editorReg, defaultEditor).getId();
+	}
+
+	/**
+	 * Applies the <code>org.eclipse.ui.ide.editorAssociationOverride</code> extensions to the given
+	 * input.
+	 * <p>
+	 * <strong>Note:</strong> It is recommended to get the descriptor for the default editor by
+	 * calling {@link #getDefaultEditor(IFile, boolean)}. This method here should only be used if
+	 * this is not possible for whatever reason.
+	 * </p>
+	 * 
+	 * @param editorInput the editor input for the editor
+	 * @param contentType the content type of the input or <code>null</code> if not available
+	 * @param editorDescriptor the current association for the given input or <code>null</code> if
+	 *            none
+	 * @return the editor descriptor to be used for the given input or <code>null</code> if none.
+	 *         Can be <code>editorDescriptor</code>.
+	 * @see IEditorAssociationOverride#overrideDefaultEditor(IEditorInput, IContentType,
+	 *      IEditorDescriptor)
+	 * @since 3.8
+	 */
+	public static IEditorDescriptor overrideDefaultEditorAssociation(IEditorInput editorInput, IContentType contentType, IEditorDescriptor editorDescriptor) {
+		IEditorAssociationOverride[] overrides = getEditorAssociationOverrides();
+		for (int i = 0; i < overrides.length; i++) {
+			editorDescriptor = overrides[i].overrideDefaultEditor(editorInput, contentType, editorDescriptor);
+		}
+		return editorDescriptor;
+	}
+
+	/**
+	 * Applies the <code>org.eclipse.ui.ide.editorAssociationOverride</code> extensions to the given
+	 * input.
+	 * 
+	 * @param fileName the name of the file for which to choose the editor
+	 * @param contentType the content type of the input or <code>null</code> if not available
+	 * @param editorDescriptor the current association for the given input or <code>null</code> if
+	 *            none
+	 * @return the editor descriptor to be used for the given input or <code>null</code> if none.
+	 *         Can be <code>editorDescriptor</code>.
+	 * @see IEditorAssociationOverride#overrideDefaultEditor(String, IContentType,
+	 *      IEditorDescriptor)
+	 * @since 3.8
+	 */
+	private static IEditorDescriptor overrideDefaultEditorAssociation(String fileName, IContentType contentType, IEditorDescriptor editorDescriptor) {
+		IEditorAssociationOverride[] overrides = getEditorAssociationOverrides();
+		for (int i = 0; i < overrides.length; i++) {
+			editorDescriptor = overrides[i].overrideDefaultEditor(fileName, contentType, editorDescriptor);
+		}
+		return editorDescriptor;
+	}
+
+	/**
+	 * Applies the <code>org.eclipse.ui.ide.editorAssociationOverride</code> extensions to the given
+	 * input.
+	 * 
+	 * @param editorInput the editor input for the editor
+	 * @param contentType the content type of the input or <code>null</code> if not available
+	 * @param editorDescriptors the current association for the given input
+	 * @return the editor descriptors to be used for the given input - can be
+	 *         <code>editorDescriptors</code>. The order is not relevant.
+	 * @see IEditorAssociationOverride#overrideEditors(IEditorInput, IContentType,
+	 *      IEditorDescriptor[])
+	 * @since 3.8
+	 */
+	public static IEditorDescriptor[] overrideEditorAssociations(IEditorInput editorInput, IContentType contentType, IEditorDescriptor[] editorDescriptors) {
+		IEditorAssociationOverride[] overrides = getEditorAssociationOverrides();
+		for (int i = 0; i < overrides.length; i++) {
+			editorDescriptors = overrides[i].overrideEditors(editorInput, contentType, editorDescriptors);
+		}
+		return editorDescriptors;
+	}
+
+	/**
+	 * Applies the <code>org.eclipse.ui.ide.editorAssociationOverride</code> extensions to the given
+	 * input.
+	 * 
+	 * @param fileName the name of the file for which to choose the editor
+	 * @param contentType the content type of the input or <code>null</code> if not available
+	 * @param editorDescriptors the current association for the given input
+	 * @return the editor descriptors to be used for the given input - can be
+	 *         <code>editorDescriptors</code>. The order is not relevant.
+	 * @see IEditorAssociationOverride#overrideEditors(IEditorInput, IContentType,
+	 *      IEditorDescriptor[])
+	 * @since 3.8
+	 */
+	public static IEditorDescriptor[] overrideEditorAssociations(String fileName, IContentType contentType, IEditorDescriptor[] editorDescriptors) {
+		IEditorAssociationOverride[] overrides = getEditorAssociationOverrides();
+		for (int i = 0; i < overrides.length; i++) {
+			editorDescriptors = overrides[i].overrideEditors(fileName, contentType, editorDescriptors);
+		}
+		return editorDescriptors;
 	}
 
 	/**
@@ -963,8 +1060,9 @@ public final class IDE {
 		IEditorRegistry editorReg = PlatformUI.getWorkbench()
 				.getEditorRegistry();
 
-		return getEditorDescriptor(name, editorReg, editorReg.getDefaultEditor(
-				name, contentType));
+		IEditorDescriptor defaultEditor = editorReg.getDefaultEditor(name, contentType);
+		defaultEditor = getEditorDescriptor(name, editorReg, defaultEditor);
+		return overrideDefaultEditorAssociation(name, contentType, defaultEditor);
 	}
 
 	/**
@@ -1212,6 +1310,7 @@ public final class IDE {
 		if (contentTypes != null) {
 			for(int i = 0 ; i < contentTypes.length; i++) {
 				IEditorDescriptor editorDesc = editorReg.getDefaultEditor(name, contentTypes[i]);
+				editorDesc = overrideDefaultEditorAssociation(input, contentTypes[i], editorDesc);
 				if ((editorDesc != null) && (editorDesc.isInternal()))
 					return page.openEditor(input, editorDesc.getId());
 			}
@@ -1220,6 +1319,7 @@ public final class IDE {
 		// no content types are available, use file name associations
 		IEditorDescriptor[] editors = editorReg.getEditors(name);
 		if (editors != null) {
+			editors = overrideEditorAssociations(input, null, editors);
 			for(int i = 0 ; i < editors.length; i++) {
 				if ((editors[i] != null) && (editors[i].isInternal()))
 					return page.openEditor(input, editors[i].getId());
@@ -1342,24 +1442,27 @@ public final class IDE {
 		// Try file specific editor.
 		IEditorRegistry editorReg = PlatformUI.getWorkbench()
 				.getEditorRegistry();
+
+		IContentType contentType = null;
+		if (determineContentType) {
+			contentType = getContentType(file);
+		}
+
 		try {
 			String editorID = file.getPersistentProperty(EDITOR_KEY);
 			if (editorID != null) {
 				IEditorDescriptor desc = editorReg.findEditor(editorID);
 				if (desc != null) {
-					return desc;
+					return overrideDefaultEditorAssociation(new FileEditorInput(file), contentType, desc);
 				}
 			}
 		} catch (CoreException e) {
 			// do nothing
 		}
 
-		IContentType contentType = null;
-		if (determineContentType) {
-			contentType = getContentType(file);
-		}
 		// Try lookup with filename
-		return editorReg.getDefaultEditor(file.getName(), contentType);
+		IEditorDescriptor desc = editorReg.getDefaultEditor(file.getName(), contentType);
+		return overrideDefaultEditorAssociation(new FileEditorInput(file), contentType, desc);
 	}
 
 	/**
@@ -1644,5 +1747,22 @@ public final class IDE {
 		}
 		return page.openEditors(editorInputs, editorDescriptions, IWorkbenchPage.MATCH_INPUT);
 	}
-	
+
+	private static synchronized IEditorAssociationOverride[] getEditorAssociationOverrides() {
+		if (editorAssociationOverrides == null) {
+			EditorAssociationOverrideDescriptor[] descriptors = EditorAssociationOverrideDescriptor.getContributedEditorAssociationOverrides();
+			ArrayList overrides = new ArrayList(descriptors.length);
+			for (int i = 0; i < descriptors.length; i++) {
+				try {
+					IEditorAssociationOverride override = descriptors[i].createOverride();
+					overrides.add(override);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			editorAssociationOverrides = (IEditorAssociationOverride[])overrides.toArray(new IEditorAssociationOverride[overrides.size()]);
+		}
+		return editorAssociationOverrides;
+	}
 }

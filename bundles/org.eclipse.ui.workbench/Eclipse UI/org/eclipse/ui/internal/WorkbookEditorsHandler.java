@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -69,6 +70,16 @@ public class WorkbookEditorsHandler extends AbstractHandler {
 				int y = (bounds.height / 2) + bounds.y;
 				x = x - (size.x / 2);
 				y = y - (size.y / 2);
+
+				// adjust for monitor bounds as necessary
+				Monitor monitor = editorList.getShell().getMonitor();
+				Rectangle monitorBounds = monitor.getClientArea();
+				if (x + size.x > monitorBounds.x + monitorBounds.width) {
+					x = monitorBounds.x + monitorBounds.width - size.x;
+				}
+				if (y + size.y > monitorBounds.y + monitorBounds.height) {
+					y = monitorBounds.y + monitorBounds.height - size.y;
+				}
 
 				editorList.setLocation(new Point(x, y));
 				editorList.setVisible(true);

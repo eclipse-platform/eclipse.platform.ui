@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3470,7 +3470,7 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
         }
     }
 
-	private MUIElement getActiveElement(IWorkbenchPartReference ref) {
+	public MUIElement getActiveElement(IWorkbenchPartReference ref) {
 		MUIElement element = null;
 
 		MPerspective curPersp = modelService.getActivePerspective(window);
@@ -3480,6 +3480,7 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 
 		switch (modelService.getElementLocation(placeholder == null ? model : placeholder)) {
 		case EModelService.IN_ACTIVE_PERSPECTIVE:
+		case EModelService.OUTSIDE_PERSPECTIVE:
 			MUIElement parent = placeholder == null ? model.getParent() : placeholder.getParent();
 			if (parent instanceof MPartStack) {
 				element = parent;
@@ -4268,6 +4269,39 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 	}
 
 	/**
+	 * Unzooms the shared area if there are no more rendered parts contained
+	 * within it.
+	 * 
+	 * @see #unzoomSharedArea(MUIElement)
+	 */
+	private void unzoomSharedArea() {
+		MPlaceholder eaPH = (MPlaceholder) modelService.find(IPageLayout.ID_EDITOR_AREA, window);
+		for (MPart part : modelService.findElements(eaPH, null, MPart.class, null)) {
+			if (part.isToBeRendered()) {
+				MPlaceholder placeholder = part.getCurSharedRef();
+				if (placeholder == null || placeholder.isToBeRendered()) {
+					return;
+				}
+			}
+		}
+
+		setPartState(eaPH, null);
+	}
+
+	/**
+	 * Unzooms the shared area if the specified element is in the shared area.
+	 * 
+	 * @param element
+	 *            the element to check if it is in the shared area
+	 * @see #unzoomSharedArea()
+	 */
+	private void unzoomSharedArea(MUIElement element) {
+		if (modelService.getElementLocation(element) == EModelService.IN_SHARED_AREA) {
+			unzoomSharedArea();
+		}
+	}
+
+	/**
 	 * An event handler for listening to parts and placeholders being
 	 * unrendered.
 	 */
@@ -4280,6 +4314,10 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 			if (element instanceof MPlaceholder) {
 				MUIElement ref = ((MPlaceholder) element).getRef();
+				// a placeholder has been unrendered, check to see if the shared
+				// area needs to be unzoomed
+				unzoomSharedArea(ref);
+
 				if (ref instanceof MPart) {
 					// find all placeholders for this part
 					List<MPlaceholder> placeholders = modelService.findElements(window,
@@ -4301,6 +4339,10 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 				}
 			} else if (element instanceof MPart) {
 				MPart part = (MPart) element;
+				// a part has been unrendered, check to see if the shared
+				// area needs to be unzoomed
+				unzoomSharedArea(part);
+
 				if (CompatibilityEditor.MODEL_ELEMENT_ID.equals(part.getElementId())) {
 					EditorReference reference = getEditorReference(part);
 					if (reference != null) {

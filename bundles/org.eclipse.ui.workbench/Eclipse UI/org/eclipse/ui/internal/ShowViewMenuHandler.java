@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,21 @@ import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISources;
@@ -85,10 +95,49 @@ public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 						}
 						parent = parent.getParent();
 					}
+
+					MMenu menuModel = StackRenderer.getViewMenu(model);
+					if (menuModel != null) {
+						showStandaloneViewMenu(event, model, menuModel, partContainer);
+					}
 				}
 			}
 		}
 		return null;
+	}
+
+	private void showStandaloneViewMenu(ExecutionEvent event, MPart model, MMenu menuModel,
+			Composite partContainer) {
+		Shell shell = partContainer.getShell();
+		Menu menu = (Menu) menuModel.getWidget();
+		if (menu == null) {
+			IPresentationEngine engine = (IPresentationEngine) HandlerUtil.getVariable(event,
+					IPresentationEngine.class.getName());
+			menu = (Menu) engine.createGui(menuModel, shell, model.getContext());
+			if (menu != null) {
+				final Menu tmpMenu = menu;
+				partContainer.addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						tmpMenu.dispose();
+					}
+				});
+			}
+		}
+
+		Display display = menu.getDisplay();
+		Point location = display.map(partContainer, null, partContainer.getLocation());
+		Point size = partContainer.getSize();
+		menu.setLocation(location.x + size.x, location.y);
+		menu.setVisible(true);
+
+		while (!menu.isDisposed() && menu.isVisible()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+
+		if (!(menu.getData() instanceof MenuManager)) {
+			menu.dispose();
+		}
 	}
 
 	/*

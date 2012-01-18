@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorPart;
@@ -180,13 +179,14 @@ public class ZoomTestCase extends UITestCase {
     
     // returns whether this part is zoomed
     protected boolean isZoomed(IWorkbenchPart part) {
-        MUIElement partParent = getPartParent(part);
-        
-        if (partParent instanceof MPartStack) {
-        	return partParent.getTags().contains(IPresentationEngine.MAXIMIZED);
-        }
-        							
-        return false;
+    	if (part == null)
+    		return false;
+    	
+    	MUIElement toTest = page.getActiveElement(page.getReference(part));
+    	if (toTest == null)
+    		return false;
+    	
+    	return toTest.getTags().contains(IPresentationEngine.MAXIMIZED);
     }
     
     /**

@@ -199,7 +199,7 @@ public class NewMWindowTest extends TestCase {
 		stack.getChildren().add(contributedPart);
 		contributedPart.setLabel("Sample View");
 		contributedPart
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		return window;
 	}

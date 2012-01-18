@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class SampleToolControl {
 
-	public static String CONTRIBUTION_URI = "platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleToolControl"; //$NON-NLS-1$
+	public static String CONTRIBUTION_URI = "bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleToolControl"; //$NON-NLS-1$
 
 	boolean shellDisposed = false;
 	boolean shellEagerlyDestroyed = false;

@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -30,12 +29,14 @@ import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.ParseException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.CommandManagerEvent;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyConfiguration;
+import org.eclipse.ui.internal.MakeHandlersGo;
 import org.eclipse.ui.internal.handlers.LegacyHandlerWrapper;
 import org.eclipse.ui.internal.keys.SchemeLegacyWrapper;
 import org.eclipse.ui.internal.util.Util;
@@ -286,6 +287,9 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 
 	public ICommand getCommand(String commandId) {
 		final Command command = commandManager.getCommand(commandId);
+		if (!command.isDefined()) {
+			command.setHandler(new MakeHandlersGo(PlatformUI.getWorkbench(), commandId));
+		}
 		return new CommandLegacyWrapper(command, bindingManager);
 	}
 

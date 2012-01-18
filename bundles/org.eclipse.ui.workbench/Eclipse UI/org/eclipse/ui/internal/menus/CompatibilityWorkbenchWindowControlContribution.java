@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.menus;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -31,7 +32,9 @@ import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
  */
 public class CompatibilityWorkbenchWindowControlContribution {
 
-	public static final String CONTROL_CONTRIBUTION_URI = "platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.menus.CompatibilityWorkbenchWindowControlContribution"; //$NON-NLS-1$
+	public static final String CONTROL_CONTRIBUTION_URI = "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.menus.CompatibilityWorkbenchWindowControlContribution"; //$NON-NLS-1$
+
+	private WorkbenchWindowControlContribution contribution;
 
 	/**
 	 * Constructs the control contribution that this proxy represents.
@@ -48,10 +51,9 @@ public class CompatibilityWorkbenchWindowControlContribution {
 		IConfigurationElement configurationElement = ControlContributionRegistry.get(toolControl
 				.getElementId());
 		if (configurationElement != null) {
-			WorkbenchWindowControlContribution contribution = (WorkbenchWindowControlContribution) Util
-					.safeLoadExecutableExtension(configurationElement,
-							IWorkbenchRegistryConstants.ATT_CLASS,
-							WorkbenchWindowControlContribution.class);
+			contribution = (WorkbenchWindowControlContribution) Util.safeLoadExecutableExtension(
+					configurationElement, IWorkbenchRegistryConstants.ATT_CLASS,
+					WorkbenchWindowControlContribution.class);
 			if (contribution != null) {
 				IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
 				contribution.setWorkbenchWindow(workbenchWindow);
@@ -82,6 +84,14 @@ public class CompatibilityWorkbenchWindowControlContribution {
 
 				contribution.delegateCreateControl(composite);
 			}
+		}
+	}
+
+	@PreDestroy
+	void dispose() {
+		if (contribution != null) {
+			contribution.dispose();
+			contribution = null;
 		}
 	}
 

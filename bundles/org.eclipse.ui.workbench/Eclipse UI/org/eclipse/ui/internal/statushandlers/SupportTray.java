@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Krzysztof Daniel <krzysztof.daniel@gmail.com> - Bug 355030
  ******************************************************************************/
 package org.eclipse.ui.internal.statushandlers;
 
@@ -79,8 +80,6 @@ public class SupportTray extends DialogTray implements
 	private Composite supportAreaContent;
 
 	private StatusAdapter lastSelectedStatus;
-
-	private AbstractStatusAreaProvider userSupportProvider;
 
 	/*
 	 * (non-Javadoc)
@@ -267,9 +266,12 @@ public class SupportTray extends DialogTray implements
 	public ErrorSupportProvider getSupportProvider() {
 		ErrorSupportProvider provider = Policy.getErrorSupportProvider();
 
-		if (userSupportProvider != null) {
-			provider = userSupportProvider;
+		Object userSupportProvider = dialogState
+				.get(IStatusDialogConstants.CUSTOM_SUPPORT_PROVIDER);
+		if (userSupportProvider instanceof AbstractStatusAreaProvider) {
+			provider = (ErrorSupportProvider) userSupportProvider;
 		}
+
 
 		if (getBooleanValue(IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA) && provider == null) {
 			provider = new StackTraceSupportArea();

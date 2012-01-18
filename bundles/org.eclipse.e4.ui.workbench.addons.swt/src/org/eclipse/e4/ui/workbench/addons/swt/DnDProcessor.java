@@ -20,7 +20,7 @@ public class DnDProcessor {
 		// Insert the addon into the system
 		MAddon dndAddon = ApplicationFactoryImpl.eINSTANCE.createAddon();
 		dndAddon.setElementId("DnDAddon"); //$NON-NLS-1$
-		dndAddon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.dndaddon.DnDAddon"); //$NON-NLS-1$
+		dndAddon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.dndaddon.DnDAddon"); //$NON-NLS-1$
 		app.getAddons().add(dndAddon);
 	}
 }

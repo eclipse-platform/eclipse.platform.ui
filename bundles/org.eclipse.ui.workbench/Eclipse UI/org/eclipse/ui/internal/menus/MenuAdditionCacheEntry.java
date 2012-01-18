@@ -395,6 +395,12 @@ public class MenuAdditionCacheEntry {
 		}
 		item.setTooltip(MenuHelper.getTooltip(commandAddition));
 		item.setType(MenuHelper.getStyle(commandAddition));
+		if (MenuHelper.hasPulldownStyle(commandAddition)) {
+			MMenu element = MenuFactoryImpl.eINSTANCE.createMenu();
+			String id = MenuHelper.getId(commandAddition);
+			element.setElementId(id);
+			item.setMenu(element);
+		}
 		item.setVisibleWhen(MenuHelper.getVisibleWhen(commandAddition));
 		return item;
 	}

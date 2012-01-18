@@ -50,9 +50,9 @@ public class MPartSashContainerTest extends TestCase {
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 
 		partSashContainer.setHorizontal(true);
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		window.getChildren().add(partSashContainer);
 		partSashContainer.getChildren().add(partA);

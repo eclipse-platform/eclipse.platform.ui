@@ -26,6 +26,8 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Path;
@@ -60,6 +62,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.renderers.swt.DirectContributionItem;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
@@ -398,6 +401,11 @@ public class MenuHelper {
 		return ItemType.PUSH;
 	}
 
+	public static boolean hasPulldownStyle(IConfigurationElement element) {
+		String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
+		return IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style);
+	}
+
 	public static boolean getRetarget(IConfigurationElement element) {
 		String r = element.getAttribute(IWorkbenchRegistryConstants.ATT_RETARGET);
 		return Boolean.valueOf(r);
@@ -554,6 +562,7 @@ public class MenuHelper {
 		final MHandledToolItem item = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
 
 		String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
+		String pulldown = element.getAttribute("pulldown"); //$NON-NLS-1$
 		if (style == null || style.length() == 0) {
 			item.setType(ItemType.PUSH);
 		} else if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {
@@ -564,7 +573,8 @@ public class MenuHelper {
 			}
 		} else if (IWorkbenchRegistryConstants.STYLE_RADIO.equals(style)) {
 			item.setType(ItemType.RADIO);
-		} else if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
+		} else if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)
+				|| (pulldown != null && pulldown.equals("true"))) { //$NON-NLS-1$
 			MRenderedMenu menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
 			ECommandService cs = app.getContext().get(ECommandService.class);
 			final ParameterizedCommand parmCmd = cs.createCommand(cmdId, null);
@@ -750,7 +760,7 @@ public class MenuHelper {
 					menuItem.setMnemonics(data.mnemonic);
 				}
 				if (data.icon != null) {
-					menuItem.setIconURI(getIconURI(data.icon));
+					menuItem.setIconURI(getIconURI(data.icon, application.getContext()));
 				} else {
 					menuItem.setIconURI(getIconURI(id, application.getContext()));
 				}
@@ -773,7 +783,7 @@ public class MenuHelper {
 
 				String iconURI = null;
 				if (data.icon != null) {
-					iconURI = getIconURI(data.icon);
+					iconURI = getIconURI(data.icon, application.getContext());
 				}
 				if (iconURI == null) {
 					iconURI = getIconURI(id, application.getContext());
@@ -798,7 +808,7 @@ public class MenuHelper {
 	}
 
 	public static MToolItem createToolItem(MApplication application, ActionContributionItem item) {
-		IAction action = item.getAction();
+		final IAction action = item.getAction();
 		String id = action.getActionDefinitionId();
 		if (id != null) {
 			for (MCommand command : application.getCommands()) {
@@ -807,7 +817,8 @@ public class MenuHelper {
 					toolItem.setCommand(command);
 					toolItem.setContributorURI(command.getContributorURI());
 
-					String iconURI = getIconURI(action.getImageDescriptor());
+					String iconURI = getIconURI(action.getImageDescriptor(),
+							application.getContext());
 					if (iconURI == null) {
 						iconURI = getIconURI(id, application.getContext());
 						if (iconURI == null) {
@@ -842,10 +853,10 @@ public class MenuHelper {
 				}
 			}
 		} else {
-			MDirectToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
+			final MDirectToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
 			String itemId = item.getId();
 			toolItem.setElementId(itemId);
-			String iconURI = getIconURI(action.getImageDescriptor());
+			String iconURI = getIconURI(action.getImageDescriptor(), application.getContext());
 			if (iconURI == null) {
 				if (itemId == null) {
 					if (action.getText() != null) {
@@ -864,6 +875,9 @@ public class MenuHelper {
 			} else {
 				toolItem.setIconURI(iconURI);
 			}
+			if (action.getToolTipText() != null) {
+				toolItem.setTooltip(action.getToolTipText());
+			}
 
 			switch (action.getStyle()) {
 			case IAction.AS_CHECK_BOX:
@@ -878,8 +892,32 @@ public class MenuHelper {
 				toolItem.setType(ItemType.PUSH);
 				break;
 			}
-			toolItem.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
+			toolItem.setContributionURI("bundleclass://org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
 			toolItem.setObject(new DirectProxy(action));
+			toolItem.setEnabled(action.isEnabled());
+
+			final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					String property = event.getProperty();
+					if (property.equals(IAction.ENABLED)) {
+						toolItem.setEnabled(action.isEnabled());
+					} else if (property.equals(IAction.CHECKED)) {
+						toolItem.setSelected(action.isChecked());
+					} else if (property.equals(IAction.TEXT)) {
+						toolItem.setLabel(action.getText());
+					} else if (property.equals(IAction.TOOL_TIP_TEXT)) {
+						toolItem.setLabel(action.getToolTipText());
+					}
+				}
+			};
+			// property listener is removed in
+			// DirectContributionItem#handleWidgetDispose()
+			action.addPropertyChangeListener(propertyListener);
+			toolItem.getTransientData().put(DirectContributionItem.DISPOSABLE, new Runnable() {
+						public void run() {
+							action.removePropertyChangeListener(propertyListener);
+						}
+					});
 			return toolItem;
 		}
 		return null;
@@ -894,7 +932,8 @@ public class MenuHelper {
 					MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
 					menuItem.setCommand(command);
 					menuItem.setLabel(command.getCommandName());
-					menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+					menuItem.setIconURI(getIconURI(action.getImageDescriptor(),
+							application.getContext()));
 
 					switch (action.getStyle()) {
 					case IAction.AS_CHECK_BOX:
@@ -930,7 +969,8 @@ public class MenuHelper {
 					} else {
 						menuItem.setLabel(command.getCommandName());
 					}
-					menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+					menuItem.setIconURI(getIconURI(action.getImageDescriptor(),
+							application.getContext()));
 
 					switch (action.getStyle()) {
 					case IAction.AS_CHECK_BOX:
@@ -958,7 +998,7 @@ public class MenuHelper {
 			}
 			String itemId = item.getId();
 			menuItem.setElementId(itemId == null ? id : itemId);
-			menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+			menuItem.setIconURI(getIconURI(action.getImageDescriptor(), application.getContext()));
 			switch (action.getStyle()) {
 			case IAction.AS_CHECK_BOX:
 				menuItem.setType(ItemType.CHECK);
@@ -972,7 +1012,7 @@ public class MenuHelper {
 				menuItem.setType(ItemType.PUSH);
 				break;
 			}
-			menuItem.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
+			menuItem.setContributionURI("bundleclass://org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
 			menuItem.setObject(new DirectProxy(action));
 			return menuItem;
 		}
@@ -997,30 +1037,19 @@ public class MenuHelper {
 		}
 	}
 
-	private static String getIconURI(ImageDescriptor descriptor) {
+	private static String getIconURI(ImageDescriptor descriptor, IEclipseContext context) {
 		if (descriptor == null) {
 			return null;
 		}
 
+		// Attempt to retrieve URIs from the descriptor and convert into a more
+		// durable form in case it's to be persisted
 		String string = descriptor.toString();
 		if (string.startsWith("URLImageDescriptor(")) { //$NON-NLS-1$
 			string = string.substring("URLImageDescriptor(".length()); //$NON-NLS-1$
 			string = string.substring(0, string.length() - 1);
 
-			BundleContext ctxt = FrameworkUtil.getBundle(WorkbenchWindow.class).getBundleContext();
-
-			try {
-				URI uri = new URI(string);
-				String host = uri.getHost();
-				String bundleId = host.substring(0, host.indexOf('.'));
-				Bundle bundle = ctxt.getBundle(Long.parseLong(bundleId));
-				StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
-				builder.append(bundle.getSymbolicName());
-				builder.append(uri.getPath());
-				return builder.toString();
-			} catch (URISyntaxException e) {
-				// ignored
-			}
+			return rewriteDurableURL(string);
 		} else if (descriptor.getClass().toString().endsWith("FileImageDescriptor")) { //$NON-NLS-1$
 			Class<?> sourceClass = getLocation(descriptor);
 			if (sourceClass == null) {
@@ -1042,9 +1071,64 @@ public class MenuHelper {
 
 			// construct the URL
 			URL url = FileLocator.find(bundle, new Path(parentPath).append(path), null);
-			return url == null ? null : url.toString();
+			return url == null ? null : rewriteDurableURL(url.toString());
+		} else {
+			if (descriptor instanceof IAdaptable) {
+				Object o = ((IAdaptable) descriptor).getAdapter(URL.class);
+				if (o != null) {
+					return rewriteDurableURL(o.toString());
+				}
+				o = ((IAdaptable) descriptor).getAdapter(URI.class);
+				if (o != null) {
+					return rewriteDurableURL(o.toString());
+				}
+			}
+			IAdapterManager adapter = context.get(IAdapterManager.class);
+			if (adapter != null) {
+				Object o = adapter.getAdapter(descriptor, URL.class);
+				if (o != null) {
+					return rewriteDurableURL(o.toString());
+				}
+				o = adapter.getAdapter(descriptor, URI.class);
+				if (o != null) {
+					return rewriteDurableURL(o.toString());
+				}
+			}
 		}
 		return null;
+	}
+
+	/**
+	 * Rewrite certain types of URLs to more durable forms, as these URLs may
+	 * may be persisted in the model.
+	 * 
+	 * @param url
+	 *            the url
+	 * @return the rewritten URL
+	 */
+	private static String rewriteDurableURL(String url) {
+		// Rewrite bundleentry and bundleresource entries as they are
+		// invalidated on -clean or a bundle remove, . These Platform URIs are
+		// of the form:
+		// bundleentry://<bundle-id>.XXX/path/to/file
+		// bundleresource://<bundle-id>.XXX/path/to/file
+		if (!url.startsWith("bundleentry:") && !url.startsWith("bundleresource:")) { //$NON-NLS-1$ //$NON-NLS-2$
+			return url;
+		}
+
+		BundleContext ctxt = FrameworkUtil.getBundle(WorkbenchWindow.class).getBundleContext();
+		try {
+			URI uri = new URI(url);
+			String host = uri.getHost();
+			String bundleId = host.substring(0, host.indexOf('.'));
+			Bundle bundle = ctxt.getBundle(Long.parseLong(bundleId));
+			StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
+			builder.append(bundle.getSymbolicName());
+			builder.append(uri.getPath());
+			return builder.toString();
+		} catch (URISyntaxException e) {
+			return url;
+		}
 	}
 
 	private static String getIconURI(String commandId, IEclipseContext workbench) {
@@ -1054,6 +1138,6 @@ public class MenuHelper {
 
 		ICommandImageService imageService = workbench.get(ICommandImageService.class);
 		ImageDescriptor descriptor = imageService.getImageDescriptor(commandId);
-		return getIconURI(descriptor);
+		return getIconURI(descriptor, workbench);
 	}
 }

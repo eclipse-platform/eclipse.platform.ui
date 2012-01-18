@@ -21,7 +21,7 @@ public class MinMaxProcessor {
 		MAddon minMaxAddon = ApplicationFactoryImpl.eINSTANCE.createAddon();
 		minMaxAddon.setElementId("MinMaxAddon"); //$NON-NLS-1$
 		minMaxAddon
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon"); //$NON-NLS-1$
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon"); //$NON-NLS-1$
 		app.getAddons().add(minMaxAddon);
 	}
 }

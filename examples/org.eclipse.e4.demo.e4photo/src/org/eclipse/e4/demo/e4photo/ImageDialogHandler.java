@@ -65,7 +65,7 @@ public class ImageDialogHandler {
 			
 			// Create the 'Library' part
 			MPart library = BasicFactoryImpl.eINSTANCE.createPart();
-			library.setContributionURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library");
+			library.setContributionURI("bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library");
 			library.setLabel("Library");
 			
 			// Create the 'Preview' part

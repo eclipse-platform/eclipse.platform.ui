@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -361,7 +361,10 @@ public final class ContributionsAnalyzer {
 		if (positionInParent != null && positionInParent.length() > 0) {
 			String[] array = positionInParent.split("="); //$NON-NLS-1$
 			modifier = array[0];
-			id = array[1];
+			// may have an invalid position, check for this
+			if (array.length > 1) {
+				id = array[1];
+			}
 		}
 		if (id == null) {
 			return menuModel.getChildren().size();

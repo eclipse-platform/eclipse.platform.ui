@@ -34,7 +34,7 @@ public class AddNoteHandler {
 		MPart exifPart = partService.findPart("e4.photo.demo.exif");
 		MPart editor = BasicFactoryImpl.eINSTANCE.createPart();
 		editor.setLabel("Note");
-		editor.setContributionURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NoteEditor");
+		editor.setContributionURI("bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NoteEditor");
 		editor.setElementId("org.eclipse.e4.demo.e4photo.noteEditor" + editors);
 		editors++;
 		

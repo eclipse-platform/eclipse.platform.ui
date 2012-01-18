@@ -53,8 +53,6 @@ public interface EPartService {
 		CREATE
 	}
 
-	public static final String PART_SERVICE_ROOT = "partServiceRoot"; //$NON-NLS-1$
-
 	/**
 	 * A tag on a part to indicate that it should be removed from the model when it is hidden.
 	 * 

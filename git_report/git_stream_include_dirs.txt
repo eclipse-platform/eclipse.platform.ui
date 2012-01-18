@@ -1,0 +1,2 @@
+bundles/org.eclipse.ui.workbench/Eclipse UI/org/eclipse/ui/progress
+bundles/org.eclipse.ui.workbench/Eclipse\ UI/org/eclipse/ui/activities

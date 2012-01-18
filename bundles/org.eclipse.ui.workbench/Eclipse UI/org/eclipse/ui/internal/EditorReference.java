@@ -320,7 +320,15 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		editorSite.setActionBars(createEditorActionBars((WorkbenchPage) getPage(), descriptor,
 				editorSite));
 		IEditorPart editor = (IEditorPart) part;
-		editor.init(editorSite, getEditorInput());
+		try {
+			editor.init(editorSite, getEditorInput());
+		} catch (PartInitException e) {
+			if (editor instanceof ErrorEditorPart) {
+				editor.init(editorSite, new NullEditorInput(this));
+			} else {
+				throw e;
+			}
+		}
 
 		if (editor.getSite() != editorSite || editor.getEditorSite() != editorSite) {
 			String id = descriptor == null ? getModel().getElementId() : descriptor.getId();

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.services;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
@@ -24,6 +25,14 @@ public class ServiceLocatorCreator implements IServiceLocatorCreator {
 
 	public IServiceLocator createServiceLocator(IServiceLocator parent,
 			AbstractServiceFactory factory, IDisposable owner) {
-		return new ServiceLocator(parent, factory, owner);
+		ServiceLocator serviceLocator = new ServiceLocator(parent, factory, owner);
+		//System.err.println("parentLocator: " + parent); //$NON-NLS-1$
+		if (parent != null) {
+			IEclipseContext ctx = (IEclipseContext) parent.getService(IEclipseContext.class);
+			if (ctx != null) {
+				serviceLocator.setContext(ctx.createChild());
+			}
+		}
+		return serviceLocator;
 	}
 }

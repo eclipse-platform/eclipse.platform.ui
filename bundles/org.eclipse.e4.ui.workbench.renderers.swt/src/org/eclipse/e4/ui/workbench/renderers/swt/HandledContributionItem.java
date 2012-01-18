@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import org.eclipse.core.commands.IStateListener;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
@@ -43,6 +45,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
@@ -53,6 +56,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.menus.IMenuStateIds;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -166,6 +170,12 @@ public class HandledContributionItem extends ContributionItem {
 
 	private ISWTResourceUtilities resUtils = null;
 
+	private IStateListener stateListener = new IStateListener() {
+		public void handleStateChange(State state, Object oldValue) {
+			model.setSelected(((Boolean) state.getValue()).booleanValue());
+		}
+	};
+
 	@Inject
 	void setResourceUtils(IResourceUtilities utils) {
 		resUtils = (ISWTResourceUtilities) utils;
@@ -238,6 +248,14 @@ public class HandledContributionItem extends ContributionItem {
 				Activator
 						.trace(Policy.DEBUG_MENUS, "command: " + parmCmd, null); //$NON-NLS-1$
 				model.setWbCommand(parmCmd);
+
+				State state = parmCmd.getCommand()
+						.getState(IMenuStateIds.STYLE);
+				if (state != null) {
+					state.addListener(stateListener);
+					model.setSelected(((Boolean) state.getValue())
+							.booleanValue());
+				}
 				return;
 			}
 			HashMap<String, String> parms = new HashMap<String, String>();
@@ -248,6 +266,12 @@ public class HandledContributionItem extends ContributionItem {
 					cmdId, parms);
 			Activator.trace(Policy.DEBUG_MENUS, "command: " + parmCmd, null); //$NON-NLS-1$
 			model.setWbCommand(parmCmd);
+
+			State state = parmCmd.getCommand().getState(IMenuStateIds.STYLE);
+			if (state != null) {
+				state.addListener(stateListener);
+				model.setSelected(((Boolean) state.getValue()).booleanValue());
+			}
 		}
 	}
 
@@ -467,21 +491,23 @@ public class HandledContributionItem extends ContributionItem {
 			IEclipseContext context = getContext(item);
 			EBindingService bs = (EBindingService) context
 					.get(EBindingService.class.getName());
-			ParameterizedCommand cmd = handledItem.getWbCommand();
-			if (cmd == null) {
-				cmd = generateParameterizedCommand(handledItem, context);
-			}
-			TriggerSequence sequence = bs.getBestSequenceFor(handledItem
-					.getWbCommand());
-			if (sequence != null) {
-				if (text == null) {
-					try {
-						text = cmd.getName();
-					} catch (NotDefinedException e) {
-						return null;
-					}
+			if (bs != null) {
+				ParameterizedCommand cmd = handledItem.getWbCommand();
+				if (cmd == null) {
+					cmd = generateParameterizedCommand(handledItem, context);
 				}
-				text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
+				TriggerSequence sequence = bs.getBestSequenceFor(handledItem
+						.getWbCommand());
+				if (sequence != null) {
+					if (text == null) {
+						try {
+							text = cmd.getName();
+						} catch (NotDefinedException e) {
+							return null;
+						}
+					}
+					text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
+				}
 			}
 			return text;
 		}
@@ -597,6 +623,14 @@ public class HandledContributionItem extends ContributionItem {
 	@Override
 	public void dispose() {
 		if (widget != null) {
+			ParameterizedCommand command = model.getWbCommand();
+			if (command != null) {
+				State state = command.getCommand()
+						.getState(IMenuStateIds.STYLE);
+				if (state != null) {
+					state.removeListener(stateListener);
+				}
+			}
 			widget.dispose();
 			widget = null;
 			model.setWidget(null);
@@ -686,6 +720,18 @@ public class HandledContributionItem extends ContributionItem {
 					menu.setData(AbstractPartRenderer.OWNING_ME, menu);
 					return menu;
 				}
+			}
+		} else {
+			final IEclipseContext lclContext = getContext(model);
+			IPresentationEngine engine = lclContext
+					.get(IPresentationEngine.class);
+			obj = engine.createGui(mmenu, toolItem.getParent(), lclContext);
+			if (obj instanceof Menu) {
+				Menu menu = (Menu) obj;
+				// menu.setData(AbstractPartRenderer.OWNING_ME, menu);
+				return menu;
+			} else {
+				System.err.println("Rendering returned " + obj); //$NON-NLS-1$
 			}
 		}
 		return null;

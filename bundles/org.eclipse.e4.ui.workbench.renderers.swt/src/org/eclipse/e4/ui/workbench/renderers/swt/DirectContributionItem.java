@@ -47,6 +47,9 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class DirectContributionItem extends ContributionItem {
+	/** Internal key for transient maps to provide a runnable on widget disposal */
+	public static final String DISPOSABLE = "IDisposable"; //$NON-NLS-1$
+
 	private MItem model;
 	private Widget widget;
 	private Listener menuItemListener;
@@ -296,6 +299,10 @@ public class DirectContributionItem extends ContributionItem {
 			widget.removeListener(SWT.Dispose, getItemListener());
 			widget.removeListener(SWT.DefaultSelection, getItemListener());
 			widget = null;
+			Object obj = model.getTransientData().get(DISPOSABLE);
+			if (obj instanceof Runnable) {
+				((Runnable) obj).run();
+			}
 			model.setWidget(null);
 			disposeOldImages();
 		}

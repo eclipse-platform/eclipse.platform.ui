@@ -654,31 +654,31 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MToolControl spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
 		spacerControl
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
 		spacerControl.getTags().add(TrimBarLayout.SPACER);
 
 		MToolControl spacerGlueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		spacerGlueControl.setElementId("Spacer Glue"); //$NON-NLS-1$
 		spacerGlueControl
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
 		spacerGlueControl.getTags().add(TrimBarLayout.GLUE);
 
 		MToolControl searchControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		searchControl.setElementId("SearchField"); //$NON-NLS-1$
 		searchControl
-				.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.quickaccess.SearchField"); //$NON-NLS-1$
+				.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.quickaccess.SearchField"); //$NON-NLS-1$
 
 		MToolControl glueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		glueControl.setElementId("Search-PS Glue"); //$NON-NLS-1$
 		glueControl
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
 		glueControl.getTags().add(TrimBarLayout.GLUE);
 
 		MToolControl switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
 		switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
 		switcherControl
-				.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
+				.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
 
 		trimBar.getChildren().add(spacerControl);
 		trimBar.getChildren().add(spacerGlueControl);
@@ -703,7 +703,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			slElement = MenuFactoryImpl.eINSTANCE.createToolControl();
 			slElement.setElementId("org.eclipse.ui.StatusLine"); //$NON-NLS-1$
 			slElement
-					.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
+					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
 			bottomTrim.getChildren().add(slElement);
 		}
 		slElement.setToBeRendered(statusLineVisible);
@@ -716,7 +716,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			hsElement = MenuFactoryImpl.eINSTANCE.createToolControl();
 			hsElement.setElementId("org.eclipse.ui.HeapStatus"); //$NON-NLS-1$
 			hsElement
-					.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
+					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
 			bottomTrim.getChildren().add(hsElement);
 		}
 		hsElement.setToBeRendered(getShowHeapStatus());
@@ -728,7 +728,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			pbElement = MenuFactoryImpl.eINSTANCE.createToolControl();
 			pbElement.setElementId("org.eclipse.ui.ProgressBar"); //$NON-NLS-1$
 			pbElement
-					.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
+					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
 			bottomTrim.getChildren().add(pbElement);
 		}
 		pbElement.setToBeRendered(getWindowConfigurer().getShowProgressIndicator());
@@ -822,7 +822,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		newTrimElement.setToBeRendered(classSpec != null);
 		if (classSpec != null) {
 			newTrimElement
-					.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.LegacyTrim"); //$NON-NLS-1$
+					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.LegacyTrim"); //$NON-NLS-1$
 		}
 		newTrimElement.setContributorURI(URIHelper.constructPlatformURI(ice.getContributor()));
 
