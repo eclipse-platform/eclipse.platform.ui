@@ -341,7 +341,7 @@ public class CocoaUIHandler {
 		closeDialogCommand.setElementId(COMMAND_ID_CLOSE_DIALOG);
 		closeDialogCommand.setCommandName("%command.closeDialog.name"); //$NON-NLS-1$
 		closeDialogCommand.setDescription("%command.closeDialog.desc"); //$NON-NLS-1$
-		closeDialogCommand.setContributorURI(CocoaUIProcessor.FRAGMENT_URI);
+		closeDialogCommand.setContributorURI(CocoaUIProcessor.CONTRIBUTOR_URI);
 		app.getCommands().add(closeDialogCommand);
 	}
 
@@ -352,7 +352,7 @@ public class CocoaUIHandler {
 		}
 		handler = CommandsFactoryImpl.eINSTANCE.createHandler();
 		handler.setCommand(closeDialogCommand);
-		handler.setContributionURI(CocoaUIProcessor.HOST_URI
+		handler.setContributionURI(CocoaUIProcessor.CONTRIBUTION_URI_PREFIX
 				+ "/" + CloseDialogHandler.class.getName());//$NON-NLS-1$
 		app.getHandlers().add(handler);
 	}
@@ -426,7 +426,8 @@ public class CocoaUIHandler {
 				}
 			}
 		};
-		eventBroker.subscribe(UIEvents.MenuContributions.TOPIC_MENUCONTRIBUTIONS,
+		eventBroker.subscribe(
+				UIEvents.MenuContributions.TOPIC_MENUCONTRIBUTIONS,
 				menuContributionListener);
 
 		// watch for command changes
@@ -444,7 +445,8 @@ public class CocoaUIHandler {
 				}
 			}
 		};
-		eventBroker.subscribe(UIEvents.Application.TOPIC_COMMANDS, commandListener);
+		eventBroker.subscribe(UIEvents.Application.TOPIC_COMMANDS,
+				commandListener);
 
 	}
 

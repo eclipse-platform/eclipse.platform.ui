@@ -31,22 +31,13 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class CocoaUIProcessor {
 	/**
-	 * The schema identifier used for Eclipse platform references
-	 */
-	final private static String PLATFORM_SCHEMA = "platform"; //$NON-NLS-1$
-	final private static String PLUGIN_SEGMENT = "/plugin/"; //$NON-NLS-1$
-	final private static String FRAGMENT_SEGMENT = "/fragment/"; //$NON-NLS-1$
-
-	/**
 	 * Useful constants for referencing classes defined within this
 	 * host/fragment
 	 */
-	protected static final String FRAGMENT_ID = "org.eclipse.e4.ui.workbench.renderers.swt.cocoa"; //$NON-NLS-1$
-	protected static final String FRAGMENT_URI = PLATFORM_SCHEMA
-			+ ":" + FRAGMENT_SEGMENT + FRAGMENT_ID; //$NON-NLS-1$  
-	protected static final String HOST_ID = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
-	protected static final String HOST_URI = PLATFORM_SCHEMA
-			+ ":" + PLUGIN_SEGMENT + HOST_ID; //$NON-NLS-1$  
+	static final String FRAGMENT_ID = "org.eclipse.e4.ui.workbench.renderers.swt.cocoa"; //$NON-NLS-1$
+	protected static final String CONTRIBUTOR_URI = "platform:/fragment/" + FRAGMENT_ID; //$NON-NLS-1$
+	static final String HOST_ID = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
+	protected static final String CONTRIBUTION_URI_PREFIX = "bundleclass://" + HOST_ID; //$NON-NLS-1$
 
 	@Inject
 	protected MApplication app;
@@ -90,18 +81,18 @@ public class CocoaUIProcessor {
 				defineCommand(
 						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.arrangeWindowsInFront", //$NON-NLS-1$ //$NON-NLS-2$
 						"%command.arrangeWindows.name", //$NON-NLS-1$
-						"%command.arrangeWindows.desc", FRAGMENT_URI), //$NON-NLS-1$
-				ArrangeWindowHandler.class, FRAGMENT_URI);
+						"%command.arrangeWindows.desc", CONTRIBUTOR_URI), //$NON-NLS-1$
+				ArrangeWindowHandler.class, CONTRIBUTOR_URI);
 		installHandler(
 				defineCommand(
 						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.minimizeWindow", //$NON-NLS-1$ //$NON-NLS-2$
-						"%command.minimize.name", "%command.minimize.desc", FRAGMENT_URI), //$NON-NLS-1$ //$NON-NLS-2$
-				MinimizeWindowHandler.class, FRAGMENT_URI);
+						"%command.minimize.name", "%command.minimize.desc", CONTRIBUTOR_URI), //$NON-NLS-1$ //$NON-NLS-2$
+				MinimizeWindowHandler.class, CONTRIBUTOR_URI);
 		installHandler(
 				defineCommand(
 						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.zoomWindow", //$NON-NLS-1$ //$NON-NLS-2$
-						"%command.zoom.name", "%command.zoom.desc", FRAGMENT_URI), //$NON-NLS-1$//$NON-NLS-2$
-				ZoomWindowHandler.class, FRAGMENT_URI);
+						"%command.zoom.name", "%command.zoom.desc", CONTRIBUTOR_URI), //$NON-NLS-1$//$NON-NLS-2$
+				ZoomWindowHandler.class, CONTRIBUTOR_URI);
 	}
 
 	/**
@@ -200,8 +191,7 @@ public class CocoaUIProcessor {
 		if (bundle == null) {
 			throw new IllegalArgumentException(clazz.getName());
 		}
-		return PLATFORM_SCHEMA
-				+ ":" + PLUGIN_SEGMENT + bundle.getSymbolicName(); //$NON-NLS-1$
+		return "bundleclass://" + bundle.getSymbolicName(); //$NON-NLS-1$
 	}
 
 }
