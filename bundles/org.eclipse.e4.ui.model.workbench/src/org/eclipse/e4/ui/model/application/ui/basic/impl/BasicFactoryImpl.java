@@ -10,7 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
-import org.eclipse.e4.ui.model.application.ui.basic.*;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;

@@ -10,7 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application.descriptor.basic.impl;
 
-import org.eclipse.e4.ui.model.application.descriptor.basic.*;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.emf.ecore.EClass;
