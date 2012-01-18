@@ -6,7 +6,7 @@
         <children xsi:type="basic:PartSashContainer" xmi:id="_8wp4IEldEd-TVO58rzJVgA" elementId="_8wp4IEldEd-TVO58rzJVgA" containerData="" horizontal="true">
           <children xsi:type="basic:PartSashContainer" xmi:id="_Ec_RsEleEd-TVO58rzJVgA" elementId="_Ec_RsEleEd-TVO58rzJVgA" containerData="30">
             <children xsi:type="basic:PartStack" xmi:id="_H868QEleEd-TVO58rzJVgA" elementId="_H868QEleEd-TVO58rzJVgA" containerData="70">
-              <children xsi:type="basic:Part" xmi:id="_LYVTMEleEd-TVO58rzJVgA" elementId="_LYVTMEleEd-TVO58rzJVgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" label="Library">
+              <children xsi:type="basic:Part" xmi:id="_LYVTMEleEd-TVO58rzJVgA" elementId="_LYVTMEleEd-TVO58rzJVgA" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" label="Library">
                 <menus xmi:id="_E5HnwEjUEd-v7fhjaiz65w" elementId="org.eclipse.e4.demo.e4photo.Library.viewMenu" label="File">
                   <tags>ViewMenu</tags>
                   <children xsi:type="menu:HandledMenuItem" xmi:id="_IHQXsEjUEd-v7fhjaiz65w" elementId="_IHQXsEjUEd-v7fhjaiz65w" label="Create Album" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>
@@ -14,14 +14,14 @@
               </children>
             </children>
             <children xsi:type="basic:PartStack" xmi:id="_XpMn4EleEd-TVO58rzJVgA" elementId="_XpMn4EleEd-TVO58rzJVgA" containerData="30">
-              <children xsi:type="basic:Part" xmi:id="_YuUc4EleEd-TVO58rzJVgA" elementId="_YuUc4EleEd-TVO58rzJVgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" label="Location"/>
+              <children xsi:type="basic:Part" xmi:id="_YuUc4EleEd-TVO58rzJVgA" elementId="_YuUc4EleEd-TVO58rzJVgA" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" label="Location"/>
             </children>
           </children>
           <children xsi:type="basic:PartSashContainer" xmi:id="_hKibQEleEd-TVO58rzJVgA" elementId="_hKibQEleEd-TVO58rzJVgA" containerData="70">
-            <children xsi:type="basic:Part" xmi:id="_krbvIEleEd-TVO58rzJVgA" elementId="_krbvIEleEd-TVO58rzJVgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" containerData="70" label="Preview"/>
+            <children xsi:type="basic:Part" xmi:id="_krbvIEleEd-TVO58rzJVgA" elementId="_krbvIEleEd-TVO58rzJVgA" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" containerData="70" label="Preview"/>
             <children xsi:type="basic:PartStack" xmi:id="_sRLYgEleEd-TVO58rzJVgA" elementId="_sRLYgEleEd-TVO58rzJVgA" containerData="30">
-              <children xsi:type="basic:Part" xmi:id="_tuj8gEleEd-TVO58rzJVgA" elementId="ThumbnailsView" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" label="Thumbnails"/>
-              <children xsi:type="basic:Part" xmi:id="_xPeegEleEd-TVO58rzJVgA" elementId="ExifView" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
+              <children xsi:type="basic:Part" xmi:id="_tuj8gEleEd-TVO58rzJVgA" elementId="ThumbnailsView" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" label="Thumbnails"/>
+              <children xsi:type="basic:Part" xmi:id="_xPeegEleEd-TVO58rzJVgA" elementId="ExifView" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
             </children>
           </children>
         </children>
@@ -42,11 +42,11 @@
       </children>
     </mainMenu>
   </children>
-  <handlers xmi:id="_JZspQEjPEd-XR9_8rlW1bQ" elementId="_JZspQEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler" command="_vBr-QEjPEd-XR9_8rlW1bQ"/>
-  <handlers xmi:id="_OVTnoEjPEd-XR9_8rlW1bQ" elementId="_OVTnoEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>
-  <handlers xmi:id="_QLZmkEjPEd-XR9_8rlW1bQ" elementId="_QLZmkEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.SwitchPerspectiveHandler" command="_4L5EAEjPEd-XR9_8rlW1bQ"/>
-  <handlers xmi:id="_RrwmEEjPEd-XR9_8rlW1bQ" elementId="_RrwmEEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="_6B0q4EjPEd-XR9_8rlW1bQ"/>
-  <handlers xmi:id="_bH-CkUljEd-YPslvXqnLdg" elementId="_bH-CkUljEd-YPslvXqnLdg" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.AddNoteHandler" command="_9w2hYEjPEd-XR9_8rlW1bQ"/>
+  <handlers xmi:id="_JZspQEjPEd-XR9_8rlW1bQ" elementId="_JZspQEjPEd-XR9_8rlW1bQ" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler" command="_vBr-QEjPEd-XR9_8rlW1bQ"/>
+  <handlers xmi:id="_OVTnoEjPEd-XR9_8rlW1bQ" elementId="_OVTnoEjPEd-XR9_8rlW1bQ" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>
+  <handlers xmi:id="_QLZmkEjPEd-XR9_8rlW1bQ" elementId="_QLZmkEjPEd-XR9_8rlW1bQ" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.SwitchPerspectiveHandler" command="_4L5EAEjPEd-XR9_8rlW1bQ"/>
+  <handlers xmi:id="_RrwmEEjPEd-XR9_8rlW1bQ" elementId="_RrwmEEjPEd-XR9_8rlW1bQ" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="_6B0q4EjPEd-XR9_8rlW1bQ"/>
+  <handlers xmi:id="_bH-CkUljEd-YPslvXqnLdg" elementId="_bH-CkUljEd-YPslvXqnLdg" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.AddNoteHandler" command="_9w2hYEjPEd-XR9_8rlW1bQ"/>
   <bindingTables xmi:id="_ofif4EjPEd-XR9_8rlW1bQ" elementId="_ofif4EjPEd-XR9_8rlW1bQ" bindingContext="_Y_0CgEjPEd-XR9_8rlW1bQ">
     <bindings xmi:id="_rCRiYEjPEd-XR9_8rlW1bQ" keySequence="CTRL+Q" elementId="_rCRiYEjPEd-XR9_8rlW1bQ" command="_vBr-QEjPEd-XR9_8rlW1bQ"/>
     <bindings xmi:id="_tDFjkEjPEd-XR9_8rlW1bQ" keySequence="CTRL+N" elementId="_tDFjkEjPEd-XR9_8rlW1bQ" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>

@@ -73,17 +73,17 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	protected Object createFromBundle(Bundle bundle, IEclipseContext context,
 			IEclipseContext staticContext, URI uri) {
 		Object contribution;
-		if (uri.segmentCount() > 3) {
-			String prefix = uri.segment(2);
+		if (uri.segmentCount() > 1) {
+			String prefix = uri.segment(0);
 			IContributionFactorySpi factory = (IContributionFactorySpi) languages.get(prefix);
-			StringBuffer resource = new StringBuffer(uri.segment(3));
-			for (int i = 4; i < uri.segmentCount(); i++) {
+			StringBuffer resource = new StringBuffer(uri.segment(1));
+			for (int i = 2; i < uri.segmentCount(); i++) {
 				resource.append('/');
 				resource.append(uri.segment(i));
 			}
 			contribution = factory.create(bundle, resource.toString(), context);
 		} else {
-			String clazz = uri.segment(2);
+			String clazz = uri.segment(0);
 			try {
 				Class<?> targetClass = bundle.loadClass(clazz);
 				if (staticContext == null)
@@ -132,7 +132,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	}
 
 	protected Bundle getBundle(URI platformURI) {
-		return Activator.getDefault().getBundleForName(platformURI.segment(1));
+		return Activator.getDefault().getBundleForName(platformURI.authority());
 	}
 
 	public Bundle getBundle(String uriString) {

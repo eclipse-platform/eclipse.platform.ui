@@ -135,7 +135,7 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 																		// Id
 		// Fix test suite when live-tooling is part of the build
 		if (application.getHandlers().size() == 2) {
-			String check = "platform:/plugin/org.eclipse.e4.tools.emf.liveeditor/org.eclipse.e4.tools.emf.liveeditor.OpenLiveDialogHandler";
+			String check = "bundleclass://org.eclipse.e4.tools.emf.liveeditor/org.eclipse.e4.tools.emf.liveeditor.OpenLiveDialogHandler";
 			if (check.equals(application.getHandlers().get(0)
 					.getContributionURI())) {
 				application.getHandlers().remove(0);

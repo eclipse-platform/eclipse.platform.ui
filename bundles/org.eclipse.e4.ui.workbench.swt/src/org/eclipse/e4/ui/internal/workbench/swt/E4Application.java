@@ -336,7 +336,7 @@ public class E4Application implements IApplication {
 				E4Workbench.MODEL_RESOURCE_HANDLER, appContext, false);
 
 		if (resourceHandler == null) {
-			resourceHandler = "platform:/plugin/org.eclipse.e4.ui.workbench/"
+			resourceHandler = "bundleclass://org.eclipse.e4.ui.workbench/"
 					+ ResourceHandler.class.getName();
 		}
 

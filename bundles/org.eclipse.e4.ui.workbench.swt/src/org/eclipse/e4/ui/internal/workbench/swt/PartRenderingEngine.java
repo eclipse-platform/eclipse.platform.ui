@@ -84,10 +84,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class PartRenderingEngine implements IPresentationEngine {
-	public static final String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/"
+	public static final String engineURI = "bundleclass://org.eclipse.e4.ui.workbench.swt/"
 			+ "org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine";
 
-	private static final String defaultFactoryUrl = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/"
+	private static final String defaultFactoryUrl = "bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/"
 			+ "org.eclipse.e4.ui.workbench.renderers.swt.WorkbenchRendererFactory";
 	private String factoryUrl;
 

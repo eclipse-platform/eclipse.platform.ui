@@ -91,6 +91,8 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static final String ORIGINALREFERENCE_ELEMENT_NAME = "originalReference"; //$NON-NLS-1$
 
 	private static final String NAMESPACE_ATTNAME = "e4namespace"; //$NON-NLS-1$
+	private static final String OLD_CONTRIBUTION_URI_PREFIX = "platform:/plugin/"; //$NON-NLS-1$
+	private static final String NEW_CONTRIBUTION_URI_PREFIX = "bundleclass://"; //$NON-NLS-1$
 
 	/**
 	 * The name of the root element that describes the model deltas in XML form (value is
@@ -786,8 +788,12 @@ public class XMLModelReconciler extends ModelReconciler {
 								}
 							}
 						} else {
-							object.eSet(attributeFeature,
-									getValue(attributeFeature, item.getAttribute(attributeName)));
+							Object value = getValue(attributeFeature,
+									item.getAttribute(attributeName));
+							if (CONTRIBUTION_URI_ATTNAME.equals(attributeFeature.getName()))
+								value = ((String) value).replaceFirst(OLD_CONTRIBUTION_URI_PREFIX,
+										NEW_CONTRIBUTION_URI_PREFIX);
+							object.eSet(attributeFeature, value);
 						}
 					}
 				}

@@ -131,7 +131,7 @@ public class MSashTest extends TestCase {
 			MPart contributedPart = BasicFactoryImpl.eINSTANCE.createPart();
 			contributedPart.setLabel("Sample View" + i);
 			contributedPart
-					.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+					.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 			sash.getChildren().add(contributedPart);
 		}
 

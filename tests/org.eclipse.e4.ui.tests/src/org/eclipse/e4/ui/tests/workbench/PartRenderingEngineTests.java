@@ -163,11 +163,11 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
@@ -200,11 +200,11 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
@@ -232,7 +232,7 @@ public class PartRenderingEngineTests extends TestCase {
 		MPartDescriptor descriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		descriptor
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		descriptor.setElementId("part");
 		descriptor.setCategory("aStack");
 		application.getDescriptors().add(descriptor);
@@ -274,11 +274,11 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
@@ -308,7 +308,7 @@ public class PartRenderingEngineTests extends TestCase {
 		window.getChildren().add(stack);
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		stack.getChildren().add(partA);
 
 		wb = new E4Workbench(application, appContext);
@@ -317,7 +317,7 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(partA, stack.getSelectedElement());
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		stack.getChildren().add(partB);
 
 		assertEquals(
@@ -340,7 +340,7 @@ public class PartRenderingEngineTests extends TestCase {
 		window.getChildren().add(stack);
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		stack.getChildren().add(partA);
 
 		wb = new E4Workbench(application, appContext);
@@ -351,7 +351,7 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(partA, stack.getSelectedElement());
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		stack.getChildren().add(partB);
 
 		assertEquals(0, tabFolder.getSelectionIndex());
@@ -372,7 +372,7 @@ public class PartRenderingEngineTests extends TestCase {
 		MPartDescriptor descriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		descriptor
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		descriptor.setElementId("part");
 		descriptor.setCategory("aStack");
 		application.getDescriptors().add(descriptor);
@@ -380,7 +380,7 @@ public class PartRenderingEngineTests extends TestCase {
 		MPartDescriptor descriptor2 = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		descriptor2
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		descriptor2.setElementId("part2");
 		descriptor2.setCategory("aStack");
 		application.getDescriptors().add(descriptor2);
@@ -434,11 +434,11 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
@@ -475,11 +475,11 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partB.setToBeRendered(false);
 
 		stack.getChildren().add(partA);
@@ -546,7 +546,7 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		stack.getChildren().add(partA);
 		stack.setSelectedElement(partA);
@@ -564,7 +564,7 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		// add this new part to the stack
 		stack.getChildren().add(partB);
@@ -602,11 +602,11 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
@@ -635,18 +635,18 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		stack.getChildren().add(partA);
 		stack.getChildren().add(partB);
 
 		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		// You can set the selected element to a child
 		boolean causedException = false;
@@ -682,15 +682,15 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
 		partC.setElementId("partC");
-		partC.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partC.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		container.getChildren().add(partA);
 		container.getChildren().add(partB);
@@ -731,15 +731,15 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
 		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
 		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
 		partC.setElementId("partC");
-		partC.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partC.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		container.getChildren().add(partA);
 		container.getChildren().add(partB);
@@ -778,7 +778,7 @@ public class PartRenderingEngineTests extends TestCase {
 		wb.createAndRunUI(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getChildren().add(part);
 
 		IPresentationEngine renderer = (IPresentationEngine) appContext
@@ -805,12 +805,12 @@ public class PartRenderingEngineTests extends TestCase {
 
 		// put two parts in it
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		stack.getChildren().add(partA);
 		stack.setSelectedElement(partA);
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		stack.getChildren().add(partB);
 
 		application.setContext(appContext);
@@ -853,17 +853,17 @@ public class PartRenderingEngineTests extends TestCase {
 
 		// put two parts in it
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partStack.getChildren().add(partA);
 		partStack.setSelectedElement(partA);
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partStack.getChildren().add(partB);
 
 		// make a third random part that's not in the UI
 		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
-		partC.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partC.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		appContext.set(MApplication.class.getName(), application);
 
@@ -891,7 +891,7 @@ public class PartRenderingEngineTests extends TestCase {
 		application.setSelectedElement(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getSharedElements().add(part);
 
 		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
@@ -939,12 +939,12 @@ public class PartRenderingEngineTests extends TestCase {
 
 		// put two parts in it
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partStack.getChildren().add(partA);
 		partStack.setSelectedElement(partA);
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partStack.getChildren().add(partB);
 
 		appContext.set(MApplication.class.getName(), application);
@@ -974,7 +974,7 @@ public class PartRenderingEngineTests extends TestCase {
 		window.setSelectedElement(stack);
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		stack.getChildren().add(partA);
 		stack.setSelectedElement(partA);
 
@@ -998,13 +998,13 @@ public class PartRenderingEngineTests extends TestCase {
 				.createPartDescriptor();
 		descriptorA.setElementId("sharedA");
 		descriptorA
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		application.getDescriptors().add(descriptorA);
 		MPartDescriptor descriptorB = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
 				.createPartDescriptor();
 		descriptorB.setElementId("sharedB");
 		descriptorB
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		application.getDescriptors().add(descriptorB);
 
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
@@ -1044,7 +1044,7 @@ public class PartRenderingEngineTests extends TestCase {
 		application.setSelectedElement(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getSharedElements().add(part);
 
 		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
@@ -1101,7 +1101,7 @@ public class PartRenderingEngineTests extends TestCase {
 		application.setSelectedElement(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getSharedElements().add(part);
 
 		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
@@ -1160,7 +1160,7 @@ public class PartRenderingEngineTests extends TestCase {
 		window.getSharedElements().add(partStack);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partStack.getChildren().add(part);
 
 		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
@@ -1219,7 +1219,7 @@ public class PartRenderingEngineTests extends TestCase {
 		window.getSharedElements().add(partStack);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partStack.getChildren().add(part);
 
 		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
@@ -1478,12 +1478,12 @@ public class PartRenderingEngineTests extends TestCase {
 		perspectiveB.setSelectedElement(partStackPlaceholderB);
 
 		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
-		part1.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part1.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partStack.getChildren().add(part1);
 		partStack.setSelectedElement(part1);
 
 		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
-		part2.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part2.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		partStack.getChildren().add(part2);
 
 		application.setContext(appContext);
@@ -1591,7 +1591,7 @@ public class PartRenderingEngineTests extends TestCase {
 		application.setSelectedElement(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getChildren().add(part);
 		window.setSelectedElement(part);
 
@@ -1621,7 +1621,7 @@ public class PartRenderingEngineTests extends TestCase {
 		application.setSelectedElement(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getChildren().add(part);
 		window.setSelectedElement(part);
 
@@ -2708,7 +2708,7 @@ public class PartRenderingEngineTests extends TestCase {
 		window.getWindows().add(detachedWindow);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		detachedWindow.getChildren().add(part);
 		detachedWindow.setSelectedElement(part);
 
@@ -2744,7 +2744,7 @@ public class PartRenderingEngineTests extends TestCase {
 		detachedWindow.setSelectedElement(stack);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		stack.getChildren().add(part);
 		stack.setSelectedElement(part);
 
@@ -2773,7 +2773,7 @@ public class PartRenderingEngineTests extends TestCase {
 		application.setSelectedElement(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getSharedElements().add(part);
 
 		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
@@ -2813,7 +2813,7 @@ public class PartRenderingEngineTests extends TestCase {
 		application.setSelectedElement(window);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getSharedElements().add(part);
 
 		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
@@ -2863,7 +2863,7 @@ public class PartRenderingEngineTests extends TestCase {
 		stack.getChildren().add(contributedPart);
 		contributedPart.setLabel(partName);
 		contributedPart
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
 		return window;
 	}

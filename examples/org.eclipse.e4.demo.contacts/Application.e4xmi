@@ -3,33 +3,33 @@
   <children xsi:type="basic:TrimmedWindow" xmi:id="_SeXUAe8EEd6FC9cDb6iV7g" elementId="_SeXUAe8EEd6FC9cDb6iV7g" label="%windowTitle" x="20" y="20" width="700" height="480">
     <children xsi:type="basic:PartSashContainer" xmi:id="_SeXUCu8EEd6FC9cDb6iV7g" elementId="_SeXUCu8EEd6FC9cDb6iV7g" horizontal="true">
       <children xsi:type="basic:PartStack" xmi:id="_SeXUC-8EEd6FC9cDb6iV7g" elementId="_SeXUC-8EEd6FC9cDb6iV7g" containerData="30">
-        <children xsi:type="basic:Part" xmi:id="_SeXUDO8EEd6FC9cDb6iV7g" elementId="ContactsView" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" label="%contactsList" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="%contactsTooltip"/>
+        <children xsi:type="basic:Part" xmi:id="_SeXUDO8EEd6FC9cDb6iV7g" elementId="ContactsView" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" label="%contactsList" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="%contactsTooltip"/>
       </children>
       <children xsi:type="basic:PartStack" xmi:id="_SeXUDe8EEd6FC9cDb6iV7g" elementId="org.eclipse.e4.demo.contacts.partstacks.second" containerData="70">
-        <children xsi:type="basic:Part" xmi:id="DetailsView" elementId="DetailsView" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" label="%partDetails" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" tooltip="%detailsTooltip"/>
+        <children xsi:type="basic:Part" xmi:id="DetailsView" elementId="DetailsView" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" label="%partDetails" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" tooltip="%detailsTooltip"/>
       </children>
     </children>
     <mainMenu xmi:id="menu:org.eclipse.ui.main.menu" elementId="menu:org.eclipse.ui.main.menu">
       <children xsi:type="menu:Menu" xmi:id="_SeXUD-8EEd6FC9cDb6iV7g" elementId="_SeXUD-8EEd6FC9cDb6iV7g" label="%fileMenu">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_SeXUEO8EEd6FC9cDb6iV7g" elementId="_SeXUEO8EEd6FC9cDb6iV7g" label="%menuLabelSave" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/disk.png" command="contacts.save"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_SeXUEe8EEd6FC9cDb6iV7g" elementId="_SeXUEe8EEd6FC9cDb6iV7g" label="%menuLabelDelete" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/user_delete.png" command="contacts.delete"/>
-        <children xsi:type="menu:DirectMenuItem" xmi:id="_SeXUEu8EEd6FC9cDb6iV7g" elementId="_SeXUEu8EEd6FC9cDb6iV7g" label="%menuLabelDirectExit" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler"/>
+        <children xsi:type="menu:DirectMenuItem" xmi:id="_SeXUEu8EEd6FC9cDb6iV7g" elementId="_SeXUEu8EEd6FC9cDb6iV7g" label="%menuLabelDirectExit" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_SeXUE-8EEd6FC9cDb6iV7g" elementId="_SeXUE-8EEd6FC9cDb6iV7g" label="%menuLabelExit" command="contacts.exit"/>
       </children>
     </mainMenu>
     <trimBars xmi:id="_SeXUAu8EEd6FC9cDb6iV7g" elementId="_SeXUAu8EEd6FC9cDb6iV7g">
       <children xsi:type="menu:ToolBar" xmi:id="toolbar:org.eclipse.ui.main.toolbar" elementId="toolbar:org.eclipse.ui.main.toolbar">
-        <children xsi:type="menu:DirectToolItem" xmi:id="_SeXUBO8EEd6FC9cDb6iV7g" elementId="_SeXUBO8EEd6FC9cDb6iV7g" label="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/disk.png" tooltip="%toolbarSaveTooltip" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_SeXUBO8EEd6FC9cDb6iV7g" elementId="_SeXUBO8EEd6FC9cDb6iV7g" label="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/disk.png" tooltip="%toolbarSaveTooltip" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_6RnVUE8FEeCyZoR8urPqaw" elementId="toolbar:org.eclipse.ui.main.toolbar">
         <children xsi:type="menu:HandledToolItem" xmi:id="_Vw4jUE8FEeCyZoR8urPqaw" label="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/user_delete.png" tooltip="%menuLabelDelete" command="contacts.delete"/>
       </children>
     </trimBars>
   </children>
-  <handlers xmi:id="_SeXUF-8EEd6FC9cDb6iV7g" elementId="_SeXUF-8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" command="contacts.exit"/>
-  <handlers xmi:id="_SeXUGO8EEd6FC9cDb6iV7g" elementId="_SeXUGO8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler" command="contacts.save"/>
-  <handlers xmi:id="_SeXUGe8EEd6FC9cDb6iV7g" elementId="_SeXUGe8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DeleteContactHandler" command="contacts.delete"/>
-  <handlers xmi:id="_SeXUG=8EEd6FC9cDb6iV7g" elementId="_SeXUG=8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SwitchThemeHandler" command="contacts.switchTheme"/>
+  <handlers xmi:id="_SeXUF-8EEd6FC9cDb6iV7g" elementId="_SeXUF-8EEd6FC9cDb6iV7g" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" command="contacts.exit"/>
+  <handlers xmi:id="_SeXUGO8EEd6FC9cDb6iV7g" elementId="_SeXUGO8EEd6FC9cDb6iV7g" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler" command="contacts.save"/>
+  <handlers xmi:id="_SeXUGe8EEd6FC9cDb6iV7g" elementId="_SeXUGe8EEd6FC9cDb6iV7g" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DeleteContactHandler" command="contacts.delete"/>
+  <handlers xmi:id="_SeXUG=8EEd6FC9cDb6iV7g" elementId="_SeXUG=8EEd6FC9cDb6iV7g" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SwitchThemeHandler" command="contacts.switchTheme"/>
   <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="_SeXUEO8EEd6FC9cDb6iV7x" bindingContext="_SeXUHO8EEd6FC9cDb6iV7y">
     <bindings xmi:id="_SeXUHu8EEd6FC9cDb6iV7g" elementId="_SeXUHu8EEd6FC9cDb6iV7g" keySequence="CTRL+S" command="contacts.save"/>
     <bindings xmi:id="_SeXUH-8EEd6FC9cDb6iV7g" elementId="_SeXUH-8EEd6FC9cDb6iV7g" keySequence="Delete" command="contacts.delete"/>
@@ -45,10 +45,10 @@
   <commands xmi:id="contacts.switchTheme" elementId="contacts.switchTheme" commandName="%menuLabelSwitchTheme" description="">
     <parameters xmi:id="contacts.commands.switchtheme.themeid" elementId="contacts.commands.switchtheme.themeid" name="Theme Id" typeId="" optional="false"/>
   </commands>
-  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="platform:/plugin/org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
-  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="platform:/plugin/org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
-  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="platform:/plugin/org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
-  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXj" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
-  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXk" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
-  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXl" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXj" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXk" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXl" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
 </application:Application>

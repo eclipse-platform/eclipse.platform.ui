@@ -325,7 +325,7 @@ public abstract class HeadlessApplicationTest extends
 			part.setIconURI("platform:/plugin/" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
 					+ parts[i].getAttribute("icon")); //$NON-NLS-1$
-			part.setContributionURI("platform:/plugin/" //$NON-NLS-1$
+			part.setContributionURI("bundleclass://" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
 					+ parts[i].getAttribute("class")); //$NON-NLS-1$
 			String parentId = parts[i].getAttribute("parentId"); //$NON-NLS-1$

@@ -892,7 +892,7 @@ public class MenuHelper {
 				toolItem.setType(ItemType.PUSH);
 				break;
 			}
-			toolItem.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
+			toolItem.setContributionURI("bundleclass://org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
 			toolItem.setObject(new DirectProxy(action));
 			toolItem.setEnabled(action.isEnabled());
 
@@ -1012,7 +1012,7 @@ public class MenuHelper {
 				menuItem.setType(ItemType.PUSH);
 				break;
 			}
-			menuItem.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
+			menuItem.setContributionURI("bundleclass://org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
 			menuItem.setObject(new DirectProxy(action));
 			return menuItem;
 		}

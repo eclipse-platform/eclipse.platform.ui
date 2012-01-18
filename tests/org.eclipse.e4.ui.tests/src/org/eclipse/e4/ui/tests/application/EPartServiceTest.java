@@ -1259,12 +1259,12 @@ public class EPartServiceTest extends UITest {
 		application.getChildren().add(window);
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getChildren().add(partA);
 		window.setSelectedElement(partA);
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getChildren().add(partB);
 
 		initialize();
@@ -3751,7 +3751,7 @@ public class EPartServiceTest extends UITest {
 		MPart saveablePart = BasicFactoryImpl.eINSTANCE.createPart();
 		saveablePart.setDirty(beforeDirty);
 		saveablePart
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getChildren().add(saveablePart);
 
 		initialize();
@@ -3993,7 +3993,7 @@ public class EPartServiceTest extends UITest {
 		MPart saveablePart = BasicFactoryImpl.eINSTANCE.createPart();
 		saveablePart.setDirty(beforeDirty);
 		saveablePart
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getChildren().add(saveablePart);
 
 		initialize();
@@ -4058,7 +4058,7 @@ public class EPartServiceTest extends UITest {
 		MPart saveablePart = BasicFactoryImpl.eINSTANCE.createPart();
 		saveablePart.setDirty(beforeDirty);
 		saveablePart
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		container.getChildren().add(saveablePart);
 		return saveablePart;
 	}
@@ -5517,7 +5517,7 @@ public class EPartServiceTest extends UITest {
 		MPart saveablePart = BasicFactoryImpl.eINSTANCE.createPart();
 		saveablePart.setDirty(beforeDirty);
 		saveablePart
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getChildren().add(saveablePart);
 
 		initialize();
@@ -5957,7 +5957,7 @@ public class EPartServiceTest extends UITest {
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.setToBeRendered(false);
-		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 		window.getSharedElements().add(part);
 
 		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
@@ -7489,7 +7489,7 @@ public class EPartServiceTest extends UITest {
 		window.getChildren().add(partStack);
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		partStack.getChildren().add(partB);
 
 		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
@@ -7513,7 +7513,7 @@ public class EPartServiceTest extends UITest {
 		application.setSelectedElement(window);
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getSharedElements().add(partB);
 
 		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
@@ -9742,11 +9742,11 @@ public class EPartServiceTest extends UITest {
 		application.setSelectedElement(window);
 
 		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getSharedElements().add(partA);
 
 		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.ClientEditor");
 		window.getSharedElements().add(partB);
 
 		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE

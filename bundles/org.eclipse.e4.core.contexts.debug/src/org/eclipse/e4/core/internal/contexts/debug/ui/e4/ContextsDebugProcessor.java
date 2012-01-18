@@ -52,7 +52,7 @@ public class ContextsDebugProcessor {
 
 		descriptor.setCloseable(true);
 		descriptor.setAllowMultiple(false);
-		descriptor.setContributionURI("platform:/plugin/org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.ContextsView");
+		descriptor.setContributionURI("bundleclass://org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.ContextsView");
 		descriptor.setIconURI("platform:/plugin/org.eclipse.e4.core.contexts.debug/icons/full/obj16/contexts.gif");
 
 		application.getDescriptors().add(descriptor);

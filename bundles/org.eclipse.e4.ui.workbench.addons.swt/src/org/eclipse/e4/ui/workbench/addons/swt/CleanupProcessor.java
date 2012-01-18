@@ -22,7 +22,7 @@ public class CleanupProcessor {
 		MAddon cleanupAddon = ApplicationFactoryImpl.eINSTANCE.createAddon();
 		cleanupAddon.setElementId("CleanupAddon"); //$NON-NLS-1$
 		cleanupAddon
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon"); //$NON-NLS-1$
+				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon"); //$NON-NLS-1$
 		app.getAddons().add(cleanupAddon);
 	}
 }

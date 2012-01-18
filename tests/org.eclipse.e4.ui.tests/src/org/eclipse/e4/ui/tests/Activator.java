@@ -93,11 +93,11 @@ public class Activator extends Plugin {
 	 * 
 	 * @param clazz
 	 *            the class to be referenced
-	 * @return the platform-based URI: platform:/plugin/X/X.Y
+	 * @return the platform-based URI: bundleclass://X/X.Y
 	 */
 	public static String asURI(Class<?> clazz) {
 		PackageAdmin pkgadm = getDefault().getPackageAdmin();
-		return "platform:/plugin/" + pkgadm.getBundle(clazz).getSymbolicName()
+		return "bundleclass://" + pkgadm.getBundle(clazz).getSymbolicName()
 				+ '/' + clazz.getName();
 	}
 

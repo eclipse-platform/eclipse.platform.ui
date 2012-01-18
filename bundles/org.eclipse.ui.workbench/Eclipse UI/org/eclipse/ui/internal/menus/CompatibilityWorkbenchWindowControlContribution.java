@@ -32,7 +32,7 @@ import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
  */
 public class CompatibilityWorkbenchWindowControlContribution {
 
-	public static final String CONTROL_CONTRIBUTION_URI = "platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.menus.CompatibilityWorkbenchWindowControlContribution"; //$NON-NLS-1$
+	public static final String CONTROL_CONTRIBUTION_URI = "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.menus.CompatibilityWorkbenchWindowControlContribution"; //$NON-NLS-1$
 
 	private WorkbenchWindowControlContribution contribution;
 
