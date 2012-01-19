@@ -37,7 +37,9 @@ public class ProjectVariableProviderManager {
 			name = element.getAttribute("variable"); //$NON-NLS-1$
 			value = element.getAttribute("value"); //$NON-NLS-1$
 			try {
-				provider = (PathVariableResolver) element.createExecutableExtension("class"); //$NON-NLS-1$
+				String classAttribute = "class"; //$NON-NLS-1$
+				if (element.getAttribute(classAttribute) != null)
+					provider = (PathVariableResolver) element.createExecutableExtension(classAttribute);
 			} catch (CoreException t) {
 				t.printStackTrace();
 			}
@@ -62,6 +64,8 @@ public class ProjectVariableProviderManager {
 		public String[] getVariableNames(String variable, IResource resource) {
 			if (provider != null)
 				return provider.getVariableNames(variable, resource);
+			if (name.equals(variable))
+				return new String[] {variable};
 			return null;
 		}
 	}

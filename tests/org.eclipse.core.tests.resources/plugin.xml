@@ -570,4 +570,11 @@
          <run class="org.eclipse.core.tests.internal.localstore.Test342968FileSystem"/>
       </filesystem>
    </extension>
+	<extension id="bug338185"
+		point="org.eclipse.core.resources.variableResolvers">
+		<variableResolver
+			variable="Test338185"
+            value="${ECLIPSE_HOME}/plugins">
+		</variableResolver>
+	</extension>
 </plugin>

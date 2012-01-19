@@ -1409,4 +1409,18 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		assertNotNull("1.1", uri);
 	}
 
+	/**
+	* Regression test for Bug 338185 - Core Resource Variable Resolvers that do not specify the 'class' attribute are not displayed
+	*/
+	public void test338185() {
+		final IPathVariableManager manager = existingProject.getPathVariableManager();
+		String[] variables = manager.getPathVariableNames();
+		boolean found = false;
+
+		for (int i = 0; i < variables.length; i++) {
+			if (variables[i].equals("Test338185"))
+				found = true;
+		}
+		assertTrue(found);
+	}
 }
