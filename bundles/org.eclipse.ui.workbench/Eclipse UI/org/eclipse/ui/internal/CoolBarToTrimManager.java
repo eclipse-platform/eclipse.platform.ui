@@ -72,17 +72,8 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 		this.window = window;
 		rendererFactory = rf;
 		this.workbenchTrimElements = workbenchTrimElements;
-		for (MTrimBar tb : window.getTrimBars()) {
-			if (MAIN_TOOLBAR_ID.equals(tb.getElementId())) {
-				trimBar = tb;
-				trimBarsAdded = true;
-				break;
-			}
-		}
-		if (trimBar == null) {
-			trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
-			trimBar.setElementId(MAIN_TOOLBAR_ID);
-		}
+		trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		trimBar.setElementId(MAIN_TOOLBAR_ID);
 
 		renderer = (ToolBarManagerRenderer) rendererFactory.getRenderer(
 				MenuFactoryImpl.eINSTANCE.createToolBar(), null);
