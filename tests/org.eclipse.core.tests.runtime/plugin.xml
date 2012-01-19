@@ -6,12 +6,20 @@
          id="test-preferences"
          name="test-preferences"
          point="org.eclipse.core.runtime.preferences">
+      <!-- TestScope2 is used to test the actual file formats on disk. -->
       <scope
-            name="test"
-            class="org.eclipse.core.tests.internal.preferences.TestScope"/>
+            name="test2"
+            class="org.eclipse.core.tests.internal.preferences.TestScope2"/>
+      <!-- -->
       <scope
             name="badtest"
             class="org.eclipse.core.tests.internal.preferences.BadTestScope"/>
+      <scope
+            name="test"
+            storage="org.eclipse.core.tests.internal.preferences.TestNodeStorage"/>
+      <scope
+            name="test3"
+            storage="org.eclipse.core.tests.internal.preferences.TestNodeStorage3"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

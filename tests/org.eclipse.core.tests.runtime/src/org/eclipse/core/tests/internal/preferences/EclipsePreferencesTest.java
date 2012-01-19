@@ -15,10 +15,12 @@ import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.preferences.TestHelper;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
+import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -317,14 +319,14 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	}
 
 	private byte[][] getByteValues() {
-		ArrayList result = new ArrayList();
+		ArrayList<byte[]> result = new ArrayList<byte[]>();
 		result.add(new byte[0]);
 		result.add(new byte[] {127});
 		result.add(new byte[] {-128});
 		result.add(new byte[] {0});
 		result.add(new byte[] {5});
 		result.add(new byte[] {-23});
-		return (byte[][]) result.toArray(new byte[result.size()][]);
+		return result.toArray(new byte[result.size()][]);
 	}
 
 	public void testBytes() {
@@ -582,13 +584,13 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 	public void testRemoveNode() {
 		Preferences root = getScopeRoot();
-		ArrayList list = new ArrayList();
+		ArrayList<Preferences> list = new ArrayList<Preferences>();
 		for (int i = 0; i < 5; i++)
 			list.add(root.node(getUniqueString()));
 
 		// all exist
-		for (Iterator i = list.iterator(); i.hasNext();) {
-			Preferences node = (Preferences) i.next();
+		for (Iterator<Preferences> i = list.iterator(); i.hasNext();) {
+			Preferences node = i.next();
 			try {
 				assertTrue("1." + i, node.nodeExists(""));
 			} catch (BackingStoreException e) {
@@ -597,8 +599,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		}
 
 		// remove each
-		for (Iterator i = list.iterator(); i.hasNext();) {
-			Preferences node = (Preferences) i.next();
+		for (Iterator<Preferences> i = list.iterator(); i.hasNext();) {
+			Preferences node = i.next();
 			try {
 				node.removeNode();
 				assertTrue("2." + i, !node.nodeExists(""));
@@ -606,6 +608,37 @@ public class EclipsePreferencesTest extends RuntimeTest {
 				fail("2.99." + i, e);
 			}
 		}
+	}
+
+	/*
+	 * Test for bug 367366.
+	 * TODO re-enable when the bug is fixed
+	 */
+	public void _testRemoveDeletesFile() {
+		Preferences node = InstanceScope.INSTANCE.getNode("foo");
+		Preferences parent = node.parent();
+		node.put("a", "b");
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("0.99", e);
+		}
+		File file = null;
+		// TODO
+		//file = TestHelper.getInstanceBaseLocation().append(".settings").append("foo.prefs").toFile();
+		assertTrue("1.0", file.exists());
+		try {
+			node.removeNode();
+		} catch (BackingStoreException e) {
+			fail("1.99", e);
+		}
+		try {
+			parent.flush();
+		} catch (BackingStoreException e) {
+			fail("2.99", e);
+		}
+		// ensure file was deleted
+		assertFalse("3.0", file.exists());
 	}
 
 	public void testName() {
@@ -842,8 +875,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 	public void testAccept() {
 		IEclipsePreferences scopeRoot = getScopeRoot();
-		ArrayList expected = new ArrayList();
-		final ArrayList actual = new ArrayList();
+		ArrayList<String> expected = new ArrayList<String>();
+		final ArrayList<String> actual = new ArrayList<String>();
 
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) {
@@ -861,7 +894,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		expected.add(scopeRoot.absolutePath());
 		assertEquals("0.1", expected.toArray(new String[0]), actual.toArray(new String[0]), false);
 
-		Set children = new HashSet();
+		Set<String> children = new HashSet<String>();
 		children.add(getUniqueString());
 		children.add(getUniqueString());
 		children.add(getUniqueString());
@@ -870,8 +903,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		actual.clear();
 		expected.clear();
 		expected.add(scopeRoot.absolutePath());
-		for (Iterator i = children.iterator(); i.hasNext();) {
-			String s = (String) i.next();
+		for (Iterator<String> i = children.iterator(); i.hasNext();) {
+			String s = i.next();
 			expected.add(scopeRoot.absolutePath() + '/' + s);
 			scopeRoot.node(s);
 		}
@@ -1048,8 +1081,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		node.put(key, value);
 		Preferences current = node;
 		int count = 0;
-		while (current != null && current instanceof TestScope) {
-			assertTrue("1.0." + current.absolutePath(), ((TestScope) current).isDirty());
+		while (current != null && current instanceof EclipsePreferences && current.parent() != null && new Path(current.absolutePath()).segment(0).equals(TestScope.SCOPE)) {
+			assertTrue("1.0." + current.absolutePath(), ((EclipsePreferences) current).isDirty());
 			count++;
 			current = current.parent();
 		}
@@ -1067,7 +1100,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		String three = getUniqueString();
 		String key = "key";
 		String value = "value";
-		Preferences node = root.node(TestScope.SCOPE).node(one).node(two).node(three);
+		Preferences node = root.node(TestScope2.SCOPE).node(one).node(two).node(three);
 		node.put(key, value);
 
 		// save the prefs to disk
@@ -1077,10 +1110,10 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			fail("1.99", e);
 		}
 
-		assertTrue("2.0", node instanceof TestScope);
+		assertTrue("2.0", node instanceof TestScope2);
 
 		// read the file outside of the pref mechanism
-		IPath location = ((TestScope) node).getLocation();
+		IPath location = ((TestScope2) node).getLocation();
 		Collection<String> lines = null;
 		try {
 			lines = read(location);
@@ -1147,7 +1180,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			}
 		}
 
-		ArrayList list = new ArrayList();
+		List<Info> list = new ArrayList<Info>();
 		list.add(new Info("", "a", "a"));
 		list.add(new Info("", "/a", "///a"));
 		list.add(new Info("a", "b", "a/b"));
@@ -1158,25 +1191,24 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 		Preferences node = new TestScope().getNode(getUniqueString());
 		for (int i = 0; i < list.size(); i++) {
-			Info info = (Info) list.get(i);
+			Info info = list.get(i);
 			node.node(info.path).put(info.key, Integer.toString(i));
 		}
 
-		if (!(node instanceof TestScope))
-			return;
+		assertTrue("0.8", node instanceof EclipsePreferences);
 
 		Properties properties = null;
 		try {
-			properties = ((TestScope) node).toProperties();
+			properties = TestHelper.convertToProperties((EclipsePreferences) node, "");
 		} catch (BackingStoreException e) {
 			fail("1.0", e);
 		}
 
-		for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
+		for (Iterator<Object> i = properties.keySet().iterator(); i.hasNext();) {
 			String key = (String) i.next();
 			String value = properties.getProperty(key);
 			try {
-				Info info = (Info) list.get(Integer.parseInt(value));
+				Info info = list.get(Integer.parseInt(value));
 				assertNotNull("2.0", info);
 				assertEquals("2.1." + key, info.encoded, key);
 			} catch (NumberFormatException e) {
@@ -1218,7 +1250,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			}
 		}
 
-		ArrayList list = new ArrayList();
+		ArrayList<Item> list = new ArrayList<Item>();
 		list.add(new Item(null, "a", "a"));
 		list.add(new Item(null, "/a", "///a"));
 		list.add(new Item("a", "b", "a/b"));
@@ -1227,8 +1259,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		list.add(new Item("repositories", "cvs://dev.eclipse.org:25/cvsroot", "repositories//cvs://dev.eclipse.org:25/cvsroot"));
 		list.add(new Item("repositories:cvs", "dev.eclipse.org:25", "repositories:cvs/dev.eclipse.org:25"));
 
-		for (Iterator i = list.iterator(); i.hasNext();) {
-			Item item = (Item) i.next();
+		for (Iterator<Item> i = list.iterator(); i.hasNext();) {
+			Item item = i.next();
 			assertEquals("a" + i + item.expected, item.expected, EclipsePreferences.encodePath(item.path, item.key));
 			String[] result = EclipsePreferences.decodePath(item.expected);
 			assertEquals("b" + i + item.path, item.path, result[0]);
@@ -1311,11 +1343,64 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 	public void testGetByteArray() {
 		final byte[] testArray = new byte[] {10, 13, 15, 20};
-		DefaultScope defaultScope = new DefaultScope();
+		IScopeContext defaultScope = DefaultScope.INSTANCE;
 		defaultScope.getNode(TEST_NODE_PATH).putByteArray(TEST_PREF_KEY, testArray);
 		final byte[] returnArray = Platform.getPreferencesService().getByteArray(TEST_NODE_PATH, TEST_PREF_KEY, new byte[] {}, null);
 		assertEquals("1.0 Wrong size", testArray.length, returnArray.length);
 		for (int i = 0; i < testArray.length; i++)
 			assertEquals("2.0 Wrong value at: " + i, testArray[i], returnArray[i]);
+	}
+
+	/*
+	 * Some tests to handle user-defined node storage.
+	 */
+	public void testNode3() {
+		IPreferencesService service = Platform.getPreferencesService();
+		IEclipsePreferences rootPreferences = service.getRootNode();
+		Preferences node = rootPreferences.node("test3");
+
+		// check that we have the expected children
+		try {
+			File file = RuntimeTestsPlugin.getTestData("testData/preferences/test3");
+			Collection<String> expectedChildren = Arrays.asList(file.list());
+			String[] children = node.childrenNames();
+			for (String child : children)
+				assertTrue("1.1." + child, expectedChildren.contains(child));
+		} catch (BackingStoreException e) {
+			fail("1.99", e);
+		}
+
+		// check the child has the expected values
+		Preferences child = node.node("foo");
+		try {
+			assertEquals("2.0", 2, child.keys().length);
+		} catch (BackingStoreException e) {
+			fail("2.09", e);
+		}
+		assertEquals("2.1", "value1", child.get("key1", null));
+		assertEquals("2.2", "value2", child.get("key2", null));
+
+		// set a new value, flush (which saves the file) and check the file contents
+		child.put("key8", "value8");
+		try {
+			child.flush();
+		} catch (BackingStoreException e) {
+			fail("3.99", e);
+		}
+		String prop = System.getProperty("equinox.preference.test.TestNodeStorage3,root");
+		assertNotNull("3.1", prop);
+		File rootFile = new File(prop);
+		File childFile = new File(rootFile, "foo");
+		assertTrue("3.2", childFile.exists());
+		Properties contents = loadProperties(new Path(childFile.getAbsolutePath()));
+		assertEquals("3.3", "value8", contents.getProperty("key8", null));
+
+		// delete the node (which should remove the file)
+		try {
+			child.removeNode();
+		} catch (BackingStoreException e) {
+			fail("4.99", e);
+		}
+		assertFalse("4.1", childFile.exists());
 	}
 }

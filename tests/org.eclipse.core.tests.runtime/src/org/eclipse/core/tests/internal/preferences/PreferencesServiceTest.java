@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		private IEclipsePreferences node;
 		private ByteArrayOutputStream output;
-		private Set expected;
+		private Set<String> expected;
 		private String[] excludes;
 		private IPreferenceFilter[] transfers;
 		private boolean useTransfers;
@@ -40,14 +40,14 @@ public class PreferencesServiceTest extends RuntimeTest {
 			super();
 			this.node = node;
 			this.excludes = excludes;
-			this.expected = new HashSet();
+			this.expected = new HashSet<String>();
 		}
 
 		public ExportVerifier(IEclipsePreferences node, IPreferenceFilter[] transfers) {
 			super();
 			this.node = node;
 			this.transfers = transfers;
-			this.expected = new HashSet();
+			this.expected = new HashSet<String>();
 			this.useTransfers = true;
 		}
 
@@ -97,8 +97,8 @@ public class PreferencesServiceTest extends RuntimeTest {
 				return;
 			}
 			assertEquals("3.0", expected.size(), properties.size());
-			for (Iterator i = expected.iterator(); i.hasNext();) {
-				String key = (String) i.next();
+			for (Iterator<String> i = expected.iterator(); i.hasNext();) {
+				String key = i.next();
 				assertNotNull("4.0." + key, properties.get(key));
 			}
 		}
@@ -186,8 +186,8 @@ public class PreferencesServiceTest extends RuntimeTest {
 		actual = test.get(newKey, null);
 		assertNull("5.2", actual);
 		// ensure that the node isn't dirty (has been saved after the import)
-		assertTrue("5.3", test instanceof TestScope);
-		assertTrue("5.4", !((TestScope) test).isDirty());
+		assertTrue("5.3", test instanceof EclipsePreferences);
+		assertTrue("5.4", !((EclipsePreferences) test).isDirty());
 
 		// clear all
 		try {
@@ -403,15 +403,15 @@ public class PreferencesServiceTest extends RuntimeTest {
 		String defaultValue = getUniqueString() + '1';
 		String actual = null;
 
-		ArrayList list = new ArrayList();
+		List<IScopeContext[]> list = new ArrayList<IScopeContext[]>();
 		list.add(null);
 		list.add(new IScopeContext[] {});
 		list.add(new IScopeContext[] {null});
 		list.add(new IScopeContext[] {new TestScope()});
-		list.add(new IScopeContext[] {new TestScope(), new DefaultScope()});
-		list.add(new IScopeContext[] {new DefaultScope(), new TestScope()});
-		list.add(new IScopeContext[] {new DefaultScope()});
-		IScopeContext[][] contexts = (IScopeContext[][]) list.toArray(new IScopeContext[list.size()][]);
+		list.add(new IScopeContext[] {new TestScope(), DefaultScope.INSTANCE});
+		list.add(new IScopeContext[] {DefaultScope.INSTANCE, new TestScope()});
+		list.add(new IScopeContext[] {DefaultScope.INSTANCE});
+		IScopeContext[][] contexts = list.toArray(new IScopeContext[list.size()][]);
 
 		// nothing is set
 		for (int i = 0; i < contexts.length; i++) {
@@ -715,7 +715,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 	 */
 	public void testExportDefaults() {
 		String qualifier = getUniqueString();
-		IEclipsePreferences node = new DefaultScope().getNode(qualifier);
+		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(qualifier);
 		for (int i = 0; i < 10; i++)
 			node.put(Integer.toString(i), getUniqueString());
 
@@ -809,7 +809,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 				}
 		}
 		// change all version numbers to "0" so the validation will fail
-		for (Enumeration e = properties.keys(); e.hasMoreElements();) {
+		for (Enumeration<Object> e = properties.keys(); e.hasMoreElements();) {
 			String key = (String) e.nextElement();
 			if (key.charAt(0) == BUNDLE_VERSION_PREFIX)
 				properties.put(key, "0");
@@ -848,8 +848,8 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		// don't match this filter
 		IPreferenceFilter filter = new IPreferenceFilter() {
-			public Map getMapping(String scope) {
-				Map result = new HashMap();
+			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
+				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
 				result.put(QUALIFIER, null);
 				return result;
 			}
@@ -874,7 +874,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		assertEquals("3.0", 0, matching.length);
 
 		// add some values so it does match
-		new InstanceScope().getNode(QUALIFIER).put("key", "value");
+		InstanceScope.INSTANCE.getNode(QUALIFIER).put("key", "value");
 		try {
 			matching = service.matches(service.getRootNode(), new IPreferenceFilter[] {filter});
 		} catch (CoreException e) {
@@ -884,7 +884,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		// should match on the exact node too
 		try {
-			matching = service.matches(new InstanceScope().getNode(QUALIFIER), new IPreferenceFilter[] {filter});
+			matching = service.matches(InstanceScope.INSTANCE.getNode(QUALIFIER), new IPreferenceFilter[] {filter});
 		} catch (CoreException e) {
 			fail("4.00", e);
 		}
@@ -892,7 +892,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		// shouldn't match a different scope
 		try {
-			matching = service.matches(new ConfigurationScope().getNode(QUALIFIER), new IPreferenceFilter[] {filter});
+			matching = service.matches(ConfigurationScope.INSTANCE.getNode(QUALIFIER), new IPreferenceFilter[] {filter});
 		} catch (CoreException e) {
 			fail("5.00", e);
 		}
@@ -900,7 +900,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		// try matching on the root node for a filter which matches all nodes in the scope
 		filter = new IPreferenceFilter() {
-			public Map getMapping(String scope) {
+			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				return null;
 			}
 
@@ -909,7 +909,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 			}
 		};
 		try {
-			matching = service.matches(new InstanceScope().getNode(QUALIFIER), new IPreferenceFilter[] {filter});
+			matching = service.matches(InstanceScope.INSTANCE.getNode(QUALIFIER), new IPreferenceFilter[] {filter});
 		} catch (CoreException e) {
 			fail("6.0", e);
 		}
@@ -917,7 +917,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		// shouldn't match
 		try {
-			matching = service.matches(new ConfigurationScope().getNode(QUALIFIER), new IPreferenceFilter[] {filter});
+			matching = service.matches(ConfigurationScope.INSTANCE.getNode(QUALIFIER), new IPreferenceFilter[] {filter});
 		} catch (CoreException e) {
 			fail("7.0", e);
 		}
@@ -933,10 +933,10 @@ public class PreferencesServiceTest extends RuntimeTest {
 		final String QUALIFIER = getUniqueString();
 
 		// setup - create a child node with a key/value pair
-		new InstanceScope().getNode(QUALIFIER).node("child").put("key", "value");
+		InstanceScope.INSTANCE.getNode(QUALIFIER).node("child").put("key", "value");
 		IPreferenceFilter[] filters = new IPreferenceFilter[] {new IPreferenceFilter() {
-			public Map getMapping(String scope) {
-				Map result = new HashMap();
+			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
+				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
 				result.put(QUALIFIER, null);
 				return result;
 			}
@@ -956,8 +956,8 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		final String VALID_QUALIFIER = getUniqueString();
 		IPreferenceFilter transfer = new IPreferenceFilter() {
-			public Map getMapping(String scope) {
-				Map result = new HashMap();
+			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
+				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
 				result.put(VALID_QUALIFIER, null);
 				return result;
 			}
@@ -970,7 +970,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferencesService service = Platform.getPreferencesService();
 		ExportVerifier verifier = new ExportVerifier(service.getRootNode(), new IPreferenceFilter[] {transfer});
 
-		IEclipsePreferences node = new InstanceScope().getNode(VALID_QUALIFIER);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(VALID_QUALIFIER);
 		String VALID_KEY_1 = "key1";
 		String VALID_KEY_2 = "key2";
 		node.put(VALID_KEY_1, "value1");
@@ -981,7 +981,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		verifier.addExpected(node.absolutePath(), VALID_KEY_1);
 		verifier.addExpected(node.absolutePath(), VALID_KEY_2);
 
-		node = new InstanceScope().getNode(getUniqueString());
+		node = InstanceScope.INSTANCE.getNode(getUniqueString());
 		node.put("invalidkey1", "value1");
 		node.put("invalidkey2", "value2");
 
@@ -995,7 +995,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 	public void testExportWithTransfers2() {
 		final String VALID_QUALIFIER = getUniqueString();
 		IPreferenceFilter transfer = new IPreferenceFilter() {
-			public Map getMapping(String scope) {
+			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				return null;
 			}
 
@@ -1029,7 +1029,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		verifier.addVersion();
 		verifier.addExportRoot(service.getRootNode());
 
-		testNode = new InstanceScope().getNode(getUniqueString());
+		testNode = InstanceScope.INSTANCE.getNode(getUniqueString());
 		testNode.put("invalidkey1", "value1");
 		testNode.put("invalidkey2", "value2");
 
@@ -1045,8 +1045,8 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		final String QUALIFIER = getUniqueString();
 		IPreferenceFilter transfer = new IPreferenceFilter() {
-			public Map getMapping(String scope) {
-				Map result = new HashMap();
+			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
+				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
 				result.put(QUALIFIER, null);
 				return result;
 			}
@@ -1059,7 +1059,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferencesService service = Platform.getPreferencesService();
 		ExportVerifier verifier = new ExportVerifier(service.getRootNode(), new IPreferenceFilter[] {transfer});
 
-		Preferences node = new InstanceScope().getNode(QUALIFIER).node("child");
+		Preferences node = InstanceScope.INSTANCE.getNode(QUALIFIER).node("child");
 		String VALID_KEY_1 = "key1";
 		String VALID_KEY_2 = "key2";
 		node.put(VALID_KEY_1, "value1");
@@ -1070,7 +1070,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		verifier.addExpected(node.absolutePath(), VALID_KEY_1);
 		verifier.addExpected(node.absolutePath(), VALID_KEY_2);
 
-		node = new InstanceScope().getNode(getUniqueString());
+		node = InstanceScope.INSTANCE.getNode(getUniqueString());
 		node.put("invalidkey1", "value1");
 		node.put("invalidkey2", "value2");
 
@@ -1086,11 +1086,11 @@ public class PreferencesServiceTest extends RuntimeTest {
 		final String VALID_QUALIFIER = getUniqueString();
 		final String COMMON_PREFIX = "PREFIX.";
 		IPreferenceFilter transfer = new IPreferenceFilter() {
-			Map result;
+			Map<String, PreferenceFilterEntry[]> result;
 
-			public Map getMapping(String scope) {
+			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				if (result == null) {
-					result = new HashMap();
+					result = new HashMap<String, PreferenceFilterEntry[]>();
 					result.put(VALID_QUALIFIER, new PreferenceFilterEntry[] {new PreferenceFilterEntry(COMMON_PREFIX, "prefix")});
 				}
 				return result;
@@ -1103,7 +1103,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferenceFilter[] matching = null;
 		IPreferencesService service = Platform.getPreferencesService();
 
-		IEclipsePreferences node = new InstanceScope().getNode(VALID_QUALIFIER);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(VALID_QUALIFIER);
 		String VALID_KEY_1 = COMMON_PREFIX + "key1";
 		String VALID_KEY_2 = COMMON_PREFIX + "key2";
 		String VALID_KEY_3 = "key3";
