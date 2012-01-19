@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -151,9 +152,8 @@ public class CompatibilityView extends CompatibilityPart {
 	}
 
 	private void clearOpaqueMenuItems(MenuManagerRenderer renderer, MMenu menu) {
-		List<MMenuElement> children = menu.getChildren();
-		for (int i = 0; i < children.size(); i++) {
-			MMenuElement child = children.get(i);
+		for (Iterator<MMenuElement> it = menu.getChildren().iterator(); it.hasNext();) {
+			MMenuElement child = it.next();
 			IContributionItem contribution = renderer.getContribution(child);
 			if (contribution != null) {
 				renderer.clearModelToContribution(child, contribution);
@@ -161,12 +161,10 @@ public class CompatibilityView extends CompatibilityPart {
 
 			if (child instanceof MOpaqueMenuSeparator) {
 				((MOpaqueMenuSeparator) child).setOpaqueItem(null);
-				children.remove(i);
-				i--;
+				it.remove();
 			} else if (child instanceof MOpaqueMenuItem) {
 				((MOpaqueMenuItem) child).setOpaqueItem(null);
-				children.remove(i);
-				i--;
+				it.remove();
 			} else if (child instanceof MMenu) {
 				MMenu submenu = (MMenu) child;
 				MenuManager manager = renderer.getManager(submenu);
@@ -175,8 +173,7 @@ public class CompatibilityView extends CompatibilityPart {
 				}
 
 				if (child instanceof MOpaqueMenu) {
-					children.remove(i);
-					i--;
+					it.remove();
 				}
 				clearOpaqueMenuItems(renderer, submenu);
 			}
@@ -210,9 +207,8 @@ public class CompatibilityView extends CompatibilityPart {
 				ToolBarManagerRenderer tbmr = (ToolBarManagerRenderer) apr;
 				tbmr.clearModelToManager(toolbar, tbm);
 				// remove opaque mappings
-				List<MToolBarElement> children = toolbar.getChildren();
-				for (int i = 0; i < children.size(); i++) {
-					MToolBarElement element = children.get(i);
+				for (Iterator<MToolBarElement> it = toolbar.getChildren().iterator(); it.hasNext();) {
+					MToolBarElement element = it.next();
 					if (element instanceof MOpaqueToolItem) {
 						IContributionItem item = tbmr.getContribution(element);
 						if (item != null) {
@@ -221,8 +217,7 @@ public class CompatibilityView extends CompatibilityPart {
 						// clear the reference
 						((MOpaqueToolItem) element).setOpaqueItem(null);
 						// remove the opaque item
-						children.remove(i);
-						i--;
+						it.remove();
 					}
 				}
 			}
