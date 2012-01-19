@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,13 +17,17 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.internal.expressions.OrExpression;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
+import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
@@ -143,6 +147,35 @@ public class ContributionRecord {
 		return currentVisibility;
 	}
 
+	private Expression getExpression(MExpression expression) {
+		if (expression instanceof MCoreExpression) {
+			Object coreExpression = ((MCoreExpression) expression)
+					.getCoreExpression();
+			return coreExpression instanceof Expression ? (Expression) coreExpression
+					: null;
+		}
+		return null;
+	}
+
+	private MExpression merge(MExpression expressionA, MExpression expressionB) {
+		Expression coreExpressionA = getExpression(expressionA);
+		Expression coreExpressionB = getExpression(expressionB);
+		if (coreExpressionA == null || coreExpressionB == null) {
+			// implied to always be visible
+			return null;
+		}
+
+		// combine the two expressions
+		OrExpression expression = new OrExpression();
+		expression.add(coreExpressionA);
+		expression.add(coreExpressionB);
+
+		MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
+		exp.setCoreExpressionId("programmatic.value"); //$NON-NLS-1$
+		exp.setCoreExpression(expression);
+		return exp;
+	}
+
 	public boolean mergeIntoModel() {
 		int idx = getIndex(menuModel, menuContribution.getPositionInParent());
 		if (idx == -1) {
@@ -169,6 +202,9 @@ public class ContributionRecord {
 					renderer.linkElementToContributionRecord(copy, this);
 					menuModel.getChildren().add(idx++, copy);
 				} else {
+					shared.setVisibleWhen(merge(
+							menuContribution.getVisibleWhen(),
+							shared.getVisibleWhen()));
 					copy = shared;
 				}
 				sharedElements.add(shared);
