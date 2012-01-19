@@ -28,7 +28,7 @@
 }
 
 #org-eclipse-ui-editorss {
-   tab-renderer: url('platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+   tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
    unselected-tabs-color: #D6DDE5 #D6DDE5 #D6DDE5 100% 100%;
    outer-keyline-color: #D6DDE5;
    inner-keyline-color: #D6DDE5;

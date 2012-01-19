@@ -15,7 +15,7 @@
 }
 
 .MPartStack {
-    tab-renderer: url('platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+    tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
     unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
     outer-keyline-color: #FFFFFF;
 	inner-keyline-color: #FFFFFF;
