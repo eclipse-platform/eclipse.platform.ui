@@ -308,7 +308,7 @@ public abstract class HeadlessApplicationTest extends
 	}
 
 	protected String getEngineURI() {
-		return "platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
+		return "bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
 	}
 
 	private void processPartContributions(IEclipseContext context,

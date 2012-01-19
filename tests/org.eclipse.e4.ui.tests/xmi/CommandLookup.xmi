@@ -27,14 +27,14 @@
       <children xsi:type="org.eclipse.e4.ui.model.application:MSashForm" policy="HorizontalSash">
         <children xsi:type="org.eclipse.e4.ui.model.application:MSashForm" policy="VerticalSash">
           <children xsi:type="org.eclipse.e4.ui.model.application:MStack">
-            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Library" tooltip="" URI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
+            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Library" tooltip="" URI="bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
           </children>
         </children>
         <children xsi:type="org.eclipse.e4.ui.model.application:MSashForm" policy="VerticalSash">
-          <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Preview" URI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
+          <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Preview" URI="bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
           <children xsi:type="org.eclipse.e4.ui.model.application:MStack">
-            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Thumbnails" URI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
-            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Exif" tooltip="" URI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
+            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Thumbnails" URI="bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
+            <children xsi:type="org.eclipse.e4.ui.model.application:MContributedPart" name="Exif" tooltip="" URI="bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView"/>
           </children>
           <weights>70</weights>
           <weights>30</weights>
@@ -43,7 +43,7 @@
         <weights>70</weights>
       </children>
     </children>
-    <handlers URI="platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.ExitHandler" command="//@command.0"/>
+    <handlers URI="bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.ExitHandler" command="//@command.0"/>
   </windows>
   <command id="org.eclipse.e4.ui.tests.exit" name="Exit"/>
 </org.eclipse.e4.ui.model.application:MApplication>

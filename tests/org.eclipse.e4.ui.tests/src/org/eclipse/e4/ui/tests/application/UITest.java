@@ -20,7 +20,7 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 
 public class UITest extends TestCase {
 
-	final static private String engineURI = "platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
+	final static private String engineURI = "bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
 
 	protected IEclipseContext applicationContext;
 	protected MApplication application;

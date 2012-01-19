@@ -35,12 +35,12 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 			if (((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_URI) {
 				String rendURL = ((CSSPrimitiveValue) value).getStringValue();
 				URI uri = URI.createURI(rendURL);
-				Bundle bundle = CSSActivator.getDefault().getBundleForName(uri.segment(1));
+				Bundle bundle = CSSActivator.getDefault().getBundleForName(uri.authority());
 				if (bundle != null) {
-					if (uri.segmentCount() > 3) {
+					if (uri.segmentCount() > 1) {
 						//TODO: handle this case?
 					} else {
-						String clazz = uri.segment(2);
+						String clazz = uri.segment(0);
 						try {
 							Class<?> targetClass = bundle.loadClass(clazz);
 							//check to see if the folder already has an instance of the same renderer

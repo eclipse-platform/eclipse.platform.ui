@@ -50,7 +50,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 
 	@Override
 	protected String getEngineURI() {
-		return "platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine"; //$NON-NLS-1$
+		return "bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine"; //$NON-NLS-1$
 	}
 
 	@Override
