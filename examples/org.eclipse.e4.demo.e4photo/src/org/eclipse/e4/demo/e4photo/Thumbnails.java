@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.work.ISchedulingExecutor;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -52,8 +51,7 @@ public class Thumbnails {
 	private ESelectionService selectionService;
 
 	@Inject
-	public Thumbnails(Composite parent, 
-			ISchedulingExecutor backgroundRunner, IStylingEngine stylingEngine) {
+	public Thumbnails(Composite parent, IStylingEngine stylingEngine) {
 		this.stylingEngine = stylingEngine;
 		parent.setLayout(new FillLayout());
 		gallery = new Gallery(parent, SWT.V_SCROLL | SWT.MULTI);
