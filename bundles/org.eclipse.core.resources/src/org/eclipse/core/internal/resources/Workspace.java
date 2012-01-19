@@ -1170,7 +1170,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			URI sourceURI) throws CoreException {
 		IPath srcLoc = source.getLocation();
 		IPath srcRawLoc = source.getRawLocation();
-		if ((srcLoc != null) && !srcRawLoc.equals(srcLoc)) {
+		if ((srcLoc != null) && (srcRawLoc != null) && !srcLoc.equals(srcRawLoc)) {
 			// the location is variable relative
 			if (!source.getProject().equals(dest.getProject())) {
 				String variable = srcRawLoc.segment(0);
