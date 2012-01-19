@@ -19,6 +19,7 @@ bundles/org.eclipse.e4.ui.workbench.swt
 bundles/org.eclipse.ui
 bundles/org.eclipse.ui.workbench
 examples/org.eclipse.e4.demo.contacts
+examples/org.eclipse.e4.demo.contacts.feature
 examples/org.eclipse.e4.demo.e4photo
 examples/org.eclipse.e4.examples.services
 examples/org.eclipse.e4.ui.examples.css
