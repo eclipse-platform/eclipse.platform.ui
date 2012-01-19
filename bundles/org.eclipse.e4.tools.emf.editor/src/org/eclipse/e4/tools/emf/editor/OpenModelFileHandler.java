@@ -43,7 +43,7 @@ public class OpenModelFileHandler {
 					MInputPart part = MBasicFactory.INSTANCE.createInputPart();
 					part.setLabel(name);
 					part.setTooltip(file);
-					part.setContributionURI("platform:/plugin/org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor");
+					part.setContributionURI("bundleclass://org.eclipse.e4.tools.emf.ui/org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor");
 					part.setIconURI("platform:/plugin/org.eclipse.e4.tools.emf.editor/icons/full/application_view_tile.png");
 					part.setInputURI(filePath);
 					

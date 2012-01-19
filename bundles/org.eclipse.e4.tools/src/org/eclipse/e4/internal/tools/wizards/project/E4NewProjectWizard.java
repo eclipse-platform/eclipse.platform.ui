@@ -398,32 +398,32 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 			MAddon addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.core.commands.service");
-			addon.setContributionURI("platform:/plugin/org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon");
+			addon.setContributionURI("bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon");
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.contexts.service");
-			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon");
+			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon");
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.bindings.service");
-			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon");
+			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon");
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.commands.model");
-			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon");
+			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon");
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.contexts.model");
-			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon");
+			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon");
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.bindings.model");
-			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon");
+			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon");
 			application.getAddons().add(addon);
 
 			MBindingContext rootContext = MCommandsFactory.INSTANCE
@@ -647,7 +647,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			// Create Quit handler for command
 			MHandler quitHandler = MCommandsFactory.INSTANCE.createHandler();
 			quitHandler.setCommand(command);
-			quitHandler.setContributionURI("platform:/plugin/" + projectName
+			quitHandler.setContributionURI("bundleclass://" + projectName
 					+ "/" + fragment.getElementName() + ".handlers."
 					+ className);
 			application.getHandlers().add(quitHandler);

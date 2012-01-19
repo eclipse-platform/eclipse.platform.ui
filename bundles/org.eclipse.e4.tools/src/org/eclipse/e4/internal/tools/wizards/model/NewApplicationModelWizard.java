@@ -35,12 +35,12 @@ public class NewApplicationModelWizard extends BaseApplicationModelWizard {
 			application.setElementId(getModelFile().getProject().getName() + ".application");
 			if( ((ModelFilePageImpl)getPages()[0]).includeDefaultAddons.getSelection() ) {
 				String[][] addons = { 
-					{ "org.eclipse.e4.core.commands.service", "platform:/plugin/org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon" },
-					{ "org.eclipse.e4.ui.contexts.service", "platform:/plugin/org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon" },
-					{ "org.eclipse.e4.ui.bindings.service", "platform:/plugin/org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon" },
-					{ "org.eclipse.e4.ui.workbench.commands.model", "platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon" },
-					{ "org.eclipse.e4.ui.workbench.contexts.model", "platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon" },
-					{ "org.eclipse.e4.ui.workbench.bindings.model", "platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon" }
+					{ "org.eclipse.e4.core.commands.service", "bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon" },
+					{ "org.eclipse.e4.ui.contexts.service", "bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon" },
+					{ "org.eclipse.e4.ui.bindings.service", "bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon" },
+					{ "org.eclipse.e4.ui.workbench.commands.model", "bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon" },
+					{ "org.eclipse.e4.ui.workbench.contexts.model", "bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon" },
+					{ "org.eclipse.e4.ui.workbench.bindings.model", "bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon" }
 					
 				};
 				

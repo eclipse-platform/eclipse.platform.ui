@@ -25,8 +25,8 @@ public class ContributionURIValidator implements IValidator {
 		} else {
 			try {
 				URI uri = URI.createURI(value.toString());
-				if (uri.segmentCount() != 3) {
-					return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", "The uri has to have the format 'platform:/plugin/$$bundleId$$/$$className$$'");
+				if (uri.authority() == null || uri.authority().length() == 0 || uri.segmentCount() != 1) {
+					return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", "The uri has to have the format 'bundleclass://$$bundleId$$/$$className$$'");
 				}
 			} catch (Exception e) {
 				return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", e.getMessage());

@@ -21,10 +21,10 @@
       </children>
     </trimBars>
   </children>
-  <handlers xmi:id="_Jp-AEEZBEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.handlers.openxmi" contributionURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" command="_Hx2ycEZCEd-3Rue18XuTew"/>
-  <handlers xmi:id="_OTM1AEZBEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.handlers.savexmi" contributionURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.SaveModelFileHandler" command="_NyiigEZCEd-3Rue18XuTew"/>
-  <handlers xmi:id="_Owa8gEZBEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.handlers.newappmodel" contributionURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewApplicationModelHandler" command="_OI-FgEZCEd-3Rue18XuTew"/>
-  <handlers xmi:id="_PhoXAEZBEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.handlers.newcontribmodel" contributionURI="platform:/plugin/org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewModelContributionHandler" command="_OcpPcEZCEd-3Rue18XuTew"/>
+  <handlers xmi:id="_Jp-AEEZBEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.handlers.openxmi" contributionURI="bundleclass://org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.OpenModelFileHandler" command="_Hx2ycEZCEd-3Rue18XuTew"/>
+  <handlers xmi:id="_OTM1AEZBEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.handlers.savexmi" contributionURI="bundleclass://org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.SaveModelFileHandler" command="_NyiigEZCEd-3Rue18XuTew"/>
+  <handlers xmi:id="_Owa8gEZBEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.handlers.newappmodel" contributionURI="bundleclass://org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewApplicationModelHandler" command="_OI-FgEZCEd-3Rue18XuTew"/>
+  <handlers xmi:id="_PhoXAEZBEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.handlers.newcontribmodel" contributionURI="bundleclass://org.eclipse.e4.tools.emf.editor/org.eclipse.e4.tools.emf.editor.NewModelContributionHandler" command="_OcpPcEZCEd-3Rue18XuTew"/>
   <bindingTables xmi:id="_a8i7IEZBEd-3Rue18XuTew" elementId="org.eclipse.ui.bindingtables.dialogAndWindow" bindingContext="_uvPCgEZBEd-3Rue18XuTew">
     <bindings xmi:id="_pTpjkEZBEd-3Rue18XuTew" elementId="_pTpjkEZBEd-3Rue18XuTew" keySequence="M1+S" command="_NyiigEZCEd-3Rue18XuTew"/>
   </bindingTables>
@@ -36,10 +36,10 @@
   <commands xmi:id="_NyiigEZCEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.commands.savexmi" commandName="e4editor.savexmi"/>
   <commands xmi:id="_OI-FgEZCEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.commands.newappmodel" commandName="e4editor.newappmodel"/>
   <commands xmi:id="_OcpPcEZCEd-3Rue18XuTew" elementId="org.eclipse.e4.tools.emf.editor.commands.newcontribmodel" commandName="e4editor.newcontribmodel"/>
-  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="platform:/plugin/org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
-  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="platform:/plugin/org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
-  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="platform:/plugin/org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
-  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXj" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
-  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXk" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
-  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXl" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXj" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXk" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXl" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
 </application:Application>
