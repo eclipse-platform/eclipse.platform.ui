@@ -109,7 +109,7 @@ public class ViewRegistry implements IViewRegistry {
 								.getImageDescriptor(ISharedImages.IMG_DEF_VIEW)));
 					} else if (!iconURI.startsWith("platform:/plugin/")) { //$NON-NLS-1$
 						StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
-						builder.append(element.getNamespaceIdentifier()).append('/');
+						builder.append(element.getContributor().getName()).append('/');
 
 						// FIXME: need to get rid of $nl$ properly
 						if (iconURI.startsWith("$nl$")) { //$NON-NLS-1$
