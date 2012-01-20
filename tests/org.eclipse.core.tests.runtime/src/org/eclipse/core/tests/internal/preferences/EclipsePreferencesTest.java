@@ -623,9 +623,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		} catch (BackingStoreException e) {
 			fail("0.99", e);
 		}
-		File file = null;
-		// TODO
-		//file = TestHelper.getInstanceBaseLocation().append(".settings").append("foo.prefs").toFile();
+		File file = TestHelper.getInstanceBaseLocation().append(".settings").append("foo.prefs").toFile();
+
 		assertTrue("1.0", file.exists());
 		try {
 			node.removeNode();
