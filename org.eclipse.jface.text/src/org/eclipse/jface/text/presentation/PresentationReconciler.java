@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -207,11 +207,13 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 						damage= new Region(0, document.getLength());
 			 		} else {
 						IRegion region= widgetRegion2ModelRegion(e);
-						try {
-							String text= document.get(region.getOffset(), region.getLength());
-							DocumentEvent de= new DocumentEvent(document, region.getOffset(), region.getLength(), text);
-							damage= getDamage(de, false);
-						} catch (BadLocationException x) {
+						if (region != null) {
+							try {
+								String text= document.get(region.getOffset(), region.getLength());
+								DocumentEvent de= new DocumentEvent(document, region.getOffset(), region.getLength(), text);
+								damage= getDamage(de, false);
+							} catch (BadLocationException x) {
+							}
 						}
 			 		}
 		 		}
@@ -230,9 +232,10 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 
 		/**
 		 * Translates the given text event into the corresponding range of the viewer's document.
-		 *
+		 * 
 		 * @param e the text event
-		 * @return the widget region corresponding the region of the given event
+		 * @return the widget region corresponding the region of the given event or
+		 *         <code>null</code> if none
 		 * @since 2.1
 		 */
 		protected IRegion widgetRegion2ModelRegion(TextEvent e) {
