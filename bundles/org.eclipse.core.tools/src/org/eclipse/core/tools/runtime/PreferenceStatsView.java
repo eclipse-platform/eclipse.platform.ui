@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.core.tools.runtime;
 
 import java.util.*;
@@ -195,9 +194,13 @@ public class PreferenceStatsView extends SpyView {
 			// child map
 			// TODO this isn't quite right but is ok for now
 			count += 4;
-			String[] childrenNames = node.childrenNames();
-			for (int i = 0; i < childrenNames.length; i++)
-				count += sizeof(childrenNames[i]);
+			try {
+				String[] childrenNames = node.childrenNames();
+				for (int i = 0; i < childrenNames.length; i++)
+					count += sizeof(childrenNames[i]);
+			} catch (BackingStoreException e) {
+				//this is truly exceptional!
+			}
 
 			// node change listener list
 			// TODO
