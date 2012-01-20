@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.TreeModelContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
@@ -27,59 +28,69 @@ public class MemoryViewTreeModelContentProvider extends
 		{
 	        for (int i = 0; i < nodes.length; i++) {
 				IModelDelta node = nodes[i];
-				int flags = node.getFlags() & mask;
+				int flags = node.getFlags();
 
-				if ((flags & IModelDelta.ADDED) != 0) {
-					if (node.getElement() instanceof IMemoryBlock) {
-						if ((flags & IModelDelta.SELECT) != 0) {
-							if (getPresentationContext() instanceof MemoryView) {
-								MemoryView view = (MemoryView) getPresentationContext().getPart();
-								if (view.isPinMBDisplay()) {
-									// turn off select if the view is currently
-									// pinned
-									flags |= IModelDelta.SELECT;
-									flags ^= IModelDelta.SELECT;
-								}
+				if((mask & ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS) != 0 &&
+				   (flags & IModelDelta.ADDED) != 0 && 
+				   (flags & IModelDelta.SELECT) != 0 &&
+				   node.getElement() instanceof IMemoryBlock) 
+				{
+					if ((flags & IModelDelta.SELECT) != 0) {
+						if (getPresentationContext().getPart() instanceof MemoryView) {
+							MemoryView view = (MemoryView) getPresentationContext().getPart();
+							if (view.isPinMBDisplay() && !isFirstMemoryBlock()) {
+								// turn off select if the view is currently
+								// pinned and not the first memory block
+								flags |= IModelDelta.SELECT;
+								flags ^= IModelDelta.SELECT;
 							}
 						}
+					}
 
-						// override and select the first memory block
-						if (isFirstMemoryBlock()) {
-							flags |= IModelDelta.SELECT;
-						}
+					// override and select the first memory block
+					if (isFirstMemoryBlock()) {
+						flags |= IModelDelta.SELECT;
 					}
 				}
-				if ((flags & IModelDelta.ADDED) != 0) {
-					handleAdd(node);
-				}
-				if ((flags & IModelDelta.REMOVED) != 0) {
-					handleRemove(node);
-				}
-				if ((flags & IModelDelta.CONTENT) != 0) {
-					handleContent(node);
-				}
-				if ((flags & IModelDelta.EXPAND) != 0) {
-					handleExpand(node);
-				}
-				if ((flags & IModelDelta.SELECT) != 0) {
-					handleSelect(node);
-				}
-				if ((flags & IModelDelta.STATE) != 0) {
-					handleState(node);
-				}
-				if ((flags & IModelDelta.INSERTED) != 0) {
-					handleInsert(node);
-				}
-				if ((flags & IModelDelta.REPLACED) != 0) {
-					handleReplace(node);
-				}
-				if ((flags & IModelDelta.INSTALL) != 0) {
-					handleInstall(node);
-				}
-				if ((flags & IModelDelta.UNINSTALL) != 0) {
-					handleUninstall(node);
-				}
-				updateNodes(node.getChildDeltas(), mask);
+				flags = flags & mask;
+
+	            if ((flags & IModelDelta.ADDED) != 0) {
+	                handleAdd(node);
+	            }
+	            if ((flags & IModelDelta.REMOVED) != 0) {
+	                handleRemove(node);
+	            }
+	            if ((flags & IModelDelta.CONTENT) != 0) {
+	                handleContent(node);
+	            }
+	            if ((flags & IModelDelta.STATE) != 0) {
+	                handleState(node);
+	            }
+	            if ((flags & IModelDelta.INSERTED) != 0) {
+	                handleInsert(node);
+	            }
+	            if ((flags & IModelDelta.REPLACED) != 0) {
+	                handleReplace(node);
+	            }
+	            if ((flags & IModelDelta.INSTALL) != 0) {
+	                handleInstall(node);
+	            }
+	            if ((flags & IModelDelta.UNINSTALL) != 0) {
+	                handleUninstall(node);
+	            }
+	            if ((flags & IModelDelta.EXPAND) != 0) {
+	                handleExpand(node);
+	            }
+	            if ((flags & IModelDelta.COLLAPSE) != 0) {
+	                handleCollapse(node);
+	            }
+	            if ((flags & IModelDelta.SELECT) != 0) {
+	                handleSelect(node);
+	            }
+	            if ((flags & IModelDelta.REVEAL) != 0) {
+	                handleReveal(node);
+	            }
+	            updateNodes(node.getChildDeltas(), mask);
 	        }
 		}
 	}

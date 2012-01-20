@@ -1143,7 +1143,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * @param mask the model delta mask
      * @see IModelDelta for a list of masks
      */
-    private void updateNodes(IModelDelta[] nodes, int mask) {
+    protected void updateNodes(IModelDelta[] nodes, int mask) {
         for (int i = 0; i < nodes.length; i++) {
             IModelDelta node = nodes[i];
             int flags = node.getFlags() & mask;
