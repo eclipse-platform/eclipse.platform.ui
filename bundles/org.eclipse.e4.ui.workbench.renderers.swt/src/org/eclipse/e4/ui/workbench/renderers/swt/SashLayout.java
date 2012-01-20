@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 public class SashLayout extends Layout {
 	// The minimum value (as a percentage) that a sash can be dragged to
 	int minSashPercent = 10;
-	
+
 	int marginLeft = 0;
 	int marginRight = 0;
 	int marginTop = 0;
@@ -301,10 +301,12 @@ public class SashLayout extends Layout {
 		if (node.getWidget() instanceof Control) {
 			Control ctrl = (Control) node.getWidget();
 			ctrl.setBounds(bounds);
-		} else if (node instanceof MGenericTile<?>) {
-			Rectangle newRect = new Rectangle(bounds.x, bounds.y, bounds.width,
-					bounds.height);
-			node.setWidget(newRect);
+		} else if (node.getWidget() instanceof Rectangle) {
+			Rectangle theRect = (Rectangle) node.getWidget();
+			theRect.x = bounds.x;
+			theRect.y = bounds.y;
+			theRect.width = bounds.width;
+			theRect.height = bounds.height;
 		}
 	}
 

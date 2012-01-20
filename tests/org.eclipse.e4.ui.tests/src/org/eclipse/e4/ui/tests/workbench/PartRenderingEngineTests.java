@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2847,6 +2847,42 @@ public class PartRenderingEngineTests extends TestCase {
 
 		assertTrue(part.getContext() != null);
 		assertTrue(part.getContext().getParent() == detachedWindow.getContext());
+	}
+
+	public void testBug369229() {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+
+		MPartSashContainer container = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		window.getChildren().add(container);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setContributionURI(LayoutView.CONTRIBUTION_URI);
+		container.getChildren().add(partA);
+
+		MPartSashContainer innerContainer = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		container.getChildren().add(innerContainer);
+
+		MPartSashContainer innerContainer2 = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		innerContainer.getChildren().add(innerContainer2);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setContributionURI(LayoutView.CONTRIBUTION_URI);
+		innerContainer.getChildren().add(partB);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(partA.getWidget());
+		assertNotNull(partB.getWidget());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
