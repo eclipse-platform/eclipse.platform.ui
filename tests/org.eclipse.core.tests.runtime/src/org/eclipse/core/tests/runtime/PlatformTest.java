@@ -61,15 +61,7 @@ public class PlatformTest extends RuntimeTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(PlatformTest.class.getName());
-		suite.addTest(new PlatformTest("testKeyRing1"));
-		suite.addTest(new PlatformTest("testKeyRing2"));
-		suite.addTest(new PlatformTest("testGetCommandLine"));
-		suite.addTest(new PlatformTest("testGetLocation"));
-		suite.addTest(new PlatformTest("testGetLogLocation"));
-		//	suite.addTest(new PlatformTest("testRetrievePlugins"));
-		suite.addTest(new PlatformTest("testRunnable"));
-		return suite;
+		return new TestSuite(PlatformTest.class);
 	}
 
 	public void testKeyRing1() {
@@ -166,6 +158,24 @@ public class PlatformTest extends RuntimeTest {
 		assertNotNull("1.0", Platform.getLocation());
 	}
 
+	/**
+	 * API test for {@link Platform#getResourceBundle(org.osgi.framework.Bundle)}
+	 */
+	public void testGetResourceBundle() {
+		//ensure it returns non-null for bundle with a resource bundle
+		ResourceBundle bundle = Platform.getResourceBundle(Platform.getBundle("org.eclipse.core.runtime"));
+		assertNotNull(bundle);
+		//ensure it throws exception for bundle with no resource bundle
+		boolean failed = false;
+		try {
+			bundle = Platform.getResourceBundle(Platform.getBundle("org.eclipse.core.tests.runtime"));
+		} catch (MissingResourceException e) {
+			//expected
+			failed = true;
+		}
+		assertTrue(failed);
+	}
+
 	public void testGetLogLocation() throws IOException {
 		IPath initialLocation = Platform.getLogFileLocation();
 		System.out.println(Platform.getLogFileLocation());
@@ -186,28 +196,6 @@ public class PlatformTest extends RuntimeTest {
 		//when log is non-local, should revert to default location
 		logService.setWriter(new StringWriter(), true);
 		assertEquals("4.0", initialLocation, Platform.getLogFileLocation());
-	}
-
-	public void testRetrievePlugins() {
-		assertNull("1.0", Platform.getPlugin(""));
-		assertNull("1.1", Platform.getPlugin("qwert666yuiop"));
-
-		IPluginRegistry registry = Platform.getPluginRegistry();
-		IPluginDescriptor descriptors[] = registry.getPluginDescriptors();
-
-		for (int i = 0; i < descriptors.length; i++) {
-			assertNotNull("2." + i, Platform.getPlugin(descriptors[i].getUniqueIdentifier()).getDescriptor().getInstallURL());
-			IPath location;
-			try {
-				location = Platform.getPluginStateLocation(descriptors[i].getPlugin());
-				assertTrue("3." + i, true);
-			} catch (CoreException e) {
-				assertTrue("3." + i, false);
-				continue; // no point continuing this descriptor
-			}
-
-			assertNotNull("4." + i, location);
-		}
 	}
 
 	public void testRunnable() {
