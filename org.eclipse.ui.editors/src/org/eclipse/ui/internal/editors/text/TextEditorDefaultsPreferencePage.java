@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.util.Util;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -1145,12 +1146,17 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		GridLayout layout= new GridLayout();
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
+		layout.horizontalSpacing= 0;
 		layout.numColumns= 2;
 		composite.setLayout(layout);
 		composite.setLayoutData(gd);
 
 		final Button checkBox= new Button(composite, SWT.CHECK);
-		checkBox.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		checkBox.setFont(JFaceResources.getDialogFont());
+		gd= new GridData(GridData.FILL, GridData.CENTER, false, false);
+		int offset= Util.isMac() ? -4 : Util.isLinux() ? -2 : /* Windows et al. */ 3;
+		gd.widthHint= checkBox.computeSize(SWT.DEFAULT, SWT.DEFAULT).x + offset;
+		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				checkboxControlChanged(preference, domain, checkBox);
@@ -1163,7 +1169,6 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		});
 
 		gd= new GridData(GridData.FILL, GridData.CENTER, false, false);
-		gd.horizontalIndent= -2;
 
 		Link link= new Link(composite, SWT.NONE);
 		link.setText(preference.getName());
