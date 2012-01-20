@@ -14,7 +14,9 @@ import java.io.ByteArrayInputStream;
 import java.net.URI;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.resources.projectvariables.ProjectLocationVariableResolver;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -456,4 +458,41 @@ public class LinkedResourceSyncMoveAndCopyTest extends ResourceTest {
 		}
 	}
 
+	public void test361201() {
+		String linkName = getUniqueString();
+		IFile fileLink = existingProject.getFile(linkName);
+		IFile file = existingProject.getFolder("dir").getFile("foo.txt");
+
+		ensureExistsInWorkspace(file.getParent(), true);
+		ensureExistsInWorkspace(file, "content");
+		IPath fileLocation = file.getLocation();
+
+		URI relativeLocation = null;
+		try {
+			relativeLocation = existingProject.getPathVariableManager().convertToRelative(URIUtil.toURI(fileLocation), true, ProjectLocationVariableResolver.NAME);
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+
+		try {
+			fileLink.createLink(relativeLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		IProject destination = getWorkspace().getRoot().getProject("DestProject");
+		IProjectDescription description = getWorkspace().newProjectDescription(destination.getName());
+
+		assertDoesNotExistInWorkspace("1.1", destination);
+		try {
+			// without the fix, this call will cause an infinite loop in PathVariableUtil.getUniqueVariableName()
+			existingProject.move(description, IResource.SHALLOW, getMonitor());
+		} catch (CoreException e) {
+			fail("1.2", e);
+		}
+		IProject destProject = ResourcesPlugin.getWorkspace().getRoot().getProject("DestProject");
+		assertExistsInWorkspace("2.0", destProject);
+		assertExistsInWorkspace("2.1", destProject.getFile(linkName));
+
+	}
 }

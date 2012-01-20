@@ -34,8 +34,12 @@ public class PathVariableUtil {
 		variable = getValidVariableName(variable);
 		String destVariable = variable;
 
-		while (resource.getPathVariableManager().isDefined(destVariable)) {
-			destVariable = variable + index;
+		IPathVariableManager pathVariableManager = resource.getPathVariableManager();
+		if (destVariable.startsWith(ParentVariableResolver.NAME) || destVariable.startsWith(ProjectLocationVariableResolver.NAME))
+			destVariable = "copy_" + destVariable; //$NON-NLS-1$
+
+		while (pathVariableManager.isDefined(destVariable)) {
+			destVariable = destVariable + index;
 			index++;
 		}
 		return destVariable;
