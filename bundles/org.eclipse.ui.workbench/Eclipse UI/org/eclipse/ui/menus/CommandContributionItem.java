@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
@@ -872,7 +872,7 @@ public class CommandContributionItem extends ContributionItem {
 					if (workbenchHelpSystem != null) {
 						workbenchHelpSystem.setHelp(menu, helpContextId);
 					}
-					menuManager.addMenuListener(new IMenuListener() {
+					menuManager.addMenuListener(new IMenuListener2() {
 						public void menuAboutToShow(IMenuManager manager) {
 							String id = getId();
 							if (dropDownMenuOverride != null) {
@@ -880,6 +880,14 @@ public class CommandContributionItem extends ContributionItem {
 							}
 							menuService.populateContributionManager(
 									menuManager, "menu:" + id); //$NON-NLS-1$
+						}
+						public void menuAboutToHide(IMenuManager manager) {
+							display.asyncExec(new Runnable() {
+								public void run() {
+									menuService.releaseContributions(menuManager);
+									menuManager.dispose();
+								}
+							});
 						}
 					});
 
