@@ -70,7 +70,7 @@ public class SampleView {
 		viewer.getTree().setData("class", "navigator"); //$NON-NLS-1$ //$NON-NLS-2$
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				outputContext.set(IServiceConstants.SELECTION,
+				outputContext.set(IServiceConstants.ACTIVE_SELECTION,
 						event.getSelection());
 			}
 		});

@@ -11,12 +11,20 @@
 
 package org.eclipse.e4.ui.workbench.modeling;
 
+import org.eclipse.e4.ui.services.IServiceConstants;
+
 /**
  * @since 1.0
  */
 public interface ESelectionService {
 
-	public static final String SELECTION = "in.selection"; //$NON-NLS-1$
+	/**
+	 * Due to the possibly misleading nature of this field's name, it has been replaced with
+	 * {@link IServiceConstants#ACTIVE_SELECTION}. All clients of this API should change their
+	 * references to <code>IServiceConstants.ACTIVE_SELECTION</code>.
+	 */
+	@Deprecated
+	public static final String SELECTION = IServiceConstants.ACTIVE_SELECTION; // "in.selection";
 
 	public void setSelection(Object selection);
 

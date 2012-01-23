@@ -40,7 +40,7 @@ Export-Package: org.eclipse.e4.ui.internal.workbench;
    org.eclipse.e4.ui.workbench.renderers.swt,
    org.eclipse.ui.workbench"
 Bundle-Activator: org.eclipse.e4.ui.internal.workbench.Activator
-Service-Component: OSGI-INF/progress.xml, OSGI-INF/partService.xml, OSGI-INF/selectionLookup.xml, OSGI-INF/selectionService.xml
+Service-Component: OSGI-INF/progress.xml, OSGI-INF/partService.xml
 Import-Package: com.ibm.icu.text;version="3.8.1",
  javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0"

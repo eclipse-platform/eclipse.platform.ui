@@ -1,0 +1,222 @@
+/*******************************************************************************
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
+package org.eclipse.e4.ui.internal.workbench;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.inject.Named;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
+
+public class SelectionAggregator {
+
+	static final String OUT_SELECTION = "org.eclipse.ui.output.selection"; //$NON-NLS-1$
+
+	private ListenerList genericListeners = new ListenerList();
+	private Map<String, ListenerList> targetedListeners = new HashMap<String, ListenerList>();
+	private Set<IEclipseContext> tracked = new HashSet<IEclipseContext>();
+
+	@Inject
+	UISynchronize synchService;
+
+	private EventHandler eventHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (element instanceof MPart) {
+				MPart part = (MPart) element;
+
+				String partId = part.getElementId();
+				if (targetedListeners.containsKey(partId))
+					track(part);
+			}
+		}
+	};
+
+	private MPart activePart;
+
+	private IEclipseContext context;
+
+	private EPartService partService;
+
+	private IEventBroker eventBroker;
+
+	@Inject
+	SelectionAggregator(IEclipseContext context, EPartService partService, IEventBroker eventBroker) {
+		super();
+		this.context = context;
+		this.partService = partService;
+		this.eventBroker = eventBroker;
+	}
+
+	@PreDestroy
+	void preDestroy() {
+		genericListeners.clear();
+		targetedListeners.clear();
+
+		eventBroker.unsubscribe(eventHandler);
+	}
+
+	@PostConstruct
+	void postConstruct() {
+		eventBroker.subscribe(UIEvents.Context.TOPIC_CONTEXT, eventHandler);
+	}
+
+	@Inject
+	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) final MPart part) {
+		if ((part != null) && (activePart != part)) {
+			activePart = part;
+			IEclipseContext partContext = part.getContext();
+			// only notify listeners if the part actually posts selections
+			if (partContext.containsKey(OUT_SELECTION)) {
+				Object selection = partContext.get(OUT_SELECTION);
+				context.set(IServiceConstants.ACTIVE_SELECTION, selection);
+				notifyListeners(part, selection);
+			}
+			track(part);
+		}
+	}
+
+	private void notifyListeners(MPart part, Object selection) {
+		for (Object listener : genericListeners.getListeners()) {
+			((ISelectionListener) listener).selectionChanged(part, selection);
+		}
+		notifyTargetedListeners(part, selection);
+	}
+
+	private void notifyTargetedListeners(MPart part, Object selection) {
+		String id = part.getElementId();
+		if (id != null) {
+			ListenerList listenerList = targetedListeners.get(id);
+			if (listenerList != null) {
+				for (Object listener : listenerList.getListeners()) {
+					((ISelectionListener) listener).selectionChanged(part, selection);
+				}
+			}
+		}
+	}
+
+	private void track(final MPart part) {
+		final IEclipseContext myContext = this.context;
+		IEclipseContext context = part.getContext();
+		if (context != null && tracked.add(context)) {
+			context.runAndTrack(new RunAndTrack() {
+				private boolean initial = true;
+
+				public boolean changed(IEclipseContext context) {
+					final Object selection = context.get(OUT_SELECTION);
+					if (initial) {
+						initial = false;
+						if (selection == null) {
+							return true;
+						}
+					}
+
+					// TBD the async calls below are used to avoid listeners
+					// interfering with the context (listeners adding dependincies
+					// for this RaT and listeners creating values in the context
+					// going into infinite loops). We probably need to add a method
+					// to RaT to stop recoding.
+					if (activePart == part) {
+						myContext.set(IServiceConstants.ACTIVE_SELECTION, selection);
+						synchService.asyncExec(new Runnable() {
+							public void run() {
+								notifyListeners(part, selection);
+							}
+						});
+					} else {
+						synchService.asyncExec(new Runnable() {
+							public void run() {
+								notifyTargetedListeners(part, selection);
+							}
+						});
+						// we don't need to keep tracking non-active parts unless
+						// they have targeted listeners
+						String partId = part.getElementId();
+						boolean continueTracking = targetedListeners.containsKey(partId);
+						if (!continueTracking) {
+							tracked.remove(part.getContext());
+						}
+						return continueTracking;
+					}
+					return true;
+				}
+			});
+		}
+	}
+
+	public Object getSelection() {
+		return context.get(IServiceConstants.ACTIVE_SELECTION);
+	}
+
+	public void addSelectionListener(ISelectionListener listener) {
+		genericListeners.add(listener);
+	}
+
+	public void removeSelectionListener(ISelectionListener listener) {
+		// we may have been destroyed already, see bug 310113
+		if (context != null) {
+			genericListeners.remove(listener);
+		}
+	}
+
+	public void addSelectionListener(String partId, ISelectionListener listener) {
+		ListenerList listeners = targetedListeners.get(partId);
+		if (listeners == null) {
+			listeners = new ListenerList();
+			targetedListeners.put(partId, listeners);
+		}
+		listeners.add(listener);
+
+		MPart part = partService.findPart(partId);
+		if (part != null)
+			track(part);
+	}
+
+	public void removeSelectionListener(String partId, ISelectionListener listener) {
+		// we may have been destroyed already, see bug 310113
+		if (context != null) {
+			ListenerList listeners = targetedListeners.get(partId);
+			if (listeners != null) {
+				listeners.remove(listener);
+			}
+		}
+	}
+
+	public Object getSelection(String partId) {
+		MPart part = partService.findPart(partId);
+		if (part == null) {
+			return null;
+		}
+
+		IEclipseContext partContext = part.getContext();
+		if (partContext == null) {
+			return null;
+		}
+		return partContext.get(OUT_SELECTION);
+	}
+
+}

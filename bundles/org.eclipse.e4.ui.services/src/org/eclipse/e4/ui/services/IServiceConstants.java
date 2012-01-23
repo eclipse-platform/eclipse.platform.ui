@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eclipse.e4.ui.services;
 
 public interface IServiceConstants {
 
-	public final static String ACTIVE_SELECTION = "selection"; //$NON-NLS-1$
+	public final static String ACTIVE_SELECTION = "org.eclipse.ui.selection"; //$NON-NLS-1$
 
 	/**
 	 * Due to the possibly misleading nature of this field's name, it has been

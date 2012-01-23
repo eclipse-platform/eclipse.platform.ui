@@ -13,10 +13,12 @@ package org.eclipse.e4.ui.tests.application;
 import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.swt.widgets.Display;
 
 public class UITest extends TestCase {
 
@@ -35,6 +37,19 @@ public class UITest extends TestCase {
 		applicationContext = E4Application.createDefaultContext();
 		application.setContext(applicationContext);
 		applicationContext.set(MApplication.class, application);
+
+		final Display display = Display.getDefault();
+		applicationContext.set(UISynchronize.class, new UISynchronize() {
+			public void syncExec(Runnable runnable) {
+				display.syncExec(runnable);
+			}
+
+			public void asyncExec(Runnable runnable) {
+				display.asyncExec(runnable);
+			}
+		});
+
+		E4Application.initializeServices(application);
 	}
 
 	@Override

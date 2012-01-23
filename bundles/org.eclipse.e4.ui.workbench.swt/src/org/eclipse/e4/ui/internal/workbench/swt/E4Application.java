@@ -28,7 +28,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -46,6 +48,8 @@ import org.eclipse.e4.ui.internal.workbench.ModelServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.PlaceholderResolver;
 import org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.ResourceHandler;
+import org.eclipse.e4.ui.internal.workbench.SelectionServiceImpl;
+import org.eclipse.e4.ui.internal.workbench.SelectionAggregator;
 import org.eclipse.e4.ui.internal.workbench.WorkbenchLogger;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -56,6 +60,8 @@ import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
@@ -66,8 +72,12 @@ import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -227,6 +237,9 @@ public class E4Application implements IApplication {
 
 		// Set the app's context after adding itself
 		appContext.set(MApplication.class.getName(), appModel);
+
+		// adds basic services to the contexts
+		initializeServices(appModel);
 
 		// let the life cycle manager add to the model
 		if (lcManager != null) {
@@ -752,4 +765,78 @@ public class E4Application implements IApplication {
 		}
 	}
 
+	static final private String CONTEXT_INITIALIZED = "org.eclipse.ui.contextInitialized";
+
+	static public void initializeServices(MApplication appModel) {
+		IEclipseContext appContext = appModel.getContext();
+		// make sure we only add trackers once
+		if (appContext.containsKey(CONTEXT_INITIALIZED))
+			return;
+		appContext.set(CONTEXT_INITIALIZED, "true");
+		initializeApplicationServices(appContext);
+		List<MWindow> windows = appModel.getChildren();
+		for (MWindow childWindow : windows) {
+			initializeWindowServices(childWindow);
+		}
+		((EObject) appModel).eAdapters().add(new AdapterImpl() {
+			public void notifyChanged(Notification notification) {
+				if (notification.getFeatureID(MApplication.class) != UiPackageImpl.ELEMENT_CONTAINER__CHILDREN)
+					return;
+				MWindow childWindow = (MWindow) notification.getNewValue();
+				initializeWindowServices(childWindow);
+			}
+		});
+	}
+
+	static public void initializeApplicationServices(IEclipseContext appContext) {
+		final IEclipseContext theContext = appContext;
+		// we add a special tracker to bring up current selection from
+		// the active window to the application level
+		appContext.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
+				IEclipseContext activeChildContext = context.getActiveChild();
+				if (activeChildContext != null) {
+					Object selection = activeChildContext
+							.get(IServiceConstants.ACTIVE_SELECTION);
+					theContext.set(IServiceConstants.ACTIVE_SELECTION,
+							selection);
+				}
+				return true;
+			}
+		});
+
+		// we create a selection service handle on every node that we are asked
+		// about as handle needs to know its context
+		appContext.set(ESelectionService.class.getName(),
+				new IContextFunction() {
+					public Object compute(IEclipseContext context) {
+						return ContextInjectionFactory.make(
+								SelectionServiceImpl.class, context);
+					}
+				});
+	}
+
+	static public void initializeWindowServices(MWindow childWindow) {
+		IEclipseContext windowContext = childWindow.getContext();
+		initWindowContext(windowContext);
+		// Mostly MWindow contexts are lazily created by renderers and is not
+		// set at this point.
+		((EObject) childWindow).eAdapters().add(new AdapterImpl() {
+			public void notifyChanged(Notification notification) {
+				if (notification.getFeatureID(MWindow.class) != BasicPackageImpl.WINDOW__CONTEXT)
+					return;
+				IEclipseContext windowContext = (IEclipseContext) notification
+						.getNewValue();
+				initWindowContext(windowContext);
+			}
+		});
+	}
+
+	static private void initWindowContext(IEclipseContext windowContext) {
+		if (windowContext == null)
+			return;
+		SelectionAggregator selectionAggregator = ContextInjectionFactory.make(
+				SelectionAggregator.class, windowContext);
+		windowContext.set(SelectionAggregator.class, selectionAggregator);
+	}
 }
