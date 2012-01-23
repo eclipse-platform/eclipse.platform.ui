@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3057,13 +3057,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				private final int fDoubleClickTime= getSite().getShell().getDisplay().getDoubleClickTime();
 				private long fMouseUpDelta= 0;
 
-				private void triggerAction(String actionID) {
+				private void triggerAction(String actionID, MouseEvent e) {
 					IAction action= getAction(actionID);
 					if (action != null) {
 						if (action instanceof IUpdate)
 							((IUpdate) action).update();
-						if (action.isEnabled())
-							action.run();
+						if (action.isEnabled()) {
+							Event event= new Event();
+							event.display= e.display;
+							event.widget= e.widget;
+							event.time= e.time;
+							event.data= e.data;
+							event.x= e.x;
+							event.y= e.y;
+							event.button= e.button;
+							event.stateMask= e.stateMask;
+							event.count= e.count;
+							action.runWithEvent(event);
+						}
 					}
 				}
 
@@ -3076,7 +3087,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					Runnable runnable= new Runnable() {
 						public void run() {
 							if (!fDoubleClicked)
-								triggerAction(ITextEditorActionConstants.RULER_CLICK);
+								triggerAction(ITextEditorActionConstants.RULER_CLICK, e);
 						}
 					};
 					if (delay <= 0)
@@ -3088,7 +3099,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				public void mouseDoubleClick(MouseEvent e) {
 					if (1 == e.button) {
 						fDoubleClicked= true;
-						triggerAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK);
+						triggerAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK, e);
 					}
 				}
 
