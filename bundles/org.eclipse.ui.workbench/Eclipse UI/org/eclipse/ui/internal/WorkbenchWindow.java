@@ -642,7 +642,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			return;
 		}
 		engine.removeGui(trimBar);
-		trimBars.remove(trimBar);
+		trimBar.getChildren().clear();
 	}
 
 	void populateTopTrimContributions() {
@@ -685,7 +685,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		trimBar.getChildren().add(searchControl);
 		trimBar.getChildren().add(glueControl);
 		trimBar.getChildren().add(switcherControl);
-		trimBar.setToBeRendered(true);
+		// trimBar.setToBeRendered(true);
 
 		workbenchTrimElements.add(spacerControl);
 		workbenchTrimElements.add(searchControl);
