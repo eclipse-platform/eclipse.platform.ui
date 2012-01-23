@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/XMLMemento.java" type="org.eclipse.ui.XMLMemento">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="getChildren()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
