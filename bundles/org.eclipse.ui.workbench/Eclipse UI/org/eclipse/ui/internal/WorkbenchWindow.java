@@ -560,7 +560,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							return;
 						}
 						MenuManagerRendererFilter.updateElementVisibility(mainMenu, renderer,
-								menuManager, windowContext.getActiveLeaf(), true);
+								menuManager, windowContext.getActiveLeaf(), true, false);
 						menuManager.update(true);
 					} finally {
 						canUpdateMenus = true;
@@ -588,7 +588,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				}
 			};
 			windowContext.runAndTrack(menuChangeManager);
-			// HandledContributionItem.toolItemUpdater.addWindowRunnable(menuUpdater);
 		}
 
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, windowWidgetHandler);

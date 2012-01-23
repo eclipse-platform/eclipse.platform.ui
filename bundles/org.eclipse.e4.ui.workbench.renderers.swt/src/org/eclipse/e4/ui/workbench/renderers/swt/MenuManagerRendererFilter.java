@@ -269,7 +269,7 @@ public class MenuManagerRendererFilter implements Listener {
 			evalContext = modelService.getContainingContext(menuModel);
 		}
 		updateElementVisibility(menuModel, renderer, menuManager, evalContext,
-				true);
+				true, true);
 
 		// last thing to do, kill the event and update the menu manager
 		event.type = SWT.None;
@@ -306,7 +306,8 @@ public class MenuManagerRendererFilter implements Listener {
 	 */
 	public static void updateElementVisibility(final MMenu menuModel,
 			MenuManagerRenderer renderer, MenuManager menuManager,
-			final IEclipseContext evalContext, boolean recurse) {
+			final IEclipseContext evalContext, boolean recurse,
+			boolean updateEnablement) {
 		final ExpressionContext exprContext = new ExpressionContext(evalContext);
 		HashSet<ContributionRecord> records = new HashSet<ContributionRecord>();
 		for (MMenuElement element : menuModel.getChildren()) {
@@ -324,11 +325,11 @@ public class MenuManagerRendererFilter implements Listener {
 				MenuManager childManager = renderer.getManager(childMenu);
 				if (childManager != null) {
 					updateElementVisibility(childMenu, renderer, childManager,
-							evalContext, false);
+							evalContext, false, false);
 				}
 			}
 
-			if (element instanceof MHandledMenuItem) {
+			if (updateEnablement && element instanceof MHandledMenuItem) {
 				ParameterizedCommand cmd = ((MHandledMenuItem) element)
 						.getWbCommand();
 				EHandlerService handlerService = evalContext
@@ -346,7 +347,7 @@ public class MenuManagerRendererFilter implements Listener {
 						staticContext.dispose();
 					}
 				}
-			} else if (element instanceof MDirectMenuItem) {
+			} else if (updateEnablement && element instanceof MDirectMenuItem) {
 				MDirectMenuItem contrib = (MDirectMenuItem) element;
 				if (contrib.getObject() != null) {
 					MDirectMenuItem item = (MDirectMenuItem) element;
