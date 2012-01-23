@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,7 +104,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	protected void createEnableAnimationsPref(Composite composite) {
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
-		enableAnimations = createCheckButton(composite, "Enable Animations", //WorkbenchMessages.ViewsPreference_enableAnimations, //$NON-NLS-1$
+		enableAnimations = createCheckButton(composite,
+				WorkbenchMessages.ViewsPreference_enableAnimations,
 				apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
 	}
 
