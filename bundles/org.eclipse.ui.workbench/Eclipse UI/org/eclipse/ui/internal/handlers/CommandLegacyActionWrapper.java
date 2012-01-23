@@ -286,8 +286,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	public final boolean isEnabled() {
-		final Command baseCommand = command.getCommand();
-		return baseCommand.isEnabled() && enabled;
+		return isEnabledDisregardingCommand();
 	}
 
 	/**
