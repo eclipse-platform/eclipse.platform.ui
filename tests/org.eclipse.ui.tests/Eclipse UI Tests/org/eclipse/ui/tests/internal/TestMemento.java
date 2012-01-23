@@ -57,6 +57,15 @@ public class TestMemento implements IMemento {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IMemento#getChildren()
+	 */
+	public IMemento[] getChildren() {
+		IMemento[] returnValue = new IMemento[children.size()];
+		children.toArray(returnValue);
+		return returnValue;
+	}
+
 	public IMemento[] getChildren(String type) {
 		Iterator iterator = children.iterator();
 		Collection matches = new HashSet();

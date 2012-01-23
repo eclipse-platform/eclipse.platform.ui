@@ -1,5 +1,13 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.ui.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/IMemento.java" type="org.eclipse.ui.IMemento">
+        <filter id="1209008130">
+            <message_arguments>
+                <message_argument value="3.8"/>
+                <message_argument value="3.103"/>
+                <message_argument value="getChildren()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="Eclipse UI/org/eclipse/ui/IWorkingSetManager.java" type="org.eclipse.ui.IWorkingSetManager">
         <filter id="1209008130">
             <message_arguments>
@@ -13,6 +21,13 @@
                 <message_argument value="3.7"/>
                 <message_argument value="3.103"/>
                 <message_argument value="setRecentWorkingSetsLength(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/XMLMemento.java" type="org.eclipse.ui.XMLMemento">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="getChildren()"/>
             </message_arguments>
         </filter>
     </resource>

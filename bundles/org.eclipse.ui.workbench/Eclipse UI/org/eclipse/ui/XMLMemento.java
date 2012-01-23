@@ -270,6 +270,35 @@ public final class XMLMemento implements IMemento {
         return null;
     }
 
+	/*
+	 * (non-Javadoc) Method declared in IMemento.
+	 */
+	public IMemento[] getChildren() {
+
+		// Get the nodes.
+		final NodeList nodes = element.getChildNodes();
+		int size = nodes.getLength();
+		if (size == 0) {
+			return new IMemento[0];
+		}
+
+		// Extract each node with given type.
+		ArrayList list = new ArrayList(size);
+		for (int nX = 0; nX < size; nX++) {
+			final Node node = nodes.item(nX);
+			if (node instanceof Element)
+				list.add(node);
+		}
+
+		// Create a memento for each node.
+		size = list.size();
+		IMemento[] results = new IMemento[size];
+		for (int x = 0; x < size; x++) {
+			results[x] = new XMLMemento(factory, (Element) list.get(x));
+		}
+		return results;
+	}
+
     /* (non-Javadoc)
      * Method declared in IMemento.
      */
