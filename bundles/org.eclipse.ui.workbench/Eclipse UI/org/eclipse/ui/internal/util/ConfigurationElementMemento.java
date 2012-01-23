@@ -46,11 +46,21 @@ public final class ConfigurationElementMemento implements IMemento {
         return null;
     }
 
+	public IMemento[] getChildren() {
+		IConfigurationElement[] configurationElements = configurationElement.getChildren();
+
+		return getMementoArray(configurationElements);
+	}
+
     public IMemento[] getChildren(String type) {
         IConfigurationElement[] configurationElements = configurationElement
                 .getChildren(type);
 
-        if (configurationElements != null && configurationElements.length >= 1) {
+        return getMementoArray(configurationElements);
+    }
+
+	private IMemento[] getMementoArray(IConfigurationElement[] configurationElements) {
+		if (configurationElements != null && configurationElements.length > 0) {
             IMemento mementos[] = new ConfigurationElementMemento[configurationElements.length];
 
             for (int i = 0; i < configurationElements.length; i++) {
@@ -62,7 +72,7 @@ public final class ConfigurationElementMemento implements IMemento {
         }
 
         return new IMemento[0];
-    }
+	}
 
     public Float getFloat(String key) {
         String string = configurationElement.getAttribute(key);

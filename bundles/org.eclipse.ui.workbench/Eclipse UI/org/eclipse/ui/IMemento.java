@@ -99,6 +99,16 @@ public interface IMemento {
 	 */
     public IMemento getChild(String type);
 
+	/**
+	 * Returns all children of this node.
+	 * 
+	 * @return an array of children of this node. This will not be
+	 *         <code>null</code>. If there are no children, an array of length
+	 *         zero will be returned.
+	 * @since 3.8
+	 */
+	public IMemento[] getChildren();
+
     /**
 	 * Returns all children with the given type id.
 	 * 
