@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.tests.markers;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -22,12 +24,19 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * 
  */
 public class MarkersViewColumnSizeTest extends UITestCase {
+	
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite();
+		ts.addTest(new MarkersViewColumnSizeTest("testColumnCreate"));
+		ts.addTest(new MarkersViewColumnSizeTest("testColumnRestore"));
+		return ts;
+	}
 
 	/**
 	 * @param testName
 	 */
-	public MarkersViewColumnSizeTest() {
-		super("MarkersViewColumnSizeTest");
+	public MarkersViewColumnSizeTest(String name) {
+		super(name);
 	}
 
 	public void testColumnCreate() {

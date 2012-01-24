@@ -31,7 +31,11 @@ public class Bug98800Test extends TestCase {
 	private static final String VIEW_WITH_STATE_ID = "org.eclipse.ui.tests.session.ViewWithState";
 
 	public static TestSuite suite() {
-		return new TestSuite(Bug98800Test.class);
+		TestSuite ts = new TestSuite();
+		ts.addTest(new Bug98800Test("testActivateView"));
+		ts.addTest(new Bug98800Test("testSecondOpening"));
+		ts.addTest(new Bug98800Test("testSavedMemento"));
+		return ts;
 	}
 
 	private IWorkbenchPage fPage;

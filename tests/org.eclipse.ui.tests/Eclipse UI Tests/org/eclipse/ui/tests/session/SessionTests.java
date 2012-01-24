@@ -99,10 +99,11 @@ public class SessionTests extends TestSuite {
 	 * Add editor tests that involve starting and stopping sessions.
 	 */
 	private void addEditorTests() {
-		addTest(new WorkbenchSessionTest("editorSessionTests",
-				Bug95357Test.class));
-		
 		WorkbenchSessionTest test = new WorkbenchSessionTest("editorSessionTests");
+		test.addTest(Bug95357Test.suite());
+		addTest(test);
+		
+		test = new WorkbenchSessionTest("editorSessionTests");
 		test.addTest(EditorWithStateTest.suite());
 		addTest(test);
 
@@ -135,17 +136,25 @@ public class SessionTests extends TestSuite {
 	 * workspace for these particular session tests.
 	 */
 	private void addViewStateTests() {
-		addTest(new WorkbenchSessionTest("editorSessionTests",
-				Bug98800Test.class));
-		addTest(new WorkbenchSessionTest("editorSessionTests",
-				Bug108033Test.class));
-		addTest(new WorkbenchSessionTest("editorSessionTests",
-				ArbitraryPropertiesViewTest.class));
+		WorkbenchSessionTest test = new WorkbenchSessionTest("editorSessionTests");
+		test.addTest(Bug98800Test.suite());
+		addTest(test);
+		
+		test = new WorkbenchSessionTest("editorSessionTests");
+		test.addTest(Bug108033Test.suite());
+		addTest(test);
+		
+		test = new WorkbenchSessionTest("editorSessionTests");
+		test.addTest(ArbitraryPropertiesViewTest.suite());
+		addTest(test);
+		
 		addTest(new WorkbenchSessionTest("editorSessionTests",
 				NonRestorableViewTest.class));
 		addTest(new WorkbenchSessionTest("editorSessionTests",
 				NonRestorablePropertySheetTest.class));
-		addTest(new WorkbenchSessionTest("editorSessionTests",
-				MarkersViewColumnSizeTest.class));
+
+		test = new WorkbenchSessionTest("editorSessionTests");
+		test.addTest(MarkersViewColumnSizeTest.suite());
+		addTest(test);
 	}
 }
