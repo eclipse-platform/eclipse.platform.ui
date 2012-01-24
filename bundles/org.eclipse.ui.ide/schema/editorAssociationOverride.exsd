@@ -8,7 +8,7 @@
       <documentation>
          Allows to override editor associations for the IDE to resolve conflicting contributions.
 &lt;p&gt;
-There are many ways to find editors for a given input and to open an editor. This extension point will only for work those cases where the request was done via &lt;code&gt;org.eclipse.ui.ide.IDE&lt;/code&gt; or where the client code explicitly honors this extension point by calling one of the override methods in &lt;code&gt;org.eclipse.ui.ide.IDE&lt;/code&gt;. Main intent is to allow intercepting how editors are opened via the IDE UI like &lt;b&gt;Open&lt;/b&gt;, &lt;b&gt;Open With&lt;/b&gt; and &lt;b&gt;Open Resource&lt;/b&gt;. This extension point does not affect the Compare editors.
+There are many ways to find editors for a given input and to open an editor. This extension point will only work for those cases where the request was done via &lt;code&gt;org.eclipse.ui.ide.IDE&lt;/code&gt; or where the client code explicitly honors this extension point by calling one of the override methods in &lt;code&gt;org.eclipse.ui.ide.IDE&lt;/code&gt;. Main intent is to allow intercepting how editors are opened via the IDE UI like &lt;b&gt;Open&lt;/b&gt;, &lt;b&gt;Open With&lt;/b&gt; and &lt;b&gt;Open Resource&lt;/b&gt;. This extension point does not affect the Compare editors.
 &lt;/p&gt;
 
 &lt;p&gt;
