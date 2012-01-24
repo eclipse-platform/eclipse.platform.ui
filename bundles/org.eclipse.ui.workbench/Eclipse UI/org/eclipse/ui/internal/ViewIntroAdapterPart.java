@@ -140,6 +140,15 @@ public final class ViewIntroAdapterPart extends ViewPart {
     public void createPartControl(Composite parent) {
         addZoomListener();
         introPart.createPartControl(parent);
+
+		ViewSite site = (ViewSite) getViewSite();
+		MPart introModelPart = site.getModel();
+		if (introModelPart.getCurSharedRef() != null) {
+			MUIElement parentElement = introModelPart.getCurSharedRef().getParent();
+			if (parentElement instanceof MPartStack) {
+				setStandby(!parentElement.getTags().contains(IPresentationEngine.MAXIMIZED));
+			}
+		}
     }
 
     /* (non-Javadoc)
