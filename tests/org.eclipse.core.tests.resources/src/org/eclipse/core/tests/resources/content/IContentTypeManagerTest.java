@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1116,12 +1116,12 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	}
 
 	/**
-	 * Bug 68894  
+	 * Regression test for bug 68894  
 	 */
 	public void testPreferences() throws CoreException, BackingStoreException {
 		ContentTypeManager manager = ContentTypeManager.getInstance();
 		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
-		Preferences textPrefs = new InstanceScope().getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE).node(text.getId());
+		Preferences textPrefs = InstanceScope.INSTANCE.getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE).node(text.getId());
 		assertNotNull("0.1", text);
 
 		// ensure the "default charset" preference is being properly used
@@ -1138,6 +1138,9 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertFalse("2.01", text.isAssociatedWith("xyz.bar"));
 		assertFalse("2.03", text.isAssociatedWith("foo.ext"));
 		assertFalse("2.04", text.isAssociatedWith("bar.ext"));
+		//Null entries first to avoid interference from other tests
+		textPrefs.remove(ContentType.PREF_FILE_NAMES);
+		textPrefs.remove(ContentType.PREF_FILE_EXTENSIONS);
 		// play with file name associations first...
 		assertNull("2.0a", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
 		assertNull("2.0b", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
