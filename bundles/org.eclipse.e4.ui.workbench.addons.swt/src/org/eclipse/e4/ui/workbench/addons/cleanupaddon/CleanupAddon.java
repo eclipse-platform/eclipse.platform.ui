@@ -213,14 +213,17 @@ public class CleanupAddon {
 						return;
 
 					// If there are no more 'visible' children then make the parent go away too
-					boolean makeInvisible = true;
+					boolean makeParentInvisible = true;
 					for (MUIElement kid : parent.getChildren()) {
 						if (kid.isToBeRendered() && kid.isVisible()) {
-							makeInvisible = false;
+							makeParentInvisible = false;
 							break;
 						}
 					}
-					if (makeInvisible)
+
+					// Special check: If a perspective goes invisibe we need to make its
+					// PerspectiveStack invisible as well...see bug 369528
+					if (makeParentInvisible || changedObj instanceof MPerspective)
 						parent.setVisible(false);
 				}
 			}
