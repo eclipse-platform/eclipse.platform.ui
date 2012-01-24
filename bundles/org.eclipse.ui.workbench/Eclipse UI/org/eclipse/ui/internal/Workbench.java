@@ -31,6 +31,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.CommandManagerEvent;
+import org.eclipse.core.commands.ICommandManagerListener;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
@@ -1828,6 +1830,15 @@ UIEvents.Context.TOPIC_CONTEXT,
 			cmd.setHandler(new MakeHandlersGo(this, cmd.getId()));
 		}
 
+		commandManager.addCommandManagerListener(new ICommandManagerListener() {
+			public void commandManagerChanged(CommandManagerEvent commandManagerEvent) {
+				if (commandManagerEvent.isCommandDefined()) {
+					Command cmd = commandManagerEvent.getCommandManager().getCommand(
+							commandManagerEvent.getCommandId());
+					cmd.setHandler(new MakeHandlersGo(Workbench.this, cmd.getId()));
+				}
+			}
+		});
 		return service;
 	}
 
