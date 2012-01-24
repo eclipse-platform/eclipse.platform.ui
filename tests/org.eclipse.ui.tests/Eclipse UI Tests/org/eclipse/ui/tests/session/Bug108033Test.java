@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.session;
 import java.util.List;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -39,6 +40,14 @@ import org.eclipse.ui.internal.ViewSite;
  * 
  */
 public class Bug108033Test extends TestCase {
+	
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite();
+		ts.addTest(new Bug108033Test("testShowMultipleViews"));
+		ts.addTest(new Bug108033Test("testCheckMultipleViews"));
+		ts.addTest(new Bug108033Test("testMovedMultipleViews"));
+		return ts;
+	}
 
 	public static final String PROBLEM_VIEW_ID = "org.eclipse.ui.views.ProblemView";
 

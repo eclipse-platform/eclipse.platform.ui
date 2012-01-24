@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.session;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -47,6 +48,18 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
  * 
  */
 public class Bug95357Test extends TestCase {
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite();
+		ts.addTest(new Bug95357Test("testMultipleEditors"));
+		ts.addTest(new Bug95357Test("testMultipleEditorsOpen"));
+		ts.addTest(new Bug95357Test("testMultipleStacks"));
+		ts.addTest(new Bug95357Test("testMultipleStacksOnStartup"));
+		ts.addTest(new Bug95357Test("testMultipleEditorsSession"));
+		ts.addTest(new Bug95357Test("testMultipleEditorsOpenSession"));
+		ts.addTest(new Bug95357Test("testMultipleStacksSession"));
+		ts.addTest(new Bug95357Test("testMultipleStacksOnStartupSession"));
+		return ts;
+	}
 
 	private static final String BUG95357PROJECT = "Bug95357project";
 
