@@ -19,6 +19,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -75,6 +76,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
+import org.w3c.dom.css.CSSValue;
 
 public class StackRenderer extends LazyStackRenderer {
 
@@ -382,13 +384,15 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// TBD: need to define attributes to handle this
 		final CTabFolder ctf = new CTabFolder(parentComposite, SWT.BORDER);
+		ctf.setMRUVisible(getInitialMRUValue(ctf));
 
 		// Adjust the minimum chars based on the location
 		int location = modelService.getElementLocation(element);
 		if ((location & EModelService.IN_SHARED_AREA) != 0) {
 			ctf.setMinimumCharacters(MIN_EDITOR_CHARS);
 			ctf.setUnselectedCloseVisible(true);
-			appendArrows(ctf);
+			if (!ctf.getMRUVisible())
+				appendArrows(ctf);
 		} else {
 			ctf.setMinimumCharacters(MIN_VIEW_CHARS);
 			ctf.setUnselectedCloseVisible(false);
@@ -400,6 +404,19 @@ public class StackRenderer extends LazyStackRenderer {
 		addTopRight(ctf);
 
 		return ctf;
+	}
+
+	private boolean getInitialMRUValue(Control control) {
+		boolean result = false;
+		CSSRenderingUtils util = context.get(CSSRenderingUtils.class);
+		if (util == null)
+			return result;
+
+		CSSValue value = util.getCSSValue(control, "MPartStack", "mru-visible"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (value == null)
+			return result;
+
+		return Boolean.parseBoolean(value.getCssText());
 	}
 
 	private void appendArrows(final CTabFolder tabFolder) {

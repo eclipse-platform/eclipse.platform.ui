@@ -48,6 +48,24 @@ public class CSSRenderingUtils {
 	// return toFrame;
 	// }
 
+	@SuppressWarnings("restriction")
+	public CSSValue getCSSValue(Control styleControl, String className,
+			String attributeName) {
+		CSSEngine csseng = themeEngine.getCSSEngine();
+
+		// super hack
+		ControlElement tempEment = new ControlElement(styleControl, csseng);
+		ControlElement.setCSSClass(styleControl, className);
+
+		CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
+				.getComputedStyle(tempEment, ""); //$NON-NLS-1$
+
+		if (styleDeclarations == null)
+			return null;
+
+		return styleDeclarations.getPropertyCSSValue(attributeName);
+	}
+
 	/**
 	 * @param string
 	 * @param string2
@@ -57,7 +75,7 @@ public class CSSRenderingUtils {
 			String attName, Integer[] frameInts) {
 		Image image = null;
 
-		System.out.println("THeme engine " + themeEngine); //$NON-NLS-1$
+		//		System.out.println("THeme engine " + themeEngine); //$NON-NLS-1$
 		if (themeEngine instanceof ThemeEngine) {
 			CSSEngine csseng = ((ThemeEngine) themeEngine).getCSSEngine();
 
@@ -78,7 +96,7 @@ public class CSSRenderingUtils {
 					&& imagePath.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 				String imageString = ((CSSPrimitiveValue) imagePath)
 						.getStringValue();
-				System.out.println("here" + imageString);
+				// System.out.println("here" + imageString);
 				try {
 					image = (Image) csseng.convert(imagePath, Image.class,
 							styleControl.getDisplay());
@@ -102,7 +120,7 @@ public class CSSRenderingUtils {
 								}
 							}
 
-							System.out.println("Results " + frameInts);
+							// System.out.println("Results " + frameInts);
 						}
 					}
 				} catch (Exception e1) {
