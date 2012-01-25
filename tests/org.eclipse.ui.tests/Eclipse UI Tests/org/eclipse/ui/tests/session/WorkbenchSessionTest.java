@@ -61,6 +61,20 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 	 * @param dataLocation
 	 *            the location of the workspace to test, relative to
 	 *            data/workspaces
+	 * @param arguments
+	 *            a map of arguments to use
+	 */
+	public WorkbenchSessionTest(String dataLocation, Map arguments) {
+		this(dataLocation);
+		this.arguments = arguments;
+	}
+	
+	/**
+	 * Create a new workbench session test.
+	 * 
+	 * @param dataLocation
+	 *            the location of the workspace to test, relative to
+	 *            data/workspaces
 	 * @param clazz
 	 *            the <code>Test</code> class
 	 */

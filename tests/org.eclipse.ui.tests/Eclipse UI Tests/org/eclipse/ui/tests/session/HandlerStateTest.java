@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.session;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.State;
@@ -25,6 +26,13 @@ import org.eclipse.ui.commands.ICommandService;
  * @since 3.2
  */
 public class HandlerStateTest extends TestCase {
+	
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.session.HandlerStateTest");
+		ts.addTest(new HandlerStateTest("testInitialHandlerState"));
+		ts.addTest(new HandlerStateTest("testModifiedHandlerState"));
+		return ts;
+	}
 
 	/**
 	 * The identifier of the command with state that we wish to test.

@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.session;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.ui.PlatformUI;
 
@@ -20,6 +21,12 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.1
  */
 public class IntroSessionTests extends TestCase {
+	
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.session.IntroSessionTests");
+		ts.addTest(new IntroSessionTests("testIntro"));
+		return ts;
+	}
 	
 	/**
 	 * @param name

@@ -54,12 +54,16 @@ public class SessionTests extends TestSuite {
 	 * 
 	 */
 	private void addWindowlessSessionTest() {
-		// Windowless apps are available only on Cocoa 
-		if(Util.isCocoa()) {
+		// Windowless apps are available only on Cocoa
+		if (Util.isCocoa()) {
 			Map arguments = new HashMap(2);
 			arguments.put("product", null);
-			arguments.put("testApplication", "org.eclipse.ui.tests.windowLessRcpApplication");
-			addTest(new WorkbenchSessionTest("windowlessSessionTests",WindowlessSessionTest.class, arguments));
+			arguments.put("testApplication",
+					"org.eclipse.ui.tests.windowLessRcpApplication");
+			WorkbenchSessionTest test = new WorkbenchSessionTest(
+					"windowlessSessionTests", arguments);
+			test.addTest(WindowlessSessionTest.suite());
+			addTest(test);
 		}
 	}
 
@@ -68,8 +72,9 @@ public class SessionTests extends TestSuite {
 	 */
 	private void addStatusHandlingTests() {
 		//actually we do not care which workspace is used
-		addTest(new StatusHandlerConfigurationSuite("themeSessionTests",
-				StatusHandlingConfigurationTest.class));
+		StatusHandlerConfigurationSuite test = new StatusHandlerConfigurationSuite("themeSessionTests");
+		test.addTest(StatusHandlingConfigurationTest.suite());
+		addTest(test);
 	}
 
 	/**
@@ -83,16 +88,18 @@ public class SessionTests extends TestSuite {
 	 * 
 	 */
 	private void addThemeTests() {
-		addTest(new WorkbenchSessionTest("themeSessionTests",
-				ThemeStateTest.class));
-		
+		WorkbenchSessionTest test = new WorkbenchSessionTest("themeSessionTests");
+		test.addTest(ThemeStateTest.suite());
+		addTest(test);
 	}
 
 	private void addRestoredSessionTest() {
 		Map arguments = new HashMap(2);
 		arguments.put("product", null);
 		arguments.put("testApplication", "org.eclipse.ui.tests.rcpSessionApplication");
-		addTest(new WorkbenchSessionTest("introSessionTests",RestoreSessionTest.class, arguments));
+		WorkbenchSessionTest test = new WorkbenchSessionTest("introSessionTests", arguments);
+		test.addTest(RestoreSessionTest.suite());
+		addTest(test);
 	}
 
 	/**
@@ -107,8 +114,9 @@ public class SessionTests extends TestSuite {
 		test.addTest(EditorWithStateTest.suite());
 		addTest(test);
 
-		addTest(new WorkbenchSessionTest("editorSessionTests",
-				ArbitraryPropertiesEditorTest.class));
+		test = new WorkbenchSessionTest("editorSessionTests");
+		test.addTest(ArbitraryPropertiesEditorTest.suite());
+		addTest(test);
 	}
 
 	/**
@@ -117,16 +125,18 @@ public class SessionTests extends TestSuite {
 	 * @since 3.2
 	 */
 	private void addHandlerStateTests() {
-		addTest(new WorkbenchSessionTest("editorSessionTests",
-				HandlerStateTest.class));
+		WorkbenchSessionTest test = new WorkbenchSessionTest("editorSessionTests");
+		test.addTest(HandlerStateTest.suite());
+		addTest(test);
 	}
 
 	/**
 	 * Adds intro related session tests.
 	 */
 	private void addIntroTests() {
-		addTest(new WorkbenchSessionTest("introSessionTests",
-				IntroSessionTests.class));
+		WorkbenchSessionTest test = new WorkbenchSessionTest("introSessionTests");
+		test.addTest(IntroSessionTests.suite());
+		addTest(test);
 	}
 
 	/**
@@ -148,10 +158,13 @@ public class SessionTests extends TestSuite {
 		test.addTest(ArbitraryPropertiesViewTest.suite());
 		addTest(test);
 		
-		addTest(new WorkbenchSessionTest("editorSessionTests",
-				NonRestorableViewTest.class));
-		addTest(new WorkbenchSessionTest("editorSessionTests",
-				NonRestorablePropertySheetTest.class));
+		test = new WorkbenchSessionTest("editorSessionTests");
+		test.addTest(NonRestorableViewTest.suite());
+		addTest(test);
+		
+		test = new WorkbenchSessionTest("editorSessionTests");
+		test.addTest(NonRestorablePropertySheetTest.suite());
+		addTest(test);
 
 		test = new WorkbenchSessionTest("editorSessionTests");
 		test.addTest(MarkersViewColumnSizeTest.suite());
