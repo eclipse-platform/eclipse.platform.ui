@@ -34,7 +34,7 @@ public class DataTransferTestSuite extends TestSuite {
         addTest(new TestSuite(ImportArchiveOperationTest.class)); 
         addTest(new TestSuite(ExportFileSystemOperationTest.class));
         addTest(new TestSuite(ExportArchiveFileOperationTest.class));
-        addTest(new TestSuite(ImportExistingProjectsWizardTest.class));
+        addTest(ImportExistingProjectsWizardTest.suite());
         addTest(new TestSuite(ImportExportWizardsCategoryTests.class));
     }
 }
