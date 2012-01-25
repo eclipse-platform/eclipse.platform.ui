@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.internal.workbench.swt;
 
 import javax.inject.Inject;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.ControlElement;
 import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
@@ -26,6 +27,7 @@ public class CSSRenderingUtils {
 	private ThemeEngine themeEngine;
 
 	@Inject
+	@Optional
 	void getThemeEngine(IThemeEngine engine) {
 		if (engine instanceof ThemeEngine) {
 			themeEngine = (ThemeEngine) engine;
@@ -51,6 +53,10 @@ public class CSSRenderingUtils {
 	@SuppressWarnings("restriction")
 	public CSSValue getCSSValue(Control styleControl, String className,
 			String attributeName) {
+		if (themeEngine == null) {
+			return null;
+		}
+
 		CSSEngine csseng = themeEngine.getCSSEngine();
 
 		// super hack
