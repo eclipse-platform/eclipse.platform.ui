@@ -34,7 +34,7 @@ public class DecoratorsTestSuite extends TestSuite {
 //		addTest(new TestSuite(DecoratorTreeTest.class));
 //		addTest(new TestSuite(DecoratorTableTest.class));
 //		addTest(new TestSuite(DecoratorTableTreeTest.class));
-		addTest(new TestSuite(DecoratorAdaptableTests.class));
+		addTest(DecoratorAdaptableTests.suite());
 		addTest(new TestSuite(DecoratorCacheTest.class));
 	}
 

@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.tests.commands;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.Parameterization;
@@ -35,6 +37,14 @@ public class ToggleStateTest extends UITestCase {
 	private ICommandService commandService;
 	private IHandlerService handlerService;
 
+
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite();
+		ts.addTest(new ToggleStateTest("testDefaultValues"));
+		ts.addTest(new ToggleStateTest("testExceptionThrown"));
+		ts.addTest(new ToggleStateTest("testMultipleContributions"));
+		return ts;
+	}
 
 	public ToggleStateTest(String testName) {
 		super(testName);

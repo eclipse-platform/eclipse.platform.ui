@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -27,6 +29,14 @@ import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
 
 public class DecoratorAdaptableTests extends UITestCase {
 
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite();
+		ts.addTest(new DecoratorAdaptableTests("testAdaptables"));
+		ts.addTest(new DecoratorAdaptableTests("testNonAdaptableContributions"));
+		ts.addTest(new DecoratorAdaptableTests("testContributorResourceAdapter"));
+		return ts;
+	}
+	
     public DecoratorAdaptableTests(String testName) {
         super(testName);
     }

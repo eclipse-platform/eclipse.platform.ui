@@ -31,7 +31,7 @@ public class AdaptableTestSuite extends TestSuite {
      * Constructor for AdaptableTestSuite.
      */
     public AdaptableTestSuite() {
-        addTest(new TestSuite(AdaptableDecoratorTestCase.class));
+        addTest(AdaptableDecoratorTestCase.suite());
         addTest(new TestSuite(MarkerImageProviderTest.class));
         addTest(new TestSuite(WorkingSetTestCase.class));
         addTest(new TestSuite(SelectionAdapterTest.class));
