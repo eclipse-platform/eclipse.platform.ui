@@ -162,7 +162,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 		if (!s.isEmpty()) {
 			ContributionData cd = (ContributionData) s.getFirstElement();
-			String uri = "platform:/plugin/" + cd.bundleName + "/" + cd.className; //$NON-NLS-1$ //$NON-NLS-2$
+			String uri = "bundleclass://" + cd.bundleName + "/" + cd.className; //$NON-NLS-1$ //$NON-NLS-2$
 			Command cmd = SetCommand.create(editingDomain, contribution, feature, uri);
 			if (cmd.canExecute()) {
 				editingDomain.getCommandStack().execute(cmd);

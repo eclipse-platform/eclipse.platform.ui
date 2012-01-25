@@ -45,7 +45,7 @@ public class PartContributionEditor implements IContributionClassCreator {
 			IProject project, Shell shell, boolean forceNew) {
 		if ( forceNew || contribution.getContributionURI() == null
 				|| contribution.getContributionURI().trim().length() == 0
-				|| !contribution.getContributionURI().startsWith("platform:")) {
+				|| !contribution.getContributionURI().startsWith("bundleclass:")) {
 			NewPartClassWizard wizard = new NewPartClassWizard();
 			wizard.init(null, new StructuredSelection(project));
 			WizardDialog dialog = new WizardDialog(shell, wizard);
@@ -66,7 +66,7 @@ public class PartContributionEditor implements IContributionClassCreator {
 						fullyQualified = wizard.getDomainClass().getName();
 					}
 					
-					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "platform:/plugin/" + Util.getBundleSymbolicName(f.getProject()) + "/" + fullyQualified);
+					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "bundleclass://" + Util.getBundleSymbolicName(f.getProject()) + "/" + fullyQualified);
 					if( cmd.canExecute() ) {
 						domain.getCommandStack().execute(cmd);
 					}

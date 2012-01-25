@@ -854,7 +854,7 @@ public class ModelEditor {
 			}
 
 			IContributionFactory fact = context.get(IContributionFactory.class);
-			AbstractComponentEditor editor = (AbstractComponentEditor) fact.create("platform:/plugin/" + el.getContributor().getName() + "/" + el.getAttribute("class"), context); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			AbstractComponentEditor editor = (AbstractComponentEditor) fact.create("bundleclass://" + el.getContributor().getName() + "/" + el.getAttribute("class"), context); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			registerVirtualEditor(el.getAttribute("id"), editor); //$NON-NLS-1$
 		}
 	}
@@ -906,7 +906,7 @@ public class ModelEditor {
 				IEditorDescriptor desc = (IEditorDescriptor) el.createExecutableExtension("descriptorClass"); //$NON-NLS-1$
 				EClass eClass = desc.getEClass();
 				IContributionFactory fact = context.get(IContributionFactory.class);
-				AbstractComponentEditor editor = (AbstractComponentEditor) fact.create("platform:/plugin/" + el.getContributor().getName() + "/" + desc.getEditorClass().getName(), context); //$NON-NLS-1$ //$NON-NLS-2$
+				AbstractComponentEditor editor = (AbstractComponentEditor) fact.create("bundleclass://" + el.getContributor().getName() + "/" + desc.getEditorClass().getName(), context); //$NON-NLS-1$ //$NON-NLS-2$
 				registerEditor(eClass, editor);
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block

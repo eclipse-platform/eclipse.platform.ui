@@ -43,7 +43,7 @@ public class HandlerContributionEditor implements IContributionClassCreator {
 	}
 	
 	private void createOpen(MContribution contribution, EditingDomain domain, IProject project, Shell shell, boolean forceNew) {
-		if( contribution.getContributionURI() == null || contribution.getContributionURI().trim().length() == 0 || !contribution.getContributionURI().startsWith("platform:") ) {
+		if( contribution.getContributionURI() == null || contribution.getContributionURI().trim().length() == 0 || !contribution.getContributionURI().startsWith("bundleclass:") ) {
 			NewHandlerClassWizard wizard = new NewHandlerClassWizard();
 			wizard.init( null, new StructuredSelection(project));
 			WizardDialog dialog = new WizardDialog(shell, wizard);
@@ -64,7 +64,7 @@ public class HandlerContributionEditor implements IContributionClassCreator {
 						fullyQualified = wizard.getDomainClass().getName();
 					}
 					
-					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "platform:/plugin/" + Util.getBundleSymbolicName(f.getProject()) + "/" + fullyQualified);
+					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "bundleclass://" + Util.getBundleSymbolicName(f.getProject()) + "/" + fullyQualified);
 					if( cmd.canExecute() ) {
 						domain.getCommandStack().execute(cmd);
 					}

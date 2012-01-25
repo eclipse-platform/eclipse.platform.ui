@@ -20,7 +20,7 @@ public class ContributionURIValidator implements IValidator {
 	public IStatus validate(Object value) {
 		if (value == null) {
 			return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", "The URI must not be empty!");
-		} else if (!value.toString().startsWith("platform:/plugin")) {
+		} else if (!value.toString().startsWith("bundleclass:")) {
 			return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", "The URI has to start with 'platform:/plugin'");
 		} else {
 			try {

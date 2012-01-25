@@ -46,7 +46,7 @@ public class ClassMoveParticipant extends
 		String toBundle = Util.getBundleSymbolicName(fragment.getJavaProject().getProject());
 		String toClassName = fragment.getElementName().length() == 0 ? type.getElementName() : fragment.getElementName() + "." + type.getElementName();
 		
-		return RefactorParticipantDelegate.createChange(pm, this, "platform:/plugin/"+fromBundle+"/"+fromClassname, "platform:/plugin/"+toBundle+"/"+toClassName);
+		return RefactorParticipantDelegate.createChange(pm, this, "bundleclass://"+fromBundle+"/"+fromClassname, "bundleclass://"+toBundle+"/"+toClassName);
 	}
 
 }

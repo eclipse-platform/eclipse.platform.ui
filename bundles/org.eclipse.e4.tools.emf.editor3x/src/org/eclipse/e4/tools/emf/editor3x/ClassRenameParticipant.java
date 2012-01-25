@@ -50,8 +50,8 @@ public class ClassRenameParticipant extends
 			OperationCanceledException {
 		String bundle = Util.getBundleSymbolicName(type.getJavaProject().getProject());
 		
-		final String newUrl = "platform:/plugin/" + bundle + "/" + (type.getPackageFragment().getElementName().length() == 0 ? getArguments().getNewName() : type.getPackageFragment().getElementName() + "." + getArguments().getNewName());
-		String oldUrl = "platform:/plugin/" + bundle + "/" + type.getFullyQualifiedName().replace(".", "\\.");
+		final String newUrl = "bundleclass://" + bundle + "/" + (type.getPackageFragment().getElementName().length() == 0 ? getArguments().getNewName() : type.getPackageFragment().getElementName() + "." + getArguments().getNewName());
+		String oldUrl = "bundleclass://" + bundle + "/" + type.getFullyQualifiedName().replace(".", "\\.");
 		return RefactorParticipantDelegate.createChange(pm, this, oldUrl, newUrl);
 	}
 
