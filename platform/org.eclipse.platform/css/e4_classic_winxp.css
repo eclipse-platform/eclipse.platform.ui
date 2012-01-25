@@ -9,7 +9,7 @@
   tab-renderer: null;
   selected-tabs-background: #FFFFFF #ECE9D8 100%;
   simple: false;
-  mru-visible: false;
+  mru-visible: true;
 }
 
 
