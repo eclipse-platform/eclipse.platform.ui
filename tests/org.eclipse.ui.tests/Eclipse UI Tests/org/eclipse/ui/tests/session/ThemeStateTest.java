@@ -11,10 +11,11 @@
 
 package org.eclipse.ui.tests.session;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.IThemeManager;
-
-import junit.framework.TestCase;
 
 /**
  * Tests various persistent theme properties.
@@ -22,6 +23,11 @@ import junit.framework.TestCase;
  * @since 3.4
  */
 public class ThemeStateTest extends TestCase {
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.session.ThemeStateTest");
+		ts.addTest(new ThemeStateTest("testBadPreference"));
+		return ts;
+	}
 
 	public ThemeStateTest(final String name) {
 		super(name);

@@ -39,7 +39,7 @@ import org.eclipse.ui.presentations.IPresentablePart;
 public class Bug108033Test extends TestCase {
 	
 	public static TestSuite suite() {
-		TestSuite ts = new TestSuite();
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.session.Bug108033Test");
 		ts.addTest(new Bug108033Test("testShowMultipleViews"));
 		ts.addTest(new Bug108033Test("testCheckMultipleViews"));
 		ts.addTest(new Bug108033Test("testMovedMultipleViews"));

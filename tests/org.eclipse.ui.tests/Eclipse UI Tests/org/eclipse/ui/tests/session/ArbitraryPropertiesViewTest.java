@@ -38,7 +38,7 @@ public class ArbitraryPropertiesViewTest extends TestCase {
 	private static final String VIEW_WITH_STATE_ID = "org.eclipse.ui.tests.session.ViewWithState";
 
 	public static TestSuite suite() {
-		TestSuite ts = new TestSuite();
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.session.ArbitraryPropertiesViewTest");
 		ts.addTest(new ArbitraryPropertiesViewTest("test01ActivateView"));
 		ts.addTest(new ArbitraryPropertiesViewTest("test02SecondOpening"));
 		ts.addTest(new ArbitraryPropertiesViewTest("test03PartInstantiation"));
