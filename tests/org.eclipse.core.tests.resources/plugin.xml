@@ -545,6 +545,12 @@
    </filesystem>
 </extension>
 <extension
+      point="org.eclipse.core.filesystem.filesystems">
+   <filesystem scheme="bogus">
+      <run class="org.eclipse.core.tests.internal.filesystem.bogus.BogusFileSystem"/>
+   </filesystem>
+</extension>
+<extension
       id="modelProvider"
       point="org.eclipse.core.resources.modelProviders">
    <modelProvider

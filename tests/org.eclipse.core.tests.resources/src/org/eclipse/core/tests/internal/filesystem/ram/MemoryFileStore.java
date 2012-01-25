@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.*;
 public class MemoryFileStore extends FileStore {
 	private static final MemoryTree TREE = MemoryTree.TREE;
 
-	private final IPath path;
+	protected final IPath path;
 
 	public MemoryFileStore(IPath path) {
 		super();

@@ -16,6 +16,7 @@ import org.eclipse.core.filesystem.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.tests.internal.filesystem.bogus.BogusFileSystem;
 import org.eclipse.core.tests.internal.filesystem.ram.MemoryFileSystem;
 import org.eclipse.core.tests.internal.filesystem.ram.MemoryTree;
 
@@ -158,7 +159,7 @@ public class NonLocalLinkedResourceTest extends ResourceTest {
 			fail("2.0", e);
 		}
 		assertTrue("2.1", destination.exists());
-		
+
 		//should fail when destination is occupied
 		try {
 			source.copy(destination.getFullPath(), IResource.NONE, getMonitor());
@@ -232,4 +233,50 @@ public class NonLocalLinkedResourceTest extends ResourceTest {
 		}
 	}
 
+	// Test for Bug 342060 - Renaming a project failing with custom EFS
+	public void test342060() {
+		IFileStore sourceStore = createBogusFolderStore("source");
+		IFileStore destinationStore = createBogusFolderStore("destination");
+		IProject project = getWorkspace().getRoot().getProject("project");
+		IFolder source = project.getFolder("source");
+		IFolder destination = project.getFolder("destination");
+		IFile sourceFile = source.getFile("file.txt");
+		//setup initial resources
+		ensureExistsInWorkspace(project, true);
+		try {
+			source.createLink(sourceStore.toURI(), IResource.NONE, getMonitor());
+			destination.createLink(destinationStore.toURI(), IResource.NONE, getMonitor());
+			sourceFile.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+
+		//move to linked destination should succeed
+		try {
+			project.move(Path.fromPortableString("movedProject"), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+	}
+
+	protected IFileStore createBogusFolderStore(String name) {
+		IFileSystem system = getBogusFileSystem();
+		IFileStore store = system.getStore(Path.ROOT.append(name));
+		try {
+			store.mkdir(EFS.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("createFolderStore", e);
+		}
+		return store;
+	}
+
+	protected IFileSystem getBogusFileSystem() {
+		try {
+			return EFS.getFileSystem(BogusFileSystem.SCHEME_BOGUS);
+		} catch (CoreException e) {
+			fail("Test file system missing", e);
+		}
+		//can't get here
+		return null;
+	}
 }
