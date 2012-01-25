@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.tests.services;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -31,6 +33,15 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class ContributedServiceTest extends UITestCase {
 
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite();
+		ts.addTest(new ContributedServiceTest("testGlobalService"));
+		ts.addTest(new ContributedServiceTest("testWindowService"));
+		ts.addTest(new ContributedServiceTest("testLocalServiceCreated"));
+		ts.addTest(new ContributedServiceTest("testLocalDialogService"));
+		ts.addTest(new ContributedServiceTest("testWorkbenchServiceFactory"));
+		return ts;
+	}
 	/**
 	 * @param testName
 	 */
