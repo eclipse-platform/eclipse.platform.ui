@@ -8,6 +8,7 @@
 	font-size: 9;
 	font-family: 'Segoe UI';
 	simple: true;
+	mru-visible: false;
 }
 
 .MTrimBar {

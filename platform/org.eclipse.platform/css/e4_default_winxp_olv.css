@@ -22,6 +22,7 @@
 	font-size: 9;
 	simple: true;
 	padding: 0px 10px 11px;
+	mru-visible: false;
 }
 
 .MTrimBar#org-eclipse-ui-main-toolbar {

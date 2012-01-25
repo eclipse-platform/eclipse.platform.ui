@@ -1,33 +1,31 @@
-
 @import url("e4_basestyle.css");
 
 .MTrimmedWindow { 
-    background-color: #E2E2E2; 
+    background-color: #E1E6F6; 
 }
 
 .MPartStack {
-	font-size: 11;
-	simple: false;
-	mru-visible: false;
+	font-size: 9;
+	font-family: 'Segoe UI';
+	simple: true;
+	mru-visible: true;
 }
 
 .MTrimBar {
-    background-color: #E2E2E2; 
+    background-color: #E1E6F6; 
 }
 
-.MTrimBar#org-eclipse-ui-main-toolbar  {
-    background-image:  url(./gtkGrey.PNG);	
+.MTrimBar#org-eclipse-ui-main-toolbar {
+    background-image:  url(./win7.PNG);	
 }
 
 .MPartStack.active {
-	unselected-tabs-color: #DCDCDC #E1E1E1 #FFFFFF 100% 100%;
-    outer-keyline-color: #B4B4B4;
-    tab-outline: #B4B4B4;
+	unselected-tabs-color: #F3F9FF #D0DFEE #CEDDED #CEDDED #D2E1F0 #D2E1F0 #FFFFFF 20% 45% 60% 70% 100% 100%;
+	outer-keyline-color: #B6BCCC;
 }
 
-#PerspectiveSwitcher { 
-	background-color: #EBEBEB #E2E2E2 100%;
-	perspective-keyline-color: #B4B4B4 #B4B4B4;
+#PerspectiveSwitcher  {
+	background-color: #F5F7FC #E1E6F6 100%;
 }
 
 #org-eclipse-ui-editorss {
@@ -48,4 +46,3 @@ CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active {
 CTabFolder Canvas {
   background-color: #F8F8F8;
 }
-

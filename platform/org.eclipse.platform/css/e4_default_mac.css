@@ -7,6 +7,7 @@
 .MPartStack {
 	font-size: 12;
 	simple: false;
+	mru-visible: false;
 }
 
 .MTrimBar {
