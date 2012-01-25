@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.zip.ZipFile;
+
+import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -74,6 +76,26 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 
 	private boolean originalRefreshSetting;
 
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite();
+		ts.addTest(new ImportExistingProjectsWizardTest("testFindSingleZip"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testFindSingleTar"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testFindSingleDirectory"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testDoNotShowProjectWithSameName"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testImportSingleZip"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testImportZipWithEmptyFolder"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testImportSingleTar"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testImportTarWithEmptyFolder"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testImportSingleDirectory"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testImportSingleDirectoryWithCopy"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testImportSingleDirectoryWithCopyDeleteProjectKeepContents"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testImportZipDeleteContentsImportAgain"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testInitialValue"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testImportArchiveMultiProject"));
+		ts.addTest(new ImportExistingProjectsWizardTest("testGetProjectRecords"));
+		return ts;
+	}
+	
 	public ImportExistingProjectsWizardTest(String testName) {
 		super(testName);
 	}
