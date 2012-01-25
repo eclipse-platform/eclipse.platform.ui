@@ -20,12 +20,24 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * @since 3.5
  *
  */
 public class StatusHandlingConfigurationTest extends TestCase {
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.statushandlers.StatusHandlingConfigurationTest");
+		ts.addTest(new StatusHandlingConfigurationTest("testFreeStatusHandler"));
+		ts.addTest(new StatusHandlingConfigurationTest("testDefaultNotification"));
+		return ts;
+	}
+	
+	public StatusHandlingConfigurationTest(String name) {
+		super(name);
+	}
+	
 	public void testFreeStatusHandler(){
 		final StatusAdapter adapter = new StatusAdapter(new Status(IStatus.ERROR,"fakeplugin","testmessage"));
 		final boolean[] called = new boolean[]{false};

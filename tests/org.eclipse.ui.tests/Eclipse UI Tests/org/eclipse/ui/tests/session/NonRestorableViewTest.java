@@ -31,7 +31,10 @@ public class NonRestorableViewTest extends TestCase {
 	private static final String NON_RESTORABLE_VIEW_ID = "org.eclipse.ui.tests.session.NonRestorableView";
 
 	public static TestSuite suite() {
-		return new TestSuite(NonRestorableViewTest.class);
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.session.NonRestorableViewTest");
+		ts.addTest(new NonRestorableViewTest("test01ActivateView"));
+		ts.addTest(new NonRestorableViewTest("test02SecondOpening"));
+		return ts;
 	}
 
 	public NonRestorableViewTest(String testName) {

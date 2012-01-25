@@ -13,12 +13,18 @@ package org.eclipse.ui.tests.session;
 import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 
 /**
  * @since 3.5
  */
 public class RestoreSessionTest extends TestCase {
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.session.RestoreSessionTest");
+		ts.addTest(new RestoreSessionTest("testDisplayAccess"));
+		return ts;
+	}
 	
 	public RestoreSessionTest(String name) {
 		super(name);

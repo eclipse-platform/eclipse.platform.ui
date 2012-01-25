@@ -32,7 +32,10 @@ import org.eclipse.ui.views.properties.PropertySheet;
 public class NonRestorablePropertySheetTest extends TestCase {
 
 	public static TestSuite suite() {
-		return new TestSuite(NonRestorablePropertySheetTest.class);
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.session.NonRestorablePropertySheetTest");
+		ts.addTest(new NonRestorablePropertySheetTest("test01ActivateView"));
+		ts.addTest(new NonRestorablePropertySheetTest("test02SecondOpening"));
+		return ts;
 	}
 
 	public NonRestorablePropertySheetTest(String testName) {

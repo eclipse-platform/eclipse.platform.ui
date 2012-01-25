@@ -49,7 +49,7 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
  */
 public class Bug95357Test extends TestCase {
 	public static TestSuite suite() {
-		TestSuite ts = new TestSuite();
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.session.Bug95357Test");
 		ts.addTest(new Bug95357Test("testMultipleEditors"));
 		ts.addTest(new Bug95357Test("testMultipleEditorsOpen"));
 		ts.addTest(new Bug95357Test("testMultipleStacks"));

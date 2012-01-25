@@ -26,7 +26,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 public class MarkersViewColumnSizeTest extends UITestCase {
 	
 	public static TestSuite suite() {
-		TestSuite ts = new TestSuite();
+		TestSuite ts = new TestSuite("org.eclipse.ui.tests.markers.MarkersViewColumnSizeTest");
 		ts.addTest(new MarkersViewColumnSizeTest("testColumnCreate"));
 		ts.addTest(new MarkersViewColumnSizeTest("testColumnRestore"));
 		return ts;
