@@ -217,7 +217,7 @@ public class KeyDispatcherTest extends TestCase {
 		assertFalse(handler.q2);
 	}
 
-	public void testKeyDispatcherReset() throws Exception {
+	public void TODOtestKeyDispatcherReset() throws Exception {
 		KeyBindingDispatcher dispatcher = new KeyBindingDispatcher();
 		ContextInjectionFactory.inject(dispatcher, workbenchContext);
 		final Listener listener = dispatcher.getKeyDownFilter();

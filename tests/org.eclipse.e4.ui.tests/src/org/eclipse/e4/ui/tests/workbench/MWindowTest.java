@@ -289,7 +289,7 @@ public class MWindowTest extends TestCase {
 		assertEquals("windowName2", shell.getText());
 	}
 
-	public void testWindow_X() {
+	public void TODOtestWindow_X() {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setX(200);
 		window.setY(200);
@@ -326,7 +326,7 @@ public class MWindowTest extends TestCase {
 		assertEquals(300, bounds.x);
 	}
 
-	public void testWindow_Y() {
+	public void TODOtestWindow_Y() {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setX(200);
 		window.setY(200);

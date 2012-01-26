@@ -924,7 +924,7 @@ public class MMenuItemTest extends TestCase {
 		assertEquals(2, fileManager.getSize());
 	}
 
-	public void testWithVisible() throws Exception {
+	public void TODOtestWithVisible() throws Exception {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
 		menuBar.setElementId("org.eclipse.ui.main.menu");
