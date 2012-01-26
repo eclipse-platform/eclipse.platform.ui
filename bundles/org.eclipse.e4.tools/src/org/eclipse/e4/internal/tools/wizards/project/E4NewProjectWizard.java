@@ -184,11 +184,13 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 								IPluginImport iimport = model
 										.getPluginFactory().createImport();
 								iimport.setId(id);
-								Version version = dependency.getVersion();
-								String versionString = version.getMajor() + "."
-										+ version.getMinor() + "."
-										+ version.getMicro();
-								iimport.setVersion(versionString);
+								if(dependency != null) {
+    								Version version = dependency.getVersion();
+    								String versionString = version.getMajor() + "."
+    										+ version.getMinor() + "."
+    										+ version.getMicro();
+    								iimport.setVersion(versionString);
+								}
 								pluginBase.add(iimport);
 							}
 						}
