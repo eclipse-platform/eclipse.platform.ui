@@ -83,6 +83,11 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		if (uri.segmentCount() > 1) {
 			String prefix = uri.segment(0);
 			IContributionFactorySpi factory = (IContributionFactorySpi) languages.get(prefix);
+			if (factory == null) {
+				String message = "Unsupported contribution factory type '" + prefix + "'"; //$NON-NLS-1$ //$NON-NLS-2$
+				Activator.log(LogService.LOG_ERROR, message);
+				return null;
+			}
 			StringBuffer resource = new StringBuffer(uri.segment(1));
 			for (int i = 2; i < uri.segmentCount(); i++) {
 				resource.append('/');
