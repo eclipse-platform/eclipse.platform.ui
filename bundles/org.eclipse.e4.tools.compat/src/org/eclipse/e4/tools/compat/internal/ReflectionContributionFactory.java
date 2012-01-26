@@ -60,6 +60,15 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		if (uriString == null) {
 			return null;
 		}
+		// translate old-style platform:/plugin/ class specifiers into new-style
+		// bundleclass:// URIs
+		if (uriString.startsWith("platform:/plugin/")) { //$NON-NLS-1$
+			logger.error("platform-style URIs deprecated for referencing types: " + uriString); //$NON-NLS-1$
+			uriString = uriString
+					.replace("platform:/plugin/", "bundleclass://"); //$NON-NLS-1$ //$NON-NLS-2$
+			logger.error("URI rewritten as: " + uriString); //$NON-NLS-1$
+		}
+
 		URI uri = URI.createURI(uriString);
 		Bundle bundle = getBundle(uri);
 		Object contribution;
@@ -76,17 +85,22 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	protected Object createFromBundle(Bundle bundle, IEclipseContext context,
 			IEclipseContext staticContext, URI uri) {
 		Object contribution;
-		if (uri.segmentCount() > 3) {
-			String prefix = uri.segment(2);
+		if (uri.segmentCount() > 1) {
+			String prefix = uri.segment(0);
 			IContributionFactorySpi factory = (IContributionFactorySpi) languages.get(prefix);
-			StringBuffer resource = new StringBuffer(uri.segment(3));
-			for (int i = 4; i < uri.segmentCount(); i++) {
+			if(factory == null) {
+			    String message = "Unsupported contribution factory type '" + prefix + "'"; //$NON-NLS-1$ //$NON-NLS-2$
+			    logger.error(message);
+			    return null;
+			}
+			StringBuffer resource = new StringBuffer(uri.segment(1));
+			for (int i = 2; i < uri.segmentCount(); i++) {
 				resource.append('/');
 				resource.append(uri.segment(i));
 			}
 			contribution = factory.create(bundle, resource.toString(), context);
 		} else {
-			String clazz = uri.segment(2);
+			String clazz = uri.segment(0);
 			try {
 				Class<?> targetClass = bundle.loadClass(clazz);
 				if (staticContext == null)
@@ -136,7 +150,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 
 
 	protected Bundle getBundle(URI platformURI) {
-		return getBundleForName(platformURI.segments[1]);
+		return getBundleForName(platformURI.authority());
 	}
 
 	public Bundle getBundle(String uriString) {
@@ -164,14 +178,33 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	}
 	
 	static class URI {
-		String[] segments;
-		String uri;
+	    String scheme;
+		String authority;
+		String[] segments = new String[0];
 		
 		URI(String uriString) {
-			segments = uriString.substring(uriString.indexOf('/')+1).split("/");
+		    int colon = uriString.indexOf(':');
+		    if(colon < 0) { throw new IllegalArgumentException("invalid URI"); }
+		    scheme = uriString.substring(0, colon);
+		    uriString = uriString.substring(colon + 1);
+		    if(uriString.startsWith("//")) {
+		        int authEnd = uriString.indexOf('/', 2);
+		        if(authEnd < 0) {
+		            authority = uriString.substring(2);
+		        } else {
+		            authority = uriString.substring(2, authEnd);
+		            segments = uriString.substring(authEnd + 1).split("/");
+		        }
+		    } else {
+		        segments = uriString.substring(uriString.indexOf('/')+1).split("/");
+		    }
 		}
 		
-		public String segment(int i) {
+		public String authority() {
+            return authority;
+        }
+
+        public String segment(int i) {
 			return segments[i];
 		}
 
