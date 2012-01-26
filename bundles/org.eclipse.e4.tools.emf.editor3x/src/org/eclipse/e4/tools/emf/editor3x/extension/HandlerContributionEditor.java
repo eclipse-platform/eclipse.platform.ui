@@ -75,14 +75,16 @@ public class HandlerContributionEditor implements IContributionClassCreator {
 			}
 		} else {
 			URI uri = URI.createURI(contribution.getContributionURI());
-			if (uri.segmentCount() == 3) {
+			if (uri.hasAuthority() && uri.segmentCount() == 1) {
+			    String symbolicName = uri.authority();
+			    String fullyQualified = uri.segment(0);
 				IProject p = ResourcesPlugin.getWorkspace().getRoot()
-						.getProject(uri.segment(1));
+						.getProject(symbolicName);
 				
 				if( ! p.exists() ) {
 					for( IProject check : ResourcesPlugin.getWorkspace().getRoot().getProjects() ) {
 						String name = Util.getBundleSymbolicName(check);
-						if( uri.segment(1).equals(name) ) {
+						if( symbolicName.equals(name) ) {
 							p = check;
 							break;
 						}
@@ -93,16 +95,16 @@ public class HandlerContributionEditor implements IContributionClassCreator {
 				if (p != null) {
 					IJavaProject jp = JavaCore.create(p);
 					try {
-						IType t = jp.findType(uri.segment(2));
+						IType t = jp.findType(fullyQualified);
 						if( t != null ) {
 							JavaUI.openInEditor(t);
 						} else {
-							if( MessageDialog.openQuestion(shell, "Class not found", "The class '"+uri.segment(2)+"' was not found. Would you like to start the class creation wizard?") ) {
+							if( MessageDialog.openQuestion(shell, "Class not found", "The class '"+fullyQualified+"' was not found. Would you like to start the class creation wizard?") ) {
 								createOpen(contribution, domain, project, shell, true);
 							}
 						}
 					} catch (JavaModelException e) {
-						if( MessageDialog.openQuestion(shell, "Class not found", "The class '"+uri.segment(2)+"' was not found. Would you like to start the class creation wizard?") ) {
+						if( MessageDialog.openQuestion(shell, "Class not found", "The class '"+fullyQualified+"' was not found. Would you like to start the class creation wizard?") ) {
 							createOpen(contribution, domain, project, shell, true);
 						}
 					} catch (PartInitException e) {
