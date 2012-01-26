@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.tests.dynamicplugins;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
@@ -27,6 +29,15 @@ import org.osgi.framework.Bundle;
  * @since 3.3
  */
 public class WorkingSetTests extends DynamicTestCase {
+
+	public static TestSuite suite() {
+		TestSuite ts = new TestSuite();
+		//ts.addTest(new WorkingSetTests("testClass"));
+		ts.addTest(new WorkingSetTests("testWorkingSetUpdater"));
+		ts.addTest(new WorkingSetTests("testWorkingSetWithBasicElementAdapter"));
+		ts.addTest(new WorkingSetTests("testWorkingSetWithCustomElementAdapter"));
+		return ts;
+	}
 
 	/**
 	 * @param testName
