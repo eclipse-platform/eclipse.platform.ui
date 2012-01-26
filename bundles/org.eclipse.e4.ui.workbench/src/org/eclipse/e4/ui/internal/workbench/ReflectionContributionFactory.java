@@ -16,7 +16,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -57,6 +56,13 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	private Object doCreate(String uriString, IEclipseContext context, IEclipseContext staticContext) {
 		if (uriString == null) {
 			return null;
+		}
+		// translate old-style platform:/plugin/ class specifiers into new-style bundleclass:// URIs
+		if (uriString.startsWith("platform:/plugin/")) { //$NON-NLS-1$
+			Activator.log(LogService.LOG_ERROR,
+					"platform-style URIs deprecated for referencing types: " + uriString); //$NON-NLS-1$
+			uriString = uriString.replace("platform:/plugin/", "bundleclass://"); //$NON-NLS-1$ //$NON-NLS-2$
+			Activator.log(LogService.LOG_ERROR, "URI rewritten as: " + uriString); //$NON-NLS-1$
 		}
 		URI uri = URI.createURI(uriString);
 		Bundle bundle = getBundle(uri);
@@ -134,7 +140,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 
 	protected Bundle getBundle(URI platformURI) {
 		if (platformURI.authority() == null) {
-			Activator.log(IStatus.ERROR, "Failed to get bundle for: " + platformURI); //$NON-NLS-1$
+			Activator.log(LogService.LOG_ERROR, "Failed to get bundle for: " + platformURI); //$NON-NLS-1$
 			return null;
 		}
 		return Activator.getDefault().getBundleForName(platformURI.authority());
