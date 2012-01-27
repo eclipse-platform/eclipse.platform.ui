@@ -31,8 +31,8 @@
    </plugins>
 
    <features>
-      <feature id="org.eclipse.e4.demo.contacts.feature" version="1.0.0.qualifier"/>
-      <feature id="org.eclipse.e4.rcp" version="1.1.0.qualifier"/>
+      <feature id="org.eclipse.e4.demo.contacts.feature"/>
+      <feature id="org.eclipse.e4.rcp"/>
    </features>
 
 
