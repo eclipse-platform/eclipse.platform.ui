@@ -227,6 +227,44 @@ public class MPartTest extends TestCase {
 		assertNull(part.getContext());
 	}
 
+	public void testMPartBug369866() {
+		final MWindow window = createWindowWithOneView("Part");
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		MPartSashContainer container = (MPartSashContainer) window
+				.getChildren().get(0);
+		MPartStack stack = (MPartStack) container.getChildren().get(0);
+		MPart part = (MPart) stack.getChildren().get(0);
+
+		CTabFolder folder = (CTabFolder) stack.getWidget();
+		CTabItem item = folder.getItem(0);
+
+		// bug 369866 has a StringIOOBE from toggling the dirty flag with an
+		// empty part name
+		assertFalse(part.isDirty());
+		assertEquals("Part", item.getText());
+
+		part.setDirty(true);
+		assertEquals("*Part", item.getText());
+
+		part.setLabel("");
+		assertEquals("*", item.getText());
+
+		part.setDirty(false);
+		assertEquals("", item.getText());
+
+		part.setDirty(true);
+		assertEquals("*", item.getText());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		return createWindowWithOneView(partName, null);
 	}

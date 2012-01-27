@@ -340,7 +340,7 @@ public class StackRenderer extends LazyStackRenderer {
 		} else if (UIEvents.Dirtyable.DIRTY.equals(attName)) {
 			Boolean dirtyState = (Boolean) newValue;
 			String text = cti.getText();
-			boolean hasAsterisk = text.charAt(0) == '*';
+			boolean hasAsterisk = text.length() > 0 && text.charAt(0) == '*';
 			if (dirtyState.booleanValue()) {
 				if (!hasAsterisk) {
 					cti.setText('*' + text);
