@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,8 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -464,8 +466,6 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
              * @see KeyListener.keyPressed
              */
             public void keyPressed(KeyEvent e) {
-                //If there has been a key pressed then mark as dirty
-                entryChanged = true;
 				if (e.character == SWT.CR) {
 					entryChanged = false;
 					updateFromSourceField();
@@ -478,6 +478,12 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             public void keyReleased(KeyEvent e) {
             }
         });
+
+        sourceNameField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				entryChanged = true;
+			}
+		});
 
         sourceNameField.addFocusListener(new FocusListener() {
             /*
