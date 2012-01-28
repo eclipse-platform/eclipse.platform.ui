@@ -1018,10 +1018,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		// thread.
 		// Otherwise the UI is blocked anyway.
 		Object state = null;
-		if (activeRunningOperations == 0) {
+		if (activeRunningOperations++ == 0) {
 			state = aboutToStart(fork && cancelable);
 		}
-		activeRunningOperations++;
 		try {
 			if (!fork) {
 				lockedUI = true;
