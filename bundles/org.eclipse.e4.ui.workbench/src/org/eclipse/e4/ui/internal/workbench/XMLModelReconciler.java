@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -400,7 +400,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		if (elementName.equals(CONTEXT_PROPERTIES_ATTNAME)) {
 			constructEntryDelta(deltas, UiPackageImpl.eINSTANCE.getContext_Properties(), object,
 					element);
-		} else if (elementName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)) {
+		} else if (elementName.equals(APPLICATIONELEMENT_PERSISTEDSTATE_ATTNAME)) {
 			constructEntryDelta(deltas,
 					ApplicationPackageImpl.eINSTANCE.getApplicationElement_PersistedState(),
 					object, element);
@@ -931,7 +931,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			for (Entry<String, String> state : ((MContribution) object).getPersistedState()
 					.entrySet()) {
 				if (state == entry) {
-					return CONTRIBUTION_PERSISTEDSTATE_ATTNAME;
+					return APPLICATIONELEMENT_PERSISTEDSTATE_ATTNAME;
 				}
 			}
 		}
@@ -1834,7 +1834,7 @@ public class XMLModelReconciler extends ModelReconciler {
 	}
 
 	private static boolean isStringToStringMap(String featureName) {
-		return featureName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)
+		return featureName.equals(APPLICATIONELEMENT_PERSISTEDSTATE_ATTNAME)
 				|| featureName.equals(CONTEXT_PROPERTIES_ATTNAME);
 	}
 

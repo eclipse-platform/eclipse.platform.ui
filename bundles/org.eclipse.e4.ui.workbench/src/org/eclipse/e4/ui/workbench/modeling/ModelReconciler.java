@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,9 +58,9 @@ public abstract class ModelReconciler {
 			.getContext_Properties().getName();
 
 	/**
-	 * Attribute defined by MContributions (value is <code>persistedState</code>).
+	 * Attribute defined by MApplicationElements (value is <code>persistedState</code>).
 	 */
-	public static final String CONTRIBUTION_PERSISTEDSTATE_ATTNAME = ApplicationPackageImpl.eINSTANCE
+	public static final String APPLICATIONELEMENT_PERSISTEDSTATE_ATTNAME = ApplicationPackageImpl.eINSTANCE
 			.getApplicationElement_PersistedState().getName();
 
 	/**
