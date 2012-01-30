@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,8 +118,8 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	public class AppElementTester extends EventTester {
 		AppElementTester(IEventBroker eventBroker) {
 			super("AppElement", ApplicationElement.TOPIC_ALL, new String[] {
-					ApplicationElement.ELEMENTID, ApplicationElement.TAGS },
-					eventBroker);
+					ApplicationElement.ELEMENTID, ApplicationElement.TAGS,
+					ApplicationElement.PERSISTEDSTATE }, eventBroker);
 		}
 	}
 
@@ -140,8 +140,8 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	public class ContributionTester extends EventTester {
 		ContributionTester(IEventBroker eventBroker) {
 			super("Contribution", Contribution.TOPIC_ALL, new String[] {
-					Contribution.CONTRIBUTIONURI, Contribution.PERSISTEDSTATE,
-					Contribution.OBJECT }, eventBroker);
+					Contribution.CONTRIBUTIONURI, Contribution.OBJECT },
+					eventBroker);
 		}
 	}
 
@@ -243,6 +243,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		allData.setElementId(newId);
 		allData.getTags().add("Testing");
 		// allData.setTags("new Style");
+		allData.getPersistedState().put("testing", "Some state");
 		checkForFailures(allTesters, appTester);
 
 		// Test that no-ops don't throw events
@@ -268,7 +269,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		reset(allTesters);
 		allData.setContributionURI("Some URI");
 		allData.setObject("Some onbject");
-		allData.getPersistedState().put("testing", "Some state");
 		checkForFailures(allTesters, contributionTester);
 
 		// ElementContainer

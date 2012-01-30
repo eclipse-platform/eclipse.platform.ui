@@ -63,7 +63,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getObject <em>Object</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getPersistedState <em>Persisted State</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getRenderer <em>Renderer</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#isToBeRendered <em>To Be Rendered</em>}</li>
@@ -205,16 +204,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	 * @ordered
 	 */
 	protected Object object = OBJECT_EDEFAULT;
-	/**
-	 * The cached value of the '{@link #getPersistedState()
-	 * <em>Persisted State</em>}' map. <!-- begin-user-doc --> <!-- end-user-doc
-	 * -->
-	 * 
-	 * @see #getPersistedState()
-	 * @generated
-	 * @ordered
-	 */
-	protected EMap<String, String> persistedState;
 	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -668,17 +657,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 		object = newObject;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MTestPackage.TEST_HARNESS__OBJECT, oldObject, object));
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Map<String, String> getPersistedState() {
-		if (persistedState == null) {
-			persistedState = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MTestPackage.TEST_HARNESS__PERSISTED_STATE);
-		}
-		return persistedState.map();
 	}
 
 	/**
@@ -1207,8 +1185,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
 			case MTestPackage.TEST_HARNESS__PROPERTIES:
 				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
-			case MTestPackage.TEST_HARNESS__PERSISTED_STATE:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).basicRemove(otherEnd, msgs);
 			case MTestPackage.TEST_HARNESS__PARENT:
 				return basicSetParent(null, msgs);
 			case MTestPackage.TEST_HARNESS__VISIBLE_WHEN:
@@ -1262,9 +1238,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return getContributionURI();
 			case MTestPackage.TEST_HARNESS__OBJECT:
 				return getObject();
-			case MTestPackage.TEST_HARNESS__PERSISTED_STATE:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getPersistedState()).eMap();
-				else return getPersistedState();
 			case MTestPackage.TEST_HARNESS__WIDGET:
 				return getWidget();
 			case MTestPackage.TEST_HARNESS__RENDERER:
@@ -1347,9 +1320,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return;
 			case MTestPackage.TEST_HARNESS__OBJECT:
 				setObject(newValue);
-				return;
-			case MTestPackage.TEST_HARNESS__PERSISTED_STATE:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).set(newValue);
 				return;
 			case MTestPackage.TEST_HARNESS__WIDGET:
 				setWidget(newValue);
@@ -1451,9 +1421,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__OBJECT:
 				setObject(OBJECT_EDEFAULT);
 				return;
-			case MTestPackage.TEST_HARNESS__PERSISTED_STATE:
-				getPersistedState().clear();
-				return;
 			case MTestPackage.TEST_HARNESS__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
 				return;
@@ -1543,8 +1510,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 			case MTestPackage.TEST_HARNESS__OBJECT:
 				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
-			case MTestPackage.TEST_HARNESS__PERSISTED_STATE:
-				return persistedState != null && !persistedState.isEmpty();
 			case MTestPackage.TEST_HARNESS__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case MTestPackage.TEST_HARNESS__RENDERER:
@@ -1616,7 +1581,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			switch (derivedFeatureID) {
 				case MTestPackage.TEST_HARNESS__CONTRIBUTION_URI: return ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
 				case MTestPackage.TEST_HARNESS__OBJECT: return ApplicationPackageImpl.CONTRIBUTION__OBJECT;
-				case MTestPackage.TEST_HARNESS__PERSISTED_STATE: return ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE;
 				default: return -1;
 			}
 		}
@@ -1705,7 +1669,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			switch (baseFeatureID) {
 				case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI: return MTestPackage.TEST_HARNESS__CONTRIBUTION_URI;
 				case ApplicationPackageImpl.CONTRIBUTION__OBJECT: return MTestPackage.TEST_HARNESS__OBJECT;
-				case ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE: return MTestPackage.TEST_HARNESS__PERSISTED_STATE;
 				default: return -1;
 			}
 		}

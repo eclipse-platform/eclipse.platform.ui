@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -496,12 +496,14 @@ public class UIEvents {
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/ApplicationElement/*"; //$NON-NLS-1$
 		public static final String TOPIC_CONTRIBUTORURI = "org/eclipse/e4/ui/model/application/ApplicationElement/contributorURI/*"; //$NON-NLS-1$
 		public static final String TOPIC_ELEMENTID = "org/eclipse/e4/ui/model/application/ApplicationElement/elementId/*"; //$NON-NLS-1$
+		public static final String TOPIC_PERSISTEDSTATE = "org/eclipse/e4/ui/model/application/ApplicationElement/persistedState/*"; //$NON-NLS-1$
 		public static final String TOPIC_TAGS = "org/eclipse/e4/ui/model/application/ApplicationElement/tags/*"; //$NON-NLS-1$
 		public static final String TOPIC_TRANSIENTDATA = "org/eclipse/e4/ui/model/application/ApplicationElement/transientData/*"; //$NON-NLS-1$
 
 		// Attributes that can be tested in event handlers
 		public static final String CONTRIBUTORURI = "contributorURI"; //$NON-NLS-1$
 		public static final String ELEMENTID = "elementId"; //$NON-NLS-1$
+		public static final String PERSISTEDSTATE = "persistedState"; //$NON-NLS-1$
 		public static final String TAGS = "tags"; //$NON-NLS-1$
 		public static final String TRANSIENTDATA = "transientData"; //$NON-NLS-1$
 	}
@@ -517,12 +519,10 @@ public class UIEvents {
 		public static final String TOPIC_ALL = "org/eclipse/e4/ui/model/application/Contribution/*"; //$NON-NLS-1$
 		public static final String TOPIC_CONTRIBUTIONURI = "org/eclipse/e4/ui/model/application/Contribution/contributionURI/*"; //$NON-NLS-1$
 		public static final String TOPIC_OBJECT = "org/eclipse/e4/ui/model/application/Contribution/object/*"; //$NON-NLS-1$
-		public static final String TOPIC_PERSISTEDSTATE = "org/eclipse/e4/ui/model/application/Contribution/persistedState/*"; //$NON-NLS-1$
 
 		// Attributes that can be tested in event handlers
 		public static final String CONTRIBUTIONURI = "contributionURI"; //$NON-NLS-1$
 		public static final String OBJECT = "object"; //$NON-NLS-1$
-		public static final String PERSISTEDSTATE = "persistedState"; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("javadoc")
@@ -1102,4 +1102,5 @@ public class UIEvents {
 		// Attributes that can be tested in event handlers
 		public static final String TRIMCONTRIBUTIONS = "trimContributions"; //$NON-NLS-1$
 	}
+
 }
