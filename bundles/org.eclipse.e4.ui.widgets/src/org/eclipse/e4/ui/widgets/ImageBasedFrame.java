@@ -12,6 +12,8 @@
 package org.eclipse.e4.ui.widgets;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -30,6 +32,7 @@ import org.eclipse.swt.widgets.Listener;
 
 public class ImageBasedFrame extends Canvas {
 	private Control framedControl;
+	
 	private boolean draggable = true;
 	private boolean vertical = true;
 	
@@ -45,11 +48,14 @@ public class ImageBasedFrame extends Canvas {
 	private int handleWidth;
 	private int handleHeight;
 	
-	public ImageBasedFrame(Composite parent, Control toWrap, boolean hasHandle) {
+	public ImageBasedFrame(Composite parent, Control toWrap, boolean vertical, boolean draggable) {
 		super(parent, SWT.NONE);
 		
 		this.framedControl = toWrap;
-		setUpImages(parent.getDisplay(), "Some Image Path");
+		this.vertical = vertical;
+		this.draggable = draggable;
+		
+		setUpImages(parent.getDisplay());
 		
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
@@ -66,23 +72,9 @@ public class ImageBasedFrame extends Canvas {
 		
 		addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
-				if (!draggable)
-					return;
-
 				// Compute the display location for the handle
-				Rectangle handleRect = new Rectangle(0,0,0,0);
-				
-				if (!vertical) {
-					handleRect.x = w1;
-					handleRect.y = h1;
-					handleRect.width = handle.getBounds().width;
-					handleRect.height = framedControl.getSize().y;
-				} else {
-					handleRect.x = w1;
-					handleRect.y = h1;
-					handleRect.width = framedControl.getSize().x;
-					handleRect.height = handle.getBounds().height;
-				}
+				// Note that this is an empty rect if !draggable
+				Rectangle handleRect = getHandleRect();
 				
 				ImageBasedFrame frame = (ImageBasedFrame) e.widget;
 				if (handleRect.contains(e.x, e.y)) {
@@ -95,6 +87,14 @@ public class ImageBasedFrame extends Canvas {
 		});
 		
 		toWrap.setParent(this);
+		toWrap.pack(true);
+
+		toWrap.addControlListener(new ControlListener() {
+			public void controlResized(ControlEvent e) {
+				pack(true);
+			}
+			public void controlMoved(ControlEvent e) {}
+		});
 		if (vertical) {
 			toWrap.setLocation(w1, h1 + handleHeight);
 		} else {
@@ -102,6 +102,25 @@ public class ImageBasedFrame extends Canvas {
 		}
 		setSize(computeSize(-1, -1));
 
+	}
+
+	public Rectangle getHandleRect() {
+		Rectangle handleRect = new Rectangle(0,0,0,0);
+		if (!draggable)
+			return handleRect;
+		
+		if (vertical) {
+			handleRect.x = w1;
+			handleRect.y = h1;
+			handleRect.width = handle.getBounds().width;
+			handleRect.height = framedControl.getSize().y;
+		} else {
+			handleRect.x = w1;
+			handleRect.y = h1;
+			handleRect.width = framedControl.getSize().x;
+			handleRect.height = handle.getBounds().height;
+		}
+		return handleRect;
 	}
 
 	@Override
@@ -113,24 +132,31 @@ public class ImageBasedFrame extends Canvas {
 		super.dispose();
 	}
 	
-	private void setUpImages(Display display, String string) {
+	private void setUpImages(Display display) {
 		// KLUDGE !! should come from CSS
 		imageCache = new Image(display, 5,5);
 		GC gc = new GC(imageCache);
-		gc.setBackground(display.getSystemColor(SWT.COLOR_RED));
-		gc.fillRectangle(0, 0, 5, 5);
-		gc.setBackground(display.getSystemColor(SWT.COLOR_GREEN));
-		gc.fillRectangle(2, 0, 1, 2);
-		gc.fillRectangle(2, 3, 1, 2);
-		gc.setBackground(display.getSystemColor(SWT.COLOR_BLUE));
-		gc.fillRectangle(0, 2, 2, 1);
-		gc.fillRectangle(3, 2, 2, 1);
+		gc.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+		gc.fillRectangle(0, 0, 5,5);
+		gc.setBackground(display.getSystemColor(SWT.COLOR_MAGENTA));
+		gc.fillRectangle(1, 1, 3,3);
 		gc.dispose();
 		
-		handle = new Image(display, 2, 1);
+		w1 = 2; w2 = 1; h1 = 2; h2 = 1; 
+		w3 = imageCache.getBounds().width - (w1+w2);
+		h3 = imageCache.getBounds().height - (h1+h2);
+		
+		handle = new Image(display, 5, 17);
 		gc = new GC(handle);
-		gc.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
-		gc.fillRectangle(0, 0, 2, 1);
+		gc.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
+		gc.fillRectangle(0, 0, 5, 17);
+		
+		gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+		gc.drawLine(1, 2, 1, 15);
+		
+		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+		gc.drawLine(2, 2, 2, 15);
+		
 		gc.dispose();
 		
 		w1 = 2; w2 = 1; h1 = 2; h2 = 1; 
@@ -162,8 +188,8 @@ public class ImageBasedFrame extends Canvas {
 		Image rotatedImage = new Image(display, image.getBounds().height, image.getBounds().width);
 		GC gc = new GC(rotatedImage);
 		Transform t = new Transform(display);
-		int w = image.getBounds().width;
-		int offset = (w+1) % 2;
+		int w = image.getBounds().height;
+		int offset = 0; //(w+1) % 2;
 		t.translate(w - offset, 0);
 		t.rotate(90);
 		gc.setTransform(t);
@@ -260,6 +286,12 @@ public class ImageBasedFrame extends Canvas {
 		dstRect.x = w1 + handleWidth + inner.x; dstRect.y = h1 + handleHeight + inner.y; dstRect.width = w3; dstRect.height = h3;
 		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
 				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
+		
+		// Imterior
+		srcRect.x = w1; srcRect.y = h1; srcRect.width = w2; srcRect.height = h2;
+		dstRect.x = w1 + handleWidth; dstRect.y = h1 + handleHeight; dstRect.width = inner.x; dstRect.height = inner.y;
+		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
+				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
 	}
 	
 	public Image getImageCache() {
@@ -268,5 +300,43 @@ public class ImageBasedFrame extends Canvas {
 	
 	public Image getHandleImage() {
 		return handle;
+	}
+
+	public void setImages(Image frameImage, Integer[] frameInts, Image handleImage) {
+		if (frameImage != null)
+			imageCache = frameImage;
+		if (handleImage != null)
+			handle = handleImage;
+		
+		w1 = frameInts[0];
+		w2 = frameInts[1];
+		h1 = frameInts[2];
+		h2 = frameInts[3];
+		w3 = imageCache.getBounds().width - (w1+w2);
+		h3 = imageCache.getBounds().height - (h1+h2);
+		
+		if (vertical) {
+			imageCache = rotateImage(getDisplay(), imageCache);
+			
+			// Adjust the size markers for the rotation
+			int tmp;
+			tmp = w1; w1 = h1; h1 = tmp;
+			tmp = w2; w2 = h2; h2 = tmp;
+			tmp = w3; w3 = h3; h3 = tmp;
+
+			if (handle != null)
+				handle = rotateImage(getDisplay(), handle);
+		}
+		
+		// Compute the size of the handle in the 'offset' dimension
+		handleWidth = (handle != null && !vertical) ? handle.getBounds().width : 0;
+		handleHeight = (handle != null && vertical) ? handle.getBounds().height : 0;
+
+		if (vertical) {
+			framedControl.setLocation(w1, h1 + handleHeight);
+		} else {
+			framedControl.setLocation(w1 + handleWidth, h1);
+		}
+		setSize(computeSize(-1, -1));
 	}
 }
