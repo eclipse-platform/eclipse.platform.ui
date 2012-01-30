@@ -489,23 +489,23 @@ public class HandledContributionItem extends ContributionItem {
 		if (item instanceof MHandledItem) {
 			MHandledItem handledItem = (MHandledItem) item;
 			IEclipseContext context = getContext(item);
+			ParameterizedCommand cmd = handledItem.getWbCommand();
+			if (cmd == null) {
+				cmd = generateParameterizedCommand(handledItem, context);
+			}
+			if (text == null) {
+				try {
+					text = cmd.getName();
+				} catch (NotDefinedException e) {
+					return null;
+				}
+			}
 			EBindingService bs = (EBindingService) context
 					.get(EBindingService.class.getName());
 			if (bs != null) {
-				ParameterizedCommand cmd = handledItem.getWbCommand();
-				if (cmd == null) {
-					cmd = generateParameterizedCommand(handledItem, context);
-				}
 				TriggerSequence sequence = bs.getBestSequenceFor(handledItem
 						.getWbCommand());
 				if (sequence != null) {
-					if (text == null) {
-						try {
-							text = cmd.getName();
-						} catch (NotDefinedException e) {
-							return null;
-						}
-					}
 					text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
 				}
 			}
