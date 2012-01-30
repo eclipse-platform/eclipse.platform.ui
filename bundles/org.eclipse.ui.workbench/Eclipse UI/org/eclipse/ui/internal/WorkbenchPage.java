@@ -836,9 +836,26 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return null;
 	}
 
-	MPart findPart(String viewId, String secondaryId) {
+	/**
+	 * Searches the workbench window for a part with the given view id and
+	 * secondary id (if desired) given the specified search rules.
+	 * 
+	 * @param viewId
+	 *            the id of the view
+	 * @param secondaryId
+	 *            the secondary id of the view, or <code>null</code> if the view
+	 *            to search for should be one without a secondary id defined
+	 * @param searchFlags
+	 *            the desired search locations
+	 * @return the part with the specified view id and secondary id, or
+	 *         <code>null</code> if it could not be found in this page's parent
+	 *         workbench window
+	 * @see EModelService#findElements(MUIElement, String, Class, List, int)
+	 */
+	private MPart findPart(String viewId, String secondaryId, int searchFlags) {
+		Collection<MPart> parts = modelService.findElements(getWindowModel(), viewId, MPart.class,
+				null, searchFlags);
 		if (secondaryId == null) {
-			Collection<MPart> parts = partService.getParts();
 			partsLoop: for (MPart part : parts) {
 				if (part.getElementId().equals(viewId)) {
 					for (String tag : part.getTags()) {
@@ -852,9 +869,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		Collection<MPart> parts = partService.getParts();
 		for (MPart part : parts) {
-			if (part.getElementId().equals(viewId) && part.getTags().contains(secondaryId)) {
+			if (part.getTags().contains(secondaryId)) {
 				return part;
 			}
 		}
@@ -907,7 +923,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		MPart part = findPart(viewId, secondaryId);
+		MPart part = findPart(viewId, secondaryId, EModelService.ANYWHERE);
 		if (part == null) {
 			MPlaceholder ph = partService.createSharedPart(viewId, secondaryId != null);
 			if (ph == null) {
