@@ -100,8 +100,8 @@ public class CSSRenderingUtils {
 
 			if (imagePath != null
 					&& imagePath.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-				String imageString = ((CSSPrimitiveValue) imagePath)
-						.getStringValue();
+				// String imageString = ((CSSPrimitiveValue) imagePath)
+				// .getStringValue();
 				// System.out.println("here" + imageString);
 				try {
 					image = (Image) csseng.convert(imagePath, Image.class,
