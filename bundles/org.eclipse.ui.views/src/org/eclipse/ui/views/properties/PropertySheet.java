@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -297,12 +297,9 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      * since 3.4
      */
     protected void partHidden(IWorkbenchPart part) {
-        // if we are pinned, then we are not interested if parts are hidden, if
-        // our target part is hidden, we should still show whatever content we
-        // have been pinned on
-        if (!isPinned()) {
-            super.partHidden(part);
-        }
+    	// Explicitly ignore parts becoming hidden as this
+    	// can cause issues when the Property View is maximized
+    	// See bug 325743 for more details
     }
     
 	/**
