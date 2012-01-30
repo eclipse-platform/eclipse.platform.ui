@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getElementId <em>Element Id</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getPersistedState <em>Persisted State</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getContributorURI <em>Contributor URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTransientData <em>Transient Data</em>}</li>
@@ -63,6 +64,16 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * @ordered
 	 */
 	protected String elementId = ELEMENT_ID_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPersistedState()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, String> persistedState;
 
 	/**
 	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
@@ -149,6 +160,18 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Map<String, String> getPersistedState() {
+		if (persistedState == null) {
+			persistedState = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE);
+		}
+		return persistedState.map();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public List<String> getTags() {
 		if (tags == null) {
 			tags = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS);
@@ -196,6 +219,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE:
+				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
 				return ((InternalEList<?>)((EMap.InternalMapView<String, Object>)getTransientData()).eMap()).basicRemove(otherEnd, msgs);
 		}
@@ -212,6 +237,9 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 		switch (featureID) {
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
 				return getElementId();
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE:
+				if (coreType) return ((EMap.InternalMapView<String, String>)getPersistedState()).eMap();
+				else return getPersistedState();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
 				return getTags();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
@@ -234,6 +262,9 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 		switch (featureID) {
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
 				setElementId((String)newValue);
+				return;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE:
+				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).set(newValue);
 				return;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
 				getTags().clear();
@@ -260,6 +291,9 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
 				setElementId(ELEMENT_ID_EDEFAULT);
 				return;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE:
+				getPersistedState().clear();
+				return;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
 				getTags().clear();
 				return;
@@ -283,6 +317,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 		switch (featureID) {
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
 				return ELEMENT_ID_EDEFAULT == null ? elementId != null : !ELEMENT_ID_EDEFAULT.equals(elementId);
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE:
+				return persistedState != null && !persistedState.isEmpty();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
 				return tags != null && !tags.isEmpty();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:

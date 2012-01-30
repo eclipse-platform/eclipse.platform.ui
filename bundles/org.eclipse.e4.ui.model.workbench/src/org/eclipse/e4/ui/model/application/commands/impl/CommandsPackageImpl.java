@@ -189,6 +189,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDING_CONTEXT__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int BINDING_CONTEXT__PERSISTED_STATE = ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -280,6 +289,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDING_TABLE__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int BINDING_TABLE__PERSISTED_STATE = ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -360,6 +378,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int COMMAND__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int COMMAND__PERSISTED_STATE = ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -480,6 +507,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int COMMAND_PARAMETER__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int COMMAND_PARAMETER__PERSISTED_STATE = ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -571,6 +607,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int HANDLER__ELEMENT_ID = ApplicationPackageImpl.CONTRIBUTION__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLER__PERSISTED_STATE = ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -614,15 +659,6 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int HANDLER__OBJECT = ApplicationPackageImpl.CONTRIBUTION__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLER__PERSISTED_STATE = ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
@@ -716,6 +752,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int KEY_BINDING__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int KEY_BINDING__PERSISTED_STATE = ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -836,6 +881,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int PARAMETER__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PARAMETER__PERSISTED_STATE = ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -916,6 +970,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int CATEGORY__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CATEGORY__PERSISTED_STATE = ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.

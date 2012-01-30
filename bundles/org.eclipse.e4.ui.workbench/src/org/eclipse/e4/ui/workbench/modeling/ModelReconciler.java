@@ -61,7 +61,7 @@ public abstract class ModelReconciler {
 	 * Attribute defined by MContributions (value is <code>persistedState</code>).
 	 */
 	public static final String CONTRIBUTION_PERSISTEDSTATE_ATTNAME = ApplicationPackageImpl.eINSTANCE
-			.getContribution_PersistedState().getName();
+			.getApplicationElement_PersistedState().getName();
 
 	/**
 	 * Attribute defined by MContributions (value is <code>contributionURI</code>).

@@ -66,7 +66,6 @@ public class DirectMenuItemItemProvider
 
 			addContributionURIPropertyDescriptor(object);
 			addObjectPropertyDescriptor(object);
-			addPersistedStatePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -116,28 +115,6 @@ public class DirectMenuItemItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Persisted State feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addPersistedStatePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Contribution_persistedState_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_persistedState_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE,
-				 true,
-				 false,
-				 false,
-				 null,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This returns DirectMenuItem.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -176,7 +153,6 @@ public class DirectMenuItemItemProvider
 		switch (notification.getFeatureID(MDirectMenuItem.class)) {
 			case MenuPackageImpl.DIRECT_MENU_ITEM__CONTRIBUTION_URI:
 			case MenuPackageImpl.DIRECT_MENU_ITEM__OBJECT:
-			case MenuPackageImpl.DIRECT_MENU_ITEM__PERSISTED_STATE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

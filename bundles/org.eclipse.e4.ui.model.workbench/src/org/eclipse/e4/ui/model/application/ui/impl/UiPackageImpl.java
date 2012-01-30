@@ -237,6 +237,15 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int UI_ELEMENT__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int UI_ELEMENT__PERSISTED_STATE = ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -408,6 +417,15 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int ELEMENT_CONTAINER__ELEMENT_ID = UI_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ELEMENT_CONTAINER__PERSISTED_STATE = UI_ELEMENT__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -654,6 +672,15 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int GENERIC_STACK__ELEMENT_ID = ELEMENT_CONTAINER__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_STACK__PERSISTED_STATE = ELEMENT_CONTAINER__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -833,6 +860,15 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int GENERIC_TILE__ELEMENT_ID = ELEMENT_CONTAINER__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_TILE__PERSISTED_STATE = ELEMENT_CONTAINER__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -1025,6 +1061,15 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int GENERIC_TRIM_CONTAINER__ELEMENT_ID = ELEMENT_CONTAINER__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_TRIM_CONTAINER__PERSISTED_STATE = ELEMENT_CONTAINER__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1215,6 +1260,15 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int EXPRESSION__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EXPRESSION__PERSISTED_STATE = ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1277,6 +1331,15 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int CORE_EXPRESSION__ELEMENT_ID = EXPRESSION__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CORE_EXPRESSION__PERSISTED_STATE = EXPRESSION__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.

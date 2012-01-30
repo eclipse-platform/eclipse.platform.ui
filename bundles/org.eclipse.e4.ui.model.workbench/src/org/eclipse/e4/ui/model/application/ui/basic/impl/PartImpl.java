@@ -58,7 +58,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getObject <em>Object</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getPersistedState <em>Persisted State</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getProperties <em>Properties</em>}</li>
@@ -117,16 +116,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @ordered
 	 */
 	protected Object object = OBJECT_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getPersistedState()
-	 * @generated
-	 * @ordered
-	 */
-	protected EMap<String, String> persistedState;
 
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -387,18 +376,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 		object = newObject;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__OBJECT, oldObject, object));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Map<String, String> getPersistedState() {
-		if (persistedState == null) {
-			persistedState = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, BasicPackageImpl.PART__PERSISTED_STATE);
-		}
-		return persistedState.map();
 	}
 
 	/**
@@ -683,8 +660,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BasicPackageImpl.PART__PERSISTED_STATE:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.PART__PROPERTIES:
 				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getProperties()).eMap()).basicRemove(otherEnd, msgs);
 			case BasicPackageImpl.PART__HANDLERS:
@@ -709,9 +684,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return getContributionURI();
 			case BasicPackageImpl.PART__OBJECT:
 				return getObject();
-			case BasicPackageImpl.PART__PERSISTED_STATE:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getPersistedState()).eMap();
-				else return getPersistedState();
 			case BasicPackageImpl.PART__CONTEXT:
 				return getContext();
 			case BasicPackageImpl.PART__VARIABLES:
@@ -757,9 +729,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return;
 			case BasicPackageImpl.PART__OBJECT:
 				setObject(newValue);
-				return;
-			case BasicPackageImpl.PART__PERSISTED_STATE:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).set(newValue);
 				return;
 			case BasicPackageImpl.PART__CONTEXT:
 				setContext((IEclipseContext)newValue);
@@ -822,9 +791,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 			case BasicPackageImpl.PART__OBJECT:
 				setObject(OBJECT_EDEFAULT);
 				return;
-			case BasicPackageImpl.PART__PERSISTED_STATE:
-				getPersistedState().clear();
-				return;
 			case BasicPackageImpl.PART__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
@@ -880,8 +846,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 			case BasicPackageImpl.PART__OBJECT:
 				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
-			case BasicPackageImpl.PART__PERSISTED_STATE:
-				return persistedState != null && !persistedState.isEmpty();
 			case BasicPackageImpl.PART__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case BasicPackageImpl.PART__VARIABLES:
@@ -933,7 +897,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 			switch (derivedFeatureID) {
 				case BasicPackageImpl.PART__CONTRIBUTION_URI: return ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
 				case BasicPackageImpl.PART__OBJECT: return ApplicationPackageImpl.CONTRIBUTION__OBJECT;
-				case BasicPackageImpl.PART__PERSISTED_STATE: return ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE;
 				default: return -1;
 			}
 		}
@@ -1000,7 +963,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 			switch (baseFeatureID) {
 				case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI: return BasicPackageImpl.PART__CONTRIBUTION_URI;
 				case ApplicationPackageImpl.CONTRIBUTION__OBJECT: return BasicPackageImpl.PART__OBJECT;
-				case ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE: return BasicPackageImpl.PART__PERSISTED_STATE;
 				default: return -1;
 			}
 		}

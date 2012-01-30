@@ -312,6 +312,8 @@ public class PerspectiveItemProvider
 		Object childObject = child;
 
 		boolean qualify =
+			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE ||
+			childFeature == UiPackageImpl.Literals.CONTEXT__PROPERTIES ||
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
 			childFeature == AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS;
 

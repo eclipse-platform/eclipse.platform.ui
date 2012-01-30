@@ -22,7 +22,6 @@ import java.util.Map;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getObject <em>Object</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MContribution#getPersistedState <em>Persisted State</em>}</li>
  * </ul>
  * </p>
  *
@@ -79,21 +78,5 @@ public interface MContribution extends MApplicationElement {
 	 * @generated
 	 */
 	void setObject(Object value);
-
-	/**
-	 * Returns the value of the '<em><b>Persisted State</b></em>' map.
-	 * The key is of type {@link java.lang.String},
-	 * and the value is of type {@link java.lang.String},
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Persisted State</em>' map isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Persisted State</em>' map.
-	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
-	 * @generated
-	 */
-	Map<String, String> getPersistedState();
 
 } // MContribution

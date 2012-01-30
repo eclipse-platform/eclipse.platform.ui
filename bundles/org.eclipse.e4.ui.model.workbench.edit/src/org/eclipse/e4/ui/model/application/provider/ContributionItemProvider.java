@@ -64,7 +64,6 @@ public class ContributionItemProvider
 
 			addContributionURIPropertyDescriptor(object);
 			addObjectPropertyDescriptor(object);
-			addPersistedStatePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -114,28 +113,6 @@ public class ContributionItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Persisted State feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addPersistedStatePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Contribution_persistedState_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_persistedState_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE,
-				 true,
-				 false,
-				 false,
-				 null,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -163,7 +140,6 @@ public class ContributionItemProvider
 		switch (notification.getFeatureID(MContribution.class)) {
 			case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI:
 			case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
-			case ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

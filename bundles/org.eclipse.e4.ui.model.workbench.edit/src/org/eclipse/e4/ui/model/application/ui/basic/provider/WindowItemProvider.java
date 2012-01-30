@@ -812,6 +812,8 @@ public class WindowItemProvider
 		Object childObject = child;
 
 		boolean qualify =
+			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE ||
+			childFeature == UiPackageImpl.Literals.CONTEXT__PROPERTIES ||
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
 			childFeature == UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS ||

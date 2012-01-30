@@ -402,8 +402,8 @@ public class XMLModelReconciler extends ModelReconciler {
 					element);
 		} else if (elementName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)) {
 			constructEntryDelta(deltas,
-					ApplicationPackageImpl.eINSTANCE.getContribution_PersistedState(), object,
-					element);
+					ApplicationPackageImpl.eINSTANCE.getApplicationElement_PersistedState(),
+					object, element);
 		} else {
 			constructObjectDeltas(deltas, references, object, element);
 		}

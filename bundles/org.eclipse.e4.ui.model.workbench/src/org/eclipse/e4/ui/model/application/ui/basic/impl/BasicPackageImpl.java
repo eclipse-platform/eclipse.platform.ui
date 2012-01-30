@@ -204,6 +204,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__PERSISTED_STATE = UiPackageImpl.UI_ELEMENT__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -339,22 +348,13 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__OBJECT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART__PERSISTED_STATE = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__CONTEXT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 3;
+	public static final int PART__CONTEXT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -363,7 +363,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__VARIABLES = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 4;
+	public static final int PART__VARIABLES = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' map.
@@ -372,7 +372,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__PROPERTIES = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 5;
+	public static final int PART__PROPERTIES = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -381,7 +381,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__LABEL = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 6;
+	public static final int PART__LABEL = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -390,7 +390,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__ICON_URI = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 7;
+	public static final int PART__ICON_URI = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -399,7 +399,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TOOLTIP = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 8;
+	public static final int PART__TOOLTIP = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -408,7 +408,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__HANDLERS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 9;
+	public static final int PART__HANDLERS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
@@ -417,7 +417,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__DIRTY = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 10;
+	public static final int PART__DIRTY = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
@@ -426,7 +426,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__BINDING_CONTEXTS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 11;
+	public static final int PART__BINDING_CONTEXTS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
@@ -435,7 +435,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__MENUS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 12;
+	public static final int PART__MENUS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
@@ -444,7 +444,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TOOLBAR = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 13;
+	public static final int PART__TOOLBAR = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
@@ -453,7 +453,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__CLOSEABLE = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 14;
+	public static final int PART__CLOSEABLE = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -462,7 +462,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__DESCRIPTION = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 15;
+	public static final int PART__DESCRIPTION = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 14;
 
 	/**
 	 * The number of structural features of the '<em>Part</em>' class.
@@ -471,7 +471,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 16;
+	public static final int PART_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 15;
 
 	/**
 	 * The operation id for the '<em>Get Localized Accessibility Phrase</em>' operation.
@@ -526,6 +526,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int INPUT_PART__ELEMENT_ID = PART__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int INPUT_PART__PERSISTED_STATE = PART__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -661,15 +670,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int INPUT_PART__OBJECT = PART__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int INPUT_PART__PERSISTED_STATE = PART__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -861,6 +861,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_STACK__ELEMENT_ID = UiPackageImpl.GENERIC_STACK__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_STACK__PERSISTED_STATE = UiPackageImpl.GENERIC_STACK__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1030,6 +1039,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER__ELEMENT_ID = UiPackageImpl.GENERIC_TILE__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER__PERSISTED_STATE = UiPackageImpl.GENERIC_TILE__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -1210,6 +1228,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int WINDOW__ELEMENT_ID = UiPackageImpl.ELEMENT_CONTAINER__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW__PERSISTED_STATE = UiPackageImpl.ELEMENT_CONTAINER__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -1543,6 +1570,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIMMED_WINDOW__ELEMENT_ID = WINDOW__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMMED_WINDOW__PERSISTED_STATE = WINDOW__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -1887,6 +1923,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIM_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_ELEMENT__PERSISTED_STATE = UiPackageImpl.UI_ELEMENT__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2038,6 +2083,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER_ELEMENT__PERSISTED_STATE = UiPackageImpl.UI_ELEMENT__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -2193,6 +2247,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW_ELEMENT__PERSISTED_STATE = UiPackageImpl.UI_ELEMENT__PERSISTED_STATE;
+
+	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2344,6 +2407,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIM_BAR__ELEMENT_ID = UiPackageImpl.GENERIC_TRIM_CONTAINER__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_BAR__PERSISTED_STATE = UiPackageImpl.GENERIC_TRIM_CONTAINER__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -2524,6 +2596,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int STACK_ELEMENT__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int STACK_ELEMENT__PERSISTED_STATE = UiPackageImpl.UI_ELEMENT__PERSISTED_STATE;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.

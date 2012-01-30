@@ -77,7 +77,6 @@ public class PartItemProvider
 
 			addContributionURIPropertyDescriptor(object);
 			addObjectPropertyDescriptor(object);
-			addPersistedStatePropertyDescriptor(object);
 			addContextPropertyDescriptor(object);
 			addVariablesPropertyDescriptor(object);
 			addLabelPropertyDescriptor(object);
@@ -131,28 +130,6 @@ public class PartItemProvider
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Persisted State feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addPersistedStatePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Contribution_persistedState_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_persistedState_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE,
-				 true,
-				 false,
-				 false,
-				 null,
 				 null,
 				 null));
 	}
@@ -427,7 +404,6 @@ public class PartItemProvider
 		switch (notification.getFeatureID(MPart.class)) {
 			case BasicPackageImpl.PART__CONTRIBUTION_URI:
 			case BasicPackageImpl.PART__OBJECT:
-			case BasicPackageImpl.PART__PERSISTED_STATE:
 			case BasicPackageImpl.PART__CONTEXT:
 			case BasicPackageImpl.PART__VARIABLES:
 			case BasicPackageImpl.PART__LABEL:
@@ -499,6 +475,29 @@ public class PartItemProvider
 			(createChildParameter
 				(BasicPackageImpl.Literals.PART__TOOLBAR,
 				 MMenuFactory.INSTANCE.createRenderedToolBar()));
+	}
+
+	/**
+	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
+		Object childFeature = feature;
+		Object childObject = child;
+
+		boolean qualify =
+			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE ||
+			childFeature == UiPackageImpl.Literals.CONTEXT__PROPERTIES;
+
+		if (qualify) {
+			return getString
+				("_UI_CreateChild_text2", //$NON-NLS-1$
+				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
+		}
+		return super.getCreateChildText(owner, feature, child, selection);
 	}
 
 	/**

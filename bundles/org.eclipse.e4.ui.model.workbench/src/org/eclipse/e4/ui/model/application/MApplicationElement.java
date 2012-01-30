@@ -22,6 +22,7 @@ import java.util.Map;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getElementId <em>Element Id</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getPersistedState <em>Persisted State</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getContributorURI <em>Contributor URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}</li>
@@ -56,6 +57,22 @@ public interface MApplicationElement {
 	 * @generated
 	 */
 	void setElementId(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Persisted State</b></em>' map.
+	 * The key is of type {@link java.lang.String},
+	 * and the value is of type {@link java.lang.String},
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Persisted State</em>' map isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Persisted State</em>' map.
+	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
+	 * @generated
+	 */
+	Map<String, String> getPersistedState();
 
 	/**
 	 * Returns the value of the '<em><b>Tags</b></em>' attribute list.

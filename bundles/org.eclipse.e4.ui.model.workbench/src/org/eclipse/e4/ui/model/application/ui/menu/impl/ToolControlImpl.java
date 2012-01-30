@@ -35,7 +35,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#getContributionURI <em>Contribution URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#getObject <em>Object</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#getPersistedState <em>Persisted State</em>}</li>
  * </ul>
  * </p>
  *
@@ -81,16 +80,6 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	 * @ordered
 	 */
 	protected Object object = OBJECT_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getPersistedState()
-	 * @generated
-	 * @ordered
-	 */
-	protected EMap<String, String> persistedState;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -158,32 +147,6 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Map<String, String> getPersistedState() {
-		if (persistedState == null) {
-			persistedState = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MenuPackageImpl.TOOL_CONTROL__PERSISTED_STATE);
-		}
-		return persistedState.map();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case MenuPackageImpl.TOOL_CONTROL__PERSISTED_STATE:
-				return ((InternalEList<?>)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -191,9 +154,6 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 				return getContributionURI();
 			case MenuPackageImpl.TOOL_CONTROL__OBJECT:
 				return getObject();
-			case MenuPackageImpl.TOOL_CONTROL__PERSISTED_STATE:
-				if (coreType) return ((EMap.InternalMapView<String, String>)getPersistedState()).eMap();
-				else return getPersistedState();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -211,9 +171,6 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 				return;
 			case MenuPackageImpl.TOOL_CONTROL__OBJECT:
 				setObject(newValue);
-				return;
-			case MenuPackageImpl.TOOL_CONTROL__PERSISTED_STATE:
-				((EStructuralFeature.Setting)((EMap.InternalMapView<String, String>)getPersistedState()).eMap()).set(newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -233,9 +190,6 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 			case MenuPackageImpl.TOOL_CONTROL__OBJECT:
 				setObject(OBJECT_EDEFAULT);
 				return;
-			case MenuPackageImpl.TOOL_CONTROL__PERSISTED_STATE:
-				getPersistedState().clear();
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -252,8 +206,6 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 			case MenuPackageImpl.TOOL_CONTROL__OBJECT:
 				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
-			case MenuPackageImpl.TOOL_CONTROL__PERSISTED_STATE:
-				return persistedState != null && !persistedState.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -269,7 +221,6 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 			switch (derivedFeatureID) {
 				case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI: return ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
 				case MenuPackageImpl.TOOL_CONTROL__OBJECT: return ApplicationPackageImpl.CONTRIBUTION__OBJECT;
-				case MenuPackageImpl.TOOL_CONTROL__PERSISTED_STATE: return ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE;
 				default: return -1;
 			}
 		}
@@ -292,7 +243,6 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 			switch (baseFeatureID) {
 				case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI: return MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI;
 				case ApplicationPackageImpl.CONTRIBUTION__OBJECT: return MenuPackageImpl.TOOL_CONTROL__OBJECT;
-				case ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE: return MenuPackageImpl.TOOL_CONTROL__PERSISTED_STATE;
 				default: return -1;
 			}
 		}

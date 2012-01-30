@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
+import org.eclipse.e4.ui.model.application.ui.menu.*;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
