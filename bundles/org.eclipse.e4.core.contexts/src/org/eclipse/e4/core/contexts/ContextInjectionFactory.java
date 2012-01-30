@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  * <p>
  * If annotations are supported by the runtime, matching of methods and fields to be injected is
  * also performed using the annotations defined in packages javax.inject and
- * org.eclipse.e4.core.services.annotations.
+ * org.eclipse.e4.core.di.annotations.
  * </p>
  * <p>
  * The injection of values is generally done as a number of calls. User objects that want to
