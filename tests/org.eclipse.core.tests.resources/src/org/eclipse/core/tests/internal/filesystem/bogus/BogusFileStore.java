@@ -12,6 +12,7 @@ package org.eclipse.core.tests.internal.filesystem.bogus;
 
 import java.io.File;
 import java.net.URI;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.filesystem.ram.MemoryFileStore;
@@ -36,4 +37,9 @@ public class BogusFileStore extends MemoryFileStore {
 			parent.mkdirs();
 		return new java.io.File(parentPath.append(getName()).toOSString());
 	}
+
+	public void move(IFileStore destination, int options, IProgressMonitor monitor) {
+		// ignore
+	}
+
 }
