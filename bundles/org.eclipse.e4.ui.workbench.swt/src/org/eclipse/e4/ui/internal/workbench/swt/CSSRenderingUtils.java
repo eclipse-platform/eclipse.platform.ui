@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.ControlElement;
 import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.e4.ui.widgets.ImageBasedFrame;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSPrimitiveValue;
@@ -34,21 +35,21 @@ public class CSSRenderingUtils {
 		}
 	}
 
-	// public Control frameMeIfPossible(Control toFrame, String classId,
-	// boolean vertical, boolean draggable) {
-	// Integer[] frameInts = new Integer[4];
-	// Image frameImage = createImage(toFrame, classId, "frame-image",
-	// frameInts);
-	// Image handleImage = createImage(toFrame, classId, "handle-image", null);
-	// if (frameImage != null) {
-	// ImageBasedFrame frame = new ImageBasedFrame(toFrame.getParent(),
-	// toFrame, vertical, draggable);
-	// frame.setImages(frameImage, frameInts, handleImage);
-	// return frame;
-	// }
-	//
-	// return toFrame;
-	// }
+	public Control frameMeIfPossible(Control toFrame, String classId,
+			boolean vertical, boolean draggable) {
+		Integer[] frameInts = new Integer[4];
+		Image frameImage = createImage(toFrame, classId, "frame-image",
+				frameInts);
+		Image handleImage = createImage(toFrame, classId, "handle-image", null);
+		if (frameImage != null) {
+			ImageBasedFrame frame = new ImageBasedFrame(toFrame.getParent(),
+					toFrame, vertical, draggable);
+			frame.setImages(frameImage, frameInts, handleImage);
+			return frame;
+		}
+
+		return toFrame;
+	}
 
 	@SuppressWarnings("restriction")
 	public CSSValue getCSSValue(Control styleControl, String className,
