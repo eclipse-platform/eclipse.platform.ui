@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	private ISynchronizationContext context;
 	private IStatus[] errors;
 	private boolean showingError;
+	private JobChangeAdapter jobChangeListener;
 	
 	public interface ITraversalFactory {
 		ResourceTraversal[] getTraversals(ISynchronizationScope scope);
@@ -58,7 +59,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		context = (ISynchronizationContext)configuration.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 		context.getDiffTree().addDiffChangeListener(this);
 		getConfiguration().addPropertyChangeListener(this);
-		Job.getJobManager().addJobChangeListener(new JobChangeAdapter() {
+		jobChangeListener = new JobChangeAdapter() {
 			public void running(IJobChangeEvent event) {
 				if (isJobOfInterest(event.getJob())) {
 					if (context.getDiffTree().isEmpty())
@@ -79,12 +80,14 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 						calculateDescription();
 				}
 			}
-		});
+		};
+		Job.getJobManager().addJobChangeListener(jobChangeListener);
 	}
 
 	public void dispose() {
 		context.getDiffTree().removeDiffChangeListener(this);
 		getConfiguration().removePropertyChangeListener(this);
+		Job.getJobManager().removeJobChangeListener(jobChangeListener);
 		super.dispose();
 	}
 	
