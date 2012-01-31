@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,12 +46,12 @@ public class ContextContextService implements EContextService {
 				.getLocal(LOCAL_CONTEXTS);
 		if (locals == null) {
 			locals = new HashSet<String>();
-		} else {
-			//copy the set so the change is propagated
-			locals = new HashSet(locals);
+			locals.add(id);
+			eclipseContext.set(LOCAL_CONTEXTS, locals);
+		} else if (locals.add(id)) {
+			// copy the set so the change is propagated
+			eclipseContext.set(LOCAL_CONTEXTS, new HashSet<String>(locals));
 		}
-		locals.add(id);
-		eclipseContext.set(LOCAL_CONTEXTS, locals);
 	}
 
 	/*
@@ -64,10 +64,9 @@ public class ContextContextService implements EContextService {
 	public void deactivateContext(String id) {
 		Set<String> locals = (Set<String>) eclipseContext
 				.getLocal(LOCAL_CONTEXTS);
-		if (locals != null) {
-			//copy the set so the change is propagated
-			locals = new HashSet(locals);
-			locals.remove(id);
+		if (locals != null && locals.remove(id)) {
+			// copy the set so the change is propagated
+			locals = new HashSet<String>(locals);
 			eclipseContext.set(LOCAL_CONTEXTS, locals);
 		}
 	}
