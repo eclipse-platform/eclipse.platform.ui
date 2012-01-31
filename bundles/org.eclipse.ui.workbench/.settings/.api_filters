@@ -94,6 +94,15 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/presentations/PresentationUtil.java" type="org.eclipse.ui.presentations.PresentationUtil">
+        <filter id="1108344834">
+            <message_arguments>
+                <message_argument value="3.0"/>
+                <message_argument value="3.103"/>
+                <message_argument value="org.eclipse.ui.presentations.PresentationUtil"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="Eclipse UI/org/eclipse/ui/progress/IProgressConstants.java" type="org.eclipse.ui.progress.IProgressConstants">
         <filter id="403767336">
             <message_arguments>
