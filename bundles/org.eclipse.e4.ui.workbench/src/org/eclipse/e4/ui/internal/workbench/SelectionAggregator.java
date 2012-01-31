@@ -18,12 +18,14 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -39,9 +41,6 @@ public class SelectionAggregator {
 	private ListenerList genericListeners = new ListenerList();
 	private Map<String, ListenerList> targetedListeners = new HashMap<String, ListenerList>();
 	private Set<IEclipseContext> tracked = new HashSet<IEclipseContext>();
-
-	@Inject
-	UISynchronize synchService;
 
 	private EventHandler eventHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -64,12 +63,16 @@ public class SelectionAggregator {
 
 	private IEventBroker eventBroker;
 
+	private Logger logger;
+
 	@Inject
-	SelectionAggregator(IEclipseContext context, EPartService partService, IEventBroker eventBroker) {
+	SelectionAggregator(IEclipseContext context, EPartService partService,
+			IEventBroker eventBroker, Logger logger) {
 		super();
 		this.context = context;
 		this.partService = partService;
 		this.eventBroker = eventBroker;
+		this.logger = logger;
 	}
 
 	@PreDestroy
@@ -100,20 +103,38 @@ public class SelectionAggregator {
 		}
 	}
 
-	private void notifyListeners(MPart part, Object selection) {
+	private void notifyListeners(final MPart part, final Object selection) {
 		for (Object listener : genericListeners.getListeners()) {
-			((ISelectionListener) listener).selectionChanged(part, selection);
+			final ISelectionListener myListener = (ISelectionListener) listener;
+			SafeRunner.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					myListener.selectionChanged(part, selection);
+				}
+
+				public void handleException(Throwable exception) {
+					logger.error(exception);
+				}
+			});
 		}
 		notifyTargetedListeners(part, selection);
 	}
 
-	private void notifyTargetedListeners(MPart part, Object selection) {
+	private void notifyTargetedListeners(final MPart part, final Object selection) {
 		String id = part.getElementId();
 		if (id != null) {
 			ListenerList listenerList = targetedListeners.get(id);
 			if (listenerList != null) {
 				for (Object listener : listenerList.getListeners()) {
-					((ISelectionListener) listener).selectionChanged(part, selection);
+					final ISelectionListener myListener = (ISelectionListener) listener;
+					SafeRunner.run(new ISafeRunnable() {
+						public void run() throws Exception {
+							myListener.selectionChanged(part, selection);
+						}
+
+						public void handleException(Throwable exception) {
+							logger.error(exception);
+						}
+					});
 				}
 			}
 		}
@@ -135,24 +156,15 @@ public class SelectionAggregator {
 						}
 					}
 
-					// TBD the async calls below are used to avoid listeners
-					// interfering with the context (listeners adding dependincies
-					// for this RaT and listeners creating values in the context
-					// going into infinite loops). We probably need to add a method
-					// to RaT to stop recoding.
 					if (activePart == part) {
 						myContext.set(IServiceConstants.ACTIVE_SELECTION, selection);
-						synchService.asyncExec(new Runnable() {
-							public void run() {
-								notifyListeners(part, selection);
-							}
-						});
+						pauseRecording();
+						notifyListeners(part, selection);
+						resumeRecoding();
 					} else {
-						synchService.asyncExec(new Runnable() {
-							public void run() {
-								notifyTargetedListeners(part, selection);
-							}
-						});
+						pauseRecording();
+						notifyTargetedListeners(part, selection);
+						resumeRecoding();
 						// we don't need to keep tracking non-active parts unless
 						// they have targeted listeners
 						String partId = part.getElementId();
