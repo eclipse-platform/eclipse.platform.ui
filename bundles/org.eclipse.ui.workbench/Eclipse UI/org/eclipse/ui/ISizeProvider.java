@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@ package org.eclipse.ui;
 
 
 /**
- * Interface implemented by objects that are capable of computing 
- * a preferred size
+ * Interface implemented by objects that are capable of computing a preferred
+ * size.
  * 
  * @since 3.1
  */
@@ -65,77 +65,88 @@ public interface ISizeProvider {
     public int getSizeFlags(boolean width);
     
     /**
-     * <p>
-     * Returns the best size for this part, given the available width and height and the workbench's
-     * preferred size for the part. Parts can overload this to enforce a minimum size, maximum size,
-     * or a quantized set of preferred sizes. If width == true, this method computes a width in pixels.
-     * If width == false, this method computes a height. availableParallel and availablePerpendicular 
-     * contain the space available, and preferredParallel contains the preferred result.
-     * </p>
-     * 
-     * <p>
-     * This method returns an answer that is less than or equal to availableParallel and as
-     * close to preferredParallel as possible. Return values larger than availableParallel will
-     * be truncated.
-     * </p>
-     * 
-     * <p>
-     * Most presentations will define a minimum size at all times, and a maximum size that only applies
-     * when maximized.
-     * </p>
-     * 
-     * <p>
-     * The getSizeFlags method controls how frequently this method will be called and what information
-     * will be available when it is. Any subclass that specializes this method should also specialize
-     * getSizeFlags. computePreferredSize(width, INFINITE, someSize, 0) returns 
-     * the minimum size of the control (if any). computePreferredSize(width, INFINITE, someSize,
-     * INFINITE) returns the maximum size of the control.   
-     * </p>
-     * 
-     * <p>
-     * Examples: 
-     * <ul>
-     * <li>To maintain a constant size of 100x300 pixels: {return width ? 100 : 300}, getSizeFlags(boolean) must 
-     *     return SWT.MIN | SWT.MAX</li>
-     * <li>To grow without constraints: {return preferredResult;}, getSizeFlags(boolean) must return 0.</li>
-     * <li>To enforce a width that is always a multiple of 100 pixels, to a minimum of 100 pixels:
-     * 		<code>
-     *        {
-     *              if (width && preferredResult != INFINITE) {                       
-     *                  int result = preferredResult - ((preferredResult + 50) % 100) + 50;
-     *                  result = Math.max(100, Math.min(result, availableParallel - (availableParallel % 100)));
-     *        
-     *                  return result; 
-     *              }
-     *              return preferredResult;
-     *         }
-     * 		</code>
-     * 	   In this case, getSizeFlags(boolean width) must return (width ? SWT.FILL | SWT.MIN: 0)
-     * </ul>
-     * <li>To maintain a minimum area of 100000 pixels:
-     * 	   <code>
-     *     {return availablePerpendicular < 100 ? 1000 : 100000 / availablePerpendicular;}
-     *     </code>
-     *     getSizeFlags(boolean width) must return SWT.WRAP | SWT.MIN;
-     * </li>
-     * </p>
-     * 
-     * @param width indicates whether a width (=true) or a height (=false) is being computed
-     * @param availableParallel available space. This is a width (pixels) if width == true, and a height (pixels)
-     *  if width == false. A return value larger than this will be ignored. 
-     * @param availablePerpendicular available space perpendicular to the direction being measured
-     * or INFINITE if unbounded (pixels). This
-     * is a height if width == true, or a height if width == false. Implementations will generally ignore this
-     * argument unless they contain wrapping widgets. Note this argument will only contain meaningful information
-     * if the part returns the SWT.WRAP flag from getSizeFlags(width)
-     * @param preferredResult preferred size of the control (pixels, <= availableParallel). Set to 
-     * INFINITE if unknown or unbounded.
-     * @return returns the preferred size of the control (pixels). This is a width if width == true or a height 
-     * if width == false. Callers are responsible for rounding down the return value if it is larger than
-     * availableParallel. If availableParallel is INFINITE, then a return value of INFINITE
-     * is permitted, indicating that the preferred size of the control is unbounded.  
-     * 
-     * @see ISizeProvider#getSizeFlags(boolean) 
-     */
+	 * <p>
+	 * Returns the best size for this part, given the available width and height
+	 * and the workbench's preferred size for the part. Parts can overload this
+	 * to enforce a minimum size, maximum size, or a quantized set of preferred
+	 * sizes. If width == true, this method computes a width in pixels. If width
+	 * == false, this method computes a height. availableParallel and
+	 * availablePerpendicular contain the space available, and preferredParallel
+	 * contains the preferred result.
+	 * </p>
+	 * 
+	 * <p>
+	 * This method returns an answer that is less than or equal to
+	 * availableParallel and as close to preferredParallel as possible. Return
+	 * values larger than availableParallel will be truncated.
+	 * </p>
+	 * 
+	 * <p>
+	 * Most presentations will define a minimum size at all times, and a maximum
+	 * size that only applies when maximized.
+	 * </p>
+	 * 
+	 * <p>
+	 * The getSizeFlags method controls how frequently this method will be
+	 * called and what information will be available when it is. Any subclass
+	 * that specializes this method should also specialize getSizeFlags.
+	 * computePreferredSize(width, INFINITE, someSize, 0) returns the minimum
+	 * size of the control (if any). computePreferredSize(width, INFINITE,
+	 * someSize, INFINITE) returns the maximum size of the control.
+	 * </p>
+	 * 
+	 * <p>
+	 * Examples:
+	 * <ul>
+	 * <li>To maintain a constant size of 100x300 pixels: {return width ? 100 :
+	 * 300}, getSizeFlags(boolean) must return SWT.MIN | SWT.MAX</li>
+	 * <li>To grow without constraints: {return preferredResult;},
+	 * getSizeFlags(boolean) must return 0.</li>
+	 * <li>To enforce a width that is always a multiple of 100 pixels, to a
+	 * minimum of 100 pixels: <code>
+	 *        {
+	 *              if (width && preferredResult != INFINITE) {                       
+	 *                  int result = preferredResult - ((preferredResult + 50) % 100) + 50;
+	 *                  result = Math.max(100, Math.min(result, availableParallel - (availableParallel % 100)));
+	 *        
+	 *                  return result; 
+	 *              }
+	 *              return preferredResult;
+	 *         }
+	 * 		</code> In this case, getSizeFlags(boolean width) must return (width ?
+	 * SWT.FILL | SWT.MIN: 0)
+	 * </ul>
+	 * <li>To maintain a minimum area of 100000 pixels: <code>
+	 *     {return availablePerpendicular < 100 ? 1000 : 100000 / availablePerpendicular;}
+	 *     </code> getSizeFlags(boolean width) must return SWT.WRAP | SWT.MIN;</li>
+	 * </p>
+	 * 
+	 * @param width
+	 *            indicates whether a width (if <code>true</code>) or a height
+	 *            (if <code>false</code>) is being computed
+	 * @param availableParallel
+	 *            available space. This is a width (pixels) if width == true,
+	 *            and a height (pixels) if width == false. A return value larger
+	 *            than this will be ignored.
+	 * @param availablePerpendicular
+	 *            available space perpendicular to the direction being measured
+	 *            or INFINITE if unbounded (pixels). This is a height if width
+	 *            == true, or a height if width == false. Implementations will
+	 *            generally ignore this argument unless they contain wrapping
+	 *            widgets. Note this argument will only contain meaningful
+	 *            information if the part returns the SWT.WRAP flag from
+	 *            getSizeFlags(width)
+	 * @param preferredResult
+	 *            preferred size of the control (pixels, <= availableParallel).
+	 *            Set to INFINITE if unknown or unbounded.
+	 * @return returns the preferred size of the control (pixels). This is a
+	 *         width if width == true or a height if width == false. Callers are
+	 *         responsible for rounding down the return value if it is larger
+	 *         than availableParallel. If availableParallel is INFINITE, then a
+	 *         return value of INFINITE is permitted, indicating that the
+	 *         preferred size of the control is unbounded.
+	 * 
+	 * @see ISizeProvider#getSizeFlags(boolean)
+	 */
     public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredResult);
 }
