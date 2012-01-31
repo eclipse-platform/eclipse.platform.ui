@@ -563,9 +563,7 @@ public class MenuHelper {
 
 		String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
 		String pulldown = element.getAttribute("pulldown"); //$NON-NLS-1$
-		if (style == null || style.length() == 0) {
-			item.setType(ItemType.PUSH);
-		} else if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {
+		if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {
 			item.setType(ItemType.CHECK);
 			IContextFunction generator = createToggleFunction(element);
 			if (generator != null) {
@@ -573,7 +571,11 @@ public class MenuHelper {
 			}
 		} else if (IWorkbenchRegistryConstants.STYLE_RADIO.equals(style)) {
 			item.setType(ItemType.RADIO);
-		} else if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)
+		} else {
+			item.setType(ItemType.PUSH);
+		}
+
+		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)
 				|| (pulldown != null && pulldown.equals("true"))) { //$NON-NLS-1$
 			MRenderedMenu menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
 			ECommandService cs = app.getContext().get(ECommandService.class);
@@ -635,8 +637,6 @@ public class MenuHelper {
 			};
 			menu.setContributionManager(generator);
 			item.setMenu(menu);
-		} else {
-			item.setType(ItemType.PUSH);
 		}
 		
 		item.setElementId(id);
