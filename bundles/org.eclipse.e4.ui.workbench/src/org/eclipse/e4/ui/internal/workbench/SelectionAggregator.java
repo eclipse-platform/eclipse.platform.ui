@@ -158,13 +158,17 @@ public class SelectionAggregator {
 
 					if (activePart == part) {
 						myContext.set(IServiceConstants.ACTIVE_SELECTION, selection);
-						pauseRecording();
-						notifyListeners(part, selection);
-						resumeRecoding();
+						runExternalCode(new Runnable() {
+							public void run() {
+								notifyListeners(part, selection);
+							}
+						});
 					} else {
-						pauseRecording();
-						notifyTargetedListeners(part, selection);
-						resumeRecoding();
+						runExternalCode(new Runnable() {
+							public void run() {
+								notifyTargetedListeners(part, selection);
+							}
+						});
 						// we don't need to keep tracking non-active parts unless
 						// they have targeted listeners
 						String partId = part.getElementId();
