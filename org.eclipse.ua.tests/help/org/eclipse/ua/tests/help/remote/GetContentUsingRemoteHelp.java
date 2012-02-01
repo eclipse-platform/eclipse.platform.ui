@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,14 +13,31 @@ package org.eclipse.ua.tests.help.remote;
 
 import java.net.URL;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.server.WebappManager;
+import org.eclipse.test.OrderedTestSuite;
 
 public class GetContentUsingRemoteHelp extends TestCase {
 	
+
+	public static Test suite() {
+		return new OrderedTestSuite(GetContentUsingRemoteHelp.class, new String[] {
+			"testContentNotFound",
+			"testContentFound",
+			"testContentFoundDe",
+			"testLocalBeatsRemote",
+			"testRemoteHelpPreferredPreference",
+			"testRemoteOrdering",
+			"testRemoteOrderingReversed",
+			"testRemoteUsedIfLocalUnavaliable"
+		});
+	}
+
+
 	private int mode;
 
 	protected void setUp() throws Exception {

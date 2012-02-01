@@ -43,7 +43,7 @@ public class TocZipTest extends TestCase {
 	 * Verify that loose files override those in doc.zip
 	 * @throws IOException
 	 */
-	public void testDocInZipAndBundle() throws IOException {
+	public void testXXXDocInZipAndBundle() throws IOException {
 		final String path = "/org.eclipse.ua.tests/data/help/manual/dz2.html";
 		 String contents  = readPage(path);
 		 assertFalse(contents.indexOf("dz2 from doc.zip") > -1);
