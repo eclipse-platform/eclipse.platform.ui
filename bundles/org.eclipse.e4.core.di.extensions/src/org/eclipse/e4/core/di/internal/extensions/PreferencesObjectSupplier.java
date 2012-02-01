@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,9 +72,9 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		if (descriptor == null)
 			return null;
 		Class<?> descriptorsClass = getDesiredClass(descriptor.getDesiredType());
-		String nodePath = getNodePath(descriptor, requestor.getRequestingObject());
+		String nodePath = getNodePath(descriptor, requestor.getRequestingObjectClass());
 		if (IEclipsePreferences.class.equals(descriptorsClass)) {
-			return (new InstanceScope()).getNode(nodePath);
+			return InstanceScope.INSTANCE.getNode(nodePath);
 		}
 
 		String key = getKey(descriptor);
@@ -132,7 +132,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		return qualifier.value();
 	}
 
-	private String getNodePath(IObjectDescriptor descriptor, Object requestingObject) {
+	private String getNodePath(IObjectDescriptor descriptor, Class<?> requestingObject) {
 		if (descriptor == null)
 			return null;
 		Preference qualifier = descriptor.getQualifier(Preference.class);
@@ -141,7 +141,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		if (nodePath == null || nodePath.length() == 0) {
 			if (requestingObject == null)
 				return null;
-			nodePath = FrameworkUtil.getBundle(requestingObject.getClass()).getSymbolicName();
+			nodePath = FrameworkUtil.getBundle(requestingObject).getSymbolicName();
 		}
 		return nodePath;
 	}
@@ -162,7 +162,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 				}
 			}
 		}
-		final IEclipsePreferences node = new InstanceScope().getNode(nodePath);
+		final IEclipsePreferences node = InstanceScope.INSTANCE.getNode(nodePath);
 		PrefInjectionListener listener = new PrefInjectionListener(node, requestor);
 		node.addPreferenceChangeListener(listener);
 

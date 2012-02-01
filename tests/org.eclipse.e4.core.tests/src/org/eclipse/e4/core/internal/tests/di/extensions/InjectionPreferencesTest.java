@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,6 +132,18 @@ public class InjectionPreferencesTest extends TestCase {
 		}
 	}
 	
+	static class InjectTargetConstructor {
+		public String pref;
+		public String prefNode;
+		
+		@Inject
+		public InjectTargetConstructor(@Preference(TEST_PREFS_KEY) String string, @Preference(value=TEST_PREFS_KEY, nodePath=TEST_PREFS_NODE) String stringNode) {
+			pref = string;
+			prefNode = stringNode;
+			
+		}
+	}
+
 	public void testPreferencesQualifier() throws BackingStoreException {
 		setPreference(TEST_PREFS_KEY, "abc");
 		setPreference(TEST_PREFS_KEY, TEST_PREFS_NODE, "123");
@@ -255,4 +267,22 @@ public class InjectionPreferencesTest extends TestCase {
 		node.flush();
 	}
 	
+	public void testPreferencesConstructor() throws BackingStoreException {
+		setPreference(TEST_PREFS_KEY, "abc");
+		setPreference(TEST_PREFS_KEY, TEST_PREFS_NODE, "123");
+		IEclipseContext context = EclipseContextFactory.create();
+		InjectTargetConstructor target = ContextInjectionFactory.make(InjectTargetConstructor.class, context);
+		// default node
+		assertEquals("abc", target.pref);
+		// specific node
+		assertEquals("123", target.prefNode);
+		
+		// change
+		setPreference(TEST_PREFS_KEY, "xyz");
+		setPreference(TEST_PREFS_KEY, TEST_PREFS_NODE, "456");
+		
+		// values should stay the same - no tracking for constructor injection
+		assertEquals("abc", target.pref);
+		assertEquals("123", target.prefNode);
+	}
 }
