@@ -21,8 +21,6 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  */
 abstract public class RunAndTrack {
 
-	private boolean isRecordingPaused = false;
-
 	/**
 	 * Creates a new instance of trackable computation
 	 */
@@ -43,31 +41,19 @@ abstract public class RunAndTrack {
 	abstract public boolean changed(IEclipseContext context);
 
 	/**
-	 * This method can be called to pause dependency recording while {@link #changed(IEclipseContext)}
-	 * does its processing. This can be especially useful if external code
-	 * has to be called. The method {@link #resumeRecoding()} must be called before RunAndTrack
-	 * returns control to its caller.  
+	 * Use this method to wrap calls to external code. For instance, while in {@link #changed(IEclipseContext)}.
+	 * consider calling listeners from this method. This wrapper will pause dependency recording while
+	 * in the 3rd party code, reducing potential dependency circularity issues.
+	 * @param runnable
 	 */
-	synchronized protected void pauseRecording() {
-		if (isRecordingPaused)
-			return;
-		Stack<Computation> current = EclipseContext.getCalculatedComputations();
-		current.push(null);
-		isRecordingPaused = true;
-	}
-
-	/**
-	 * Call this method to resume dependency recording previously paused by 
-	 * the {@link #pauseRecording()}.
-	 */
-	synchronized protected void resumeRecoding() {
-		if (!isRecordingPaused)
-			return;
-		Stack<Computation> current = EclipseContext.getCalculatedComputations();
-		Computation plug = current.pop();
-		if (plug != null)
-			throw new IllegalArgumentException("Internal error in nested computation processing"); //$NON-NLS-1$
-		isRecordingPaused = false;
+	synchronized protected void runExternalCode(Runnable runnable) {
+		Stack<Computation> computationStack = EclipseContext.getCalculatedComputations();
+		computationStack.push(null);
+		try {
+			runnable.run();
+		} finally {
+			computationStack.pop();
+		}
 	}
 
 }
