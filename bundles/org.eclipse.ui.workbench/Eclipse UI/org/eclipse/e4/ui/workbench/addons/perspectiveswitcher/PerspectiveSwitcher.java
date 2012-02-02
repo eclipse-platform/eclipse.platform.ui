@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -400,9 +400,18 @@ UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
 		if (descriptor != null) {
 			ImageDescriptor desc = descriptor.getImageDescriptor();
 			if (desc != null) {
-				psItem.setImage(desc.createImage(false));
-				foundImage = true;
-				psItem.setToolTipText(persp.getLocalizedLabel());
+				final Image image = desc.createImage(false);
+				if (image != null) {
+					psItem.setImage(image);
+
+					psItem.addListener(SWT.Dispose, new Listener() {
+						public void handleEvent(org.eclipse.swt.widgets.Event event) {
+							image.dispose();
+						}
+					});
+					foundImage = true;
+					psItem.setToolTipText(persp.getLocalizedLabel());
+				}
 			}
 		}
 		if (!foundImage
