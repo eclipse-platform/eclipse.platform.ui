@@ -901,6 +901,10 @@ public class ModelServiceImpl implements EModelService {
 		if (element == null)
 			return NOT_IN_UI;
 
+		// If the element is shared then use its current placeholder
+		if (element.getCurSharedRef() != null)
+			element = element.getCurSharedRef();
+
 		MUIElement curElement = element;
 		while (curElement != null) {
 			MUIElement parent = curElement.getParent();
