@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,12 +30,15 @@ import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
@@ -408,6 +411,8 @@ public class ExtendedMarkersView extends ViewPart {
 
 		createViewer(parent);
 
+		addDoubleClickListener();
+		
 		addPageAndPartSelectionListener();
 
 		addLinkWithEditorSupport();
@@ -451,6 +456,27 @@ public class ExtendedMarkersView extends ViewPart {
 		builder.start();
 	}
 
+	/**
+	 * Attaches an {@link IDoubleClickListener} to expand items that are not openable
+	 * @since 3.8
+	 */
+	private void addDoubleClickListener() {
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				ISelection selection = event.getSelection();
+				if(selection instanceof ITreeSelection) {
+					ITreeSelection ss = (ITreeSelection) selection;
+					if(ss.size() == 1) {
+						Object obj = ss.getFirstElement();
+						if(viewer.isExpandable(obj)) {
+							viewer.setExpandedState(obj, !viewer.getExpandedState(obj));
+						}
+					}
+				}
+			}
+		});
+	}
+	
 	/**
 	 * 
 	 */
@@ -580,7 +606,35 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		};
 	}
-
+	
+	/**
+	 * Returns the complete list of selected {@link IMarker}s from the view.
+	 * 
+	 * @return the complete list of selected {@link IMarker}s or an empty array, never <code>null</code>
+	 * @since 3.8
+	 */
+	IMarker[] getOpenableMarkers() {
+		ISelection selection = viewer.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structured = (IStructuredSelection) selection;
+			Iterator elements = structured.iterator();
+			HashSet result = new HashSet();
+			while (elements.hasNext()) {
+				MarkerSupportItem next = (MarkerSupportItem) elements.next();
+				if (next.isConcrete()) {
+					result.add(((MarkerEntry) next).getMarker());
+				}
+			}
+			if (result.isEmpty()) {
+				return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;
+			}
+			IMarker[] markers = new IMarker[result.size()];
+			result.toArray(markers);
+			return markers;
+		}
+		return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;
+	}
+	
 	/**
 	 * Turn off all filters in the builder.
 	 */
@@ -624,7 +678,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return MarkerSupportItem[]
 	 */
 	MarkerSupportItem[] getAllConcreteItems() {
-
 		MarkerSupportItem[] elements =getActiveViewerInputClone().getElements();
 		Collection allMarkers = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
@@ -1183,17 +1236,15 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 
 	}
-
+	
 	/**
 	 * Open the selected markers
 	 */
 	void openSelectedMarkers() {
-		IMarker[] markers = getSelectedMarkers();
+		IMarker[] markers = getOpenableMarkers();
 		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
 			IWorkbenchPage page = getSite().getPage();
-
-			openMarkerInEditor(marker, page);
+			openMarkerInEditor(markers[i], page);
 		}
 	}
 
