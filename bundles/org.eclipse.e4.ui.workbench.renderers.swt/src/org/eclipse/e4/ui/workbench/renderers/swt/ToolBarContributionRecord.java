@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,17 +54,27 @@ public class ToolBarContributionRecord {
 		updateIsVisible(exprContext);
 		HashSet<ToolBarContributionRecord> recentlyUpdated = new HashSet<ToolBarContributionRecord>();
 		recentlyUpdated.add(this);
+		boolean changed = false;
 		for (MToolBarElement item : generatedElements) {
 			boolean currentVisibility = computeVisibility(recentlyUpdated,
 					item, exprContext);
-			item.setVisible(currentVisibility);
+			if (item.isVisible() != currentVisibility) {
+				item.setVisible(currentVisibility);
+				changed = true;
+			}
 		}
 		for (MToolBarElement item : sharedElements) {
 			boolean currentVisibility = computeVisibility(recentlyUpdated,
 					item, exprContext);
-			item.setVisible(currentVisibility);
+			if (item.isVisible() != currentVisibility) {
+				item.setVisible(currentVisibility);
+				changed = true;
+			}
 		}
-		getManagerForModel().markDirty();
+
+		if (changed) {
+			getManagerForModel().markDirty();
+		}
 	}
 
 	public void updateIsVisible(ExpressionContext exprContext) {

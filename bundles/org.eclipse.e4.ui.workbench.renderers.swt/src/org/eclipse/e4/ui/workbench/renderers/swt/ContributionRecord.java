@@ -91,17 +91,27 @@ public class ContributionRecord {
 		updateIsVisible(exprContext);
 		HashSet<ContributionRecord> recentlyUpdated = new HashSet<ContributionRecord>();
 		recentlyUpdated.add(this);
+		boolean changed = false;
 		for (MMenuElement item : generatedElements) {
 			boolean currentVisibility = computeVisibility(recentlyUpdated,
 					item, exprContext);
-			item.setVisible(currentVisibility);
+			if (item.isVisible() != currentVisibility) {
+				changed = true;
+				item.setVisible(currentVisibility);
+			}
 		}
 		for (MMenuElement item : sharedElements) {
 			boolean currentVisibility = computeVisibility(recentlyUpdated,
 					item, exprContext);
-			item.setVisible(currentVisibility);
+			if (item.isVisible() != currentVisibility) {
+				changed = true;
+				item.setVisible(currentVisibility);
+			}
 		}
-		getManagerForModel().markDirty();
+
+		if (changed) {
+			getManagerForModel().markDirty();
+		}
 	}
 
 	public void collectInfo(ExpressionInfo info) {

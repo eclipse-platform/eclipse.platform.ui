@@ -444,7 +444,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				@Override
 				public boolean changed(IEclipseContext context) {
 					record.updateVisibility(parentContext.getActiveLeaf());
-					manager.update(true);
+					manager.update(false);
 					return true;
 				}
 			});

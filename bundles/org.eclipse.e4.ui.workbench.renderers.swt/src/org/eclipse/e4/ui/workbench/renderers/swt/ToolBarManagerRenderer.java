@@ -356,7 +356,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 					}
 
 					record.updateVisibility(parentContext.getActiveLeaf());
-					manager.update(true);
+					manager.update(false);
 					// disposeToolbarIfNecessary(toolbarModel);
 					return true;
 				}
