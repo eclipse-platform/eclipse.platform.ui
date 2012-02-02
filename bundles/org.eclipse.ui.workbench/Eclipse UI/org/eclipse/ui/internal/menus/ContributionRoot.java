@@ -12,8 +12,10 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.ContributionManager;
@@ -32,15 +34,15 @@ final class ContributionRoot implements
 		IContributionRoot {
 
 	private List topLevelItems = new ArrayList();
-	private List itemsToExpressions = new ArrayList();
-	private WorkbenchMenuService menuService;
+	private Map<IContributionItem, Expression> itemsToExpressions = new HashMap<IContributionItem, Expression>();
+	// private WorkbenchMenuService menuService;
 	Set restriction;
 	private ContributionManager mgr;
 	private AbstractContributionFactory factory;
 
 	public ContributionRoot(IMenuService menuService, Set restriction,
 			ContributionManager mgr, AbstractContributionFactory factory) {
-		this.menuService = (WorkbenchMenuService) menuService;
+		// this.menuService = (WorkbenchMenuService) menuService;
 		this.restriction = restriction;
 		this.mgr = mgr;
 		this.factory = factory;
@@ -57,9 +59,9 @@ final class ContributionRoot implements
 		if (visibleWhen == null) 
 			visibleWhen = AlwaysEnabledExpression.INSTANCE;
 		
-		menuService.registerVisibleWhen(item, visibleWhen, restriction,
-				createIdentifierId(item));
-		itemsToExpressions.add(item);
+		// menuService.registerVisibleWhen(item, visibleWhen, restriction,
+		// createIdentifierId(item));
+		itemsToExpressions.put(item, visibleWhen);
 	}
 
 	/**
@@ -68,7 +70,7 @@ final class ContributionRoot implements
 	 * @param item the item
 	 * @return the identifier
 	 */
-	private String createIdentifierId(IContributionItem item) {
+	String createIdentifierId(IContributionItem item) {
 		String namespace = factory.getNamespace();
 		String identifierID = namespace != null ? namespace + '/'
 				+ item.getId() : null; // create the activity identifier ID. If
@@ -81,15 +83,22 @@ final class ContributionRoot implements
 		return topLevelItems;
 	}
 
+	public Map<IContributionItem, Expression> getVisibleWhen() {
+		return itemsToExpressions;
+	}
+
 	/**
 	 * Unregister all visible when expressions from the menu service.
 	 */
 	public void release() {
-		for (Iterator itemIter = itemsToExpressions.iterator(); itemIter.hasNext();) {
-			IContributionItem item = (IContributionItem) itemIter.next();
-			menuService.unregisterVisibleWhen(item, restriction);
+		for (Iterator<IContributionItem> itemIter = itemsToExpressions.keySet().iterator(); itemIter
+				.hasNext();) {
+			IContributionItem item = itemIter.next();
+			// menuService.unregisterVisibleWhen(item, restriction);
 			item.dispose();
 		}
+		itemsToExpressions.clear();
+		topLevelItems.clear();
 	}
 
 	/*
@@ -105,9 +114,9 @@ final class ContributionRoot implements
 			throw new IllegalArgumentException();
 		if (visibleWhen == null) 
 			visibleWhen = AlwaysEnabledExpression.INSTANCE;
-		menuService.registerVisibleWhen(item, visibleWhen, restriction,
-				createIdentifierId(item));
-		itemsToExpressions.add(item);
+		// menuService.registerVisibleWhen(item, visibleWhen, restriction,
+		// createIdentifierId(item));
+		itemsToExpressions.put(item, visibleWhen);
 	}
 
 	/**

@@ -14,12 +14,16 @@ package org.eclipse.ui.internal.menus;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
+import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
@@ -95,6 +99,7 @@ public class MenuFactoryGenerator {
 				sl.setContext(context);
 				factory.createContributionItems(sl, root);
 				final List contributionItems = root.getItems();
+				final Map<IContributionItem, Expression> itemsToExpression = root.getVisibleWhen();
 				List<MMenuElement> menuElements = new ArrayList<MMenuElement>();
 				for (Object obj : contributionItems) {
 					if (obj instanceof IContributionItem) {
@@ -103,6 +108,13 @@ public class MenuFactoryGenerator {
 								.createRenderedMenuItem();
 						renderedItem.setElementId(ici.getId());
 						renderedItem.setContributionItem(ici);
+						if (itemsToExpression.containsKey(ici)) {
+							final Expression ex = itemsToExpression.get(ici);
+							MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
+							exp.setCoreExpressionId("programmatic." + ici.getId()); //$NON-NLS-1$
+							exp.setCoreExpression(ex);
+							renderedItem.setVisibleWhen(exp);
+						}
 						menuElements.add(renderedItem);
 					}
 				}
@@ -111,11 +123,7 @@ public class MenuFactoryGenerator {
 				// return something disposable
 				return new Runnable() {
 					public void run() {
-						for (Object obj : contributionItems) {
-							if (obj instanceof IContributionItem) {
-								((IContributionItem) obj).dispose();
-							}
-						}
+						root.release();
 					}
 				};
 			}
