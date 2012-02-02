@@ -223,7 +223,7 @@ public class CleanupAddon {
 
 					// Special check: If a perspective goes invisibe we need to make its
 					// PerspectiveStack invisible as well...see bug 369528
-					if (makeParentInvisible || changedObj instanceof MPerspective)
+					if (makeParentInvisible)
 						parent.setVisible(false);
 				}
 			}
@@ -273,6 +273,24 @@ public class CleanupAddon {
 								theContainer.setToBeRendered(false);
 						}
 					});
+				} else {
+					// if there are rendered elements but none are 'visible' we should
+					// make the container invisible as well
+					boolean makeInvisible = true;
+
+					// OK, we have rendered children, are they 'visible' ?
+					for (MUIElement kid : container.getChildren()) {
+						if (!kid.isToBeRendered())
+							continue;
+						if (kid.isVisible()) {
+							makeInvisible = false;
+							break;
+						}
+					}
+
+					if (makeInvisible) {
+						container.setVisible(false);
+					}
 				}
 			}
 		}

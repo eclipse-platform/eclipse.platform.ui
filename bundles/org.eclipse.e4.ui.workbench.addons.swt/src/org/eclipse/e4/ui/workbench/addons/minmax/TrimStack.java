@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,10 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.internal.workbench.swt.ShellActivationListener;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -29,7 +31,6 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
-import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -157,7 +158,7 @@ public class TrimStack {
 			}
 
 			if (changedElement == getLeafPart(minimizedElement)) {
-				fixToolItemSelection((MPart) changedElement);
+				fixToolItemSelection(changedElement);
 				return;
 			}
 
@@ -165,17 +166,22 @@ public class TrimStack {
 		}
 	};
 
-	private void fixToolItemSelection(MPart part) {
+	private void fixToolItemSelection(MUIElement element) {
 		if (trimStackTB == null || trimStackTB.isDisposed())
 			return;
 
 		if (isEditorStack()) {
-			trimStackTB.getItem(1).setSelection(part != null);
-			if (part != null)
-				trimStackTB.getItem(1).setData(part);
+			trimStackTB.getItem(1).setSelection(element != null);
+			if (element != null)
+				trimStackTB.getItem(1).setData(element);
+		} else if (isPerspectiveStack()) {
+			for (ToolItem item : trimStackTB.getItems()) {
+				boolean result = item.getData() == null ? false : item.getData() == element;
+				item.setSelection(result);
+			}
 		} else {
 			for (ToolItem item : trimStackTB.getItems()) {
-				boolean result = item.getData() == null ? false : item.getData() == part;
+				boolean result = item.getData() == null ? false : item.getData() == element;
 				item.setSelection(result);
 			}
 		}
@@ -184,6 +190,10 @@ public class TrimStack {
 
 	private boolean isEditorStack() {
 		return minimizedElement instanceof MPlaceholder;
+	}
+
+	private boolean isPerspectiveStack() {
+		return minimizedElement instanceof MPerspectiveStack;
 	}
 
 	private MPart getLeafPart(MUIElement element) {
@@ -298,8 +308,11 @@ public class TrimStack {
 		public void widgetSelected(SelectionEvent e) {
 			ToolItem toolItem = (ToolItem) e.widget;
 			MUIElement uiElement = (MUIElement) toolItem.getData();
-			if (toolItem.getSelection()) {
+			if (toolItem.getSelection() && uiElement instanceof MPart) {
 				partService.activate((MPart) uiElement);
+			} else if (uiElement instanceof MPerspective) {
+				uiElement.getParent().setSelectedElement(uiElement);
+				showStack(true);
 			} else {
 				// Get partService to activate a part visible in the presentation
 				partService.requestActivation();
@@ -334,7 +347,7 @@ public class TrimStack {
 	}
 
 	@PostConstruct
-	void createWidget(Composite parent, MToolControl me) {
+	void createWidget(Composite parent, MToolControl me, CSSRenderingUtils cssUtils) {
 		if (minimizedElement == null) {
 			minimizedElement = findElement();
 		}
@@ -433,39 +446,41 @@ public class TrimStack {
 			}
 			return image;
 		}
+
 		return null;
 	}
 
-	private MPart getPart(MStackElement element) {
-		if (element instanceof MPart) {
-			return (MPart) element;
-		}
-		return (MPart) ((MPlaceholder) element).getRef();
+	private MUILabel getLabelElement(MUIElement element) {
+		if (element instanceof MPlaceholder)
+			element = ((MPlaceholder) element).getRef();
+
+		return (MUILabel) (element instanceof MUILabel ? element : null);
 	}
 
 	private void updateTrimStackItems() {
 		// Prevent exceptions on shutdown
-		if (trimStackTB == null || trimStackTB.isDisposed())
+		if (trimStackTB == null || trimStackTB.isDisposed() || minimizedElement.getWidget() == null)
 			return;
 
-		if (isEditorStack()) {
-			if (trimStackTB.getItemCount() == 1) {
-				MUIElement data = getLeafPart(minimizedElement);
-				ToolItem ti = new ToolItem(trimStackTB, SWT.CHECK);
-				ti.setToolTipText(Messages.TrimStack_SharedAreaTooltip);
-				ti.setImage(getLayoutImage());
-				ti.setData(data);
-				ti.addSelectionListener(toolItemSelectionListener);
-			}
-		} else if (minimizedElement instanceof MPartStack) {
-			MPartStack theStack = (MPartStack) minimizedElement;
-			if (theStack.getWidget() == null) {
-				return;
-			}
+		// Remove any current items except the 'restore' button
+		while (trimStackTB.getItemCount() > 1) {
+			trimStackTB.getItem(trimStackTB.getItemCount() - 1).dispose();
+		}
+
+		if (isEditorStack() && trimStackTB.getItemCount() == 1) {
+			MUIElement data = getLeafPart(minimizedElement);
+			ToolItem ti = new ToolItem(trimStackTB, SWT.CHECK);
+			ti.setToolTipText(Messages.TrimStack_SharedAreaTooltip);
+			ti.setImage(getLayoutImage());
+			ti.setData(data);
+			ti.addSelectionListener(toolItemSelectionListener);
+		} else if (minimizedElement instanceof MGenericStack<?>) {
+			// Handle *both* PartStacks and PerspectiveStacks here...
+			MGenericStack<?> theStack = (MGenericStack<?>) minimizedElement;
 
 			// check to see if this stack has any valid elements
 			boolean check = false;
-			for (MStackElement stackElement : theStack.getChildren()) {
+			for (MUIElement stackElement : theStack.getChildren()) {
 				if (stackElement.isToBeRendered()) {
 					check = true;
 					break;
@@ -478,21 +493,16 @@ public class TrimStack {
 				return;
 			}
 
-			// Remove any current items except the 'restore' button
-			while (trimStackTB.getItemCount() > 1) {
-				trimStackTB.getItem(trimStackTB.getItemCount() - 1).dispose();
-			}
-
-			for (MStackElement stackElement : theStack.getChildren()) {
+			for (MUIElement stackElement : theStack.getChildren()) {
 				if (!stackElement.isToBeRendered()) {
 					continue;
 				}
 
-				MPart part = getPart(stackElement);
+				MUILabel labelElement = getLabelElement(stackElement);
 				ToolItem newItem = new ToolItem(trimStackTB, SWT.CHECK);
-				newItem.setData(part);
-				newItem.setImage(getImage(part));
-				newItem.setToolTipText(getLabel(part));
+				newItem.setData(labelElement);
+				newItem.setImage(getImage(labelElement));
+				newItem.setToolTipText(getLabel(labelElement));
 				newItem.addSelectionListener(toolItemSelectionListener);
 			}
 		}

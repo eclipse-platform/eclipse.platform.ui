@@ -58,6 +58,8 @@ public class MinMaxAddon {
 	 */
 	private static final String ID_EDITOR_AREA = "org.eclipse.ui.editorss"; //$NON-NLS-1$
 
+	private static final String GLOBAL_CACHE_ID = "Global";
+
 	static String ID_SUFFIX = "(minimized)"; //$NON-NLS-1$
 
 	// tags representing the min/max state (h
@@ -550,15 +552,84 @@ public class MinMaxAddon {
 		MWindow win = getWindowFor(element);
 		MPerspective persp = modelService.getActivePerspective(win);
 
+		List<MUIElement> elementsToMinimize = new ArrayList<MUIElement>();
+		int loc = modelService.getElementLocation(element);
+		if ((loc & EModelService.OUTSIDE_PERSPECTIVE) != 0) {
+			// Minimize all other global stacks
+			List<MPartStack> globalStacks = modelService.findElements(win, null, MPartStack.class,
+					null, EModelService.OUTSIDE_PERSPECTIVE);
+			for (MPartStack gStack : globalStacks) {
+				if (gStack == element || !gStack.isToBeRendered())
+					continue;
+
+				if (gStack.getWidget() != null && !gStack.getTags().contains(MINIMIZED)) {
+					elementsToMinimize.add(gStack);
+				}
+			}
+
+			// Minimize the Perspective Stack
+			if (persp != null) {
+				MUIElement perspStack = persp.getParent();
+				if (perspStack.getElementId() == null || perspStack.getElementId().length() == 0)
+					perspStack.setElementId("PerspectiveStack"); //$NON-NLS-1$
+
+				elementsToMinimize.add(perspStack);
+			}
+		} else {
+			List<MPartStack> stacks = modelService.findElements(persp == null ? win : persp, null,
+					MPartStack.class, null, EModelService.PRESENTATION);
+			for (MPartStack theStack : stacks) {
+				if (theStack == element || !theStack.isToBeRendered())
+					continue;
+
+				// Exclude stacks in DW's
+				if (getWindowFor(theStack) != win)
+					continue;
+
+				loc = modelService.getElementLocation(theStack);
+				if (loc != EModelService.IN_SHARED_AREA && theStack.getWidget() != null
+						&& !theStack.getTags().contains(MINIMIZED)) {
+					elementsToMinimize.add(theStack);
+				}
+			}
+
+			// Find the editor 'area'
+			if (persp != null) {
+				MPlaceholder eaPlaceholder = (MPlaceholder) modelService
+						.find(ID_EDITOR_AREA, persp);
+				if (element != eaPlaceholder && eaPlaceholder != null
+						&& eaPlaceholder.isToBeRendered()) {
+					elementsToMinimize.add(eaPlaceholder);
+				}
+			}
+		}
+
 		Shell hostShell = (Shell) modelService.getTopLevelWindowFor(element).getWidget();
 		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
 		AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
 		engine.schedule();
 
+		// Restore any currently maximized element
+		restoreMaximizedElement(element, win);
+
+		for (MUIElement toMinimize : elementsToMinimize) {
+			toMinimize.getTags().add(MINIMIZED);
+			toMinimize.getTags().add(MINIMIZED_BY_ZOOM);
+		}
+
+		adjustCTFButtons(element);
+	}
+
+	/**
+	 * Restore any currently maximized element (except the one we're in the process of maximizing
+	 * 
+	 * @param element
+	 * @param win
+	 */
+	private void restoreMaximizedElement(final MUIElement element, MWindow win) {
 		List<String> maxTag = new ArrayList<String>();
 		maxTag.add(MAXIMIZED);
-		List<MUIElement> curMax = modelService.findElements(persp == null ? win : persp, null,
-				MUIElement.class, maxTag);
+		List<MUIElement> curMax = modelService.findElements(win, null, MUIElement.class, maxTag);
 		if (curMax.size() > 0) {
 			for (MUIElement maxElement : curMax) {
 				if (maxElement == element)
@@ -571,35 +642,6 @@ public class MinMaxAddon {
 				}
 			}
 		}
-
-		List<MPartStack> stacks = modelService.findElements(persp == null ? win : persp, null,
-				MPartStack.class, null, EModelService.PRESENTATION);
-		for (MPartStack theStack : stacks) {
-			if (theStack == element || !theStack.isToBeRendered())
-				continue;
-
-			// Exclude stacks in DW's
-			if (getWindowFor(theStack) != win)
-				continue;
-
-			int loc = modelService.getElementLocation(theStack);
-			if (loc != EModelService.IN_SHARED_AREA && theStack.getWidget() != null
-					&& !theStack.getTags().contains(MINIMIZED)) {
-				theStack.getTags().add(MINIMIZED_BY_ZOOM);
-				theStack.getTags().add(MINIMIZED);
-			}
-		}
-
-		// Find the editor 'area'
-		if (persp != null) {
-			MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA, persp);
-			if (element != eaPlaceholder && eaPlaceholder != null && eaPlaceholder.isToBeRendered()) {
-				eaPlaceholder.getTags().add(MINIMIZED_BY_ZOOM);
-				eaPlaceholder.getTags().add(MINIMIZED);
-			}
-		}
-
-		adjustCTFButtons(element);
 	}
 
 	/**
@@ -645,8 +687,23 @@ public class MinMaxAddon {
 		// Find the editor 'area'
 		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA,
 				persp == null ? win : persp);
-		if (element != eaPlaceholder && eaPlaceholder != null) {
+		if (element != eaPlaceholder && eaPlaceholder != null
+				&& eaPlaceholder.getTags().contains(MINIMIZED_BY_ZOOM)) {
 			eaPlaceholder.getTags().remove(MINIMIZED);
+		}
+
+		// Find the Perspective Stack
+		int loc = modelService.getElementLocation(element);
+		if ((loc & EModelService.OUTSIDE_PERSPECTIVE) != 0) {
+			List<MPerspectiveStack> psList = modelService.findElements(win, null,
+					MPerspectiveStack.class, null);
+			if (psList.size() == 1) {
+				MPerspectiveStack perspStack = psList.get(0);
+				if (element != perspStack && perspStack != null
+						&& perspStack.getTags().contains(MINIMIZED_BY_ZOOM)) {
+					perspStack.getTags().remove(MINIMIZED);
+				}
+			}
 		}
 
 		adjustCTFButtons(element);
@@ -699,9 +756,18 @@ public class MinMaxAddon {
 		}
 	}
 
-	private int getCachedIndex(MUIElement element) {
+	private String getCachedInfo(MUIElement element) {
+		String cacheId = GLOBAL_CACHE_ID;
 		MPerspective persp = modelService.getPerspectiveFor(element);
-		String cache = minMaxAddon.getPersistedState().get(persp.getElementId());
+		if (persp != null)
+			cacheId = persp.getElementId();
+		String cacheInfo = minMaxAddon.getPersistedState().get(cacheId);
+
+		return cacheInfo;
+	}
+
+	private int getCachedIndex(MUIElement element) {
+		String cache = getCachedInfo(element);
 		if (cache == null)
 			return -1;
 
@@ -716,8 +782,7 @@ public class MinMaxAddon {
 	}
 
 	private SideValue getCachedBar(MUIElement element) {
-		MPerspective persp = modelService.getPerspectiveFor(element);
-		String cache = minMaxAddon.getPersistedState().get(persp.getElementId());
+		String cache = getCachedInfo(element);
 		if (cache == null)
 			return null;
 

@@ -65,6 +65,7 @@ import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
@@ -123,6 +124,7 @@ import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
+import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
@@ -3254,11 +3256,6 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		}
 	}
 
-    
-
-
-
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -3313,6 +3310,12 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		}
 
 		modelPerspective.setLabel(perspective.getLabel());
+
+		ImageDescriptor imageDescriptor = perspective.getImageDescriptor();
+		if (imageDescriptor != null) {
+			String imageURL = MenuHelper.getImageUrl(imageDescriptor);
+			modelPerspective.setIconURI(imageURL);
+		}
 
 		if (lastPerspective != null) {
 			legacyWindow.firePerspectiveDeactivated(this, lastPerspective);
