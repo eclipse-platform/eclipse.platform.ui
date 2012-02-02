@@ -152,14 +152,18 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		Composite c = (Composite) part.getWidget();
 
 		// Do we already have a label?
-		if (c.getChildren().length == 2) {
+		if (c.getChildren().length == 3) {
 			Label label = (Label) c.getChildren()[0];
 			if (description == null)
 				description = ""; //$NON-NLS-1$
 			// hide the label if there is no text to show
-			label.setVisible(!description.equals("")); //$NON-NLS-1$
+			boolean hasText = !description.equals(""); //$NON-NLS-1$
+			label.setVisible(hasText);
 			label.setText(description);
 			label.setToolTipText(description);
+
+			// also hide the separator
+			c.getChildren()[1].setVisible(hasText);
 			c.layout();
 		} else if (c.getChildren().length == 1) {
 			c.setLayout(new Layout() {
@@ -176,26 +180,34 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 					if (composite.getChildren().length == 1) {
 						composite.getChildren()[0].setBounds(composite
 								.getBounds());
-					} else if (composite.getChildren().length == 2) {
+					} else if (composite.getChildren().length == 3) {
 						Label label = (Label) composite.getChildren()[0];
-						Control partCtrl = composite.getChildren()[1];
+						Label separator = (Label) composite.getChildren()[1];
+						Control partCtrl = composite.getChildren()[2];
 
 						// if the label is not visible, give it a zero size
 						int labelHeight = label.isVisible() ? label
 								.computeSize(bounds.width, SWT.DEFAULT).y : 0;
 						label.setBounds(0, 0, bounds.width, labelHeight);
 
-						partCtrl.setBounds(0, labelHeight, bounds.width,
-								bounds.height - labelHeight);
+						int separatorHeight = separator.isVisible() ? separator
+								.computeSize(bounds.width, SWT.DEFAULT).y : 0;
+						separator.setBounds(0, labelHeight, bounds.width,
+								separatorHeight);
+
+						partCtrl.setBounds(0, labelHeight + separatorHeight,
+								bounds.width, bounds.height - labelHeight
+										- separatorHeight);
 					}
 				}
 			});
 
-			Control partCtrl = c.getChildren()[0];
+			Label separator = new Label(c, SWT.SEPARATOR | SWT.HORIZONTAL);
+			separator.moveAbove(null);
 			Label label = new Label(c, SWT.NONE);
 			label.setText(description);
 			label.setToolTipText(description);
-			label.moveAbove(partCtrl);
+			label.moveAbove(null);
 			c.layout();
 		}
 	}
