@@ -12,30 +12,16 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
-import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.ContributionRecord;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.services.ServiceLocator;
-import org.eclipse.ui.menus.AbstractContributionFactory;
-import org.eclipse.ui.menus.IMenuService;
 
 /**
  * @since 3.102.0
@@ -80,54 +66,7 @@ public class MenuFactoryGenerator {
 		}
 		menuContribution.getTags().add(filter);
 		menuContribution.setVisibleWhen(MenuHelper.getVisibleWhen(configElement));
-		ContextFunction generator = new ContextFunction() {
-
-			@Override
-			public Object compute(IEclipseContext context) {
-				AbstractContributionFactory factory;
-				try {
-					factory = (AbstractContributionFactory) configElement
-							.createExecutableExtension("class"); //$NON-NLS-1$
-				} catch (CoreException e) {
-					WorkbenchPlugin.log(e);
-					return null;
-				}
-				final IMenuService menuService = context.get(IMenuService.class);
-				final ContributionRoot root = new ContributionRoot(menuService,
-						new HashSet<Object>(), null, factory);
-				ServiceLocator sl = new ServiceLocator();
-				sl.setContext(context);
-				factory.createContributionItems(sl, root);
-				final List contributionItems = root.getItems();
-				final Map<IContributionItem, Expression> itemsToExpression = root.getVisibleWhen();
-				List<MMenuElement> menuElements = new ArrayList<MMenuElement>();
-				for (Object obj : contributionItems) {
-					if (obj instanceof IContributionItem) {
-						IContributionItem ici = (IContributionItem) obj;
-						MRenderedMenuItem renderedItem = MenuFactoryImpl.eINSTANCE
-								.createRenderedMenuItem();
-						renderedItem.setElementId(ici.getId());
-						renderedItem.setContributionItem(ici);
-						if (itemsToExpression.containsKey(ici)) {
-							final Expression ex = itemsToExpression.get(ici);
-							MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
-							exp.setCoreExpressionId("programmatic." + ici.getId()); //$NON-NLS-1$
-							exp.setCoreExpression(ex);
-							renderedItem.setVisibleWhen(exp);
-						}
-						menuElements.add(renderedItem);
-					}
-				}
-				context.set(List.class, menuElements);
-
-				// return something disposable
-				return new Runnable() {
-					public void run() {
-						root.release();
-					}
-				};
-			}
-		};
+		ContextFunction generator = new ContributionFactoryGenerator(configElement);
 		menuContribution.getTransientData().put(ContributionRecord.FACTORY, generator);
 		menuContributions.add(menuContribution);
 	}
