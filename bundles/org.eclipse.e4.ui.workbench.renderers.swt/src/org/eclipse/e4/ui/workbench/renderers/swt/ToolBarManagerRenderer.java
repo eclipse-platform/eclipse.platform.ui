@@ -565,7 +565,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 */
 	private void modelProcessSwitch(ToolBarManager parentManager,
 			MToolBarElement childME) {
-		if (childME instanceof MHandledToolItem) {
+		if (childME instanceof MOpaqueToolItem) {
+			MOpaqueToolItem itemModel = (MOpaqueToolItem) childME;
+			processOpaqueItem(parentManager, itemModel);
+		} else if (childME instanceof MHandledToolItem) {
 			MHandledToolItem itemModel = (MHandledToolItem) childME;
 			processHandledItem(parentManager, itemModel);
 		} else if (childME instanceof MDirectToolItem) {
@@ -662,6 +665,23 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		ci.setVisible(itemModel.isVisible());
 		addToManager(parentManager, itemModel, ci);
 		linkModelToContribution(itemModel, ci);
+	}
+
+	void processOpaqueItem(ToolBarManager parentManager,
+			MOpaqueToolItem itemModel) {
+		IContributionItem ici = getContribution(itemModel);
+		if (ici != null) {
+			return;
+		}
+		Object obj = itemModel.getOpaqueItem();
+		if (obj instanceof IContributionItem) {
+			ici = (IContributionItem) obj;
+		} else {
+			return;
+		}
+		ici.setVisible(itemModel.isVisible());
+		addToManager(parentManager, itemModel, ici);
+		linkModelToContribution(itemModel, ici);
 	}
 
 	/**
@@ -789,4 +809,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
+	public IEclipseContext getContext(MUIElement el) {
+		return super.getContext(el);
+	}
 }

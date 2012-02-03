@@ -21,9 +21,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -34,13 +35,16 @@ import org.eclipse.ui.menus.IMenuService;
 public class ContributionFactoryGenerator extends ContextFunction {
 	private AbstractContributionFactory factoryImpl;
 	private IConfigurationElement configElement;
+	private int type;
 
-	public ContributionFactoryGenerator(AbstractContributionFactory factory) {
+	public ContributionFactoryGenerator(AbstractContributionFactory factory, int type) {
 		this.factoryImpl = factory;
+		this.type = type;
 	}
 
-	public ContributionFactoryGenerator(IConfigurationElement element) {
+	public ContributionFactoryGenerator(IConfigurationElement element, int type) {
 		configElement = element;
+		this.type = type;
 	}
 
 	private AbstractContributionFactory getFactory() {
@@ -74,21 +78,21 @@ public class ContributionFactoryGenerator extends ContextFunction {
 		factory.createContributionItems(sl, root);
 		final List contributionItems = root.getItems();
 		final Map<IContributionItem, Expression> itemsToExpression = root.getVisibleWhen();
-		List<MMenuElement> menuElements = new ArrayList<MMenuElement>();
+		List<MUIElement> menuElements = new ArrayList<MUIElement>();
 		for (Object obj : contributionItems) {
 			if (obj instanceof IContributionItem) {
 				IContributionItem ici = (IContributionItem) obj;
-				MOpaqueMenuItem opaqueItem = MenuFactoryImpl.eINSTANCE.createOpaqueMenuItem();
-				opaqueItem.setElementId(ici.getId());
-				opaqueItem.setOpaqueItem(ici);
-				if (itemsToExpression.containsKey(ici)) {
-					final Expression ex = itemsToExpression.get(ici);
-					MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
-					exp.setCoreExpressionId("programmatic." + ici.getId()); //$NON-NLS-1$
-					exp.setCoreExpression(ex);
-					opaqueItem.setVisibleWhen(exp);
+				MUIElement opaqueItem = createUIElement(ici);
+				if (opaqueItem != null) {
+					if (itemsToExpression.containsKey(ici)) {
+						final Expression ex = itemsToExpression.get(ici);
+						MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
+						exp.setCoreExpressionId("programmatic." + ici.getId()); //$NON-NLS-1$
+						exp.setCoreExpression(ex);
+						opaqueItem.setVisibleWhen(exp);
+					}
+					menuElements.add(opaqueItem);
 				}
-				menuElements.add(opaqueItem);
 			}
 		}
 		context.set(List.class, menuElements);
@@ -101,4 +105,27 @@ public class ContributionFactoryGenerator extends ContextFunction {
 		};
 	}
 
+	private MUIElement createUIElement(IContributionItem ici) {
+		switch (type) {
+		case 0:
+			return createMenuItem(ici);
+		case 1:
+			return createToolItem(ici);
+		}
+		return null;
+	}
+
+	private MUIElement createMenuItem(IContributionItem ici) {
+		MOpaqueMenuItem opaqueItem = MenuFactoryImpl.eINSTANCE.createOpaqueMenuItem();
+		opaqueItem.setElementId(ici.getId());
+		opaqueItem.setOpaqueItem(ici);
+		return opaqueItem;
+	}
+
+	private MUIElement createToolItem(IContributionItem ici) {
+		MOpaqueToolItem opaqueItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
+		opaqueItem.setElementId(ici.getId());
+		opaqueItem.setOpaqueItem(ici);
+		return opaqueItem;
+	}
 }

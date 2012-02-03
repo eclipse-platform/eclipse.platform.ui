@@ -12,8 +12,12 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
@@ -28,12 +32,17 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.ToolBarManager;
 
 public class ToolBarContributionRecord {
+	public static final String FACTORY = "ToolBarContributionFactory"; //$NON-NLS-1$
+	static final String STATIC_CONTEXT = "ToolBarContributionFactoryContext"; //$NON-NLS-1$
+
 	MToolBar toolbarModel;
 	MToolBarContribution toolbarContribution;
 	ArrayList<MToolBarElement> generatedElements = new ArrayList<MToolBarElement>();
 	HashSet<MToolBarElement> sharedElements = new HashSet<MToolBarElement>();
 	ToolBarManagerRenderer renderer;
 	boolean isVisible = true;
+	private IEclipseContext infoContext;
+	private Runnable factoryDispose;
 
 	public ToolBarContributionRecord(MToolBar model,
 			MToolBarContribution contribution, ToolBarManagerRenderer renderer) {
@@ -128,9 +137,18 @@ public class ToolBarContributionRecord {
 			return false;
 		}
 
-		for (MToolBarElement item : toolbarContribution.getChildren()) {
-			MToolBarElement copy = (MToolBarElement) EcoreUtil
-					.copy((EObject) item);
+		final List<MToolBarElement> copyElements;
+		if (toolbarContribution.getTransientData().get(FACTORY) != null) {
+			copyElements = mergeFactoryIntoModel();
+		} else {
+			copyElements = new ArrayList<MToolBarElement>();
+			for (MToolBarElement item : toolbarContribution.getChildren()) {
+				MToolBarElement copy = (MToolBarElement) EcoreUtil
+						.copy((EObject) item);
+				copyElements.add(copy);
+			}
+		}
+		for (MToolBarElement copy : copyElements) {
 			// if a visibleWhen clause is defined, the item should not be
 			// visible until the clause has been evaluated and returned 'true'
 			copy.setVisible(!anyVisibleWhen());
@@ -159,6 +177,36 @@ public class ToolBarContributionRecord {
 		return true;
 	}
 
+	/**
+	 * @return
+	 */
+	private List<MToolBarElement> mergeFactoryIntoModel() {
+		Object obj = toolbarContribution.getTransientData().get(FACTORY);
+		if (!(obj instanceof IContextFunction)) {
+			return Collections.EMPTY_LIST;
+		}
+		IEclipseContext staticContext = getStaticContext();
+		staticContext.remove(List.class);
+		factoryDispose = (Runnable) ((IContextFunction) obj)
+				.compute(staticContext);
+		return staticContext.get(List.class);
+	}
+
+	private IEclipseContext getStaticContext() {
+		if (infoContext == null) {
+			IEclipseContext parentContext = renderer.getContext(toolbarModel);
+			if (parentContext != null) {
+				infoContext = parentContext.createChild(STATIC_CONTEXT);
+			} else {
+				infoContext = EclipseContextFactory.create(STATIC_CONTEXT);
+			}
+			ContributionsAnalyzer.populateModelInterfaces(toolbarModel,
+					infoContext, toolbarModel.getClass().getInterfaces());
+			infoContext.set(ToolBarManagerRenderer.class, renderer);
+		}
+		return infoContext;
+	}
+
 	MToolBarSeparator findExistingSeparator(String id) {
 		if (id == null) {
 			return null;
@@ -183,6 +231,10 @@ public class ToolBarContributionRecord {
 			if (array.isEmpty()) {
 				toolbarModel.getChildren().remove(shared);
 			}
+		}
+		if (factoryDispose != null) {
+			factoryDispose.run();
+			factoryDispose = null;
 		}
 	}
 

@@ -21,9 +21,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.e4.ui.workbench.renderers.swt.ContributionRecord;
+import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarContributionRecord;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.ISourceProvider;
@@ -42,7 +44,7 @@ public class WorkbenchMenuService implements IMenuService {
 	// private ServiceLocator serviceLocator;
 	private ExpressionContext legacyContext;
 	private MenuPersistence persistence;
-	private Map<AbstractContributionFactory, MMenuContribution> factoriesToContributions = new HashMap<AbstractContributionFactory, MMenuContribution>();
+	private Map<AbstractContributionFactory, Object> factoriesToContributions = new HashMap<AbstractContributionFactory, Object>();
 
 	/**
 	 * @param serviceLocator
@@ -78,13 +80,37 @@ public class WorkbenchMenuService implements IMenuService {
 		persistence.dispose();
 	}
 
+	private boolean inToolbar(MenuLocationURI location) {
+		return location.getScheme().startsWith("toolbar"); //$NON-NLS-1$
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.menus.IMenuService#addContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
 	 */
 	public void addContributionFactory(final AbstractContributionFactory factory) {
+		MenuLocationURI location = new MenuLocationURI(factory.getLocation());
+
+		if (inToolbar(location)) {
+			String path = location.getPath();
+			if (path.equals(MenuAdditionCacheEntry.MAIN_TOOLBAR)
+					|| path.equals(MenuAdditionCacheEntry.TRIM_COMMAND1)
+					|| path.equals(MenuAdditionCacheEntry.TRIM_COMMAND2)
+					|| path.equals(MenuAdditionCacheEntry.TRIM_VERTICAL1)
+					|| path.equals(MenuAdditionCacheEntry.TRIM_VERTICAL2)
+					|| path.equals(MenuAdditionCacheEntry.TRIM_STATUS)) {
+				// processTrimChildren(trimContributions, toolBarContributions,
+				// configElement);
+			} else {
+				String query = location.getQuery();
+				if (query == null || query.length() == 0) {
+					query = "after=additions"; //$NON-NLS-1$
+				}
+				processToolbarChildren(factory, location, path, query);
+			}
+			return;
+		}
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
 		menuContribution.setElementId(factory.getNamespace() + ":" + factory.hashCode()); //$NON-NLS-1$
-		MenuLocationURI location = new MenuLocationURI(factory.getLocation());
 
 		if ("org.eclipse.ui.popup.any".equals(location.getPath())) { //$NON-NLS-1$
 			menuContribution.setParentId("popup"); //$NON-NLS-1$
@@ -102,21 +128,41 @@ public class WorkbenchMenuService implements IMenuService {
 			filter = ContributionsAnalyzer.MC_POPUP;
 		}
 		menuContribution.getTags().add(filter);
-		ContextFunction generator = new ContributionFactoryGenerator(factory);
+		ContextFunction generator = new ContributionFactoryGenerator(factory, 0);
 		menuContribution.getTransientData().put(ContributionRecord.FACTORY, generator);
 		factoriesToContributions.put(factory, menuContribution);
 		MApplication app = e4Context.get(MApplication.class);
 		app.getMenuContributions().add(menuContribution);
 	}
 
+	private void processToolbarChildren(AbstractContributionFactory factory,
+			MenuLocationURI location, String parentId, String position) {
+		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
+				.createToolBarContribution();
+		toolBarContribution.setElementId(factory.getNamespace() + ":" + factory.hashCode()); //$NON-NLS-1$
+		toolBarContribution.setParentId(parentId);
+		toolBarContribution.setPositionInParent(position);
+		toolBarContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
+
+		ContextFunction generator = new ContributionFactoryGenerator(factory, 1);
+		toolBarContribution.getTransientData().put(ToolBarContributionRecord.FACTORY, generator);
+		factoriesToContributions.put(factory, toolBarContribution);
+		MApplication app = e4Context.get(MApplication.class);
+		app.getToolBarContributions().add(toolBarContribution);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
 	 */
 	public void removeContributionFactory(AbstractContributionFactory factory) {
-		MMenuContribution menuContribution;
-		if ((menuContribution = factoriesToContributions.remove(factory)) != null) {
+		Object contribution;
+		if ((contribution = factoriesToContributions.remove(factory)) != null) {
 			MApplication app = e4Context.get(MApplication.class);
-			app.getMenuContributions().remove(menuContribution);
+			if (contribution instanceof MMenuContribution) {
+				app.getMenuContributions().remove(contribution);
+			} else if (contribution instanceof MToolBarContribution) {
+				app.getToolBarContributions().remove(contribution);
+			}
 		}
 	}
 

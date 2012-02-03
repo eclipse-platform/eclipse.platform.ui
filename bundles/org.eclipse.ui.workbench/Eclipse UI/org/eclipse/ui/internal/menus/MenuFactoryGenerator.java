@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.ContributionRecord;
+import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarContributionRecord;
 
 /**
  * @since 3.102.0
@@ -41,9 +42,32 @@ public class MenuFactoryGenerator {
 		this.location = new MenuLocationURI(attribute);
 	}
 
+	private boolean inToolbar() {
+		return location.getScheme().startsWith("toolbar"); //$NON-NLS-1$
+	}
+
 	public void mergeIntoModel(ArrayList<MMenuContribution> menuContributions,
 			ArrayList<MToolBarContribution> toolBarContributions,
 			ArrayList<MTrimContribution> trimContributions) {
+		if (inToolbar()) {
+			String path = location.getPath();
+			if (path.equals(MenuAdditionCacheEntry.MAIN_TOOLBAR)
+					|| path.equals(MenuAdditionCacheEntry.TRIM_COMMAND1)
+					|| path.equals(MenuAdditionCacheEntry.TRIM_COMMAND2)
+					|| path.equals(MenuAdditionCacheEntry.TRIM_VERTICAL1)
+					|| path.equals(MenuAdditionCacheEntry.TRIM_VERTICAL2)
+					|| path.equals(MenuAdditionCacheEntry.TRIM_STATUS)) {
+				// processTrimChildren(trimContributions, toolBarContributions,
+				// configElement);
+			} else {
+				String query = location.getQuery();
+				if (query == null || query.length() == 0) {
+					query = "after=additions"; //$NON-NLS-1$
+				}
+				processToolbarChildren(toolBarContributions, configElement, path, query);
+			}
+			return;
+		}
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
 		String idContrib = MenuHelper.getId(configElement);
 		if (idContrib != null && idContrib.length() > 0) {
@@ -66,8 +90,26 @@ public class MenuFactoryGenerator {
 		}
 		menuContribution.getTags().add(filter);
 		menuContribution.setVisibleWhen(MenuHelper.getVisibleWhen(configElement));
-		ContextFunction generator = new ContributionFactoryGenerator(configElement);
+		ContextFunction generator = new ContributionFactoryGenerator(configElement, 0);
 		menuContribution.getTransientData().put(ContributionRecord.FACTORY, generator);
 		menuContributions.add(menuContribution);
+	}
+
+	private void processToolbarChildren(ArrayList<MToolBarContribution> contributions,
+			IConfigurationElement toolbar, String parentId, String position) {
+		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
+				.createToolBarContribution();
+		String idContrib = MenuHelper.getId(toolbar);
+		if (idContrib != null && idContrib.length() > 0) {
+			toolBarContribution.setElementId(idContrib);
+		}
+		toolBarContribution.setParentId(parentId);
+		toolBarContribution.setPositionInParent(position);
+		toolBarContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
+
+		ContextFunction generator = new ContributionFactoryGenerator(configElement, 1);
+		toolBarContribution.getTransientData().put(ToolBarContributionRecord.FACTORY, generator);
+
+		contributions.add(toolBarContribution);
 	}
 }
