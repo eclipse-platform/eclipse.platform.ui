@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.tests.workbench.TargetedView;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
@@ -5948,6 +5949,52 @@ public class EPartServiceTest extends UITest {
 
 	public void testShowPart_Bug328078_ACTIVATE() {
 		testShowPart_Bug328078(PartState.ACTIVATE);
+	}
+
+	public void testShowPart_Bug370026_CREATE() {
+		testShowPart_Bug370026(PartState.CREATE);
+	}
+
+	public void testShowPart_Bug370026_VISIBLE() {
+		testShowPart_Bug370026(PartState.VISIBLE);
+	}
+
+	public void testShowPart_Bug370026_ACTIVATE() {
+		testShowPart_Bug370026(PartState.ACTIVATE);
+	}
+
+	private void testShowPart_Bug370026(PartState partState) {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SimpleView");
+		window.getChildren().add(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.TargetedView");
+		window.getChildren().add(partB);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		partC.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SimpleView");
+		partStack.getChildren().add(partC);
+		partStack.setSelectedElement(partC);
+
+		// setup the context
+		initialize();
+
+		applicationContext.set(PartState.class, partState);
+		applicationContext.set(TargetedView.TARGET_MARKER, partC);
+
+		// render the window
+		getEngine().createGui(window);
+
+		TargetedView view = (TargetedView) partB.getObject();
+		assertTrue(view.passed);
 	}
 
 	private void testHidePart_Bug325148(boolean force) {

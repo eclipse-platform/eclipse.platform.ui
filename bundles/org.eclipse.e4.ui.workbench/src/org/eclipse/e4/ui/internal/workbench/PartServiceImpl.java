@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -311,7 +311,7 @@ public class PartServiceImpl implements EPartService {
 
 			MUIElement oldSelectedElement = parent.getSelectedElement();
 
-			modelService.bringToTop(part);
+			delegateBringToTop(part);
 
 			// check to make sure that the currently selected element is actually valid
 			if (oldSelectedElement != currentElement
@@ -554,7 +554,7 @@ public class PartServiceImpl implements EPartService {
 		// unwanted bundle activation
 		recordStackActivation(part);
 
-		modelService.bringToTop(part);
+		delegateBringToTop(part);
 		window.getParent().setSelectedElement(window);
 
 		partActivationHistory.activate(part, activateBranch);
@@ -572,6 +572,11 @@ public class PartServiceImpl implements EPartService {
 						"Failed to grant focus via DI to part ({0})", part.getElementId(), e); //$NON-NLS-1$
 			}
 		}
+	}
+
+	private void delegateBringToTop(MPart part) {
+		modelService.bringToTop(part);
+		createElement(part);
 	}
 
 	/**
@@ -958,26 +963,37 @@ public class PartServiceImpl implements EPartService {
 			}
 			return addedPart;
 		case CREATE:
-			MPlaceholder placeholder = addedPart.getCurSharedRef();
-			if (placeholder != null) {
-				addedPart.setToBeRendered(true);
-				createElement(placeholder);
-			} else {
-				createElement(addedPart);
-			}
+			createElement(addedPart);
 			return addedPart;
 		}
 		return addedPart;
 	}
 
 	private void createElement(MUIElement element) {
+		MPlaceholder placeholder = element.getCurSharedRef();
+		if (placeholder != null) {
+			element.setToBeRendered(true);
+			element = placeholder;
+		}
+		
 		// render this element
 		element.setToBeRendered(true);
+
 		// render all of its parents
+		MUIElement parentWindow = workbenchWindow;
+		// determine the top parent that needs to be forcibly created
+		MUIElement target = null;
 		MElementContainer<MUIElement> parent = element.getParent();
-		while (parent != null) {
+		while (parent != null && parent != parentWindow) {
 			parent.setToBeRendered(true);
+			if (parent.getWidget() == null) {
+				target = parent;
+			}
 			parent = parent.getParent();
+		}
+		if (target != null) {
+			// force the element's parent hierarchy to be created
+			engine.createGui(target);
 		}
 		// ask the engine to create the element
 		engine.createGui(element);

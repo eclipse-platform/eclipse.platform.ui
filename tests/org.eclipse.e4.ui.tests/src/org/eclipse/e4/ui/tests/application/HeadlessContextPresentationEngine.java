@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -125,17 +126,19 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				Object element = event
 						.getProperty(UIEvents.EventTags.NEW_VALUE);
 				if (element instanceof MUIElement) {
-					MUIElement uiElement = (MUIElement) element;
-					IEclipseContext parentContext = getParentContext(uiElement);
 					Object parent = event
 							.getProperty(UIEvents.EventTags.ELEMENT);
-					createGui(uiElement, parent, parentContext);
+					if (parent instanceof MGenericStack) {
+						MUIElement uiElement = (MUIElement) element;
+						IEclipseContext parentContext = getParentContext(uiElement);
+						createGui(uiElement, parent, parentContext);
 
-					if (parent instanceof MPerspectiveStack) {
-						MPerspective perspective = (MPerspective) uiElement;
-						adjustPlaceholders(perspective);
-						parentContext.get(EPartService.class)
-								.switchPerspective(perspective);
+						if (parent instanceof MPerspectiveStack) {
+							MPerspective perspective = (MPerspective) uiElement;
+							adjustPlaceholders(perspective);
+							parentContext.get(EPartService.class)
+									.switchPerspective(perspective);
+						}
 					}
 				}
 			}
@@ -161,6 +164,13 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED,
 				toBeRenderedHandler);
+	}
+
+	@PreDestroy
+	void preDestroy() {
+		eventBroker.unsubscribe(childHandler);
+		eventBroker.unsubscribe(activeChildHandler);
+		eventBroker.unsubscribe(toBeRenderedHandler);
 	}
 
 	private void adjustPlaceholders(MUIElement element) {
@@ -211,6 +221,16 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			// if the element is not under the application, it should have a
 			// parent widget
 			Assert.isNotNull(parentWidget);
+		}
+
+		if (element.getWidget() != null) {
+			if (element instanceof MContext) {
+				IEclipseContext context = ((MContext) element).getContext();
+				if (context.getParent() != parentContext) {
+					context.setParent(parentContext);
+				}
+			}
+			return element.getWidget();
 		}
 
 		element.setRenderer(this);
@@ -370,6 +390,9 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				context.dispose();
 			}
 		}
+
+		element.setRenderer(null);
+		element.setWidget(null);
 	}
 
 	private void removePlaceholder(MPlaceholder placeholder) {
