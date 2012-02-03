@@ -9,17 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal;
+package org.eclipse.e4.ui.internal.workbench.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
@@ -63,22 +63,27 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 	private ISWTResourceUtilities utils;
 
-	private MPartStack input;
+	private MElementContainer<?> input;
 
 	private EPartService partService;
 
-	public BasicPartList(Shell parent, int shellStyle, int treeStyler, EPartService partService,
-			MPartStack input, ISWTResourceUtilities utils) {
+	private boolean alphabetical;
+
+	public BasicPartList(Shell parent, int shellStyle, int treeStyler,
+			EPartService partService, MElementContainer<?> input,
+			ISWTResourceUtilities utils, boolean alphabetical) {
 		super(parent, shellStyle, treeStyler);
 		this.partService = partService;
 		this.input = input;
 		this.utils = utils;
+		this.alphabetical = alphabetical;
 	}
 
 	private Image getLabelImage(String iconURI) {
 		Image image = images.get(iconURI);
 		if (image == null) {
-			ImageDescriptor descriptor = utils.imageDescriptorFromURI(URI.createURI(iconURI));
+			ImageDescriptor descriptor = utils.imageDescriptorFromURI(URI
+					.createURI(iconURI));
 			image = descriptor.createImage();
 			images.put(iconURI, image);
 		}
@@ -87,10 +92,13 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 	protected TableViewer createTableViewer(Composite parent, int style) {
 		Table table = new Table(parent, SWT.SINGLE | (style & ~SWT.MULTI));
-		table.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+		table.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false,
+				false));
 		TableViewer tableViewer = new TableViewer(table);
 		tableViewer.setComparator(new ViewerComparator());
-		tableViewer.addFilter(new NamePatternFilter());
+		if (alphabetical) {
+			tableViewer.addFilter(new NamePatternFilter());
+		}
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setLabelProvider(new BasicStackListLabelProvider());
 
@@ -116,7 +124,8 @@ public class BasicPartList extends AbstractTableInformationControl {
 				element = ((MPlaceholder) element).getRef();
 			}
 
-			if (element.isToBeRendered() && element.isVisible() && element instanceof MPart) {
+			if (element.isToBeRendered() && element.isVisible()
+					&& element instanceof MPart) {
 				list.add(element);
 			}
 		}

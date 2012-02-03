@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.e4.ui.internal.workbench.renderers.swt;
 
+import org.eclipse.e4.ui.workbench.swt.internal.copy.StringMatcher;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -48,7 +49,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
  * @since 3.0
@@ -64,14 +64,16 @@ public abstract class AbstractTableInformationControl {
 		/*
 		 * (non-Javadoc) Method declared on ViewerFilter.
 		 */
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
 			StringMatcher matcher = getMatcher();
 			if (matcher == null || !(viewer instanceof TableViewer)) {
 				return true;
 			}
 			TableViewer tableViewer = (TableViewer) viewer;
 
-			String matchName = ((ILabelProvider) tableViewer.getLabelProvider()).getText(element);
+			String matchName = ((ILabelProvider) tableViewer.getLabelProvider())
+					.getText(element);
 
 			if (matchName == null) {
 				return false;
@@ -111,7 +113,8 @@ public abstract class AbstractTableInformationControl {
 	 * @param controlStyle
 	 *            the additional styles for the control
 	 */
-	public AbstractTableInformationControl(Shell parent, int shellStyle, int controlStyle) {
+	public AbstractTableInformationControl(Shell parent, int shellStyle,
+			int controlStyle) {
 		fShell = new Shell(parent, shellStyle);
 		fShell.setLayout(new FillLayout());
 
@@ -191,11 +194,12 @@ public abstract class AbstractTableInformationControl {
 				if (divCount == ignoreEventCount) {
 					divCount = 0;
 				}
-				if (table.equals(e.getSource()) & ++divCount == ignoreEventCount) {
+				if (table.equals(e.getSource())
+						& ++divCount == ignoreEventCount) {
 					Object o = table.getItem(new Point(e.x, e.y));
 					if (fLastItem == null ^ o == null) {
-						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(
-								SWT.CURSOR_HAND));
+						table.setCursor(o == null ? null : table.getDisplay()
+								.getSystemCursor(SWT.CURSOR_HAND));
 					}
 					if (o instanceof TableItem && lastY != e.y) {
 						lastY = e.y;
@@ -204,14 +208,16 @@ public abstract class AbstractTableInformationControl {
 							table.setSelection(new TableItem[] { fLastItem });
 						} else if (e.y < itemHeightdiv4) {
 							// Scroll up
-							Item item = fTableViewer.scrollUp(e.x + tableLoc.x, e.y + tableLoc.y);
+							Item item = fTableViewer.scrollUp(e.x + tableLoc.x,
+									e.y + tableLoc.y);
 							if (item instanceof TableItem) {
 								fLastItem = (TableItem) item;
 								table.setSelection(new TableItem[] { fLastItem });
 							}
 						} else if (e.y > tableHeight - itemHeightdiv4) {
 							// Scroll down
-							Item item = fTableViewer.scrollDown(e.x + tableLoc.x, e.y + tableLoc.y);
+							Item item = fTableViewer.scrollDown(e.x
+									+ tableLoc.x, e.y + tableLoc.y);
 							if (item instanceof TableItem) {
 								fLastItem = (TableItem) item;
 								table.setSelection(new TableItem[] { fLastItem });
@@ -240,13 +246,15 @@ public abstract class AbstractTableInformationControl {
 					}
 				}
 				if (e.button == 3) {
-					TableItem tItem = fTableViewer.getTable().getItem(new Point(e.x, e.y));
+					TableItem tItem = fTableViewer.getTable().getItem(
+							new Point(e.x, e.y));
 					if (tItem != null) {
 						Menu menu = new Menu(fTableViewer.getTable());
 						MenuItem mItem = new MenuItem(menu, SWT.NONE);
-						mItem.setText(WorkbenchMessages.PartPane_close);
+						mItem.setText(SWTRenderersMessages.menuClose);
 						mItem.addSelectionListener(new SelectionAdapter() {
-							public void widgetSelected(SelectionEvent selectionEvent) {
+							public void widgetSelected(
+									SelectionEvent selectionEvent) {
 								removeSelectedItems();
 							}
 						});
@@ -330,8 +338,8 @@ public abstract class AbstractTableInformationControl {
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		gc.dispose();
 
-		data.heightHint = org.eclipse.jface.dialogs.Dialog.convertHeightInCharsToPixels(
-				fontMetrics, 1);
+		data.heightHint = org.eclipse.jface.dialogs.Dialog
+				.convertHeightInCharsToPixels(fontMetrics, 1);
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
 		fFilterText.setLayoutData(data);
@@ -349,8 +357,8 @@ public abstract class AbstractTableInformationControl {
 					break;
 				case SWT.ARROW_UP:
 					fTableViewer.getTable().setFocus();
-					fTableViewer.getTable()
-							.setSelection(fTableViewer.getTable().getItemCount() - 1);
+					fTableViewer.getTable().setSelection(
+							fTableViewer.getTable().getItemCount() - 1);
 					break;
 				case SWT.ESC:
 					dispose();
@@ -364,7 +372,8 @@ public abstract class AbstractTableInformationControl {
 		});
 
 		// Horizontal separator line
-		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
+		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL
+				| SWT.LINE_DOT);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		return fFilterText;
@@ -428,7 +437,8 @@ public abstract class AbstractTableInformationControl {
 	 * Implementers can modify
 	 */
 	protected Object getSelectedElement() {
-		return ((IStructuredSelection) fTableViewer.getSelection()).getFirstElement();
+		return ((IStructuredSelection) fTableViewer.getSelection())
+				.getFirstElement();
 	}
 
 	protected abstract void gotoSelectedElement();
@@ -455,7 +465,8 @@ public abstract class AbstractTableInformationControl {
 	}
 
 	private Object findElement(TableItem[] items) {
-		ILabelProvider labelProvider = (ILabelProvider) fTableViewer.getLabelProvider();
+		ILabelProvider labelProvider = (ILabelProvider) fTableViewer
+				.getLabelProvider();
 		for (int i = 0; i < items.length; i++) {
 			Object element = items[i].getData();
 			if (fStringMatcher == null) {
@@ -502,7 +513,8 @@ public abstract class AbstractTableInformationControl {
 		int tableMaxHeight = fComposite.getDisplay().getBounds().height / 2;
 		// removes padding if necessary
 		int tableHeight = (tableSize.y <= tableMaxHeight) ? tableSize.y
-				- viewerTable.getItemHeight() - viewerTable.getItemHeight() / 2 : tableMaxHeight;
+				- viewerTable.getItemHeight() - viewerTable.getItemHeight() / 2
+				: tableMaxHeight;
 		((GridData) viewerTable.getLayoutData()).heightHint = tableHeight;
 		Point fCompSize = fComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		fComposite.setSize(fCompSize);

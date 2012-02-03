@@ -17,6 +17,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
@@ -38,9 +39,11 @@ import org.eclipse.e4.ui.widgets.CTabFolder2Adapter;
 import org.eclipse.e4.ui.widgets.CTabFolderEvent;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -68,6 +71,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -732,6 +736,12 @@ public class StackRenderer extends LazyStackRenderer {
 			public void close(CTabFolderEvent event) {
 				event.doit = closePart(event.item);
 			}
+
+			@Override
+			public void showList(CTabFolderEvent event) {
+				event.doit = false;
+				showAvailableItems(stack, ctf);
+			}
 		};
 		ctf.addCTabFolder2Listener(closeListener);
 
@@ -761,6 +771,54 @@ public class StackRenderer extends LazyStackRenderer {
 				}
 			}
 		});
+	}
+
+	private void showAvailableItems(MElementContainer<?> stack, CTabFolder ctf) {
+		IEclipseContext ctxt = getContext(stack);
+		final BasicPartList editorList = new BasicPartList(ctf.getShell(),
+				SWT.ON_TOP, SWT.V_SCROLL | SWT.H_SCROLL,
+				ctxt.get(EPartService.class), stack,
+				(ISWTResourceUtilities) ctxt.get(IResourceUtilities.class),
+				getInitialMRUValue(ctf));
+		editorList.setInput();
+
+		Point size = editorList.computeSizeHint();
+		editorList.setSize(size.x, size.y);
+
+		editorList.setLocation(ctf.toDisplay(getChevronLocation(ctf)));
+		editorList.setVisible(true);
+		editorList.setFocus();
+		editorList.getShell().addListener(SWT.Deactivate, new Listener() {
+			public void handleEvent(org.eclipse.swt.widgets.Event event) {
+				editorList.getShell().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						editorList.dispose();
+					}
+				});
+			}
+		});
+	}
+
+	private Point getChevronLocation(CTabFolder tabFolder) {
+		// get the last visible item
+		int numItems = tabFolder.getItemCount();
+		CTabItem item = null;
+		for (int i = 0; i < numItems; i++) {
+			CTabItem tempItem = tabFolder.getItem(i);
+			if (tempItem.isShowing()) {
+				item = tempItem;
+			}
+		}
+
+		// if we have no visible tabs, abort.
+		if (item == null) {
+			return new Point(0, 0);
+		}
+
+		Rectangle itemBounds = item.getBounds();
+		int x = itemBounds.x + itemBounds.width;
+		int y = itemBounds.y + itemBounds.height;
+		return new Point(x, y);
 	}
 
 	private boolean closePart(Widget widget) {

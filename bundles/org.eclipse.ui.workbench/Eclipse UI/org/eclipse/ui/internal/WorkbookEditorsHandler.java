@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -59,7 +60,8 @@ public class WorkbookEditorsHandler extends AbstractHandler {
 				EPartService partService = (EPartService) HandlerUtil.getVariableChecked(event,
 						EPartService.class.getName());
 				final BasicPartList editorList = new BasicPartList(workbenchWindow.getShell(),
-						SWT.ON_TOP, SWT.V_SCROLL | SWT.H_SCROLL, partService, activeStack, utils);
+						SWT.ON_TOP, SWT.V_SCROLL | SWT.H_SCROLL, partService, activeStack, utils,
+						true);
 				editorList.setInput();
 
 				Point size = editorList.computeSizeHint();
