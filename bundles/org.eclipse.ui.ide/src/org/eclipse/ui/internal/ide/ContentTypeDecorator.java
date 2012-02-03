@@ -49,7 +49,8 @@ public class ContentTypeDecorator implements ILightweightLabelDecorator {
 
 		if (hasEditorAssociationOverrides()) {
 			IEditorDescriptor d = IDE.getDefaultEditor(file);
-			image = d.getImageDescriptor();
+			if (d != null)
+				image = d.getImageDescriptor();
 		} else {
 			IContentDescription contentDescription= null;
 			try {
