@@ -400,11 +400,14 @@ public final class ContributionsAnalyzer {
 		private String parentId;
 		private String position;
 		private MCoreExpression vexp;
+		private Object factory;
 
-		public Key(String parentId, String position, List<String> tags, MCoreExpression vexp) {
+		public Key(String parentId, String position, List<String> tags, MCoreExpression vexp,
+				Object factory) {
 			this.parentId = parentId;
 			this.position = position;
 			this.vexp = vexp;
+			this.factory = factory;
 			if (tags.contains("scheme:menu")) { //$NON-NLS-1$
 				tag = 1;
 			} else if (tags.contains("scheme:popup")) { //$NON-NLS-1$
@@ -434,7 +437,8 @@ public final class ContributionsAnalyzer {
 			Object exp1 = vexp == null ? null : vexp.getCoreExpression();
 			Object exp2 = other.vexp == null ? null : other.vexp.getCoreExpression();
 			return Util.equals(parentId, other.parentId) && Util.equals(position, other.position)
-					&& getSchemeTag() == other.getSchemeTag() && Util.equals(exp1, exp2);
+					&& getSchemeTag() == other.getSchemeTag() && Util.equals(exp1, exp2)
+					&& Util.equals(factory, other.factory);
 		}
 
 		@Override
@@ -445,6 +449,7 @@ public final class ContributionsAnalyzer {
 				hc = hc * 87 + Util.hashCode(position);
 				hc = hc * 87 + getSchemeTag();
 				hc = hc * 87 + Util.hashCode(exp1);
+				hc = hc * 87 + Util.hashCode(factory);
 			}
 			return hc;
 		}
@@ -457,11 +462,12 @@ public final class ContributionsAnalyzer {
 	}
 
 	static class MenuKey extends Key {
+		static final String FACTORY = "ContributionFactory"; //$NON-NLS-1$
 		private MMenuContribution contribution;
 
 		public MenuKey(MMenuContribution mc) {
 			super(mc.getParentId(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc
-					.getVisibleWhen());
+					.getVisibleWhen(), mc.getTransientData().get(FACTORY));
 			this.contribution = mc;
 			mc.setWidget(this);
 		}
@@ -472,11 +478,12 @@ public final class ContributionsAnalyzer {
 	}
 
 	static class ToolBarKey extends Key {
+		static final String FACTORY = "ToolBarContributionFactory"; //$NON-NLS-1$
 		private MToolBarContribution contribution;
 
 		public ToolBarKey(MToolBarContribution mc) {
 			super(mc.getParentId(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc
-					.getVisibleWhen());
+					.getVisibleWhen(), mc.getTransientData().get(FACTORY));
 			this.contribution = mc;
 			mc.setWidget(this);
 		}
@@ -491,7 +498,7 @@ public final class ContributionsAnalyzer {
 
 		public TrimKey(MTrimContribution mc) {
 			super(mc.getParentId(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc
-					.getVisibleWhen());
+					.getVisibleWhen(), null);
 			this.contribution = mc;
 			mc.setWidget(this);
 		}

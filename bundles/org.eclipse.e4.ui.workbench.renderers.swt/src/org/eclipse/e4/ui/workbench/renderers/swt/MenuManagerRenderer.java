@@ -555,6 +555,9 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		if (childME instanceof MRenderedMenuItem) {
 			MRenderedMenuItem itemModel = (MRenderedMenuItem) childME;
 			processRenderedItem(menuManager, itemModel);
+		} else if (childME instanceof MOpaqueMenuItem) {
+			MOpaqueMenuItem itemModel = (MOpaqueMenuItem) childME;
+			processOpaqueItem(menuManager, itemModel);
 		} else if (childME instanceof MHandledMenuItem) {
 			MHandledMenuItem itemModel = (MHandledMenuItem) childME;
 			processHandledItem(menuManager, itemModel);
@@ -594,6 +597,22 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		} else {
 			// TODO potentially log the state, we've got something we're not
 			// happy with
+			return;
+		}
+		ici.setVisible(itemModel.isVisible());
+		addToManager(parentManager, itemModel, ici);
+		linkModelToContribution(itemModel, ici);
+	}
+
+	void processOpaqueItem(MenuManager parentManager, MOpaqueMenuItem itemModel) {
+		IContributionItem ici = getContribution(itemModel);
+		if (ici != null) {
+			return;
+		}
+		Object obj = itemModel.getOpaqueItem();
+		if (obj instanceof IContributionItem) {
+			ici = (IContributionItem) obj;
+		} else {
 			return;
 		}
 		ici.setVisible(itemModel.isVisible());

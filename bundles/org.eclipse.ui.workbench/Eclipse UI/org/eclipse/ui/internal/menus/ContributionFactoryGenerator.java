@@ -23,7 +23,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -78,17 +78,17 @@ public class ContributionFactoryGenerator extends ContextFunction {
 		for (Object obj : contributionItems) {
 			if (obj instanceof IContributionItem) {
 				IContributionItem ici = (IContributionItem) obj;
-				MRenderedMenuItem renderedItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
-				renderedItem.setElementId(ici.getId());
-				renderedItem.setContributionItem(ici);
+				MOpaqueMenuItem opaqueItem = MenuFactoryImpl.eINSTANCE.createOpaqueMenuItem();
+				opaqueItem.setElementId(ici.getId());
+				opaqueItem.setOpaqueItem(ici);
 				if (itemsToExpression.containsKey(ici)) {
 					final Expression ex = itemsToExpression.get(ici);
 					MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
 					exp.setCoreExpressionId("programmatic." + ici.getId()); //$NON-NLS-1$
 					exp.setCoreExpression(ex);
-					renderedItem.setVisibleWhen(exp);
+					opaqueItem.setVisibleWhen(exp);
 				}
-				menuElements.add(renderedItem);
+				menuElements.add(opaqueItem);
 			}
 		}
 		context.set(List.class, menuElements);
