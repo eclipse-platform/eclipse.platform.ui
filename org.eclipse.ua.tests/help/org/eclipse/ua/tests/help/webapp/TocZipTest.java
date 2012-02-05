@@ -34,16 +34,16 @@ public class TocZipTest extends TestCase {
 	}
 
 	public void testDocInZipOnly() throws IOException {
-		final String path = "/org.eclipse.ua.tests/data/help/manual/dz1.html";
-		 String contents  = readPage(path);
-		 assertTrue(contents.indexOf("dz1 from doc.zip") > -1);
+		final String path= "/org.eclipse.ua.tests/data/help/manual/dz1.html";
+		String contents= readPage(path);
+		assertTrue(contents.indexOf("dz1 from doc.zip") > -1);
 	}
-	
+
 	/**
 	 * Verify that loose files override those in doc.zip
 	 * @throws IOException
 	 */
-	public void testXXXDocInZipAndBundle() throws IOException {
+	public void testDocInZipAndBundle() throws IOException {
 		final String path = "/org.eclipse.ua.tests/data/help/manual/dz2.html";
 		 String contents  = readPage(path);
 		 assertFalse(contents.indexOf("dz2 from doc.zip") > -1);
@@ -54,10 +54,7 @@ public class TocZipTest extends TestCase {
 			IOException {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/topic" + path);
-		URLConnection connection= url.openConnection();
-		connection.setConnectTimeout(5000);
-		connection.setReadTimeout(5000);
-		InputStream is= connection.getInputStream();
+		InputStream is = url.openStream();
 		BufferedInputStream buffered = new BufferedInputStream(is);
 	    ByteArrayOutputStream os = new ByteArrayOutputStream();
 	    int result = buffered.read();
