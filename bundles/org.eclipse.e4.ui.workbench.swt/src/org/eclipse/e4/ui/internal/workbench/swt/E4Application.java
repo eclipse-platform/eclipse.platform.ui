@@ -53,12 +53,6 @@ import org.eclipse.e4.ui.internal.workbench.SelectionServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.WorkbenchLogger;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -362,64 +356,7 @@ public class E4Application implements IApplication {
 		Resource resource = handler.loadMostRecentModel();
 		theApp = (MApplication) resource.getContents().get(0);
 
-		upgradeToMArea_M3(eclipseContext, theApp);
-
 		return theApp;
-	}
-
-	/**
-	 * Upgrades the provided application's model to use MAreas for the shared
-	 * area.
-	 * <p>
-	 * The shared area was originally represented by an MPartSashContainer. In
-	 * M3, the MArea model was introduced and is now the representation of the
-	 * shared area.
-	 * </p>
-	 */
-	private void upgradeToMArea_M3(IEclipseContext applicationContext,
-			MApplication application) {
-		EModelService service = applicationContext.get(EModelService.class);
-
-		// check all the windows of this application
-		for (MWindow window : application.getChildren()) {
-			// retrieve its shared elements
-			List<MUIElement> sharedElements = window.getSharedElements();
-			for (MUIElement shared : sharedElements) {
-				// look for a shared editor area that's an MPartSashContainer
-				// but not an MArea
-				if ("org.eclipse.ui.editorss".equals(shared.getElementId()) //$NON-NLS-1$
-						&& shared instanceof MPartSashContainer
-						&& !(shared instanceof MArea)) {
-					// create an MArea
-					MArea area = AdvancedFactoryImpl.eINSTANCE.createArea();
-					// initialize it
-					area.setLabel("Editor Area"); //$NON-NLS-1$
-					area.setElementId(shared.getElementId());
-
-					// add the original as a children of this area
-					area.getChildren().add((MPartSashContainerElement) shared);
-					// update references
-					area.setCurSharedRef(shared.getCurSharedRef());
-					// reset the original
-					shared.setCurSharedRef(null);
-
-					// update the shared elements list
-					sharedElements.remove(shared);
-					sharedElements.add(area);
-
-					// look for all placeholders with the editor area id
-					for (MPlaceholder placeholder : service.findElements(
-							window, "org.eclipse.ui.editorss", //$NON-NLS-1$
-							MPlaceholder.class, null)) {
-						// if we were pointing at the original, change it
-						if (placeholder.getRef() == shared) {
-							placeholder.setRef(area);
-						}
-					}
-					break;
-				}
-			}
-		}
 	}
 
 	private String getArgValue(String argName, IApplicationContext appContext,
