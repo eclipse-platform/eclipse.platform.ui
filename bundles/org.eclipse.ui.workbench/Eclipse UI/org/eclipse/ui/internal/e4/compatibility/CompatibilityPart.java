@@ -183,10 +183,6 @@ public abstract class CompatibilityPart {
 	}
 
 	private String computeLabel() {
-		if (wrapped instanceof ErrorEditorPart || wrapped instanceof ErrorViewPart) {
-			return getReference().getTitle();
-		}
-		
 		if (wrapped instanceof IWorkbenchPart2) {
 			String label = ((IWorkbenchPart2) wrapped).getPartName();
 			return Util.safeString(label);
@@ -270,9 +266,12 @@ public abstract class CompatibilityPart {
 			return;
 		}
 
-		part.setLabel(computeLabel());
-		part.setTooltip(wrapped.getTitleToolTip());
-		updateImages(part);
+		// Only update 'valid' parts
+		if (!(wrapped instanceof ErrorEditorPart) && !(wrapped instanceof ErrorViewPart)) {
+			part.setLabel(computeLabel());
+			part.setTooltip(wrapped.getTitleToolTip());
+			updateImages(part);
+		}
 
 		if (wrapped instanceof ISaveablePart) {
 			part.setDirty(((ISaveablePart) wrapped).isDirty());
