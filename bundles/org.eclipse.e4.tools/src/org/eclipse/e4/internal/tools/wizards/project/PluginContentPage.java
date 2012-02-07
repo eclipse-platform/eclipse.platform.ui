@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.osgi.framework.Version;
 
 /**
  * Content wizard page for the New Plugin Project wizard (page 2)
@@ -359,5 +360,28 @@ public class PluginContentPage extends ContentPage {
 			return super.canFlipToNextPage() && templatePage.isAnyTemplateAvailable();
 		}
 		return super.canFlipToNextPage();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#computeId()
+	 */
+	protected String computeId() {
+		String id = super.computeId();
+		// In addition to removed illegal characters, the xmi model does not recognize plug-in uris if they end in a version number
+		// See PlatformURLPluginConnection.parse()
+		int underScore = id.lastIndexOf('_');
+		Version version;
+		while (underScore >= 0) {
+			try {
+				version = Version.parseVersion(id.substring(underScore + 1));
+				// name cannot end with a valid version, remove it
+				id = id.substring(0, underScore);
+			} catch (IllegalArgumentException iae) {
+				// valid name so far, continue to next underscore
+			}
+			underScore = id.lastIndexOf('_', underScore - 1);
+			
+		}
+		return id;
 	}
 }

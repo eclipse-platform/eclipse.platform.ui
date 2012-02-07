@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Soyatec(http://www.soyatec.com) and others.
+ * Copyright (c) 2006, 2012 Soyatec(http://www.soyatec.com) and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Soyatec - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -129,7 +130,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		fContentPage = new PluginContentPage(
 				"page2", fProjectProvider, fMainPage, fPluginData); //$NON-NLS-1$
 
-		fApplicationPage = new NewApplicationWizardPage(fProjectProvider);
+		fApplicationPage = new NewApplicationWizardPage(fProjectProvider, fPluginData);
 
 		addPage(fContentPage);
 		addPage(fApplicationPage);
@@ -347,7 +348,8 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 				|| map.get(NewApplicationWizardPage.PRODUCT_NAME) == null)
 			return;
 
-		String projectName = map.get(NewApplicationWizardPage.PRODUCT_NAME);
+		// If the project has invalid characters, the plug-in name would replace them with underscores, product name does the same
+		String pluginName = map.get(NewApplicationWizardPage.PRODUCT_NAME);
 		String xmiPath = map
 				.get(NewApplicationWizardPage.APPLICATION_XMI_PROPERTY);
 
@@ -451,23 +453,23 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 			// Create Quit command
 			MCommand quitCommand = createCommand("quitCommand", "QuitHandler",
-					"Ctrl+Q", projectName, fragment, application);
+					"Ctrl+Q", pluginName, fragment, application);
 
 			MCommand openCommand = createCommand("openCommand", "OpenHandler",
-					"Ctrl+O", projectName, fragment, application);
+					"Ctrl+O", pluginName, fragment, application);
 
 			MCommand saveCommand = createCommand("saveCommand", "SaveHandler",
-					"Ctrl+S", projectName, fragment, application);
+					"Ctrl+S", pluginName, fragment, application);
 
 			MCommand aboutCommand = createCommand("aboutCommand",
-					"AboutHandler", "Ctrl+A", projectName, fragment,
+					"AboutHandler", "Ctrl+A", pluginName, fragment,
 					application);
 
 			MTrimmedWindow mainWindow = MBasicFactory.INSTANCE
 					.createTrimmedWindow();
 			application.getChildren().add(mainWindow);
 			{
-				mainWindow.setLabel(projectName);
+				mainWindow.setLabel(pluginName);
 				mainWindow.setWidth(500);
 				mainWindow.setHeight(400);
 
@@ -486,7 +488,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						fileMenuItem.getChildren().add(menuItemOpen);
 						menuItemOpen.setLabel("Open");
 						menuItemOpen.setIconURI("platform:/plugin/"
-								+ project.getName() + "/icons/sample.gif");
+								+ pluginName + "/icons/sample.gif");
 						menuItemOpen.setCommand(openCommand);
 
 						MHandledMenuItem menuItemSave = MMenuFactory.INSTANCE
@@ -494,7 +496,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						fileMenuItem.getChildren().add(menuItemSave);
 						menuItemSave.setLabel("Save");
 						menuItemSave.setIconURI("platform:/plugin/"
-								+ project.getName() + "/icons/save_edit.gif");
+								+ pluginName + "/icons/save_edit.gif");
 						menuItemSave.setCommand(saveCommand);
 
 						MHandledMenuItem menuItemQuit = MMenuFactory.INSTANCE
@@ -555,14 +557,14 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 								.createHandledToolItem();
 						toolBar.getChildren().add(toolItemOpen);
 						toolItemOpen.setIconURI("platform:/plugin/"
-								+ project.getName() + "/icons/sample.gif");
+								+ pluginName + "/icons/sample.gif");
 						toolItemOpen.setCommand(openCommand);
 
 						MHandledToolItem toolItemSave = MMenuFactory.INSTANCE
 								.createHandledToolItem();
 						toolBar.getChildren().add(toolItemSave);
 						toolItemSave.setIconURI("platform:/plugin/"
-								+ project.getName() + "/icons/save_edit.gif");
+								+ pluginName + "/icons/save_edit.gif");
 						toolItemSave.setCommand(saveCommand);
 					}
 				}
@@ -616,7 +618,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		binaryExtentions.add(".png");
 
 		Map<String, String> keys = new HashMap<String, String>();
-		keys.put("projectName", projectName);
+		keys.put("projectName", pluginName);
 		keys.put("packageName", fragment.getElementName() + ".handlers");
 
 		try {

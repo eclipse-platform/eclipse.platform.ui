@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Soyatec (http://www.soyatec.com) and others.
+ * Copyright (c) 2006, 2012 Soyatec (http://www.soyatec.com) and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Soyatec - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -19,6 +20,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
+import org.eclipse.pde.internal.ui.wizards.plugin.AbstractFieldData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -58,12 +60,14 @@ public class NewApplicationWizardPage extends WizardPage {
 	private Text proNameText;
 	private Text proApplicationText;
 	private Group propertyGroup;
+	private AbstractFieldData pluginData;
 
 	private PropertyData[] PROPERTIES;
 
-	protected NewApplicationWizardPage(IProjectProvider projectProvider) {
+	protected NewApplicationWizardPage(IProjectProvider projectProvider, AbstractFieldData pluginData) {
 		super("New e4 Application Wizard Page");
 		this.projectProvider = projectProvider;
+		this.pluginData = pluginData;
 		data = new HashMap<String, String>();
 		setTitle("e4 Application");
 		setMessage("Configure application with special values.");
@@ -386,7 +390,9 @@ public class NewApplicationWizardPage extends WizardPage {
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible && PROPERTIES == null) {
-			proNameText.setText(projectProvider.getProjectName());
+			
+			// Use the plug-in name for the product name (not project name which can contain illegal characters)
+			proNameText.setText(pluginData.getId());
 
 			proApplicationText.setText(E4_APPLICATION);
 
@@ -406,8 +412,11 @@ public class NewApplicationWizardPage extends WizardPage {
 			for (PropertyData property : getPropertyData()) {
 				data.put(property.getName(), property.getValue());
 			}
-
-			data.put(PRODUCT_NAME, projectProvider.getProjectName());
+			
+			// Use the plug-in name for the product name (not project name which can contain illegal characters)
+			String productName = pluginData.getId();
+			
+			data.put(PRODUCT_NAME, productName);
 			data.put(APPLICATION, E4_APPLICATION);
 		}
 		Map<String, String> map = new HashMap<String, String>();
