@@ -95,10 +95,10 @@ public class BasicPartList extends AbstractTableInformationControl {
 		table.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false,
 				false));
 		TableViewer tableViewer = new TableViewer(table);
-		tableViewer.setComparator(new ViewerComparator());
 		if (alphabetical) {
-			tableViewer.addFilter(new NamePatternFilter());
+			tableViewer.setComparator(new ViewerComparator());
 		}
+		tableViewer.addFilter(new NamePatternFilter());
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setLabelProvider(new BasicStackListLabelProvider());
 
