@@ -174,6 +174,7 @@ public class PopupMenuExtender implements IMenuListener2,
 			((MenuManagerRenderer) obj).linkModelToManager(menuModel, menu);
 		}
 		registerE4Support();
+		cleanUpContributionCache();
 	}
 
 	private void registerE4Support() {
