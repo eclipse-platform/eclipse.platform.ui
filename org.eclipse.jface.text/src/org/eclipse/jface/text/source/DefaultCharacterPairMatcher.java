@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	private int fAnchor= -1;
 	private final CharPairs fPairs;
 	private final String fPartitioning;
+	private final boolean fCaretInsideMatchedPair;
 
 	/**
 	 * Creates a new character pair matcher that matches the specified characters within the
@@ -50,10 +51,34 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	 * @param partitioning the partitioning to match within
 	 */
 	public DefaultCharacterPairMatcher(char[] chars, String partitioning) {
+		this(chars, partitioning, false);
+	}
+
+	/**
+	 * Creates a new character pair matcher that matches the specified characters within the
+	 * specified partitioning. The specified list of characters must have the form <blockquote>{
+	 * <i>start</i>, <i>end</i>, <i>start</i>, <i>end</i>, ..., <i>start</i>, <i>end</i>
+	 * }</blockquote> For instance:
+	 * 
+	 * <pre>
+	 * char[] chars = new char[] {'(', ')', '{', '}', '[', ']'};
+	 * new DefaultCharacterPairMatcher(chars, ...);
+	 * </pre>
+	 * 
+	 * @param chars a list of characters
+	 * @param partitioning the partitioning to match within
+	 * @param caretInsideMatchedPair controls the matching behavior. When <code>true</code>, the
+	 *            matching start peer will be found when the caret is placed before the end
+	 *            character. When <code>false</code>, the matching start peer will be found when the
+	 *            caret is placed after the end character.
+	 * @since 3.8
+	 */
+	public DefaultCharacterPairMatcher(char[] chars, String partitioning, boolean caretInsideMatchedPair) {
 		Assert.isLegal(chars.length % 2 == 0);
 		Assert.isNotNull(partitioning);
 		fPairs= new CharPairs(chars);
 		fPartitioning= partitioning;
+		fCaretInsideMatchedPair= caretInsideMatchedPair;
 	}
 
 	/**
@@ -86,21 +111,36 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	 * Performs the actual work of matching for #match(IDocument, int).
 	 */
 	private IRegion performMatch(IDocument doc, int caretOffset) throws BadLocationException {
-		final int charOffset= caretOffset - 1;
-		final char prevChar= doc.getChar(Math.max(charOffset, 0));
-		if (!fPairs.contains(prevChar)) return null;
-		final boolean isForward= fPairs.isStartCharacter(prevChar);
+		final char prevChar= doc.getChar(Math.max(caretOffset - 1, 0));
+		boolean isForward;
+		final char ch;
+		if (fCaretInsideMatchedPair) {
+			final char currChar= doc.getChar(caretOffset);
+			isForward= fPairs.contains(prevChar) && fPairs.isStartCharacter(prevChar);
+			boolean isBackward= fPairs.contains(currChar) && !fPairs.isStartCharacter(currChar);
+			if (!isForward && !isBackward) {
+				return null;
+			}
+			ch= isForward ? prevChar : currChar;
+		} else {
+			if (!fPairs.contains(prevChar))
+				return null;
+			isForward= fPairs.isStartCharacter(prevChar);
+			ch= prevChar;
+		}
+
 		fAnchor= isForward ? ICharacterPairMatcher.LEFT : ICharacterPairMatcher.RIGHT;
-		final int searchStartPosition= isForward ? caretOffset : caretOffset - 2;
-		final int adjustedOffset= isForward ? charOffset : caretOffset;
-		final String partition= TextUtilities.getContentType(doc, fPartitioning, charOffset, false);
+		final int searchStartPosition= isForward ? caretOffset : (fCaretInsideMatchedPair ? caretOffset - 1 : caretOffset - 2);
+		final int adjustedOffset= isForward ? caretOffset - 1 : (fCaretInsideMatchedPair ? caretOffset + 1 : caretOffset);
+		final String partition= TextUtilities.getContentType(doc, fPartitioning, ((!isForward && fCaretInsideMatchedPair) ? caretOffset : caretOffset - 1), false);
 		final DocumentPartitionAccessor partDoc= new DocumentPartitionAccessor(doc, fPartitioning, partition);
-		int endOffset= findMatchingPeer(partDoc, prevChar, fPairs.getMatching(prevChar),
-				isForward,  isForward ? doc.getLength() : -1,
-				searchStartPosition);
-		if (endOffset == -1) return null;
-		final int adjustedEndOffset= isForward ? endOffset + 1: endOffset;
-		if (adjustedEndOffset == adjustedOffset) return null;
+		int endOffset= findMatchingPeer(partDoc, ch, fPairs.getMatching(ch),
+				isForward, isForward ? doc.getLength() : -1, searchStartPosition);
+		if (endOffset == -1)
+			return null;
+		final int adjustedEndOffset= isForward ? endOffset + 1 : endOffset;
+		if (adjustedEndOffset == adjustedOffset)
+			return null;
 		return new Region(Math.min(adjustedOffset, adjustedEndOffset),
 				Math.abs(adjustedEndOffset - adjustedOffset));
 	}
