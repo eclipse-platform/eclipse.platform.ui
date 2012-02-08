@@ -47,6 +47,7 @@ import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
@@ -373,6 +374,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		if (manager == null) {
 			manager = new ToolBarManager(orientation | SWT.WRAP | SWT.FLAT
 					| SWT.RIGHT);
+			IContributionManagerOverrides overrides = (IContributionManagerOverrides) element
+					.getParent().getTransientData().get(IContributionManagerOverrides.class.getName());
+			manager.setOverrides(overrides);
 			linkModelToManager((MToolBar) element, manager);
 		}
 		ToolBar bar = manager.createControl(parent);

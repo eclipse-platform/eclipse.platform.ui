@@ -79,6 +79,7 @@ import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -131,8 +132,10 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.contexts.ContextService;
+import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
@@ -234,7 +237,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * dependency injection.
 	 */
 	private ServiceLocator serviceLocator;
-
 
 	/**
 	 * Bit flags indication which submenus (New, Show Views, ...) this window
@@ -508,6 +510,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		windowContext.set(IWorkbenchPage.class, page);
 		firePageOpened();
 
+		menuManager.setOverrides(menuOverride);
+		((CoolBarToTrimManager) getCoolBarManager2()).setOverrides(toolbarOverride);
+
 		// Fill the action bars
 		fillActionBars(FILL_ALL_ACTION_BARS);
 
@@ -691,7 +696,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		workbenchTrimElements.add(glueControl);
 		workbenchTrimElements.add(switcherControl);
 
-
 	}
 
 	private void populateStandardTrim(MTrimBar bottomTrim) {
@@ -796,8 +800,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	private MToolControl addTrimElement(MTrimBar bottomTrim, IConfigurationElement ice, String id,
-			boolean isBefore,
-			String relTo, String classSpec) {
+			boolean isBefore, String relTo, String classSpec) {
 		// is it already in the trim ?
 		MUIElement existingTrim = modelService.find(id, bottomTrim);
 		if (existingTrim != null) {
@@ -838,7 +841,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		populateTrimContributions(bottomTrim);
 	}
 
-	private MTrimBar getTopTrim() {
+	public MTrimBar getTopTrim() {
 		List<MTrimBar> trimBars = model.getTrimBars();
 		for (MTrimBar bar : trimBars) {
 			if (MAIN_TOOLBAR_ID.equals(bar.getElementId())) {
@@ -891,10 +894,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 		}
 	}
-
-
-
-
 
 	public static String getId(IConfigurationElement element) {
 		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
@@ -952,7 +951,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return SWT.FLAT | SWT.WRAP | SWT.RIGHT | SWT.HORIZONTAL;
 	}
 
-
 	private boolean coolBarVisible = true;
 
 	private boolean perspectiveBarVisible = true;
@@ -960,7 +958,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private boolean fastViewBarVisible = true;
 
 	private boolean statusLineVisible = true;
-
 
 	/**
 	 * The handlers for global actions that were last submitted to the workbench
@@ -1039,8 +1036,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * </p>
 	 */
 	void submitGlobalActions() {
-		final IHandlerService handlerService = (IHandlerService) getService(
-				IHandlerService.class);
+		final IHandlerService handlerService = (IHandlerService) getService(IHandlerService.class);
 
 		/*
 		 * Mash the action sets and global actions together, with global actions
@@ -1452,7 +1448,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * Unconditionally close this window. Assumes the proper flags have been set
 	 * correctly (e.i. closing and updateDisabled)
 	 * 
-	 * @param remove <code>true</code> if this window should be removed from the application model
+	 * @param remove
+	 *            <code>true</code> if this window should be removed from the
+	 *            application model
 	 */
 	private boolean hardClose(boolean remove) {
 		try {
@@ -1601,7 +1599,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			IWorkbenchWindow window = getWorkbench().openWorkbenchWindow(perspectiveId, input);
 			return window.getActivePage();
 		}
-	
+
 		perspective = descriptor;
 		page.setPerspective(perspective);
 		firePageActivated();
@@ -1843,7 +1841,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			return;
 		}
 
-
 	}
 
 	private ListenerList actionSetListeners = null;
@@ -2023,8 +2020,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 	}
 
-
-
 	/**
 	 * @param visible
 	 *            whether the cool bar should be shown. This is only applicable
@@ -2135,13 +2130,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return statusLineVisible;
 	}
 
-
-
 	public boolean getShowFastViewBars() {
 		return getWindowConfigurer().getShowFastViewBars();
 	}
-
-
 
 	/**
 	 * Return the action bar presentation used for creating toolbars. This is
@@ -2171,14 +2162,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return false;
 	}
 
-
 	/**
 	 * @return Returns the progressRegion.
 	 */
 	public ProgressRegion getProgressRegion() {
 		return progressRegion;
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -2198,7 +2187,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	IAdaptable getDefaultPageInput() {
 		return getWorkbenchImpl().getDefaultPageInput();
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -2264,9 +2252,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class, mappingService);
 
-
-		selectionService = ContextInjectionFactory.make(SelectionService.class,
-				model.getContext());
+		selectionService = ContextInjectionFactory.make(SelectionService.class, model.getContext());
 		serviceLocator.registerService(ISelectionService.class, selectionService);
 
 		LegacyHandlerService hs = new LegacyHandlerService(windowContext);
@@ -2359,6 +2345,45 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return oldCBM;
 	}
 
+	private IContributionManagerOverrides toolbarOverride = new IContributionManagerOverrides() {
+
+		public Integer getAccelerator(IContributionItem item) {
+			return null;
+		}
+
+		public String getAcceleratorText(IContributionItem item) {
+			return null;
+		}
+
+		public Boolean getEnabled(IContributionItem item) {
+			return null;
+		}
+
+		public String getText(IContributionItem item) {
+			return null;
+		}
+
+		public Boolean getVisible(IContributionItem item) {
+			if (page == null)
+				return null;
+
+			MPerspective curPersp = page.getCurrentPerspective();
+			if (curPersp == null)
+				return null;
+
+			// Find the command ID
+			String id = CustomizePerspectiveDialog.getIDFromIContributionItem(item);
+			if (id == null)
+				return null;
+
+			String hiddenToolItems = page.getHiddenItems();
+			if (hiddenToolItems.contains(ModeledPageLayout.HIDDEN_TOOLBAR_PREFIX + id)) {
+				return Boolean.FALSE;
+			}
+			return null;
+		}
+	};
+
 	MenuManager menuManager = new MenuManager("MenuBar", "org.eclipse.ui.main.menu"); //$NON-NLS-1$//$NON-NLS-2$
 
 	public MenuManager getMenuManager() {
@@ -2368,6 +2393,45 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public IMenuManager getMenuBarManager() {
 		return menuManager;
 	}
+
+	private IContributionManagerOverrides menuOverride = new IContributionManagerOverrides() {
+
+		public Integer getAccelerator(IContributionItem item) {
+			return null;
+		}
+
+		public String getAcceleratorText(IContributionItem item) {
+			return null;
+		}
+
+		public Boolean getEnabled(IContributionItem item) {
+			return null;
+		}
+
+		public String getText(IContributionItem item) {
+			return null;
+		}
+
+		public Boolean getVisible(IContributionItem item) {
+			if (page == null)
+				return null;
+
+			MPerspective curPersp = page.getCurrentPerspective();
+			if (curPersp == null)
+				return null;
+
+			// Find the command ID
+			String id = CustomizePerspectiveDialog.getIDFromIContributionItem(item);
+			if (id == null)
+				return null;
+
+			String hiddenToolItems = page.getHiddenItems();
+			if (hiddenToolItems.contains(ModeledPageLayout.HIDDEN_MENU_PREFIX + id)) {
+				return Boolean.FALSE;
+			}
+			return null;
+		}
+	};
 
 	ToolBarManager2 toolBarManager = new ToolBarManager2();
 
@@ -2379,5 +2443,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	public IToolBarManager getToolBarManager() {
 		return getToolBarManager2();
+	}
+
+	public CustomizePerspectiveDialog createCustomizePerspectiveDialog(
+			IPerspectiveDescriptor persp, IEclipseContext context) {
+		return new CustomizePerspectiveDialog(getWindowConfigurer(), persp, context);
 	}
 }

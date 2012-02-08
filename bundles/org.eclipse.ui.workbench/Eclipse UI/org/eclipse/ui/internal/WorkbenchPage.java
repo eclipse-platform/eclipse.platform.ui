@@ -64,6 +64,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -71,6 +72,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
@@ -118,6 +120,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
@@ -1616,26 +1619,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     public boolean editActionSets() {
-		// Perspective persp = getActivePerspective();
-		// if (persp == null) {
-		// return false;
-		// }
-		//
-		// // Create list dialog.
-		// CustomizePerspectiveDialog dlg =
-		// legacyWindow.createCustomizePerspectiveDialog(persp);
-		//        
-		// // Open.
-		// boolean ret = (dlg.open() == Window.OK);
-		// if (ret) {
-		// legacyWindow.updateActionSets();
-		// legacyWindow.firePerspectiveChanged(this, getPerspective(),
-		// CHANGE_RESET);
-		// legacyWindow.firePerspectiveChanged(this, getPerspective(),
-		// CHANGE_RESET_COMPLETE);
-		// }
-		// return ret;
-		return false;
+		IPerspectiveDescriptor persp = getPerspective();
+		if (persp == null) {
+			return false;
+		}
+		// Create list dialog.
+		CustomizePerspectiveDialog dlg = legacyWindow.createCustomizePerspectiveDialog(persp,
+				window.getContext());
+		// Open.
+		boolean ret = (dlg.open() == Window.OK);
+		if (ret) {
+			legacyWindow.updateActionSets();
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_RESET);
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_RESET_COMPLETE);
+		}
+		return ret;
     }
 
 
@@ -2262,15 +2260,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see IWorkbenchPage
      */
     public void hideActionSet(String actionSetID) {
-		MPerspective persp = getPerspectiveStack().getSelectedElement();
-		if (persp == null) {
+		MPerspective persp = getCurrentPerspective();
+		if (persp == null)
 			return;
-		}
-		EContextService contextService = window.getContext().get(EContextService.class);
+
+		// Remove Tags
 		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
 		if (persp.getTags().contains(tag)) {
 			persp.getTags().remove(tag);
-			contextService.deactivateContext(actionSetID);
+		}
+
+		addHiddenItems(tag);
+
+		IActionSetDescriptor descriptor = WorkbenchPlugin.getDefault().getActionSetRegistry()
+				.findActionSet(actionSetID);
+		if (descriptor != null) {
+			actionSets.hideAction(descriptor);
 		}
     }
 
@@ -2439,8 +2444,11 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 	private void addActionSet(MPerspective perspective, MPerspective temporary) {
 		List<String> tags = perspective.getTags();
 		List<String> extendedTags = temporary.getTags();
+		String excludedTags = perspective.getPersistedState().get(
+				ModeledPageLayout.HIDDEN_ITEMS_KEY);
 		for (String extendedTag : extendedTags) {
-			if (!tags.contains(extendedTag)) {
+			if (!tags.contains(extendedTag) && excludedTags != null
+					&& !excludedTags.contains(extendedTag + ",")) { //$NON-NLS-1$
 				tags.add(extendedTag);
 			}
 		}
@@ -2493,6 +2501,9 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 			MPerspective oldPersp = (MPerspective) event.getProperty(UIEvents.EventTags.OLD_VALUE);
 			MPerspective newPersp = (MPerspective) event.getProperty(UIEvents.EventTags.NEW_VALUE);
 			updatePerspectiveActionSets(oldPersp, newPersp);
+
+			((CoolBarToTrimManager) legacyWindow.getCoolBarManager2()).updateAll(true);
+			legacyWindow.menuManager.updateAll(true);
 
 			List<MPart> hiddenParts = new ArrayList<MPart>();
 			List<MPart> visibleParts = new ArrayList<MPart>();
@@ -2989,9 +3000,14 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		}
 		
 		MPerspective dummyPerspective = null;
-		if (!revert) {
-			dummyPerspective = (MPerspective) modelService.cloneSnippet(application,
- desc.getId(),
+		if (revert) {
+			// Show hidden tool & menu items
+			persp.getPersistedState().remove(ModeledPageLayout.HIDDEN_ITEMS_KEY);
+			legacyWindow.getMenuManager().updateAll(true);
+			((ICoolBarManager2) ((WorkbenchWindow) getWorkbenchWindow()).getCoolBarManager2())
+					.resetItemOrder();
+		} else {
+			dummyPerspective = (MPerspective) modelService.cloneSnippet(application, desc.getId(),
 					window);
 		}
 
@@ -3419,11 +3435,19 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		if (persp == null) {
 			return;
 		}
-		EContextService contextService = window.getContext().get(EContextService.class);
+
+		// Add Tags
 		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
 		if (!persp.getTags().contains(tag)) {
 			persp.getTags().add(tag);
-			contextService.activateContext(actionSetID);
+		}
+
+		removeHiddenItems(tag);
+
+		IActionSetDescriptor descriptor = WorkbenchPlugin.getDefault().getActionSetRegistry()
+				.findActionSet(actionSetID);
+		if (descriptor != null) {
+			actionSets.showAction(descriptor);
 		}
     }
 
@@ -3653,7 +3677,7 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		return null;
 	}
 
-	private MPerspective getCurrentPerspective() {
+	public MPerspective getCurrentPerspective() {
 		MPerspectiveStack stack = getPerspectiveStack();
 		return stack == null ? null : stack.getSelectedElement();
 	}
@@ -3724,15 +3748,18 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 	private final static String[] EMPTY_STRING_ARRAY = new String[0];
 
 	private String[] getArrayForTag(String tagPrefix) {
+		List<String> id = getCollectionForTag(tagPrefix);
+		if (id == null)
+			return EMPTY_STRING_ARRAY;
+		return id.toArray(new String[id.size()]);
+	}
+
+	private List<String> getCollectionForTag(String tagPrefix) {
 		MPerspective perspective = getPerspectiveStack().getSelectedElement();
 		if (perspective == null) {
-			return EMPTY_STRING_ARRAY;
+			return Collections.emptyList();
 		}
-		List<String> id = ModeledPageLayout.getIds(perspective, tagPrefix);
-		if (id.size() == 0) {
-			return EMPTY_STRING_ARRAY;
-		}
-		return id.toArray(new String[id.size()]);
+		return ModeledPageLayout.getIds(perspective, tagPrefix);
 	}
 
 	/*
@@ -4377,5 +4404,81 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 	 */
 	public void resetHiddenEditors() {
 		E4Util.unsupported("resetHiddenEditors not supported yet"); //$NON-NLS-1$
+	}
+
+	public String getHiddenItems() {
+		MPerspective perspective = getCurrentPerspective();
+		if (perspective == null)
+			return ""; //$NON-NLS-1$
+
+		String result = perspective.getPersistedState()
+.get(ModeledPageLayout.HIDDEN_ITEMS_KEY);
+		if (result == null)
+			return ""; //$NON-NLS-1$
+
+		return result;
+	}
+
+	public void addHiddenItems(String id) {
+		String persistedID = id + ","; //$NON-NLS-1$
+
+		MPerspective perspective = getCurrentPerspective();
+		if (perspective == null)
+			return;
+
+		String hiddenIDs = perspective.getPersistedState().get(
+ModeledPageLayout.HIDDEN_ITEMS_KEY);
+		if (hiddenIDs == null)
+			hiddenIDs = ""; //$NON-NLS-1$
+
+		if (!hiddenIDs.contains(persistedID)) {
+			hiddenIDs = hiddenIDs + persistedID;
+			perspective.getPersistedState().put(ModeledPageLayout.HIDDEN_ITEMS_KEY, hiddenIDs);
+		}
+	}
+
+	public void removeHiddenItems(String id) {
+		String persistedID = id + ","; //$NON-NLS-1$
+
+		MPerspective perspective = getCurrentPerspective();
+		if (perspective == null)
+			return;
+
+		String hiddenIDs = perspective.getPersistedState().get(
+ModeledPageLayout.HIDDEN_ITEMS_KEY);
+		if (hiddenIDs == null)
+			return;
+
+		String newValue = hiddenIDs.replaceFirst(persistedID, ""); //$NON-NLS-1$
+		if (hiddenIDs.length() != newValue.length()) {
+			if (newValue.length() == 0)
+				perspective.getPersistedState().remove(ModeledPageLayout.HIDDEN_ITEMS_KEY);
+			else
+				perspective.getPersistedState().put(ModeledPageLayout.HIDDEN_ITEMS_KEY,
+						newValue);
+		}
+	}
+
+	public void setNewShortcuts(List<String> wizards, String tagPrefix) {
+		MPerspective persp = getCurrentPerspective();
+		if (persp == null)
+			return;
+
+		List<String> tags = persp.getTags();
+		List<String> existingNewWizards = new ArrayList<String>();
+		for (Iterator<String> iterator = tags.iterator(); iterator.hasNext();) {
+			String string = iterator.next();
+			if (string.contains(tagPrefix))
+				existingNewWizards.add(string);
+		}
+
+		List<String> newWizards = new ArrayList<String>(wizards.size());
+		for (Iterator<String> iterator = wizards.iterator(); iterator.hasNext();) {
+			String wizardName = iterator.next();
+			newWizards.add(tagPrefix + wizardName);
+		}
+
+		persp.getTags().removeAll(existingNewWizards);
+		persp.getTags().addAll(newWizards);
 	}
 }

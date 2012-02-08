@@ -962,10 +962,6 @@ public class MenuHelper {
 				}
 			}
 		} else if (id != null) {
-			// wire these off because we're out of time, see bug 317203
-			if (id.equals(IWorkbenchCommandConstants.WINDOW_CUSTOMIZE_PERSPECTIVE)) {
-				return null;
-			}
 
 			for (MCommand command : application.getCommands()) {
 				if (id.equals(command.getElementId())) {
@@ -1044,7 +1040,7 @@ public class MenuHelper {
 		}
 	}
 
-	private static String getIconURI(ImageDescriptor descriptor, IEclipseContext context) {
+	public static String getIconURI(ImageDescriptor descriptor, IEclipseContext context) {
 		if (descriptor == null) {
 			return null;
 		}

@@ -80,7 +80,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	}
 
 	public String getDescription() {
-		return RegistryReader.getDescription(configElement);
+		return configElement == null ? null : RegistryReader.getDescription(configElement);
 	}
 
 	/*

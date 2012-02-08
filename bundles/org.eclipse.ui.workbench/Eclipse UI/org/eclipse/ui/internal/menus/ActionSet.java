@@ -239,6 +239,7 @@ public class ActionSet {
 			if (menu != null) {
 				contributeMenuGroup(contributions, parentId, positionInParent);
 				menuContribution.getChildren().add(menu);
+				menu.getTransientData().put("ActionSet", id); //$NON-NLS-1$
 			}
 		} else {
 			if (parentId.equals(MAIN_MENU)) {
@@ -250,6 +251,7 @@ public class ActionSet {
 			if (action != null) {
 				contributeMenuGroup(contributions, parentId, positionInParent);
 				menuContribution.getChildren().add(action);
+				action.getTransientData().put("ActionSet", id); //$NON-NLS-1$
 			}
 		}
 		if (menuContribution.getChildren().size() > 0) {
@@ -317,6 +319,8 @@ public class ActionSet {
 		if (action == null) {
 			return;
 		}
+		action.getTransientData().put("Name", MenuHelper.getLabel(element)); //$NON-NLS-1$
+		action.getTransientData().put("ActionSet", id); //$NON-NLS-1$
 
 		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
 				.createToolBarContribution();
@@ -387,6 +391,8 @@ public class ActionSet {
 		trimContribution.setPositionInParent("after=additions"); //$NON-NLS-1$		trimContribution.setVisibleWhen(createVisibleWhen());
 		MToolBar tb = MenuFactoryImpl.eINSTANCE.createToolBar();
 		tb.setElementId(tpath);
+		tb.getTransientData().put("Name", MenuHelper.getLabel(this.configElement)); //$NON-NLS-1$
+		tb.getTransientData().put("ActionSet", id); //$NON-NLS-1$
 		trimContribution.getChildren().add(tb);
 		trimContributions.add(trimContribution);
 	}

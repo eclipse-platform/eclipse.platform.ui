@@ -60,6 +60,9 @@ public class ModeledPageLayout implements IPageLayout {
 	public static final String PERSP_SHORTCUT_TAG = "persp.perspSC:"; //$NON-NLS-1$
 	public static final String SHOW_IN_PART_TAG = "persp.showIn:"; //$NON-NLS-1$
 	public static final String SHOW_VIEW_TAG = "persp.viewSC:"; //$NON-NLS-1$
+	public static final String HIDDEN_MENU_PREFIX = "persp.hideMenuSC:"; //$NON-NLS-1$
+	public static final String HIDDEN_TOOLBAR_PREFIX = "persp.hideToolbarSC:"; //$NON-NLS-1$
+	public static final String HIDDEN_ITEMS_KEY = "persp.hiddenItems"; //$NON-NLS-1$
 
 	public static List<String> getIds(MPerspective model, String tagPrefix) {
 		if (model == null) {
@@ -608,11 +611,11 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void addHiddenMenuItemId(String id) {
-		E4Util.unsupported("addHiddenMenuItemId: " + id); //$NON-NLS-1$
+		page.addHiddenItems(HIDDEN_MENU_PREFIX + id);
 	}
 
 	public void addHiddenToolBarItemId(String id) {
-		E4Util.unsupported("addHiddenToolBarItemId: " + id); //$NON-NLS-1$
+		page.addHiddenItems(HIDDEN_TOOLBAR_PREFIX + id);
 	}
 
 	public void removePlaceholder(String id) {

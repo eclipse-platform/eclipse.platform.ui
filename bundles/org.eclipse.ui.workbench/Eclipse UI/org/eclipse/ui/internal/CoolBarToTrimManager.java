@@ -39,8 +39,10 @@ import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.menus.CommandContributionItem;
 
@@ -59,6 +61,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	private ToolBarManagerRenderer renderer;
 	private MApplication application;
 	private MTrimmedWindow window;
+	private IContributionManagerOverrides toolbarOverrides;
 
 	/**
 	 * Field to indicate whether the trim bars have been added to the window's
@@ -135,6 +138,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				trimBar.getChildren().add(idx, toolBar);
 			}
 			workbenchTrimElements.add(toolBar);
+			manager.setOverrides(toolbarOverrides);
 		} else if (item instanceof IContributionManager) {
 			new Exception("Have to deal with " + item).printStackTrace(); //$NON-NLS-1$
 		} else if (item instanceof AbstractGroupMarker) {
@@ -533,7 +537,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	 * ()
 	 */
 	public void resetItemOrder() {
-		new Exception("CBTTM:resetItemOrder").printStackTrace(); //$NON-NLS-1$
+		updateAll(true);
 	}
 
 	/*
@@ -577,8 +581,10 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	 * (org.eclipse.jface.action.IContributionManagerOverrides)
 	 */
 	public void setOverrides(IContributionManagerOverrides newOverrides) {
-		// TODO Auto-generated method stub
-
+		this.toolbarOverrides = newOverrides;
+		// this is required when we need to set the overrides for the
+		// new ToolbarManager when it is created in ToolbarManagerRenderer
+		trimBar.getTransientData().put(IContributionManagerOverrides.class.getName(), newOverrides);
 	}
 
 	/*
@@ -606,6 +612,28 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			trimBars.add(0, trimBar);
 			trimBarsAdded = true;
 		}
+	}
+	
+		/**
+		 * @param force
+		 */
+		public void updateAll(boolean force) {
+			for (MTrimElement el : trimBar.getChildren()) {
+				if (el instanceof MToolBar) {
+					MToolBar toolbar = (MToolBar) el;
+					ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) rendererFactory
+							.getRenderer(el, null);
+					final ToolBarManager manager = renderer.getManager(toolbar);
+					if (manager != null) {
+						manager.update(true);
+					// TODO: Hack to work around Bug 370961
+					ToolBar tb = manager.getControl();
+					if (tb != null && !tb.isDisposed()) {
+						tb.getShell().layout(new Control[] { tb }, SWT.DEFER);
+					}
+					}
+				}
+			}
 	}
 
 	private void fill(MToolBar container, IContributionManager manager) {
@@ -647,7 +675,11 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				IAction action = ((ActionContributionItem) item).getAction();
 				if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
 					MOpaqueToolItem toolItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
+					toolItem.setOpaqueItem(item);
 					toolItem.setElementId(item.getId());
+					String iconUrl = MenuHelper.getIconURI(action.getImageDescriptor(),
+							application.getContext());
+					 toolItem.setIconURI(iconUrl);
 					container.getChildren().add(toolItem);
 					renderer.linkModelToContribution(toolItem, item);
 				} else {
@@ -656,6 +688,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 					manager.remove(item);
 					if (toolItem != null) {
 						container.getChildren().add(toolItem);
+						toolItem.getTransientData().put("Name", action.getToolTipText()); //$NON-NLS-1$						
 					}
 				}
 			} else {
