@@ -15,10 +15,10 @@ Export-Package: org.eclipse.e4.ui.model.application.commands.provider,
  org.eclipse.e4.ui.model.application.ui.basic.provider,
  org.eclipse.e4.ui.model.application.ui.menu.provider,
  org.eclipse.e4.ui.model.application.ui.provider
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.e4.ui.model.workbench;visibility:=reexport,
- org.eclipse.emf.edit;visibility:=reexport,
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.7.0,4.0.0)",
+ org.eclipse.e4.ui.model.workbench;bundle-version="0.10.0";visibility:=reexport,
+ org.eclipse.emf.edit;bundle-version="[2.6.0,3.0.0)";visibility:=reexport,
  org.eclipse.e4.core.services;bundle-version="0.9.1",
- org.eclipse.e4.core.contexts,
- org.eclipse.e4.core.di
+ org.eclipse.e4.core.contexts;bundle-version="1.0.0",
+ org.eclipse.e4.core.di;bundle-version="1.1.0"
 Bundle-ActivationPolicy: lazy

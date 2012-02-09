@@ -7,4 +7,4 @@ Bundle-SymbolicName: org.eclipse.e4.ui.widgets
 Bundle-Version: 0.11.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.ui.widgets
-Require-Bundle: org.eclipse.swt;bundle-version="3.6.0"
+Require-Bundle: org.eclipse.swt;bundle-version="[3.6.0,4.0.0)"

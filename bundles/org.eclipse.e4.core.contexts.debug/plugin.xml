@@ -3,7 +3,7 @@
 <plugin>
    <extension
          id="ContextDebug"
-         name="Context Trace and Debug"
+         name="%extension.contextdebugmodel.name"
          point="org.eclipse.e4.workbench.model">
       <processor
             beforefragment="true"

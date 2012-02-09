@@ -20,10 +20,10 @@ Import-Package: javax.annotation;version="1.0.0",
  org.eclipse.jface.dialogs,
  org.eclipse.jface.window,
  org.osgi.framework;version="1.5.0"
-Require-Bundle: org.eclipse.swt;bundle-version="3.6.0",
- org.eclipse.core.commands;bundle-version="3.5.0",
- org.eclipse.e4.core.contexts,
- org.eclipse.e4.core.di
+Require-Bundle: org.eclipse.swt;bundle-version="[3.6.0,4.0.0)",
+ org.eclipse.core.commands;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.e4.core.contexts;bundle-version="1.0.0",
+ org.eclipse.e4.core.di;bundle-version="1.1.0"
 Export-Package: org.eclipse.e4.ui.bindings;
   x-friends:="org.eclipse.e4.ui.workbench,
    org.eclipse.e4.ui.workbench.renderers.swt,

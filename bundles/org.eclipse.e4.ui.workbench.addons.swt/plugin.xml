@@ -3,7 +3,7 @@
 <plugin>
    <extension
          id="AddonSnippet"
-         name="Addon Snippet"
+         name="%extension.addonsnippet.name"
          point="org.eclipse.e4.workbench.model">
       <processor
             beforefragment="true"

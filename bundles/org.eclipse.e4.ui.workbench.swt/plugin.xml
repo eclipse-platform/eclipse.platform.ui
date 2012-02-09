@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
+<!--
+     Copyright (c) 2012 IBM Corporation and others.
+     All rights reserved. This program and the accompanying materials
+     are made available under the terms of the Eclipse Public License v1.0
+     which accompanies this distribution, and is available at
+     http://www.eclipse.org/legal/epl-v10.html
+    
+     Contributors:
+         IBM Corporation - initial API and implementation
+ -->
 <plugin>
    <extension
          id="E4Application"
-         name="E4 Application"
+         name="%extension.e4application.name"
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="singleton-global"
@@ -16,7 +26,7 @@
    </extension>
    <extension
          id="GenTopic"
-         name="Internal Model Topic Generator"
+         name="%extension.generatetopic.name"
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="singleton-global"

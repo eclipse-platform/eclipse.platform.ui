@@ -6,19 +6,19 @@ Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="0.9.0";visibility:=reexport,
- org.eclipse.equinox.common;bundle-version="3.4.0",
- org.eclipse.osgi;bundle-version="3.4.0",
+ org.eclipse.equinox.common;bundle-version="[3.4.0,4.0.0)",
+ org.eclipse.osgi;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.e4.ui.services;bundle-version="0.9.0",
- org.eclipse.equinox.registry;bundle-version="3.4.0",
+ org.eclipse.equinox.registry;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.e4.core.services;bundle-version="0.9.0",
- org.eclipse.e4.core.contexts,
- org.eclipse.e4.core.di,
+ org.eclipse.e4.core.contexts;bundle-version="1.0.0",
+ org.eclipse.e4.core.di;bundle-version="1.1.0",
  org.eclipse.core.jobs;bundle-version="[3.4.0,4.0.0)",
- org.eclipse.core.commands;bundle-version="3.5.0",
- org.eclipse.osgi.services;bundle-version="3.2.0",
+ org.eclipse.core.commands;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.osgi.services;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.e4.core.commands;bundle-version="0.9.0",
  org.eclipse.emf.ecore.change;bundle-version="2.5.0",
- org.eclipse.core.expressions;bundle-version="3.4.200",
+ org.eclipse.core.expressions;bundle-version="[3.4.200,4.0.0)",
  org.eclipse.e4.ui.di;bundle-version="0.9.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -27,6 +27,7 @@ Export-Package: org.eclipse.e4.ui.internal.workbench;
    org.eclipse.e4.ui.workbench.renderers.swt,
    org.eclipse.e4.ui.workbench.swt,
    org.eclipse.ui.workbench",
+ org.eclipse.e4.ui.internal.workbench.addons;x-internal:=true,
  org.eclipse.e4.ui.internal.workbench.handlers;x-internal:=true,
  org.eclipse.e4.ui.workbench;
   x-friends:="org.eclipse.e4.ui.workbench.swt,

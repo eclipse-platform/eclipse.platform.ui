@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="org.eclipse.e4.ui.css.swt.property.handler" name="Properties" schema="schema/org.eclipse.e4.ui.css.swt.property.handler.exsd"/>
+   <extension-point id="org.eclipse.e4.ui.css.swt.property.handler" name="%extension-point.properties.name" schema="schema/org.eclipse.e4.ui.css.swt.property.handler.exsd"/>
    <extension
          point="org.eclipse.e4.u.css.core.elementProvider">
       <provider
