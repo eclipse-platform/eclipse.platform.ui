@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,9 @@ package org.eclipse.jface.text.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.jface.text.IDocumentExtension3;
-import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
+
 
 /**
  * Tests for the default pair matcher.
@@ -24,21 +24,44 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
  */
 public class DefaultPairMatcherTest extends AbstractPairMatcherTest {
 
+	public DefaultPairMatcherTest() {
+		super(false);
+	}
+
 	public static Test suite() {
 		return new TestSuite(DefaultPairMatcherTest.class);
 	}
 
-	protected ICharacterPairMatcher createMatcher(String chars) {
-		return new DefaultCharacterPairMatcher(chars.toCharArray(),
-				getDocumentPartitioning());
+
+	/** Tests that the test case reader works */
+	public void testTestCaseReader() {
+		super.testTestCaseReader();
+		performReaderTest("#( )%", 3, 0, "( )");
+		performReaderTest("( )%", 3, -1, "( )");
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.tests.AbstractPairMatcherTest#getDocumentPartitioning()
-	 * @since 3.3
+	/**
+	 * Close matches.
+	 * 
+	 * @throws BadLocationException
 	 */
-	protected String getDocumentPartitioning() {
-		return IDocumentExtension3.DEFAULT_PARTITIONING;
+	public void testCloseMatches1() throws BadLocationException {
+		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
+		performMatch(matcher, "#()%");
+		performMatch(matcher, "(#()%)");
+		matcher.dispose();
+	}
+
+
+	/**
+	 * Checks of simple situations where no matches should be found.
+	 * 
+	 * @throws BadLocationException
+	 */
+	public void testIncompleteMatch1() throws BadLocationException {
+		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
+		performMatch(matcher, "(  %)");
+		matcher.dispose();
 	}
 
 }

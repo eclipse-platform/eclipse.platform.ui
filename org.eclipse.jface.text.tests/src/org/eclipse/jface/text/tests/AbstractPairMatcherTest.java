@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextStore;
@@ -26,6 +27,7 @@ import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 
 /**
@@ -35,37 +37,37 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
  */
 public abstract class AbstractPairMatcherTest extends TestCase {
 
+	private final boolean fCaretInsideMatchedPair;
+
+	public AbstractPairMatcherTest(boolean caretInsideMatchedPair) {
+		fCaretInsideMatchedPair= caretInsideMatchedPair;
+	}
+
 	/**
 	 * Constructs a new character pair matcher.
 	 * 
 	 * @param chars the characters to match
 	 * @return the character pair matcher
 	 */
-	protected abstract ICharacterPairMatcher createMatcher(final String chars);
+	protected ICharacterPairMatcher createMatcher(final String chars) {
+		return new DefaultCharacterPairMatcher(chars.toCharArray(), getDocumentPartitioning(), fCaretInsideMatchedPair);
+	}
 
 	/**
 	 * Returns the partitioning treated by the matcher.
 	 * 
 	 * @return the partition
 	 */
-	protected abstract String getDocumentPartitioning();
-
-	public AbstractPairMatcherTest(String name) {
-		super(name);
-	}
-
-	public AbstractPairMatcherTest() {
-		super();
+	protected String getDocumentPartitioning() {
+		return IDocumentExtension3.DEFAULT_PARTITIONING;
 	}
 
 	/* --- T e s t s --- */
 
 	/** Tests that the test case reader works */
 	public void testTestCaseReader() {
-		performReaderTest("#( )%", 3,  0,  "( )");
-		performReaderTest("%( )#", 0,  3,  "( )");
-		performReaderTest("( )%",  3,  -1, "( )");
-		performReaderTest("#%",    0,  0,  "");
+		performReaderTest("%( )#", 0, 3, "( )");
+		performReaderTest("#%", 0, 0, "");
 	}
 
 	/**
@@ -105,12 +107,10 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 */
 	public void testCloseMatches() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
-		performMatch(matcher, "#()%");
 		performMatch(matcher, "(%)#");
 		performMatch(matcher, "#(())%");
 		performMatch(matcher, "(%())#");
 		performMatch(matcher, "((%)#)");
-		performMatch(matcher, "(#()%)");
 		matcher.dispose();
 	}
 
@@ -125,7 +125,6 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "(% ");
 		performMatch(matcher, "%(  )");
 		performMatch(matcher, "( % )");
-		performMatch(matcher, "(  %)");
 		performMatch(matcher, "%");
 		matcher.dispose();
 	}
@@ -218,7 +217,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 * @param expectedMatch the expected match
 	 * @param expectedString the expected string
 	 */
-	private void performReaderTest(String testString, int expectedPos, int expectedMatch, String expectedString) {
+	protected void performReaderTest(String testString, int expectedPos, int expectedMatch, String expectedString) {
 		TestCase t0= createTestCase(testString);
 		assertEquals(expectedPos, t0.fPos);
 		assertEquals(expectedMatch, t0.fMatch);
@@ -244,11 +243,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 			assertNotNull(region);
 			final boolean isForward= test.fPos > test.fMatch;
 			assertEquals(isForward, matcher.getAnchor() == ICharacterPairMatcher.RIGHT);
-			// If the match is forward, the curser is one character
+			// If the match is forward, the cursor is one character
 			// after the start of the match, so we need to count one
 			// step backwards
 			final int offset= isForward ? test.getOffset() : test.getOffset() - 1;
-			final int length= isForward ? test.getLength() : test.getLength() + 1;
+			final int length= (isForward && !fCaretInsideMatchedPair) ? test.getLength() : test.getLength() + 1;
 			assertEquals(length, region.getLength());
 			assertEquals(offset, region.getOffset());
 		}
@@ -271,6 +270,16 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		int pos= str.indexOf("%");
 		assertFalse(pos == -1);
 		int match= str.indexOf("#");
+
+		if (fCaretInsideMatchedPair) {
+			if (pos - 1 >= 0) {
+				char ch= str.charAt(pos - 1);
+				if ("()[]{}<>".indexOf(ch) % 2 == 1) {
+					pos-= 1;
+				}
+			}
+		}
+
 		// account for the length of the first position marker,
 		// if there is one
 		if (match != -1 && match < pos) pos -= 1;
