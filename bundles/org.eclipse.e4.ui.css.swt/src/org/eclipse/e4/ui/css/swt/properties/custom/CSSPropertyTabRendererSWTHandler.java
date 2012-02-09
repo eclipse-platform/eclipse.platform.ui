@@ -20,13 +20,14 @@ import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabFolderRenderer;
 import org.eclipse.swt.widgets.Control;
 import org.osgi.framework.Bundle;
+import org.osgi.service.log.LogService;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHandler {
 
-	
 	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyTabRendererSWTHandler();
+	private boolean backwardsCompatURIsLogged = false;
 	
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
@@ -34,9 +35,20 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			if (((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_URI) {
 				String rendURL = ((CSSPrimitiveValue) value).getStringValue();
+				// translate old-style platform:/plugin/ class specifiers into new-style bundleclass:// URIs
+				if (rendURL.startsWith("platform:/plugin/")) { //$NON-NLS-1$
+					if(!backwardsCompatURIsLogged) {
+						CSSActivator.getDefault().log(LogService.LOG_ERROR, 
+								"platform-style URIs deprecated for referencing types: use bundleclass://<bundlename>/<typename>"); //$NON-NLS-1$
+						backwardsCompatURIsLogged = true;
+					}
+					rendURL = rendURL.replace("platform:/plugin/", "bundleclass://"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				URI uri = URI.createURI(rendURL);
 				Bundle bundle = CSSActivator.getDefault().getBundleForName(uri.authority());
-				if (bundle != null) {
+				if (bundle == null) {
+					CSSActivator.getDefault().log(LogService.LOG_ERROR, "Failed to get bundle for: " + rendURL); //$NON-NLS-1$
+				} else {
 					if (uri.segmentCount() > 1) {
 						//TODO: handle this case?
 					} else {
@@ -57,10 +69,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 						} catch (ClassNotFoundException e) {
 							String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
 									+ bundle.getBundleId() + "'"; //$NON-NLS-1$
-							System.err.println(message);
-							if (e != null) {
-								e.printStackTrace(System.err);
-							}
+							CSSActivator.getDefault().log(LogService.LOG_ERROR, message);
 						} 
 					}
 				}

@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.internal.css.swt;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.log.LogService;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -22,6 +23,7 @@ public class CSSActivator implements BundleActivator {
 
 	private BundleContext context;
 	private ServiceTracker pkgAdminTracker;
+	private ServiceTracker logTracker;
 
 	public static CSSActivator getDefault() {
 		return activator;
@@ -73,9 +75,30 @@ public class CSSActivator implements BundleActivator {
 			pkgAdminTracker.close();
 			pkgAdminTracker = null;
 		}
+		if (logTracker != null) {
+			logTracker.close();
+			logTracker = null;
+		}
 		context = null;
 	}
-	
+
+	private LogService getLogger() {
+		if (logTracker == null) {
+			if (context == null)
+				return null;
+			logTracker = new ServiceTracker(context,
+					LogService.class.getName(), null);
+			logTracker.open();
+		}
+		return (LogService) logTracker.getService();
+	}
+
+	public void log(int logError, String message) {
+		LogService logger = getLogger();
+		if (logger != null) {
+			logger.log(logError, message);
+		}
+	}	
 	
 
 }
