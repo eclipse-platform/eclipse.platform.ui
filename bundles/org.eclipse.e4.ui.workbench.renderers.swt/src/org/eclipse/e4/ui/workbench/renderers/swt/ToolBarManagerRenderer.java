@@ -26,6 +26,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -374,8 +375,15 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		if (manager == null) {
 			manager = new ToolBarManager(orientation | SWT.WRAP | SWT.FLAT
 					| SWT.RIGHT);
-			IContributionManagerOverrides overrides = (IContributionManagerOverrides) element
-					.getParent().getTransientData().get(IContributionManagerOverrides.class.getName());
+			IContributionManagerOverrides overrides = null;
+			MApplicationElement parentElement = element.getParent();
+			if (parentElement == null) {
+				parentElement = (MApplicationElement) ((EObject) element)
+						.eContainer();
+				overrides = (IContributionManagerOverrides) parentElement
+						.getTransientData().get(
+								IContributionManagerOverrides.class.getName());
+			}
 			manager.setOverrides(overrides);
 			linkModelToManager((MToolBar) element, manager);
 		}
