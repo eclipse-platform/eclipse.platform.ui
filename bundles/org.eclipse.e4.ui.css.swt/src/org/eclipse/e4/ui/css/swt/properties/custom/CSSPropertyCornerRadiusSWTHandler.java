@@ -31,8 +31,10 @@ public class CSSPropertyCornerRadiusSWTHandler extends AbstractCSSPropertySWTHan
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			int radiusValue = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-			Method m = renderer.getClass().getMethod("setCornerRadius", new Class[]{int.class});
-			m.invoke(renderer, radiusValue);
+			try {
+				Method m = renderer.getClass().getMethod("setCornerRadius", new Class[]{int.class});
+				m.invoke(renderer, radiusValue);
+			} catch(NoSuchMethodException e) {/*IGNORED*/}
 		}
 	}
 	

@@ -19,8 +19,10 @@ public class CSSPropertye4TabOutline extends AbstractCSSPropertySWTHandler {
 			Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
 			if (renderer == null) return;
-			Method m = renderer.getClass().getMethod("setTabOutline", new Class[]{Color.class});
-			m.invoke(renderer, newColor);
+			try {
+				Method m = renderer.getClass().getMethod("setTabOutline", new Class[]{Color.class});
+				m.invoke(renderer, newColor);
+			} catch(NoSuchMethodException e) {/*IGNORED*/}
 		}
 	}
 

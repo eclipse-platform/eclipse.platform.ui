@@ -32,8 +32,10 @@ public class CSSPropertyOuterKeylineSWTHandler extends AbstractCSSPropertySWTHan
 			Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
 			if (renderer == null) return;
-			Method m = renderer.getClass().getMethod("setOuterKeyline", new Class[]{Color.class});
-			m.invoke(renderer, newColor);
+			try {
+				Method m = renderer.getClass().getMethod("setOuterKeyline", new Class[]{Color.class});
+				m.invoke(renderer, newColor);
+			} catch(NoSuchMethodException e) {/*IGNORED*/}
 		}
 	}
 	

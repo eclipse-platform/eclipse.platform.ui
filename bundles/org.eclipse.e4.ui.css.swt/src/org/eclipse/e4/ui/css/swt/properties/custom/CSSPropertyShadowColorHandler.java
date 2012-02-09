@@ -19,15 +19,16 @@ public class CSSPropertyShadowColorHandler extends AbstractCSSPropertySWTHandler
 			Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
 			if (renderer == null) return;
-			Method m = renderer.getClass().getMethod("setShadowColor", new Class[]{Color.class});
-			m.invoke(renderer, newColor);
+			try {
+				Method m = renderer.getClass().getMethod("setShadowColor", new Class[]{Color.class});
+				m.invoke(renderer, newColor);
+			} catch(NoSuchMethodException e) {/*IGNORED*/}
 		}
 	}
 
 	@Override
 	protected String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

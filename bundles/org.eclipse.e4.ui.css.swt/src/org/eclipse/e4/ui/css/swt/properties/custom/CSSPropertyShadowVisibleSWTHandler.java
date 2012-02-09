@@ -29,8 +29,10 @@ public class CSSPropertyShadowVisibleSWTHandler extends AbstractCSSPropertySWTHa
 		if (!(control instanceof CTabFolder)) return;
 		boolean shadowVisible = (Boolean) engine.convert(value, Boolean.class, null);
 		CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-		Method m = renderer.getClass().getMethod("setShadowVisible",  new Class[]{boolean.class});
-		m.invoke(renderer, shadowVisible);
+		try {
+			Method m = renderer.getClass().getMethod("setShadowVisible",  new Class[]{boolean.class});
+			m.invoke(renderer, shadowVisible);
+		} catch(NoSuchMethodException e) {/*IGNORED*/}
 	}
 	
 	protected String retrieveCSSProperty(Control control, String property,

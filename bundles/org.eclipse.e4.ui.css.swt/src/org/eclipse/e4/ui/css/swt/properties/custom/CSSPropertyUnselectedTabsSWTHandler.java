@@ -38,13 +38,15 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 			
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
 			if (renderer == null) return;
-			if (pseudo != null && pseudo.equals("selected")) {
-				Method m = renderer.getClass().getMethod("setActiveToolbarGradient",  new Class[]{Color[].class, int[].class});
-				m.invoke(renderer, colors, percents);
-			} else {
-				Method m = renderer.getClass().getMethod("setInactiveToolbarGradient",  new Class[]{Color[].class, int[].class});
-				m.invoke(renderer, colors, percents);
-			}
+			try {
+				if (pseudo != null && pseudo.equals("selected")) {
+					Method m = renderer.getClass().getMethod("setActiveToolbarGradient",  new Class[]{Color[].class, int[].class});
+					m.invoke(renderer, colors, percents);
+				} else {
+					Method m = renderer.getClass().getMethod("setInactiveToolbarGradient",  new Class[]{Color[].class, int[].class});
+					m.invoke(renderer, colors, percents);
+				}
+			} catch(NoSuchMethodException e) {/*IGNORED*/}
 		}
 	}
 	

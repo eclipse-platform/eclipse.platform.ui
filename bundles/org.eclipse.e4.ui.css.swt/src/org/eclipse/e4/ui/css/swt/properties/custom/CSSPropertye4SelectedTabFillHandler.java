@@ -20,8 +20,10 @@ public class CSSPropertye4SelectedTabFillHandler extends
 			Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
 			if (renderer == null) return;
-			Method m = renderer.getClass().getMethod("setSelectedTabFill", new Class[]{Color.class});
-			m.invoke(renderer, newColor);
+			try {
+				Method m = renderer.getClass().getMethod("setSelectedTabFill", new Class[]{Color.class});
+				m.invoke(renderer, newColor);
+			} catch(NoSuchMethodException e) {/*IGNORED*/}
 		}
 	}
 
