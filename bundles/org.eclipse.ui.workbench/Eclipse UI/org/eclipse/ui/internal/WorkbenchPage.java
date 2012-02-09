@@ -2268,15 +2268,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
 		if (persp.getTags().contains(tag)) {
 			persp.getTags().remove(tag);
+
+			// ActionSetManager does reference counting to determine visibility
+			// so don't add action sets that have already been added
+			IActionSetDescriptor descriptor = WorkbenchPlugin.getDefault().getActionSetRegistry()
+					.findActionSet(actionSetID);
+			if (descriptor != null) {
+				actionSets.hideAction(descriptor);
+			}
 		}
 
 		addHiddenItems(tag);
-
-		IActionSetDescriptor descriptor = WorkbenchPlugin.getDefault().getActionSetRegistry()
-				.findActionSet(actionSetID);
-		if (descriptor != null) {
-			actionSets.hideAction(descriptor);
-		}
     }
 
     /*
@@ -3440,15 +3442,17 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
 		if (!persp.getTags().contains(tag)) {
 			persp.getTags().add(tag);
+
+			// ActionSetManager does reference counting to determine visibility
+			// so don't add action sets that have already been added
+			IActionSetDescriptor descriptor = WorkbenchPlugin.getDefault().getActionSetRegistry()
+					.findActionSet(actionSetID);
+			if (descriptor != null) {
+				actionSets.showAction(descriptor);
+			}
 		}
 
 		removeHiddenItems(tag);
-
-		IActionSetDescriptor descriptor = WorkbenchPlugin.getDefault().getActionSetRegistry()
-				.findActionSet(actionSetID);
-		if (descriptor != null) {
-			actionSets.showAction(descriptor);
-		}
     }
 
     /**
