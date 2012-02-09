@@ -5703,16 +5703,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		ResourceAction action;
 
+		setAction(IWorkbenchCommandConstants.EDIT_CUT, null);
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_CUT);
 		setAction(ITextEditorActionConstants.CUT, action);
 
+		setAction(IWorkbenchCommandConstants.EDIT_COPY, null);
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Copy.", this, ITextOperationTarget.COPY, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 		setAction(ITextEditorActionConstants.COPY, action);
 
+		setAction(IWorkbenchCommandConstants.EDIT_PASTE, null);
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Paste.", this, ITextOperationTarget.PASTE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
