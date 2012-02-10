@@ -284,4 +284,23 @@ public interface IEclipseContext {
 	 * will have no effect.
 	 */
 	public void dispose();
+
+	/**
+	 * <STRONG>EXPERIMENTAL, DO NOT USE</STRONG>
+	 * Returns the value stored on the active leaf node of the context's tree.
+	 * @param clazz the class that needs to be found in the active context
+	 * @return an object corresponding to the given class, or <code>null</code>
+	 * @see IEclipseContext#getActiveLeaf()
+	 */
+	public <T> T getActive(Class<T> clazz);
+
+	/**
+	 * <STRONG>EXPERIMENTAL, DO NOT USE</STRONG>
+	 * Returns the named value stored on the active leaf node of the context's tree.
+	 * @param name the name of the value to return
+	 * @return an object corresponding to the given name, or <code>null</code>
+	 * @see IEclipseContext#getActiveLeaf()
+	 */
+	public Object getActive(final String name);
+
 }

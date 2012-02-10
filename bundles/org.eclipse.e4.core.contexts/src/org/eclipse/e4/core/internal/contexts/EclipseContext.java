@@ -693,4 +693,32 @@ public class EclipseContext implements IEclipseContext {
 	protected Object lookup(String name, EclipseContext originatingContext) {
 		return null;
 	}
+
+	/**
+	 * Prefix used to distinguish active variables
+	 */
+	static private final String ACTIVE_VARIABLE = "org.eclipse.ui.active_"; //$NON-NLS-1$
+
+	public <T> T getActive(Class<T> clazz) {
+		return clazz.cast(getActive(clazz.getName()));
+	}
+
+	public Object getActive(final String name) {
+		final String internalName = ACTIVE_VARIABLE + name;
+		trackAccess(internalName);
+
+		if (containsKey(internalName, false))
+			return internalGet(this, internalName, false);
+
+		final EclipseContext originatingContext = this;
+		runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
+				IEclipseContext activeContext = getRoot().getActiveLeaf();
+				Object result = activeContext.get(name);
+				originatingContext.set(internalName, result);
+				return true;
+			}
+		});
+		return internalGet(this, internalName, true);
+	}
 }
