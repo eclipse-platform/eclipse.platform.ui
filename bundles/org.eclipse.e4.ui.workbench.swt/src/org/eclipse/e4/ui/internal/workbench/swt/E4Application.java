@@ -131,8 +131,11 @@ public class E4Application implements IApplication {
 		Location instanceLocation = (Location) workbench.getContext().get(
 				E4Workbench.INSTANCE_LOCATION);
 		Shell shell = display.getActiveShell();
-		if (shell == null)
+		if (shell == null) {
 			shell = new Shell();
+			// place it off so it's not visible
+			shell.setLocation(0, 10000);
+		}
 		try {
 			if (!checkInstanceLocation(instanceLocation, shell))
 				return EXIT_OK;
