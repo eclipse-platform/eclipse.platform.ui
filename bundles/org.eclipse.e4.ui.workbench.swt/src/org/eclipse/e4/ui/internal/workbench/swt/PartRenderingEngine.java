@@ -1048,7 +1048,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (theApp != null) {
 			for (MWindow window : theApp.getChildren()) {
 				if (window.getWidget() != null) {
-					((Shell) window.getWidget()).close();
+					removeGui(window);
 				}
 			}
 		} else if (testShell != null && !testShell.isDisposed()) {
