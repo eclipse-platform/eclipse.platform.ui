@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,14 +34,14 @@ import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.MarginPainter;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
+import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
+import org.eclipse.jface.text.source.AnnotationPainter.ITextStyleStrategy;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
-import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
-import org.eclipse.jface.text.source.AnnotationPainter.ITextStyleStrategy;
 
 
 
@@ -237,6 +237,10 @@ public class SourceViewerDecorationSupport {
 	private String fMarginPainterColumnKey;
 	/** Preference key for the matching character painter */
 	private String fMatchingCharacterPainterEnableKey;
+	/** Preference key for highlighting character at caret location */
+	private String fMatchingCharacterPainterHighlightCharacterAtCaretLocationKey;
+	/** Preference key for enclosing peer characters */
+	private String fMatchingCharacterPainterEnclosingPeerCharactersKey;
 	/** Preference key for the matching character painter color */
 	private String fMatchingCharacterPainterColorKey;
 	/** The property change listener */
@@ -471,6 +475,24 @@ public class SourceViewerDecorationSupport {
 	}
 
 	/**
+	 * Sets the preference keys for the matching character painter.
+	 * 
+	 * @param enableKey the preference key for the matching character painter
+	 * @param colorKey the preference key for the color used by the matching character painter
+	 * @param highlightCharacterAtCaretLocationKey the preference key for highlighting character at
+	 *            caret location
+	 * @param enclosingPeerCharactersKey the preference key for highlighting enclosing peer
+	 *            characters
+	 * 
+	 * @since 3.8
+	 */
+	public void setMatchingCharacterPainterPreferenceKeys(String enableKey, String colorKey, String highlightCharacterAtCaretLocationKey, String enclosingPeerCharactersKey) {
+		setMatchingCharacterPainterPreferenceKeys(enableKey, colorKey);
+		fMatchingCharacterPainterEnclosingPeerCharactersKey= enclosingPeerCharactersKey;
+		fMatchingCharacterPainterHighlightCharacterAtCaretLocationKey= highlightCharacterAtCaretLocationKey;
+	}
+
+	/**
 	 * Sets the symbolic font name that is used for computing the margin width.
 	 *
 	 * @param symbolicFontName the symbolic font name
@@ -508,6 +530,22 @@ public class SourceViewerDecorationSupport {
 				showMatchingCharacters();
 			else
 				hideMatchingCharacters();
+			return;
+		}
+
+		if (fMatchingCharacterPainterHighlightCharacterAtCaretLocationKey != null && fMatchingCharacterPainterHighlightCharacterAtCaretLocationKey.equals(p)) {
+			if (fMatchingCharacterPainter != null) {
+				fMatchingCharacterPainter.setHighlightCharacterAtCaretLocation(isCharacterAtCaretLocationShown());
+				fMatchingCharacterPainter.paint(IPainter.CONFIGURATION);
+			}
+			return;
+		}
+
+		if (fMatchingCharacterPainterEnclosingPeerCharactersKey != null && fMatchingCharacterPainterEnclosingPeerCharactersKey.equals(p)) {
+			if (fMatchingCharacterPainter != null) {
+				fMatchingCharacterPainter.setHighlightEnclosingPeerCharacters(areEnclosingPeerCharactersShown());
+				fMatchingCharacterPainter.paint(IPainter.CONFIGURATION);
+			}
 			return;
 		}
 
@@ -653,6 +691,8 @@ public class SourceViewerDecorationSupport {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
 				fMatchingCharacterPainter= new MatchingCharacterPainter(fSourceViewer, fCharacterPairMatcher);
 				fMatchingCharacterPainter.setColor(getColor(fMatchingCharacterPainterColorKey));
+				fMatchingCharacterPainter.setHighlightCharacterAtCaretLocation(isCharacterAtCaretLocationShown());
+				fMatchingCharacterPainter.setHighlightEnclosingPeerCharacters(areEnclosingPeerCharactersShown());
 				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.addPainter(fMatchingCharacterPainter);
 			}
@@ -682,6 +722,28 @@ public class SourceViewerDecorationSupport {
 	private boolean areMatchingCharactersShown() {
 		if (fPreferenceStore != null && fMatchingCharacterPainterEnableKey != null)
 			return fPreferenceStore.getBoolean(fMatchingCharacterPainterEnableKey);
+		return false;
+	}
+
+	/**
+	 * Tells whether character at caret location is shown.
+	 * 
+	 * @return <code>true</code> if character at caret location is shown
+	 */
+	private boolean isCharacterAtCaretLocationShown() {
+		if (fPreferenceStore != null && fMatchingCharacterPainterHighlightCharacterAtCaretLocationKey != null)
+			return fPreferenceStore.getBoolean(fMatchingCharacterPainterHighlightCharacterAtCaretLocationKey);
+		return false;
+	}
+
+	/**
+	 * Tells whether enclosing peer characters are shown.
+	 * 
+	 * @return <code>true</code> if the enclosing peer characters are shown
+	 */
+	private boolean areEnclosingPeerCharactersShown() {
+		if (fPreferenceStore != null && fMatchingCharacterPainterEnclosingPeerCharactersKey != null)
+			return fPreferenceStore.getBoolean(fMatchingCharacterPainterEnclosingPeerCharactersKey);
 		return false;
 	}
 

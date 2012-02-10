@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,12 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	private Position fPairPosition= new Position(0, 0);
 	/** The anchor indicating whether the character is left or right of the caret */
 	private int fAnchor;
+	/** Whether to highlight enclosing peer characters or not. */
+	private boolean fHighlightEnclosingPeerCharcters;
+	/** Whether to highlight the character at caret location or not. */
+	private boolean fHighlightCharacterAtCaretLocation;
+	/** Whether a character is present at caret location or not. */
+	private boolean fCharacterPresentAtCaretLocation;
 
 
 	/**
@@ -69,6 +75,27 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		fSourceViewer= sourceViewer;
 		fMatcher= matcher;
 		fTextWidget= sourceViewer.getTextWidget();
+	}
+
+	/**
+	 * Sets whether to highlight the character at caret location or not.
+	 * 
+	 * @param highlightCharacterAtCaretLocation whether to highlight the character at caret location
+	 *            or not
+	 * @since 3.8
+	 */
+	public void setHighlightCharacterAtCaretLocation(boolean highlightCharacterAtCaretLocation) {
+		fHighlightCharacterAtCaretLocation= highlightCharacterAtCaretLocation;
+	}
+
+	/**
+	 * Sets whether to highlight enclosing peer characters or not.
+	 * 
+	 * @param highlightEnclosingPeerCharcters whether to highlight enclosing peer characters or not
+	 * @since 3.8
+	 */
+	public void setHighlightEnclosingPeerCharacters(boolean highlightEnclosingPeerCharcters) {
+		fHighlightEnclosingPeerCharcters= highlightEnclosingPeerCharcters;
 	}
 
 	/**
@@ -158,10 +185,15 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			offset -= region.getOffset();
 		}
 
-		if (ICharacterPairMatcher.RIGHT == fAnchor)
+		if (fHighlightCharacterAtCaretLocation || (fHighlightEnclosingPeerCharcters && !fCharacterPresentAtCaretLocation)) {
 			draw(gc, offset, 1);
-		else
-			draw(gc, offset + length -1, 1);
+			draw(gc, offset + length - 1, 1);
+		} else {
+			if (ICharacterPairMatcher.RIGHT == fAnchor)
+				draw(gc, offset, 1);
+			else
+				draw(gc, offset + length - 1, 1);
+		}
 	}
 
 	/**
@@ -218,6 +250,12 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		}
 
 		IRegion pair= fMatcher.match(document, selection.x);
+		boolean characterPresentAtCaretLocation= (pair != null);
+		if (pair == null && fHighlightEnclosingPeerCharcters && fMatcher instanceof ICharacterPairMatcherExtension) {
+			ICharacterPairMatcherExtension matcher= (ICharacterPairMatcherExtension)fMatcher;
+			pair= matcher.findEnclosingPeerCharacters(document, selection.x);
+		}
+
 		if (pair == null) {
 			deactivate(true);
 			return;
@@ -232,8 +270,8 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 
 			} else if (pair.getOffset() != fPairPosition.getOffset() ||
 					pair.getLength() != fPairPosition.getLength() ||
-					fMatcher.getAnchor() != fAnchor) {
-
+					fMatcher.getAnchor() != fAnchor ||
+					characterPresentAtCaretLocation != fCharacterPresentAtCaretLocation) {
 				// otherwise only do something if position is different
 
 				// remove old highlighting
@@ -243,6 +281,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 				fPairPosition.offset= pair.getOffset();
 				fPairPosition.length= pair.getLength();
 				fAnchor= fMatcher.getAnchor();
+				fCharacterPresentAtCaretLocation= characterPresentAtCaretLocation;
 				// apply new highlighting
 				handleDrawRequest(null);
 
@@ -255,6 +294,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			fPairPosition.offset= pair.getOffset();
 			fPairPosition.length= pair.getLength();
 			fAnchor= fMatcher.getAnchor();
+			fCharacterPresentAtCaretLocation= characterPresentAtCaretLocation;
 
 			fTextWidget.addPaintListener(this);
 			fPaintPositionManager.managePosition(fPairPosition);

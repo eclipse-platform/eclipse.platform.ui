@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,15 +14,15 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * A character pair matcher finds to a character at a certain document offset
- * the matching peer character. It is the matchers responsibility to define the
- * concepts of "matching" and "peer". The matching process starts at a given
- * offset. Starting of this offset, the matcher chooses a character close to
- * this offset. The anchor defines whether the chosen character is left or right
- * of the initial offset. The matcher then searches for the matching peer
- * character of the chosen character and if it finds one, delivers the minimal
- * region of the document that contains both characters.
- *
+ * A character pair matcher finds to a character at a certain document offset the matching peer
+ * character. It is the matchers responsibility to define the concepts of "matching" and "peer". The
+ * matching process starts at a given offset. Starting of this offset, the matcher chooses a
+ * character close to this offset. The anchor defines whether the chosen character is left or right
+ * of the initial offset. The matcher then searches for the matching peer character of the chosen
+ * character and if it finds one, delivers the minimal region of the document that contains both
+ * characters.
+ * 
+ * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension
  * @since 2.1
  */
 public interface ICharacterPairMatcher {

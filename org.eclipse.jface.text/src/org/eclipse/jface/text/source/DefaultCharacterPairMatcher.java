@@ -29,7 +29,7 @@ import org.eclipse.jface.text.TextUtilities;
  *
  * @since 3.3
  */
-public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
+public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, ICharacterPairMatcherExtension {
 
 	private int fAnchor= -1;
 	private final CharPairs fPairs;
@@ -105,6 +105,34 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 		} catch (BadLocationException ble) {
 			return null;
 		}
+	}
+
+	/**
+	 * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension#findEnclosingPeerCharacters(org.eclipse.jface.text.IDocument,
+	 *      int)
+	 * @since 3.8
+	 */
+	public IRegion findEnclosingPeerCharacters(IDocument doc, int offset) {
+		if (doc == null || offset < 0 || offset > doc.getLength())
+			return null;
+		try {
+			for (int offset1= offset; offset1 >= 0; offset1--) {
+				char prevChar= doc.getChar(Math.max(offset1 - 1, 0));
+				if (fPairs.contains(prevChar) && fPairs.isStartCharacter(prevChar)) {
+					IRegion match= performMatch(doc, offset1);
+					if (match != null) {
+						int matchOffset= match.getOffset();
+						int matchLength= match.getLength();
+						if ((matchOffset <= offset) && (matchOffset + matchLength > offset)) {
+							return match;
+						}
+					}
+				}
+			}
+		} catch (BadLocationException ble) {
+			return null;
+		}
+		return null;
 	}
 
 	/*
