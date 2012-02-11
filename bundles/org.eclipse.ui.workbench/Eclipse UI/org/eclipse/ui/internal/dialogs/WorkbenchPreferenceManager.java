@@ -13,12 +13,12 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.Collection;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
@@ -27,6 +27,7 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExpressionNode;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
@@ -138,8 +139,8 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 				}
 				if (parent == null) {
 					// Could not find the parent - log
-					WorkbenchPlugin
-							.log("Invalid preference page path: " + category); //$NON-NLS-1$
+					String message = "Invalid preference category path: " + category + " (bundle: " + node.getPluginId() + ", page: " + node.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+					WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.WARNING, message, null));
 					addToRoot(node);
 				} else {
 					parent.add(node);

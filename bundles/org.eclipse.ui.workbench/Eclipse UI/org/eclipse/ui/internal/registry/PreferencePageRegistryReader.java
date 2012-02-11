@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.registry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -129,6 +128,19 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 */
 	String getCategory(Object node) {
 		return ((WorkbenchPreferenceNode) node).getCategory();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#
+	 * invalidCategoryNodeMessage
+	 * (org.eclipse.ui.internal.registry.CategorizedPageRegistryReader
+	 * .CategoryNode)
+	 */
+	protected String invalidCategoryNodeMessage(CategoryNode categoryNode) {
+		WorkbenchPreferenceNode wpn = (WorkbenchPreferenceNode) categoryNode.getNode();
+		return "Invalid preference category path: " + wpn.getCategory() + " (bundle: " + wpn.getPluginId() + ", page: " + wpn.getLocalId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	/* (non-Javadoc)

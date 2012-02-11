@@ -284,6 +284,19 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#
+	 * invalidCategoryNodeMessage
+	 * (org.eclipse.ui.internal.registry.CategorizedPageRegistryReader
+	 * .CategoryNode)
+	 */
+	protected String invalidCategoryNodeMessage(CategoryNode categoryNode) {
+		RegistryPageContributor rpc = (RegistryPageContributor) categoryNode.getNode();
+		return "Invalid property category path: " + rpc.getCategory() + " (bundle: " + rpc.getPluginId() + ", propertyPage: " + rpc.getLocalId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#getNodes()
 	 */
 	Collection getNodes() {
