@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -291,6 +291,7 @@ public class MenuAdditionCacheEntry {
 		for (IConfigurationElement toolbar : toolbars) {
 			MToolBar item = MenuFactoryImpl.eINSTANCE.createToolBar();
 			item.setElementId(MenuHelper.getId(toolbar));
+			item.getTransientData().put("Name", MenuHelper.getLabel(toolbar)); //$NON-NLS-1$
 			processToolbarChildren(toolBarContributions, toolbar, item.getElementId(),
 					"after=additions"); //$NON-NLS-1$
 			trimContribution.getChildren().add(item);
