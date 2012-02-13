@@ -110,7 +110,10 @@ public class ContributionRecord {
 		}
 
 		if (changed) {
-			getManagerForModel().markDirty();
+			MenuManager manager = getManagerForModel();
+			if (manager != null) {
+				manager.markDirty();
+			}
 		}
 	}
 

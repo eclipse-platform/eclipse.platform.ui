@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,15 @@ public class CompatibilityView extends CompatibilityPart {
 		return reference;
 	}
 
+	private MMenu getViewMenu() {
+		for (MMenu menu : part.getMenus()) {
+			if (menu.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
+				return menu;
+			}
+		}
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -94,6 +103,9 @@ public class CompatibilityView extends CompatibilityPart {
 	protected boolean createPartControl(IWorkbenchPart legacyPart, Composite parent) {
 		part.getContext().set(IViewPart.class, (IViewPart) legacyPart);
 
+		IEclipseContext context = getModel().getContext();
+		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
+
 		// Some views (i.e. Console) require that the actual ToolBar be
 		// instantiated before they are
 		IActionBars actionBars = ((IViewPart) legacyPart).getViewSite().getActionBars();
@@ -101,22 +113,22 @@ public class CompatibilityView extends CompatibilityPart {
 		Composite toolBarParent = new Composite(parent, SWT.NONE);
 		tbm.createControl(toolBarParent);
 
+		MenuManager mm = (MenuManager) actionBars.getMenuManager();
+		MMenu menu = getViewMenu();
+		if (menu != null) {
+			AbstractPartRenderer apr = rendererFactory.getRenderer(menu, parent);
+			if (apr instanceof MenuManagerRenderer) {
+				MenuManagerRenderer renderer = (MenuManagerRenderer) apr;
+				renderer.linkModelToManager(menu, mm);
+			}
+		}
+
 		super.createPartControl(legacyPart, parent);
 
 		// dispose the tb, it will be re-created when the tab is shown
 		toolBarParent.dispose();
 
-		IEclipseContext context = getModel().getContext();
-		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
-
-		MenuManager mm = (MenuManager) actionBars.getMenuManager();
-		MMenu menu = null;
-		for (MMenu me : part.getMenus()) {
-			if (me.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
-				menu = me;
-				break;
-			}
-		}
+		menu = getViewMenu();
 		if (menu == null) {
 			menu = MenuFactoryImpl.eINSTANCE.createMenu();
 			menu.setElementId(part.getElementId());
