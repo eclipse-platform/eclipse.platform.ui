@@ -327,9 +327,8 @@ public class SearchField {
 
 	void layoutShell() {
 		Display display = text.getDisplay();
-		Composite parent = text.getParent();
-		Rectangle tempBounds = parent.getBounds();
-		Rectangle compBounds = display.map(parent, null, tempBounds);
+		Rectangle tempBounds = text.getBounds();
+		Rectangle compBounds = display.map(text, null, tempBounds);
 		int preferredWidth = dialogWidth == -1 ? 350 : dialogWidth;
 		int width = Math.max(preferredWidth, compBounds.width);
 		int height = dialogHeight == -1 ? 250 : dialogHeight;
