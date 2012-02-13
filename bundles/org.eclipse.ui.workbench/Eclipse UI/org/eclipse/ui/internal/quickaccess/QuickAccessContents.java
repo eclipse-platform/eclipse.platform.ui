@@ -348,13 +348,11 @@ public abstract class QuickAccessContents {
 					if (index != -1 && table.getItemCount() > index + 1) {
 						table.setSelection(index + 1);
 					}
-					table.setFocus();
 					break;
 				case SWT.ARROW_UP:
 					index = table.getSelectionIndex();
 					if (index != -1 && index >= 1) {
 						table.setSelection(index - 1);
-						table.setFocus();
 					}
 					break;
 				case SWT.ESC:
