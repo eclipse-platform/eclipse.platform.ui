@@ -208,6 +208,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	ArrayList<MPart> activationList = new ArrayList<MPart>();
 
 	/**
+	 * Cached perspective stack for this workbench page.
+	 */
+	private MPerspectiveStack _perspectiveStack;
+
+	/**
 	 * Deactivate the last editor's action bars if another type of editor has
 	 * been activated.
 	 * 
@@ -3360,14 +3365,19 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 	 * @return the stack of perspectives of this page's containing window
 	 */
 	private MPerspectiveStack getPerspectiveStack() {
+		if (_perspectiveStack != null)
+			return _perspectiveStack;
 		List<MPerspectiveStack> theStack = modelService.findElements(window, null,
 				MPerspectiveStack.class, null);
-		if (theStack.size() > 0)
-			return theStack.get(0);
+		if (theStack.size() > 0) {
+			_perspectiveStack = theStack.get(0);
+			return _perspectiveStack;
+		}
 
 		for (MWindowElement child : window.getChildren()) {
 			if (child instanceof MPerspectiveStack) {
-				return (MPerspectiveStack) child;
+				_perspectiveStack = (MPerspectiveStack) child;
+				return _perspectiveStack;
 			}
 		}
 
@@ -3398,10 +3408,9 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 
 		window.getChildren().add(stickySash);
 		window.setSelectedElement(stickySash);
+		_perspectiveStack = perspectiveStack;
 		return perspectiveStack;
 	}
-    
-
 
     /**
      * Sets the active working set for the workbench page. Notifies property
