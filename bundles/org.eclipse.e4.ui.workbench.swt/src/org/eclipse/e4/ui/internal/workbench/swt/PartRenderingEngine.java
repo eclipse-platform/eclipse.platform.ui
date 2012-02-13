@@ -38,6 +38,7 @@ import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
+import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.Policy;
@@ -810,6 +811,22 @@ public class PartRenderingEngine implements IPresentationEngine {
 					MTrimmedWindow trimmedWindow = (MTrimmedWindow) window;
 					for (MUIElement trimBar : trimmedWindow.getTrimBars()) {
 						removeGui(trimBar);
+					}
+				}
+			}
+
+			if (element instanceof MContribution) {
+				MContribution contribution = (MContribution) element;
+				Object client = contribution.getObject();
+				IEclipseContext parentContext = renderer.getContext(element);
+				if (parentContext != null && client != null) {
+					try {
+						ContextInjectionFactory.invoke(client,
+								PersistState.class, parentContext);
+					} catch (Exception e) {
+						if (logger != null) {
+							logger.error(e);
+						}
 					}
 				}
 			}

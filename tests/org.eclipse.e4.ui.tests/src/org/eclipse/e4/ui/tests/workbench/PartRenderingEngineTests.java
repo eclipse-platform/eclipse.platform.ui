@@ -3235,4 +3235,66 @@ public class PartRenderingEngineTests extends TestCase {
 
 		assertFalse(logged);
 	}
+
+	public void test_persistState_371087() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		window.getChildren().add(part);
+		window.setSelectedElement(part);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(part.getObject());
+		assertNotNull(part.getContext());
+
+		SampleView view = (SampleView) part.getObject();
+		view.errorOnWidgetDisposal = true;
+
+		part.setToBeRendered(false);
+		assertTrue("The view should have been destroyed",
+				view.isStatePersisted());
+		assertNull(part.getObject());
+		assertNull(part.getContext());
+	}
+
+	public void test_persistState_371087_1() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		window.getChildren().add(part);
+		window.setSelectedElement(part);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(part.getObject());
+		assertNotNull(part.getContext());
+
+		SampleView view = (SampleView) part.getObject();
+		view.errorOnWidgetDisposal = true;
+
+		window.setToBeRendered(false);
+		assertTrue("The view should have been destroyed",
+				view.isStatePersisted());
+		assertNull(part.getObject());
+		assertNull(part.getContext());
+	}
 }

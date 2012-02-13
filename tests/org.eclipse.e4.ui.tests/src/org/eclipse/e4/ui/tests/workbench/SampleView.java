@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -46,6 +47,10 @@ public class SampleView {
 
 	boolean nullParentContext = false;
 
+	private TreeViewer viewer;
+
+	private boolean statePersisted;
+
 	/**
 	 * Create the sample view.
 	 * 
@@ -65,8 +70,7 @@ public class SampleView {
 			}
 		});
 
-		TreeViewer viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.getTree().setData("class", "navigator"); //$NON-NLS-1$ //$NON-NLS-2$
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -163,6 +167,17 @@ public class SampleView {
 		if (errorOnPreDestroy) {
 			throw new RuntimeException();
 		}
+	}
+
+	@PersistState
+	void persistState() {
+		if (!viewer.getControl().isDisposed()) {
+			statePersisted = true;
+		}
+	}
+
+	public boolean isStatePersisted() {
+		return statePersisted;
 	}
 
 	public boolean isDestroyed() {
