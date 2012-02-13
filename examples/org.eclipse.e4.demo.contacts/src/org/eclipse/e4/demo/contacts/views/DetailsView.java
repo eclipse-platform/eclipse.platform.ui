@@ -224,6 +224,8 @@ public class DetailsView {
 			uiItem.setLabel("Details");
 		}
 		dirtyable.setDirty(false);
-		detailComposite.update(contact);
+		if (!detailComposite.isDisposed()) {
+			detailComposite.update(contact);
+		}
 	}
 }

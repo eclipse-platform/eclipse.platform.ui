@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -110,6 +111,9 @@ public class WBWRenderer extends SWTPartRenderer {
 	@Inject
 	private IEventBroker eventBroker;
 
+	@Inject
+	private IPresentationEngine engine;
+
 	private EventHandler shellUpdater;
 	private EventHandler visibilityHandler;
 	private EventHandler sizeHandler;
@@ -170,7 +174,15 @@ public class WBWRenderer extends SWTPartRenderer {
 			setCSSInfo(stack, stack.getWidget());
 	}
 
-	private void closeDetachedWindow(MWindow window) {
+	/**
+	 * Closes the provided detached window.
+	 * 
+	 * @param window
+	 *            the detached window to close
+	 * @return <code>true</code> if the window should be closed,
+	 *         <code>false</code> otherwise
+	 */
+	private boolean closeDetachedWindow(MWindow window) {
 		EPartService partService = (EPartService) window.getContext().get(
 				EPartService.class.getName());
 		List<MPart> parts = modelService.findElements(window, null,
@@ -179,7 +191,8 @@ public class WBWRenderer extends SWTPartRenderer {
 		// at all
 		for (MPart part : parts) {
 			if (!partService.savePart(part, true)) {
-				return;
+				// user cancelled the operation, return false
+				return false;
 			}
 		}
 
@@ -187,9 +200,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		for (MPart part : parts) {
 			partService.hidePart(part);
 		}
-
-		// finally unrender the window itself
-		window.setToBeRendered(false);
+		return true;
 	}
 
 	@PostConstruct
@@ -483,8 +494,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			context.set(IWindowCloseHandler.class.getName(),
 					new IWindowCloseHandler() {
 						public boolean close(MWindow window) {
-							closeDetachedWindow(window);
-							return false;
+							return closeDetachedWindow(window);
 						}
 					});
 		} else {
@@ -541,12 +551,16 @@ public class WBWRenderer extends SWTPartRenderer {
 
 			shell.addShellListener(new ShellAdapter() {
 				public void shellClosed(ShellEvent e) {
+					// override the shell close event
+					e.doit = false;
 					MWindow window = (MWindow) e.widget.getData(OWNING_ME);
 					IWindowCloseHandler closeHandler = (IWindowCloseHandler) window
 							.getContext().get(
 									IWindowCloseHandler.class.getName());
-					if (closeHandler != null) {
-						e.doit = closeHandler.close(window);
+					// if there's no handler or the handler permits the close
+					// request, clean-up as necessary
+					if (closeHandler == null || closeHandler.close(window)) {
+						cleanUp(window);
 					}
 				}
 			});
@@ -565,6 +579,34 @@ public class WBWRenderer extends SWTPartRenderer {
 					}
 				}
 			});
+		}
+	}
+
+	private void cleanUp(MWindow window) {
+		Object parent = ((EObject) window).eContainer();
+		if (parent instanceof MApplication) {
+			MApplication application = (MApplication) parent;
+			List<MWindow> children = application.getChildren();
+			if (children.size() > 1) {
+				// not the last window, destroy and remove
+				window.setToBeRendered(false);
+				children.remove(window);
+			} else {
+				// last window, just destroy without changing the model
+				engine.removeGui(window);
+			}
+		} else if (parent != null) {
+			window.setToBeRendered(false);
+			// this is a detached window, check for parts
+			if (modelService.findElements(window, null, MPart.class, null)
+					.isEmpty()) {
+				// if no parts, remove it
+				if (parent instanceof MWindow) {
+					((MWindow) parent).getWindows().remove(window);
+				} else if (parent instanceof MPerspective) {
+					((MPerspective) parent).getWindows().remove(window);
+				}
+			}
 		}
 	}
 
