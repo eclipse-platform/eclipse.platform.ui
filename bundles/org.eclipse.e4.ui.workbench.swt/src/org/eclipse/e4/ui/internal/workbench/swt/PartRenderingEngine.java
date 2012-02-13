@@ -822,7 +822,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (parentContext != null && client != null) {
 					try {
 						ContextInjectionFactory.invoke(client,
-								PersistState.class, parentContext);
+								PersistState.class, parentContext, null);
 					} catch (Exception e) {
 						if (logger != null) {
 							logger.error(e);
