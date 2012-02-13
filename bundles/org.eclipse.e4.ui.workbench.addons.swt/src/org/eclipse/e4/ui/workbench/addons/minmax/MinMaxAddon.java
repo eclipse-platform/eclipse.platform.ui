@@ -721,6 +721,7 @@ public class MinMaxAddon {
 			trimStack = MenuFactoryImpl.eINSTANCE.createToolControl();
 			trimStack.setElementId(trimId);
 			trimStack.setContributionURI(TrimStack.CONTRIBUTION_URI);
+			trimStack.getTags().add("TrimStack"); //$NON-NLS-1$
 
 			// Check if we have a cached location
 			MTrimBar bar = getBarForElement(element, window);

@@ -85,10 +85,10 @@ public class PartDragAgent extends DragAgent {
 	 * application.ui.MUIElement)
 	 */
 	@Override
-	public void dragStart(MUIElement element, DnDInfo info) {
-		super.dragStart(element, info);
+	public void dragStart(DnDInfo info) {
+		super.dragStart(info);
 		if (dndManager.getFeedbackStyle() != DnDManager.SIMPLE)
-			dndManager.hostElement(element, 16, 10);
+			dndManager.hostElement(dragElement, 16, 10);
 	}
 
 	/*
@@ -97,11 +97,11 @@ public class PartDragAgent extends DragAgent {
 	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#dragFinished()
 	 */
 	@Override
-	public void dragFinished() {
+	public void dragFinished(boolean performDrop, DnDInfo info) {
 		if (dragElement instanceof MPart) {
 			EPartService ps = dndManager.getDragWindow().getContext().get(EPartService.class);
 			ps.activate((MPart) dragElement);
 		}
-		super.dragFinished();
+		super.dragFinished(performDrop, info);
 	}
 }

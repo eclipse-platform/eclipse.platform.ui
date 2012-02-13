@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,16 @@
 
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import java.util.List;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 
 /**
  *
@@ -23,9 +29,9 @@ abstract class DragAgent {
 	private static final String DRAG_PLACEHOLDER_ID = "Drag Placerholder";
 	protected MUIElement dragElement;
 
-	protected MElementContainer<MUIElement> originalParent;
-	protected int originalIndex;
 	protected DnDManager dndManager;
+	private MUIElement dragPH = null;
+	private DropAgent dropAgent = null;
 
 	/**
 	 * Return the element that your agent would start to drag given the current cursor info.
@@ -62,10 +68,11 @@ abstract class DragAgent {
 	 * @param info
 	 *            Information about which model element the cursor is over
 	 * 
-	 * @return true iff it is OK to start a drag
+	 * @return true iff there is an element to drag
 	 */
 	public boolean canDrag(DnDInfo info) {
-		return getElementToDrag(info) != null;
+		dragElement = getElementToDrag(info);
+		return dragElement != null;
 	}
 
 	/**
@@ -74,21 +81,45 @@ abstract class DragAgent {
 	 * @param element
 	 *            The element to drag
 	 */
-	public void dragStart(MUIElement element, DnDInfo info) {
-		// Cache the element's current location in the model.
-		dragElement = element;
-		originalParent = element.getParent();
-		if (originalParent != null) {
-			originalIndex = element.getParent().getChildren().indexOf(element);
+	public void dragStart(DnDInfo info) {
+		// cache a placeholder where the element started (NOTE: this also prevents the parent from
+		// being auto-removed by going 'empty'
+		if (dragElement.getParent() != null) {
+			if (dragElement instanceof MStackElement)
+				dragPH = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+			else if (dragElement instanceof MPartStack)
+				dragPH = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
+			else if (dragElement instanceof MTrimElement)
+				dragPH = MenuFactoryImpl.eINSTANCE.createToolControl();
 
-			// If there's only one child, add a placeholder to prevent the stack
-			// from being 'garbage collected'
-			if (originalParent.getChildren().size() == 1
-					&& dndManager.getFeedbackStyle() == DnDManager.HOSTED) {
-				MPlaceholder dragPH = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
-				dragPH.setElementId(DRAG_PLACEHOLDER_ID);
-				dragPH.setToBeRendered(false);
-				originalParent.getChildren().add(dragPH);
+			dragPH.setElementId(DRAG_PLACEHOLDER_ID);
+			dragPH.setToBeRendered(false);
+
+			List<MUIElement> kids = dragElement.getParent().getChildren();
+			kids.add(kids.indexOf(dragElement), dragPH);
+		}
+
+		dropAgent = dndManager.getDropAgent(dragElement, info);
+	}
+
+	public void track(DnDInfo info) {
+		DropAgent curAgent = dropAgent;
+
+		// Re-use the same dropAgent until it returns 'false' from track
+		if (dropAgent != null)
+			dropAgent = dropAgent.track(dragElement, info) ? dropAgent : null;
+
+		// If we don't have a drop agent currently try to get one
+		if (dropAgent == null) {
+			if (curAgent != null)
+				curAgent.dragLeave(dragElement, info);
+
+			dropAgent = dndManager.getDropAgent(dragElement, info);
+
+			if (dropAgent != null)
+				dropAgent.dragEnter(dragElement, info);
+			else {
+				dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_NO));
 			}
 		}
 	}
@@ -98,25 +129,43 @@ abstract class DragAgent {
 	 * original location in the model.
 	 */
 	public void cancelDrag() {
-		// if (dragElement.getParent() != null)
-		// dragElement.getParent().getChildren().remove(dragElement);
-		// originalParent.getChildren().add(originalIndex, dragElement);
-		// dndManager.getModelService().bringToTop(dragElement);
+		if (dragPH == null)
+			return;
+
+		// if the dragElement is *not* directly after the placeholder we have to return it there
+		List<MUIElement> phParentsKids = dragPH.getParent().getChildren();
+		if (phParentsKids.indexOf(dragElement) != phParentsKids.indexOf(dragPH) + 1) {
+			if (dragElement.getParent() != null)
+				dragElement.getParent().getChildren().remove(dragElement);
+			phParentsKids.add(phParentsKids.indexOf(dragPH) + 1, dragElement);
+		}
 	}
 
 	/**
 	 * Restore the DragAgent to a state where it will be ready to start a new drag
+	 * 
+	 * @param performDrop
+	 *            determines if a drop operation should be performed if possible
 	 */
-	public void dragFinished() {
-		if (originalParent != null && dndManager.getFeedbackStyle() == DnDManager.HOSTED) {
-			MUIElement dragPH = dndManager.getModelService().find(DRAG_PLACEHOLDER_ID,
-					originalParent);
-			if (dragPH != null)
-				originalParent.getChildren().remove(dragPH);
+	public void dragFinished(boolean performDrop, DnDInfo info) {
+		boolean isNoDrop = dndManager.getDragShell().getCursor() == Display.getCurrent()
+				.getSystemCursor(SWT.CURSOR_NO);
+		if (performDrop && dropAgent != null && !isNoDrop) {
+			dropAgent.drop(dragElement, info);
+		} else {
+			cancelDrag();
+		}
+
+		dndManager.getDragShell().layout(true, true);
+
+		if (dragPH == null)
+			return;
+
+		if (dragPH != null) {
+			dragPH.getParent().getChildren().remove(dragPH);
+			dragPH = null;
 		}
 
 		dragElement = null;
-		originalIndex = -1;
-		originalParent = null;
 	}
 }

@@ -62,7 +62,8 @@ public class CSSRenderingUtils {
 
 		// super hack
 		ControlElement tempEment = new ControlElement(styleControl, csseng);
-		ControlElement.setCSSClass(styleControl, className);
+		if (className != null)
+			ControlElement.setCSSClass(styleControl, className);
 
 		CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
 				.getComputedStyle(tempEment, ""); //$NON-NLS-1$
@@ -88,7 +89,8 @@ public class CSSRenderingUtils {
 
 			// super hack
 			ControlElement tempEment = new ControlElement(styleControl, csseng);
-			ControlElement.setCSSClass(styleControl, classId); //$NON-NLS-1$
+			if (classId != null)
+				ControlElement.setCSSClass(styleControl, classId); //$NON-NLS-1$
 
 			CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
 					.getComputedStyle(tempEment, "");

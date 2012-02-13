@@ -1,0 +1,119 @@
+/*******************************************************************************
+ * Copyright (c) 2012 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
+
+package org.eclipse.e4.ui.workbench.addons.dndaddon;
+
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.widgets.ImageBasedFrame;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Shell;
+
+/**
+ *
+ */
+public class IBFDragAgent extends DragAgent {
+
+	private ImageBasedFrame frame;
+	private Shell ds;
+
+	/**
+	 * @param manager
+	 */
+	public IBFDragAgent(DnDManager manager) {
+		super(manager);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#getElementToDrag(org.eclipse.e4.ui.
+	 * workbench.addons.dndaddon.DnDInfo)
+	 */
+	@Override
+	public MUIElement getElementToDrag(DnDInfo info) {
+		if (!(info.curCtrl instanceof ImageBasedFrame))
+			return null;
+
+		if (!(info.curElement instanceof MToolControl))
+			return null;
+
+		ImageBasedFrame frame = (ImageBasedFrame) info.curCtrl;
+		Rectangle handleRect = frame.getHandleRect();
+		handleRect = frame.getDisplay().map(frame, null, handleRect);
+
+		if (handleRect.contains(info.cursorPos)) {
+			dragElement = info.curElement;
+			return info.curElement;
+		}
+
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#dragStart(org.eclipse.e4.ui.workbench
+	 * .addons.dndaddon.DnDInfo)
+	 */
+	@Override
+	public void dragStart(DnDInfo info) {
+		super.dragStart(info);
+
+		frame = (ImageBasedFrame) dragElement.getWidget();
+
+		dragElement.setVisible(false);
+
+		ds = new Shell(dndManager.getDragShell(), SWT.NO_TRIM);
+		frame.setParent(ds);
+		frame.setLocation(0, 0);
+		ds.setSize(frame.getSize());
+		ds.setLocation(info.cursorPos.x - 5, info.cursorPos.y - 5);
+		ds.open();
+
+		ds.getParent().layout(ds.getParent().getChildren());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#track(org.eclipse.e4.ui.workbench.addons
+	 * .dndaddon.DnDInfo)
+	 */
+	@Override
+	public void track(DnDInfo info) {
+		super.track(info);
+
+		if (ds != null)
+			ds.setLocation(info.cursorPos.x - 5, info.cursorPos.y - 5);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#dragFinished(boolean,
+	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
+	 */
+	@Override
+	public void dragFinished(boolean performDrop, DnDInfo info) {
+		dragElement.setVisible(true);
+
+		super.dragFinished(performDrop, info);
+
+		// NOTE: the dragElement should no longer be a child of the shell
+		if (ds != null && !ds.isDisposed())
+			ds.dispose();
+	}
+}

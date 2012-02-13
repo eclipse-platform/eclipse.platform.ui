@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
+import org.eclipse.e4.ui.widgets.ImageBasedFrame;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -88,37 +89,49 @@ class DnDManager {
 		info = new DnDInfo(topLevelWindow);
 
 		dragAgents.add(new PartDragAgent(this));
+		dragAgents.add(new IBFDragAgent(this));
 
 		dropAgents.add(new StackDropAgent(this));
 		dropAgents.add(new SplitDropAgent(this));
 		dropAgents.add(new DetachedDropAgent(this));
 
 		// Register a 'dragDetect' against any stacks that get created
-		IEventBroker eventBroker = topLevelWindow.getContext().get(IEventBroker.class);
-		EventHandler stackWidgetHandler = new EventHandler() {
-			public void handleEvent(org.osgi.service.event.Event event) {
-				// Ensure that this event is for a MPartSashContainer
-				MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
-				if (!(element instanceof MPartStack)
-						|| !(element.getWidget() instanceof CTabFolder))
-					return;
-
-				CTabFolder ctf = (CTabFolder) element.getWidget();
-				ctf.addDragDetectListener(new DragDetectListener() {
-					public void dragDetected(DragDetectEvent e) {
-						startDrag(e);
-					}
-				});
-			}
-		};
-
-		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, stackWidgetHandler);
+		hookWidgets();
 
 		getDragShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
 			}
 		});
+	}
+
+	/**
+	 * Do any widget specific logic hookup. We should break the model generic logic away from the
+	 * specific platform by moving this code into an SWT-specific subclass
+	 */
+	private void hookWidgets() {
+		EventHandler stackWidgetHandler = new EventHandler() {
+			public void handleEvent(org.osgi.service.event.Event event) {
+				MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+
+				// Listen for drags starting in CTabFolders
+				if (element.getWidget() instanceof CTabFolder
+						|| element.getWidget() instanceof ImageBasedFrame) {
+					Control ctrl = (Control) element.getWidget();
+					ctrl.addDragDetectListener(new DragDetectListener() {
+						public void dragDetected(DragDetectEvent e) {
+							info.update(e);
+							dragAgent = getDragAgent(info);
+							if (dragAgent != null)
+								startDrag();
+						}
+					});
+				}
+			}
+		};
+
+		IEventBroker eventBroker = dragWindow.getContext().get(IEventBroker.class);
+		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, stackWidgetHandler);
 	}
 
 	public MWindow getDragWindow() {
@@ -135,50 +148,26 @@ class DnDManager {
 
 	protected void dispose() {
 		clearOverlay();
+
 		if (overlayFrame != null && !overlayFrame.isDisposed())
 			overlayFrame.dispose();
 		overlayFrame = null;
 	}
 
-	protected void startDrag(DragDetectEvent e) {
-		info.update(e);
-		dragAgent = getDragAgent(info);
-		if (dragAgent == null)
-			return;
-
+	protected void startDrag() {
+		// Create a new tracker for this drag instance
 		tracker = new Tracker(Display.getCurrent(), SWT.NULL);
 		tracker.setStippled(true);
+		setRectangle(offScreenRect);
 
 		tracker.addListener(SWT.Move, new Listener() {
 			public void handleEvent(final Event event) {
 				Display.getCurrent().syncExec(new Runnable() {
 					public void run() {
 						info.update();
+						dragAgent.track(info);
 
-						DropAgent curAgent = dropAgent;
-
-						// Re-use the same dropAgent until it returns 'false' from track
-						if (dropAgent != null)
-							dropAgent = dropAgent.track(dragAgent.dragElement, info) ? dropAgent
-									: null;
-
-						// If we don't have a drop agent currently try to get one
-						if (dropAgent == null) {
-							if (curAgent != null)
-								curAgent.dragLeave(dragAgent.dragElement, info);
-
-							dropAgent = getDropAgent(dragAgent.dragElement, info);
-
-							if (dropAgent != null)
-								dropAgent.dragEnter(dragAgent.dragElement, info);
-							else {
-								setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_NO));
-								setRectangle(offScreenRect);
-							}
-						}
-
-						// Hack: Spin the event loop to allow the model and its renderers to catch
-						// up
+						// Hack: Spin the event loop
 						update();
 					}
 				});
@@ -190,11 +179,12 @@ class DnDManager {
 		getDragShell().setCapture(true);
 
 		try {
-			dragAgent.dragStart(dragAgent.dragElement, info);
-			dropAgent = getDropAgent(dragAgent.dragElement, info);
+			dragAgent.dragStart(info);
 
 			// Run tracker until mouse up occurs or escape key pressed.
 			boolean performDrop = tracker.open();
+
+			// clean up
 			finishDrag(performDrop);
 		} finally {
 			getDragShell().setCursor(null);
@@ -212,34 +202,27 @@ class DnDManager {
 	 * @param performDrop
 	 */
 	private void finishDrag(boolean performDrop) {
+		// Tear down any feedback
+		if (tracker != null && !tracker.isDisposed()) {
+			tracker.dispose();
+			tracker = null;
+		}
+
+		if (overlayFrame != null) {
+			overlayFrame.dispose();
+			overlayFrame = null;
+		}
+
+		if (dragHost != null) {
+			dragHost.dispose();
+			dragHost = null;
+		}
+
 		// Perform either drop or cancel
 		try {
-			boolean isNoDrop = getDragShell().getCursor() == Display.getCurrent().getSystemCursor(
-					SWT.CURSOR_NO);
-			if (performDrop && dropAgent != null && !isNoDrop) {
-				dropAgent.drop(dragAgent.dragElement, info);
-			} else {
-				dragAgent.cancelDrag();
-			}
-			dragAgent.dragFinished();
+			dragAgent.dragFinished(performDrop, info);
 		} finally {
-			if (tracker != null && !tracker.isDisposed()) {
-				tracker.dispose();
-				tracker = null;
-			}
-
-			if (overlayFrame != null) {
-				overlayFrame.dispose();
-				overlayFrame = null;
-			}
-
-			if (dragHost != null) {
-				dragHost.dispose();
-				dragHost = null;
-			}
-
 			dragAgent = null;
-			dropAgent = null;
 		}
 	}
 
@@ -473,7 +456,7 @@ class DnDManager {
 		return null;
 	}
 
-	private DropAgent getDropAgent(MUIElement dragElement, DnDInfo info) {
+	public DropAgent getDropAgent(MUIElement dragElement, DnDInfo info) {
 		for (DropAgent agent : dropAgents) {
 			if (agent.canDrop(dragElement, info))
 				return agent;

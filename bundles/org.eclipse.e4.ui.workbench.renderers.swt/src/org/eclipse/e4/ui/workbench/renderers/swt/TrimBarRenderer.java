@@ -97,35 +97,38 @@ public class TrimBarRenderer extends SWTPartRenderer {
 			return null;
 
 		Composite parentComp = (Composite) parent;
-		if (!(parentComp.getLayout() instanceof TrimmedPartLayout))
-			return null;
 
+		Composite trimComposite = null;
 		final MTrimBar trimModel = (MTrimBar) element;
-		TrimmedPartLayout tpl = (TrimmedPartLayout) parentComp.getLayout();
+		if (parentComp.getLayout() instanceof TrimmedPartLayout) {
+			TrimmedPartLayout tpl = (TrimmedPartLayout) parentComp.getLayout();
 
-		Composite result = null;
-		switch (trimModel.getSide().getValue()) {
-		case SideValue.TOP_VALUE:
-			result = tpl.getTrimComposite(parentComp, SWT.TOP);
-			break;
-		case SideValue.BOTTOM_VALUE:
-			result = tpl.getTrimComposite(parentComp, SWT.BOTTOM);
-			break;
-		case SideValue.LEFT_VALUE:
-			result = tpl.getTrimComposite(parentComp, SWT.LEFT);
-			break;
-		case SideValue.RIGHT_VALUE:
-			result = tpl.getTrimComposite(parentComp, SWT.RIGHT);
-			break;
-		default:
-			return null;
-		}
-		result.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				cleanUp(trimModel);
+			switch (trimModel.getSide().getValue()) {
+			case SideValue.TOP_VALUE:
+				trimComposite = tpl.getTrimComposite(parentComp, SWT.TOP);
+				break;
+			case SideValue.BOTTOM_VALUE:
+				trimComposite = tpl.getTrimComposite(parentComp, SWT.BOTTOM);
+				break;
+			case SideValue.LEFT_VALUE:
+				trimComposite = tpl.getTrimComposite(parentComp, SWT.LEFT);
+				break;
+			case SideValue.RIGHT_VALUE:
+				trimComposite = tpl.getTrimComposite(parentComp, SWT.RIGHT);
+				break;
+			default:
+				return null;
 			}
-		});
-		return result;
+			trimComposite.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					cleanUp(trimModel);
+				}
+			});
+		} else {
+			trimComposite = new Composite(parentComp, SWT.NONE);
+			trimComposite.setLayout(new TrimBarLayout(true));
+		}
+		return trimComposite;
 	}
 
 	@Override
