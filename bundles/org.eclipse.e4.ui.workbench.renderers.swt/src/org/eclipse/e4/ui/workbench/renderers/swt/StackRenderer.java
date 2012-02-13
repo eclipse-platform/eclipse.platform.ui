@@ -427,6 +427,7 @@ public class StackRenderer extends LazyStackRenderer {
 		ToolBar navLeftBar = new ToolBar(tabFolder, SWT.FLAT);
 		ToolItem navLeftItem = new ToolItem(navLeftBar, SWT.PUSH);
 		navLeftItem.setText("<"); //$NON-NLS-1$
+		navLeftItem.setToolTipText(SWTRenderersMessages.tabScrollingLeft);
 		tabFolder.addTabControl(navLeftBar, SWT.LEAD);
 		navLeftItem.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -450,6 +451,7 @@ public class StackRenderer extends LazyStackRenderer {
 		ToolBar navRightBar = new ToolBar(tabFolder, SWT.FLAT);
 		ToolItem navRightItem = new ToolItem(navRightBar, SWT.PUSH);
 		navRightItem.setText(">"); //$NON-NLS-1$
+		navRightItem.setToolTipText(SWTRenderersMessages.tabScrollingRight);
 		tabFolder.addTabControl(navRightBar, SWT.TRAIL);
 		navRightItem.addSelectionListener(new SelectionAdapter() {
 			@Override
