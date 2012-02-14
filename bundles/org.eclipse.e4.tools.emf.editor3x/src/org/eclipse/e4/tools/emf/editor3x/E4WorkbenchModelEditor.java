@@ -66,7 +66,7 @@ public class E4WorkbenchModelEditor extends
 		if (redoAction != null)
 			redoAction.dispose();
 
-		if (listener != null && getComponent().getModelProvider() != null)
+		if (listener != null && getComponent() != null && getComponent().getModelProvider() != null)
 			getComponent().getModelProvider().removeModelListener(listener);
 
 		super.dispose();
