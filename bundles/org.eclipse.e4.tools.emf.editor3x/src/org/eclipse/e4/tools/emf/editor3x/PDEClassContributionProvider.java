@@ -18,6 +18,8 @@ import java.io.InputStreamReader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
 import org.eclipse.jdt.core.JavaModelException;
@@ -36,7 +38,10 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 	
 	@SuppressWarnings("restriction")
 	public void findContribution(final Filter filter,  final ContributionResultHandler handler) {
-		IJavaSearchScope scope = PDEJavaHelper.getSearchScope(filter.project);
+		// filter.project may be null in the live editor
+		IJavaSearchScope scope = filter.project != null ? PDEJavaHelper
+				.getSearchScope(filter.project) : SearchEngine
+				.createWorkspaceScope();
 		
 		char[] packageName = null;
 		char[] typeName = null;
@@ -85,7 +90,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 				
 //				System.err.println("Found: " + label + " => " + pName + " => " + path);
 				
-				IResource resource = filter.project.getWorkspace().getRoot().findMember(path);
+				IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 				
 				if( resource != null ) {
 					IProject project = resource.getProject();
