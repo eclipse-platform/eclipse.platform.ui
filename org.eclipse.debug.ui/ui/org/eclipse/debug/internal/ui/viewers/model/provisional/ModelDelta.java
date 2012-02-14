@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,14 +11,18 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * A model delta. Used to create model deltas.
  * <p>
- * Clients may instantiate this class; not intended to be sub-classed.
+ * Clients may instantiate this class; not intended to be subclassed.
  * </p>
- * @see IModelDelta
+ * @see org.eclipse.debug.internal.ui.viewers.IModelDelta
  * @since 3.2
- * @noextend This class is not intended to be sub-classed by clients.
  */
 public class ModelDelta implements IModelDelta {
 
@@ -26,6 +30,8 @@ public class ModelDelta implements IModelDelta {
 	private Object fElement;
 	private int fFlags;
 	private ModelDelta[] fNodes = EMPTY_NODES;
+	private List fNodesList = null;
+	private Map fNodesMap;
 	private Object fReplacement;
 	private int fIndex = -1;
 	private int fChildCount = -1;
@@ -122,16 +128,76 @@ public class ModelDelta implements IModelDelta {
 	 * @return corresponding delta node, or <code>null</code>
 	 */
 	public ModelDelta getChildDelta(Object element) {
-		if (fNodes != null) {
-			for (int i = 0; i < fNodes.length; i++) {
-				ModelDelta delta = fNodes[i];
-				if (element.equals(delta.getElement())) {
-					return delta;
-				}
-			}
-		}
-		return null;
+	    if (fNodesMap == null) {
+	        mapNodes();
+	    }
+        Object nodeOrNodes = fNodesMap.get(element);
+        if (nodeOrNodes instanceof ModelDelta) {
+            return (ModelDelta)nodeOrNodes;
+        } else if (nodeOrNodes instanceof ModelDelta[]) {
+            return ((ModelDelta[])nodeOrNodes)[0];
+        }
+	    return null;
 	}
+
+	/**
+     * Returns the child delta for the given element and index, or <code>null</code> if none.
+     * 
+     * @param element Element of the child delta to find
+     * @param index Index of the child delta to find.
+     * @return corresponding delta node, or <code>null</code>
+     * 
+     * @since 3.8
+     */
+    public ModelDelta getChildDelta(Object element, int index) {
+        if (fNodesMap == null) {
+            mapNodes();
+        }
+        Object nodeOrNodes = fNodesMap.get(element);
+        if (nodeOrNodes instanceof ModelDelta) {
+            ModelDelta node = (ModelDelta)nodeOrNodes;
+            if (index == node.getIndex()) {
+                return node;
+            }
+        } else if (nodeOrNodes instanceof ModelDelta[]) {
+            ModelDelta[] nodes = (ModelDelta[])nodeOrNodes;
+            for (int i = 0; i < nodes.length; i++) {
+                if (index == nodes[i].getIndex()) {
+                    return nodes[i];
+                }
+            }
+        }
+        return null;
+    }
+
+	private void mapNodes() {
+	    if (fNodesList == null) {
+	        fNodesMap = new HashMap(1);
+	        return;
+	    }
+	    // Create a map with capacity for all child nodes.
+	    fNodesMap = new HashMap(fNodesList.size()*4/3);
+	    for (int i = 0; i < fNodesList.size(); i++) {
+	        mapNode( (ModelDelta)fNodesList.get(i) );
+	    }
+	}
+	
+	private void mapNode(ModelDelta node) {
+        Object oldValue = fNodesMap.put(node.getElement(), node);
+        if (oldValue instanceof ModelDelta) {
+            // Edge case: already a node for given element was added.
+            ModelDelta[] nodes = new ModelDelta[] { (ModelDelta)oldValue, node };
+            fNodesMap.put(node.getElement(), nodes);
+        } else if (oldValue instanceof ModelDelta[]) {
+            // Even more remote case: multiple delta nodes for the same element were already added
+            ModelDelta[] oldNodes = (ModelDelta[])oldValue;
+            ModelDelta[] newNodes = new ModelDelta[oldNodes.length + 1];
+            System.arraycopy(oldNodes, 0, newNodes, 0, oldNodes.length);
+            newNodes[newNodes.length - 1] = node;
+            fNodesMap.put(node.getElement(), newNodes);
+        }
+	}
+	
 
 	/**
 	 * Adds a child node to this delta to replace the given element with the
@@ -217,18 +283,19 @@ public class ModelDelta implements IModelDelta {
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getNodes()
 	 */
 	public IModelDelta[] getChildDeltas() {
+	    if (fNodes == null) {
+	        fNodes = (ModelDelta[])fNodesList.toArray(new ModelDelta[fNodesList.size()]);
+	    }
 		return fNodes;
 	}
 	
 	private void addDelta(ModelDelta delta) {
-		if (fNodes.length == 0) {
-			fNodes = new ModelDelta[]{delta};
-		} else {
-			ModelDelta[] nodes = new ModelDelta[fNodes.length + 1];
-			System.arraycopy(fNodes, 0, nodes, 0, fNodes.length);
-			nodes[fNodes.length] = delta;
-			fNodes = nodes;
-		}
+	    if (fNodesList == null) fNodesList = new ArrayList(4);
+	    fNodesList.add(delta);
+	    fNodes = null;
+	    if (fNodesMap != null) {
+	        mapNode(delta);
+	    }
 	}
 	
 	public String toString() {
@@ -330,7 +397,7 @@ public class ModelDelta implements IModelDelta {
 	/**
 	 * Sets this delta's element
 	 * 
-	 * @param element element to set
+	 * @param element
 	 */
 	public void setElement(Object element) {
 		fElement = element;
@@ -339,7 +406,7 @@ public class ModelDelta implements IModelDelta {
 	/**
 	 * Sets this delta's flags.
 	 * 
-	 * @param flags new flags to set
+	 * @param flags
 	 */
 	public void setFlags(int flags) {
 		fFlags = flags;
@@ -348,7 +415,7 @@ public class ModelDelta implements IModelDelta {
     /**
      * Sets this delta's index
      * 
-     * @param index new index to set.
+     * @param index
      * @since 3.6
      */
     public void setIndex(int index) {
@@ -358,7 +425,7 @@ public class ModelDelta implements IModelDelta {
 	/**
      * Sets this delta's child count.
      * 
-     * @param count New child count to set.
+     * @param count
      */
     public void setChildCount(int count) {
         fChildCount = count;

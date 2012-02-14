@@ -524,21 +524,14 @@ class ViewerStateTracker {
                 ModelDelta saveDeltaNode = findSubDeltaParent(saveDeltaRoot, revealDelta);
                 if (saveDeltaNode != null) {
                     clearRevealFlag(saveDeltaRoot);
-                    boolean childFounded = false;
-                    for (int i = 0; i < saveDeltaNode.getChildDeltas().length; i++) {
-                        ModelDelta child = (ModelDelta)saveDeltaNode.getChildDeltas()[i]; 
-                        if (deltasEqual(child, revealDelta)) {
-                            child.setFlags(child.getFlags() | IModelDelta.REVEAL);
-                            childFounded = true;
-                            break;
-                        }
-                    }
-                    
-                    // the node should be added if not found
-                    if (!childFounded) {
+            		ModelDelta child = saveDeltaNode.getChildDelta(revealDelta.getElement(), revealDelta.getIndex());
+            		if (child != null) {
+            		    child.setFlags(child.getFlags() | IModelDelta.REVEAL);
+            		} else {
+                        // the node should be added if not found
                         saveDeltaNode.setChildCount(revealDelta.getParentDelta().getChildCount());
                         copyIntoDelta(revealDelta, saveDeltaNode);
-                    }
+            		}
                 } else {
                     if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                         System.out.println("\tSKIPPED: " + revealDelta.getElement()); //$NON-NLS-1$
@@ -644,15 +637,9 @@ class ViewerStateTracker {
         // Skip the root element
         itr.next();
         ModelDelta saveDelta = destinationDeltaRoot;
-        outer: while (itr.hasNext()) {
+        while (saveDelta != null && itr.hasNext()) {
             IModelDelta itrDelta = (IModelDelta) itr.next();
-            for (int i = 0; i < saveDelta.getChildDeltas().length; i++) {
-                if (deltasEqual(saveDelta.getChildDeltas()[i], itrDelta)) {
-                    saveDelta = (ModelDelta) saveDelta.getChildDeltas()[i];
-                    continue outer;
-                }
-            }
-            return null;
+            saveDelta = saveDelta.getChildDelta(itrDelta.getElement(), itrDelta.getIndex());
         }
         return saveDelta;
     }
@@ -668,19 +655,8 @@ class ViewerStateTracker {
         return delta;
     }
 
-    private boolean deltasEqual(IModelDelta d1, IModelDelta d2) {
-        // Note: don't compare the child count, because it is
-        // incorrect for nodes which have not been expanded yet.
-        return d1.getElement().equals(d2.getElement()) && d1.getIndex() == d2.getIndex();
-    }
-
     private boolean isDeltaInParent(IModelDelta delta, ModelDelta destParent) {
-        for (int i = 0; i < destParent.getChildDeltas().length; i++) {
-            if (deltasEqual(destParent.getChildDeltas()[i], delta)) {
-                return true;
-            }
-        }
-        return false;
+        return destParent.getChildDelta(delta.getElement(), delta.getIndex()) != null;
     }
 
     private void copyIntoDelta(IModelDelta delta, ModelDelta destParent) {
