@@ -413,6 +413,7 @@ public class Messages {
 	public String VMenuEditor_TreeLabelDescription;
 	public String VMenuEditor_Menus;
 	public String VMenuEditor_AddMenuContribution;
+	public String VMenuEditor_AddPopupMenuContribution;
 
 	public String VModelFragmentsEditor_TreeLabel;
 	public String VModelFragmentsEditor_TreeLabelDescription;

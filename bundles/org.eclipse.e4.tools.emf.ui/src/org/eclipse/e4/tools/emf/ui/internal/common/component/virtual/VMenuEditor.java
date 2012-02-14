@@ -21,18 +21,22 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -52,8 +56,8 @@ public class VMenuEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
-	private EStructuralFeature feature;
 	private List<Action> actions = new ArrayList<Action>();
+	private EStructuralFeature feature;
 
 	protected VMenuEditor(EStructuralFeature feature) {
 		super();
@@ -65,7 +69,13 @@ public class VMenuEditor extends AbstractComponentEditor {
 		actions.add(new Action(Messages.VMenuEditor_AddMenuContribution, createImageDescriptor(ResourceProvider.IMG_Menu)) {
 			@Override
 			public void run() {
-				handleAdd();
+				handleAdd(MenuPackageImpl.Literals.MENU);
+			}
+		});
+		actions.add(new Action(Messages.VMenuEditor_AddPopupMenuContribution, createImageDescriptor(ResourceProvider.IMG_Menu)) {
+			@Override
+			public void run() {
+				handleAdd(MenuPackageImpl.Literals.POPUP_MENU);
 			}
 		});
 	}
@@ -124,7 +134,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 
 		Composite buttonComp = new Composite(parent, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-		GridLayout gl = new GridLayout();
+		GridLayout gl = new GridLayout(2, false);
 		gl.marginLeft = 0;
 		gl.marginRight = 0;
 		gl.marginWidth = 0;
@@ -134,7 +144,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Up);
 		b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -161,7 +171,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Down);
 		b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -186,21 +196,34 @@ public class VMenuEditor extends AbstractComponentEditor {
 			}
 		});
 
+		final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
+		childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		childrenDropDown.setContentProvider(new ArrayContentProvider());
+		childrenDropDown.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				EClass eclass = (EClass) element;
+				return eclass.getName();
+			}
+		});
+		childrenDropDown.setInput(new EClass[] { MenuPackageImpl.Literals.MENU, MenuPackageImpl.Literals.POPUP_MENU });
+		childrenDropDown.setSelection(new StructuredSelection(MenuPackageImpl.Literals.MENU));
+
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_AddEllipsis);
 		b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				handleAdd();
+				EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
+				handleAdd(eClass);
 			}
 		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Remove);
 		b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -224,8 +247,8 @@ public class VMenuEditor extends AbstractComponentEditor {
 		return null;
 	}
 
-	protected void handleAdd() {
-		MMenu handler = MMenuFactory.INSTANCE.createMenu();
+	protected void handleAdd(EClass eClass) {
+		EObject handler = EcoreUtil.create(eClass);
 		setElementId(handler);
 
 		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), feature, handler);
