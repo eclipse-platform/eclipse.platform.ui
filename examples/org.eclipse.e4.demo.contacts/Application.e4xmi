@@ -3,7 +3,11 @@
   <children xsi:type="basic:TrimmedWindow" xmi:id="_SeXUAe8EEd6FC9cDb6iV7g" elementId="_SeXUAe8EEd6FC9cDb6iV7g" label="%windowTitle" x="20" y="20" width="700" height="480">
     <children xsi:type="basic:PartSashContainer" xmi:id="_SeXUCu8EEd6FC9cDb6iV7g" elementId="_SeXUCu8EEd6FC9cDb6iV7g" horizontal="true">
       <children xsi:type="basic:PartStack" xmi:id="_SeXUC-8EEd6FC9cDb6iV7g" elementId="_SeXUC-8EEd6FC9cDb6iV7g" containerData="30">
-        <children xsi:type="basic:Part" xmi:id="_SeXUDO8EEd6FC9cDb6iV7g" elementId="ContactsView" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" label="%contactsList" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="%contactsTooltip"/>
+        <children xsi:type="basic:Part" xmi:id="_SeXUDO8EEd6FC9cDb6iV7g" elementId="ContactsView" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" label="%contactsList" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="%contactsTooltip">
+          <menus xsi:type="menu:PopupMenu" xmi:id="_UZ9dUFdZEeGsq_upV39tDA" elementId="contacts.popup" label="">
+            <children xsi:type="menu:DirectMenuItem" xmi:id="_7I3l0FdTEeGJ6q6DQoiZvg" label="Open Email..." tooltip="Create a new email message" mnemonics="E" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SendEmailHandler"/>
+          </menus>
+        </children>
       </children>
       <children xsi:type="basic:PartStack" xmi:id="_SeXUDe8EEd6FC9cDb6iV7g" elementId="org.eclipse.e4.demo.contacts.partstacks.second" containerData="70">
         <children xsi:type="basic:Part" xmi:id="DetailsView" elementId="DetailsView" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" label="%partDetails" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" tooltip="%detailsTooltip"/>
