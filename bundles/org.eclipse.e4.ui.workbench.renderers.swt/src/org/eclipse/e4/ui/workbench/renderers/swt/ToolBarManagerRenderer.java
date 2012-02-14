@@ -380,10 +380,14 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			if (parentElement == null) {
 				parentElement = (MApplicationElement) ((EObject) element)
 						.eContainer();
+			}
+
+			if (parentElement != null) {
 				overrides = (IContributionManagerOverrides) parentElement
 						.getTransientData().get(
 								IContributionManagerOverrides.class.getName());
 			}
+
 			manager.setOverrides(overrides);
 			linkModelToManager((MToolBar) element, manager);
 		}
