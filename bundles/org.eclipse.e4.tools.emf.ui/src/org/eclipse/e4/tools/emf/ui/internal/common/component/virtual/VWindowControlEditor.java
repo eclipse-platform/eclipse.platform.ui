@@ -98,7 +98,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 		actions.add(new Action(Messages.VWindowControlEditor_AddInputPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
-				handleAdd(BasicPackageImpl.Literals.PART);
+				handleAdd(BasicPackageImpl.Literals.INPUT_PART);
 			}
 		});
 
