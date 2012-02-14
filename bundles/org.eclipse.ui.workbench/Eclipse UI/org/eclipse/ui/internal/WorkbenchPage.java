@@ -3007,13 +3007,7 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		}
 		
 		MPerspective dummyPerspective = null;
-		if (revert) {
-			// Show hidden tool & menu items
-			persp.getPersistedState().remove(ModeledPageLayout.HIDDEN_ITEMS_KEY);
-			legacyWindow.getMenuManager().updateAll(true);
-			((ICoolBarManager2) ((WorkbenchWindow) getWorkbenchWindow()).getCoolBarManager2())
-					.resetItemOrder();
-		} else {
+		if (!revert) {
 			dummyPerspective = (MPerspective) modelService.cloneSnippet(application, desc.getId(),
 					window);
 		}
@@ -3027,11 +3021,17 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 					partService, dummyPerspective, desc, this, true);
 			factory.createInitialLayout(modelLayout);
 
-		PerspectiveTagger.tagPerspective(dummyPerspective, modelService);
-		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
-		reader.extendLayout(getExtensionTracker(), desc.getId(), modelLayout);
-
+			PerspectiveTagger.tagPerspective(dummyPerspective, modelService);
+			PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
+			reader.extendLayout(getExtensionTracker(), desc.getId(), modelLayout);
 		}
+
+		String hiddenItems = dummyPerspective.getPersistedState().get(ModeledPageLayout.HIDDEN_ITEMS_KEY);
+		persp.getPersistedState().put(ModeledPageLayout.HIDDEN_ITEMS_KEY, hiddenItems);
+		
+		legacyWindow.getMenuManager().updateAll(true);
+		((ICoolBarManager2) ((WorkbenchWindow) getWorkbenchWindow()).getCoolBarManager2())
+				.resetItemOrder();
 
 		// Hide placeholders for parts that exist in the 'global' areas
 		modelService.hideLocalPlaceholders(window, dummyPerspective);
@@ -4432,33 +4432,29 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		return result;
 	}
 
-	public void addHiddenItems(String id) {
-		String persistedID = id + ","; //$NON-NLS-1$
-
-		MPerspective perspective = getCurrentPerspective();
-		if (perspective == null)
-			return;
-
-		String hiddenIDs = perspective.getPersistedState().get(
-ModeledPageLayout.HIDDEN_ITEMS_KEY);
+	public void addHiddenItems(MPerspective perspective, String id) {
+		String hiddenIDs = perspective.getPersistedState().get(ModeledPageLayout.HIDDEN_ITEMS_KEY);
 		if (hiddenIDs == null)
 			hiddenIDs = ""; //$NON-NLS-1$
 
+		String persistedID = id + ","; //$NON-NLS-1$
 		if (!hiddenIDs.contains(persistedID)) {
 			hiddenIDs = hiddenIDs + persistedID;
 			perspective.getPersistedState().put(ModeledPageLayout.HIDDEN_ITEMS_KEY, hiddenIDs);
 		}
 	}
 
-	public void removeHiddenItems(String id) {
-		String persistedID = id + ","; //$NON-NLS-1$
-
+	public void addHiddenItems(String id) {
 		MPerspective perspective = getCurrentPerspective();
 		if (perspective == null)
 			return;
+		addHiddenItems(perspective, id);
+	}
 
-		String hiddenIDs = perspective.getPersistedState().get(
-ModeledPageLayout.HIDDEN_ITEMS_KEY);
+	public void removeHiddenItems(MPerspective perspective, String id) {
+		String persistedID = id + ","; //$NON-NLS-1$
+
+		String hiddenIDs = perspective.getPersistedState().get(ModeledPageLayout.HIDDEN_ITEMS_KEY);
 		if (hiddenIDs == null)
 			return;
 
@@ -4470,6 +4466,13 @@ ModeledPageLayout.HIDDEN_ITEMS_KEY);
 				perspective.getPersistedState().put(ModeledPageLayout.HIDDEN_ITEMS_KEY,
 						newValue);
 		}
+	}
+
+	public void removeHiddenItems(String id) {
+		MPerspective perspective = getCurrentPerspective();
+		if (perspective == null)
+			return;
+		removeHiddenItems(perspective, id);
 	}
 
 	public void setNewShortcuts(List<String> wizards, String tagPrefix) {

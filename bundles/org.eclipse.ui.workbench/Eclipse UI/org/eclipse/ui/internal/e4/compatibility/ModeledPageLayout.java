@@ -611,11 +611,11 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void addHiddenMenuItemId(String id) {
-		page.addHiddenItems(HIDDEN_MENU_PREFIX + id);
+		page.addHiddenItems(perspModel, HIDDEN_MENU_PREFIX + id);
 	}
 
 	public void addHiddenToolBarItemId(String id) {
-		page.addHiddenItems(HIDDEN_TOOLBAR_PREFIX + id);
+		page.addHiddenItems(perspModel, HIDDEN_TOOLBAR_PREFIX + id);
 	}
 
 	public void removePlaceholder(String id) {

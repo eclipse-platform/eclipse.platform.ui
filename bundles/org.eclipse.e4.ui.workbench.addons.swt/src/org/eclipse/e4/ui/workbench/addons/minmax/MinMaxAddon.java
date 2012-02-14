@@ -89,7 +89,6 @@ public class MinMaxAddon {
 		public void handleEvent(Event event) {
 			final MPerspective savedPersp = (MPerspective) event.getProperty(EventTags.ELEMENT);
 			String cache = getTrimCache(savedPersp);
-			System.out.println(savedPersp.getElementId() + ':' + cache);
 			minMaxAddon.getPersistedState().put(savedPersp.getElementId(), cache);
 		}
 
