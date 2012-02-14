@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -40,20 +41,42 @@ import org.eclipse.ui.services.IEvaluationService;
  * 
  */
 public final class EvaluationService implements IEvaluationService {
+	private static final String RE_EVAL = "org.eclipse.ui.internal.services.EvaluationService.evaluate"; //$NON-NLS-1$
+	private boolean evaluate = false;
 	private ExpressionContext legacyContext;
+	private IEclipseContext context;
+	private IEclipseContext ratContext;
 	private int notifying = 0;
 
 	private ListenerList serviceListeners = new ListenerList(ListenerList.IDENTITY);
 	ArrayList<ISourceProvider> sourceProviders = new ArrayList<ISourceProvider>();
-	private IEclipseContext context;
 	LinkedList<EvaluationReference> refs = new LinkedList<EvaluationReference>();
 	private ISourceProviderListener contextUpdater;
+
+	private HashSet<String> ratVariables = new HashSet<String>();
+	private RunAndTrack ratUpdater = new RunAndTrack() {
+		@Override
+		public boolean changed(IEclipseContext context) {
+			context.get(RE_EVAL);
+			String[] vars = ratVariables.toArray(new String[ratVariables.size()]);
+			for (String var : vars) {
+				Object value = context.getActiveLeaf().get(var);
+				if (value == null) {
+					ratContext.remove(var);
+				} else {
+					ratContext.set(var, value);
+				}
+			}
+			return true;
+		}
+	};
 
 	private HashSet<String> variableFilter = new HashSet<String>();
 
 	public EvaluationService(IEclipseContext c) {
 		context = c;
-		legacyContext = new ExpressionContext(c);
+		ratContext = context.getParent().createChild(getClass().getName());
+		legacyContext = new ExpressionContext(context);
 		contextUpdater = new ISourceProviderListener() {
 
 			public void sourceChanged(int sourcePriority, String sourceName, Object sourceValue) {
@@ -74,6 +97,12 @@ public final class EvaluationService implements IEvaluationService {
 				ISources.SHOW_IN_SELECTION, ISources.ACTIVE_PART_NAME,
 				ISources.ACTIVE_PART_ID_NAME, ISources.ACTIVE_SITE_NAME,
 				ISources.ACTIVE_CONTEXT_NAME, ISources.ACTIVE_CURRENT_SELECTION_NAME }));
+		context.runAndTrack(ratUpdater);
+	}
+
+	private void contextEvaluate() {
+		evaluate = !evaluate;
+		context.set(RE_EVAL, Boolean.valueOf(evaluate));
 	}
 
 	protected final void changeVariable(final String name, final Object value) {
@@ -113,6 +142,7 @@ public final class EvaluationService implements IEvaluationService {
 				changeVariable(variableName, variableValue);
 			}
 		}
+		contextEvaluate();
 	}
 
 	/*
@@ -133,6 +163,7 @@ public final class EvaluationService implements IEvaluationService {
 			final String variableName = (String) entry.getKey();
 			changeVariable(variableName, null);
 		}
+		contextEvaluate();
 	}
 
 	/*
@@ -180,7 +211,8 @@ public final class EvaluationService implements IEvaluationService {
 	 */
 	public IEvaluationReference addEvaluationListener(Expression expression,
 			IPropertyChangeListener listener, String property) {
-		EvaluationReference ref = new EvaluationReference(context, expression, listener, property);
+		EvaluationReference ref = new EvaluationReference(ratContext, expression, listener,
+				property);
 		addEvaluationReference(ref);
 		return ref;
 	}
@@ -195,8 +227,21 @@ public final class EvaluationService implements IEvaluationService {
 	public void addEvaluationReference(IEvaluationReference ref) {
 		EvaluationReference eref = (EvaluationReference) ref;
 		refs.add(eref);
+		boolean changed = false;
+		if (eref.getExpression() != null) {
+			ExpressionInfo info = new ExpressionInfo();
+			eref.getExpression().collectExpressionInfo(info);
+			for (String varName : info.getAccessedVariableNames()) {
+				if (ratVariables.add(varName)) {
+					changed = true;
+				}
+			}
+		}
+		if (changed) {
+			contextEvaluate();
+		}
 		eref.participating = true;
-		context.runAndTrack(eref);
+		ratContext.runAndTrack(eref);
 	}
 
 	private void invalidate(IEvaluationReference ref, boolean remove) {
@@ -207,6 +252,7 @@ public final class EvaluationService implements IEvaluationService {
 		eref.participating = false;
 		eref.evaluate();
 		eref.hasRun = false;
+		contextEvaluate();
 	}
 
 	/*
