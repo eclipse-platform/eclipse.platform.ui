@@ -761,21 +761,23 @@
                tooltip="%LinkWithDebugView.tooltip">
          </action>
          <action
-               id="org.eclipse.debug.ui.breakpointsView.toolbar.collapseAll"
-               toolbarPath="navigationGroup"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.BreakpointsCollapseAllAction"
-               icon="$nl$/icons/full/elcl16/collapseall.gif"
+               definitionId="org.eclipse.ui.navigate.expandAll"
                helpContextId="breakpoints_collapse_all_action_context"
+               icon="$nl$/icons/full/elcl16/collapseall.gif"
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.collapseAll"
                label="%CollapseAll.label"
+               toolbarPath="navigationGroup"
                tooltip="%CollapseAll.tooltip">
          </action>
          <action
-               id="org.eclipse.debug.ui.breakpointsView.toolbar.expandAll"
-               toolbarPath="navigationGroup"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.BreakpointsExpandAllAction"
-               icon="$nl$/icons/full/elcl16/expandall.gif"
+               definitionId="org.eclipse.ui.navigate.expandAll"
                helpContextId="breakpoints_expand_all_action_context"
+               icon="$nl$/icons/full/elcl16/expandall.gif"
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.expandAll"
                label="%ExpandAll.label"
+               toolbarPath="navigationGroup"
                tooltip="%ExpandAll.tooltip">
          </action>
          <action

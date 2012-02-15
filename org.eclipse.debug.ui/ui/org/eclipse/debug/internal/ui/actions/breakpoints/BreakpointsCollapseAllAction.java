@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -29,7 +28,6 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.handlers.CollapseAllHandler;
-import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * 
@@ -45,10 +43,6 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
 	 */
 	public void init(IViewPart view) {
 		fView = (AbstractDebugView) view;
-		IHandlerService hs = (IHandlerService) view.getSite().getService(IHandlerService.class);
-		if (hs != null) {
-			hs.activateHandler(CollapseAllHandler.COMMAND_ID, new ActionHandler(fAction));
-		}
         IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)fView.getViewer();
         if (viewer != null) {
             viewer.addViewerUpdateListener(this);
