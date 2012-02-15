@@ -969,6 +969,11 @@ public class StackRenderer extends LazyStackRenderer {
 	protected void showTab(MUIElement element) {
 		super.showTab(element);
 
+		// an invisible element won't have the correct widget hierarchy
+		if (!element.isVisible()) {
+			return;
+		}
+
 		final CTabFolder ctf = (CTabFolder) getParentWidget(element);
 		CTabItem cti = findItemForPart(element, null);
 		if (cti == null) {

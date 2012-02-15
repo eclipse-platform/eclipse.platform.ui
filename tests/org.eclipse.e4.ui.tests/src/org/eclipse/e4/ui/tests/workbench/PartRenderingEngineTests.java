@@ -3192,6 +3192,30 @@ public class PartRenderingEngineTests extends TestCase {
 		testBug348069_DetachedPerspectiveWindow_02(false);
 	}
 
+	public void testBug371100() {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setVisible(false);
+		stack.getChildren().add(part);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		stack.setSelectedElement(part);
+		assertFalse(logged);
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
