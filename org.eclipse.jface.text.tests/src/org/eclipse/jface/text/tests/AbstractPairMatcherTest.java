@@ -29,6 +29,7 @@ import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
+import org.eclipse.jface.text.source.ICharacterPairMatcherExtension;
 
 /**
  * Generic test of simple character pair matchers
@@ -83,6 +84,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "(%   )#");
 		performMatch(matcher, "[%   ]#");
 		performMatch(matcher, "{%   }#");
+
+		performMatch(matcher, "#(  %  )#");
+		performMatch(matcher, "#[  %  ]#");
+		performMatch(matcher, "#{  %  }#");
+
 		matcher.dispose();
 	}
 
@@ -98,6 +104,10 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch("()[]{}", "(%   )#");
 		performMatch("()[]{}", "[%   ]#");
 		performMatch("()[]{}", "{%   }#");
+
+		performMatch("()[]{}", "#(  %  )#");
+		performMatch("()[]{}", "#[  %  ]#");
+		performMatch("()[]{}", "#{  %  }#");
 	}
 
 	/**
@@ -111,6 +121,10 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "#(())%");
 		performMatch(matcher, "(%())#");
 		performMatch(matcher, "((%)#)");
+
+		performMatch(matcher, "#(%)#");
+		performMatch(matcher, "#(%())#");
+
 		matcher.dispose();
 	}
 
@@ -146,6 +160,13 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "|c #( c| ) ( |c )% c|");
 		performMatch(matcher, "|c (% c| ) ( |c )# c|");
 		performMatch(matcher, "(% |a ) a| |b ) b| |c ) c| )#");
+
+		performMatch(matcher, "#( % |a a| )#");
+		performMatch(matcher, "|b #( % )# b|");
+		performMatch(matcher, "|c #( % c| ) ( |c )# c|");
+		performMatch(matcher, "|c #( c| ) ( |c % )# c|");
+		performMatch(matcher, "#( % |a ) a| |b ) b| |c ) c| )#");
+
 		matcher.dispose();
 	}
 
@@ -163,6 +184,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "|c#(c|)(|c)%c|");
 		performMatch(matcher, "|c(%c|)(|c)#c|");
 		performMatch(matcher, "(%|a)a||b)b||c)c|)#");
+
+		performMatch(matcher, "|c#(c|)(|%c)#c|");
+		performMatch(matcher, "|c#(c%|)(|c)#c|");
+		performMatch(matcher, "#(%|a)a||b)b||c)c|)#");
+
 		matcher.dispose();
 	}
 
@@ -181,6 +207,20 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "a(b(%c{d(e)f}g[h]i)#j)k");
 		performMatch(matcher, "a(b(c#{d(e)f}%g[h]i)j)k");
 		performMatch(matcher, "a(b(c{%d(e)f}#g[h]i)j)k");
+
+		performMatch(matcher, " ( #( ( ( ) ) ( ) % )# ) ");
+		performMatch(matcher, " ( #( % ( ( ) ) ( ) )# ) ");
+		performMatch(matcher, " ( #( { ( ) } [ ] % )# ) ");
+		performMatch(matcher, " ( #( % { ( ) } [ ] )# ) ");
+		performMatch(matcher, " ( ( #{ ( ) % }# [ ] ) ) ");
+		performMatch(matcher, " ( ( #{ % ( ) }# [ ] ) ) ");
+		performMatch(matcher, "a(b#(c(d(e)f)g(h)i%)#j)k");
+		performMatch(matcher, "a(b#(%c(d(e)f)g(h)i)#j)k");
+		performMatch(matcher, "a(b#(c{d(e)f}g[h]i%)#j)k");
+		performMatch(matcher, "a(b#(%c{d(e)f}g[h]i)#j)k");
+		performMatch(matcher, "a(b(c#{d(e)f%}#g[h]i)j)k");
+		performMatch(matcher, "a(b(c#{%d(e)f}#g[h]i)j)k");
+
 		matcher.dispose();
 	}
 
@@ -220,7 +260,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	protected void performReaderTest(String testString, int expectedPos, int expectedMatch, String expectedString) {
 		TestCase t0= createTestCase(testString);
 		assertEquals(expectedPos, t0.fPos);
-		assertEquals(expectedMatch, t0.fMatch);
+		assertEquals(expectedMatch, t0.fMatch2);
 		assertEquals(expectedString, t0.fString);
 	}
 
@@ -233,21 +273,27 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	protected void performMatch(final ICharacterPairMatcher matcher, final String testCase) {
 		final TestCase test= createTestCase(testCase);
 		matcher.clear();
-		final IRegion region= matcher.match(test.getDocument(), test.fPos);
-		if (test.fMatch == -1) {
-			// if no match point has been specified there should be
-			// no match
+		final IRegion region;
+
+		if (test.isEnclosingTestCase()) {
+			assertTrue((matcher instanceof ICharacterPairMatcherExtension));
+			ICharacterPairMatcherExtension matcherExtension= (ICharacterPairMatcherExtension)matcher;
+			region= matcherExtension.findEnclosingPeerCharacters(test.getDocument(), test.fPos);
+		} else {
+			region= matcher.match(test.getDocument(), test.fPos);
+		}
+
+		if (test.fMatch2 == -1) {
+			// if no match point has been specified there should be no match
 			if (region != null) System.out.println(region.getOffset());
 			assertNull(region);
 		} else {
 			assertNotNull(region);
-			final boolean isForward= test.fPos > test.fMatch;
+			final boolean isForward= test.isEnclosingTestCase() ? false : test.fPos > test.fMatch2;
 			assertEquals(isForward, matcher.getAnchor() == ICharacterPairMatcher.RIGHT);
-			// If the match is forward, the cursor is one character
-			// after the start of the match, so we need to count one
-			// step backwards
-			final int offset= isForward ? test.getOffset() : test.getOffset() - 1;
-			final int length= (isForward && !fCaretInsideMatchedPair) ? test.getLength() : test.getLength() + 1;
+
+			final int offset= (isForward || test.isEnclosingTestCase()) ? test.getOffset() : test.getOffset() - 1;
+			final int length= ((isForward && !fCaretInsideMatchedPair) || test.isEnclosingTestCase()) ? test.getLength() : test.getLength() + 1;
 			assertEquals(length, region.getLength());
 			assertEquals(offset, region.getOffset());
 		}
@@ -269,7 +315,9 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	public TestCase createTestCase(String str) {
 		int pos= str.indexOf("%");
 		assertFalse(pos == -1);
-		int match= str.indexOf("#");
+		int match1= str.indexOf("#");
+		int match2= str.lastIndexOf("#");
+		boolean enclosingTest= match1 != match2;
 
 		if (fCaretInsideMatchedPair) {
 			if (pos - 1 >= 0) {
@@ -280,23 +328,36 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 			}
 		}
 
-		// account for the length of the first position marker,
-		// if there is one
-		if (match != -1 && match < pos) pos -= 1;
-		if (pos < match) match -= 1;
+		// account for the length of marker characters
+		if (!enclosingTest) {
+			if (match1 != -1 && match1 < pos)
+				pos-= 1;
+			if (pos < match1)
+				match1-= 1;
+		} else {
+			pos-= 1;
+			match2-= 2;
+		}
+
 		final String stripped= str.replaceAll("%", "").replaceAll("#", "");
-		return new TestCase(stripped, pos, match);
+		return enclosingTest ? new TestCase(stripped, pos, match1, match2) : new TestCase(stripped, pos, match1);
 	}
 
 	private class TestCase {
 
 		public final String fString;
-		public final int fPos, fMatch;
+
+		public final int fPos, fMatch1, fMatch2;
 
 		public TestCase(String string, int pos, int match) {
+			this(string, pos, pos, match);
+		}
+
+		public TestCase(String string, int pos, int match1, int match2) {
 			fString= string;
 			fPos= pos;
-			fMatch= match;
+			fMatch1= match1;
+			fMatch2= match2;
 		}
 
 		public IDocument getDocument() {
@@ -304,12 +365,17 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		}
 
 		public int getLength() {
-			return Math.abs(fPos - fMatch);
+			return Math.abs(fMatch1 - fMatch2);
 		}
 
 		public int getOffset() {
-			if (fPos > fMatch) return fMatch;
-			return fPos;
+			if (fMatch1 > fMatch2)
+				return fMatch2;
+			return fMatch1;
+		}
+
+		public boolean isEnclosingTestCase() {
+			return fPos != fMatch1;
 		}
 
 	}

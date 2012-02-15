@@ -28,11 +28,10 @@ public interface ICharacterPairMatcherExtension {
 	 * Starting at the given offset, the matcher searches for a pair of enclosing peer characters
 	 * and if it finds one, returns the minimal region of the document that contains the pair.
 	 * 
-	 * It returns <code>null</code> if there is no enclosing pair.
-	 * 
-	 * @param iDocument the document to work on
-	 * @param i the start offset
-	 * @return the minimal region containing the peer characters
+	 * @param document the document to work on
+	 * @param offset the start offset
+	 * @return the minimal region containing the peer characters or <code>null</code> if there is no
+	 *         enclosing pair
 	 */
-	IRegion findEnclosingPeerCharacters(IDocument iDocument, int i);
+	IRegion findEnclosingPeerCharacters(IDocument document, int offset);
 }

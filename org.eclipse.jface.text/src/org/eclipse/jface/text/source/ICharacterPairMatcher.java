@@ -22,6 +22,20 @@ import org.eclipse.jface.text.IRegion;
  * character and if it finds one, delivers the minimal region of the document that contains both
  * characters.
  * 
+ * <p>
+ * In order to provide backward compatibility for clients of <code>ICharacterPairMatcher</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interface
+ * exists:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.source.ICharacterPairMatcherExtension} since version 3.8
+ *		introducing the concept of enclosing peer characters at a caret offset.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Clients may implement this interface and its extension interface or use the default
+ * implementation provided by <code>DefaultCharacterPairMatcher</code>.
+ * </p>
+ * 
  * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension
  * @since 2.1
  */
@@ -50,16 +64,17 @@ public interface ICharacterPairMatcher {
 	void clear();
 
 	/**
-	 * Starting at the given offset, the matcher chooses a character close to this offset.
-	 * The matcher then searches for the matching peer character of the chosen character
-	 * and if it finds one, returns the minimal region of the document that contains both characters.
-	 * It returns <code>null</code> if there is no peer character.
-	 *
-	 * @param iDocument the document to work on
-	 * @param i the start offset
-	 * @return the minimal region containing the peer characters
+	 * Starting at the given offset, the matcher chooses a character close to this offset. The
+	 * matcher then searches for the matching peer character of the chosen character and if it finds
+	 * one, returns the minimal region of the document that contains both characters. It returns
+	 * <code>null</code> if there is no peer character.
+	 * 
+	 * @param document the document to work on
+	 * @param offset the start offset
+	 * @return the minimal region containing the peer characters and <code>null</code> if there is
+	 *         no peer character.
 	 */
-	IRegion match(IDocument iDocument, int i);
+	IRegion match(IDocument document, int offset);
 
 	/**
 	 * Returns the anchor for the region of the matching peer characters. The anchor

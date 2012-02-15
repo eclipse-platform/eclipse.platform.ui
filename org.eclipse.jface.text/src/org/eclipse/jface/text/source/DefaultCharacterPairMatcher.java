@@ -108,18 +108,17 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	}
 
 	/**
-	 * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension#findEnclosingPeerCharacters(org.eclipse.jface.text.IDocument,
-	 *      int)
+	 * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension#findEnclosingPeerCharacters(org.eclipse.jface.text.IDocument, int)
 	 * @since 3.8
 	 */
-	public IRegion findEnclosingPeerCharacters(IDocument doc, int offset) {
-		if (doc == null || offset < 0 || offset > doc.getLength())
+	public IRegion findEnclosingPeerCharacters(IDocument document, int offset) {
+		if (document == null || offset < 0 || offset > document.getLength())
 			return null;
 		try {
 			for (int offset1= offset; offset1 >= 0; offset1--) {
-				char prevChar= doc.getChar(Math.max(offset1 - 1, 0));
+				char prevChar= document.getChar(Math.max(offset1 - 1, 0));
 				if (fPairs.contains(prevChar) && fPairs.isStartCharacter(prevChar)) {
-					IRegion match= performMatch(doc, offset1);
+					IRegion match= performMatch(document, offset1);
 					if (match != null) {
 						int matchOffset= match.getOffset();
 						int matchLength= match.getLength();
