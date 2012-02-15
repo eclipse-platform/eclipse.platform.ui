@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
@@ -126,14 +125,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 	protected static final String OLD_LABEL = "old_label"; //$NON-NLS-1$
 	protected static final String OLD_IMAGE = "old_image"; //$NON-NLS-1$
-	
-	   // debug flags
-	public static boolean DEBUG_VIEWER = false;
-	
-	static {
-		DEBUG_VIEWER = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/viewer")); //$NON-NLS-1$
-	}    	
 	
 	/**
 	 * Creates a new viewer 
@@ -1065,7 +1056,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		int level = 0;
 		
 		Widget parentItem = getParentWidget(item);
-		if (DEBUG_VIEWER) {
+		if (DebugUIPlugin.DEBUG_VIEWER) {
 			DebugUIPlugin.debug("SET DATA [" + index + "]: " + parentItem);  //$NON-NLS-1$//$NON-NLS-2$
 		}
 		ModelNode node = null;
@@ -1103,7 +1094,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			
 			node = getModel().getRootNode();
 			if (node == null) {
-				if (DEBUG_VIEWER) {
+				if (DebugUIPlugin.DEBUG_VIEWER) {
 					DebugUIPlugin.debug("\tFAILED - root model node is null"); //$NON-NLS-1$
 				}
 				return;
@@ -1111,7 +1102,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			for (int i = level; i >= 0; i--) {
 				ModelNode[] childrenNodes = node.getChildrenNodes();
 				if (childrenNodes == null) {
-					if (DEBUG_VIEWER) {
+					if (DebugUIPlugin.DEBUG_VIEWER) {
 						DebugUIPlugin.debug("\tFAILED - no children nodes for " + node); //$NON-NLS-1$
 					}
 					return;
@@ -1120,7 +1111,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 				if (pindex < childrenNodes.length) {
 					node = childrenNodes[pindex];
 				} else {
-					if (DEBUG_VIEWER) {
+					if (DebugUIPlugin.DEBUG_VIEWER) {
 						DebugUIPlugin.debug("\tFAILED - no children nodes for " + node); //$NON-NLS-1$
 					}
 					return;
@@ -1133,12 +1124,12 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		if (node != null) {
 			mapElement(node, item);
     		item.setData(node.getElement());
-    		if (DEBUG_VIEWER) {
+    		if (DebugUIPlugin.DEBUG_VIEWER) {
 				DebugUIPlugin.debug("\titem mapped: " + node); //$NON-NLS-1$
     		}
     		internalRefresh(node);
 		} else {
-			if (DEBUG_VIEWER) {
+			if (DebugUIPlugin.DEBUG_VIEWER) {
 				DebugUIPlugin.debug("\tFAILED - unable to find corresponding node"); //$NON-NLS-1$
 			}
 		}		

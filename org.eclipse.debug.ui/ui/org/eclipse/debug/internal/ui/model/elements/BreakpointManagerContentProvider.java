@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009, 2011 Texas Instruments and others
+ * Copyright (c) 2009, 2012 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -194,7 +193,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 rootDelta = new ModelDelta(fInput, 0, IModelDelta.NO_CHANGE, -1);
                 buildInstallDelta(rootDelta, fContainer);
 
-                if (DEBUG_BREAKPOINT_DELTAS) {
+                if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
                     System.out.println("PROXY INSTALLED (" + proxy + ")\n"); //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
@@ -204,7 +203,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 
         synchronized void proxyDisposed(BreakpointManagerProxy proxy) {
             fProxies.remove(proxy);
-            if (DEBUG_BREAKPOINT_DELTAS) {
+            if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
                 System.out.println("PROXY DISPOSED (" + proxy + ")\n"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
@@ -265,7 +264,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 if (newBreakpoint != null) {
                     appendModelDeltaToElement(delta, newBreakpoint, IModelDelta.SELECT);
                 }
-                if (DEBUG_BREAKPOINT_DELTAS) {
+                if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
                     System.out.println("POST BREAKPOINT DELTA (setOrganizers)\n"); //$NON-NLS-1$
                 }
                 postModelChanged(delta, false); 
@@ -362,7 +361,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 }
 
                 if (changed) {
-                    if (DEBUG_BREAKPOINT_DELTAS) {
+                    if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
                         System.out.println("POST BREAKPOINT DELTA (setFilterSelection)\n"); //$NON-NLS-1$
                     }
                     postModelChanged(delta, false); 
@@ -399,7 +398,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
             ModelDelta delta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
             synchronized (this) {
                 if (buildTrackSelectionDelta(delta, fContainer, bpsSet)) {
-                    if (DEBUG_BREAKPOINT_DELTAS) {
+                    if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
                         System.out.println("POST BREAKPOINT DELTA (trackSelection)\n"); //$NON-NLS-1$
                     }
                     BreakpointManagerProxy[] proxies = getProxies();
@@ -477,7 +476,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                         appendModelDeltaToElement(delta, filteredBreakpoints[0], IModelDelta.SELECT);
                     }
                 
-                    if (DEBUG_BREAKPOINT_DELTAS) {
+                    if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
                         System.out.println("POST BREAKPOINT DELTA (breakpointsAddedInput)\n"); //$NON-NLS-1$
                     }
                     postModelChanged(delta, false); 
@@ -499,7 +498,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 }
                 
                 if (removed) {
-                    if (DEBUG_BREAKPOINT_DELTAS) {
+                    if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
                         System.out.println("POST BREAKPOINT DELTA (breakpointsRemovedInput)\n"); //$NON-NLS-1$
                     }
                     postModelChanged(delta, false); 
@@ -539,7 +538,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 for (int i = 0; i < filteredBreakpoints.length; ++i)
                     appendModelDelta(fContainer, delta, IModelDelta.STATE | IModelDelta.CONTENT, filteredBreakpoints[i]); // content flag triggers detail refresh
 
-                if (DEBUG_BREAKPOINT_DELTAS) {
+                if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
                     System.out.println("POST BREAKPOINT DELTA (breakpointsChanged)\n"); //$NON-NLS-1$
                 }
                 postModelChanged(delta, false); 
@@ -733,14 +732,6 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         }
     };
     
-    // debug flags
-    public static boolean DEBUG_BREAKPOINT_DELTAS = false;
-    
-    static {
-        DEBUG_BREAKPOINT_DELTAS = DebugUIPlugin.DEBUG && "true".equals(                     //$NON-NLS-1$
-         Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/breakpointDeltas"));   //$NON-NLS-1$
-    } 
-        
     /**
      * A map of input to info data cache
      */

@@ -16,6 +16,7 @@ package org.eclipse.debug.internal.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -28,10 +29,13 @@ import com.ibm.icu.text.MessageFormat;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.util.tracker.ServiceTracker;
 
 import org.w3c.dom.Document;
 
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
@@ -53,6 +57,8 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
@@ -108,6 +114,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
@@ -128,8 +135,31 @@ import org.eclipse.debug.ui.ILaunchGroup;
  * @see LaunchConfigurationManager
  * @see PerspectiveManager
  */
-public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
+public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, DebugOptionsListener {
 	
+	public static boolean DEBUG = false;
+	public static boolean DEBUG_BREAKPOINT_DELTAS = false;
+	public static boolean DEBUG_MODEL = false;
+	public static boolean DEBUG_VIEWER = false;
+	public static boolean DEBUG_BREADCRUMB = false;
+	public static boolean DEBUG_TREE_VIEWER_DROPDOWN = false;
+	public static boolean DEBUG_CONTENT_PROVIDER = false;
+	public static boolean DEBUG_UPDATE_SEQUENCE = false;
+	public static boolean DEBUG_DELTAS = false;
+	public static boolean DEBUG_STATE_SAVE_RESTORE = false;
+	public static String DEBUG_PRESENTATION_ID = null;
+	
+	static final String DEBUG_FLAG = "org.eclipse.debug.ui/debug";
+	static final String DEBUG_BREAKPOINT_DELTAS_FLAG = "org.eclipse.debug.ui/debug/viewers/breakpointDeltas";
+	static final String DEBUG_MODEL_FLAG = "org.eclipse.debug.ui/debug/viewers/model";
+	static final String DEBUG_VIEWER_FLAG = "org.eclipse.debug.ui/debug/viewers/viewer";
+	static final String DEBUG_BREADCRUMB_FLAG = "org.eclipse.debug.ui/debug/breadcrumb";
+	static final String DEBUG_TREE_VIEWER_DROPDOWN_FLAG = "org.eclipse.debug.ui/debug/breadcrumb";
+	static final String DEBUG_CONTENT_PROVIDER_FLAG ="org.eclipse.debug.ui/debug/viewers/contentProvider";
+	static final String DEBUG_UPDATE_SEQUENCE_FLAG = "org.eclipse.debug.ui/debug/viewers/updateSequence";
+	static final String DEBUG_DELTAS_FLAG ="org.eclipse.debug.ui/debug/viewers/deltas";
+	static final String DEBUG_STATE_SAVE_RESTORE_FLAG = "org.eclipse.debug.ui/debug/viewers/stateSaveRestore";
+	static final String DEBUG_PRESENTATION_ID_FLAG ="org.eclipse.debug.ui/debug/viewers/presentationId";
 	
 	/**
 	 * The singleton debug plug-in instance
@@ -202,9 +232,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	private IPropertyChangeListener fThemeListener;
     
-	
-    public static boolean DEBUG = false;
-	
     /**
      * Dummy launch node representing a launch that is waiting
      * for a build to finish before proceeding. This node exists
@@ -444,7 +471,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			
 			fSaveParticipants.clear();
 			
-			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(getUniqueIdentifier());
 			
 			if (fThemeListener != null) {
 				if (PlatformUI.isWorkbenchRunning())
@@ -485,10 +512,20 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		ResourcesPlugin.getWorkspace().addSaveParticipant(this,
+		Hashtable props = new Hashtable(2);
+		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, getUniqueIdentifier());
+		context.registerService(DebugOptionsListener.class.getName(), this, props);
+		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(),
 				new ISaveParticipant() {
 					public void saving(ISaveContext saveContext) throws CoreException {
-						savePluginPreferences();
+						IEclipsePreferences node = InstanceScope.INSTANCE.getNode(getUniqueIdentifier());
+						if(node != null) {
+							try {
+								node.flush();
+							} catch (BackingStoreException e) {
+								log(e);
+							}
+						}
 						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
 							((ISaveParticipant)iter.next()).saving(saveContext);
 						}
@@ -509,7 +546,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						}
 					}
 				});
-		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.debug.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 		
 		// make sure the perspective manager is created
 		// and be the first debug event listener
@@ -561,6 +597,28 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
+	 */
+	public void optionsChanged(DebugOptions options) {
+		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
+		DEBUG_BREAKPOINT_DELTAS = DEBUG & options.getBooleanOption(DEBUG_BREAKPOINT_DELTAS_FLAG, false);
+		DEBUG_MODEL = DEBUG & options.getBooleanOption(DEBUG_MODEL_FLAG, false);
+		DEBUG_VIEWER = DEBUG & options.getBooleanOption(DEBUG_VIEWER_FLAG, false);
+		DEBUG_BREADCRUMB = DEBUG & options.getBooleanOption(DEBUG_BREADCRUMB_FLAG, false);
+		DEBUG_TREE_VIEWER_DROPDOWN = DEBUG & options.getBooleanOption(DEBUG_TREE_VIEWER_DROPDOWN_FLAG, false);
+		DEBUG_CONTENT_PROVIDER = DEBUG & options.getBooleanOption(DEBUG_CONTENT_PROVIDER_FLAG, false);
+		DEBUG_UPDATE_SEQUENCE = DEBUG & options.getBooleanOption(DEBUG_UPDATE_SEQUENCE_FLAG, false);
+		DEBUG_DELTAS = DEBUG & options.getBooleanOption(DEBUG_DELTAS_FLAG, false);
+		DEBUG_STATE_SAVE_RESTORE = DEBUG & options.getBooleanOption(DEBUG_STATE_SAVE_RESTORE_FLAG, false);
+		if(DEBUG) {
+			DEBUG_PRESENTATION_ID = options.getOption(DEBUG_PRESENTATION_ID_FLAG, IInternalDebugCoreConstants.EMPTY_STRING);
+			if(IInternalDebugCoreConstants.EMPTY_STRING.equals(DEBUG_PRESENTATION_ID)) {
+				DEBUG_PRESENTATION_ID = null;
+			}
+		}
+	}
+	
 	/**
 	 * Utility method with conventions
 	 * @param shell the shell to open the dialog on
@@ -890,6 +948,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
 	public void launchRemoved(ILaunch launch) {}
+
+	public static boolean DEBUG_TEST_PRESENTATION_ID(IPresentationContext context) {
+	    if (context == null) {
+	        return true;
+	    }
+	    return DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(context.getId());
+	}
 
 	/**
      * Return the ILaunch associated with a model element, or null if there is

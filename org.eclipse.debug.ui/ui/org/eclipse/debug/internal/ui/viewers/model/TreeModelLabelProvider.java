@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -451,12 +451,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		fUpdatesInProgress.add(update);
 		
 		if (begin) {
-			if (TreeModelContentProvider.DEBUG_UPDATE_SEQUENCE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+			if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println("LABEL SEQUENCE BEGINS"); //$NON-NLS-1$
 			}
 			notifyUpdate(TreeModelContentProvider.UPDATE_SEQUENCE_BEGINS, null);
 		}
-        if (TreeModelContentProvider.DEBUG_UPDATE_SEQUENCE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+        if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("\tBEGIN - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(TreeModelContentProvider.UPDATE_BEGINS, update);
@@ -470,12 +470,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	void updateComplete(ILabelUpdate update) {
 		fUpdatesInProgress.remove(update);
 		
-        if (TreeModelContentProvider.DEBUG_UPDATE_SEQUENCE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+        if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 			System.out.println("\tEND - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(TreeModelContentProvider.UPDATE_COMPLETE, update);
 		if (fUpdatesInProgress.isEmpty()) {
-            if (TreeModelContentProvider.DEBUG_UPDATE_SEQUENCE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+            if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				System.out.println("LABEL SEQUENCE ENDS"); //$NON-NLS-1$
 			}
 			notifyUpdate(TreeModelContentProvider.UPDATE_SEQUENCE_COMPLETE, null);

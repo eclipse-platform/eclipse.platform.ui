@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Wind River Systems and others.
+ * Copyright (c) 2011, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,9 +73,6 @@ import org.eclipse.ui.XMLMemento;
  */
 class ViewerStateTracker {
 
-    // Debugging flag.
-    static boolean DEBUG_STATE_SAVE_RESTORE = false;
-    
     // State update type constants used in notifying listeners
     static final int STATE_SAVE_SEQUENCE_BEGINS = 4;
     static final int STATE_SAVE_SEQUENCE_COMPLETE = 5;
@@ -277,7 +274,7 @@ class ViewerStateTracker {
                             final String keyMementoString = writer.toString();
                             ModelDelta stateDelta = (ModelDelta) fViewerStates.get(keyMementoString);
                             if (stateDelta != null) {
-                                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
+                                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
                                     System.out.println("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - MATCHING STATE FOUND"); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
 
@@ -288,7 +285,7 @@ class ViewerStateTracker {
                                         if (!fContentProvider.isDisposed() && input.equals(fContentProvider.getViewer().getInput())) {
                                             ModelDelta stateDelta2 = (ModelDelta) fViewerStates.remove(keyMementoString);
                                             if (stateDelta2 != null) {
-                                                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
+                                                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
                                                     System.out.println("STATE RESTORE BEGINS"); //$NON-NLS-1$
                                                     System.out.println("\tRESTORE: " + stateDelta2.toString()); //$NON-NLS-1$
                                                     notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
@@ -298,14 +295,14 @@ class ViewerStateTracker {
                                                 doInitialRestore(fPendingState);
                                             }
                                         } else {
-                                            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
+                                            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
                                                 System.out.println("STATE RESTORE CANCELED."); //$NON-NLS-1$
                                             }
                                         }
                                     }
                                 });
                             } else {
-                                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
+                                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
                                     System.out.println("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - NO MATCHING STATE"); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
                             }
@@ -326,7 +323,7 @@ class ViewerStateTracker {
                  */
                 public void processReqeusts() {
                     notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
-                    if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                    if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                         System.out.println("STATE RESTORE INPUT COMARE BEGIN : " + fRequest); //$NON-NLS-1$
                     }
                     notifyStateUpdate(input, TreeModelContentProvider.UPDATE_BEGINS, fRequest);
@@ -356,7 +353,7 @@ class ViewerStateTracker {
                     delta.getElement(), fContentProvider.getViewerTreePath(delta), inputMemento, delta));
             manager.processReqeusts();
         } else {
-            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
+            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
                 System.out.println("STATE RESTORE: No input memento provider"); //$NON-NLS-1$
             }            
         }
@@ -369,7 +366,7 @@ class ViewerStateTracker {
     void appendToPendingStateDelta(final TreePath path) {
         if (fContentProvider.getViewer() == null) return; // Not initialized yet.
         
-        if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
+        if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
             System.out.println("STATE APPEND BEGIN: " + path.getLastSegment()); //$NON-NLS-1$
         }
 
@@ -383,7 +380,7 @@ class ViewerStateTracker {
         if (!fContentProvider.getViewer().saveElementState(path, delta, IModelDelta.COLLAPSE | IModelDelta.EXPAND | IModelDelta.SELECT)) {
             // Path to save the state was not found or there was no 
             // (expansion) state to save!  Abort.
-            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                 System.out.println("STATE APPEND CANCEL: Element " + path.getLastSegment() + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
             }
             return;
@@ -402,7 +399,7 @@ class ViewerStateTracker {
             }
         });
 
-        if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+        if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
             System.out.println("\tAPPEND DELTA: " + appendDeltaRoot); //$NON-NLS-1$
         }
 
@@ -410,7 +407,7 @@ class ViewerStateTracker {
             // If the restore for the current input was never completed,
             // preserve
             // that restore along with the restore that was completed.
-            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                 System.out.println("\tAPPEND OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
             }
 
@@ -458,7 +455,7 @@ class ViewerStateTracker {
                         saveDeltaNode.setChildCount(pendingDeltaNode.getParentDelta().getChildCount());
                         copyIntoDelta(pendingDeltaNode, saveDeltaNode);
                     } else {
-                        if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                        if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                             System.out.println("\tSKIPPED: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
                         }
                     }
@@ -483,11 +480,11 @@ class ViewerStateTracker {
                 notifyStateUpdate(appendDeltaRoot.getElement(), STATE_RESTORE_SEQUENCE_BEGINS, null);
             }
             fPendingState = appendDeltaRoot;
-            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                 System.out.println("STATE APPEND COMPLETE " + fPendingState); //$NON-NLS-1$
             }
         } else {
-            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                 System.out.println("STATE APPEND CANCELED: No Data"); //$NON-NLS-1$
             }
         }
@@ -505,14 +502,14 @@ class ViewerStateTracker {
 
         IElementMementoProvider stateProvider = ViewerAdapterService.getMementoProvider(input);
         if (stateProvider != null) {
-            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                 System.out.println("STATE SAVE BEGIN: " + input); //$NON-NLS-1$
             }
 
             // build a model delta representing expansion and selection state
             final ModelDelta saveDeltaRoot = new ModelDelta(input, IModelDelta.NO_CHANGE);
             buildViewerState(saveDeltaRoot);
-            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                 System.out.println("\tSAVE DELTA FROM VIEW:\n" + saveDeltaRoot); //$NON-NLS-1$
             }
 
@@ -543,7 +540,7 @@ class ViewerStateTracker {
                         copyIntoDelta(revealDelta, saveDeltaNode);
                     }
                 } else {
-                    if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                    if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                         System.out.println("\tSKIPPED: " + revealDelta.getElement()); //$NON-NLS-1$
                     }
                 }
@@ -553,7 +550,7 @@ class ViewerStateTracker {
                 // If the restore for the current input was never completed,
                 // preserve
                 // that restore along with the restore that was completed.
-                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     System.out.println("\tSAVE OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
                 }
 
@@ -589,7 +586,7 @@ class ViewerStateTracker {
                             saveDeltaNode.setChildCount(pendingDeltaNode.getParentDelta().getChildCount());
                             copyIntoDelta(pendingDeltaNode, saveDeltaNode);
                         } else {
-                            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                                 System.out.println("\tSKIPPED: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
                             }
                         }
@@ -613,7 +610,7 @@ class ViewerStateTracker {
                 // thread
                 encodeDelta(saveDeltaRoot, stateProvider);
             } else {
-                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     System.out.println("STATE SAVE CANCELED, NO DATA"); //$NON-NLS-1$
                 }
             }
@@ -729,7 +726,7 @@ class ViewerStateTracker {
                 Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
 
                 notifyStateUpdate(input, TreeModelContentProvider.UPDATE_COMPLETE, request);
-                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     System.out.println("\tSTATE END: " + request); //$NON-NLS-1$
                 }
 
@@ -748,7 +745,7 @@ class ViewerStateTracker {
                         } catch (IOException e) {
                             DebugUIPlugin.log(e);
                         }
-                        if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                        if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                             System.out.println("STATE SAVE COMPLETED: " + rootDelta); //$NON-NLS-1$
                         }
                         stateSaveComplete(input, this);
@@ -772,7 +769,7 @@ class ViewerStateTracker {
                     req.cancel();
                 }
                 fRequests.clear();
-                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     System.out.println("STATE SAVE ABORTED: " + rootDelta.getElement()); //$NON-NLS-1$
                 }
                 stateSaveComplete(input, this);
@@ -948,7 +945,7 @@ class ViewerStateTracker {
                 public boolean visit(IModelDelta delta, int depth) {
                     int deltaFlags = delta.getFlags();
                     int newFlags = deltaFlags & ~mask;
-                    if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                    if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                         if (deltaFlags != newFlags) {
                             System.out.println("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         }
@@ -977,7 +974,7 @@ class ViewerStateTracker {
                         if (deltaPath.equals(path)) {
                             int deltaFlags = delta.getFlags();
                             int newFlags = deltaFlags & ~mask;
-                            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                                 if (deltaFlags != newFlags) {
                                     System.out.println("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                 }
@@ -993,7 +990,7 @@ class ViewerStateTracker {
                         // We're clearing out flags of a matching sub-tree
                         // assert (flags & IModelDelta.EXPAND) != 0;
                         
-                        if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                        if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                             if (delta.getFlags() != IModelDelta.NO_CHANGE) {
                                 System.out.println("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(delta.getFlags()) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             }
@@ -1058,7 +1055,7 @@ class ViewerStateTracker {
                                     (IMemento) element, (ModelDelta) delta, modelIndex, knowsHasChildren,
                                     knowsChildCount, checkChildrenRealized);
                                 fCompareRequestsInProgress.put(key, compareRequest);
-                                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                                     System.out.println("\tSTATE BEGIN: " + compareRequest); //$NON-NLS-1$
                                 }
                                 notifyStateUpdate(element, TreeModelContentProvider.UPDATE_BEGINS, compareRequest);
@@ -1158,7 +1155,7 @@ class ViewerStateTracker {
             }
 
             private void removeDelta(IModelDelta delta) {
-                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     System.out.println("\tRESTORE REMOVED: " + delta.getElement()); //$NON-NLS-1$
                 }
 
@@ -1180,7 +1177,7 @@ class ViewerStateTracker {
             // notify restore complete if REVEAL was restored also, otherwise
             // postpone until then. 
             if (fPendingSetTopItem == null) {
-                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
                 }
 
@@ -1207,14 +1204,14 @@ class ViewerStateTracker {
         // Attempt to expand the node only if the children are known.
         if (knowsHasChildren) {
             if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
-                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     System.out.println("\tRESTORE EXPAND: " + treePath.getLastSegment()); //$NON-NLS-1$
                 }
                 viewer.expandToLevel(treePath, 1);
                 delta.setFlags(delta.getFlags() & ~IModelDelta.EXPAND);
             }
             if ((delta.getFlags() & IModelDelta.COLLAPSE) != 0) {
-                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     System.out.println("\tRESTORE COLLAPSE: " + treePath.getLastSegment()); //$NON-NLS-1$
                 }
                 // Check auto-expand before collapsing an element (bug 335734)
@@ -1228,7 +1225,7 @@ class ViewerStateTracker {
         
         if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
             delta.setFlags(delta.getFlags() & ~IModelDelta.SELECT);
-            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                 System.out.println("\tRESTORE SELECT: " + treePath.getLastSegment()); //$NON-NLS-1$
             }
             ITreeSelection currentSelection = (ITreeSelection)viewer.getSelection();
@@ -1309,7 +1306,7 @@ class ViewerStateTracker {
              fContentProvider.getViewer().getElementChildrenRealized(treePath)) ||
             (knowsHasChildren && !viewer.getHasChildren(treePath)) ) 
         {
-            if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                 System.out.println("\tRESTORE CONTENT: " + treePath.getLastSegment()); //$NON-NLS-1$
             }
             delta.setFlags(delta.getFlags() & ~IModelDelta.CONTENT);            
@@ -1355,7 +1352,7 @@ class ViewerStateTracker {
                 TreePath parentPath = fPathToReveal.getParentPath();
                 int index = viewer.findElementIndex(parentPath, fPathToReveal.getLastSegment());
                 if (index >= 0) { 
-                    if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                    if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                         System.out.println("\tRESTORE REVEAL: " + fPathToReveal.getLastSegment()); //$NON-NLS-1$
                     }
                     viewer.reveal(parentPath, index);
@@ -1398,7 +1395,7 @@ class ViewerStateTracker {
             viewer.removeViewerUpdateListener(this);
             
             if (fPendingState == null) {
-                if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                     System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
                 }
                 notifyStateUpdate(fModelInput, STATE_RESTORE_SEQUENCE_COMPLETE, null);
@@ -1514,7 +1511,7 @@ class ViewerStateTracker {
 
     void compareFinished(ElementCompareRequest request, ModelDelta delta) {
         notifyStateUpdate(request.getViewerInput(), TreeModelContentProvider.UPDATE_COMPLETE, request);
-        if (DEBUG_STATE_SAVE_RESTORE && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+        if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
             System.out.println("\tSTATE END: " + request + " = " + false); //$NON-NLS-1$ //$NON-NLS-2$
         }
 

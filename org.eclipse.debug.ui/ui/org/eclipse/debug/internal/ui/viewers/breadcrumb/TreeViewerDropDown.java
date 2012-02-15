@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -56,11 +55,6 @@ import org.eclipse.ui.progress.UIJob;
 public abstract class TreeViewerDropDown {
     
     /**
-     * Tells whether this class is in debug mode.
-     */
-    private static boolean DEBUG= DebugUIPlugin.DEBUG && "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.debug.ui/debug/breadcrumb")); //$NON-NLS-1$//$NON-NLS-2$
-
-    /**
      * Delay to control scrolling when the mouse pointer reaches the edge of 
      * the tree viewer. 
      */
@@ -91,7 +85,7 @@ public abstract class TreeViewerDropDown {
 
         fDropDownViewer.addOpenListener(new IOpenListener() {
             public void open(OpenEvent event) {
-                if (DEBUG)
+                if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN)
                     System.out.println("BreadcrumbItemDropDown.showMenu()$treeViewer>open"); //$NON-NLS-1$
 
                 openElement(event.getSelection());
@@ -102,7 +96,7 @@ public abstract class TreeViewerDropDown {
         
         tree.addMouseListener(new MouseListener() {
             public void mouseUp(MouseEvent e) {
-                if (DEBUG)
+                if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN)
                     System.out.println("BreadcrumbItemDropDown.showMenu()$treeViewer>mouseUp"); //$NON-NLS-1$
 
                 if (e.button != 1)
@@ -276,7 +270,7 @@ public abstract class TreeViewerDropDown {
         
         boolean treeHasFocus= !tree.isDisposed() && tree.isFocusControl();
 
-        if (DEBUG) {
+        if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
             System.out.println("    isDisposed: " + tree.isDisposed()); //$NON-NLS-1$
             System.out.println("    shell hasFocus: " + (!tree.isDisposed() && tree.isFocusControl())); //$NON-NLS-1$
             System.out.println("    tree hasFocus: " + treeHasFocus); //$NON-NLS-1$

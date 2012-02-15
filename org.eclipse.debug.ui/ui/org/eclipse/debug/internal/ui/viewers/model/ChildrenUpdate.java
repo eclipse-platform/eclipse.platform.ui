@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.jface.viewers.TreePath;
@@ -63,7 +64,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 					if (provider.shouldFilter(elementPath, element)) {
 						if (provider.addFilteredIndex(elementPath, modelIndex, element)) {
                             if (!updateFilterOnly) {
-                                if (TreeModelContentProvider.DEBUG_CONTENT_PROVIDER && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                                if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
     								System.out.println("REMOVE(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
     							}
 							    viewer.remove(elementPath, viewIndex);
@@ -74,13 +75,13 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 							provider.clearFilteredChild(elementPath, modelIndex);
                             if (!updateFilterOnly) {
 								int insertIndex = provider.modelToViewIndex(elementPath, modelIndex);
-								if (TreeModelContentProvider.DEBUG_CONTENT_PROVIDER) {
+								if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER) {
 									System.out.println("insert(" + getElement() + ", modelIndex: " + modelIndex + " insertIndex: " + insertIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 								}
 								viewer.insert(elementPath, element, insertIndex);
                             }
 						} else if (!updateFilterOnly){
-		                    if (TreeModelContentProvider.DEBUG_CONTENT_PROVIDER && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+		                    if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 								System.out.println("replace(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 							}
 							viewer.replace(elementPath, viewIndex, element);
@@ -140,7 +141,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 					fIndex = Math.min(fIndex, otherStart);
 					end = Math.max(end, otherEnd);
 					fLength = end - fIndex;
-					if (TreeModelContentProvider.DEBUG_CONTENT_PROVIDER && TreeModelContentProvider.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+					if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 						System.out.println("coalesced: " + this.toString()); //$NON-NLS-1$
 					}
 					return true;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -50,14 +49,6 @@ public abstract class AsynchronousModel {
 	private AsynchronousViewer fViewer; // viewer this model works for
     private boolean fDisposed = false; // whether disposed
     
-    // debug flags
-	public static boolean DEBUG_MODEL = false;
-	
-	static {
-		DEBUG_MODEL = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/model")); //$NON-NLS-1$
-	}  
-	
 	class EmptyContentAdapter extends AsynchronousContentAdapter {
 		
 		/* (non-Javadoc)
@@ -101,7 +92,7 @@ public abstract class AsynchronousModel {
 	 */
 	public AsynchronousModel(AsynchronousViewer viewer) {
 		fViewer = viewer;
-		if (DEBUG_MODEL) {
+		if (DebugUIPlugin.DEBUG_MODEL) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("MODEL CREATED for: "); //$NON-NLS-1$
 			buffer.append(fViewer);
@@ -132,7 +123,7 @@ public abstract class AsynchronousModel {
 	 * Disposes this model
 	 */
 	public synchronized void dispose() {
-		if (DEBUG_MODEL) {
+		if (DebugUIPlugin.DEBUG_MODEL) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("MODEL DISPOSED for: "); //$NON-NLS-1$
 			buffer.append(fViewer);
@@ -593,7 +584,7 @@ public abstract class AsynchronousModel {
             	}
     	        parentNode.setChildren(newChildren);
             }
-            if (DEBUG_MODEL) {
+            if (DebugUIPlugin.DEBUG_MODEL) {
             	DebugUIPlugin.debug("CHILDREN CHANGED: " + parentNode); //$NON-NLS-1$
             	DebugUIPlugin.debug(toString());
             }

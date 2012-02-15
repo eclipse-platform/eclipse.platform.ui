@@ -3051,5 +3051,24 @@ M4 = Platform-specific fourth key
          </activeWhen>
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.debug.ui.component"
+            label="%debug.ui.component.label">
+         <bundle
+               consumed="true"
+               name="org.eclipse.debug.ui">
+         </bundle>
+      </component>
+      <component
+            id="org.eclipse.debug.core.component"
+            label="%debug.core.component.label">
+         <bundle
+               consumed="true"
+               name="org.eclipse.debug.core">
+         </bundle>
+      </component>
+   </extension>
 
 </plugin>
