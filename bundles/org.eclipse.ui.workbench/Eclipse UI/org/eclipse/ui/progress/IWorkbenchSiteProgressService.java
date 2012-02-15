@@ -12,7 +12,6 @@ package org.eclipse.ui.progress;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * IWorkbenchPartProgressService is an IProgressService that adds API for jobs
@@ -104,11 +103,9 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
     public void showBusyForFamily(Object family);
 
     /**
-     * Warn that the content of the receiver has 
-     * changed. The method of this is determined by
-     * how the presentation shows this. 
-     * @see IPresentablePart#PROP_HIGHLIGHT_IF_BACK
-     */
+	 * Warn that the content of the part has changed. How this change is
+	 * displayed to the end user is left up to the workbench renderer.
+	 */
     public void warnOfContentChange();
     
     /**
