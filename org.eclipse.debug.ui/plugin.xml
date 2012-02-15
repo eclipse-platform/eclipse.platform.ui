@@ -762,7 +762,7 @@
          </action>
          <action
                class="org.eclipse.debug.internal.ui.actions.breakpoints.BreakpointsCollapseAllAction"
-               definitionId="org.eclipse.ui.navigate.expandAll"
+               definitionId="org.eclipse.ui.navigate.collapseAll"
                helpContextId="breakpoints_collapse_all_action_context"
                icon="$nl$/icons/full/elcl16/collapseall.gif"
                id="org.eclipse.debug.ui.breakpointsView.toolbar.collapseAll"
