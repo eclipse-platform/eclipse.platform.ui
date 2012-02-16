@@ -842,7 +842,7 @@ public class StackRenderer extends LazyStackRenderer {
 					return;
 
 				if (e.button == 2) {
-					closePart(item);
+					closePart(item, false);
 				} else if (e.button == 1) {
 					MUIElement ele = (MUIElement) item.getData(OWNING_ME);
 					if (ele.getParent().getSelectedElement() == ele) {
@@ -856,7 +856,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		CTabFolder2Adapter closeListener = new CTabFolder2Adapter() {
 			public void close(CTabFolderEvent event) {
-				event.doit = closePart(event.item);
+				event.doit = closePart(event.item, true);
 			}
 
 			@Override
@@ -943,11 +943,25 @@ public class StackRenderer extends LazyStackRenderer {
 		return new Point(x, y);
 	}
 
-	private boolean closePart(Widget widget) {
+	/**
+	 * Closes the part that's backed by the given widget.
+	 * 
+	 * @param widget
+	 *            the part that owns this widget
+	 * @param check
+	 *            <tt>true</tt> if the part should be checked to see if it has
+	 *            been defined as being not closeable for users, <tt>false</tt>
+	 *            if this check should not be performed
+	 * @return <tt>true</tt> if the part was closed, <tt>false</tt> otherwise
+	 */
+	private boolean closePart(Widget widget, boolean check) {
 		MUIElement uiElement = (MUIElement) widget
 				.getData(AbstractPartRenderer.OWNING_ME);
 		MPart part = (MPart) ((uiElement instanceof MPart) ? uiElement
 				: ((MPlaceholder) uiElement).getRef());
+		if (!check && !isClosable(part)) {
+			return false;
+		}
 
 		IEclipseContext partContext = part.getContext();
 		IEclipseContext parentContext = getContextForParent(part);
