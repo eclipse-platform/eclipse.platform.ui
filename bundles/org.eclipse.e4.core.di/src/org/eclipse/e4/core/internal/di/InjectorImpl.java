@@ -38,6 +38,7 @@ import javax.inject.Singleton;
 import org.eclipse.e4.core.di.IBinding;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
@@ -447,6 +448,10 @@ public class InjectorImpl implements IInjector {
 				if (descriptors[i].hasQualifier(Optional.class))
 					continue;
 				try {
+					Class<?> desiredClass = getDesiredClass(descriptors[i].getDesiredType());
+					Creatable creatableAnnotation = desiredClass.getAnnotation(Creatable.class);
+					if (creatableAnnotation == null)
+						continue;
 					actualArgs[i] = internalMake(getDesiredClass(descriptors[i].getDesiredType()), objectSupplier, tempSupplier);
 				} catch (InjectionException e) {
 					// ignore
@@ -794,6 +799,16 @@ public class InjectorImpl implements IInjector {
 			for (Iterator<Binding> i = collection.iterator(); i.hasNext();) {
 				Binding collectionBinding = i.next();
 				if (eq(collectionBinding.getQualifierName(), desiredQualifierName))
+					return collectionBinding;
+			}
+			desiredQualifierName = desiredClass.getName();
+			for (Iterator<Binding> i = collection.iterator(); i.hasNext();) {
+				Binding collectionBinding = i.next();
+				Class<?> bindingClass = collectionBinding.getDescribedClass();
+				if (bindingClass == null)
+					continue;
+				String simpleClassName = bindingClass.getName();
+				if (eq(simpleClassName, desiredQualifierName))
 					return collectionBinding;
 			}
 		}

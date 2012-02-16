@@ -40,6 +40,7 @@ import org.eclipse.e4.core.internal.tests.contexts.inject.ProviderInjectionTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ServiceContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.TestConstructorInjection;
 import org.eclipse.e4.core.internal.tests.di.AtInjectTest;
+import org.eclipse.e4.core.internal.tests.di.AutoConstructTest;
 import org.eclipse.e4.core.internal.tests.di.DisposeClassLinkTest;
 import org.eclipse.e4.core.internal.tests.di.InjectArraysTest;
 import org.eclipse.e4.core.internal.tests.di.InjectBaseTypeTest;
@@ -67,6 +68,7 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(InjectBaseTypeTest.class);
 		addTestSuite(InjectionResultLeakTest.class);
 		addTest(AtInjectTest.suite());
+		addTestSuite(AutoConstructTest.class);
 
 		// Contexts
 		addTestSuite(EclipseContextTest.class);
