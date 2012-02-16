@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -71,48 +72,67 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 		fRulerInfo = rulerInfo;
 		ToggleBreakpointsTargetManager.getDefault().addChangedListener(fListener);
 	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
+		doIt(null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
+	 */
+	public void runWithEvent(Event event) {
+		doIt(event);
+	}
+	
+	/**
+	 * Delegate method to perform the toggling
+	 * @param event the event, possibly <code>null</code>
+	 * 
+	 * @since 3.8
+	 */
+	void doIt(Event event) {
 		IDocument document= getDocument();
-		if (document == null) {
-			return;
-		}
-
-		int line = fRulerInfo.getLineOfLastMouseButtonActivity();
-		
-		// Test if line is valid
-		if (line == -1)
-			return;
-
-		try {
-			ITextSelection selection = getTextSelection(document, line);
-			IToggleBreakpointsTarget toggleTarget = 
-			    ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, selection);
-			if (toggleTarget == null) {
-			    return;
-			}
-
-			if (toggleTarget instanceof IToggleBreakpointsTargetExtension) {
-			    IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) toggleTarget;
-				if (extension.canToggleBreakpoints(fPart, selection)) {
-					extension.toggleBreakpoints(fPart, selection);
-					return;
+		if (document != null) {
+			int line = fRulerInfo.getLineOfLastMouseButtonActivity();
+			if(line > -1) {
+				try {
+					ITextSelection selection = getTextSelection(document, line);
+					IToggleBreakpointsTarget target = ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, selection);
+					if (target != null) {
+						if(target instanceof IToggleBreakpointsTargetExtension2) {
+							IToggleBreakpointsTargetExtension2 ext = (IToggleBreakpointsTargetExtension2) target;
+							if(ext.canToggleBreakpointsWithEvent(fPart, selection, event)) {
+								ext.toggleBreakpointsWithEvent(fPart, selection, event);
+								return;
+							}
+						}
+						if (target instanceof IToggleBreakpointsTargetExtension) {
+						    IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) target;
+							if (extension.canToggleBreakpoints(fPart, selection)) {
+								extension.toggleBreakpoints(fPart, selection);
+								return;
+							}
+						}
+						if (target.canToggleLineBreakpoints(fPart, selection)) {
+						    target.toggleLineBreakpoints(fPart, selection);
+						} else if (target.canToggleWatchpoints(fPart, selection)) {
+							target.toggleWatchpoints(fPart, selection);
+						} else if (target.canToggleMethodBreakpoints(fPart, selection)) {
+							target.toggleMethodBreakpoints(fPart, selection);
+						}
+					}
+				}
+				catch(BadLocationException ble) {
+					reportException(ble);
+				}
+				catch(CoreException ce) {
+					reportException(ce);
 				}
 			}
-			if (toggleTarget.canToggleLineBreakpoints(fPart, selection)) {
-			    toggleTarget.toggleLineBreakpoints(fPart, selection);
-			} else if (toggleTarget.canToggleWatchpoints(fPart, selection)) {
-			    toggleTarget.toggleWatchpoints(fPart, selection);
-			} else if (toggleTarget.canToggleMethodBreakpoints(fPart, selection)) {
-			    toggleTarget.toggleMethodBreakpoints(fPart, selection);
-			}
-		} catch (BadLocationException e) {
-			reportException(e);
-		} catch (CoreException e) {
-			reportException(e);
 		}
 	}
 	
