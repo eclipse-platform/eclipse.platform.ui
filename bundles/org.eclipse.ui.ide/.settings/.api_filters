@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.ide" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="924844039">
+            <message_arguments>
+                <message_argument value="3.7.1"/>
+                <message_argument value="3.7.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/ide/IDE.java" type="org.eclipse.ui.ide.IDE">
+        <filter id="1141899266">
+            <message_arguments>
+                <message_argument value="3.8"/>
+                <message_argument value="3.7"/>
+                <message_argument value="overrideDefaultEditorAssociation(IEditorInput, IContentType, IEditorDescriptor)"/>
+            </message_arguments>
+        </filter>
+        <filter id="1141899266">
+            <message_arguments>
+                <message_argument value="3.8"/>
+                <message_argument value="3.7"/>
+                <message_argument value="overrideEditorAssociations(IEditorInput, IContentType, IEditorDescriptor[])"/>
+            </message_arguments>
+        </filter>
+        <filter id="1141899266">
+            <message_arguments>
+                <message_argument value="3.8"/>
+                <message_argument value="3.7"/>
+                <message_argument value="overrideEditorAssociations(String, IContentType, IEditorDescriptor[])"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/ide/IEditorAssociationOverride.java" type="org.eclipse.ui.ide.IEditorAssociationOverride">
+        <filter id="1108344834">
+            <message_arguments>
+                <message_argument value="3.8"/>
+                <message_argument value="3.7"/>
+                <message_argument value="org.eclipse.ui.ide.IEditorAssociationOverride"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
