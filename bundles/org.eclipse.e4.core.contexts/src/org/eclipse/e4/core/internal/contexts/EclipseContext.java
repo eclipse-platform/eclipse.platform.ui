@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -705,20 +705,22 @@ public class EclipseContext implements IEclipseContext {
 
 	public Object getActive(final String name) {
 		final String internalName = ACTIVE_VARIABLE + name;
-		trackAccess(internalName);
-
-		if (containsKey(internalName, false))
+		if (containsKey(internalName, false)) {
+			trackAccess(internalName);
 			return internalGet(this, internalName, false);
+		}
 
 		final EclipseContext originatingContext = this;
+
 		runAndTrack(new RunAndTrack() {
 			public boolean changed(IEclipseContext context) {
-				IEclipseContext activeContext = getRoot().getActiveLeaf();
+				IEclipseContext activeContext = getActiveLeaf();
 				Object result = activeContext.get(name);
 				originatingContext.set(internalName, result);
 				return true;
 			}
 		});
+		trackAccess(internalName);
 		return internalGet(this, internalName, true);
 	}
 }

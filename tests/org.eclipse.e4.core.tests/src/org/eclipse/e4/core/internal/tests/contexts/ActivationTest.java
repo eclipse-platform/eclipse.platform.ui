@@ -130,12 +130,12 @@ public class ActivationTest extends TestCase {
 		root.set("var", "7");
 		
 		// nothing is active - we get value from the node
-		assertEquals("7", child2.getActive("var"));
+		assertEquals("3", child1.getActive("var"));
 		
 		child11.activateBranch();
-		assertEquals("1", child2.getActive("var"));
+		assertEquals("1", child1.getActive("var"));
 		child12.activateBranch();
-		assertEquals("2", child2.getActive("var"));
+		assertEquals("2", child1.getActive("var"));
 		child22.activateBranch();
 		assertEquals("5", child2.getActive("var"));
 	}
@@ -161,23 +161,74 @@ public class ActivationTest extends TestCase {
 		
 		final String[] result = new String[1];
 		
-		child2.runAndTrack(new RunAndTrack() {
+		child1.runAndTrack(new RunAndTrack() {
 			public boolean changed(IEclipseContext context) {
 				result[0] = (String) context.getActive("var");
 				return true;
 			}});
 		
 		// nothing is active - we get value from the node
-		assertEquals("7", result[0]);
+		assertEquals("3", result[0]);
 		
 		child11.activateBranch();
 		assertEquals("1", result[0]);
 		child12.activateBranch();
 		assertEquals("2", result[0]);
 		child22.activateBranch();
-		assertEquals("5", result[0]);
+		assertEquals("2", result[0]);
 	}
 	
+	public void testGetActiveRATNumberOfCalls() {
+		IEclipseContext root = EclipseContextFactory.create("root");
+		
+		IEclipseContext child1 = root.createChild("child1");
+		IEclipseContext child11 = child1.createChild("child11");
+		IEclipseContext child12 = child1.createChild("child12");
+		
+		IEclipseContext child2 = root.createChild("child2");
+		IEclipseContext child21 = child2.createChild("child21");
+		IEclipseContext child22 = child2.createChild("child22");
+		
+		child11.set("var", "1");
+		child12.set("var", "1");
+		child1.set("var", "3");
+		child21.set("var", "4");
+		child22.set("var", "4");
+		child2.set("var", "6");
+		root.set("var", "7");
+		
+		final String[] result = new String[1];
+		final int[] called = new int[1];
+		called[0] = 0;
+		
+		child1.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
+				result[0] = (String) context.getActive("var");
+				called[0]++;
+				return true;
+			}});
+		
+		// nothing is active - we get value from the node
+		assertEquals("3", result[0]);
+		assertEquals(1, called[0]);
+		
+		child11.activateBranch();
+		assertEquals("1", result[0]);
+		assertEquals(2, called[0]);
+		
+		child12.activateBranch();
+		assertEquals("1", result[0]);
+		assertEquals(2, called[0]);
+		
+		child22.activateBranch();
+		assertEquals("1", result[0]);
+		assertEquals(2, called[0]);
+		
+		child21.activateBranch();
+		assertEquals("1", result[0]);
+		assertEquals(2, called[0]);
+	}
+
 	public static class ActiveInject {
 		//@Inject @Named("var")
 		public String value;
