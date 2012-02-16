@@ -25,6 +25,7 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -189,14 +190,20 @@ public class IDEResourceInfoUtils {
 	}
 
 	/**
-	 * Get the file store for the string.
+	 * Get the file store for the local file system path.
 	 * 
 	 * @param string
 	 * @return IFileStore or <code>null</code> if there is a
 	 *         {@link CoreException}.
 	 */
 	public static IFileStore getFileStore(String string) {
-		return getFileStore(new Path(string).toFile().toURI());
+		Path location = new Path(string);
+		//see if there is an existing resource at that location that might have a different file store
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(location);
+		if (file != null) {
+			return getFileStore(file.getLocationURI());
+		}
+		return getFileStore(location.toFile().toURI());
 	}
 
 	/**
