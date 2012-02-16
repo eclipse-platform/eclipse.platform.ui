@@ -74,7 +74,10 @@ final public class ContextInjectionFactory {
 
 	/**
 	 * Call a method, injecting the parameters from the context.
-	 * 
+	 * <p>
+	 * If no matching method is found on the class, an InjectionException will be 
+	 * thrown.
+	 * </p>
 	 * @param object The object to perform injection on
 	 * @param qualifier the annotation tagging method to be called
 	 * @param context The context to obtain injected values from
@@ -88,7 +91,9 @@ final public class ContextInjectionFactory {
 
 	/**
 	 * Call a method, injecting the parameters from the context.
-	 * 
+	 * <p>
+	 * If no matching method is found on the class, the defaultValue will be returned.
+	 * </p>
 	 * @param object The object to perform injection on
 	 * @param qualifier the annotation tagging method to be called
 	 * @param context The context to obtain injected values from
@@ -109,6 +114,9 @@ final public class ContextInjectionFactory {
 	 * If values for the same key present in both the context and the local context, the values from
 	 * the local context are injected.
 	 * </p> 
+	 * <p>
+	 * If no matching method is found on the class, the defaultValue will be returned.
+	 * </p>
 	 * @param object The object to perform injection on
 	 * @param qualifier the annotation tagging method to be called
 	 * @param context The context to obtain injected values from

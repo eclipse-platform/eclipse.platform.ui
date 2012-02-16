@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,6 +75,10 @@ public interface IInjector {
 
 	/**
 	 * Call the annotated method on an object, injecting the parameters from the supplier.
+	 * <p>
+	 * If no matching method is found on the class, an InjectionException will be 
+	 * thrown.
+	 * </p>
 	 * @param object the object on which the method should be called
 	 * @param qualifier the annotation tagging method to be called
 	 * @param objectSupplier primary object supplier
@@ -85,6 +89,9 @@ public interface IInjector {
 
 	/**
 	 * Call the annotated method on an object, injecting the parameters from the supplier.
+	 * <p>
+	 * If no matching method is found on the class, the defaultValue will be returned.
+	 * </p>
 	 * @param object the object on which the method should be called
 	 * @param qualifier the annotation tagging method to be called
 	 * @param defaultValue a value to be returned if the method cannot be called, might be <code>null</code>
@@ -96,6 +103,9 @@ public interface IInjector {
 
 	/**
 	 * Call the annotated method on an object, injecting the parameters from the suppliers.
+	 * <p>
+	 * If no matching method is found on the class, the defaultValue will be returned.
+	 * </p>
 	 * @param object the object on which the method should be called
 	 * @param qualifier the annotation tagging method to be called
 	 * @param defaultValue a value to be returned if the method cannot be called, might be <code>null</code>
