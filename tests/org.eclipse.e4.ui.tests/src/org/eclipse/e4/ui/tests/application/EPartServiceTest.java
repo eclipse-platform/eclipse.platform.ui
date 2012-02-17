@@ -1389,6 +1389,29 @@ public class EPartServiceTest extends UITest {
 				.getActivePart());
 	}
 
+	public void testActivate_Bug371894() {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partB);
+		window.setSelectedElement(partB);
+
+		initialize();
+		getEngine().createGui(window);
+
+		IEclipseContext context = window.getContext();
+		context.get(EModelService.class).hostElement(partA, window,
+				window.getWidget(), context);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+	}
+
 	public void testCreatePart() {
 		createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);

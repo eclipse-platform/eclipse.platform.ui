@@ -999,7 +999,7 @@ public class PartServiceImpl implements EPartService {
 		engine.createGui(element);
 
 		parent = element.getParent();
-		if (parent.getChildren().size() == 1) {
+		if (parent != null && parent.getChildren().size() == 1) {
 			// if we're the only child, set ourselves as the selected element
 			parent.setSelectedElement(element);
 		}
