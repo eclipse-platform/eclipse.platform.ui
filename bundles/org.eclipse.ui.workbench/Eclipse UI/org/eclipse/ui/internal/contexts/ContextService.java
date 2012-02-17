@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,18 +121,21 @@ public final class ContextService implements IContextService {
 			}
 			ExpressionContext ctx = new ExpressionContext(eclipseContext.getActiveLeaf());
 			try {
-				final boolean shouldActivate = expression.evaluate(ctx) != EvaluationResult.FALSE;
-				synchService.asyncExec(new Runnable() {
-					public void run() {
-						if (updating) {
-							if (shouldActivate) {
+				if (updating) {
+					if (expression.evaluate(ctx) != EvaluationResult.FALSE) {
+						runExternalCode(new Runnable() {
+							public void run() {
 								contextService.activateContext(contextId);
-							} else {
+							}
+						});
+					} else {
+						runExternalCode(new Runnable() {
+							public void run() {
 								contextService.deactivateContext(contextId);
 							}
-						}
+						});
 					}
-				});
+				}
 			} catch (CoreException e) {
 				// contextService.deactivateContext(contextId);
 				WorkbenchPlugin.log("Failed to update " + contextId, e); //$NON-NLS-1$
