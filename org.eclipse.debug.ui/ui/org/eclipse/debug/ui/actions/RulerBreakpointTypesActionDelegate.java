@@ -68,7 +68,7 @@ import org.eclipse.ui.texteditor.ITextEditorExtension;
  * Clients may refer to this class as an action delegate in plug-in XML. This class
  * is not intended to be subclassed.
  * </p>
- * @see ToggleBreakpointsTargetManager
+ * @see IToggleBreakpointsTargetManager
  * @see IToggleBreakpointsTargetFactory
  * @noextend This class is not intended to be subclassed by clients.
  * @since 3.5

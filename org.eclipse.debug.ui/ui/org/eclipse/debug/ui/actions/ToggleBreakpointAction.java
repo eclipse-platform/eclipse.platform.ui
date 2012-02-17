@@ -14,8 +14,8 @@ package org.eclipse.debug.ui.actions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTargetManagerListener;
 import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -70,7 +70,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 		fPart = part;
 		fDocument = document;
 		fRulerInfo = rulerInfo;
-		ToggleBreakpointsTargetManager.getDefault().addChangedListener(fListener);
+		DebugUITools.getToggleBreakpointsTargetManager().addChangedListener(fListener);
 	}
 	
 	/*
@@ -101,7 +101,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 			if(line > -1) {
 				try {
 					ITextSelection selection = getTextSelection(document, line);
-					IToggleBreakpointsTarget target = ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, selection);
+					IToggleBreakpointsTarget target = DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, selection);
 					if (target != null) {
 						if(target instanceof IToggleBreakpointsTargetExtension2) {
 							IToggleBreakpointsTargetExtension2 ext = (IToggleBreakpointsTargetExtension2) target;
@@ -153,7 +153,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 		fDocument = null;
 		fPart = null;
 		fRulerInfo = null;
-	    ToggleBreakpointsTargetManager.getDefault().removeChangedListener(fListener);
+		DebugUITools.getToggleBreakpointsTargetManager().removeChangedListener(fListener);
 	}
 
 	/**

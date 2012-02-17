@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems and others.
+ * Copyright (c) 2008, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -38,36 +39,40 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetFactory;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManager;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManagerListener;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 
 /**
- * Organizes the toggle breakpoints target factories contributed through the 
- * extension point and keeps track of the toggle breakpoints target that 
- * the factories produce.  The manager is accessed as a singleton through
- * the <code>getDefault()</code> method.
- * <p>
- * The adapter mechanism for obtaining a toggle breakpoints target is
- * still supported through a specialized toggle target factory.  Targets
- * contributed through this mechanism are labeled as "Default" in the UI. 
- * </p>  
+ * The concrete implementation of the toggle breakpoints target manager 
+ * interface. 
  * 
- * @see IToggleBreakpointsTargetFactory
- * @see IToggleBreakpointsTarget
- * @see IToggleBreakpointsTargetExtension
  * @since 3.5
  */
-public class ToggleBreakpointsTargetManager {
+public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetManager {
 
     /**
      * Toggle breakpoints target ID which refers to a target contributed
@@ -82,7 +87,7 @@ public class ToggleBreakpointsTargetManager {
     
     /**
      * Acts as a proxy between the toggle breakpoints target manager and the factories 
-     * contributed to the extension point.  Only loads information from the plug-in xml 
+     * contributed to the extension point.  Only loads information from the plug-in XML 
      * and only instantiates the specified factory if required (lazy loading).
      */
     private static class ToggleTargetFactory implements IToggleBreakpointsTargetFactory {
@@ -516,40 +521,16 @@ public class ToggleBreakpointsTargetManager {
         return idsForSelection;
     }
 
-    /**
-     * Returns the set of <code>String</code> IDs of toggle breakpoint targets, 
-     * which are enabled for the given active part and selection.  The IDs can be used
-     * to create the {@link IToggleBreakpointsTarget} instance.  
-     * @param part active part
-     * @param selection active selection in part
-     * @return Set of toggle target IDs or an empty set
-     */
     public Set getEnabledToggleBreakpointsTargetIDs(IWorkbenchPart part, ISelection selection) {
         return getEnabledTargetIDs(getEnabledFactories(part, selection), part, selection);
     }
 
-    /**
-     * Returns the ID of the calculated preferred toggle breakpoints target for the
-     * given active part and selection.  The returned ID is chosen based on factory 
-     * enablement, whether the target is a default one, and on user choice. 
-     * @param part active part
-     * @param selection active selection in part
-     * @return The toggle target IDs or null if none.
-     */
     public String getPreferredToggleBreakpointsTargetID(IWorkbenchPart part, ISelection selection) {
         Set factories = getEnabledFactories(part, selection);
         Set possibleIDs = getEnabledTargetIDs(factories, part, selection);
         return chooseToggleTargetIDInSet(possibleIDs, part, selection);
     }
 
-    /**
-     * Given the ID of toggle breakpoint target, this method will try to find the factory
-     * that creates it and return an instance of it.
-     * 
-     * @param part The workbench part in which toggle target is to be used
-     * @param selection The active selection to use with toggle target 
-     * @return The instantiated target or null
-     */
     public IToggleBreakpointsTarget getToggleBreakpointsTarget(IWorkbenchPart part, ISelection selection) {
         String id = getPreferredToggleBreakpointsTargetID(part, selection);
         IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fFactoriesByTargetID.get(id);
@@ -563,13 +544,6 @@ public class ToggleBreakpointsTargetManager {
         return null;
     }
     
-    /**
-     * Given the ID of a toggle breakpoints target, this method will try 
-     * to find the factory that creates it and ask it for the name of it.
-     * 
-     * @param id The ID of the requested toggle breakpoint target.
-     * @return The name of the target.
-     */
     public String getToggleBreakpointsTargetName(String id) {
         IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fFactoriesByTargetID.get(id);
         if (factory != null) {
@@ -578,13 +552,6 @@ public class ToggleBreakpointsTargetManager {
         return null;
     }
     
-    /**
-     * Given the ID of a toggle breakpoints target, this method will try 
-     * to find the factory that creates it and ask it for the description of it.
-     * 
-     * @param id The ID of the requested toggle breakpoint target.
-     * @return The description of the target or null.
-     */
     public String getToggleBreakpointsTargetDescription(String id) {
         IToggleBreakpointsTargetFactory factory = (IToggleBreakpointsTargetFactory)fFactoriesByTargetID.get(id);
         if (factory != null) {
@@ -593,20 +560,10 @@ public class ToggleBreakpointsTargetManager {
         return null;
     }
 
-    /**
-     * Adds the given listener to the list of listeners notified when the preferred
-     * toggle breakpoints targets change.
-     * @param listener The listener to add.
-     */
     public void addChangedListener(IToggleBreakpointsTargetManagerListener listener) {
         fChangedListners.add(listener);
     }
 
-    /**
-     * Removes the given listener from the list of listeners notified when the preferred
-     * toggle breakpoints targets change.
-     * @param listener The listener to add.
-     */
     public void removeChangedListener(IToggleBreakpointsTargetManagerListener listener) {
         fChangedListners.remove(listener);
     }
@@ -635,7 +592,10 @@ public class ToggleBreakpointsTargetManager {
             buffer.append(entry.getValue());
             buffer.append('|');
         }
-        DebugUIPlugin.getDefault().getPluginPreferences().setValue(PREF_TARGETS, buffer.toString());
+        IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+        if(prefs != null) {
+        	prefs.put(PREF_TARGETS, buffer.toString());
+        }
     }
 
     /**
@@ -645,7 +605,14 @@ public class ToggleBreakpointsTargetManager {
      */
     private void loadPreferredTargets() {
         fPreferredTargets = new HashMap();
-        String preferenceValue = DebugUIPlugin.getDefault().getPluginPreferences().getString(PREF_TARGETS);
+        String preferenceValue = Platform.getPreferencesService().getString(
+        		DebugUIPlugin.getUniqueIdentifier(), 
+        		PREF_TARGETS, 
+        		null, 
+        		null);
+        if(preferenceValue == null) {
+        	return;
+        }
         StringTokenizer entryTokenizer = new StringTokenizer(preferenceValue,"|"); //$NON-NLS-1$
         while (entryTokenizer.hasMoreTokens()){
             String token = entryTokenizer.nextToken();
@@ -744,4 +711,38 @@ public class ToggleBreakpointsTargetManager {
         }
     }
     
+    public IBreakpoint getBeakpointFromEditor(ITextEditor editor, IVerticalRulerInfo info) {
+    	IDocumentProvider provider = editor.getDocumentProvider();
+    	if(provider == null) {
+    		return null;
+    	}
+    	IEditorInput input = editor.getEditorInput();
+    	IAnnotationModel annotationModel = provider.getAnnotationModel(input);
+		if (annotationModel != null) {
+			IDocument document = provider.getDocument(input);
+			Iterator iterator = annotationModel.getAnnotationIterator();
+			while (iterator.hasNext()) {
+				Object object = iterator.next();
+				if (object instanceof SimpleMarkerAnnotation) {
+					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
+					IMarker marker = markerAnnotation.getMarker();
+					try {
+						if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
+							Position position = annotationModel.getPosition(markerAnnotation);
+							int line = document.getLineOfOffset(position.getOffset());
+							if (line == info.getLineOfLastMouseButtonActivity()) {
+								IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
+								if (breakpoint != null) {
+									return breakpoint;
+								}
+							}
+						}
+					} catch (CoreException e) {
+					} catch (BadLocationException e) {
+					}
+				}
+			}
+		}
+    	return null;
+    }
 }

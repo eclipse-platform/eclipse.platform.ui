@@ -8,7 +8,8 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions;
+package org.eclipse.debug.ui.actions;
+
 
 /**
  * Listener for changes in the preferred toggle targets in the toggle
@@ -16,9 +17,9 @@ package org.eclipse.debug.internal.ui.actions;
  * actions to update their enablement when the user changes the preferred
  * toggle target settings.
  * 
- * @see ToggleBreakpointsTargetManager
+ * @see IToggleBreakpointsTargetManager
  * @see IToggleBreakpointsTargetFactory
- * @since 3.5
+ * @since 3.8
  */
 public interface IToggleBreakpointsTargetManagerListener {
     

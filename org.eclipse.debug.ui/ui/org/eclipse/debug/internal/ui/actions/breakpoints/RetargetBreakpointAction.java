@@ -12,19 +12,16 @@
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.core.runtime.IAdaptable;
-
+import org.eclipse.debug.internal.ui.actions.RetargetAction;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManager;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManagerListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-
-import org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTargetManagerListener;
-import org.eclipse.debug.internal.ui.actions.RetargetAction;
-import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
-
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 
 
 /**
@@ -44,7 +41,7 @@ public abstract class RetargetBreakpointAction extends RetargetAction implements
 	}
 	
     protected Object getAdapter(IAdaptable adaptable) {
-        ToggleBreakpointsTargetManager manager = ToggleBreakpointsTargetManager.getDefault();
+        IToggleBreakpointsTargetManager manager = DebugUITools.getToggleBreakpointsTargetManager();
 		IWorkbenchPart activePart = getActivePart();
         if (activePart != null) {
 			return manager.getToggleBreakpointsTarget(activePart, getTargetSelection());
@@ -54,16 +51,16 @@ public abstract class RetargetBreakpointAction extends RetargetAction implements
 
     public void init(IWorkbenchWindow window) {
         super.init(window);
-        ToggleBreakpointsTargetManager.getDefault().addChangedListener(this);
+        DebugUITools.getToggleBreakpointsTargetManager().addChangedListener(this);
     }
     
     public void init(IAction action) {
         super.init(action);
-        ToggleBreakpointsTargetManager.getDefault().addChangedListener(this);
+        DebugUITools.getToggleBreakpointsTargetManager().addChangedListener(this);
     }
     
     public void dispose() {
-        ToggleBreakpointsTargetManager.getDefault().removeChangedListener(this);
+        DebugUITools.getToggleBreakpointsTargetManager().removeChangedListener(this);
         super.dispose();
     }
     

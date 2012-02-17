@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,7 @@ public abstract class RulerBreakpointAction extends Action {
 	 * @return breakpoint associated with activity in the ruler or <code>null</code>
 	 */
 	protected IBreakpoint getBreakpoint() {
-		IAnnotationModel annotationModel = fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
+    	IAnnotationModel annotationModel = fEditor.getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
 		IDocument document = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		if (annotationModel != null) {
 			Iterator iterator = annotationModel.getAnnotationIterator();

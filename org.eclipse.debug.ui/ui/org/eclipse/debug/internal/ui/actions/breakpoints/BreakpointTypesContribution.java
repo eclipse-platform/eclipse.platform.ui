@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
@@ -50,6 +52,8 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
 
         public void run() {
             if (isChecked()) {
+                // Note: setPreferredTarget is not declared on the
+                // IToggleBreakpontsTargetManager interface.
                 ToggleBreakpointsTargetManager.getDefault().setPreferredTarget(fPossibleIDs, fID);
             }
         }
@@ -91,7 +95,7 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
         }
         
         // Get breakpoint toggle target IDs.
-        ToggleBreakpointsTargetManager manager = ToggleBreakpointsTargetManager.getDefault(); 
+        IToggleBreakpointsTargetManager manager = DebugUITools.getToggleBreakpointsTargetManager(); 
         Set enabledIDs = manager.getEnabledToggleBreakpointsTargetIDs(part, selection);
         String preferredId = manager.getPreferredToggleBreakpointsTargetID(part, selection);
 

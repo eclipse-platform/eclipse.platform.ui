@@ -13,18 +13,14 @@ package org.eclipse.debug.ui;
 
 import java.util.Set;
 
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
-
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -33,26 +29,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
-
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
-import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
-
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -70,6 +46,7 @@ import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
@@ -80,13 +57,32 @@ import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIUtils;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
-
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManager;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextManager;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 
 
 /**
@@ -215,7 +211,7 @@ public class DebugUITools {
 	}	
 	
 	/**
-	 * Returns the element of the currently selected context in the 
+ 	 * Returns the element of the currently selected context in the 
 	 * active workbench window. Returns <code>null</code> if there is no 
 	 * current debug context.
 	 * <p>
@@ -234,6 +230,31 @@ public class DebugUITools {
 	    return null;
 	}
 
+    /**
+     * Returns the currently selected context in the given part or part's  
+     * workbench window. Returns <code>null</code> if there is no current 
+     * debug context.
+     * @param part workbench part where the active context is to be evaluated
+     * @return the currently selected debug context in the given workbench part, 
+     * or <code>null</code>
+     * @since 3.8
+     * @see IDebugContextService#getActiveContext(String)
+     * @see IDebugContextService#getActiveContext(String, String)
+     */
+    public static ISelection getDebugContextForPart(IWorkbenchPart part) {
+        IWorkbenchPartSite site = part.getSite();
+        IWorkbenchWindow partWindow = site.getWorkbenchWindow();
+        if (partWindow != null) {
+            IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(partWindow);
+            if (site instanceof IViewSite) {
+                return contextService.getActiveContext(site.getId(), ((IViewSite)site).getSecondaryId());
+            } else {
+                return contextService.getActiveContext(site.getId());
+            }
+        }
+        return null;
+    }
+	
 	/**
 	 * Return the undo context that should be used for operations involving breakpoints.
 	 * 
@@ -1071,6 +1092,17 @@ public class DebugUITools {
                 + " found " + o.getClass().getName()); //$NON-NLS-1$
         }
         return (ISelection) o;
+    }
+
+    /**
+     * Returns the global instance of toggle breakpoints target manager.
+     * 
+     * @return toggle breakpoints target manager
+     * 
+     * @since 3.8
+     */
+    public static IToggleBreakpointsTargetManager getToggleBreakpointsTargetManager() {
+        return ToggleBreakpointsTargetManager.getDefault();
     }
 
 }

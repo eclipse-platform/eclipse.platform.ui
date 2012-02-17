@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -47,7 +47,7 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 	 */
 	public void run(IAction action) {
 		IToggleBreakpointsTarget target = 
-		    ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, fSelection);
+		    DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
 		if (target != null) {
 			try {
 				performAction(target, fPart, fSelection);
@@ -79,7 +79,7 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 			// Guard here against that possibility.
 			if (fPart != null) {
 			    IToggleBreakpointsTarget target = 
-			        ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, fSelection);
+			        DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
 			    enabled = target != null;
 			}
 		}
