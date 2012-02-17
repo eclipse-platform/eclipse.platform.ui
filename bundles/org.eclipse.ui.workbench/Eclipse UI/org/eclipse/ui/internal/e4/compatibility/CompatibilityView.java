@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
@@ -70,6 +71,8 @@ public class CompatibilityView extends CompatibilityPart {
 		for (MUIElement ref : partRefs) {
 			updateTabImages(ref);
 		}
+		part.getTransientData().put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY,
+				wrapped.getTitleImage());
 	}
 
 	/*

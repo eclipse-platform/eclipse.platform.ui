@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 BestSolution.at and others.
+ * Copyright (c) 2009, 2012 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,15 +20,6 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
  * Implementations of this service are responsible for creating or destroying widgets corresponding
  * to model elements, as well as for running any event loop required for handling user events on
  * those widgets.
- */
-/**
- *
- */
-/**
- *
- */
-/**
- *
  */
 public interface IPresentationEngine {
 	/**
@@ -75,6 +66,20 @@ public interface IPresentationEngine {
 	 * user did not explicitly minimize.
 	 */
 	public static String MINIMIZED_BY_ZOOM = "MinimizedByZoom"; //$NON-NLS-1$
+
+	/**
+	 * This key should be used to add an optional org.eclipse.swt.graphics.Image to an elements
+	 * TRANSIENTDATA. If present, the image will be used to override that elements iconURI. An
+	 * example is drawing the error icon on a minimized problems view stack.
+	 */
+	public static final String OVERRIDE_ICON_IMAGE_KEY = "e4_override_icon_image_key"; //$NON-NLS-1$
+
+	/**
+	 * This key should be used to add an optional String to an elements TRANSIENTDATA. If present,
+	 * the string will be used to override the elements TitleToolTip. An example is setting the
+	 * ToolTip of a minimized problems view stack to the number of errors and warnings in the view.
+	 */
+	public static final String OVERRIDE_TITLE_TOOL_TIP_KEY = "e4_override_title_tool_tip_key"; //$NON-NLS-1$
 
 	/**
 	 * This is a <b>Boolean</b> preference used to control animations in the application

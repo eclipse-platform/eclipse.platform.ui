@@ -14,11 +14,14 @@ package org.eclipse.e4.ui.workbench.addons.minmax;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.internal.workbench.swt.ShellActivationListener;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -143,6 +146,75 @@ public class TrimStack {
 	@Inject
 	protected IEventBroker eventBroker;
 
+	private Image getOverrideImage(MUIElement element) {
+		Image result = null;
+
+		Object imageObject = element.getTransientData().get(
+				IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY);
+		if (imageObject != null && imageObject instanceof Image)
+			result = (Image) imageObject;
+		return result;
+	}
+
+	private String getOverrideTitleToolTip(MUIElement element) {
+		String result = null;
+
+		Object stringObject = element.getTransientData().get(
+				IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY);
+		if (stringObject != null && stringObject instanceof String)
+			result = (String) stringObject;
+
+		return result;
+	}
+
+	/**
+	 * This is the new way to handle UIEvents (as opposed to subscring and unsubscribing them with
+	 * the event broker.
+	 * 
+	 * The method is described in detail at http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
+	 */
+	@SuppressWarnings("unchecked")
+	@Inject
+	@Optional
+	private void handleTransientDataEvents(
+			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TRANSIENTDATA) org.osgi.service.event.Event event) {
+		MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+
+		String key;
+		if (event.containsProperty(UIEvents.EventTypes.REMOVE)) {
+			key = ((Entry<String, Object>) event.getProperty(UIEvents.EventTags.OLD_VALUE))
+					.getKey();
+		} else {
+			key = ((Entry<String, Object>) event.getProperty(UIEvents.EventTags.NEW_VALUE))
+					.getKey();
+		}
+
+		if (key.equals(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY)) {
+			ToolItem toolItem = getChangedToolItem(changedElement);
+			if (toolItem != null)
+				toolItem.setImage(getImage((MUILabel) toolItem.getData()));
+		} else if (key.equals(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY)) {
+			ToolItem toolItem = getChangedToolItem(changedElement);
+			if (toolItem != null)
+				toolItem.setToolTipText(getLabelText((MUILabel) toolItem.getData()));
+		}
+	}
+
+	private ToolItem getChangedToolItem(MUIElement changedElement) {
+		ToolItem[] toolItems = trimStackTB.getItems();
+		for (ToolItem toolItem : toolItems) {
+			if (changedElement.equals(toolItem.getData())) {
+				return toolItem;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * This is the old way to subscribe to UIEvents. You should consider using the new way as shown
+	 * by handleTransientDataEvents() and described in the article at
+	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
+	 */
 	private EventHandler closeHandler = new EventHandler() {
 		public void handleEvent(org.osgi.service.event.Event event) {
 			if (!isShowing)
@@ -209,6 +281,11 @@ public class TrimStack {
 		return null;
 	}
 
+	/**
+	 * This is the old way to subscribe to UIEvents. You should consider using the new way as shown
+	 * by handleTransientDataEvents() and described in the article at
+	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
+	 */
 	private EventHandler openHandler = new EventHandler() {
 		public void handleEvent(org.osgi.service.event.Event event) {
 			if (isShowing)
@@ -243,6 +320,11 @@ public class TrimStack {
 		}
 	};
 
+	/**
+	 * This is the old way to subscribe to UIEvents. You should consider using the new way as shown
+	 * by handleTransientDataEvents() and described in the article at
+	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
+	 */
 	private EventHandler toBeRenderedHandler = new EventHandler() {
 		public void handleEvent(org.osgi.service.event.Event event) {
 			if (minimizedElement == null || trimStackTB == null)
@@ -268,6 +350,11 @@ public class TrimStack {
 		}
 	};
 
+	/**
+	 * This is the old way to subscribe to UIEvents. You should consider using the new way as shown
+	 * by handleTransientDataEvents() and described in the article at
+	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
+	 */
 	private EventHandler childrenHandler = new EventHandler() {
 		public void handleEvent(org.osgi.service.event.Event event) {
 			if (minimizedElement == null || trimStackTB == null)
@@ -286,6 +373,11 @@ public class TrimStack {
 		}
 	};
 
+	/**
+	 * This is the old way to subscribe to UIEvents. You should consider using the new way as shown
+	 * by handleTransientDataEvents() and described in the article at
+	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
+	 */
 	private EventHandler widgetHandler = new EventHandler() {
 		public void handleEvent(org.osgi.service.event.Event event) {
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -302,6 +394,11 @@ public class TrimStack {
 		}
 	};
 
+	/**
+	 * This is the old way to subscribe to UIEvents. You should consider using the new way as shown
+	 * by handleTransientDataEvents() and described in the article at
+	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
+	 */
 	// Listener attached to every ToolItem in a TrimStack. Responsible for activating the
 	// appropriate part.
 	private SelectionListener toolItemSelectionListener = new SelectionListener() {
@@ -328,6 +425,11 @@ public class TrimStack {
 
 	private int fixedSides;
 
+	/**
+	 * This is the old way to subscribe to UIEvents. You should consider using the new way as shown
+	 * by handleTransientDataEvents() and described in the article at
+	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
+	 */
 	@PostConstruct
 	void addListeners() {
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
@@ -337,6 +439,11 @@ public class TrimStack {
 		eventBroker.subscribe(UIEvents.UILifeCycle.ACTIVATE, closeHandler);
 	}
 
+	/**
+	 * This is the old way to subscribe to UIEvents. You should consider using the new way as shown
+	 * by handleTransientDataEvents() and described in the article at
+	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
+	 */
 	@PreDestroy
 	void removeListeners() {
 		eventBroker.unsubscribe(toBeRenderedHandler);
@@ -431,12 +538,26 @@ public class TrimStack {
 		return result;
 	}
 
-	private String getLabel(MUILabel label) {
+	private String getLabelText(MUILabel label) {
+		// Use override text if available
+		if (label instanceof MUIElement) {
+			String text = getOverrideTitleToolTip((MUIElement) label);
+			if (text != null)
+				return text;
+		}
+
 		String string = label.getLabel();
 		return string == null ? "" : string; //$NON-NLS-1$
 	}
 
 	private Image getImage(MUILabel element) {
+		// Use override image if available
+		if (element instanceof MUIElement) {
+			Image image = getOverrideImage((MUIElement) element);
+			if (image != null)
+				return image;
+		}
+
 		String iconURI = element.getIconURI();
 		if (iconURI != null && iconURI.length() > 0) {
 			Image image = imageMap.get(iconURI);
@@ -502,7 +623,7 @@ public class TrimStack {
 				ToolItem newItem = new ToolItem(trimStackTB, SWT.CHECK);
 				newItem.setData(labelElement);
 				newItem.setImage(getImage(labelElement));
-				newItem.setToolTipText(getLabel(labelElement));
+				newItem.setToolTipText(getLabelText(labelElement));
 				newItem.addSelectionListener(toolItemSelectionListener);
 			}
 		}
