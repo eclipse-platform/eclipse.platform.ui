@@ -17,4 +17,19 @@
       </menuContribution>
       <!-- End of bug 275301 entry. -->
    </extension>
+   <!-- The entry below purposely references a class that doesn't exist to force
+        the contribution to not be created. This forces the createControl(Composite)
+        method of ControlContribution to return null. See bug 371611 for details. -->
+   <extension
+         id="menu.invalid.toolbar.contribution.bug371611"
+         point="org.eclipse.ui.menus">
+      <menuContribution locationURI="toolbar:org.eclipse.ui.trim.command2">
+        <toolbar id="org.eclipse.ui.tests.bug371611">
+          <control
+               class="org.eclipse.ui.tests.Bug371611"
+               id="org.eclipse.ui.tests.bug371611.control"/>
+        </toolbar>
+      </menuContribution>
+   </extension>
+   <!-- End of bug 371611 entry. -->
 </plugin>

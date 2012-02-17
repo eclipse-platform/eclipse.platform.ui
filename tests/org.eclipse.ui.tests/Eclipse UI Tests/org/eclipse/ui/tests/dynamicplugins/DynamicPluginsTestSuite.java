@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,5 +58,6 @@ public class DynamicPluginsTestSuite extends TestSuite {
 		addTest(new TestSuite(DynamicSupportTests.class));
 		addTest(new TestSuite(DynamicContributionTest.class));
 		addTest(new TestSuite(DynamicInvalidContributionTest.class));
+		addTest(new TestSuite(DynamicInvalidControlContributionTest.class));
 	}
 }
