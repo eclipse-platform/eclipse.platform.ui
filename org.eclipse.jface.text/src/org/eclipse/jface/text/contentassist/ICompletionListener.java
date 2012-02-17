@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,12 @@ package org.eclipse.jface.text.contentassist;
  *			<li>additional notification about restarting the current code assist session</li>
  *		</ul>
  *   </li>
+ *   <li>{@link org.eclipse.jface.text.contentassist.ICompletionListenerExtension2} since version 3.8 introducing
+ *		the following functions:
+ *		<ul>
+ *			<li>additional notification after applying a proposal</li>
+ *		</ul>
+ *   </li>
  * </ul>
  * </p>
  *
@@ -33,6 +39,7 @@ package org.eclipse.jface.text.contentassist;
  * @since 3.2
  */
 public interface ICompletionListener {
+
 	/**
 	 * Called when code assist is invoked when there is no current code assist session.
 	 *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2354,6 +2354,21 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		for (int i= 0; i < listeners.length; i++) {
 			ICompletionListener listener= (ICompletionListener)listeners[i];
 			listener.selectionChanged(proposal, smartToggle);
+		}
+	}
+
+	/**
+	 * Fires an event after applying a proposal, see {@link ICompletionListenerExtension2}.
+	 * 
+	 * @param proposal the applied proposal
+	 * @since 3.8
+	 */
+	void fireAppliedEvent(ICompletionProposal proposal) {
+		Object[] listeners= fCompletionListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++) {
+			ICompletionListener listener= (ICompletionListener)listeners[i];
+			if (listener instanceof ICompletionListenerExtension2)
+				((ICompletionListenerExtension2)listener).applied(proposal);
 		}
 	}
 

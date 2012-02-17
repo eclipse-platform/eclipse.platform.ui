@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -934,6 +934,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			} else {
 				p.apply(document);
 			}
+			fireAppliedEvent(p);
 
 			Point selection= p.getSelection(document);
 			if (selection != null) {
@@ -1373,9 +1374,18 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	/**
-	 * Returns whether the given character is contained in the given array of
-	 * characters.
-	 *
+	 * Fires an event after applying the given proposal, see {@link ICompletionListenerExtension2}.
+	 * 
+	 * @param proposal the applied proposal
+	 * @since 3.8
+	 */
+	private void fireAppliedEvent(ICompletionProposal proposal) {
+		fContentAssistant.fireAppliedEvent(proposal);
+	}
+
+	/**
+	 * Returns whether the given character is contained in the given array of characters.
+	 * 
 	 * @param characters the list of characters
 	 * @param c the character to look for in the list
 	 * @return <code>true</code> if character belongs to the list
