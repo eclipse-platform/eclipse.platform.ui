@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -61,9 +62,11 @@ public class CloseAllHandler extends AbstractEvaluationHandler {
 			enabledWhen = new Expression() {
 				public EvaluationResult evaluate(IEvaluationContext context)
 						throws CoreException {
-					IWorkbenchWindow window = InternalHandlerUtil.getActiveWorkbenchWindow(context);
-					if (window != null) {
-						IWorkbenchPage page = window.getActivePage();
+					IWorkbenchPart part = InternalHandlerUtil.getActivePart(context);
+					Object perspective = InternalHandlerUtil.getVariable(context,
+							ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
+					if (part != null && perspective != null) {
+						IWorkbenchPage page = part.getSite().getPage();
 						if (page != null) {
 							IEditorReference[] refArray = page.getEditorReferences();
 							if (refArray != null && refArray.length > 0) {
@@ -80,7 +83,8 @@ public class CloseAllHandler extends AbstractEvaluationHandler {
 				 * @see org.eclipse.core.expressions.Expression#collectExpressionInfo(org.eclipse.core.expressions.ExpressionInfo)
 				 */
 				public void collectExpressionInfo(ExpressionInfo info) {
-					info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+					info.addVariableNameAccess(ISources.ACTIVE_PART_NAME);
+					info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
 				}
 			};
 		}
