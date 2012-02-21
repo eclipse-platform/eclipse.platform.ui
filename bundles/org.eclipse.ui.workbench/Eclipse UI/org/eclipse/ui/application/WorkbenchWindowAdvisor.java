@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -259,39 +259,46 @@ public class WorkbenchWindowAdvisor {
     }
 
     /**
-     * Creates the contents of the window.
-     * <p>
-     * The default implementation adds a menu bar, a cool bar, a status line, 
-     * a perspective bar, and a fast view bar.  The visibility of these controls
-     * can be configured using the <code>setShow*</code> methods on
-     * <code>IWorkbenchWindowConfigurer</code>.
-     * </p>
-     * <p>
-     * Subclasses may override to define custom window contents and layout,
-     * but must call <code>IWorkbenchWindowConfigurer.createPageComposite</code>.
-     * </p> 
-     * 
-     * @param shell the window's shell
-     * @see IWorkbenchWindowConfigurer#createMenuBar
-     * @see IWorkbenchWindowConfigurer#createCoolBarControl
-     * @see IWorkbenchWindowConfigurer#createStatusLineControl
-     * @see IWorkbenchWindowConfigurer#createPageComposite
-     */
+	 * Creates the contents of the window.
+	 * <p>
+	 * The default implementation adds a menu bar, a cool bar, a status line, a
+	 * perspective bar, and a fast view bar. The visibility of these controls
+	 * can be configured using the <code>setShow*</code> methods on
+	 * <code>IWorkbenchWindowConfigurer</code>.
+	 * </p>
+	 * <p>
+	 * Subclasses may override to define custom window contents and layout, but
+	 * must call <code>IWorkbenchWindowConfigurer.createPageComposite</code>.
+	 * </p>
+	 * 
+	 * @param shell
+	 *            the window's shell
+	 * @see IWorkbenchWindowConfigurer#createMenuBar
+	 * @see IWorkbenchWindowConfigurer#createCoolBarControl
+	 * @see IWorkbenchWindowConfigurer#createStatusLineControl
+	 * @see IWorkbenchWindowConfigurer#createPageComposite
+	 * @deprecated This method is no longer used. Applications now define
+	 *             workbench window contents in their application model.
+	 */
     public void createWindowContents(Shell shell) {
         ((WorkbenchWindowConfigurer) getWindowConfigurer()).createDefaultContents(shell);
     }
 
     /**
-     * Creates and returns the control to be shown when the window has no open pages.
-     * If <code>null</code> is returned, the default window background is shown.
-     * <p>
-     * The default implementation returns <code>null</code>.
-     * Subclasses may override.
-     * </p>
-     * 
-     * @param parent the parent composite
-     * @return the control or <code>null</code>
-     */
+	 * Creates and returns the control to be shown when the window has no open
+	 * pages. If <code>null</code> is returned, the default window background is
+	 * shown.
+	 * <p>
+	 * The default implementation returns <code>null</code>. Subclasses may
+	 * override.
+	 * </p>
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 * @return the control or <code>null</code>
+	 * @deprecated This method is no longer used. Applications now define
+	 *             workbench window contents in their application model.
+	 */
     public Control createEmptyWindowContents(Composite parent) {
         return null;
     }
