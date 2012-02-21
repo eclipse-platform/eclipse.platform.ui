@@ -20,26 +20,29 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISizeProvider;
 
 /**
- * This represents an object that can supply trim around a IPresentablePart. 
- * Clients can implement subclasses to provide the appearance for editor workbooks,
- * view folders, fast views, and detached windows.
+ * This represents an object that can supply trim around a IPresentablePart.
+ * Clients can implement subclasses to provide the appearance for editor
+ * workbooks, view folders, fast views, and detached windows.
  * <p>
- * StackPresentations do not store any persistent state and cannot
- * directly make changes to the workbench. They are given an IStackPresentationSite 
- * reference on creation, which allows them to send events and requests to the workbench.
- * However, the workbench is free to ignore these requests. The workbench will call one
- * of the public methods on StackPresentation when (and if) the presentation is expected to 
- * change state. 
+ * StackPresentations do not store any persistent state and cannot directly make
+ * changes to the workbench. They are given an IStackPresentationSite reference
+ * on creation, which allows them to send events and requests to the workbench.
+ * However, the workbench is free to ignore these requests. The workbench will
+ * call one of the public methods on StackPresentation when (and if) the
+ * presentation is expected to change state.
  * </p>
  * <p>
- * For example, if the user clicks a button that is intended to close a part, the
- * StackPresentation will send a close request to its site, but should not assume
- * that the part has been closed until the workbench responds with a call 
- * <code>StackPresentation.remove</code>. 
+ * For example, if the user clicks a button that is intended to close a part,
+ * the StackPresentation will send a close request to its site, but should not
+ * assume that the part has been closed until the workbench responds with a call
+ * <code>StackPresentation.remove</code>.
  * </p>
  * 
  * @since 3.0
+ * @deprecated The presentation API is no longer used and has no effect. Refer
+ *             to the platform porting guide for further details.
  */
+@Deprecated
 public abstract class StackPresentation implements ISizeProvider {
 
     /**

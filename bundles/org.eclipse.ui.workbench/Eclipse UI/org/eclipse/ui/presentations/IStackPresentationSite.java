@@ -13,6 +13,7 @@ package org.eclipse.ui.presentations;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * Represents the main interface between a StackPresentation and the workbench.
@@ -21,13 +22,16 @@ import org.eclipse.swt.graphics.Point;
  * 
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated The presentation API is no longer used and has no effect. Refer
+ *             to the platform porting guide for further details.
  */
+@Deprecated
 public interface IStackPresentationSite {
-    public static int STATE_MINIMIZED = 0;
+	public static int STATE_MINIMIZED = IWorkbenchPage.STATE_MINIMIZED;
 
-    public static int STATE_MAXIMIZED = 1;
+	public static int STATE_MAXIMIZED = IWorkbenchPage.STATE_MAXIMIZED;
 
-    public static int STATE_RESTORED = 2;
+	public static int STATE_RESTORED = IWorkbenchPage.STATE_RESTORED;
 
     /**
      * Sets the state of the container. Called by the presentation when the

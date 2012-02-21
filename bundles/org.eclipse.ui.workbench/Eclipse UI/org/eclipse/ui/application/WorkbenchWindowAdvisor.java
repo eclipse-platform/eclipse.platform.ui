@@ -280,6 +280,7 @@ public class WorkbenchWindowAdvisor {
 	 * @deprecated This method is no longer used. Applications now define
 	 *             workbench window contents in their application model.
 	 */
+	@Deprecated
     public void createWindowContents(Shell shell) {
         ((WorkbenchWindowConfigurer) getWindowConfigurer()).createDefaultContents(shell);
     }
@@ -299,7 +300,8 @@ public class WorkbenchWindowAdvisor {
 	 * @deprecated This method is no longer used. Applications now define
 	 *             workbench window contents in their application model.
 	 */
-    public Control createEmptyWindowContents(Composite parent) {
+	@Deprecated
+	public Control createEmptyWindowContents(Composite parent) {
         return null;
     }
     

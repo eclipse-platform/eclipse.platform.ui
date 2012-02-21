@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.internal.ICompatibleWorkbenchPage;
-import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * A workbench page consists of an arrangement of views and editors intended to
@@ -216,7 +215,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * 
 	 * @since 3.2
 	 */
-	public static final int STATE_MINIMIZED = IStackPresentationSite.STATE_MINIMIZED;
+	public static final int STATE_MINIMIZED = 0;
 
 	/**
 	 * State of a view in a given page when the page is zoomed in on the view
@@ -224,7 +223,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * 
 	 * @since 3.2
 	 */
-	public static final int STATE_MAXIMIZED = IStackPresentationSite.STATE_MAXIMIZED;
+	public static final int STATE_MAXIMIZED = 1;
 
 	/**
 	 * State of a view in a given page when the view stack is in it's normal
@@ -232,7 +231,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * 
 	 * @since 3.2
 	 */
-	public static final int STATE_RESTORED = IStackPresentationSite.STATE_RESTORED;
+	public static final int STATE_RESTORED = 2;
 
 	/**
 	 * Activates the given part. The part will be brought to the front and given

@@ -67,6 +67,7 @@ public interface IWorkbenchPreferenceConstants {
 	 *             new perspective. Callers should use
 	 *             IWorkbench.showPerspective methods.
 	 */
+	@Deprecated
 	public static final String ALTERNATE_OPEN_NEW_PERSPECTIVE = "ALTERNATE_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
 	/**
@@ -82,6 +83,7 @@ public interface IWorkbenchPreferenceConstants {
 	 *             perspective. Callers should use IWorkbench.showPerspective
 	 *             methods.
 	 */
+	@Deprecated
 	public static final String SHIFT_OPEN_NEW_PERSPECTIVE = "SHIFT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
 	/**
@@ -149,7 +151,10 @@ public interface IWorkbenchPreferenceConstants {
 	 * workbench look and feel.
 	 * 
 	 * @since 3.0
+	 * @deprecated The presentation API is no longer used and has no effect.
+	 *             Refer to the platform porting guide for further details.
 	 */
+	@Deprecated
 	public static final String PRESENTATION_FACTORY_ID = "presentationFactoryId"; //$NON-NLS-1$
 
 	/**

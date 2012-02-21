@@ -23,7 +23,10 @@ import org.eclipse.swt.widgets.Sash;
  * editors, views and other components in the workbench.
  * 
  * @since 3.0
+ * @deprecated The presentation API is no longer used and has no effect. Refer
+ *             to the platform porting guide for further details.
  */
+@Deprecated
 public abstract class AbstractPresentationFactory {
 	
 	/**

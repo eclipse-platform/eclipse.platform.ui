@@ -22,7 +22,10 @@ import org.eclipse.ui.internal.dnd.DragUtil;
  * Contains various utility methods for Presentation authors
  * 
  * @since 3.0
+ * @deprecated The presentation API is no longer used and has no effect. Refer
+ *             to the platform porting guide for further details.
  */
+@Deprecated
 public class PresentationUtil {
     private static Point anchor;
 

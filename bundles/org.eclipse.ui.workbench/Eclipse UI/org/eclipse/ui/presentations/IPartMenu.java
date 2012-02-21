@@ -13,13 +13,17 @@ package org.eclipse.ui.presentations;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * Interface to a menu created by a part that will be displayed in a presentation.
+ * Interface to a menu created by a part that will be displayed in a
+ * presentation.
  * 
  * This interface is not intended to be implemented by clients.
  * 
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated The presentation API is no longer used and has no effect. Refer
+ *             to the platform porting guide for further details.
  */
+@Deprecated
 public interface IPartMenu {
     /**
      * Displays the local menu for this part as a popup at the given location.

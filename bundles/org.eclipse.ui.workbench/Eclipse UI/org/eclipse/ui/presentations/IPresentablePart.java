@@ -20,16 +20,19 @@ import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.IWorkbenchPartConstants;
 
 /**
- * This is a skin's interface to the contents of a view or editor. Note that this
- * is essentially the same as IWorkbenchPart, except it does not provide access
- * to lifecycle events and allows repositioning of the part.
+ * This is a skin's interface to the contents of a view or editor. Note that
+ * this is essentially the same as IWorkbenchPart, except it does not provide
+ * access to lifecycle events and allows repositioning of the part.
  * 
  * Not intended to be implemented by clients.
  * 
  * @since 3.0
  * @since 3.4 now extends {@link org.eclipse.ui.ISizeProvider}
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated The presentation API is no longer used and has no effect. Refer
+ *             to the platform porting guide for further details.
  */
+@Deprecated
 public interface IPresentablePart extends ISizeProvider {
 
     /**

@@ -18,7 +18,10 @@ package org.eclipse.ui.presentations;
  * 
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated The presentation API is no longer used and has no effect. Refer
+ *             to the platform porting guide for further details.
  */
+@Deprecated
 public interface IPresentationSerializer {
     /**
      * Returns a unique identifier for the given part. The identifier can later

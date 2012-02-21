@@ -13,11 +13,14 @@ package org.eclipse.ui.presentations;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
- * This structure describes a drop event that will cause a dragged part
- * to be stacked in a position currently occupied by another part. 
+ * This structure describes a drop event that will cause a dragged part to be
+ * stacked in a position currently occupied by another part.
  * 
  * @since 3.0
+ * @deprecated The presentation API is no longer used and has no effect. Refer
+ *             to the platform porting guide for further details.
  */
+@Deprecated
 public final class StackDropResult {
 
     private Rectangle snapRectangle;
