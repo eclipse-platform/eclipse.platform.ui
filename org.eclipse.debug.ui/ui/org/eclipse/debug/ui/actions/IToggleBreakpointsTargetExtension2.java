@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * when the user double-clicks in the vertical ruler. 
  * <p>
  * Clients implementing <code>IToggleBreakpointsTarget</code> or <code>IToggleBreakpointsTargetExtension</code> may optionally
- * implement this interface.
+ * implement or adapt to this interface.
  * </p>
  * @since 3.8
  * @see org.eclipse.debug.ui.actions.ToggleBreakpointAction

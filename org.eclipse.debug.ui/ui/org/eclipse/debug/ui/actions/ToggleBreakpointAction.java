@@ -12,6 +12,7 @@
 package org.eclipse.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
@@ -103,17 +104,19 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 					ITextSelection selection = getTextSelection(document, line);
 					IToggleBreakpointsTarget target = DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, selection);
 					if (target != null) {
-						if(target instanceof IToggleBreakpointsTargetExtension2) {
-							IToggleBreakpointsTargetExtension2 ext = (IToggleBreakpointsTargetExtension2) target;
+						IToggleBreakpointsTargetExtension2 ext = (IToggleBreakpointsTargetExtension2) 
+								DebugPlugin.getAdapter(target, IToggleBreakpointsTargetExtension2.class);
+						if (ext != null) {
 							if(ext.canToggleBreakpointsWithEvent(fPart, selection, event)) {
 								ext.toggleBreakpointsWithEvent(fPart, selection, event);
 								return;
 							}
 						}
-						if (target instanceof IToggleBreakpointsTargetExtension) {
-						    IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) target;
-							if (extension.canToggleBreakpoints(fPart, selection)) {
-								extension.toggleBreakpoints(fPart, selection);
+						IToggleBreakpointsTargetExtension ext2 = (IToggleBreakpointsTargetExtension) 
+								DebugPlugin.getAdapter(target, IToggleBreakpointsTargetExtension.class);
+						if(ext2 != null) {
+							if (ext2.canToggleBreakpoints(fPart, selection)) {
+								ext2.toggleBreakpoints(fPart, selection);
 								return;
 							}
 						}
