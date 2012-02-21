@@ -2,12 +2,14 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -50,10 +52,13 @@ public class DirectContributionItem extends ContributionItem {
 	/** Internal key for transient maps to provide a runnable on widget disposal */
 	public static final String DISPOSABLE = "IDisposable"; //$NON-NLS-1$
 
+	private static final String DCI_STATIC_CONTEXT = "DCI-staticContext"; //$NON-NLS-1$
+
 	private MItem model;
 	private Widget widget;
 	private Listener menuItemListener;
 	private LocalResourceManager localResourceManager;
+	private IEclipseContext infoContext;
 
 	@Inject
 	private IContributionFactory contribFactory;
@@ -295,6 +300,10 @@ public class DirectContributionItem extends ContributionItem {
 
 	private void handleWidgetDispose(Event event) {
 		if (event.widget == widget) {
+			if (infoContext != null) {
+				infoContext.dispose();
+				infoContext = null;
+			}
 			widget.removeListener(SWT.Selection, getItemListener());
 			widget.removeListener(SWT.Dispose, getItemListener());
 			widget.removeListener(SWT.DefaultSelection, getItemListener());
@@ -337,8 +346,8 @@ public class DirectContributionItem extends ContributionItem {
 				}
 				model.setSelected(selection);
 			}
-			if (canExecuteItem()) {
-				executeItem();
+			if (canExecuteItem(event)) {
+				executeItem(event);
 			}
 		}
 	}
@@ -406,33 +415,55 @@ public class DirectContributionItem extends ContributionItem {
 		return null;
 	}
 
-	private void executeItem() {
+	private IEclipseContext getStaticContext(Event event) {
+		if (infoContext == null) {
+			infoContext = EclipseContextFactory.create(DCI_STATIC_CONTEXT);
+			ContributionsAnalyzer.populateModelInterfaces(model, infoContext,
+					model.getClass().getInterfaces());
+		}
+		if (event == null) {
+			infoContext.remove(Event.class);
+		} else {
+			infoContext.set(Event.class, event);
+		}
+		return infoContext;
+	}
+
+	private void executeItem(Event trigger) {
 		final IEclipseContext lclContext = getContext(model);
 		if (!checkContribution(lclContext)) {
 			return;
 		}
 		MContribution contrib = (MContribution) model;
-		lclContext.set(MItem.class, model);
+		IEclipseContext staticContext = getStaticContext(trigger);
 		ContextInjectionFactory.invoke(contrib.getObject(), Execute.class,
-				lclContext);
-		lclContext.remove(MItem.class);
+				getExecutionContext(lclContext), staticContext, null);
 	}
 
-	private boolean canExecuteItem() {
+	private boolean canExecuteItem(Event trigger) {
 		final IEclipseContext lclContext = getContext(model);
 		if (!checkContribution(lclContext)) {
 			return false;
 		}
 		MContribution contrib = (MContribution) model;
-		lclContext.set(MItem.class, model);
-		try {
-			Boolean result = ((Boolean) ContextInjectionFactory.invoke(
-					contrib.getObject(), CanExecute.class, lclContext,
-					Boolean.TRUE));
-			return result.booleanValue();
-		} finally {
-			lclContext.remove(MItem.class);
-		}
+		IEclipseContext staticContext = getStaticContext(trigger);
+		Boolean result = ((Boolean) ContextInjectionFactory.invoke(
+				contrib.getObject(), CanExecute.class,
+				getExecutionContext(lclContext), staticContext, Boolean.TRUE));
+		return result.booleanValue();
+	}
+
+	/**
+	 * Return the execution context for the @CanExecute and @Execute methods.
+	 * This should be the same as the execution context used by the
+	 * EHandlerService.
+	 * 
+	 * @param context
+	 *            the context for this item
+	 * @return the execution context
+	 */
+	private IEclipseContext getExecutionContext(IEclipseContext context) {
+		return context.getActiveLeaf();
 	}
 
 	private boolean checkContribution(IEclipseContext lclContext) {

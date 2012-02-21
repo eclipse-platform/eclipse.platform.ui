@@ -11,10 +11,12 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import javax.inject.Named;
 import junit.framework.TestCase;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.bindings.BindingServiceAddon;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -22,14 +24,19 @@ import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
@@ -37,6 +44,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.IContributionItem;
@@ -612,6 +620,145 @@ public class MMenuItemTest extends TestCase {
 		assertTrue(vanishManager.isVisible());
 		assertNotNull(vanishManager.getMenu());
 		assertFalse(vanishManager.getMenu().isDisposed());
+	}
+
+	public void testElementHierarchyInContext_DirectItem() {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+
+		MPartStack stack = MBasicFactory.INSTANCE.createPartStack();
+		final MPart activePart = MBasicFactory.INSTANCE.createPart();
+		final MPart inactivePart = MBasicFactory.INSTANCE.createPart();
+		stack.getChildren().add(activePart);
+		stack.getChildren().add(inactivePart);
+		stack.setSelectedElement(activePart);
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MDirectMenuItem menuItem = MenuFactoryImpl.eINSTANCE
+				.createDirectMenuItem();
+		final boolean executed[] = { false };
+		menuItem.setObject(new Object() {
+			@Execute
+			public void execute(MUIElement uiElement, MMenuItem menuItem,
+					MDirectMenuItem directMenuItem, MPart part,
+					@Named("key") String key) {
+				// items should be resolved in the leaf tab, so the
+				// MPart should be activePart, but all menu item things
+				// should be the menuItem
+				assertEquals(menuItem, directMenuItem);
+				assertEquals(menuItem, menuItem);
+				assertEquals(menuItem, uiElement);
+
+				assertEquals(part, activePart);
+				assertEquals(key, "active");
+				executed[0] = true;
+			}
+		});
+		menu.getChildren().add(menuItem);
+		window.setMainMenu(menu);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		// force the part activation to ensure they have a context
+		EPartService eps = window.getContext().get(EPartService.class);
+		eps.activate(inactivePart);
+		eps.activate(activePart);
+		assertEquals(activePart, eps.getActivePart());
+
+		activePart.getContext().set("key", "active");
+		inactivePart.getContext().set("key", "inactive");
+
+		assertFalse(executed[0]);
+
+		Object widget1 = menuItem.getWidget();
+		assertNotNull(widget1);
+		assertTrue(widget1 instanceof MenuItem);
+		((MenuItem) widget1).notifyListeners(SWT.Selection, new Event());
+
+		assertTrue(executed[0]);
+	}
+
+	public void testElementHierarchyInContext_HandledItem() {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+
+		MPartStack stack = MBasicFactory.INSTANCE.createPartStack();
+		final MPart activePart = MBasicFactory.INSTANCE.createPart();
+		final MPart inactivePart = MBasicFactory.INSTANCE.createPart();
+		stack.getChildren().add(activePart);
+		stack.getChildren().add(inactivePart);
+		stack.setSelectedElement(activePart);
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		command.setElementId("testElementHierarchyInContext_HandledItem");
+
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
+				.createHandledMenuItem();
+		menuItem.setCommand(command);
+
+		MHandler handler = CommandsFactoryImpl.eINSTANCE.createHandler();
+		handler.setCommand(command);
+		final boolean executed[] = { false };
+		handler.setObject(new Object() {
+			@Execute
+			public void execute(MUIElement uiElement, MMenuItem menuItem,
+					MHandledMenuItem handledMenuItem, MPart part,
+					@Named("key") String key) {
+				// items should be resolved in the leaf tab, so the
+				// MPart should be activePart, but all menu item things
+				// should be the menuItem
+				assertEquals(menuItem, handledMenuItem);
+				assertEquals(menuItem, menuItem);
+				assertEquals(menuItem, uiElement);
+				assertEquals(part, activePart);
+				assertEquals(key, "active");
+				executed[0] = true;
+			}
+		});
+
+		window.getHandlers().add(handler);
+		menu.getChildren().add(menuItem);
+		window.setMainMenu(menu);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getCommands().add(command);
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		// force the part activation to ensure they have a context
+		EPartService eps = window.getContext().get(EPartService.class);
+		eps.activate(inactivePart);
+		eps.activate(activePart);
+		assertEquals(activePart, eps.getActivePart());
+
+		activePart.getContext().set("key", "active");
+		inactivePart.getContext().set("key", "inactive");
+
+		assertFalse(executed[0]);
+		assertEquals(activePart, window.getContext().get(EPartService.class)
+				.getActivePart());
+
+		Object widget1 = menuItem.getWidget();
+		assertNotNull(widget1);
+		assertTrue(widget1 instanceof MenuItem);
+		((MenuItem) widget1).notifyListeners(SWT.Selection, new Event());
+
+		assertTrue(executed[0]);
 	}
 
 	private MMenuContribution createContribution(boolean withVisibleWhen) {
