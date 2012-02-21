@@ -10,7 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application;
 
-import java.util.Map;
 
 /**
  * <!-- begin-user-doc -->
