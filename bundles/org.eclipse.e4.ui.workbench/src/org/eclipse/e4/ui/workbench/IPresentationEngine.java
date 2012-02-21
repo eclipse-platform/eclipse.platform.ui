@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
+ *     IBM - ongoing development
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench;
@@ -111,7 +112,7 @@ public interface IPresentationEngine {
 	public Object createGui(MUIElement element);
 
 	/**
-	 * Remove the UI element create for this model element
+	 * Remove the UI element created for this model element.
 	 * 
 	 * @param element
 	 *            the model element whose UI element should removed
