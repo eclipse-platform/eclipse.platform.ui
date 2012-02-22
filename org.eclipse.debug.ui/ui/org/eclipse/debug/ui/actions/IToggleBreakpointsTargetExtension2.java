@@ -37,7 +37,7 @@ public interface IToggleBreakpointsTargetExtension2 extends IToggleBreakpointsTa
 	 * 
 	 * @param part the part on which the action has been invoked  
 	 * @param selection selection on which line breakpoints should be toggled
-	 * @param event the key event from the double-click in the editor gutter, may be <code>null</code>
+	 * @param event the accompanying {@link Event} which can be <code>null</code> if unavailable
 	 * @throws CoreException if unable to perform the action 
 	 */
 	public void toggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event) throws CoreException;
@@ -50,8 +50,8 @@ public interface IToggleBreakpointsTargetExtension2 extends IToggleBreakpointsTa
 	 * 
 	 * @param part the part on which the action has been invoked  
 	 * @param selection selection on which line breakpoints should be toggled
-	 * @param event the key event from the double-click in the editor gutter, may be <code>null</code>
-	 * @return whether breakpoints can be toggled on the given selection with the given modifiers
+	 * @param event the accompanying {@link Event} which can be <code>null</code> if unavailable
+	 * @return whether breakpoints can be toggled on the given selection with the given {@link Event}
 	 */
 	public boolean canToggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event);
 }
