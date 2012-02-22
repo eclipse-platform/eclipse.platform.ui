@@ -342,7 +342,8 @@ public class ContributionRecord {
 
 					// Skip all menu items until next MenuSeparator is found
 					while (idx < size
-							&& !(menuModel.getChildren().get(idx) instanceof MMenuSeparator)) {
+							&& !(menuModel.getChildren().get(idx) instanceof MMenuSeparator && menuModel
+									.getChildren().get(idx).getElementId() != null)) {
 						idx++;
 					}
 				}
