@@ -1834,19 +1834,6 @@
       </section>
    </extension>
    <extension
-         point="org.eclipse.ui.presentationFactories">
-      <factory
-            name="%Presentation.default.name"
-            class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"
-            id="org.eclipse.ui.presentations.default">
-      </factory>
-      <factory
-            class="org.eclipse.ui.internal.presentations.classic.WorkbenchPresentationFactoryClassic"
-            id="org.eclipse.ui.presentations.r30"
-            name="%Presentation.30.name">
-      </factory>
-   </extension>
-   <extension
          point="org.eclipse.ui.encodings">
       <encoding name="ISO-8859-1"/>
       <encoding name="UTF-8"/>
