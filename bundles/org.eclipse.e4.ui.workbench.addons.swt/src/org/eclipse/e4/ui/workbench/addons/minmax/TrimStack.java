@@ -769,13 +769,31 @@ public class TrimStack {
 	}
 
 	private int getFixedSides() {
-		int verticalValue = SWT.TOP; // should be based on the center of the TB
-		if (bar.getSide() == SideValue.LEFT)
-			return SWT.LEFT | verticalValue;
-		else if (bar.getSide() == SideValue.RIGHT)
-			return SWT.RIGHT | verticalValue;
+		Composite trimComp = (Composite) bar.getWidget();
+		Rectangle trimBounds = trimComp.getBounds();
+		Point trimCenter = new Point(trimBounds.width / 2, trimBounds.height / 2); // adjusted to
+																					// (0,0)
 
-		return SWT.TOP | SWT.LEFT;
+		Control trimCtrl = (Control) toolControl.getWidget();
+		Rectangle ctrlBounds = trimCtrl.getBounds();
+		Point ctrlCenter = new Point(ctrlBounds.x + (ctrlBounds.width / 2), ctrlBounds.y
+				+ (ctrlBounds.height / 2));
+
+		if (bar.getSide() == SideValue.LEFT) {
+			int verticalValue = ctrlCenter.y < trimCenter.y ? SWT.TOP : SWT.BOTTOM;
+			return SWT.LEFT | verticalValue;
+		} else if (bar.getSide() == SideValue.RIGHT) {
+			int verticalValue = ctrlCenter.y < trimCenter.y ? SWT.TOP : SWT.BOTTOM;
+			return SWT.RIGHT | verticalValue;
+		} else if (bar.getSide() == SideValue.TOP) {
+			int horizontalValue = ctrlCenter.x < trimCenter.x ? SWT.LEFT : SWT.RIGHT;
+			return SWT.TOP | horizontalValue;
+		} else if (bar.getSide() == SideValue.BOTTOM) {
+			int horizontalValue = ctrlCenter.x < trimCenter.x ? SWT.LEFT : SWT.RIGHT;
+			return SWT.BOTTOM | horizontalValue;
+		}
+
+		return SWT.BOTTOM | SWT.RIGHT;
 	}
 
 	private Image getLayoutImage() {

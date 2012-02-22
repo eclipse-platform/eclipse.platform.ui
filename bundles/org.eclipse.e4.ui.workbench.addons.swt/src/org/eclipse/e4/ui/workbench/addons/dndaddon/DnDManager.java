@@ -73,6 +73,9 @@ class DnDManager {
 
 	DragDetectListener dragDetector = new DragDetectListener() {
 		public void dragDetected(DragDetectEvent e) {
+			if (e.widget.isDisposed())
+				return;
+
 			info.update(e);
 			dragAgent = getDragAgent(info);
 			if (dragAgent != null) {

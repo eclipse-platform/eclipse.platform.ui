@@ -94,6 +94,24 @@ public class TrimPaneLayout extends Layout {
 				clientRect = new Rectangle(0, 0, bounds.width - BORDER_WIDTH, bounds.height
 						- BORDER_WIDTH);
 			}
+		} else if (isFixed(SWT.BOTTOM)) {
+			if (isFixed(SWT.RIGHT)) {
+				hSizingRect = new Rectangle(0, BORDER_WIDTH, BORDER_WIDTH, bounds.height
+						- BORDER_WIDTH);
+				vSizingRect = new Rectangle(BORDER_WIDTH, 0, bounds.width - BORDER_WIDTH,
+						BORDER_WIDTH);
+				cornerRect = new Rectangle(0, 0, BORDER_WIDTH, BORDER_WIDTH);
+				clientRect = new Rectangle(BORDER_WIDTH, BORDER_WIDTH, bounds.width - BORDER_WIDTH,
+						bounds.height - BORDER_WIDTH);
+			} else {
+				hSizingRect = new Rectangle(bounds.width - BORDER_WIDTH, BORDER_WIDTH,
+						BORDER_WIDTH, bounds.height - BORDER_WIDTH);
+				vSizingRect = new Rectangle(0, 0, bounds.width - BORDER_WIDTH, BORDER_WIDTH);
+				cornerRect = new Rectangle(bounds.width - BORDER_WIDTH, 0, BORDER_WIDTH,
+						BORDER_WIDTH);
+				clientRect = new Rectangle(0, BORDER_WIDTH, bounds.width - BORDER_WIDTH,
+						bounds.height - BORDER_WIDTH);
+			}
 		}
 		Control child = composite.getChildren()[0];
 		child.setBounds(clientRect);
@@ -171,10 +189,17 @@ public class TrimPaneLayout extends Layout {
 		} else if (vSizingRect.contains(p)) {
 			composite.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_SIZENS));
 		} else if (cornerRect.contains(p)) {
-			if (isFixed(SWT.RIGHT))
-				composite.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_SIZESW));
-			else
-				composite.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_SIZESE));
+			if (isFixed(SWT.TOP)) {
+				if (isFixed(SWT.RIGHT))
+					composite.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_SIZESW));
+				else
+					composite.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_SIZESE));
+			} else if (isFixed(SWT.BOTTOM)) {
+				if (isFixed(SWT.RIGHT))
+					composite.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_SIZESE));
+				else
+					composite.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_SIZESW));
+			}
 		} else {
 			composite.setCursor(null);
 		}
