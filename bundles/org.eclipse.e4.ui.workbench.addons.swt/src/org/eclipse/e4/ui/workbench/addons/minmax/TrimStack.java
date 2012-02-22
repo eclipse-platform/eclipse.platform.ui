@@ -667,7 +667,7 @@ public class TrimStack {
 		});
 	}
 
-	protected void showStack(boolean show) {
+	public void showStack(boolean show) {
 		Control ctf = (Control) minimizedElement.getWidget();
 		Composite clientArea = getShellClientComposite();
 		if (clientArea == null)

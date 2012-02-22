@@ -15,6 +15,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -76,8 +78,15 @@ public class ToolControlRenderer extends SWTPartRenderer {
 
 		setCSSInfo(toolControl, newCtrl);
 
+		boolean vertical = false;
+		MUIElement parentElement = element.getParent();
+		if (parentElement instanceof MTrimBar) {
+			MTrimBar bar = (MTrimBar) parentElement;
+			vertical = bar.getSide() == SideValue.LEFT
+					|| bar.getSide() == SideValue.RIGHT;
+		}
 		CSSRenderingUtils cssUtils = parentContext.get(CSSRenderingUtils.class);
-		newCtrl = cssUtils.frameMeIfPossible(newCtrl, null, true, true);
+		newCtrl = cssUtils.frameMeIfPossible(newCtrl, null, vertical, true);
 		return newCtrl;
 	}
 

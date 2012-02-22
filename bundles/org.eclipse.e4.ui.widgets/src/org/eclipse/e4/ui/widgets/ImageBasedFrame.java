@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ToolBar;
 
 public class ImageBasedFrame extends Canvas {
 	private Control framedControl;
@@ -47,6 +48,8 @@ public class ImageBasedFrame extends Canvas {
 	private Image handle;
 	private int handleWidth;
 	private int handleHeight;
+
+	protected String id;
 	
 	public ImageBasedFrame(Composite parent, Control toWrap, boolean vertical, boolean draggable) {
 		super(parent, SWT.NONE);
@@ -54,8 +57,6 @@ public class ImageBasedFrame extends Canvas {
 		this.framedControl = toWrap;
 		this.vertical = vertical;
 		this.draggable = draggable;
-		
-		setUpImages(parent.getDisplay());
 		
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
@@ -102,6 +103,9 @@ public class ImageBasedFrame extends Canvas {
 		}
 		setSize(computeSize(-1, -1));
 
+		if (toWrap instanceof ToolBar) {
+			id = ((ToolBar)toWrap).getItem(0).getToolTipText();
+		}
 	}
 
 	public Rectangle getHandleRect() {
@@ -121,87 +125,6 @@ public class ImageBasedFrame extends Canvas {
 			handleRect.height = handle.getBounds().height;
 		}
 		return handleRect;
-	}
-
-	@Override
-	public void dispose() {
-		if (imageCache != null && !imageCache.isDisposed())
-			imageCache.dispose();
-		if (handle != null && !handle.isDisposed())
-			handle.dispose();
-		super.dispose();
-	}
-	
-	private void setUpImages(Display display) {
-		// KLUDGE !! should come from CSS
-		imageCache = new Image(display, 5,5);
-		GC gc = new GC(imageCache);
-		gc.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
-		gc.fillRectangle(0, 0, 5,5);
-		gc.setBackground(display.getSystemColor(SWT.COLOR_MAGENTA));
-		gc.fillRectangle(1, 1, 3,3);
-		gc.dispose();
-		
-		w1 = 2; w2 = 1; h1 = 2; h2 = 1; 
-		w3 = imageCache.getBounds().width - (w1+w2);
-		h3 = imageCache.getBounds().height - (h1+h2);
-		
-		handle = new Image(display, 5, 17);
-		gc = new GC(handle);
-		gc.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
-		gc.fillRectangle(0, 0, 5, 17);
-		
-		gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-		gc.drawLine(1, 2, 1, 15);
-		
-		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-		gc.drawLine(2, 2, 2, 15);
-		
-		gc.dispose();
-		
-		w1 = 2; w2 = 1; h1 = 2; h2 = 1; 
-		w3 = imageCache.getBounds().width - (w1+w2);
-		h3 = imageCache.getBounds().height - (h1+h2);
-		
-		if (vertical) {
-			imageCache = rotateImage(display, imageCache);
-			
-			// Adjust the size markers for the rotation
-			int tmp;
-			tmp = w1; w1 = h1; h1 = tmp;
-			tmp = w2; w2 = h2; h2 = tmp;
-			tmp = w3; w3 = h3; h3 = tmp;
-			
-			// Rotate the handle (if any)
-			if (handle != null)
-				handle = rotateImage(display, handle);
-		}
-		
-		// Compute the size of the handle in the 'offset' dimension
-		handleWidth = (handle != null && !vertical) ? handle.getBounds().width : 0;
-		handleHeight = (handle != null && vertical) ? handle.getBounds().height : 0;
-
-	}
-
-	private Image rotateImage(Display display, Image image) {
-		// rotate 90 degrees
-		Image rotatedImage = new Image(display, image.getBounds().height, image.getBounds().width);
-		GC gc = new GC(rotatedImage);
-		Transform t = new Transform(display);
-		int w = image.getBounds().height;
-		int offset = 0; //(w+1) % 2;
-		t.translate(w - offset, 0);
-		t.rotate(90);
-		gc.setTransform(t);
-		gc.drawImage(image, 0, 0);
-		gc.dispose();
-		t.dispose();
-
-		// Get rid of the original
-		image.dispose();
-		
-		// Return the new one
-		return rotatedImage;
 	}
 
 	@Override
@@ -314,19 +237,6 @@ public class ImageBasedFrame extends Canvas {
 		h2 = frameInts[3];
 		w3 = imageCache.getBounds().width - (w1+w2);
 		h3 = imageCache.getBounds().height - (h1+h2);
-		
-		if (vertical) {
-			imageCache = rotateImage(getDisplay(), imageCache);
-			
-			// Adjust the size markers for the rotation
-			int tmp;
-			tmp = w1; w1 = h1; h1 = tmp;
-			tmp = w2; w2 = h2; h2 = tmp;
-			tmp = w3; w3 = h3; h3 = tmp;
-
-			if (handle != null)
-				handle = rotateImage(getDisplay(), handle);
-		}
 		
 		// Compute the size of the handle in the 'offset' dimension
 		handleWidth = (handle != null && !vertical) ? handle.getBounds().width : 0;

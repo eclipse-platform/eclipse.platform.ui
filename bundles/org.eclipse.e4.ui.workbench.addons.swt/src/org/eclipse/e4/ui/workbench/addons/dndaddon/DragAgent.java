@@ -31,7 +31,7 @@ abstract class DragAgent {
 
 	protected DnDManager dndManager;
 	private MUIElement dragPH = null;
-	private DropAgent dropAgent = null;
+	protected DropAgent dropAgent = null;
 
 	/**
 	 * Return the element that your agent would start to drag given the current cursor info.
@@ -100,6 +100,8 @@ abstract class DragAgent {
 		}
 
 		dropAgent = dndManager.getDropAgent(dragElement, info);
+		if (dropAgent != null)
+			dropAgent.dragEnter(dragElement, info);
 	}
 
 	public void track(DnDInfo info) {
@@ -135,9 +137,12 @@ abstract class DragAgent {
 		// if the dragElement is *not* directly after the placeholder we have to return it there
 		List<MUIElement> phParentsKids = dragPH.getParent().getChildren();
 		if (phParentsKids.indexOf(dragElement) != phParentsKids.indexOf(dragPH) + 1) {
+			dragElement.setToBeRendered(false);
 			if (dragElement.getParent() != null)
 				dragElement.getParent().getChildren().remove(dragElement);
 			phParentsKids.add(phParentsKids.indexOf(dragPH) + 1, dragElement);
+			dragElement.setVisible(true);
+			dragElement.setToBeRendered(true);
 		}
 	}
 
@@ -155,8 +160,6 @@ abstract class DragAgent {
 		} else {
 			cancelDrag();
 		}
-
-		dndManager.getDragShell().layout(true, true);
 
 		if (dragPH == null)
 			return;

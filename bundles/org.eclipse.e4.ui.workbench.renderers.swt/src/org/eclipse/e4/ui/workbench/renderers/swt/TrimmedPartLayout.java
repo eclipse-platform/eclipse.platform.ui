@@ -240,4 +240,56 @@ public class TrimmedPartLayout extends Layout {
 		return null;
 	}
 
+	public Rectangle getTrimRect(int side) {
+		Rectangle caBounds = clientArea.getBounds();
+		caBounds = top.getDisplay().map(clientArea.getParent(), null, caBounds);
+
+		if (side == SWT.TOP) {
+			if (top != null) {
+				Rectangle b = top.getBounds();
+				b = top.getDisplay().map(top.getParent(), null, b);
+				return b;
+			}
+
+			// Fake one
+			caBounds.height = 25;
+			return caBounds;
+		}
+		if (side == SWT.BOTTOM) {
+			if (bottom != null) {
+				Rectangle b = bottom.getBounds();
+				b = bottom.getDisplay().map(bottom.getParent(), null, b);
+				return b;
+			}
+
+			// Fake one
+			caBounds.y = (caBounds.y + caBounds.height) - 25;
+			caBounds.height = 25;
+			return caBounds;
+		}
+		if (side == SWT.LEFT) {
+			if (left != null && left.getChildren().length > 0) {
+				Rectangle b = left.getBounds();
+				b = left.getDisplay().map(left.getParent(), null, b);
+				return b;
+			}
+
+			// Fake one
+			caBounds.width = 25;
+			return caBounds;
+		}
+		if (side == SWT.RIGHT) {
+			if (right != null && right.getChildren().length > 0) {
+				Rectangle b = right.getBounds();
+				b = right.getDisplay().map(right.getParent(), null, b);
+				return b;
+			}
+
+			// Fake one
+			caBounds.x = (caBounds.x + caBounds.width) - 25;
+			caBounds.width = 25;
+			return caBounds;
+		}
+		return null;
+	}
 }

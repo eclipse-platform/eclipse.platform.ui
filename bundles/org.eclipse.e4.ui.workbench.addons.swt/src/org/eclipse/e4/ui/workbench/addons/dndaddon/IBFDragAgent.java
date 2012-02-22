@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.widgets.ImageBasedFrame;
+import org.eclipse.e4.ui.workbench.addons.minmax.TrimStack;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
@@ -71,18 +72,32 @@ public class IBFDragAgent extends DragAgent {
 	public void dragStart(DnDInfo info) {
 		super.dragStart(info);
 
-		frame = (ImageBasedFrame) dragElement.getWidget();
+		if (dragElement instanceof MToolControl) {
+			MToolControl tc = (MToolControl) dragElement;
+			if (tc.getObject() instanceof TrimStack) {
+				TrimStack ts = (TrimStack) tc.getObject();
+				ts.showStack(false);
+			}
+		}
 
+		if (dropAgent == null)
+			attachToCursor(info);
+	}
+
+	private void attachToCursor(DnDInfo info) {
+		frame = (ImageBasedFrame) dragElement.getWidget();
 		dragElement.setVisible(false);
 
-		ds = new Shell(dndManager.getDragShell(), SWT.NO_TRIM);
+		if (ds == null)
+			ds = new Shell(dndManager.getDragShell(), SWT.NO_TRIM);
+
 		frame.setParent(ds);
 		frame.setLocation(0, 0);
 		ds.setSize(frame.getSize());
 		ds.setLocation(info.cursorPos.x - 5, info.cursorPos.y - 5);
-		ds.open();
 
-		ds.getParent().layout(ds.getParent().getChildren());
+		ds.open();
+		info.update();
 	}
 
 	/*
@@ -95,6 +110,13 @@ public class IBFDragAgent extends DragAgent {
 	@Override
 	public void track(DnDInfo info) {
 		super.track(info);
+
+		if (dropAgent != null && ds != null && !ds.isDisposed() && ds.getChildren().length == 0) {
+			ds.dispose();
+			ds = null;
+		}
+		if (dropAgent == null)
+			attachToCursor(info);
 
 		if (ds != null)
 			ds.setLocation(info.cursorPos.x - 5, info.cursorPos.y - 5);
@@ -115,5 +137,6 @@ public class IBFDragAgent extends DragAgent {
 		// NOTE: the dragElement should no longer be a child of the shell
 		if (ds != null && !ds.isDisposed())
 			ds.dispose();
+		ds = null;
 	}
 }

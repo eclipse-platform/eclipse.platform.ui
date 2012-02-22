@@ -66,9 +66,21 @@ class DnDManager {
 	private Control dragCtrl;
 
 	private Tracker tracker;
+	boolean dragging = false;
 
 	private Shell overlayFrame;
 	private List<Rectangle> frames = new ArrayList<Rectangle>();
+
+	DragDetectListener dragDetector = new DragDetectListener() {
+		public void dragDetected(DragDetectEvent e) {
+			info.update(e);
+			dragAgent = getDragAgent(info);
+			if (dragAgent != null) {
+				dragging = true;
+				startDrag();
+			}
+		}
+	};
 
 	public void addFrame(Rectangle newRect) {
 		frames.add(newRect);
@@ -88,12 +100,16 @@ class DnDManager {
 		dragWindow = topLevelWindow;
 		info = new DnDInfo(topLevelWindow);
 
+		// Dragging stacks and parts
 		dragAgents.add(new PartDragAgent(this));
-		dragAgents.add(new IBFDragAgent(this));
 
 		dropAgents.add(new StackDropAgent(this));
 		dropAgents.add(new SplitDropAgent(this));
 		dropAgents.add(new DetachedDropAgent(this));
+
+		// dragging trim
+		dragAgents.add(new IBFDragAgent(this));
+		dropAgents.add(new TrimDropAgent(this));
 
 		// Register a 'dragDetect' against any stacks that get created
 		hookWidgets();
@@ -118,14 +134,10 @@ class DnDManager {
 				if (element.getWidget() instanceof CTabFolder
 						|| element.getWidget() instanceof ImageBasedFrame) {
 					Control ctrl = (Control) element.getWidget();
-					ctrl.addDragDetectListener(new DragDetectListener() {
-						public void dragDetected(DragDetectEvent e) {
-							info.update(e);
-							dragAgent = getDragAgent(info);
-							if (dragAgent != null)
-								startDrag();
-						}
-					});
+
+					// Ensure there's only one drag detect listener per ctrl
+					ctrl.removeDragDetectListener(dragDetector);
+					ctrl.addDragDetectListener(dragDetector);
 				}
 			}
 		};
@@ -396,9 +408,6 @@ class DnDManager {
 		overlayFrame.setVisible(true);
 	}
 
-	/**
-	 * @return
-	 */
 	private Rectangle getOverlayBounds() {
 		Rectangle bounds = null;
 		for (Rectangle fr : frames) {
@@ -465,7 +474,7 @@ class DnDManager {
 	}
 
 	/**
-	 * @return
+	 * @return Return the feedback style
 	 */
 	public int getFeedbackStyle() {
 		return feedbackStyle;

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.swt;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -17,8 +19,11 @@ import org.eclipse.e4.ui.css.swt.dom.ControlElement;
 import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.widgets.ImageBasedFrame;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
@@ -26,6 +31,10 @@ import org.w3c.dom.css.CSSValueList;
 
 public class CSSRenderingUtils {
 	private ThemeEngine themeEngine;
+
+	// NOTE: The CSS engine 'owns' the image it returns (it caches it)
+	// so we have to cache any rotated versions to match
+	private Map<Image, Image> rotatedImageMap = new HashMap<Image, Image>();
 
 	@Inject
 	@Optional
@@ -40,7 +49,14 @@ public class CSSRenderingUtils {
 		Integer[] frameInts = new Integer[4];
 		Image frameImage = createImage(toFrame, classId, "frame-image",
 				frameInts);
+		if (vertical && frameImage != null)
+			frameImage = rotateImage(toFrame.getDisplay(), frameImage,
+					frameInts);
+
 		Image handleImage = createImage(toFrame, classId, "handle-image", null);
+		if (vertical && handleImage != null)
+			handleImage = rotateImage(toFrame.getDisplay(), handleImage, null);
+
 		if (frameImage != null) {
 			ImageBasedFrame frame = new ImageBasedFrame(toFrame.getParent(),
 					toFrame, vertical, draggable);
@@ -49,6 +65,42 @@ public class CSSRenderingUtils {
 		}
 
 		return toFrame;
+	}
+
+	private Image rotateImage(Display display, Image image, Integer[] frameInts) {
+		// Swap teh widths / heights of the 'cuts'
+		if (frameInts != null) {
+			int tmp;
+			tmp = frameInts[0];
+			frameInts[0] = frameInts[2];
+			frameInts[2] = tmp;
+			tmp = frameInts[1];
+			frameInts[1] = frameInts[3];
+			frameInts[3] = tmp;
+		}
+
+		if (rotatedImageMap.get(image) != null)
+			return rotatedImageMap.get(image);
+
+		// rotate 90 degrees,,,
+		Image rotatedImage = new Image(display, image.getBounds().height,
+				image.getBounds().width);
+		GC gc = new GC(rotatedImage);
+		Transform t = new Transform(display);
+		int w = image.getBounds().height;
+		int offset = 0; // (w+1) % 2;
+		t.translate(w - offset, 0);
+		t.rotate(90);
+		gc.setTransform(t);
+		gc.drawImage(image, 0, 0);
+		gc.dispose();
+		t.dispose();
+
+		// ...and cache it
+		rotatedImageMap.put(image, rotatedImage);
+
+		// Return the new one
+		return rotatedImage;
 	}
 
 	@SuppressWarnings("restriction")

@@ -137,8 +137,9 @@ public class TrimBarLayout extends Layout {
 		totalMinor += horizontal ? (marginTop + marginBottom)
 				+ totalWrapSpacing : (marginLeft + marginRight)
 				+ totalWrapSpacing;
-		return horizontal ? new Point(wHint, totalMinor) : new Point(
+		Point calcSize = horizontal ? new Point(wHint, totalMinor) : new Point(
 				totalMinor, hHint);
+		return calcSize;
 	}
 
 	private Point computeSize(Control ctrl) {
@@ -210,7 +211,7 @@ public class TrimBarLayout extends Layout {
 			if (horizontal)
 				bounds.y += curLine.minor + wrapSpacing;
 			else
-				bounds.x += curLine.minor = wrapSpacing;
+				bounds.x += curLine.minor + wrapSpacing;
 		}
 	}
 
@@ -281,5 +282,22 @@ public class TrimBarLayout extends Layout {
 			return true;
 
 		return false;
+	}
+
+	/**
+	 * @param trimPos
+	 * @return
+	 */
+	public Control ctrlFromPoint(Point trimPos) {
+		if (lines == null || lines.size() == 0)
+			return null;
+
+		Control[] kids = lines.get(0).ctrls.get(0).getParent().getChildren();
+		for (int i = 0; i < kids.length; i++) {
+			if (kids[i].getBounds().contains(trimPos))
+				return kids[i];
+		}
+
+		return null;
 	}
 }

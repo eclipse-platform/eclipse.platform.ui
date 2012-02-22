@@ -185,10 +185,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// Put the control under the 'limbo' shell
 				if (changedElement.getWidget() instanceof Control) {
 					Control ctrl = (Control) changedElement.getWidget();
-					ctrl.setParent(getLimboShell());
+					ctrl.getShell().layout(new Control[] { ctrl }, SWT.DEFER);
 
-					if (!(ctrl instanceof Shell))
-						ctrl.setSize(0, 0);
+					ctrl.setParent(getLimboShell());
 				}
 
 				if (parent instanceof MElementContainer<?>) {
@@ -383,7 +382,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					temp = temp.getParent();
 				}
 
-				composite.layout(new Control[] { elementCtrl });
+				composite.layout(true, true);
 			}
 		}
 	}
