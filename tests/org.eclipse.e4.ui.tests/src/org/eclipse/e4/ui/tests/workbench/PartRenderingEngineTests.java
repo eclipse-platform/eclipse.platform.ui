@@ -3216,6 +3216,32 @@ public class PartRenderingEngineTests extends TestCase {
 		assertFalse(logged);
 	}
 
+	public void testBug372226() {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		Shell subShell = new Shell((Shell) window.getWidget());
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		appContext.get(EModelService.class).hostElement(part, window, subShell,
+				window.getContext());
+		Control control = (Control) part.getWidget();
+		assertEquals(subShell, control.getParent());
+
+		appContext.get(EPartService.class).activate(part);
+		assertEquals(subShell, control.getParent());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);

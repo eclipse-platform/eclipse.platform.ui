@@ -970,6 +970,11 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private void createElement(MUIElement element) {
+		if (modelService.isHostedElement(element, workbenchWindow)) {
+			// assume the client has full control
+			return;
+		}
+
 		MPlaceholder placeholder = element.getCurSharedRef();
 		if (placeholder != null) {
 			element.setToBeRendered(true);
