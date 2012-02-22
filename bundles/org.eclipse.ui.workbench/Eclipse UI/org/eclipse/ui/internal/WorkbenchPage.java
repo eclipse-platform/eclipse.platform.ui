@@ -421,6 +421,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	private void updateBroughtToTop(MPart part) {
+		updateActiveEditorSources(part);
+		IWorkbenchPart workbenchPart = getWorkbenchPart(part);
+		if (workbenchPart instanceof IEditorPart) {
+			navigationHistory.markEditor((IEditorPart) workbenchPart);
+		}
+
 		MElementContainer<?> parent = part.getParent();
 		if (parent == null) {
 			MPlaceholder placeholder = part.getCurSharedRef();
