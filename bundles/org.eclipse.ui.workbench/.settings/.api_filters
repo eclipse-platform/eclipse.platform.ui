@@ -1,8 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.ui.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
     <resource path="Eclipse UI/org/eclipse/ui/XMLMemento.java" type="org.eclipse.ui.XMLMemento">
         <filter id="1143996420">
             <message_arguments>
                 <message_argument value="getChildren()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/dialogs/PatternFilter.java" type="org.eclipse.ui.dialogs.PatternFilter">
+        <filter comment="Reverting temporary change for bug 186404" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.PatternFilter"/>
+                <message_argument value="doFilter(Viewer, Object, Object[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Reverting temporary change for bug 186404" id="388018290">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.PatternFilter"/>
+                <message_argument value="foundAnyCache"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Reverting temporary change for bug 186404" id="388018290">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.PatternFilter"/>
+                <message_argument value="useCache"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Reverting temporary change for bug 186404" id="421654647">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.PatternFilter"/>
+                <message_argument value="select(Viewer, Object, Object)"/>
             </message_arguments>
         </filter>
     </resource>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,11 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import com.ibm.icu.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -23,8 +23,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.misc.StringMatcher;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * A filter used in conjunction with <code>FilteredTree</code>. In order to
@@ -42,19 +40,12 @@ public class PatternFilter extends ViewerFilter {
 	 */
     private Map cache = new HashMap();
     
-	/**
+	/*
 	 * Maps parent elements to TRUE or FALSE
-	 * 
-	 * @since 3.8
 	 */
-    protected Map foundAnyCache = new HashMap();
+	private Map foundAnyCache = new HashMap();
     
-	/**
-	 * Specifies if caching of filter results should be used.
-	 * 
-	 * @since 3.8
-	 */
-	protected boolean useCache = false;
+	private boolean useCache = false;
     
 	/**
 	 * Whether to include a leading wildcard for all provided patterns.  A
@@ -85,22 +76,7 @@ public class PatternFilter extends ViewerFilter {
         if (!useCache) {
         	return super.filter(viewer, parent, elements);
         }
-		return doFilter(viewer, parent, elements);
-	}
 
-	/**
-	 * Filters the given elements for the given viewer using local cache.
-	 * 
-	 * @param viewer
-	 *            the viewer
-	 * @param parent
-	 *            the parent element
-	 * @param elements
-	 *            the elements to filter
-	 * @return the filtered elements
-	 * @since 3.8
-	 */
-	protected Object[] doFilter(Viewer viewer, Object parent, Object[] elements) {
         Object[] filtered = (Object[]) cache.get(parent);
         if (filtered == null) {
         	Boolean foundAny = (Boolean) foundAnyCache.get(parent);
@@ -164,7 +140,7 @@ public class PatternFilter extends ViewerFilter {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
-    public boolean select(Viewer viewer, Object parentElement,
+	public final boolean select(Viewer viewer, Object parentElement,
 			Object element) {
         return isElementVisible(viewer, element);
     }
