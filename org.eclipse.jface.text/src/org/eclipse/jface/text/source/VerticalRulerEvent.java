@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.source;
+
+import org.eclipse.swt.widgets.Event;
 
 
 /**
@@ -20,6 +22,7 @@ package org.eclipse.jface.text.source;
 public class VerticalRulerEvent {
 
 	private Annotation fAnnotation;
+	private Event fEvent;
 
 	/**
 	 * Creates a new event.
@@ -28,6 +31,18 @@ public class VerticalRulerEvent {
 	 */
 	public VerticalRulerEvent(Annotation annotation) {
 		fAnnotation= annotation;
+	}
+
+	/**
+	 * Creates a new event.
+	 *
+	 * @param annotation the annotation concerned, or <code>null</code>
+	 * @param event the SWT event that triggered this vertical ruler event, or <code>null</code>
+	 * @since 3.8
+	 */
+	public VerticalRulerEvent(Annotation annotation, Event event) {
+		fAnnotation= annotation;
+		fEvent= event;
 	}
 
 	/**
@@ -42,5 +57,13 @@ public class VerticalRulerEvent {
 	 */
 	public void setSelectedAnnotation(Annotation annotation) {
 		fAnnotation= annotation;
+	}
+	
+	/**
+	 * @return the SWT event that triggered this vertical ruler event, or <code>null</code>. 
+	 * @since 3.8
+	 */
+	public Event getEvent() {
+		return fEvent;
 	}
 }

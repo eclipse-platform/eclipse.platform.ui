@@ -3064,6 +3064,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 							((IUpdate) action).update();
 						if (action.isEnabled()) {
 							Event event= new Event();
+							event.type= fDoubleClicked ? SWT.MouseDoubleClick : SWT.MouseUp;
 							event.display= e.display;
 							event.widget= e.widget;
 							event.time= e.time;
