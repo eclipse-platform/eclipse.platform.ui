@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,6 +122,7 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ELCL_NEXT_THREAD = "IMG_ELCL_NEXT_THREAD"; //$NON-NLS-1$
     public static final String IMG_ELCL_PREVIOUS_THREAD = "IMG_ELCL_PREVIOUS_THREAD"; //$NON-NLS-1$
     public static final String IMG_ELCL_RESTART = "IMG_ELCL_RESTART"; //$NON-NLS-1$
+    public static final String IMG_ELCL_DEBUG_VIEW_COMPACT_LAYOUT = "IMG_ELCL_DEBUG_VIEW_BREADCRUMB_LAYOUT";
     
     public static final String IMG_OBJS_COMMON_TAB = "IMG_OBJS_COMMON_TAB"; //$NON-NLS-1$
     public static final String IMG_OBJS_REFRESH_TAB = "IMG_OBJS_REFRESH_TAB"; //$NON-NLS-1$
