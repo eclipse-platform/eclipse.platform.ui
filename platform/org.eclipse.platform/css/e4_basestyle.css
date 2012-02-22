@@ -26,3 +26,9 @@
 #PerspectiveSwitcher {
 	perspective-keyline-color: #AAB0BF #AAB0BF;
 }
+
+.MToolControl.TrimStack {
+	frame-image:  url(./winXPTSFrame.PNG);
+	handle-image:  url(./winXPHandle.PNG);
+	frame-cuts: 5px 1px 5px 16px;
+}
