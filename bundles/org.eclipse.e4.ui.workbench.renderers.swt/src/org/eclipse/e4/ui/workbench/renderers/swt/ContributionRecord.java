@@ -336,6 +336,15 @@ public class ContributionRecord {
 			if (id.equals(menuModel.getChildren().get(idx).getElementId())) {
 				if ("after".equals(modifier)) { //$NON-NLS-1$
 					idx++;
+				} else if ("endof".equals(modifier)) { //$NON-NLS-1$
+					// Skip current menu item
+					idx++;
+
+					// Skip all menu items until next MenuSeparator is found
+					while (idx < size
+							&& !(menuModel.getChildren().get(idx) instanceof MMenuSeparator)) {
+						idx++;
+					}
 				}
 				return idx;
 			}
