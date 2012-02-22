@@ -16,6 +16,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
+import org.osgi.service.event.Event;
 
 /**
  * E4 UI events and event topic definitions.
@@ -50,7 +51,8 @@ public class UIEvents {
 	public static final String UIModelTopicBase = UITopicBase + "/model"; //$NON-NLS-1$
 
 	/**
-	 * E4 UI Event Types
+	 * E4 UI Event Types.
+	 * Add appropriate utility is<Test> method below if new types added
 	 */
 	public static interface EventTypes {
 		/**
@@ -69,6 +71,42 @@ public class UIEvents {
 		 * Remove event
 		 */
 		public static final String REMOVE = "REMOVE"; //$NON-NLS-1$
+	}
+
+	/**
+	 * @param event
+	 *            An OSGI event representing a UIEvent
+	 * @return true if it is an add event, false otherwise.
+	 */
+	public static boolean isADD(Event event) {
+		return UIEvents.EventTypes.ADD.equals(event.getProperty(UIEvents.EventTags.TYPE));
+	}
+
+	/**
+	 * @param event
+	 *            An OSGI event representing a UIEvent
+	 * @return true if it is a remove event, false otherwise.
+	 */
+	public static boolean isREMOVE(Event event) {
+		return UIEvents.EventTypes.REMOVE.equals(event.getProperty(UIEvents.EventTags.TYPE));
+	}
+
+	/**
+	 * @param event
+	 *            An OSGI event representing a UIEvent
+	 * @return true if it is a set event, false otherwise.
+	 */
+	public static boolean isSET(Event event) {
+		return UIEvents.EventTypes.SET.equals(event.getProperty(UIEvents.EventTags.TYPE));
+	}
+
+	/**
+	 * @param event
+	 *            An OSGI event representing a UIEvent
+	 * @return true if it is a create event, false otherwise.
+	 */
+	public static boolean isCREATE(Event event) {
+		return UIEvents.EventTypes.CREATE.equals(event.getProperty(UIEvents.EventTags.TYPE));
 	}
 
 	/**

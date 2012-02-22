@@ -178,10 +178,14 @@ public class TrimStack {
 	@Optional
 	private void handleTransientDataEvents(
 			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TRANSIENTDATA) org.osgi.service.event.Event event) {
+		// Prevent exceptions on shutdown
+		if (trimStackTB == null || trimStackTB.isDisposed() || minimizedElement.getWidget() == null)
+			return;
+
 		MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
 		String key;
-		if (event.containsProperty(UIEvents.EventTypes.REMOVE)) {
+		if (UIEvents.isREMOVE(event)) {
 			key = ((Entry<String, Object>) event.getProperty(UIEvents.EventTags.OLD_VALUE))
 					.getKey();
 		} else {
