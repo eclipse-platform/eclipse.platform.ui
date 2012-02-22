@@ -12,6 +12,7 @@ package org.eclipse.e4.core.internal.contexts.debug.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -20,16 +21,14 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MContext;
-import org.eclipse.e4.ui.model.application.ui.menu.MItem;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.osgi.service.event.EventAdmin;
 
 public class FindTargetAction {
@@ -58,29 +57,22 @@ public class FindTargetAction {
 	}
 
 	@Execute
-	public void doFindTarget(IEclipseContext context) {
-		MItem item = context.get(MItem.class);
-		ToolItem toolItem = (ToolItem) item.getWidget();
-		final ToolBar toolBar = toolItem.getParent();
-		final Display display = toolItem.getDisplay();
+	public void doFindTarget(MWindow win) {
+		final Control windowWidget = (Control) win.getWidget();
+		final Display display = windowWidget.getDisplay();
 
-		displayCursor = toolBar.getCursor();
-		toolBar.setCursor(targetCursor);
-		toolBar.setCapture(true);
+		displayCursor = windowWidget.getCursor();
+		windowWidget.setCursor(targetCursor);
+		windowWidget.setCapture(true);
 
-		toolBar.addMouseListener(new MouseListener() {
-			public void mouseDoubleClick(MouseEvent e) {
-				// nothing
-			}
-
-			public void mouseDown(MouseEvent e) {
-				// nothing
-			}
-
-			public void mouseUp(MouseEvent e) {
+		// This filter list is necessary to avoid not-initialized-errors within the
+		// actual listener.  The filter approach is required as some platforms (e.g.,
+		// MacOS X) don't support setCapture().
+		// FIXME: should possible set this up for MouseUp, not MouseDown?
+		final LinkedList<Listener> filters = new LinkedList<Listener>();
+		filters.add(new Listener() {
+			public void handleEvent(Event event) {
 				Control control = display.getCursorControl();
-				if (toolBar == control) // ignore click on the trigger button
-					return;
 				IEclipseContext targetContext = null;
 				while (control != null) {
 					Object data = control.getData(OWNING_ME);
@@ -101,11 +93,17 @@ public class FindTargetAction {
 					TreePath path = new TreePath(contexts.toArray());
 					EventUtils.send(eventAdmin, ContextsView.SELECT_EVENT, path);
 				}
-				toolBar.setCapture(false);
-				toolBar.removeMouseListener(this);
-				toolBar.setCursor(displayCursor);
+				windowWidget.setCapture(false);
+				windowWidget.setCursor(displayCursor);
+				for (Listener f : filters) {
+					display.removeFilter(SWT.MouseDown, f);
+				}
+				filters.clear();
 			}
 		});
+		for (Listener f : filters) {
+			display.addFilter(SWT.MouseDown, f);
+		}
 	}
 
 }

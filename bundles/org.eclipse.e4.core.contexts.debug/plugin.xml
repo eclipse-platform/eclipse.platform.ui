@@ -10,4 +10,14 @@
             class="org.eclipse.e4.core.internal.contexts.debug.ui.e4.ContextsDebugProcessor">
       </processor>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.e4.core.internal.contexts.debug.ui.legacy.ContextTraceLegacyView"
+            id="org.eclipse.e4.core.contexts.debug.view.legacy"
+            name="%traceView"
+            restorable="true">
+      </view>
+   </extension>
 </plugin>
