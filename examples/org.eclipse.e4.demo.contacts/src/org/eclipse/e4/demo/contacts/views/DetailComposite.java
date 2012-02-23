@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Siemens AG and others.
+ * Copyright (c) 2009, 2012 Siemens AG and others.
  * 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
@@ -23,6 +23,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.demo.contacts.databinding.AggregateNameObservableValue;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+@Creatable
 public class DetailComposite extends Composite {
 
 	private final MDirtyable dirtyable;
