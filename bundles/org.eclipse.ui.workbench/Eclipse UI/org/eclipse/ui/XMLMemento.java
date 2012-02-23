@@ -270,8 +270,9 @@ public final class XMLMemento implements IMemento {
         return null;
     }
 
-	/*
-	 * (non-Javadoc) Method declared in IMemento.
+	/**
+	 * {@inheritDoc}
+	 * @since 3.8
 	 */
 	public IMemento[] getChildren() {
 
