@@ -260,6 +260,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		Composite intermediate = createIntermediate(toolbarModel,
 				(Composite) parent);
 		createToolbar(toolbarModel, intermediate);
+		bindWidget(element, intermediate);
 		processContribution(toolbarModel);
 		return intermediate;
 	}

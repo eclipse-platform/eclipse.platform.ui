@@ -269,6 +269,32 @@ public class MenuAdditionCacheEntry {
 		return menu;
 	}
 
+	private boolean isUndefined(String query) {
+		if (query == null || query.length() == 0) {
+			return true;
+		}
+
+		int index = query.indexOf('=');
+		return index == -1 || query.substring(index + 1).equals("additions"); //$NON-NLS-1$
+	}
+
+	private void processTrimLocation(MTrimContribution contribution) {
+		String query = location.getQuery();
+		if (TRIM_COMMAND2.equals(location.getPath())) {
+			contribution.setParentId(MAIN_TOOLBAR);
+			if (isUndefined(query)) {
+				query = "endof"; //$NON-NLS-1$
+			}
+			contribution.setPositionInParent(query);
+		} else {
+			contribution.setParentId(location.getPath());
+			if (query == null || query.length() == 0) {
+				query = "after=additions"; //$NON-NLS-1$
+			}
+			contribution.setPositionInParent(query);
+		}
+	}
+
 	private void processTrimChildren(ArrayList<MTrimContribution> trimContributions,
 			ArrayList<MToolBarContribution> toolBarContributions, IConfigurationElement element) {
 		IConfigurationElement[] toolbars = element
@@ -281,12 +307,7 @@ public class MenuAdditionCacheEntry {
 		if (idContrib != null && idContrib.length() > 0) {
 			trimContribution.setElementId(idContrib);
 		}
-		trimContribution.setParentId(location.getPath());
-		String query = location.getQuery();
-		if (query == null || query.length() == 0) {
-			query = "after=additions"; //$NON-NLS-1$
-		}
-		trimContribution.setPositionInParent(query);
+		processTrimLocation(trimContribution);
 		trimContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
 		for (IConfigurationElement toolbar : toolbars) {
 			MToolBar item = MenuFactoryImpl.eINSTANCE.createToolBar();
