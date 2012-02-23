@@ -62,6 +62,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.renderers.swt.DirectContributionItem;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -544,6 +545,8 @@ public class MenuHelper {
 			}
 		}
 		String iconUri = MenuHelper.getIconUrl(element, IWorkbenchRegistryConstants.ATT_ICON);
+		String disabledIconUri = MenuHelper.getIconUrl(element,
+				IWorkbenchRegistryConstants.ATT_DISABLEDICON);
 		MCommand cmd = ContributionsAnalyzer.getCommandById(app, cmdId);
 		if (cmd == null) {
 			ECommandService commandService = app.getContext().get(ECommandService.class);
@@ -645,6 +648,9 @@ public class MenuHelper {
 			item.setLabel(text);
 		} else {
 			item.setIconURI(iconUri);
+		}
+		if (disabledIconUri != null) {
+			setDisabledIconURI(item, disabledIconUri);
 		}
 		String tooltip = getTooltip(element);
 		// if no tooltip defined, use the textual label as the tooltip
@@ -762,7 +768,8 @@ public class MenuHelper {
 				if (data.icon != null) {
 					menuItem.setIconURI(getIconURI(data.icon, application.getContext()));
 				} else {
-					menuItem.setIconURI(getIconURI(id, application.getContext()));
+					menuItem.setIconURI(getIconURI(id, application.getContext(),
+							ICommandImageService.TYPE_DEFAULT));
 				}
 				String itemId = cci.getId();
 				menuItem.setElementId(itemId == null ? id : itemId);
@@ -782,17 +789,34 @@ public class MenuHelper {
 				toolItem.setContributorURI(command.getContributorURI());
 
 				String iconURI = null;
+				String disabledIconURI = null;
+
 				if (data.icon != null) {
 					iconURI = getIconURI(data.icon, application.getContext());
 				}
 				if (iconURI == null) {
-					iconURI = getIconURI(id, application.getContext());
+					iconURI = getIconURI(id, application.getContext(),
+							ICommandImageService.TYPE_DEFAULT);
 				}
 				if (iconURI == null) {
 					toolItem.setLabel(command.getCommandName());
 				} else {
 					toolItem.setIconURI(iconURI);
 				}
+
+				if (data.disabledIcon != null) {
+					disabledIconURI = getIconURI(data.disabledIcon, application.getContext());
+				}
+
+				if (disabledIconURI == null) {
+					disabledIconURI = getIconURI(id, application.getContext(),
+							ICommandImageService.TYPE_DISABLED);
+				}
+
+				if (disabledIconURI != null) {
+					setDisabledIconURI(toolItem, disabledIconURI);
+				}
+
 				if (data.tooltip != null) {
 					toolItem.setTooltip(data.tooltip);
 				} else if (data.label != null) {
@@ -820,7 +844,8 @@ public class MenuHelper {
 					String iconURI = getIconURI(action.getImageDescriptor(),
 							application.getContext());
 					if (iconURI == null) {
-						iconURI = getIconURI(id, application.getContext());
+						iconURI = getIconURI(id, application.getContext(),
+								ICommandImageService.TYPE_DEFAULT);
 						if (iconURI == null) {
 							toolItem.setLabel(command.getCommandName());
 						} else {
@@ -832,6 +857,14 @@ public class MenuHelper {
 					if (action.getToolTipText() != null) {
 						toolItem.setTooltip(action.getToolTipText());
 					}
+
+					String disabledIconURI = getIconURI(action.getDisabledImageDescriptor(),
+							application.getContext());
+					if (disabledIconURI == null)
+						disabledIconURI = getIconURI(id, application.getContext(),
+								ICommandImageService.TYPE_DEFAULT);
+					if (disabledIconURI != null)
+						setDisabledIconURI(toolItem, disabledIconURI);
 
 					switch (action.getStyle()) {
 					case IAction.AS_CHECK_BOX:
@@ -863,7 +896,8 @@ public class MenuHelper {
 						toolItem.setLabel(action.getText());
 					}
 				} else {
-					iconURI = getIconURI(itemId, application.getContext());
+					iconURI = getIconURI(itemId, application.getContext(),
+							ICommandImageService.TYPE_DEFAULT);
 					if (iconURI == null) {
 						if (action.getText() != null) {
 							toolItem.setLabel(action.getText());
@@ -1134,13 +1168,21 @@ public class MenuHelper {
 		}
 	}
 
-	private static String getIconURI(String commandId, IEclipseContext workbench) {
+	private static String getIconURI(String commandId, IEclipseContext workbench, int type) {
 		if (commandId == null) {
 			return null;
 		}
 
 		ICommandImageService imageService = workbench.get(ICommandImageService.class);
-		ImageDescriptor descriptor = imageService.getImageDescriptor(commandId);
+		ImageDescriptor descriptor = imageService.getImageDescriptor(commandId, type);
 		return getIconURI(descriptor, workbench);
+	}
+
+	/**
+	 * @param item
+	 * @param disabledIconURI
+	 */
+	public static void setDisabledIconURI(MToolItem item, String disabledIconURI) {
+		item.getTransientData().put(IPresentationEngine.DISABLED_ICON_IMAGE_KEY, disabledIconURI);
 	}
 }

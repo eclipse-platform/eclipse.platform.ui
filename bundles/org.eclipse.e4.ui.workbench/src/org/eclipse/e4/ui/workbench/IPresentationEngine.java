@@ -69,6 +69,16 @@ public interface IPresentationEngine {
 	public static String MINIMIZED_BY_ZOOM = "MinimizedByZoom"; //$NON-NLS-1$
 
 	/**
+	 * This key should be used to add an optional String to an element that is a
+	 * URI to the elements disabled icon.  This is used, for example, by Toolbar Items
+	 * which, in Eclipse SDK, provide a unique icon for disabled tool items that look better
+	 * than the OS default graying on the default icon.
+	 * 
+	 * There is a strong argument to be made that this disabledIconURI actually be part of the model
+	 */
+	public static final String DISABLED_ICON_IMAGE_KEY = "e4_disabled_icon_image_key"; //$NON-NLS-1$
+
+	/**
 	 * This key should be used to add an optional org.eclipse.swt.graphics.Image to an elements
 	 * TRANSIENTDATA. If present, the image will be used to override that elements iconURI. An
 	 * example is drawing the error icon on a minimized problems view stack.

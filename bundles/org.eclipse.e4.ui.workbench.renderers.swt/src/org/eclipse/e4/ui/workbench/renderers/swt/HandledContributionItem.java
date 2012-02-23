@@ -36,7 +36,6 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
@@ -64,10 +63,12 @@ import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -533,41 +534,49 @@ public class HandledContributionItem extends ContributionItem {
 	}
 
 	private void updateIcons() {
-		if (widget instanceof MenuItem) {
-			MenuItem item = (MenuItem) widget;
-			LocalResourceManager m = new LocalResourceManager(
+		if (widget instanceof Item) {
+			Item item = (Item) widget;
+			LocalResourceManager resourceManager = new LocalResourceManager(
 					JFaceResources.getResources());
 			String iconURI = model.getIconURI();
-			ImageDescriptor icon = getImageDescriptor(model);
-			try {
-				item.setImage(icon == null ? null : m.createImage(icon));
-			} catch (DeviceResourceException e) {
-				icon = ImageDescriptor.getMissingImageDescriptor();
-				item.setImage(m.createImage(icon));
-				// as we replaced the failed icon, log the message once.
-				Activator.trace(Policy.DEBUG_MENUS,
-						"failed to create image " + iconURI, e); //$NON-NLS-1$
+			Image iconImage = getImage(iconURI, resourceManager);
+			item.setImage(iconImage);
+			if (item instanceof ToolItem) {
+				iconURI = getDisabledIconURI(model);
+				iconImage = getImage(iconURI, resourceManager);
+				((ToolItem) item).setDisabledImage(iconImage);
 			}
 			disposeOldImages();
-			localResourceManager = m;
-		} else if (widget instanceof ToolItem) {
-			ToolItem item = (ToolItem) widget;
-			LocalResourceManager m = new LocalResourceManager(
-					JFaceResources.getResources());
-			String iconURI = model.getIconURI();
-			ImageDescriptor icon = getImageDescriptor(model);
-			try {
-				item.setImage(icon == null ? null : m.createImage(icon));
-			} catch (DeviceResourceException e) {
-				icon = ImageDescriptor.getMissingImageDescriptor();
-				item.setImage(m.createImage(icon));
-				// as we replaced the failed icon, log the message once.
-				Activator.trace(Policy.DEBUG_MENUS,
-						"failed to create image " + iconURI, e); //$NON-NLS-1$
-			}
-			disposeOldImages();
-			localResourceManager = m;
+			localResourceManager = resourceManager;
 		}
+	}
+
+	private String getDisabledIconURI(MItem toolItem) {
+		Object obj = toolItem.getTransientData().get(
+				IPresentationEngine.DISABLED_ICON_IMAGE_KEY);
+		return obj instanceof String ? (String) obj : null;
+	}
+
+	private Image getImage(String iconURI, LocalResourceManager resourceManager) {
+		Image image = null;
+
+		if (iconURI != null && iconURI.length() > 0) {
+			ImageDescriptor iconDescriptor = resUtils
+					.imageDescriptorFromURI(URI.createURI(iconURI));
+			if (iconDescriptor != null) {
+				try {
+					image = resourceManager.createImage(iconDescriptor);
+				} catch (DeviceResourceException e) {
+					iconDescriptor = ImageDescriptor
+							.getMissingImageDescriptor();
+					image = resourceManager.createImage(iconDescriptor);
+					// as we replaced the failed icon, log the message once.
+					Activator.trace(Policy.DEBUG_MENUS,
+							"failed to create image " + iconURI, e); //$NON-NLS-1$
+				}
+			}
+		}
+		return image;
 	}
 
 	private void disposeOldImages() {
@@ -787,14 +796,6 @@ public class HandledContributionItem extends ContributionItem {
 			menuMgr.addMenuListener(menuListener);
 		}
 		super.setParent(parent);
-	}
-
-	private ImageDescriptor getImageDescriptor(MUILabel element) {
-		String iconURI = element.getIconURI();
-		if (iconURI != null && iconURI.length() > 0) {
-			return resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
-		}
-		return null;
 	}
 
 	/**

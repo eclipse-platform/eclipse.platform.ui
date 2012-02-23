@@ -681,6 +681,10 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 					String iconUrl = MenuHelper.getIconURI(action.getImageDescriptor(),
 							application.getContext());
 					 toolItem.setIconURI(iconUrl);
+					String disabledIconURI = MenuHelper.getIconURI(
+							action.getDisabledImageDescriptor(), application.getContext());
+					MenuHelper.setDisabledIconURI(toolItem, disabledIconURI);
+
 					container.getChildren().add(toolItem);
 					renderer.linkModelToContribution(toolItem, item);
 				} else {
