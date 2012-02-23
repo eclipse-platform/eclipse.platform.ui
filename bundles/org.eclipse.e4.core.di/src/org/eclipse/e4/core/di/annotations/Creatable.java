@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Specifies that the target class that can be created by an injector as needed.
+ * Specifies that the target class can be created by an injector as needed.
  */
 @Qualifier
 @Documented
