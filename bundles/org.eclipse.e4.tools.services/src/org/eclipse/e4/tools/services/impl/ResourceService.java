@@ -79,7 +79,7 @@ public class ResourceService implements IResourceService {
 		}
 	}
 
-	static class ResourcePool implements IDiposeableResourcePool {
+	public static class ResourcePool implements IDiposeableResourcePool {
 		private ResourceService resourceService;
 
 		private List<PooledResource<Image>> pooledImages = new ArrayList<PooledResource<Image>>();
@@ -88,9 +88,9 @@ public class ResourceService implements IResourceService {
 		private Display display;
 
 		@Inject
-		public ResourcePool(ResourceService resourceService, Display display) {
+		public ResourcePool(IResourceService resourceService, Display display) {
 			this.display = display;
-			this.resourceService = resourceService;
+			this.resourceService = (ResourceService) resourceService;
 		}
 
 		public Image getImage(String key) throws CoreException {
