@@ -370,9 +370,9 @@ public class VirtualItem {
             Map.Entry entry = (Map.Entry)itr.next();
             int index = ((Index)entry.getKey()).intValue();
             if (index >= count) {
-                itr.remove();
                 VirtualItem item = (VirtualItem)entry.getValue(); 
                 item.dispose();
+                itr.remove();
             }
         }
         if (fItemCount == 0) {
@@ -526,9 +526,9 @@ public class VirtualItem {
         buffer.append("\n");
         indent = indent + "  ";
         for (int i = 0; i < fItemCount; i++) {
-            VirtualItem item = (VirtualItem)fItems.get(new Integer(i));
+            VirtualItem item = (VirtualItem)fItems.get(new Index(i));
             if (item != null) {
-                toStringItem(buffer, indent);
+                item.toStringItem(buffer, indent);
             } else {
                 buffer.append("<no item>\n");
             }
