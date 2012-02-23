@@ -493,8 +493,6 @@ public class StackRenderer extends LazyStackRenderer {
 		if ((location & EModelService.IN_SHARED_AREA) != 0) {
 			ctf.setMinimumCharacters(MIN_EDITOR_CHARS);
 			ctf.setUnselectedCloseVisible(true);
-			if (!ctf.getMRUVisible())
-				appendArrows(ctf);
 		} else {
 			ctf.setMinimumCharacters(MIN_VIEW_CHARS);
 			ctf.setUnselectedCloseVisible(false);
@@ -519,56 +517,6 @@ public class StackRenderer extends LazyStackRenderer {
 			return result;
 
 		return Boolean.parseBoolean(value.getCssText());
-	}
-
-	private void appendArrows(final CTabFolder tabFolder) {
-		ToolBar navLeftBar = new ToolBar(tabFolder, SWT.FLAT);
-		ToolItem navLeftItem = new ToolItem(navLeftBar, SWT.PUSH);
-		navLeftItem.setText("<"); //$NON-NLS-1$
-		navLeftItem.setToolTipText(SWTRenderersMessages.tabScrollingLeft);
-		tabFolder.addTabControl(navLeftBar, SWT.LEAD);
-		navLeftItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int count = tabFolder.getItemCount();
-				// ignore if no items or if the first item is already showing
-				if (count == 0 || tabFolder.getItem(0).isShowing()) {
-					return;
-				}
-
-				for (int i = 1; i < count; i++) {
-					if (tabFolder.getItem(i).isShowing()) {
-						// found an item that's shown, show the one before it
-						tabFolder.showItem(tabFolder.getItem(i - 1));
-						return;
-					}
-				}
-			}
-		});
-
-		ToolBar navRightBar = new ToolBar(tabFolder, SWT.FLAT);
-		ToolItem navRightItem = new ToolItem(navRightBar, SWT.PUSH);
-		navRightItem.setText(">"); //$NON-NLS-1$
-		navRightItem.setToolTipText(SWTRenderersMessages.tabScrollingRight);
-		tabFolder.addTabControl(navRightBar, SWT.TRAIL);
-		navRightItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int count = tabFolder.getItemCount();
-				// ignore if no items or if the last item is already showing
-				if (count == 0 || tabFolder.getItem(count - 1).isShowing()) {
-					return;
-				}
-
-				for (int i = count - 2; i >= 0; i--) {
-					if (tabFolder.getItem(i).isShowing()) {
-						// found an item that's shown, show the one after it
-						tabFolder.showItem(tabFolder.getItem(i + 1));
-						return;
-					}
-				}
-			}
-		});
 	}
 
 	/**
