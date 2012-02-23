@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 2.0
  */
-public abstract class AbstractElementListSelectionDialog extends
-        SelectionStatusDialog {
+public abstract class AbstractElementListSelectionDialog extends SelectionStatusDialog {
 
     private ILabelProvider fRenderer;
 
@@ -169,19 +168,37 @@ public abstract class AbstractElementListSelectionDialog extends
     }
 
     /**
-     * Sets the elements of the list (widget).
-     * To be called within open().
-     * @param elements the elements of the list.
-     */
+	 * Sets the elements of the list (widget).
+	 * 
+	 * @param elements
+	 *            the elements of the list.
+	 */
     protected void setListElements(Object[] elements) {
         Assert.isNotNull(fFilteredList);
         fFilteredList.setElements(elements);
+		handleElementsChanged();
     }
 
     /**
-     * Sets the filter pattern.
-     * @param filter the filter pattern.
-     */
+	 * This method is called when the elements of the backing list are changed to refresh 
+	 * the standard dialog widgets.
+	 * 
+	 * @since 3.103
+	 */
+	protected void handleElementsChanged() {
+		boolean enabled = !fFilteredList.isEmpty();
+		fMessage.setEnabled(enabled);
+		fFilterText.setEnabled(enabled);
+		fFilteredList.setEnabled(enabled);
+		updateOkState();
+	}
+
+	/**
+	 * Sets the filter pattern.
+	 * 
+	 * @param filter
+	 *            the filter pattern.
+	 */
     public void setFilter(String filter) {
         if (fFilterText == null) {
 			fFilter = filter;
@@ -455,9 +472,9 @@ public abstract class AbstractElementListSelectionDialog extends
      * Handles empty list by disabling widgets.
      */
     protected void handleEmptyList() {
-        fMessage.setEnabled(false);
-        fFilterText.setEnabled(false);
-        fFilteredList.setEnabled(false);
+		fMessage.setEnabled(false);
+		fFilterText.setEnabled(false);
+		fFilteredList.setEnabled(false);
         updateOkState();
     }
 
