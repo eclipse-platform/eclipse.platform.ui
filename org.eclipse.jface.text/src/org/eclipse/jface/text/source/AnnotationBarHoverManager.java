@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -565,11 +565,12 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * Returns the number of the currently visible lines.
 	 *
 	 * @return the number of the currently visible lines
-	 * @deprecated to avoid deprecation warning
 	 */
 	private int computeNumberOfVisibleLines() {
-		// Hack to reduce amount of copied code.
-		return LineNumberRulerColumn.getVisibleLinesInViewport(fSourceViewer.getTextWidget());
+		StyledText textWidget= fSourceViewer.getTextWidget();
+		int lineHeight= textWidget.getLineHeight();
+		int clientAreaHeight= textWidget.getClientArea().height;
+		return clientAreaHeight / lineHeight;
 	}
 
 	/**
