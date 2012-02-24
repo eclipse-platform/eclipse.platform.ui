@@ -106,6 +106,11 @@ public final class BindingService implements IBindingService {
 		this.context = context;
 	}
 
+	@Inject
+	public void setContext(IEclipseContext context) {
+		this.context = context;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
