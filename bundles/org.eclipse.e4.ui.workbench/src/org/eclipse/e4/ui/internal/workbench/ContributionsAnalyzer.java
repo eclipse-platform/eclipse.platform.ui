@@ -177,16 +177,18 @@ public final class ContributionsAnalyzer {
 
 	static boolean isFiltered(MMenu menuModel, MMenuContribution menuContribution,
 			boolean includePopups) {
-		if (!includePopups) {
-			// not including popups, so filter out popup menu contributions
-			return menuContribution.getTags().contains(ContributionsAnalyzer.MC_POPUP);
-		} else if (menuModel.getTags().contains(ContributionsAnalyzer.MC_POPUP)) {
+		if (includePopups || menuModel.getTags().contains(ContributionsAnalyzer.MC_POPUP)) {
 			return !menuContribution.getTags().contains(ContributionsAnalyzer.MC_POPUP)
 					&& menuContribution.getTags().contains(ContributionsAnalyzer.MC_MENU);
 		}
 		if (menuModel.getTags().contains(ContributionsAnalyzer.MC_MENU)) {
 			return !menuContribution.getTags().contains(ContributionsAnalyzer.MC_MENU)
 					&& menuContribution.getTags().contains(ContributionsAnalyzer.MC_POPUP);
+		}
+		if (!includePopups) {
+			// not including popups, so filter out popup menu contributions if the menu is a regular
+			// menu
+			return menuContribution.getTags().contains(ContributionsAnalyzer.MC_POPUP);
 		}
 		return false;
 	}
