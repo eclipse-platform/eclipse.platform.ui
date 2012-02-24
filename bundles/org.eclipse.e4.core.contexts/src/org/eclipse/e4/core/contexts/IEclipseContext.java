@@ -286,8 +286,17 @@ public interface IEclipseContext {
 	public void dispose();
 
 	/**
-	 * <STRONG>EXPERIMENTAL, DO NOT USE</STRONG>
 	 * Returns the value stored on the active leaf node of the context's tree.
+	 * <p>
+	 * This method is similar to <code>getActiveLeaf().get(clazz)</code> but optimized
+	 * for a large number of repeat invocations.
+	 * </p>
+	 * <p>Use this method in code paths that are going to receive a large number
+	 * of repeat calls, such as inside {@link RunAndTrack#changed(IEclipseContext)}.
+	 * </p>
+	 * <p>In the code paths that won't be cycled through large number of times, 
+	 * consider using <code>getActiveLeaf().get(clazz)</code>.
+	 * </p>
 	 * @param clazz the class that needs to be found in the active context
 	 * @return an object corresponding to the given class, or <code>null</code>
 	 * @see IEclipseContext#getActiveLeaf()
@@ -295,8 +304,17 @@ public interface IEclipseContext {
 	public <T> T getActive(Class<T> clazz);
 
 	/**
-	 * <STRONG>EXPERIMENTAL, DO NOT USE</STRONG>
 	 * Returns the named value stored on the active leaf node of the context's tree.
+	 * <p>
+	 * This method is similar to <code>getActiveLeaf().get(name)</code> but optimized
+	 * for a large number of repeat invocations.
+	 * </p>
+	 * <p>Use this method in code paths that are going to receive a large number
+	 * of repeat calls, such as inside {@link RunAndTrack#changed(IEclipseContext)}.
+	 * </p>
+	 * <p>In the code paths that won't be cycled through large number of times, 
+	 * consider using <code>getActiveLeaf().get(name)</code>.
+	 * </p>
 	 * @param name the name of the value to return
 	 * @return an object corresponding to the given name, or <code>null</code>
 	 * @see IEclipseContext#getActiveLeaf()
