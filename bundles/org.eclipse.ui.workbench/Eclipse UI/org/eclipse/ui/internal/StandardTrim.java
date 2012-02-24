@@ -78,7 +78,10 @@ public class StandardTrim {
 	private void createStatusLine(Composite parent, MToolControl toolControl) {
 		IEclipseContext context = modelService.getContainingContext(toolControl);
 		WorkbenchWindow wbw = (WorkbenchWindow) context.get(IWorkbenchWindow.class);
-		manager = wbw.getStatusLineManager();
-		manager.createControl(parent);
+		// wbw may be null if workspace is started with no open perspectives.
+		if (wbw != null) {
+			manager = wbw.getStatusLineManager();
+			manager.createControl(parent);
+		}
 	}
 }
