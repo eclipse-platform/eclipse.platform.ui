@@ -60,7 +60,7 @@ public final class EvaluationService implements IEvaluationService {
 			context.get(RE_EVAL);
 			String[] vars = ratVariables.toArray(new String[ratVariables.size()]);
 			for (String var : vars) {
-				Object value = context.getActiveLeaf().get(var);
+				Object value = context.getActive(var);
 				if (value == null) {
 					ratContext.remove(var);
 				} else {

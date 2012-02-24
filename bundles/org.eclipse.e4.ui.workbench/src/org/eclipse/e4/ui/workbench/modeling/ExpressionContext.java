@@ -82,7 +82,7 @@ public class ExpressionContext implements IEvaluationContext {
 	 * @see org.eclipse.core.expressions.IEvaluationContext#getDefaultVariable()
 	 */
 	public Object getDefaultVariable() {
-		Object sel = eclipseContext.getActiveLeaf().get(IServiceConstants.ACTIVE_SELECTION);
+		Object sel = eclipseContext.getActive(IServiceConstants.ACTIVE_SELECTION);
 		return sel == null ? Collections.EMPTY_LIST : sel;
 	}
 
@@ -113,7 +113,7 @@ public class ExpressionContext implements IEvaluationContext {
 	 * @see org.eclipse.core.expressions.IEvaluationContext#getVariable(java.lang.String)
 	 */
 	public Object getVariable(String name) {
-		Object obj = eclipseContext.getActiveLeaf().get(name);
+		Object obj = eclipseContext.getActive(name);
 		return obj == null ? IEvaluationContext.UNDEFINED_VARIABLE : obj;
 	}
 
