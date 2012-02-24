@@ -24,6 +24,7 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
@@ -42,6 +43,7 @@ import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.util.Util;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
@@ -82,6 +84,13 @@ public final class BindingService implements IBindingService {
 	private Map<String, MBindingContext> bindingContexts = new HashMap<String, MBindingContext>();
 
 	private String[] activeSchemeIds;
+	
+	/**
+	 * Key assist dialog for workbench key bindings, lazily created and cached
+	 */
+	private GlobalKeyAssistDialog keyAssistDialog;
+
+	private IEclipseContext context;
 
 	/*
 	 * (non-Javadoc)
@@ -90,6 +99,11 @@ public final class BindingService implements IBindingService {
 	 */
 	public void dispose() {
 		bp.dispose();
+	}
+
+	@Inject
+	public void setContext(IEclipseContext context) {
+		this.context = context;
 	}
 
 	/*
@@ -329,7 +343,14 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#openKeyAssistDialog()
 	 */
 	public void openKeyAssistDialog() {
-		dispatcher.openMultiKeyAssistShell();
+		if (keyAssistDialog == null) {
+			Display.getCurrent();
+			keyAssistDialog = new GlobalKeyAssistDialog(context, dispatcher);
+		}
+		if (keyAssistDialog.getShell() == null) {
+			keyAssistDialog.setParentShell(Display.getCurrent().getActiveShell());
+		}
+		keyAssistDialog.open();
 	}
 
 	/*

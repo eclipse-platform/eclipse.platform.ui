@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.jface.bindings.Binding;
-import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.window.Window;
@@ -53,9 +52,7 @@ import org.eclipse.swt.widgets.TableItem;
  * 
  * @since 3.1
  */
-public final class KeyAssistDialog extends PopupDialog {
-
-	public static final String WINDOW_SHOW_KEY_ASSIST = "org.eclipse.ui.window.showKeyAssist"; //$NON-NLS-1$
+public class KeyAssistDialog extends PopupDialog {
 
 	/**
 	 * The data key for the binding stored on an SWT widget. The key is a fully-qualified name, but
@@ -71,7 +68,7 @@ public final class KeyAssistDialog extends PopupDialog {
 	/**
 	 * The ordered list of command identifiers corresponding to the table.
 	 */
-	private final List<Binding> bindings = new ArrayList<Binding>();
+	private List<Binding> bindings = new ArrayList<Binding>();
 
 	/**
 	 * The table containing of the possible completions. This value is <code>null</code> until the
@@ -88,7 +85,7 @@ public final class KeyAssistDialog extends PopupDialog {
 	/**
 	 * The key binding listener for the associated workbench.
 	 */
-	private final KeyBindingDispatcher workbenchKeyboard;
+	private KeyBindingDispatcher workbenchKeyboard;
 
 	/**
 	 * A sorted map of conflicts or partial matches to be used when the dialog pops up.
@@ -109,12 +106,8 @@ public final class KeyAssistDialog extends PopupDialog {
 	 *            The context in which this dialog is created; must not be <code>null</code>.
 	 * @param associatedKeyboard
 	 *            The key binding listener for the workbench; must not be <code>null</code>.
-	 * @param associatedState
-	 *            The key binding state associated with the workbench; must not be <code>null</code>
-	 *            .
 	 */
-	public KeyAssistDialog(final IEclipseContext context,
-			final KeyBindingDispatcher associatedKeyboard, final KeySequence associatedState) {
+	public KeyAssistDialog(IEclipseContext context, KeyBindingDispatcher associatedKeyboard) {
 		super((Shell) null, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false, false, false, null, null);
 		//super(null, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false, false, false, false, DIALOG_TITLE, getKeySequenceString()); //$NON-NLS-1$
 
@@ -126,7 +119,7 @@ public final class KeyAssistDialog extends PopupDialog {
 	 * Clears out the remembered state of the key assist dialog. This includes its width, as well as
 	 * the selected binding.
 	 */
-	public final void clearRememberedState() {
+	public void clearRememberedState() {
 		previousWidth = NO_REMEMBERED_WIDTH;
 	}
 
@@ -137,7 +130,7 @@ public final class KeyAssistDialog extends PopupDialog {
 	 * 
 	 * @return Whether the shell was already closed.
 	 */
-	public final boolean close() {
+	public boolean close() {
 		return close(false);
 	}
 
@@ -149,7 +142,7 @@ public final class KeyAssistDialog extends PopupDialog {
 	 *            Whether the internal state should be remembered.
 	 * @return Whether the shell was already closed.
 	 */
-	public final boolean close(final boolean rememberState) {
+	public boolean close(boolean rememberState) {
 		return close(rememberState, true);
 	}
 
@@ -163,33 +156,19 @@ public final class KeyAssistDialog extends PopupDialog {
 	 *            Whether the state should be reset.
 	 * @return Whether the shell was already closed.
 	 */
-	private final boolean close(final boolean rememberState, final boolean resetState) {
-		final Shell shell = getShell();
+	private boolean close(boolean rememberState, boolean resetState) {
+		Shell shell = getShell();
 		if (rememberState) {
 
 			// Remember the previous width.
-			final int widthToRemember;
+			int widthToRemember;
 			if ((shell != null) && (!shell.isDisposed())) {
 				widthToRemember = getShell().getSize().x;
 			} else {
 				widthToRemember = NO_REMEMBERED_WIDTH;
 			}
 
-			// Remember the selected command name and key sequence.
-			final Binding bindingToRemember;
-			if ((completionsTable != null) && (!completionsTable.isDisposed())) {
-				final int selectedIndex = completionsTable.getSelectionIndex();
-				if (selectedIndex != -1) {
-					final TableItem selectedItem = completionsTable.getItem(selectedIndex);
-					bindingToRemember = (Binding) selectedItem.getData(BINDING_KEY);
-				} else {
-					bindingToRemember = null;
-				}
-			} else {
-				bindingToRemember = null;
-			}
-
-			rememberState(widthToRemember, bindingToRemember);
+			this.previousWidth = widthToRemember;
 			completionsTable = null;
 		}
 		matches = null;
@@ -204,17 +183,17 @@ public final class KeyAssistDialog extends PopupDialog {
 	 * @param size
 	 *            The final size of the dialog; must not be <code>null</code>.
 	 */
-	private final void configureLocation(final Point size) {
-		final Shell shell = getShell();
+	private void configureLocation(Point size) {
+		Shell shell = getShell();
 
-		final Shell workbenchWindowShell = (Shell) shell.getParent();
-		final int xCoord;
-		final int yCoord;
+		Shell workbenchWindowShell = (Shell) shell.getParent();
+		int xCoord;
+		int yCoord;
 		if (workbenchWindowShell != null) {
 			/*
 			 * Position the shell at the bottom right corner of the workbench window
 			 */
-			final Rectangle workbenchWindowBounds = workbenchWindowShell.getBounds();
+			Rectangle workbenchWindowBounds = workbenchWindowShell.getBounds();
 			xCoord = workbenchWindowBounds.x + workbenchWindowBounds.width - size.x - 10;
 			yCoord = workbenchWindowBounds.y + workbenchWindowBounds.height - size.y - 10;
 
@@ -223,7 +202,7 @@ public final class KeyAssistDialog extends PopupDialog {
 			yCoord = 0;
 
 		}
-		final Rectangle bounds = new Rectangle(xCoord, yCoord, size.x, size.y);
+		Rectangle bounds = new Rectangle(xCoord, yCoord, size.x, size.y);
 		shell.setBounds(getConstrainedShellBounds(bounds));
 	}
 
@@ -235,12 +214,12 @@ public final class KeyAssistDialog extends PopupDialog {
 	 * 
 	 * @return The size of the dialog
 	 */
-	private final Point configureSize() {
-		final Shell shell = getShell();
+	private Point configureSize() {
+		Shell shell = getShell();
 
 		// Get the packed size of the shell.
 		shell.pack();
-		final Point size = shell.getSize();
+		Point size = shell.getSize();
 
 		// Use the previous width if appropriate.
 		if ((previousWidth != NO_REMEMBERED_WIDTH) && (previousWidth > size.x)) {
@@ -248,11 +227,11 @@ public final class KeyAssistDialog extends PopupDialog {
 		}
 
 		// Enforce maximum sizing.
-		final Shell workbenchWindowShell = (Shell) shell.getParent();
+		Shell workbenchWindowShell = (Shell) shell.getParent();
 		if (workbenchWindowShell != null) {
-			final Point workbenchWindowSize = workbenchWindowShell.getSize();
-			final int maxWidth = workbenchWindowSize.x * 2 / 5;
-			final int maxHeight = workbenchWindowSize.y / 2;
+			Point workbenchWindowSize = workbenchWindowShell.getSize();
+			int maxWidth = workbenchWindowSize.x * 2 / 5;
+			int maxHeight = workbenchWindowSize.y / 2;
 			if (size.x > maxWidth) {
 				size.x = maxWidth;
 			}
@@ -273,11 +252,11 @@ public final class KeyAssistDialog extends PopupDialog {
 	 * @param parent
 	 *            The parent composite to contain the dialog area; must not be <code>null</code>.
 	 */
-	protected final Control createDialogArea(final Composite parent) {
+	protected Control createDialogArea(Composite parent) {
 
 		// Create a composite for the dialog area.
-		final Composite composite = new Composite(parent, SWT.NONE);
-		final GridLayout compositeLayout = new GridLayout();
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout compositeLayout = new GridLayout();
 		compositeLayout.marginHeight = 0;
 		compositeLayout.marginWidth = 0;
 		composite.setLayout(compositeLayout);
@@ -285,7 +264,7 @@ public final class KeyAssistDialog extends PopupDialog {
 		composite.setBackground(parent.getBackground());
 
 		// Layout the partial matches.
-		final Collection<Binding> bindings;
+		Collection<Binding> bindings;
 		// if we're going to display a list of conflicts or partial matches...
 		if (matches != null) {
 			bindings = matches;
@@ -311,8 +290,8 @@ public final class KeyAssistDialog extends PopupDialog {
 	 * @param parent
 	 *            The parent composite for the dialog area; must not be <code>null</code>.
 	 */
-	private final void createEmptyDialogArea(final Composite parent) {
-		final Label noMatchesLabel = new Label(parent, SWT.NULL);
+	private void createEmptyDialogArea(Composite parent) {
+		Label noMatchesLabel = new Label(parent, SWT.NULL);
 		noMatchesLabel.setText("No matches"); //$NON-NLS-1$
 		noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		noMatchesLabel.setBackground(parent.getBackground());
@@ -329,27 +308,26 @@ public final class KeyAssistDialog extends PopupDialog {
 	 *            The lexicographically sorted map of partial matches for the current state; must
 	 *            not be <code>null</code> or empty.
 	 */
-	private final void createTableDialogArea(final Composite parent,
-			final Collection<Binding> partialMatches) {
+	private void createTableDialogArea(Composite parent, Collection<Binding> partialMatches) {
 		// Layout the table.
 		completionsTable = new Table(parent, SWT.FULL_SELECTION | SWT.SINGLE);
-		final GridData gridData = new GridData(GridData.FILL_BOTH);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
 		completionsTable.setLayoutData(gridData);
 		completionsTable.setBackground(parent.getBackground());
 		completionsTable.setLinesVisible(true);
 
 		// Initialize the columns and rows.
 		bindings.clear();
-		final TableColumn columnCommandName = new TableColumn(completionsTable, SWT.LEFT, 0);
-		final TableColumn columnKeySequence = new TableColumn(completionsTable, SWT.LEFT, 1);
-		final Iterator<Binding> itemsItr = partialMatches.iterator();
+		TableColumn columnCommandName = new TableColumn(completionsTable, SWT.LEFT, 0);
+		TableColumn columnKeySequence = new TableColumn(completionsTable, SWT.LEFT, 1);
+		Iterator<Binding> itemsItr = partialMatches.iterator();
 		while (itemsItr.hasNext()) {
-			final Binding binding = itemsItr.next();
-			final String sequence = binding.getTriggerSequence().format();
-			final ParameterizedCommand command = binding.getParameterizedCommand();
+			Binding binding = itemsItr.next();
+			String sequence = binding.getTriggerSequence().format();
+			ParameterizedCommand command = binding.getParameterizedCommand();
 			try {
-				final String[] text = { command.getName(), sequence };
-				final TableItem item = new TableItem(completionsTable, SWT.NULL);
+				String[] text = { command.getName(), sequence };
+				TableItem item = new TableItem(completionsTable, SWT.NULL);
 				item.setText(text);
 				item.setData(BINDING_KEY, binding);
 				bindings.add(binding);
@@ -372,7 +350,7 @@ public final class KeyAssistDialog extends PopupDialog {
 		 * If you double-click on the table, it should execute the selected command.
 		 */
 		completionsTable.addListener(SWT.DefaultSelection, new Listener() {
-			public final void handleEvent(final Event event) {
+			public void handleEvent(Event event) {
 				executeKeyBinding(event);
 			}
 		});
@@ -382,15 +360,15 @@ public final class KeyAssistDialog extends PopupDialog {
 	 * Handles the default selection event on the table of possible completions. This attempts to
 	 * execute the given command.
 	 */
-	private final void executeKeyBinding(final Event trigger) {
-		final int selectionIndex = completionsTable.getSelectionIndex();
+	private void executeKeyBinding(Event trigger) {
+		int selectionIndex = completionsTable.getSelectionIndex();
 		// Try to execute the corresponding command.
 		if (selectionIndex >= 0) {
-			final Binding binding = bindings.get(selectionIndex);
+			Binding binding = bindings.get(selectionIndex);
 			try {
 				// workbenchKeyboard.updateShellKludge(null);
 				workbenchKeyboard.executeCommand(binding.getParameterizedCommand(), trigger);
-			} catch (final CommandException e) {
+			} catch (CommandException e) {
 				// WorkbenchPlugin.log(binding.getParameterizedCommand().toString(), e);
 				// TODO we probably need to log something here.
 				System.err.println(binding.getParameterizedCommand().toString() + " : " + e); //$NON-NLS-1$
@@ -398,7 +376,7 @@ public final class KeyAssistDialog extends PopupDialog {
 		}
 	}
 
-	private final Collection<Binding> getActiveBindings() {
+	private Collection<Binding> getActiveBindings() {
 
 		EBindingService bindingService = context.getActiveLeaf().get(EBindingService.class);
 
@@ -409,8 +387,8 @@ public final class KeyAssistDialog extends PopupDialog {
 		Collection<Binding> conflictBindings = bindingService.getAllConflicts();
 		Collection<Binding> sortedMatches = new TreeSet<Binding>(new Comparator<Binding>() {
 			public int compare(Binding binding1, Binding binding2) {
-				final ParameterizedCommand cmdA = binding1.getParameterizedCommand();
-				final ParameterizedCommand cmdB = binding2.getParameterizedCommand();
+				ParameterizedCommand cmdA = binding1.getParameterizedCommand();
+				ParameterizedCommand cmdB = binding2.getParameterizedCommand();
 				int result = 0;
 				try {
 					result = cmdA.getName().compareTo(cmdB.getName());
@@ -472,9 +450,9 @@ public final class KeyAssistDialog extends PopupDialog {
 	 * 
 	 * @return The return code from this dialog.
 	 */
-	public final int open() {
+	public int open() {
 		// If the dialog is already open, dispose the shell and recreate it.
-		final Shell shell = getShell();
+		Shell shell = getShell();
 		if (shell != null) {
 			close(false, false);
 			return Window.OK;
@@ -482,7 +460,7 @@ public final class KeyAssistDialog extends PopupDialog {
 		create();
 
 		// Configure the size and location.
-		final Point size = configureSize();
+		Point size = configureSize();
 		configureLocation(size);
 
 		// Call the super method.
@@ -495,16 +473,16 @@ public final class KeyAssistDialog extends PopupDialog {
 	 * @return The return code from this dialog.
 	 * @since 3.3
 	 */
-	public final int open(Collection<Binding> bindings) {
+	public int open(Collection<Binding> bindings) {
 		matches = new TreeSet<Binding>(new Comparator<Binding>() {
-			public final int compare(final Binding a, final Binding b) {
-				final Binding bindingA = a;
-				final Binding bindingB = b;
-				final ParameterizedCommand commandA = bindingA.getParameterizedCommand();
-				final ParameterizedCommand commandB = bindingB.getParameterizedCommand();
+			public int compare(Binding a, Binding b) {
+				Binding bindingA = a;
+				Binding bindingB = b;
+				ParameterizedCommand commandA = bindingA.getParameterizedCommand();
+				ParameterizedCommand commandB = bindingB.getParameterizedCommand();
 				try {
 					return commandA.getName().compareTo(commandB.getName());
-				} catch (final NotDefinedException e) {
+				} catch (NotDefinedException e) {
 					// should not happen
 					return 0;
 				}
@@ -513,7 +491,7 @@ public final class KeyAssistDialog extends PopupDialog {
 		matches.addAll(bindings);
 
 		// If the dialog is already open, dispose the shell and recreate it.
-		final Shell shell = getShell();
+		Shell shell = getShell();
 		if (shell != null) {
 			close(false, false);
 			return Window.OK;
@@ -521,23 +499,11 @@ public final class KeyAssistDialog extends PopupDialog {
 		create();
 
 		// Configure the size and location.
-		final Point size = configureSize();
+		Point size = configureSize();
 		configureLocation(size);
 
 		// Call the super method.
 		return super.open();
-	}
-
-	/**
-	 * Remembers the current state of this dialog.
-	 * 
-	 * @param previousWidth
-	 *            The previous width of the dialog.
-	 * @param binding
-	 *            The binding to remember, may be <code>null</code> if none.
-	 */
-	private final void rememberState(final int previousWidth, final Binding binding) {
-		this.previousWidth = previousWidth;
 	}
 
 	/**
@@ -547,7 +513,23 @@ public final class KeyAssistDialog extends PopupDialog {
 	 *            The new parent shell; this value may be <code>null</code> if there is to be no
 	 *            parent.
 	 */
-	public final void setParentShell(final Shell newParentShell) {
+	public void setParentShell(Shell newParentShell) {
 		super.setParentShell(newParentShell);
+	}
+
+	/**
+	 * Returns the currently selected binding from the table if the table is not disposed
+	 * 
+	 * @return the currently selected binding or <code>null</code>
+	 */
+	protected Binding getSelectedBinding() {
+		if ((completionsTable != null) && (!completionsTable.isDisposed())) {
+			int selectedIndex = completionsTable.getSelectionIndex();
+			if (selectedIndex != -1) {
+				TableItem selectedItem = completionsTable.getItem(selectedIndex);
+				return (Binding) selectedItem.getData(BINDING_KEY);
+			}
+		}
+		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -447,19 +447,9 @@ public class KeyBindingDispatcher {
 	 * binding. This method lazily creates a <code>keyAssistDialog</code> and shares it between
 	 * executions.
 	 */
-	public final void openMultiKeyAssistShell() {
+	private final void openKeyAssistShell(final Collection<Binding> bindings) {
 		if (keyAssistDialog == null) {
-			keyAssistDialog = new KeyAssistDialog(context, this, state);
-		}
-		if (keyAssistDialog.getShell() == null) {
-			keyAssistDialog.setParentShell(getDisplay().getActiveShell());
-		}
-		keyAssistDialog.open();
-	}
-
-	public final void openKeyAssistShell(final Collection<Binding> bindings) {
-		if (keyAssistDialog == null) {
-			keyAssistDialog = new KeyAssistDialog(context, this, state);
+			keyAssistDialog = new KeyAssistDialog(context, this);
 		}
 		if (keyAssistDialog.getShell() == null) {
 			keyAssistDialog.setParentShell(getDisplay().getActiveShell());
