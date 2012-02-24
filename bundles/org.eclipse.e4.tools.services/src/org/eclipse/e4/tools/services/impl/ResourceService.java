@@ -244,11 +244,11 @@ public class ResourceService implements IResourceService {
 
 	protected void removePooledResource(PooledResource<?> resource) {
 		if (resource.getResource() instanceof Image) {
-			displayPool.get(resource.display).getImagePool().remove(resource);
+			displayPool.get(resource.display).getImagePool().remove(resource.imageKey);
 		} else if (resource.getResource() instanceof Color) {
-			displayPool.get(resource.display).getColorPool().remove(resource);
+			displayPool.get(resource.display).getColorPool().remove(resource.imageKey);
 		} else if (resource.getResource() instanceof Font) {
-			displayPool.get(resource.display).getFontPool().remove(resource);
+			displayPool.get(resource.display).getFontPool().remove(resource.imageKey);
 		}
 	}
 
@@ -268,7 +268,7 @@ public class ResourceService implements IResourceService {
 			}
 		}
 
-		if (resource != null) {
+		if (resource != null && resource.getResource() != null) {
 			resource.count++;
 		} else {
 			resource = new PooledResource<R>(display, this, key,
