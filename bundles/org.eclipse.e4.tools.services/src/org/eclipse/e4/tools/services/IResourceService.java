@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Display;
 public interface IResourceService {
 	public interface IPooledResource<T> {
 		public T getResource();
+		public String getId();
 		public void dispose();
 	}
 	

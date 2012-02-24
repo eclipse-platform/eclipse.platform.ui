@@ -49,16 +49,20 @@ public class ResourceService implements IResourceService {
 		private Display display;
 		private int count;
 		private T resource;
-		private String imageKey;
+		private String id;
 		private ResourceService resourceService;
 
 		PooledResource(Display display, ResourceService resourceService,
-				String imageKey, T resource) {
+				String id, T resource) {
 			this.display = display;
-			this.imageKey = imageKey;
+			this.id = id;
 			this.count = 1;
 			this.resourceService = resourceService;
 			this.resource = resource;
+		}
+		
+		public String getId() {
+			return id;
 		}
 
 		public T getResource() {
@@ -73,18 +77,18 @@ public class ResourceService implements IResourceService {
 					resource.dispose();
 				}
 				resource = null;
-				imageKey = null;
+				id = null;
 				resourceService = null;
 			}
 		}
 	}
 
 	public static class ResourcePool implements IDiposeableResourcePool {
-		private ResourceService resourceService;
+		private IResourceService resourceService;
 
-		private List<PooledResource<Image>> pooledImages = new ArrayList<PooledResource<Image>>();
-		private List<PooledResource<Font>> pooledFonts = new ArrayList<PooledResource<Font>>();
-		private List<PooledResource<Color>> pooledColors = new ArrayList<PooledResource<Color>>();
+		private List<IPooledResource<Image>> pooledImages = new ArrayList<IPooledResource<Image>>();
+		private List<IPooledResource<Font>> pooledFonts = new ArrayList<IPooledResource<Font>>();
+		private List<IPooledResource<Color>> pooledColors = new ArrayList<IPooledResource<Color>>();
 		private Display display;
 
 		@Inject
@@ -100,10 +104,10 @@ public class ResourceService implements IResourceService {
 								"org.eclipse.e4.tools.services",
 								"The pool is disposed"));
 			}
-			PooledResource<Image> image = null;
+			IPooledResource<Image> image = null;
 
-			for (PooledResource<Image> img : pooledImages) {
-				if (img.imageKey.equals(key)) {
+			for (IPooledResource<Image> img : pooledImages) {
+				if (img.getId().equals(key)) {
 					image = img;
 				}
 			}
@@ -123,9 +127,9 @@ public class ResourceService implements IResourceService {
 								"The pool is disposed"));
 			}
 			
-			PooledResource<Font> font = null;
-			for (PooledResource<Font> fon : pooledFonts) {
-				if (fon.imageKey.equals(key)) {
+			IPooledResource<Font> font = null;
+			for (IPooledResource<Font> fon : pooledFonts) {
+				if (fon.getId().equals(key)) {
 					font = fon;
 				}
 			}
@@ -143,10 +147,10 @@ public class ResourceService implements IResourceService {
 								"org.eclipse.e4.tools.services",
 								"The pool is disposed"));
 			}
-			PooledResource<Color> color = null;
+			IPooledResource<Color> color = null;
 			
-			for (PooledResource<Color> col : pooledColors) {
-				if (col.imageKey.equals(key)) {
+			for (IPooledResource<Color> col : pooledColors) {
+				if (col.getId().equals(key)) {
 					color = col;
 				}
 			}
@@ -244,11 +248,11 @@ public class ResourceService implements IResourceService {
 
 	protected void removePooledResource(PooledResource<?> resource) {
 		if (resource.getResource() instanceof Image) {
-			displayPool.get(resource.display).getImagePool().remove(resource.imageKey);
+			displayPool.get(resource.display).getImagePool().remove(resource.getId());
 		} else if (resource.getResource() instanceof Color) {
-			displayPool.get(resource.display).getColorPool().remove(resource.imageKey);
+			displayPool.get(resource.display).getColorPool().remove(resource.getId());
 		} else if (resource.getResource() instanceof Font) {
-			displayPool.get(resource.display).getFontPool().remove(resource.imageKey);
+			displayPool.get(resource.display).getFontPool().remove(resource.getId());
 		}
 	}
 
