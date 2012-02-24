@@ -220,6 +220,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         getContentProvider().inputChanged(this, oldInput, input);
         fItemsMap.clear();
         fInput = input;
+        mapElement(fInput, getTree());
         getContentProvider().postInputChanged(this, oldInput  , input);
         fTree.setData(fInput);
         fTree.setSelection(EMPTY_ITEMS_ARRAY);
@@ -564,28 +565,36 @@ public class InternalVirtualTreeModelViewer extends Viewer
             return fTree;
         }
 
-        for (int i = 0; item != null && i < path.getSegmentCount(); i++) {
-            Object segment = path.getSegment(i);
-            item = item.findItem(segment);
+        List itemsList = (List)fItemsMap.get(path.getLastSegment());
+        for (int i = 0; i < itemsList.size(); i++) {
+        	if ( path.equals(getTreePathFromItem((VirtualItem)itemsList.get(i))) ) {
+        		return (VirtualItem)itemsList.get(i);
+        	}
         }
+        
+//        for (int i = 0; item != null && i < path.getSegmentCount(); i++) {
+//            Object segment = path.getSegment(i);
+//            item = item.findItem(segment);
+//        }
         return item;
     }
 
     static private final VirtualItem[] EMPTY_ITEMS_ARRAY = new VirtualItem[0];
 
     public VirtualItem[] findItems(Object elementOrTreePath) {
-        if (elementOrTreePath instanceof TreePath) {
-            VirtualItem item = findItem((TreePath) elementOrTreePath);
-            return item == null ? EMPTY_ITEMS_ARRAY : new VirtualItem[] { item };
-        } else if (getInput().equals(elementOrTreePath)) {
-            return new VirtualItem[] { getTree() };
+    	Object element = elementOrTreePath;
+    	if (elementOrTreePath instanceof TreePath) {
+    		TreePath path = (TreePath)elementOrTreePath;
+    		if (path.getSegmentCount() == 0) {
+                return new VirtualItem[] { getTree() };
+    		}
+    		element = path.getLastSegment();
+    	}
+        List itemsList = (List) fItemsMap.get(element);
+        if (itemsList == null) {
+            return EMPTY_ITEMS_ARRAY;
         } else {
-            List itemsList = (List) fItemsMap.get(elementOrTreePath);
-            if (itemsList == null) {
-                return EMPTY_ITEMS_ARRAY;
-            } else {
-                return (VirtualItem[]) itemsList.toArray(new VirtualItem[itemsList.size()]);
-            }
+            return (VirtualItem[]) itemsList.toArray(new VirtualItem[itemsList.size()]);
         }
     }
 
@@ -1373,7 +1382,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     public void autoExpand(TreePath elementPath) {
         int level = getAutoExpandLevel();
         if (level > 0 || level == org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer.ALL_LEVELS) {
-            if (level == org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer.ALL_LEVELS || level >= elementPath.getSegmentCount()) {
+            if (level == org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer.ALL_LEVELS || level > elementPath.getSegmentCount()) {
                 expandToLevel(elementPath, 1);
             }
         }

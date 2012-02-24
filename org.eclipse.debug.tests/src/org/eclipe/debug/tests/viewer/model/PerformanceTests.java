@@ -51,11 +51,12 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         fShell.setMaximized(true);
         fShell.setLayout(new FillLayout());
 
+        fVirtualItemValidator = new VisibleVirtualItemValidator(0, Integer.MAX_VALUE);
         fViewer = createViewer(fDisplay, fShell);
         
         fListener = new TestModelUpdatesListener(fViewer, false, false);
 
-        fShell.open ();
+        fShell.open();
     }
 
     abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
@@ -87,6 +88,8 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
      */
     abstract protected int getTestModelDepth();
     
+    protected VisibleVirtualItemValidator fVirtualItemValidator;
+    
     public void testRefreshStruct() throws InterruptedException {
         TestModel model = new TestModel();
         model.setRoot( new TestElement(model, "root", new TestElement[0] ) ); 
@@ -105,7 +108,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         Performance perf = Performance.getDefault();
         PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
         try {
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 10; i++) {
                 // Update the model
                 model.setAllAppendix(" - pass " + i);
                 
@@ -126,6 +129,53 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
             meter.dispose();
         }
     }
+
+    public void testRefreshStruct2() throws InterruptedException {
+        TestModel model = new TestModel();
+        model.setRoot( new TestElement(model, "root", new TestElement[0] ) ); 
+        model.setElementChildren(TreePath.EMPTY, TestModel.makeMultiLevelElements2(model, new int[] { 2, 3000, 1}, "model."));
+        
+        fViewer.setAutoExpandLevel(2);
+        // Create the listener
+        //fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+        fListener.reset();
+        
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        //model.validateData(fViewer, TreePath.EMPTY);
+        
+        fVirtualItemValidator.setVisibleRange(0, 50);
+        
+        Performance perf = Performance.getDefault();
+        PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+        try {
+            for (int i = 0; i < 100; i++) {
+                // Update the model
+                model.setAllAppendix(" - pass " + i);
+                
+                TestElement element = model.getRootElement();
+                //fListener.reset(TreePath.EMPTY, element, -1, false, false);
+                fListener.reset();
+                
+                meter.start();
+                model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
+                while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
+                    if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+                model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
+                while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
+                    if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+                meter.stop();
+                System.gc();
+            }
+            
+            meter.commit();
+            perf.assertPerformance(meter);
+        } finally {
+            meter.dispose();
+        }
+    }
+
 
     public void testRefreshStructReplaceElements() throws InterruptedException {
         TestModel model = new TestModel();

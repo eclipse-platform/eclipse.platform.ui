@@ -13,6 +13,7 @@ package org.eclipe.debug.tests.viewer.model;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -26,7 +27,7 @@ public class VirtualViewerPerformanceTests extends PerformanceTests {
     }
 
     protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
-        return new VirtualTreeModelViewer(fDisplay, 0, new PresentationContext("TestViewer"));
+        return new VirtualTreeModelViewer(fDisplay, SWT.VIRTUAL, new PresentationContext("TestViewer"), fVirtualItemValidator);
     }
     
     protected int getTestModelDepth() {

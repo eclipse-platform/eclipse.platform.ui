@@ -688,6 +688,20 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         return elements;
     }    
 
+    public static TestElement[] makeMultiLevelElements2(TestModel model, int[] levelCounts, String prefix) {
+    	if (levelCounts.length == 0) return new TestElement[0];
+        int count = levelCounts[0];
+    	int[] oldLevelCounts = levelCounts;
+    	levelCounts = new int[levelCounts.length - 1];
+    	System.arraycopy(oldLevelCounts, 1, levelCounts, 0, levelCounts.length);
+    	TestElement[] elements = new TestElement[count];
+        for (int i = 0; i < count; i++) {
+            String name = prefix + i;
+            elements[i] = new TestElement(model, name, makeMultiLevelElements2(model, levelCounts, name + "."));
+        }
+        return elements;
+    }    
+
     public static TestModel simpleMultiLevel() {
         TestModel model = new TestModel();
         model.setRoot( new TestElement(model, "root", new TestElement[] {
