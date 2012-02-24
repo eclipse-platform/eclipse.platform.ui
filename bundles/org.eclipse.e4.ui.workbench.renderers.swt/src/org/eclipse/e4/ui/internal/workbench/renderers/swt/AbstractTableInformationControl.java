@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.internal.workbench.renderers.swt;
 
 import org.eclipse.e4.ui.workbench.swt.internal.copy.StringMatcher;
+import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -386,6 +387,7 @@ public abstract class AbstractTableInformationControl {
 	}
 
 	private void installFilter() {
+		fFilterText.setMessage(WorkbenchSWTMessages.FilteredTree_FilterMessage);
 		fFilterText.setText(""); //$NON-NLS-1$
 
 		fFilterText.addModifyListener(new ModifyListener() {

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -43,6 +44,10 @@ public class BasicPartList extends AbstractTableInformationControl {
 	private class BasicStackListLabelProvider extends ColumnLabelProvider {
 
 		public String getText(Object element) {
+			if (element instanceof MDirtyable
+					&& ((MDirtyable) element).isDirty()) {
+				return "*" + ((MUILabel) element).getLabel(); //$NON-NLS-1$
+			}
 			return ((MUILabel) element).getLabel();
 		}
 
