@@ -25,6 +25,7 @@ import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -262,6 +263,24 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		createToolbar(toolbarModel, intermediate);
 		bindWidget(element, intermediate);
 		processContribution(toolbarModel);
+
+		MUIElement parentElement = element.getParent();
+		if (parentElement instanceof MTrimBar) {
+			element.getTags().add("Draggable"); //$NON-NLS-1$
+
+			setCSSInfo(element, intermediate);
+
+			boolean vertical = false;
+			MTrimBar bar = (MTrimBar) parentElement;
+			vertical = bar.getSide() == SideValue.LEFT
+					|| bar.getSide() == SideValue.RIGHT;
+			IEclipseContext parentContext = getContextForParent(element);
+			CSSRenderingUtils cssUtils = parentContext
+					.get(CSSRenderingUtils.class);
+			intermediate = (Composite) cssUtils.frameMeIfPossible(intermediate,
+					null, vertical, true);
+		}
+
 		return intermediate;
 	}
 
@@ -393,9 +412,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			linkModelToManager((MToolBar) element, manager);
 		}
 		ToolBar bar = manager.createControl(parent);
-		if (bar.getParent() != parent) {
-			Thread.dumpStack();
-		}
+		// if (bar.getParent() != parent) {
+		// Thread.dumpStack();
+		// }
 		bar.setData(manager);
 		bar.setData(AbstractPartRenderer.OWNING_ME, element);
 		bar.getShell().layout(new Control[] { bar }, SWT.DEFER);

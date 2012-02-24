@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.widgets.ImageBasedFrame;
 import org.eclipse.e4.ui.workbench.addons.minmax.TrimStack;
@@ -46,7 +47,7 @@ public class IBFDragAgent extends DragAgent {
 		if (!(info.curCtrl instanceof ImageBasedFrame))
 			return null;
 
-		if (!(info.curElement instanceof MToolControl))
+		if (!(info.curElement instanceof MTrimElement))
 			return null;
 
 		ImageBasedFrame frame = (ImageBasedFrame) info.curCtrl;
