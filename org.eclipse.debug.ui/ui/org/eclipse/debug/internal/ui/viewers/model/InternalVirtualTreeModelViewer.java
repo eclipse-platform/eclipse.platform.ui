@@ -572,10 +572,6 @@ public class InternalVirtualTreeModelViewer extends Viewer
         	}
         }
         
-//        for (int i = 0; item != null && i < path.getSegmentCount(); i++) {
-//            Object segment = path.getSegment(i);
-//            item = item.findItem(segment);
-//        }
         return item;
     }
 
