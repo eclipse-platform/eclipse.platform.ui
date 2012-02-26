@@ -34,6 +34,7 @@ public class JFaceTextTestSuite extends TestSuite {
 		suite.addTest(RulesTestSuite.suite());
 		suite.addTest(ReconcilerTestSuite.suite());
 		suite.addTest(DefaultPairMatcherTest.suite());
+		suite.addTest(DefaultPairMatcherTest2.suite());
 
 		return suite;
 	}

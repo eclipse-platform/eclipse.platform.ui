@@ -85,9 +85,20 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "[%   ]#");
 		performMatch(matcher, "{%   }#");
 
+		performMatch(matcher, "#(   %)%");
+		performMatch(matcher, "#[   %]%");
+		performMatch(matcher, "#{   %}%");
+		performMatch(matcher, "%(%   )#");
+		performMatch(matcher, "%[%   ]#");
+		performMatch(matcher, "%{%   }#");
+
 		performMatch(matcher, "#(  %  )#");
 		performMatch(matcher, "#[  %  ]#");
 		performMatch(matcher, "#{  %  }#");
+
+		performMatch(matcher, "#(  % %  )#");
+		performMatch(matcher, "#[  % %  ]#");
+		performMatch(matcher, "#{  % %  }#");
 
 		matcher.dispose();
 	}
@@ -122,8 +133,16 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "(%())#");
 		performMatch(matcher, "((%)#)");
 
+		performMatch(matcher, "%(%)#");
+		performMatch(matcher, "#(()%)%");
+		performMatch(matcher, "%(%())#");
+		performMatch(matcher, "(%(%)#)");
+
 		performMatch(matcher, "#(%)#");
 		performMatch(matcher, "#(%())#");
+
+		performMatch(matcher, "#(% %)#");
+		performMatch(matcher, "#(% %())#");
 
 		matcher.dispose();
 	}
@@ -166,6 +185,13 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "|c #( % c| ) ( |c )# c|");
 		performMatch(matcher, "|c #( c| ) ( |c % )# c|");
 		performMatch(matcher, "#( % |a ) a| |b ) b| |c ) c| )#");
+
+		performMatch(matcher, "#( % % |a a| )#");
+		performMatch(matcher, "|b #( % % )# b|");
+		performMatch(matcher, "|c #( % % c| ) ( |c )# c|");
+		performMatch(matcher, "|c #( c| ) ( |c % % )# c|");
+		performMatch(matcher, "#( % % |a ) a| |b ) b| |c ) c| )#");
+//		performMatch(matcher, " #( |c ( c| % % |c ) c| )#");
 
 		matcher.dispose();
 	}
@@ -259,7 +285,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 */
 	protected void performReaderTest(String testString, int expectedPos, int expectedMatch, String expectedString) {
 		TestCase t0= createTestCase(testString);
-		assertEquals(expectedPos, t0.fPos);
+		assertEquals(expectedPos, t0.fPos1);
 		assertEquals(expectedMatch, t0.fMatch2);
 		assertEquals(expectedString, t0.fString);
 	}
@@ -275,12 +301,22 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		matcher.clear();
 		final IRegion region;
 
-		if (test.isEnclosingTestCase()) {
+		if (test.isSelectionTestCase()) {
 			assertTrue((matcher instanceof ICharacterPairMatcherExtension));
 			ICharacterPairMatcherExtension matcherExtension= (ICharacterPairMatcherExtension)matcher;
-			region= matcherExtension.findEnclosingPeerCharacters(test.getDocument(), test.fPos);
+			if (test.isEnclosingTestCase()) {
+				region= matcherExtension.findEnclosingPeerCharacters(test.getDocument(), test.fPos1, test.fPos2 - test.fPos1);
+			} else {
+				region= matcherExtension.match(test.getDocument(), test.fPos1, test.fPos2 - test.fPos1);
+			}
 		} else {
-			region= matcher.match(test.getDocument(), test.fPos);
+			if (test.isEnclosingTestCase()) {
+				assertTrue((matcher instanceof ICharacterPairMatcherExtension));
+				ICharacterPairMatcherExtension matcherExtension= (ICharacterPairMatcherExtension)matcher;
+				region= matcherExtension.findEnclosingPeerCharacters(test.getDocument(), test.fPos1, test.fPos2 - test.fPos1);
+			} else {
+				region= matcher.match(test.getDocument(), test.fPos1);
+			}
 		}
 
 		if (test.fMatch2 == -1) {
@@ -289,11 +325,13 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 			assertNull(region);
 		} else {
 			assertNotNull(region);
-			final boolean isForward= test.isEnclosingTestCase() ? false : test.fPos > test.fMatch2;
+			final boolean isForward= test.isEnclosingTestCase() ? false : test.fPos1 > test.fMatch2;
 			assertEquals(isForward, matcher.getAnchor() == ICharacterPairMatcher.RIGHT);
 
 			final int offset= (isForward || test.isEnclosingTestCase()) ? test.getOffset() : test.getOffset() - 1;
-			final int length= ((isForward && !fCaretInsideMatchedPair) || test.isEnclosingTestCase()) ? test.getLength() : test.getLength() + 1;
+			final int length= ((isForward && (!fCaretInsideMatchedPair || test.isSelectionTestCase())) || test.isEnclosingTestCase())
+					? test.getLength()
+					: test.getLength() + 1;
 			assertEquals(length, region.getLength());
 			assertEquals(offset, region.getOffset());
 		}
@@ -313,49 +351,77 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 * @return the created test case
 	 */
 	public TestCase createTestCase(String str) {
-		int pos= str.indexOf("%");
-		assertFalse(pos == -1);
+		int pos1= str.indexOf("%");
+		assertFalse(pos1 == -1);
+		int pos2= str.lastIndexOf("%");
+		boolean selectionTest= pos1 != pos2;
+
 		int match1= str.indexOf("#");
 		int match2= str.lastIndexOf("#");
 		boolean enclosingTest= match1 != match2;
 
-		if (fCaretInsideMatchedPair) {
-			if (pos - 1 >= 0) {
-				char ch= str.charAt(pos - 1);
+
+		if (!selectionTest && fCaretInsideMatchedPair) {
+			if (pos1 - 1 >= 0) {
+				char ch= str.charAt(pos1 - 1);
 				if ("()[]{}<>".indexOf(ch) % 2 == 1) {
-					pos-= 1;
+					pos1-= 1;
 				}
 			}
 		}
 
 		// account for the length of marker characters
-		if (!enclosingTest) {
-			if (match1 != -1 && match1 < pos)
-				pos-= 1;
-			if (pos < match1)
-				match1-= 1;
+		if (selectionTest) {
+			if (!enclosingTest) {
+				assertTrue(pos2 - pos1 == 2);
+				if (match1 != -1 && match1 < pos1) {
+					pos1-= 1;
+					pos2-= 2;
+				}
+				if (pos1 < match1) {
+					pos2-= 1;
+					match1-= 2;
+				}
+			} else {
+				pos1-= 1;
+				pos2-= 2;
+				match2-= 3;
+			}
 		} else {
-			pos-= 1;
-			match2-= 2;
+			if (!enclosingTest) {
+				if (match1 != -1 && match1 < pos1)
+					pos1-= 1;
+				if (pos1 < match1)
+					match1-= 1;
+			} else {
+				pos1-= 1;
+				match2-= 2;
+			}
+			pos2= pos1;
 		}
 
 		final String stripped= str.replaceAll("%", "").replaceAll("#", "");
-		return enclosingTest ? new TestCase(stripped, pos, match1, match2) : new TestCase(stripped, pos, match1);
+
+		if (enclosingTest)
+			return new TestCase(stripped, pos1, pos2, match1, match2);
+		else {
+			if (selectionTest)
+				return new TestCase(stripped, pos1, pos2, pos2, match1);
+			else
+				return new TestCase(stripped, pos1, pos2, pos1, match1);
+		}
 	}
 
 	private class TestCase {
 
 		public final String fString;
 
-		public final int fPos, fMatch1, fMatch2;
+		public final int fPos1, fPos2, fMatch1, fMatch2;
 
-		public TestCase(String string, int pos, int match) {
-			this(string, pos, pos, match);
-		}
-
-		public TestCase(String string, int pos, int match1, int match2) {
+		public TestCase(String string, int pos1, int pos2, int match1, int match2) {
 			fString= string;
-			fPos= pos;
+			fPos1= pos1;
+			fPos2= pos2;
 			fMatch1= match1;
 			fMatch2= match2;
 		}
@@ -375,7 +441,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		}
 
 		public boolean isEnclosingTestCase() {
-			return fPos != fMatch1;
+			return fPos1 != fMatch1 && fPos2 != fMatch1;
+		}
+
+		public boolean isSelectionTestCase() {
+			return fPos1 != fPos2;
 		}
 
 	}

@@ -108,21 +108,53 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	}
 
 	/**
-	 * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension#findEnclosingPeerCharacters(org.eclipse.jface.text.IDocument, int)
+	 * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension#match(org.eclipse.jface.text.IDocument,
+	 *      int, int)
 	 * @since 3.8
 	 */
-	public IRegion findEnclosingPeerCharacters(IDocument document, int offset) {
+	public IRegion match(IDocument document, int offset, int length) {
+		if (document == null || offset < 0 || offset > document.getLength() || Math.abs(length) > 1)
+			return null;
+
+		int sourceCaretOffset= offset + length;
+		int adjustment= getOffsetAdjustment(document, sourceCaretOffset, length);
+		sourceCaretOffset+= adjustment;
+
+		return match(document, sourceCaretOffset);
+	}
+
+	/**
+	 * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension#findEnclosingPeerCharacters(org.eclipse.jface.text.IDocument,
+	 *      int, int)
+	 * @since 3.8
+	 */
+	public IRegion findEnclosingPeerCharacters(IDocument document, int offset, int length) {
 		if (document == null || offset < 0 || offset > document.getLength())
 			return null;
+
+		int start;
+		int end;
+		if (length >= 0) {
+			start= offset;
+			end= offset + length;
+		} else {
+			end= offset;
+			start= offset + length;
+		}
+
+		int sourceCaretOffset= offset + length;
+		int adjustment= getOffsetAdjustment(document, sourceCaretOffset, length);
+		sourceCaretOffset+= adjustment;
+
 		try {
-			for (int offset1= offset; offset1 >= 0; offset1--) {
+			for (int offset1= sourceCaretOffset; offset1 >= 0; offset1--) {
 				char prevChar= document.getChar(Math.max(offset1 - 1, 0));
 				if (fPairs.contains(prevChar) && fPairs.isStartCharacter(prevChar)) {
 					IRegion match= performMatch(document, offset1);
 					if (match != null) {
 						int matchOffset= match.getOffset();
 						int matchLength= match.getLength();
-						if ((matchOffset <= offset) && (matchOffset + matchLength > offset)) {
+						if ((matchOffset <= start) && (matchOffset + matchLength > start) && (matchOffset < end) && (matchOffset + matchLength >= end)) {
 							return match;
 						}
 					}
@@ -132,6 +164,36 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 			return null;
 		}
 		return null;
+	}
+
+	/**
+	 * Computes the adjustment in the start offset for the purpose of finding a matching peer. The
+	 * adjustment is non-zero only when the selection length is one and the selection covers a
+	 * character matched by the matcher.
+	 * 
+	 * @param document the document to work on
+	 * @param offset the start offset
+	 * @param length the selection length
+	 * @return the start offset adjustment
+	 * @since 3.8
+	 */
+	private int getOffsetAdjustment(IDocument document, int offset, int length) {
+		if (length == 0 || Math.abs(length) > 1)
+			return 0;
+		try {
+			if (length < 0) {
+				if (fPairs.isStartCharacter(document.getChar(offset))) {
+					return 1;
+				}
+			} else {
+				if (fCaretInsideMatchedPair && fPairs.isEndCharacter(document.getChar(offset - 1))) {
+					return -1;
+				}
+			}
+		} catch (BadLocationException e) {
+			//do nothing
+		}
+		return 0;
 	}
 
 	/*
@@ -385,8 +447,8 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		}
 
 		/**
-		 * Returns true of the specified character is a start character.
-		 *
+		 * Returns true if the specified character is a start character.
+		 * 
 		 * @param c a character
 		 * @return true exactly if the character is a start character
 		 */
@@ -395,8 +457,19 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		}
 
 		/**
+		 * Returns true if the specified character is an end character.
+		 * 
+		 * @param c a character
+		 * @return true exactly if the character is an end character
+		 * @since 3.8
+		 */
+		public boolean isEndCharacter(char c) {
+			return this.isOpeningCharacter(c, false);
+		}
+
+		/**
 		 * Returns the matching character for the specified character.
-		 *
+		 * 
 		 * @param c a character occurring in a character pair
 		 * @return the matching character
 		 */

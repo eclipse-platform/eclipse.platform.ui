@@ -28,7 +28,8 @@ import org.eclipse.jface.text.IRegion;
  * exists:
  * <ul>
  * <li>{@link org.eclipse.jface.text.source.ICharacterPairMatcherExtension} since version 3.8
- *		introducing the concept of enclosing peer characters at a caret offset.</li>
+ * introducing the concept of matching peer character and enclosing peer characters for a given
+ * selection.</li>
  * </ul>
  * </p>
  * <p>
@@ -66,13 +67,18 @@ public interface ICharacterPairMatcher {
 	/**
 	 * Starting at the given offset, the matcher chooses a character close to this offset. The
 	 * matcher then searches for the matching peer character of the chosen character and if it finds
-	 * one, returns the minimal region of the document that contains both characters. It returns
-	 * <code>null</code> if there is no peer character.
+	 * one, returns the minimal region of the document that contains both characters.
+	 * 
+	 * <p>
+	 * Since version 3.8 the recommended way for finding matching peers is to use
+	 * {@link org.eclipse.jface.text.source.ICharacterPairMatcherExtension#match(IDocument, int, int)}
+	 * .
+	 * </p>
 	 * 
 	 * @param document the document to work on
 	 * @param offset the start offset
-	 * @return the minimal region containing the peer characters and <code>null</code> if there is
-	 *         no peer character.
+	 * @return the minimal region containing the peer characters or <code>null</code> if there is no
+	 *         peer character.
 	 */
 	IRegion match(IDocument document, int offset);
 

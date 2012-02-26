@@ -16,8 +16,8 @@ import org.eclipse.jface.text.IRegion;
 /**
  * Extension interface {@link org.eclipse.jface.text.source.ICharacterPairMatcher}.
  * <p>
- * Extends the character pair matcher with the concept of enclosing peer characters at a caret
- * offset.
+ * Extends the character pair matcher with the concept of matching peer character and enclosing peer
+ * characters for a given selection.
  * 
  * @see org.eclipse.jface.text.source.ICharacterPairMatcher
  * @since 3.8
@@ -25,13 +25,30 @@ import org.eclipse.jface.text.IRegion;
 public interface ICharacterPairMatcherExtension {
 
 	/**
-	 * Starting at the given offset, the matcher searches for a pair of enclosing peer characters
+	 * Starting with the selected character or a character close to the given <code>offset</code>,
+	 * the matcher searches for the matching peer character and if it finds one, returns the minimal
+	 * region of the document that contains both characters.
+	 * 
+	 * @param document the document to work on
+	 * @param offset the start offset
+	 * @param length the selection length. The length can be negative indicating right-to-left
+	 *            selection.
+	 * @return the minimal region containing the peer characters or <code>null</code> if there is no
+	 *         peer character.
+	 */
+	IRegion match(IDocument document, int offset, int length);
+
+
+	/**
+	 * Starting at the given selection, the matcher searches for a pair of enclosing peer characters
 	 * and if it finds one, returns the minimal region of the document that contains the pair.
 	 * 
 	 * @param document the document to work on
 	 * @param offset the start offset
+	 * @param length the selection length. The length can be negative indicating right-to-left
+	 *            selection.
 	 * @return the minimal region containing the peer characters or <code>null</code> if there is no
 	 *         enclosing pair
 	 */
-	IRegion findEnclosingPeerCharacters(IDocument document, int offset);
+	IRegion findEnclosingPeerCharacters(IDocument document, int offset, int length);
 }

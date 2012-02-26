@@ -232,6 +232,31 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		}
 	}
 
+	/**
+	 * Returns the signed current selection. The length will be negative if the resulting selection
+	 * is right-to-left.
+	 * <p>
+	 * The selection offset is model based.
+	 * </p>
+	 * 
+	 * @param sourceViewer the source viewer
+	 * @return a region denoting the current signed selection, for a resulting RtoL selections
+	 *         length is < 0
+	 * @since 3.8
+	 */
+	private static final IRegion getSignedSelection(ISourceViewer sourceViewer) {
+		Point viewerSelection= sourceViewer.getSelectedRange();
+
+		StyledText text= sourceViewer.getTextWidget();
+		Point selection= text.getSelectionRange();
+		if (text.getCaretOffset() == selection.x) {
+			viewerSelection.x= viewerSelection.x + viewerSelection.y;
+			viewerSelection.y= -viewerSelection.y;
+		}
+
+		return new Region(viewerSelection.x, viewerSelection.y);
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.IPainter#paint(int)
 	 */
@@ -243,17 +268,24 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			return;
 		}
 
-		Point selection= fSourceViewer.getSelectedRange();
-		if (selection.y > 0) {
-			deactivate(true);
-			return;
-		}
+		IRegion selection= getSignedSelection(fSourceViewer);
+		IRegion pair;
+		boolean characterPresentAtCaretLocation;
 
-		IRegion pair= fMatcher.match(document, selection.x);
-		boolean characterPresentAtCaretLocation= (pair != null);
-		if (pair == null && fHighlightEnclosingPeerCharcters && fMatcher instanceof ICharacterPairMatcherExtension) {
+		if (fMatcher instanceof ICharacterPairMatcherExtension) {
 			ICharacterPairMatcherExtension matcher= (ICharacterPairMatcherExtension)fMatcher;
-			pair= matcher.findEnclosingPeerCharacters(document, selection.x);
+			pair= matcher.match(document, selection.getOffset(), selection.getLength());
+			characterPresentAtCaretLocation= (pair != null);
+			if (pair == null && fHighlightEnclosingPeerCharcters) {
+				pair= matcher.findEnclosingPeerCharacters(document, selection.getOffset(), selection.getLength());
+			}
+		} else {
+			if (Math.abs(selection.getLength()) > 0) {
+				deactivate(true);
+				return;
+			}
+			pair= fMatcher.match(document, selection.getOffset());
+			characterPresentAtCaretLocation= (pair != null);
 		}
 
 		if (pair == null) {
