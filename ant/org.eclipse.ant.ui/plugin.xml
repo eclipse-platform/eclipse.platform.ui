@@ -93,13 +93,6 @@ M4 = Platform-specific fourth key -->
             contextId="org.eclipse.ant.ui.AntEditorScope"
             commandId="org.eclipse.jdt.ui.edit.text.java.format"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-      <!-- alternative for some gtk input modes -->
-      <key
-            platform="gtk"
-            sequence="ESC CTRL+F"
-            contextId="org.eclipse.ant.ui.AntEditorScope"
-            commandId="org.eclipse.jdt.ui.edit.text.java.format"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="M2+F2"
             contextId="org.eclipse.ant.ui.AntEditorScope"
