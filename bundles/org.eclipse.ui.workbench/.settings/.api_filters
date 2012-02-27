@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/application/WorkbenchWindowAdvisor.java" type="org.eclipse.ui.application.WorkbenchWindowAdvisor">
+        <filter id="1141899266">
+            <message_arguments>
+                <message_argument value="3.7"/>
+                <message_argument value="3.6"/>
+                <message_argument value="cleanUpEditorArea()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="924844039">
+            <message_arguments>
+                <message_argument value="3.6.2"/>
+                <message_argument value="3.6.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
