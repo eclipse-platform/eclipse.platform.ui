@@ -55,6 +55,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
  * <p>
@@ -304,8 +305,13 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 */
 	private void updateDelegate(final IAction action,
 			final IEvaluationContext context) {
-		if (action == null || delegate == null) {
+		if (action == null) {
 			return;
+		}
+		if (delegate == null) {
+			if (!BundleUtility.isActive(element.getContributor().getName()) || !loadDelegate()) {
+				return;
+			}
 		}
 
 		if (editorDelegate != null) {
