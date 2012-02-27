@@ -560,19 +560,20 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
     
     public VirtualItem findItem(TreePath path) {
-        VirtualItem item = fTree;
         if (path.getSegmentCount() == 0) {
             return fTree;
         }
 
         List itemsList = (List)fItemsMap.get(path.getLastSegment());
-        for (int i = 0; i < itemsList.size(); i++) {
-        	if ( path.equals(getTreePathFromItem((VirtualItem)itemsList.get(i))) ) {
-        		return (VirtualItem)itemsList.get(i);
-        	}
+        if (itemsList != null) {
+	        for (int i = 0; i < itemsList.size(); i++) {
+	        	if ( path.equals(getTreePathFromItem((VirtualItem)itemsList.get(i))) ) {
+	        		return (VirtualItem)itemsList.get(i);
+	        	}
+	        }
         }
         
-        return item;
+        return null;
     }
 
     static private final VirtualItem[] EMPTY_ITEMS_ARRAY = new VirtualItem[0];
