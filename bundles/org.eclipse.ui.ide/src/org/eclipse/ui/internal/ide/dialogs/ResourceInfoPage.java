@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -875,8 +875,9 @@ public class ResourceInfoPage extends PropertyPage {
 	 * 
 	 * return true; }
 	 */
-	/**
-	 * Reset the editableBox to the false.
+	
+	/*
+	 * @see PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 
@@ -908,6 +909,11 @@ public class ResourceInfoPage extends PropertyPage {
 		// Nothing to update if we never made the box
 		if (this.executableBox != null) {
 			this.executableBox.setSelection(false);
+		}
+		
+		// Nothing to update if we never made the box
+		if (this.archiveBox != null) {
+			this.archiveBox.setSelection(true);
 		}
 
 		// Nothing to update if we never made the box
