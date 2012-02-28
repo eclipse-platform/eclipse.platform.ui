@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.team.ui;
 
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.ScmUrlImportDescription;
 
 /**
@@ -29,7 +28,7 @@ public interface IScmUrlImportWizardPage extends IWizardPage {
 
 	public static final String ATT_EXTENSION = "scmUrlImportPages"; //$NON-NLS-1$
 	public static final String ATT_PAGE = "page"; //$NON-NLS-1$
-	public static final String ATT_REPOSITORY = "repository"; //$NON-NLS-1$
+	public static final String ATT_IMPORTER = "importer"; //$NON-NLS-1$
 
 	/**
 	 * Called when the import wizard is closed by selecting the finish button.
@@ -60,20 +59,4 @@ public interface IScmUrlImportWizardPage extends IWizardPage {
 	 *            the SCM URLs descriptions edited on the page.
 	 */
 	public void setSelection(ScmUrlImportDescription[] descriptions);
-
-	/**
-	 * Sets the RepositoryProviderType for the page.
-	 * 
-	 * @param provider
-	 *            to set
-	 */
-	public void setProvider(RepositoryProviderType provider);
-
-	/**
-	 * Return the RepositoryProviderType associated with the page.
-	 * 
-	 * @return a RepositoryProviderType for the current page
-	 */
-	public RepositoryProviderType getProvider();
-
 }

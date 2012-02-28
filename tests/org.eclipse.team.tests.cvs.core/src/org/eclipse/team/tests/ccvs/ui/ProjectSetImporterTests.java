@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eclipse.team.core.importing.provisional.BundleImporterDelegate;
 import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProviderType;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSScmUrlImportWizardPage;
 import org.eclipse.team.internal.ui.ProjectSetImporter;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -194,13 +195,12 @@ public class ProjectSetImporterTests extends EclipseTest {
 		project.delete(true, true, null);
 		ensureDoesNotExistInWorkspace(project);
 
+		IScmUrlImportWizardPage[] pages = TeamUI.getPages("org.eclipse.team.core.cvs.importer");
+		assertEquals(1, pages.length);
 		String s = ProjectSetCapability.SCHEME_SCM + ":cvs:" + CVSTestSetup.REPOSITORY_LOCATION + ":" + project.getName();
 		ScmUrlImportDescription d = new ScmUrlImportDescription(s, project.getName());
-		IScmUrlImportWizardPage[] pages = TeamUI.getPages(new ScmUrlImportDescription[] {d});
-		assertEquals(1, pages.length);
-		// the URIs haven't been changed in the UI so it's basically the same collection as the one passed to TeamUI.getPages(...)
-		ScmUrlImportDescription[] selection = pages[0].getSelection();
-		ProjectSetCapability c = pages[0].getProvider().getProjectSetCapability();
+		ScmUrlImportDescription[] selection = new ScmUrlImportDescription[] {d};
+		ProjectSetCapability c = new CVSTeamProviderType().getProjectSetCapability();
 		
 		// this is what every bundle importer should do, should this be in PDE?
 		List references = new ArrayList();
@@ -216,13 +216,12 @@ public class ProjectSetImporterTests extends EclipseTest {
 		project.delete(true, true, null);
 		ensureDoesNotExistInWorkspace(project);
 
-		String s = ProjectSetCapability.SCHEME_SCM + ":cvs:" + CVSTestSetup.REPOSITORY_LOCATION + ":" + project.getName()	+ ";project=project1";
-		ScmUrlImportDescription d = new ScmUrlImportDescription(s, project.getName());
-		IScmUrlImportWizardPage[] pages = TeamUI.getPages(new ScmUrlImportDescription[] {d});
+		IScmUrlImportWizardPage[] pages = TeamUI.getPages("org.eclipse.team.core.cvs.importer");
 		assertEquals(1, pages.length);
-		// the URIs haven't been changed in the UI so it's basically the same collection as the one passed to TeamUI.getPages(...)
-		ScmUrlImportDescription[] selection = pages[0].getSelection();
-		ProjectSetCapability c = pages[0].getProvider().getProjectSetCapability();
+		String s = ProjectSetCapability.SCHEME_SCM + ":cvs:" + CVSTestSetup.REPOSITORY_LOCATION + ":" + project.getName() + ";project=project1";
+		ScmUrlImportDescription d = new ScmUrlImportDescription(s, project.getName());
+		ScmUrlImportDescription[] selection = new ScmUrlImportDescription[] {d};
+		ProjectSetCapability c = new CVSTeamProviderType().getProjectSetCapability();
 
 		// this is what every bundle importer should do, should this be in PDE?
 		List references = new ArrayList();
@@ -240,10 +239,12 @@ public class ProjectSetImporterTests extends EclipseTest {
 		project.delete(true, true, null);
 		ensureDoesNotExistInWorkspace(project);
 
-		String s = ProjectSetCapability.SCHEME_SCM + ":cvs:" + CVSTestSetup.REPOSITORY_LOCATION + ":" + project.getName()+";tag=tag";
-		ScmUrlImportDescription d = new ScmUrlImportDescription(s, project.getName());
-		final IScmUrlImportWizardPage[] pages = TeamUI.getPages(new ScmUrlImportDescription[] {d});
+		final IScmUrlImportWizardPage[] pages = TeamUI.getPages("org.eclipse.team.core.cvs.importer");
 		assertEquals(1, pages.length);
+		String s = ProjectSetCapability.SCHEME_SCM + ":cvs:" + CVSTestSetup.REPOSITORY_LOCATION + ":" + project.getName() + ";tag=tag";;
+		ScmUrlImportDescription d = new ScmUrlImportDescription(s, project.getName());
+		ScmUrlImportDescription[] selection = new ScmUrlImportDescription[] {d};
+		pages[0].setSelection(selection);
 
 		assertTrue(pages[0] instanceof CVSScmUrlImportWizardPage);
 		Wizard wizard = new Wizard() {
@@ -264,8 +265,8 @@ public class ProjectSetImporterTests extends EclipseTest {
 		wizardDialog.close();
 
 		// altered selection, check out from HEAD
-		ScmUrlImportDescription[] selection = pages[0].getSelection();
-		IBundleImporter cvsBundleImporter = Team.getBundleImporters()[0];
+		selection = pages[0].getSelection();
+		IBundleImporter cvsBundleImporter = getBundleImporter("org.eclipse.team.core.cvs.importer");
 		cvsBundleImporter.performImport(selection, null);
 
 		assertExistsInWorkspace(project);
@@ -275,14 +276,7 @@ public class ProjectSetImporterTests extends EclipseTest {
 	}
 
 	public void testCvsBundleImporter() throws TeamException, CoreException {
-		IBundleImporter[] bundleImporters = Team.getBundleImporters();
-		assertEquals(1, bundleImporters.length);
-		IBundleImporter cvsBundleImporter = null;
-		for (int i = 0; i < bundleImporters.length; i++) {
-			if (bundleImporters[i].getId().equals("org.eclipse.team.core.cvs.importer")) {
-				cvsBundleImporter = bundleImporters[i];
-			} 
-		}
+		IBundleImporter cvsBundleImporter = getBundleImporter("org.eclipse.team.core.cvs.importer");;
 		// CVS Bundle Importer should be available
 		assertNotNull(cvsBundleImporter);
 
@@ -302,5 +296,14 @@ public class ProjectSetImporterTests extends EclipseTest {
 
 		cvsBundleImporter.performImport(descriptions, null);
 		assertExistsInWorkspace(project);
+	}
+
+	private static IBundleImporter getBundleImporter(final String id) {
+		IBundleImporter[] importers = Team.getBundleImporters();
+		for (int i = 0; i < importers.length; i++) {
+			if (importers[i].getId().equals(id))
+				return importers[i];
+		}
+		return null;
 	}
 }
