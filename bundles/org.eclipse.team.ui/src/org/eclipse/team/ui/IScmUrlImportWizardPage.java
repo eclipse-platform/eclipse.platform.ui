@@ -41,12 +41,12 @@ public interface IScmUrlImportWizardPage extends IWizardPage {
 	public boolean finish();
 
 	/**
-	 * Return the import descriptions for the page. The descriptions may differ
-	 * from those initially set using
-	 * {@link #setSelection(ScmUrlImportDescription[])} if the user modified
-	 * import configuration.
+	 * Return the import descriptions for the page. The descriptions may differ from those initially
+	 * set using {@link #setSelection(ScmUrlImportDescription[])} if the user modified the import
+	 * configuration.
 	 * 
-	 * @return the SCM URLs descriptions for the page.
+	 * @return the SCM URLs descriptions for the page or <code>null</code> if no selection has been
+	 *         set
 	 */
 	public ScmUrlImportDescription[] getSelection();
 
