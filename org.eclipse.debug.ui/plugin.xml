@@ -748,6 +748,7 @@
          </action>
          <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.remove"
+               definitionId="org.eclipse.ui.edit.delete"
                toolbarPath="breakpointGroup"
                hoverIcon="$nl$/icons/full/elcl16/rem_co.gif"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveBreakpointAction"
@@ -841,6 +842,7 @@
          <action
                id="org.eclipse.debug.ui.expresssionsView.toolbar.remove"
                toolbarPath="expressionGroup"
+               definitionId="org.eclipse.ui.edit.delete"
                hoverIcon="$nl$/icons/full/elcl16/rem_co.gif"
                class="org.eclipse.debug.internal.ui.actions.expressions.RemoveExpressionAction"
                disabledIcon="$nl$/icons/full/dlcl16/rem_co.gif"

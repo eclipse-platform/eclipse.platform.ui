@@ -22,13 +22,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.actions.AbstractRemoveActionDelegate;
+import org.eclipse.debug.internal.ui.actions.AbstractSelectionActionDelegate;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-public class RemoveExpressionAction extends AbstractRemoveActionDelegate {
+public class RemoveExpressionAction extends AbstractSelectionActionDelegate {
 	
 	protected IExpression[] getExpressions() {
 		TreeSelection selection = (TreeSelection) getSelection();

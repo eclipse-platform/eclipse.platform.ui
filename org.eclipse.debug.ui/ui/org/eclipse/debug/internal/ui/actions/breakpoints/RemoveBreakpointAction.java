@@ -15,17 +15,23 @@ package org.eclipse.debug.internal.ui.actions.breakpoints;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.actions.AbstractSelectionActionDelegate;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
+import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -33,24 +39,12 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.actions.AbstractRemoveActionDelegate;
-import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory;
-
-import org.eclipse.debug.ui.DebugUITools;
-
-public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
+public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
