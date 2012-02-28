@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -406,17 +406,23 @@ public class PreviewPatchPage2 extends WizardPage {
 			fStripPrefixSegments.setEnabled(false);
 		} else {
 			fStripPrefixSegments.setEnabled(true);
-			int length= 99;
-			if (fStripPrefixSegments!=null && pageRecalculate) {
-				length= getPatcher().calculatePrefixSegmentCount();
-				if (length!=99) {
-					for (int k= 1; k<length; k++)
+			int length = 99;
+			if (fStripPrefixSegments != null && pageRecalculate) {
+				if (fStripPrefixSegments.getItemCount() > 1)
+					fStripPrefixSegments.remove(1,
+							fStripPrefixSegments.getItemCount() - 1);
+				length = getPatcher().calculatePrefixSegmentCount();
+				if (length != 99) {
+					for (int k = 1; k < length; k++)
 						fStripPrefixSegments.add(Integer.toString(k));
-					pageRecalculate= false;
+					fStripPrefixSegments.select(0);
+					getPatcher().setStripPrefixSegments(0);
+					pageRecalculate = false;
 				}
 			}
 		}
 	}
+
 	/*
 	 *	Create the group for setting various patch options
 	 */

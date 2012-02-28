@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,26 +10,14 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-
+import org.eclipse.compare.internal.ICompareContextIds;
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -40,14 +28,21 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
-import org.eclipse.compare.internal.ICompareContextIds;
-import org.eclipse.compare.internal.Utilities;
+import com.ibm.icu.text.MessageFormat;
 
 /***
  * This page only shows up if the user is trying to apply
@@ -107,9 +102,18 @@ public class PatchTargetPage extends WizardPage {
                 	fPatchTargets.getTree().setEnabled(true);
                 	fPatcher.setTarget(Utilities.getFirstResource(fPatchTargets.getSelection()));
                 }
+                markPreviewPageToRecalucateIfNonWorkspacePatch();
                 updateWidgetEnablements();
             }
         });
+	}
+
+	private void markPreviewPageToRecalucateIfNonWorkspacePatch() {
+		if (!fPatcher.isWorkspacePatch()) {
+			PreviewPatchPage2 previewPage = (PreviewPatchPage2) getWizard()
+					.getPage(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME);
+			previewPage.pageRecalculate = true;
+		}
 	}
 
 	private Button createRadioButton(Composite parent, String label, int span) {
