@@ -1593,19 +1593,22 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public IPath getRawLocation();
 
 	/**
-	 * Returns the file system location of this resource, or <code>null</code> if no
+	 * Returns the raw location of this resource, or <code>null</code> if no
 	 * path can be determined.  The returned path will either be an absolute URI,
 	 * or a relative URI whose first path segment is the name of a workspace path variable.
+	 * Since the returned location may contain unresolved variables, the resulting URI
+	 * is typically only suitable for display. To access or manipulate the actual resource
+	 * backing location, clients should obtain the resolved location using {@link #getLocationURI()}.
 	 * <p>
-	 * If this resource is an existing project, the returned path will be equal to
-	 * the location path in the project description.  If this resource is a linked
-	 * resource in an open project, the returned path will be equal to the location
-	 * path supplied when the linked resource was created.  In all other cases, this
+	 * If this resource is an existing project, the returned location will be equal to
+	 * the location URI in the project description.  If this resource is a linked
+	 * resource in an open project, the returned location will be equal to the location URI
+	 * supplied when the linked resource was created.  In all other cases, this
 	 * method returns the same value as {@link #getLocationURI()}.
 	 * </p>
 	 * 
-	 * @return the raw path of this resource in the file system,  or
-	 * <code>null</code> if no path can be determined
+	 * @return the raw location of this resource, or <code>null</code> if no 
+	 * location can be determined
 	 * @see #getLocationURI()
 	 * @see IFile#createLink(URI, int, IProgressMonitor)
 	 * @see IFolder#createLink(URI, int, IProgressMonitor)
