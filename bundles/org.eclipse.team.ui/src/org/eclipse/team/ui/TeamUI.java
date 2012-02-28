@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.ui;
 
-import java.net.URI;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.team.core.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.history.GenericHistoryView;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
@@ -143,64 +142,42 @@ public class TeamUI {
 	}
 	
 	/**
-	 * Return a set of wizard pages for the given descriptions. If no wizard
-	 * page is registered for a SCM URL scheme from a description then a page
-	 * will not be created. If an extension exits, a page will be created and
-	 * initialized with a set of corresponding descriptions.
+	 * Return a set of wizard pages for the given importer ID. If no wizard page
+	 * is registered for the importer then a page will not be created. If an
+	 * extension exits, a page will be created, but it's up to the caller to
+	 * initialize the page with a set of corresponding descriptions.
 	 * 
-	 * <strong>EXPERIMENTAL</strong>. This class has been added as part of
-	 * a work in progress. There is no guarantee that this API will work or that
+	 * <strong>EXPERIMENTAL</strong>. This class has been added as part of a
+	 * work in progress. There is no guarantee that this API will work or that
 	 * it will remain the same. Please do not use this API without consulting
 	 * with the Team team.
 	 * 
-	 * @param descriptions
-	 *            descriptions with SCM URLs
-	 * @return initialized wizard pages
+	 * @param importerId
+	 *            the importer ID
+	 * @return wizard pages
 	 * @throws CoreException
 	 *             if an error occurs while trying to create a page extension
 	 * @since 3.6
 	 */
-	public static IScmUrlImportWizardPage[] getPages(ScmUrlImportDescription[] descriptions) throws CoreException {
-		// TODO: check scmUrls
-		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(TeamUIPlugin.PLUGIN_ID, IScmUrlImportWizardPage.ATT_EXTENSION);
+	public static IScmUrlImportWizardPage[] getPages(final String importerId)
+			throws CoreException {
+		IConfigurationElement[] elements = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor(TeamUIPlugin.PLUGIN_ID,
+						IScmUrlImportWizardPage.ATT_EXTENSION);
 		if (elements.length > 0) {
-			Set/*<IScmUrlImportWizardPage>*/ pages = new HashSet();
+			Set/* <IScmUrlImportWizardPage> */pages = new HashSet();
 			for (int i = 0; i < elements.length; i++) {
-				String repository = elements[i].getAttribute(IScmUrlImportWizardPage.ATT_REPOSITORY);
-				RepositoryProviderType providerType = RepositoryProviderType.getProviderType(repository);
-				String providerScheme = providerType.getFileSystemScheme();
-				Set/*<URI>*/ schemeUris = new HashSet();
-				// filter out descriptions for which provider is not known
-				for (int j = 0; j < descriptions.length; j++) {
-					URI scmUri = descriptions[j].getUri();
-					if (scmUri != null) {
-						if (ProjectSetCapability.SCHEME_SCM.equals(scmUri.getScheme())) {
-							if (scmUri.getSchemeSpecificPart().startsWith(providerScheme)) {
-								schemeUris.add(scmUri);
-							}
-						}
-					}
-				}
-				if (schemeUris.size() > 0) {
-					Object ext = TeamUIPlugin.createExtension(elements[i], IScmUrlImportWizardPage.ATT_PAGE);
-					if (ext instanceof IScmUrlImportWizardPage) {
-						IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) ext;
-						page.setProvider(providerType);
-						Set/*<ScmUrlImportDescription>*/ set = new HashSet();
-						for (Iterator iterator = schemeUris.iterator(); iterator.hasNext();) {
-							URI uri = (URI) iterator.next();
-							for (int j = 0; j < descriptions.length; j++) {
-								if (descriptions[j].getUri().equals(uri)) {
-									set.add(descriptions[j]);
-								}
-							}
-						}
-						page.setSelection((ScmUrlImportDescription[]) set.toArray(new ScmUrlImportDescription[0]));
-						pages.add(page);
-					}
+				String pageImporterId = elements[i]
+						.getAttribute(IScmUrlImportWizardPage.ATT_IMPORTER);
+				if (importerId.equals(pageImporterId)) {
+					Object ext = TeamUIPlugin.createExtension(elements[i],
+							IScmUrlImportWizardPage.ATT_PAGE);
+					IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) ext;
+					pages.add(page);
 				}
 			}
-			return (IScmUrlImportWizardPage[]) pages.toArray(new IScmUrlImportWizardPage[0]);
+			return (IScmUrlImportWizardPage[]) pages
+					.toArray(new IScmUrlImportWizardPage[pages.size()]);
 		}
 		return null;
 	}

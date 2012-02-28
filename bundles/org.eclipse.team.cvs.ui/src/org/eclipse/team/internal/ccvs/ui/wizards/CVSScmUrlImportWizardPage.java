@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.ScmUrlImportDescription;
 import org.eclipse.team.internal.ccvs.core.filesystem.CVSURI;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
@@ -33,7 +32,6 @@ import org.eclipse.ui.ide.IDE;
 
 public class CVSScmUrlImportWizardPage extends WizardPage implements IScmUrlImportWizardPage {
 	
-	private RepositoryProviderType provider;
 	private ScmUrlImportDescription[] descriptions;
 	private Button useHead;
 	private TableViewer bundlesViewer;
@@ -244,13 +242,4 @@ public class CVSScmUrlImportWizardPage extends WizardPage implements IScmUrlImpo
 	private static String getServer(URI scmUri) {
 		return CVSURI.fromUri(scmUri).getRepository().getHost();
 	}
-
-	public void setProvider(RepositoryProviderType provider) {
-		this.provider = provider;
-	}
-
-	public RepositoryProviderType getProvider() {
-		return provider;
-	}
-	
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-    Copyright (c) 2001, 2011 IBM Corporation and others.
+    Copyright (c) 2001, 2012 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -2071,8 +2071,8 @@
    <extension
          point="org.eclipse.team.ui.scmUrlImportPages">
       <scmUrlImportPage
-            page="org.eclipse.team.internal.ccvs.ui.wizards.CVSScmUrlImportWizardPage"
-            repository="org.eclipse.team.cvs.core.cvsnature">
+            importer="org.eclipse.team.core.cvs.importer"
+            page="org.eclipse.team.internal.ccvs.ui.wizards.CVSScmUrlImportWizardPage">
       </scmUrlImportPage>
    </extension>
    
