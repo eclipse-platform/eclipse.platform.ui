@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2011 Broadcom Corporation and others.
+ *  Copyright (c) 2011, 2012 Broadcom Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class Bug_303517 extends ResourceTest {
 
 	@Override
 	protected void tearDown() throws Exception {
-		super.setUp();
+		super.tearDown();
 		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
 	}
 
