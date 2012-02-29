@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -361,8 +361,8 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	 */
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		if (oldInput != null) {
-			for (Iterator e = fPainters.iterator(); e.hasNext();)
-				((IPainter) e.next()).deactivate(false);
+			for (Iterator e= fPainters.iterator(); e.hasNext();)
+				((IPainter)e.next()).deactivate(false);
 			fManager.uninstall(oldInput);
 			removeListeners();
 		}
@@ -372,7 +372,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	 * @see ITextInputListener#inputDocumentChanged(IDocument, IDocument)
 	 */
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
-		if (newInput != null) {
+		if (newInput != null && newInput != fManager.fDocument) {
 			fManager.install(newInput);
 			paint(IPainter.TEXT_CHANGE);
 			addListeners();
