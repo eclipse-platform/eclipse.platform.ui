@@ -46,6 +46,15 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/dialogs/AbstractElementListSelectionDialog.java" type="org.eclipse.ui.dialogs.AbstractElementListSelectionDialog">
+        <filter id="1141899266">
+            <message_arguments>
+                <message_argument value="3.8"/>
+                <message_argument value="3.103"/>
+                <message_argument value="handleElementsChanged()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="Eclipse UI/org/eclipse/ui/dialogs/PatternFilter.java" type="org.eclipse.ui.dialogs.PatternFilter">
         <filter comment="Reverting temporary change for bug 186404" id="338792546">
             <message_arguments>

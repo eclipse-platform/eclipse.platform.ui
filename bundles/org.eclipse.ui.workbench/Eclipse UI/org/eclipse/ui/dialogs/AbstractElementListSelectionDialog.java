@@ -180,10 +180,10 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
     }
 
     /**
-	 * This method is called when the elements of the backing list are changed to refresh 
-	 * the standard dialog widgets.
+	 * This method is called when the elements of the backing list are changed
+	 * to refresh the standard dialog widgets.
 	 * 
-	 * @since 3.103
+	 * @since 3.8
 	 */
 	protected void handleElementsChanged() {
 		boolean enabled = !fFilteredList.isEmpty();
