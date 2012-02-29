@@ -277,8 +277,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			IEclipseContext parentContext = getContextForParent(element);
 			CSSRenderingUtils cssUtils = parentContext
 					.get(CSSRenderingUtils.class);
-			intermediate = (Composite) cssUtils.frameMeIfPossible(intermediate,
-					null, vertical, true);
+			if (cssUtils != null) {
+				intermediate = (Composite) cssUtils.frameMeIfPossible(
+						intermediate, null, vertical, true);
+			}
 		}
 
 		return intermediate;
