@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,13 @@ package org.eclipse.help.internal.webapp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpContentProducer;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.MissingContentManager;
@@ -29,6 +29,8 @@ import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.webapp.data.WebappPreferences;
+
+import org.eclipse.core.runtime.Platform;
 
 
 public class StatusProducer implements IHelpContentProducer {
@@ -95,7 +97,7 @@ public class StatusProducer implements IHelpContentProducer {
 				return getNetworkOKPage(locale);
 			}
 		}
-			
+
 		// If this is a call from an invalid topic,
 		// check to see if a predefined error page exists
 		// in the preferences
@@ -208,9 +210,9 @@ public class StatusProducer implements IHelpContentProducer {
 			pageBuffer.append(tab(3)+ "</p>\n"); //$NON-NLS-1$
 	
 			pageBuffer.append(END_BODY_HTML);	
-		}		
-		ByteArrayInputStream bais = new ByteArrayInputStream(pageBuffer.toString().getBytes());
-		return bais;
+		}
+
+		return getBytes(pageBuffer);
 	}
 
 	public void addCloseLink(Locale locale, StringBuffer pageBuffer) {
@@ -233,8 +235,8 @@ public class StatusProducer implements IHelpContentProducer {
 		pageBuffer.append(WebappResources.getString("networkHelpAvailableDetails", locale)); //$NON-NLS-1$
 		pageBuffer.append("</p>\n"); //$NON-NLS-1$
 		pageBuffer.append(END_BODY_HTML);
-        ByteArrayInputStream bais = new ByteArrayInputStream(pageBuffer.toString().getBytes());	
-		return bais;
+
+		return getBytes(pageBuffer);
 	}
 
 	private InputStream getMissingTopicPage(String topicPath, Locale locale) {
@@ -255,8 +257,8 @@ public class StatusProducer implements IHelpContentProducer {
 		pageBuffer.append("</a>\n"); //$NON-NLS-1$ 
 		pageBuffer.append(tab(3) + "</p>\n"); //$NON-NLS-1$
 		pageBuffer.append(END_BODY_HTML);
-        ByteArrayInputStream bais = new ByteArrayInputStream(pageBuffer.toString().getBytes());	
-		return bais; 
+
+		return getBytes(pageBuffer);
 	}
 
 	/*
@@ -308,8 +310,8 @@ public class StatusProducer implements IHelpContentProducer {
 			pageBuffer.append(tab(3)+ "</p>\n"); //$NON-NLS-1$
 		}
 		pageBuffer.append(END_BODY_HTML);
-        ByteArrayInputStream bais = new ByteArrayInputStream(pageBuffer.toString().getBytes());	
-		return bais; 
+
+		return getBytes(pageBuffer);
 	}
 
 
@@ -329,8 +331,8 @@ public class StatusProducer implements IHelpContentProducer {
 		pageBuffer.append(WebappResources.getString("allBooksInstalled", locale)); //$NON-NLS-1$
 		pageBuffer.append("</p>\n"); //$NON-NLS-1$
 		pageBuffer.append(END_BODY_HTML);
-        ByteArrayInputStream bais = new ByteArrayInputStream(pageBuffer.toString().getBytes());	
-		return bais; 
+
+		return getBytes(pageBuffer);
 	}
 
 	/*
@@ -402,5 +404,14 @@ public class StatusProducer implements IHelpContentProducer {
 			tabs+=TAB;
 		return tabs;
 	}	
-	
+
+	private static InputStream getBytes(StringBuffer pageBuffer) {
+		try {
+			return new ByteArrayInputStream(pageBuffer.toString().getBytes("UTF-8")); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException e) {
+			HelpWebappPlugin.logError("JRE error: UTF-8 encoding not supported", e); //$NON-NLS-1$
+			return new ByteArrayInputStream(pageBuffer.toString().getBytes());
+		}
+	}
+
 }
