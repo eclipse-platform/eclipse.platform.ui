@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,41 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
+import org.eclipse.debug.internal.core.LaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.core.LaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
@@ -50,33 +69,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchDelegate;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
-import org.eclipse.debug.internal.core.LaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A viewer that displays tabs for a launch configuration, with apply and revert
@@ -212,8 +209,8 @@ public class LaunchConfigurationTabGroupViewer {
 	 * Creates this viewer's control This area displays the name of the launch
 	 * configuration currently being edited, as well as a tab folder of tabs
 	 * that are applicable to the launch configuration.
+	 * @param parent the parent {@link Composite}
 	 *
-	 * @return the composite used for launch configuration editing
 	 */
 	private void createControl(Composite parent) {
 		fViewerControl = parent;
@@ -347,7 +344,7 @@ public class LaunchConfigurationTabGroupViewer {
 	
 	/**
 	 * Creates the tab folder for displaying config instances
-	 * @param parent
+	 * @param parent the parent {@link Composite}
 	 */
 	private void createTabFolder(Composite parent) {
 		if (fTabFolder == null) {
@@ -376,6 +373,7 @@ public class LaunchConfigurationTabGroupViewer {
 	
 	/**
 	 * Returns the apply button
+	 * @return the 'Apply' button
 	 */
 	protected Button getApplyButton() {
 		return fApplyButton;
@@ -383,6 +381,7 @@ public class LaunchConfigurationTabGroupViewer {
 
 	/**
 	 * Returns the revert button
+	 * @return the 'Revert' button
 	 */
 	protected Button getRevertButton() {
 		return fRevertButton;
@@ -390,6 +389,7 @@ public class LaunchConfigurationTabGroupViewer {
 
 	/**
 	 * Sets the current name
+	 * @param name the new name to set
 	 */
 	public void setName(String name) {
 		if (getWorkingCopy() != null) {
@@ -404,7 +404,7 @@ public class LaunchConfigurationTabGroupViewer {
 	}	
 
 	/**
-	 * @see org.eclipse.jface.viewers.Viewer#getControl()
+	 * @return the backing viewer control
 	 */
 	public Control getControl() {
 		return fViewerControl;
@@ -412,6 +412,7 @@ public class LaunchConfigurationTabGroupViewer {
 	
 	/**
 	 * Returns the shell this viewer is contained in.
+	 * @return the current dialog shell
 	 */
 	private Shell getShell() {
 		return getControl().getShell();
@@ -661,8 +662,8 @@ public class LaunchConfigurationTabGroupViewer {
 	
 	/**
 	 * Returns if the two configurations are using the same <code>ILaunchDelegate</code> or not
-	 * @param config1
-	 * @param config2
+	 * @param config1 the config to compare to
+	 * @param config2 the config to compare
 	 * @return true if the configurations are using the same <code>ILaunchDelegate</code> or false if they are not
 	 * @since 3.3
 	 */
@@ -718,6 +719,7 @@ public class LaunchConfigurationTabGroupViewer {
     
 	/**
 	 * Displays tabs for the current working copy
+	 * @param redrawTabs if the tabs should be redrawn
 	 */
 	protected void displayInstanceTabs(boolean redrawTabs) {
 		// Turn on initializing flag to ignore message updates
@@ -766,6 +768,7 @@ public class LaunchConfigurationTabGroupViewer {
 	/**
 	 * Populate the tabs in the configuration edit area to be appropriate to the current
 	 * launch configuration type.
+	 * @param configType the type to show tabs for
 	 */
 	private void showInstanceTabsFor(ILaunchConfigurationType configType) {
 		// try to keep on same tab
@@ -844,6 +847,7 @@ public class LaunchConfigurationTabGroupViewer {
 	/**
 	 * Returns tab group for the given type of launch configuration.
 	 * Tabs are initialized to be contained in this dialog.
+	 * @return the new {@link ILaunchConfigurationTabGroup}
 	 *
 	 * @exception CoreException if unable to instantiate a tab group
 	 */
@@ -1001,6 +1005,7 @@ public class LaunchConfigurationTabGroupViewer {
 	
 	/**
 	 * Returns the containing launch dialog
+	 * @return the current {@link ILaunchConfigurationDialog}
 	 */
 	protected ILaunchConfigurationDialog getLaunchConfigurationDialog() {
 		return fDialog;
@@ -1019,6 +1024,7 @@ public class LaunchConfigurationTabGroupViewer {
 	/**
 	 * Returns the working copy used to edit the original, possibly
 	 * <code>null</code>.
+	 * @return the backing {@link ILaunchConfigurationWorkingCopy}
  	 */
 	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
 		return fWorkingCopy;
@@ -1033,6 +1039,7 @@ public class LaunchConfigurationTabGroupViewer {
 	 * error. For example, a shared config that has no specified location would
 	 * cause this method to return <code>false</code>.
 	 * </p>
+	 * @return if the dialog can save in its current state
 	 */
 	public boolean canSave() {
 		if (fInitializingTabs) {
@@ -1059,7 +1066,7 @@ public class LaunchConfigurationTabGroupViewer {
 	}	
 	
 	/**
-	 * @see ILaunchConfigurationDialog#canLaunch()
+	 * @return if the dialog can launch in its current state
 	 */
 	public boolean canLaunch() {
 		if(fInitializingTabs) {
@@ -1151,6 +1158,7 @@ public class LaunchConfigurationTabGroupViewer {
 	
 	/**
 	 * Returns the current error message or <code>null</code> if none.
+	 * @return the error message for the tab
 	 */
 	public String getErrorMesssage() {
 		if (fInitializingTabs) {
@@ -1232,6 +1240,7 @@ public class LaunchConfigurationTabGroupViewer {
 		
 	/**
 	 * Verify that the launch configuration name is valid.
+	 * @throws CoreException if a name conflict occurs
 	 */
 	protected void verifyName() throws CoreException {
 		if (fNameWidget.isVisible()) {
@@ -1260,10 +1269,12 @@ public class LaunchConfigurationTabGroupViewer {
 			if (fOriginal != null && !fOriginal.getName().equals(currentName)) {
 				Set reservednames = ((LaunchConfigurationsDialog)getLaunchConfigurationDialog()).getReservedNameSet();
 				if (mgr.isExistingLaunchConfigurationName(currentName) || (reservednames != null ? reservednames.contains(currentName) : false)) {
+					ILaunchConfiguration config = ((LaunchManager)mgr).findLaunchConfiguration(currentName);
+					//config cannot be null at this location since the manager knows the name conflicts
 					throw new CoreException(new Status(IStatus.ERROR,
 														 DebugUIPlugin.getUniqueIdentifier(),
 														 0,
-														 LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_configuration_already_exists_with_this_name_12, 
+														 NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_configuration_already_exists_with_this_name_12, config.getType().getName()), 
 														 null));
 				}
 			}
@@ -1398,7 +1409,7 @@ public class LaunchConfigurationTabGroupViewer {
 	/**
 	 * Show an error dialog on the given exception.
 	 *
-	 * @param exception
+	 * @param exception the exception to display
 	 */
 	protected void errorDialog(CoreException exception) {
 		ErrorDialog.openError(getShell(), null, null, exception.getStatus());

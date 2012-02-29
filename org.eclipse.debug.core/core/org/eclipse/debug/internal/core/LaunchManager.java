@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -960,6 +960,24 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 		}
 		return configs;
+	}
+	
+	/**
+	 * Searches for the {@link ILaunchConfiguration} with the given name
+	 * @param name the name to search for
+	 * @return the {@link ILaunchConfiguration} with the given name or <code>null</code>
+	 * @since 3.8
+	 */
+	public ILaunchConfiguration findLaunchConfiguration(String name) {
+		if(name != null) {
+			ILaunchConfiguration[] configs = getLaunchConfigurations();
+			for (int i = 0; i < configs.length; i++) {
+				if(name.equals(configs[i].getName())) {
+					return configs[i];
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
