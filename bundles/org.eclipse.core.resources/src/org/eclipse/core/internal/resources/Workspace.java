@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2503,14 +2503,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			saveManager.startup(null);
 			//must start after save manager, because (read) access to tree is needed
 			refreshManager.startup(null);
-			aliasManager = new AliasManager(this);
-			aliasManager.startup(null);
 			propertyManager = ResourcesCompatibilityHelper.createPropertyManager();
 			propertyManager.startup(monitor);
 			charsetManager = new CharsetManager(this);
 			charsetManager.startup(null);
 			contentDescriptionManager = new ContentDescriptionManager();
 			contentDescriptionManager.startup(null);
+			//must start at the end to avoid potential cyclic dependency on other uninitialized managers (see bug 369177)
+			aliasManager = new AliasManager(this);
+			aliasManager.startup(null);
 		} finally {	
 			//unlock tree even in case of failure, otherwise shutdown will also fail
 			treeLocked = null;	

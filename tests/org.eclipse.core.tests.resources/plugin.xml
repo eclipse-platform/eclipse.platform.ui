@@ -551,6 +551,12 @@
    </filesystem>
 </extension>
 <extension
+      point="org.eclipse.core.filesystem.filesystems">
+   <filesystem scheme="bug369177">
+      <run class="org.eclipse.core.tests.internal.filesystem.bug369177.Bug369177FileSystem"/>
+   </filesystem>
+</extension>
+<extension
       id="modelProvider"
       point="org.eclipse.core.resources.modelProviders">
    <modelProvider
