@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class ViewRegistry implements IViewRegistry {
 
 	private List<IStickyViewDescriptor> stickyDescriptors = new ArrayList<IStickyViewDescriptor>();
 
-	private List<ViewCategory> categories = new ArrayList<ViewCategory>();
+	private HashMap<String, ViewCategory> categories = new HashMap<String, ViewCategory>();
 
 	@PostConstruct
 	void postConstruct() {
@@ -66,7 +66,7 @@ public class ViewRegistry implements IViewRegistry {
 					ViewCategory category = new ViewCategory(
 							element.getAttribute(IWorkbenchRegistryConstants.ATT_ID),
 							element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
-					categories.add(category);
+					categories.put(category.getId(), category);
 				} else if (element.getName().equals(IWorkbenchRegistryConstants.TAG_STICKYVIEW)) {
 					try {
 						stickyDescriptors.add(new StickyViewDescriptor(element));
@@ -157,7 +157,7 @@ public class ViewRegistry implements IViewRegistry {
 	 * @see org.eclipse.ui.views.IViewRegistry#getCategories()
 	 */
 	public IViewCategory[] getCategories() {
-		return categories.toArray(new IViewCategory[categories.size()]);
+		return categories.values().toArray(new IViewCategory[categories.size()]);
 	}
 
 	/*
@@ -189,16 +189,19 @@ public class ViewRegistry implements IViewRegistry {
 
 	}
 
+	/**
+	 * Returns the {@link ViewCategory} for the given id or <code>null</code> if
+	 * one cannot be found or the id is <code>null</code>
+	 * 
+	 * @param id
+	 *            the {@link ViewCategory} id
+	 * @return the {@link ViewCategory} with the given id or <code>null</code>
+	 */
 	public ViewCategory findCategory(String id) {
 		if (id == null) {
 			return null;
 		}
-		for (ViewCategory category : categories) {
-			if (id.equals(category.getId())) {
-				return category;
-			}
-		}
-		return null;
+		return categories.get(id);
 	}
 
 	public Category getMiscCategory() {
