@@ -25,16 +25,15 @@ import org.eclipse.jface.text.IRegion;
 public interface ICharacterPairMatcherExtension {
 
 	/**
-	 * Starting with the selected character or a character close to the given <code>offset</code>,
-	 * the matcher searches for the matching peer character and if it finds one, returns the minimal
-	 * region of the document that contains both characters.
+	 * Starting at the given offset (i.e. length 0) or the selected character, the matcher searches
+	 * for the matching peer character and if it finds one, returns the minimal region of the
+	 * document that contains both characters.
 	 * 
 	 * @param document the document to work on
 	 * @param offset the start offset
-	 * @param length the selection length. The length can be negative indicating right-to-left
-	 *            selection.
+	 * @param length the selection length which can be negative indicating right-to-left selection
 	 * @return the minimal region containing the peer characters or <code>null</code> if there is no
-	 *         peer character.
+	 *         peer character
 	 */
 	IRegion match(IDocument document, int offset, int length);
 
@@ -45,8 +44,7 @@ public interface ICharacterPairMatcherExtension {
 	 * 
 	 * @param document the document to work on
 	 * @param offset the start offset
-	 * @param length the selection length. The length can be negative indicating right-to-left
-	 *            selection.
+	 * @param length the selection length which can be negative indicating right-to-left selection
 	 * @return the minimal region containing the peer characters or <code>null</code> if there is no
 	 *         enclosing pair
 	 */

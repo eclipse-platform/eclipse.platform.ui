@@ -167,14 +167,13 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	}
 
 	/**
-	 * Computes the adjustment in the start offset for the purpose of finding a matching peer. The
-	 * adjustment is non-zero only when the selection length is one and the selection covers a
-	 * character matched by the matcher.
+	 * Computes the adjustment in the start offset for the purpose of finding a matching peer. This
+	 * is required as the direction of selection can be right-to-left or left-to-right.
 	 * 
 	 * @param document the document to work on
 	 * @param offset the start offset
 	 * @param length the selection length
-	 * @return the start offset adjustment
+	 * @return the start offset adjustment which can be -1, 0 or +1
 	 * @since 3.8
 	 */
 	private int getOffsetAdjustment(IDocument document, int offset, int length) {
