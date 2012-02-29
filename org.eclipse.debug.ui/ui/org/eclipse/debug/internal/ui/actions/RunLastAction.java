@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
- * Relaunches the last run-mode launch
+ * Re-launches the last run-mode launch
  * 
  * This menu item appears in the main 'Run' menu
  * 
@@ -34,8 +34,8 @@ public class RunLastAction extends RelaunchLastAction {
 		return ILaunchManager.RUN_MODE;
 	}	
 	
-	/**
-	 * @see org.eclipse.debug.internal.ui.actions.LaunchDropDownAction#getLaunchGroupId()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getLaunchGroupId()
 	 */
 	public String getLaunchGroupId() {
 		return IDebugUIConstants.ID_RUN_LAUNCH_GROUP;

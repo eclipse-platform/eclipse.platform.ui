@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.eclipse.ui.commands.ICommandService;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Relaunches the last launch.
+ * Re-launches the last launch.
  * 
  * @see ContextRunner
  * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager
@@ -60,8 +60,8 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 		DebugUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
 	}
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window){
 		fWorkbenchWindow = window;
@@ -123,6 +123,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 * Set the enabled state of the underlying action based on whether there are any
 	 * registered launch configuration types that understand how to launch in the
 	 * mode of this action.
+	 * @param action the {@link IAction} to initialize
 	 */
 	private void initialize(IAction action) {
 		fAction = action;
@@ -161,6 +162,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	
 	/**
 	 * Return the last launch that occurred in the workspace.
+	 * @return the filtered last launch
 	 */
 	protected ILaunchConfiguration getLastLaunch() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupId());
@@ -174,8 +176,8 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 		return fWorkbenchWindow.getShell();
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if(event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH)) {
@@ -185,11 +187,13 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	
 	/**
 	 * Returns the mode (run or debug) of this action.
+	 * @return the mode 
 	 */
 	public abstract String getMode();
 	
 	/**
 	 * Returns the launch group id of this action.
+	 * @return  the launch group id
 	 */
 	public abstract String getLaunchGroupId();	
 
