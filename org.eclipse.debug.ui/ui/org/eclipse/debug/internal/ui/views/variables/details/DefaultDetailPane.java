@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2011 IBM Corporation and others.
+ *  Copyright (c) 2006, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -77,6 +77,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
@@ -452,6 +454,22 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			}
 		});
 		
+		// disposed controls don't get a FocusOut event, make sure all actions
+		// have been deactivated
+		fSourceViewer.getControl().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
+				setGlobalAction(IDebugView.CUT_ACTION, null);
+				setGlobalAction(IDebugView.COPY_ACTION, null);
+				setGlobalAction(IDebugView.PASTE_ACTION, null);
+				setGlobalAction(IDebugView.FIND_ACTION, null);
+				setGlobalAction(getAction(DETAIL_ASSIGN_VALUE_ACTION)
+						.getActionDefinitionId(), null);
+				setGlobalAction(getAction(DETAIL_CONTENT_ASSIST_ACTION)
+						.getActionDefinitionId(), null);
+			}
+		});
+
 		// Create a status line item displaying the current cursor location
 		fStatusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 		IStatusLineManager manager= getViewSite().getActionBars().getStatusLineManager();
