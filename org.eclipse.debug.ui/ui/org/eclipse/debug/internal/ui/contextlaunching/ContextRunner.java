@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,19 +144,6 @@ public final class ContextRunner {
 					if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE)) {
 						if(!launchLast(group)) {
 							MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
-						}
-					}
-					else if (shortcuts.size() > 0) {
-						// there are shortcuts, but not applicable to the selected mode
-						ILaunchMode launchMode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(mode);
-						if (launchMode == null) {
-							DebugUIPlugin.logErrorMessage("Unsupported launch mode: " + mode); //$NON-NLS-1$
-						} else {
-							String label = launchMode.getLabel();
-							String modeLabel = DebugUIPlugin.removeAccelerators(label);
-							MessageDialog.openInformation(DebugUIPlugin.getShell(), 
-									MessageFormat.format(ContextMessages.ContextRunner_1, new String[]{modeLabel}),
-									MessageFormat.format(ContextMessages.ContextRunner_2, new String[]{modeLabel.toLowerCase()}));
 						}
 					} else {
 						if(resource != null) {

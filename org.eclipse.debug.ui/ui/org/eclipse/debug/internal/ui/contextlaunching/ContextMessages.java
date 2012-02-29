@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2009 IBM Corporation and others.
+ *  Copyright (c) 2007, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ public class ContextMessages extends NLS {
 	public static String ContextRunner_13;
 	public static String ContextRunner_14;
 	public static String ContextRunner_15;
-	public static String ContextRunner_2;
 	public static String ContextRunner_3;
 	public static String ContextRunner_7;
 	public static String LaunchingResourceManager_0;
