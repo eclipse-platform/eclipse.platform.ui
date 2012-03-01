@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.commands;
 
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -60,15 +61,25 @@ public class CommandServiceFactory extends AbstractServiceFactory {
 		}
 
 		if (parent instanceof SlaveCommandService) {
-			Object pageSite = wls.getPageSite();
+			IServiceLocator pageSite = wls.getPageSite();
 			if (pageSite != null) {
+				MContext context = (MContext) pageSite.getService(MContext.class);
+				if (context == null) {
+					return new SlaveCommandService((ICommandService) parent,
+							IServiceScopes.PAGESITE_SCOPE, pageSite);
+				}
 				return new SlaveCommandService((ICommandService) parent,
-						IServiceScopes.PAGESITE_SCOPE, pageSite);
+						IServiceScopes.PAGESITE_SCOPE, pageSite, context.getContext());
 			}
-			Object mpepSite = wls.getMultiPageEditorSite();
+			IServiceLocator mpepSite = wls.getMultiPageEditorSite();
 			if (mpepSite != null) {
+				MContext context = (MContext) pageSite.getService(MContext.class);
+				if (context == null) {
+					return new SlaveCommandService((ICommandService) parent,
+							IServiceScopes.MPESITE_SCOPE, mpepSite);
+				}
 				return new SlaveCommandService((ICommandService) parent,
-						IServiceScopes.MPESITE_SCOPE, mpepSite);
+						IServiceScopes.MPESITE_SCOPE, mpepSite, context.getContext());
 			}
 		}
 
