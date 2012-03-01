@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class TopicFinder {
 					}
 				}
 				// if no match has been found, check if there is an anchor
-				if (foundTopicPath == null && topicHref != null) {
+				if (foundTopicPath == null) {
 					index = topicHref.indexOf('#');
 					if (index != -1)
 						topicHref = topicHref.substring(0, index);

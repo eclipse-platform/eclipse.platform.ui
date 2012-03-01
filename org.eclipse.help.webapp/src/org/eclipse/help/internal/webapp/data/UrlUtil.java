@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
+
+import org.eclipse.core.runtime.Platform;
 
 public class UrlUtil {
 
@@ -630,7 +631,7 @@ public class UrlUtil {
 		}
 
 		// locale strings as passed in command line or in preferences
-		List infocenterLocales = null;
+		final List infocenterLocales= new ArrayList();
 
 		// first check if locales passed as command line arguments
 		String[] args = Platform.getCommandLineArgs();
@@ -638,7 +639,6 @@ public class UrlUtil {
 		for (int i = 0; i < args.length; i++) {
 			if ("-locales".equalsIgnoreCase(args[i])) { //$NON-NLS-1$
 				localeOption = true;
-				infocenterLocales = new ArrayList();
 				continue;
 			} else if (args[i].startsWith("-")) { //$NON-NLS-1$
 				localeOption = false;
@@ -649,21 +649,18 @@ public class UrlUtil {
 			}
 		}
 		// if no locales from command line, get them from preferences
-		if (infocenterLocales == null) {
+		if (infocenterLocales.isEmpty()) {
 			String preferredLocales = Platform.getPreferencesService().getString
 			    (HelpBasePlugin.PLUGIN_ID, ("locales"), "", null); //$NON-NLS-1$ //$NON-NLS-2$
 			StringTokenizer tokenizer = new StringTokenizer(preferredLocales, 
 					" ,\t"); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
-				if (infocenterLocales == null) {
-					infocenterLocales = new ArrayList();
-				}
 				infocenterLocales.add(tokenizer.nextToken());
 			}
 		}
 
 		// format locales and collect in a set for lookup
-		if (infocenterLocales != null) {
+		if (!infocenterLocales.isEmpty()) {
 			locales = new HashSet(10, 0.4f);
 			for (Iterator it = infocenterLocales.iterator(); it.hasNext();) {
 				String locale = (String) it.next();

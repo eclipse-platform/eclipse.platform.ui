@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,9 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
+
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Uses a resource bundle to load images and strings from a property file in a
@@ -155,25 +156,24 @@ public class WebappResources {
 		ResourceBundle bundle;
 		Bundle hostBundle = Platform.getBundle(HelpWebappPlugin.getDefault()
 				.getBundle().getSymbolicName());
-		if (null == hostBundle) {
-			bundle = null;
-		}
+		if (hostBundle == null)
+			return null;
+
 		URL url = hostBundle.getResource("org/eclipse/help/internal/webapp/WebappResources" + key + ".properties");  //$NON-NLS-1$//$NON-NLS-2$
-		if (null == url) {
+		if (url == null)
+			return null;
+
+		InputStream in= null;
+		try {
+			in= url.openStream();
+			bundle= new PropertyResourceBundle(in);
+		} catch (IOException e) {
 			bundle = null;
-		} else {
-			InputStream in = null;
-			try {
-				in = url.openStream();
-				bundle = new PropertyResourceBundle(in);
-			} catch (IOException e) {
-				bundle = null;
-			} finally {
-				if (null != in) {
-					try {
-						in.close();
-					} catch (IOException e) {
-					}
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
 				}
 			}
 		}
