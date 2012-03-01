@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.IEventLoopAdvisor;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -1820,8 +1821,9 @@ UIEvents.Context.TOPIC_CONTEXT,
 	private ArrayList<MCategory> categoriesToRemove = new ArrayList<MCategory>();
 
 	private CommandService initializeCommandService(IEclipseContext appContext) {
-		CommandService service = new CommandService(commandManager);
+		CommandService service = new CommandService(commandManager, appContext);
 		appContext.set(ICommandService.class.getName(), service);
+		appContext.set(IUpdateService.class, service);
 		service.readRegistry();
 
 		Command[] cmds = commandManager.getAllCommands();

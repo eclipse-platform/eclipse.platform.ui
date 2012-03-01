@@ -43,6 +43,7 @@ import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.URIHelper;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -125,12 +126,14 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
+import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
@@ -2264,6 +2267,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		final LegacyActionPersistence actionPersistence = new LegacyActionPersistence(this);
 		serviceLocator.registerService(LegacyActionPersistence.class, actionPersistence);
 		actionPersistence.read();
+
+		ICommandService cmdService = (ICommandService) workbench.getService(ICommandService.class);
+		SlaveCommandService slaveCmdService = new SlaveCommandService(cmdService,
+				IServiceScopes.WINDOW_SCOPE, this, model.getContext());
+		serviceLocator.registerService(ICommandService.class, slaveCmdService);
+		serviceLocator.registerService(IUpdateService.class, slaveCmdService);
 
 		windowContext.set(IContextService.class.getName(), new ContextFunction() {
 			@Override

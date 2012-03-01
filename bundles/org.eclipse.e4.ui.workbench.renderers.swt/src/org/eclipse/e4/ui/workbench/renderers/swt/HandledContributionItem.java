@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -168,6 +169,12 @@ public class HandledContributionItem extends ContributionItem {
 
 	@Inject
 	private EBindingService bindingService;
+
+	@Inject
+	@Optional
+	private IUpdateService updateService;
+
+	private Runnable unreferenceRunnable;
 
 	private ISWTResourceUtilities resUtils = null;
 
@@ -316,6 +323,11 @@ public class HandledContributionItem extends ContributionItem {
 
 		update(null);
 		updateIcons();
+
+		if (updateService != null) {
+			unreferenceRunnable = updateService.registerElementForUpdate(
+					model.getWbCommand(), model);
+		}
 	}
 
 	/*
@@ -365,6 +377,11 @@ public class HandledContributionItem extends ContributionItem {
 		update(null);
 		updateIcons();
 		hookCheckListener();
+
+		if (updateService != null) {
+			unreferenceRunnable = updateService.registerElementForUpdate(
+					model.getWbCommand(), model);
+		}
 	}
 
 	private void hookCheckListener() {
@@ -632,6 +649,11 @@ public class HandledContributionItem extends ContributionItem {
 	@Override
 	public void dispose() {
 		if (widget != null) {
+			if (unreferenceRunnable != null) {
+				unreferenceRunnable.run();
+				unreferenceRunnable = null;
+			}
+
 			ParameterizedCommand command = model.getWbCommand();
 			if (command != null) {
 				State state = command.getCommand()

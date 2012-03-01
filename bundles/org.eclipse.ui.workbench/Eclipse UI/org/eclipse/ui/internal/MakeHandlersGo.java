@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,10 +31,12 @@ import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.E4HandlerProxy;
+import org.eclipse.ui.menus.UIElement;
 
-public class MakeHandlersGo extends AbstractHandler {
+public class MakeHandlersGo extends AbstractHandler implements IElementUpdater {
 
 	private IWorkbench workbench;
 	private String commandId;
@@ -136,5 +138,27 @@ public class MakeHandlersGo extends AbstractHandler {
 			return h == null ? false : h.isHandled();
 		}
 		return handler != null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.
+	 * menus.UIElement, java.util.Map)
+	 */
+	public void updateElement(UIElement element, Map parameters) {
+		Object o = HandlerServiceImpl.lookUpHandler(
+				(IEclipseContext) workbench.getService(IEclipseContext.class), commandId);
+		// prevent infinite recursions
+		if (o != this) {
+			if (o instanceof E4HandlerProxy) {
+				o = ((E4HandlerProxy) o).getHandler();
+			}
+
+			if (o instanceof IElementUpdater) {
+				((IElementUpdater) o).updateElement(element, parameters);
+			}
+		}
 	}
 }

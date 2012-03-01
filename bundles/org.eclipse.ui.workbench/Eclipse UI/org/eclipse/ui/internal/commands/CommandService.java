@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,11 +29,18 @@ import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
+import org.eclipse.e4.ui.model.application.ui.menu.MItem;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.jface.commands.PersistentState;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.menus.UIElement;
 
@@ -45,7 +52,7 @@ import org.eclipse.ui.menus.UIElement;
  * 
  * @since 3.1
  */
-public final class CommandService implements ICommandService {
+public final class CommandService implements ICommandService, IUpdateService {
 
 	/**
 	 * The preference key prefix for all handler state.
@@ -80,6 +87,8 @@ public final class CommandService implements ICommandService {
 	 */
 	private final CommandPersistence commandPersistence;
 
+	private IEclipseContext context;
+
 	/**
 	 * Constructs a new instance of <code>CommandService</code> using a
 	 * command manager.
@@ -87,13 +96,14 @@ public final class CommandService implements ICommandService {
 	 * @param commandManager
 	 *            The command manager to use; must not be <code>null</code>.
 	 */
-	public CommandService(final CommandManager commandManager) {
+	public CommandService(final CommandManager commandManager, IEclipseContext context) {
 		if (commandManager == null) {
 			throw new NullPointerException(
 					"Cannot create a command service with a null manager"); //$NON-NLS-1$
 		}
 		this.commandManager = commandManager;
 		this.commandPersistence = new CommandPersistence(commandManager);
+		this.context = context;
 	}
 
 	public final void addExecutionListener(final IExecutionListener listener) {
@@ -333,5 +343,62 @@ public final class CommandService implements ICommandService {
 	 */
 	public CommandPersistence getCommandPersistence() {
 		return commandPersistence;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService#
+	 * registerElementForUpdate(org.eclipse.core.commands.ParameterizedCommand,
+	 * org.eclipse.e4.ui.model.application.ui.MUILabel)
+	 */
+	public Runnable registerElementForUpdate(ParameterizedCommand parameterizedCommand,
+			final MItem item) {
+		UIElement element = new UIElement(context.get(IWorkbench.class)) {
+
+			@Override
+			public void setText(String text) {
+				item.setLabel(text);
+			}
+
+			@Override
+			public void setTooltip(String text) {
+				item.setTooltip(text);
+			}
+
+			@Override
+			public void setIcon(ImageDescriptor desc) {
+				item.setIconURI(MenuHelper.getIconURI(desc, context));
+			}
+
+			@Override
+			public void setDisabledIcon(ImageDescriptor desc) {
+				item.getTransientData().put(IPresentationEngine.DISABLED_ICON_IMAGE_KEY,
+						MenuHelper.getIconURI(desc, context));
+			}
+
+			@Override
+			public void setHoverIcon(ImageDescriptor desc) {
+				// ignored
+			}
+
+			@Override
+			public void setChecked(boolean checked) {
+				item.setSelected(checked);
+			}
+		};
+
+		try {
+			final IElementReference reference = registerElementForCommand(parameterizedCommand,
+					element);
+			return new Runnable() {
+				public void run() {
+					unregisterElement(reference);
+				}
+			};
+		} catch (NotDefinedException e) {
+			WorkbenchPlugin.log(e);
+		}
+		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IExecutionListener;
@@ -25,9 +24,17 @@ import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.ui.commands.IElementReference;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
+import org.eclipse.e4.ui.model.application.ui.menu.MItem;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.commands.IElementReference;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.menus.UIElement;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * A command service which delegates almost all responsibility to the parent
@@ -39,7 +46,7 @@ import org.eclipse.ui.menus.UIElement;
  * 
  * @since 3.2
  */
-public class SlaveCommandService implements ICommandService {
+public class SlaveCommandService implements ICommandService, IUpdateService {
 
 	private Collection fExecutionListeners = new ArrayList();
 
@@ -66,7 +73,9 @@ public class SlaveCommandService implements ICommandService {
 	 * 
 	 * @since 3.3
 	 */
-	private Object fScopingValue;
+	private IServiceLocator fScopingValue;
+
+	private IEclipseContext fContext;
 
 	/**
 	 * Build the slave service.
@@ -74,8 +83,13 @@ public class SlaveCommandService implements ICommandService {
 	 * @param parent
 	 *            the parent service. This must not be <code>null</code>.
 	 */
+	public SlaveCommandService(ICommandService parent, String scopeName, IServiceLocator scopeValue) {
+		this(parent, scopeName, scopeValue, null);
+	}
+
 	public SlaveCommandService(ICommandService parent, String scopeName,
-			Object scopeValue) {
+			IServiceLocator scopeValue,
+			IEclipseContext context) {
 		if (parent == null) {
 			throw new NullPointerException(
 					"The parent command service must not be null"); //$NON-NLS-1$
@@ -83,6 +97,7 @@ public class SlaveCommandService implements ICommandService {
 		fParentService = parent;
 		fScopingName = scopeName;
 		fScopingValue = scopeValue;
+		fContext = context;
 	}
 
 	/*
@@ -308,5 +323,62 @@ public class SlaveCommandService implements ICommandService {
 	public void unregisterElement(IElementReference elementReference) {
 		fCallbackCache.remove(elementReference);
 		fParentService.unregisterElement(elementReference);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService#
+	 * registerElementForUpdate(org.eclipse.core.commands.ParameterizedCommand,
+	 * org.eclipse.e4.ui.model.application.ui.menu.MItem)
+	 */
+	public Runnable registerElementForUpdate(ParameterizedCommand parameterizedCommand,
+			final MItem item) {
+		UIElement element = new UIElement(fScopingValue) {
+
+			@Override
+			public void setText(String text) {
+				item.setLabel(text);
+			}
+
+			@Override
+			public void setTooltip(String text) {
+				item.setTooltip(text);
+			}
+
+			@Override
+			public void setIcon(ImageDescriptor desc) {
+				item.setIconURI(MenuHelper.getIconURI(desc, fContext));
+			}
+
+			@Override
+			public void setDisabledIcon(ImageDescriptor desc) {
+				item.getTransientData().put(IPresentationEngine.DISABLED_ICON_IMAGE_KEY,
+						MenuHelper.getIconURI(desc, fContext));
+			}
+
+			@Override
+			public void setHoverIcon(ImageDescriptor desc) {
+				// ignored
+			}
+
+			@Override
+			public void setChecked(boolean checked) {
+				item.setSelected(checked);
+			}
+		};
+
+		try {
+			final IElementReference reference = registerElementForCommand(parameterizedCommand,
+					element);
+			return new Runnable() {
+				public void run() {
+					unregisterElement(reference);
+				}
+			};
+		} catch (NotDefinedException e) {
+			WorkbenchPlugin.log(e);
+		}
+		return null;
 	}
 }
