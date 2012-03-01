@@ -148,13 +148,15 @@ public class JobInfo extends JobTreeElement {
 			}
         }
 
-        // If equal prio, order by names
-        if (job.getPriority() == job2.getPriority()) {
+        int thisPriority = job.getPriority();
+		int otherPriority = job2.getPriority();
+		// If equal prio, order by names
+		if (thisPriority == otherPriority) {
             return job.getName().compareTo(job2.getName());
         }
 
         // order by priority
-        if (job.getPriority() > job2.getPriority()) {
+        if (thisPriority > otherPriority) {
 			return -1;
 		}
         return 1;
@@ -172,9 +174,13 @@ public class JobInfo extends JobTreeElement {
 		}
         JobInfo element = (JobInfo) arg0;
 
-        //If the receiver is cancelled then it is lowest priority
-        if (isCanceled() && !element.isCanceled()) {
+        boolean thisCanceled = isCanceled();
+		boolean anotherCanceled = element.isCanceled();
+		if (thisCanceled && !anotherCanceled) {
+			// If the receiver is cancelled then it is lowest priority
 			return 1;
+		} else if (!thisCanceled && anotherCanceled) {
+			return -1;
 		}
 
 		int thisState = getJob().getState();

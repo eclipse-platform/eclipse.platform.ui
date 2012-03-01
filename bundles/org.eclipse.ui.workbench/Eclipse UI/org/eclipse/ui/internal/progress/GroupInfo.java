@@ -98,16 +98,6 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object arg0) {
-		return getDisplayString().compareTo(
-				((JobTreeElement) arg0).getDisplayString());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
 	 * int)
