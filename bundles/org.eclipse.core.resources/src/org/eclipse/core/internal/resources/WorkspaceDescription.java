@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	public WorkspaceDescription(String name) {
 		super(name);
 		// initialize based on the values in the default preferences
-		IEclipsePreferences node = new DefaultScope().getNode(ResourcesPlugin.PI_RESOURCES);
+		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 		autoBuilding = node.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING, PreferenceInitializer.PREF_AUTO_BUILDING_DEFAULT);
 		maxBuildIterations = node.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, PreferenceInitializer.PREF_MAX_BUILD_ITERATIONS_DEFAULT);
 		applyFileStatePolicy = node.getBoolean(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY, PreferenceInitializer.PREF_APPLY_FILE_STATE_POLICY_DEFAULT);
