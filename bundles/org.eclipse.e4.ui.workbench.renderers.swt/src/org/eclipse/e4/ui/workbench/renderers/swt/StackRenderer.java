@@ -125,6 +125,13 @@ public class StackRenderer extends LazyStackRenderer {
 	 */
 	private EventHandler viewMenuUpdater;
 
+	/**
+	 * An event handler for listening to changes to the children of an element
+	 * container. The tab folder may need to layout itself again if a part's
+	 * toolbar has been changed.
+	 */
+	private EventHandler childrenHandler;
+
 	private boolean ignoreTabSelChanges = false;
 
 	private ActivationJob activationJob = null;
@@ -402,6 +409,36 @@ public class StackRenderer extends LazyStackRenderer {
 				.subscribe(UIEvents.UIElement.TOPIC_VISIBLE, viewMenuUpdater);
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED,
 				viewMenuUpdater);
+
+		childrenHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				Object changedObj = event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				// only interested in changes to toolbars
+				if (!(changedObj instanceof MToolBar)) {
+					return;
+				}
+
+				Object container = ((EObject) changedObj).eContainer();
+				// check if this is a part's toolbar
+				if (container instanceof MPart) {
+					MElementContainer<?> parent = ((MPart) container)
+							.getParent();
+					// only relayout if this part is the selected element and we
+					// actually rendered this element
+					if (parent instanceof MPartStack
+							&& parent.getSelectedElement() == container
+							&& parent.getRenderer() == StackRenderer.this) {
+						Object widget = parent.getWidget();
+						if (widget instanceof CTabFolder) {
+							layoutTopRight((CTabFolder) widget);
+						}
+					}
+				}
+			}
+		};
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN,
+				childrenHandler);
 	}
 
 	/**
@@ -459,6 +496,7 @@ public class StackRenderer extends LazyStackRenderer {
 		eventBroker.unsubscribe(itemUpdater);
 		eventBroker.unsubscribe(dirtyUpdater);
 		eventBroker.unsubscribe(viewMenuUpdater);
+		eventBroker.unsubscribe(childrenHandler);
 	}
 
 	private String getLabel(MUILabel itemPart, String newName) {
