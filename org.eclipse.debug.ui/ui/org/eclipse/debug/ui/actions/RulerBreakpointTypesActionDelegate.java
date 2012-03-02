@@ -73,6 +73,7 @@ import org.eclipse.ui.texteditor.ITextEditorExtension;
  * @noextend This class is not intended to be subclassed by clients.
  * @since 3.5
  *  
+ * @deprecated Should use BreakpointTypesContribution instead.
  */
 public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate, IMenuListener, IMenuCreator {
     private ITextEditor fEditor = null;
@@ -150,6 +151,7 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
     }
 
     public void menuAboutToShow(IMenuManager manager) {
+        System.out.println("about to show");
         fSelection = StructuredSelection.EMPTY;
         if (fEditor != null && fRulerInfo != null) {
             
@@ -166,6 +168,7 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
             }
             ToggleBreakpointsTargetManager toggleTargetManager = ToggleBreakpointsTargetManager.getDefault(); 
             Set enabledIDs = toggleTargetManager.getEnabledToggleBreakpointsTargetIDs(fEditor, fSelection);
+            System.out.println(enabledIDs.toString());
             fCallerAction.setEnabled(enabledIDs.size() > 0);
         } else {
             fCallerAction.setEnabled(false);

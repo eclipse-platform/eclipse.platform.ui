@@ -648,7 +648,7 @@
                </visibleWhen>            
                <dynamic
 	               id="org.eclipse.debug.ui.actions.BreakpointTypesContribution"
-	               class="org.eclipse.debug.internal.ui.actions.breakpoints.BreakpointTypesContribution">
+	               class="org.eclipse.debug.ui.actions.BreakpointTypesContribution">
 	           </dynamic>
             </menu>         
        </menuContribution>

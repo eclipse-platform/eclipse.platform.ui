@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions.breakpoints;
+package org.eclipse.debug.ui.actions;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.debug.internal.ui.actions.ToggleBreakpointsTargetManager;
+import org.eclipse.debug.internal.ui.actions.breakpoints.Messages;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
@@ -34,10 +34,36 @@ import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * Dynamic menu contribution that shows available breakpoint types from 
- * toggleBreakpointsTargetFactories extension point.
- * 
- * @since 3.5
+ * Breakpoint ruler pop-up action that creates a sub-menu to select the currently 
+ * active breakpoint type. This menu contribution can be added to an editor 
+ * with the <code>org.eclipse.ui.menus</code> extension point.  The breakpoint 
+ * types are calculated based on the toggle breakpoint target factories 
+ * contributed through the <code>toggleBreakpointsTargetFactories</code> extension point.
+ * <p>
+ * Following is example plug-in XML used to contribute this action to an editor's
+ * vertical ruler context menu.  
+ * <pre>
+ * &lt;extension point="org.eclipse.ui.menus"&gt;
+ *   &lt;menuContribution
+ *     locationURI="popup:#CEditorRulerContext?after=additions"
+ *     id="example.RulerPopupActions"&gt;
+ *       &lt;menu\
+ *         id="breakpointTypes" 
+ *         label="Toggle Breakpoint"&gt;
+ *         &lt;dynamic\
+ *           id="example.rulerContextMenu.breakpointTypesAction"&gt;
+ *           class="org.eclipse.debug.ui.actions.BreakpointTypesContribution"
+ *         menubarPath="additions"&gt;/
+ *       &lt;/menu&gt;
+ *   &lt;/menuContribution&gt;
+ * </pre>
+ * </p>
+ * <p>
+ * Clients may refer to this class in plug-in XML. This class
+ * is not intended to be subclassed.
+ * </p>
+ * @since 3.8
+ * @noextend
  */
 public class BreakpointTypesContribution extends CompoundContributionItem implements IWorkbenchContribution {
     
