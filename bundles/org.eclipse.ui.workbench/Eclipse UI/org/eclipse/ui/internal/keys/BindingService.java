@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,8 @@ public final class BindingService implements IBindingService {
 	@Optional
 	private KeyBindingDispatcher dispatcher;
 
+	private BindingPersistence bp;
+
 	private Map<String, MBindingContext> bindingContexts = new HashMap<String, MBindingContext>();
 
 	private String[] activeSchemeIds;
@@ -87,7 +89,7 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
-
+		bp.dispose();
 	}
 
 	/*
@@ -338,7 +340,17 @@ public final class BindingService implements IBindingService {
 	 * .ui.commands.ICommandService)
 	 */
 	public void readRegistryAndPreferences(ICommandService commandService) {
-		BindingPersistence bp = new BindingPersistence(manager, commandManager);
+		if (bp == null) {
+			bp = new BindingPersistence(manager, commandManager) {
+				@Override
+				public void reRead() {
+					super.reRead();
+					// after having read the registry and preferences, persist
+					// and update the model
+					persistToModel(manager.getActiveScheme());
+				}
+			};
+		}
 		bp.read();
 	}
 
@@ -371,7 +383,10 @@ public final class BindingService implements IBindingService {
 	 */
 	public void savePreferences(Scheme activeScheme, Binding[] bindings) throws IOException {
 		saveLegacyPreferences(activeScheme, bindings);
+		persistToModel(activeScheme);
+	}
 
+	private void persistToModel(Scheme activeScheme) {
 		// save the active scheme to the model
 		writeSchemeToModel(activeScheme);
 		activeSchemeIds = getSchemeIds(activeScheme.getId());
