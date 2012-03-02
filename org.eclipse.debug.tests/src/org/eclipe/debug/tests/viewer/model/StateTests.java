@@ -1065,6 +1065,8 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fListener.addUpdates(null, path, (TestElement)path.getLastSegment(), 0, STATE_UPDATES);
 
         // Wait till we restore state of elements we want to collapse and select
+        // Bug 372619 - Need to wait until proxy installed delta is processed before 
+        // posting the next delta.
         while (!fListener.isFinished(STATE_RESTORE_STARTED | STATE_UPDATES | CHILDREN_UPDATES | MODEL_CHANGED_COMPLETE)) 
             if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
                 
