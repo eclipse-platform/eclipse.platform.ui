@@ -1317,20 +1317,23 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		Control control = (Control) part.getWidget();
-		Menu menu = (Menu) renderer.createGui(viewMenu, control.getShell(),
-				part.getContext());
-		if (menu != null) {
-			menuRenderer = viewMenu.getRenderer();
-			if (menuRenderer instanceof MenuManagerRenderer) {
-				MenuManagerRenderer menuManagerRenderer = (MenuManagerRenderer) menuRenderer;
-				MenuManager manager = menuManagerRenderer.getManager(viewMenu);
-				if (manager != null) {
-					// remark ourselves as dirty so that the menu will be
-					// reconstructed
-					manager.markDirty();
+		if (control != null) {
+			Menu menu = (Menu) renderer.createGui(viewMenu, control.getShell(),
+					part.getContext());
+			if (menu != null) {
+				menuRenderer = viewMenu.getRenderer();
+				if (menuRenderer instanceof MenuManagerRenderer) {
+					MenuManagerRenderer menuManagerRenderer = (MenuManagerRenderer) menuRenderer;
+					MenuManager manager = menuManagerRenderer
+							.getManager(viewMenu);
+					if (manager != null) {
+						// remark ourselves as dirty so that the menu will be
+						// reconstructed
+						manager.markDirty();
+					}
 				}
+				return menu.getItemCount() != 0;
 			}
-			return menu.getItemCount() != 0;
 		}
 		return false;
 	}
