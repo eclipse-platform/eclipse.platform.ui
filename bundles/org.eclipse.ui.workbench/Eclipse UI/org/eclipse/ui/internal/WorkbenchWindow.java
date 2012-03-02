@@ -134,7 +134,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.commands.SlaveCommandService;
-import org.eclipse.ui.internal.contexts.SlaveContextService;
+import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -225,7 +225,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private boolean shellActivated = false;
 
 	ProgressRegion progressRegion = null;
-	private SlaveContextService contextService = null;
 
 	private List<MTrimElement> workbenchTrimElements = new ArrayList<MTrimElement>();
 
@@ -2274,19 +2273,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		serviceLocator.registerService(ICommandService.class, slaveCmdService);
 		serviceLocator.registerService(IUpdateService.class, slaveCmdService);
 
-		windowContext.set(IContextService.class.getName(), new ContextFunction() {
-			@Override
-			public Object compute(IEclipseContext context) {
-				if (contextService == null) {
-					contextService = new SlaveContextService(context.getParent().get(
-							IContextService.class), new ActiveShellExpression(getShell()));
-				}
-				return contextService;
-			}
-		});
-		// IContextService cxs = ContextInjectionFactory
-		// .make(ContextService.class, model.getContext());
-		// serviceLocator.registerService(IContextService.class, cxs);
+		IContextService cxs = ContextInjectionFactory
+				.make(ContextService.class, model.getContext());
+		serviceLocator.registerService(IContextService.class, cxs);
 	}
 
 	public final Object getService(final Class key) {
