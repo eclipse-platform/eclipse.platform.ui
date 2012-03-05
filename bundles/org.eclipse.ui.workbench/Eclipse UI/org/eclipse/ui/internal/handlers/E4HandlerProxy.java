@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.5
@@ -56,7 +55,7 @@ public class E4HandlerProxy {
 	@Execute
 	public Object execute(IEclipseContext context,
 			@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms, @Optional Event trigger,
-			@Optional IEvaluationContext staticContext) {
+			@Optional IEvaluationContext staticContext) throws ExecutionException {
 		Activator.trace(Policy.DEBUG_CMDS, "execute " + command + " and " //$NON-NLS-1$ //$NON-NLS-2$
 				+ handler + " with: " + context, null); //$NON-NLS-1$
 		IEvaluationContext appContext = staticContext;
@@ -64,12 +63,7 @@ public class E4HandlerProxy {
 			appContext = new ExpressionContext(context);
 		}
 		ExecutionEvent event = new ExecutionEvent(command, parms, trigger, appContext);
-		try {
-			return handler.execute(event);
-		} catch (ExecutionException e) {
-			WorkbenchPlugin.log("Failure during execution of " + command.getId(), e); //$NON-NLS-1$
-		}
-		return null;
+		return handler.execute(event);
 	}
 
 	public IHandler getHandler() {

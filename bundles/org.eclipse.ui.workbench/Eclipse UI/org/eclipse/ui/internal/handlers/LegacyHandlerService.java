@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
@@ -461,6 +462,9 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 		try {
 			return hs.executeHandler(command, staticContext);
+		} catch (InjectionException e) {
+			rethrow(e);
+			throw e;
 		} finally {
 			staticContext.dispose();
 		}
@@ -494,10 +498,31 @@ public class LegacyHandlerService implements IHandlerService {
 		EHandlerService hs = eclipseContext.get(EHandlerService.class);
 		try {
 			return hs.executeHandler(command, staticContext);
+		} catch (InjectionException e) {
+			rethrow(e);
+			throw e;
 		} finally {
 			if (disposeContext) {
 				staticContext.dispose();
 			}
+		}
+	}
+
+	/**
+	 * Checks the cause of the provided exception and rethrows the cause instead
+	 * if it was one of the expected exception types.
+	 */
+	private void rethrow(InjectionException e) throws ExecutionException, NotDefinedException,
+			NotEnabledException, NotHandledException {
+		Throwable cause = e.getCause();
+		if (cause instanceof ExecutionException) {
+			throw (ExecutionException) cause;
+		} else if (cause instanceof NotDefinedException) {
+			throw (NotDefinedException) cause;
+		} else if (cause instanceof NotEnabledException) {
+			throw (NotEnabledException) cause;
+		} else if (cause instanceof NotHandledException) {
+			throw (NotHandledException) cause;
 		}
 	}
 
