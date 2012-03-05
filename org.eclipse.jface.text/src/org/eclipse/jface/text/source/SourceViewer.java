@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,6 +127,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			Rectangle trim= textWidget.computeTrim(0, 0, 0, 0);
 			int topTrim= - trim.y;
 			int scrollbarHeight= trim.height - topTrim; // horizontal scroll bar is only under the client area
+			if ((textWidget.getScrollbarsMode() & SWT.SCROLLBAR_OVERLAY) != 0)
+				scrollbarHeight= 0;
 
 			int x= clArea.x;
 			int width= clArea.width;
