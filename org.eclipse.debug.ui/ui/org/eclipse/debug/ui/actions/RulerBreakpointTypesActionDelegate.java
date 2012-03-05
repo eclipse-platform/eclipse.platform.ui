@@ -151,7 +151,6 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
     }
 
     public void menuAboutToShow(IMenuManager manager) {
-        System.out.println("about to show");
         fSelection = StructuredSelection.EMPTY;
         if (fEditor != null && fRulerInfo != null) {
             
@@ -168,7 +167,6 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
             }
             ToggleBreakpointsTargetManager toggleTargetManager = ToggleBreakpointsTargetManager.getDefault(); 
             Set enabledIDs = toggleTargetManager.getEnabledToggleBreakpointsTargetIDs(fEditor, fSelection);
-            System.out.println(enabledIDs.toString());
             fCallerAction.setEnabled(enabledIDs.size() > 0);
         } else {
             fCallerAction.setEnabled(false);
