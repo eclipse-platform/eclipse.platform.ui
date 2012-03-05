@@ -1806,9 +1806,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (getRuler() == null)
 				return false;
 
-			if (descriptor == null)
-				return false;
-
 			return descriptor.matchesEditor(fEditor);
 		}
 
