@@ -757,6 +757,7 @@ public boolean getBorderVisible() {
 ToolBar getChevron() {
 	if (chevronTb == null) {
 		chevronTb = new ToolBar(this, SWT.FLAT);
+		initAccessibleChevronTb();
 		addTabControl(chevronTb, SWT.TRAIL, -1, false);
 	}
 	if (chevronItem == null) {
@@ -1308,9 +1309,12 @@ void initAccessible() {
 				if (text != null) {
 					char mnemonic = _findMnemonic(text);	
 					if (mnemonic != '\0') {
-						shortcut = "Alt+"+mnemonic; //$NON-NLS-1$
+						shortcut = SWT.getMessage ("SWT_Page_Mnemonic", new Object[] {new Character(mnemonic)}); //$NON-NLS-1$
 					}
 				}
+			}
+			if (childID == ACC.CHILDID_SELF) {
+				shortcut = SWT.getMessage ("SWT_SwitchPage_Shortcut"); //$NON-NLS-1$
 			}
 			e.result = shortcut;
 		}
@@ -1328,6 +1332,7 @@ void initAccessible() {
 			}
 			if (childID == ACC.CHILDID_NONE) {
 				Rectangle location = getBounds();
+				location.x = location.y = 0;
 				location.height = location.height - getClientArea().height;
 				if (location.contains(testPoint)) {
 					childID = ACC.CHILDID_SELF;
@@ -1369,9 +1374,6 @@ void initAccessible() {
 			if (childID >= 0 && childID < items.length) {
 				action = SWT.getMessage ("SWT_Switch"); //$NON-NLS-1$
 			}
-			if (childID >= items.length && childID < items.length) {
-				action = SWT.getMessage ("SWT_Press"); //$NON-NLS-1$
-			}
 			e.result = action;
 		}
 
@@ -1394,9 +1396,7 @@ void initAccessible() {
 				role = ACC.ROLE_TABFOLDER;
 			} else if (childID >= 0 && childID < items.length) {
 				role = ACC.ROLE_TABITEM;
-			} else if (childID >= items.length && childID < items.length) {
-				role = ACC.ROLE_PUSHBUTTON;
-			}
+			} 
 			e.detail = role;
 		}
 		
@@ -1452,6 +1452,30 @@ void initAccessible() {
 				accessible.setFocus(ACC.CHILDID_SELF);
 			} else {
 				accessible.setFocus(selectedIndex);
+			}
+		}
+	});
+}
+void initAccessibleMinMaxTb() {
+	minMaxTb.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+		public void getName(AccessibleEvent e) {
+			if (e.childID != ACC.CHILDID_SELF) {
+				if (minItem != null && e.childID == minMaxTb.indexOf(minItem)) {
+					e.result = minItem.getToolTipText();
+				} else if (maxItem != null && e.childID == minMaxTb.indexOf(maxItem)) {
+					e.result = maxItem.getToolTipText();
+				}
+			}
+		}
+	});
+}
+void initAccessibleChevronTb() {
+	chevronTb.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+		public void getName(AccessibleEvent e) {
+			if (e.childID != ACC.CHILDID_SELF) {
+				if (chevronItem != null && e.childID == chevronTb.indexOf(chevronItem)) {
+					e.result = chevronItem.getToolTipText();
+				}
 			}
 		}
 	});
@@ -2333,6 +2357,7 @@ void setButtonBounds(GC gc) {
 	if (showMax) {
 		if (minMaxTb == null) {
 			minMaxTb = new ToolBar(this, SWT.FLAT);
+			initAccessibleMinMaxTb();
 			addTabControl(minMaxTb, SWT.TRAIL, 0, false);
 		}
 		if (maxItem == null) {
@@ -2355,6 +2380,7 @@ void setButtonBounds(GC gc) {
 	if (showMin) {
 		if (minMaxTb == null) {
 			minMaxTb = new ToolBar(this, SWT.FLAT);
+			initAccessibleMinMaxTb();
 			addTabControl(minMaxTb, SWT.TRAIL, 0, false);
 		}
 		if (minItem == null) {
