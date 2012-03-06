@@ -20,7 +20,9 @@ LIB_NAME_FULL = libunixfile_1_0_0.so
 OS_TYPE = linux
 
 #Set this to be the location of your JRE
-JAVA_HOME = /usr/lib/jvm/java-1.5.0-ibm-1.5.0.9/
+ifeq (${JAVA_HOME},)
+	JAVA_HOME = /usr/lib/jvm/java-1.5.0-ibm-1.5.0.9/
+endif
 
 JDK_INCLUDE = -I ${JAVA_HOME}/include -I ${JAVA_HOME}/include/${OS_TYPE}
 OPT_FLAGS=-O -s -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
