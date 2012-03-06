@@ -347,6 +347,11 @@ public class PreviewPatchPage2 extends WizardPage {
 		//Need to handle input and rebuild tree only when becoming visible
 		if (visible){
 			fillSegmentCombo();
+			if (getPatcher().isGitPatch()) {
+				int ignore = getPatcher().calculateStripGitPrefixSegments();
+				fStripPrefixSegments.select(ignore);
+				getPatcher().setStripPrefixSegments(ignore);
+			}
 			// TODO: We should only do this if the tree needs to be rebuilt
 			rebuildTree();
 			updateEnablements();

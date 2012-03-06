@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class WorkspacePatcher extends Patcher {
 
 	private DiffProject[] fDiffProjects;
 	private boolean fIsWorkspacePatch= false;
+	private boolean fIsGitPatch = false;
 	private final Map retargetedDiffs = new HashMap();
 
 	public WorkspacePatcher() {
@@ -62,6 +63,7 @@ public class WorkspacePatcher extends Patcher {
 		super.patchParsed(patchReader);
 		fDiffProjects = patchReader.getDiffProjects();
 		fIsWorkspacePatch = patchReader.isWorkspacePatch();
+		fIsGitPatch = patchReader.isGitPatch() && calculateStripGitPrefixSegments() > -1;
 	}
 	
 	public DiffProject[] getDiffProjects() {
@@ -70,6 +72,10 @@ public class WorkspacePatcher extends Patcher {
 
 	public boolean isWorkspacePatch() {
 		return fIsWorkspacePatch;
+	}
+
+	public boolean isGitPatch() {
+		return fIsGitPatch;
 	}
 
 	//---- parsing patch files
@@ -381,5 +387,50 @@ public class WorkspacePatcher extends Patcher {
 			return 0;
 		return super.getStripPrefixSegments();
 	}
-    
+
+	int calculateStripGitPrefixSegments() {
+		FilePatch2[] diffs = getDiffs();
+		if (diffs.length == 0)
+			return -1;
+		int skip = -1;
+		for (int i = 0; i < diffs.length; i++) {
+			IPath oldPath = diffs[i].getPath(false);
+			IPath newPath = diffs[i].getPath(true);
+			if (checkFirstSegments(new IPath[] { oldPath, newPath },
+					new String[][] { { "a", "b" }, // change //$NON-NLS-1$ //$NON-NLS-2$
+							{ "b", "b" }, // addition //$NON-NLS-1$ //$NON-NLS-2$
+							{ "a", "a" } }) // deletion //$NON-NLS-1$ //$NON-NLS-2$
+					&& oldPath.segmentCount() > 2 && newPath.segmentCount() > 2) {
+				for (int j = 1; j < Math.min(oldPath.segmentCount(),
+						newPath.segmentCount()); j++) {
+					if (projectExists(oldPath.segment(j))
+							|| projectExists(newPath.segment(j))) {
+						if (skip == -1)
+							skip = j;
+						else if (skip != j)
+							return -1; // a different number of segments to be
+										// skipped, abort
+						break;
+					}
+				}
+			} else
+				return -1; // not a git diff or custom prefixes used
+		}
+		return skip;
+	}
+
+	private boolean checkFirstSegments(IPath[] paths, String[][] segments) {
+		SEGMENTS: for (int i = 0; i < segments.length; i++) {
+			for (int j = 0; j < paths.length; j++) {
+				if (!paths[j].segment(0).equals(segments[i][j]))
+					continue SEGMENTS;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean projectExists(final String name) {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists();
+	}
 }

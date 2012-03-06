@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import org.eclipse.compare.patch.IFilePatch2;
 import org.eclipse.core.runtime.Assert;
@@ -52,6 +53,7 @@ public class PatchReader {
 	};
 
 	private boolean fIsWorkspacePatch;
+	private boolean fIsGitPatch;
 	private DiffProject[] fDiffProjects;
 	private FilePatch2[] fDiffs;
 
@@ -61,7 +63,9 @@ public class PatchReader {
 	public static final String MULTIPROJECTPATCH_VERSION= "1.0"; //$NON-NLS-1$
 
 	public static final String MULTIPROJECTPATCH_PROJECT= "#P"; //$NON-NLS-1$
-	
+
+	private static final Pattern GIT_PATCH_PATTERN = Pattern.compile("^diff --git a/.+ b/.+[\r\n]+$");
+
 	/**
 	 * Create a patch reader for the default date formats.
 	 */
@@ -92,6 +96,7 @@ public class PatchReader {
 		// which will be replaced by the target selected by the user in the preview pane
 		String projectName= ""; //$NON-NLS-1$
 		this.fIsWorkspacePatch= false;
+		this.fIsGitPatch = false;
 
 		LineReader lr= new LineReader(reader);
 		if (!Platform.WS_CARBON.equals(Platform.getWS()))
@@ -102,6 +107,8 @@ public class PatchReader {
 		if (line != null && line.startsWith(PatchReader.MULTIPROJECTPATCH_HEADER)) {
 			this.fIsWorkspacePatch= true;
 		} else {
+			if (line != null && GIT_PATCH_PATTERN.matcher(line).matches())
+				this.fIsGitPatch = true;
 			parse(lr, line);
 			return;
 		}
@@ -659,6 +666,10 @@ public class PatchReader {
 
 	public boolean isWorkspacePatch() {
 		return this.fIsWorkspacePatch;
+	}
+
+	public boolean isGitPatch() {
+		return this.fIsGitPatch;
 	}
 
 	public DiffProject[] getDiffProjects() {
