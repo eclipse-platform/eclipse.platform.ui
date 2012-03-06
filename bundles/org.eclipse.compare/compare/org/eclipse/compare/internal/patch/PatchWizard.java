@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,8 +104,10 @@ public class PatchWizard extends Wizard {
 	public void addPages() {
 		if (patch == null)
 			addPage(fPatchWizardPage = new InputPatchPage(this));
-		if (patch == null || !fPatcher.isWorkspacePatch())
+		if (patch == null || (!fPatcher.isWorkspacePatch() && !fPatcher.isGitPatch()))
 			addPage(fPatchTargetPage = new PatchTargetPage(fPatcher));
+		else if (fPatcher.isGitPatch())
+			fPatcher.setTarget(ResourcesPlugin.getWorkspace().getRoot());
 		fPreviewPage2 = new PreviewPatchPage2(fPatcher, fConfiguration);
 		addPage(fPreviewPage2);
 	}

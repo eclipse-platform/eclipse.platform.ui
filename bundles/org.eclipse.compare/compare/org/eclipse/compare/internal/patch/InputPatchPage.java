@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -214,7 +214,6 @@ public class InputPatchPage extends WizardPage {
 
 		// If this is a workspace patch we don't need to set a target as the targets will be figured out from 
 		// all of the projects that make up the patch and continue on to final preview page 
-		// else go on to target selection page
 		if (patcher.isWorkspacePatch()) {
 			// skip 'Patch Target' page
 			IWizardPage page = super.getNextPage();
@@ -222,6 +221,18 @@ public class InputPatchPage extends WizardPage {
 				return page.getNextPage();
 		}
 
+		// If this is a git patch set the workspace root as the target and skip the target selection page
+		if (patcher.isGitPatch()) {
+			// skip 'Patch Target' page
+			IWizardPage page = super.getNextPage();
+			if (page.getName().equals(PatchTargetPage.PATCHTARGETPAGE_NAME)) {
+				// set the workspace root as the target
+				patcher.setTarget(ResourcesPlugin.getWorkspace().getRoot());
+				return page.getNextPage();
+			}
+		}
+
+		// else go on to target selection page
 		return super.getNextPage();
 	}
 
