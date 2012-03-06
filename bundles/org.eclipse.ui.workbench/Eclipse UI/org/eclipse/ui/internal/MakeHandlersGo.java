@@ -18,6 +18,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -45,6 +46,20 @@ public class MakeHandlersGo extends AbstractHandler implements IElementUpdater {
 		workbench = wb;
 		this.commandId = commandId;
 	}
+
+	/**
+	 * A public version of the protected
+	 * {@link #fireHandlerChanged(HandlerEvent)} method so that it can be called
+	 * by a HandlerProxy.
+	 * <p>
+	 * See bug 367094.
+	 * </p>
+	 */
+	@Override
+	public void fireHandlerChanged(HandlerEvent handlerEvent) {
+		super.fireHandlerChanged(handlerEvent);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

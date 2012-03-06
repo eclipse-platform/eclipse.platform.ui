@@ -16,8 +16,10 @@ import javax.inject.Named;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandler2;
+import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -28,12 +30,15 @@ import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.MakeHandlersGo;
+import org.eclipse.ui.internal.Workbench;
 
 /**
  * @since 3.5
  * 
  */
-public class E4HandlerProxy {
+public class E4HandlerProxy implements IHandlerListener {
 	public HandlerActivation activation = null;
 	private Command command;
 	private IHandler handler;
@@ -41,6 +46,7 @@ public class E4HandlerProxy {
 	public E4HandlerProxy(Command command, IHandler handler) {
 		this.command = command;
 		this.handler = handler;
+		handler.addHandlerListener(this);
 	}
 
 	@CanExecute
@@ -68,5 +74,16 @@ public class E4HandlerProxy {
 
 	public IHandler getHandler() {
 		return handler;
+	}
+
+	public void handlerChanged(HandlerEvent handlerEvent) {
+		IHandler handler = command.getHandler();
+		if (handler instanceof MakeHandlersGo) {
+			IEclipseContext appContext = ((Workbench) PlatformUI.getWorkbench()).getApplication()
+					.getContext();
+			if (HandlerServiceImpl.lookUpHandler(appContext, command.getId()) == this) {
+				((MakeHandlersGo) handler).fireHandlerChanged(handlerEvent);
+			}
+		}
 	}
 }
