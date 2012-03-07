@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,10 +60,10 @@ import org.eclipse.ui.services.IServiceLocator;
  * </p>
  * <p>
  * Clients may refer to this class in plug-in XML. This class
- * is not intended to be subclassed.
+ * is not intended to be sub-classed.
  * </p>
  * @since 3.8
- * @noextend
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class BreakpointTypesContribution extends CompoundContributionItem implements IWorkbenchContribution {
     
@@ -101,6 +101,9 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
     	}
     };
     
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
+     */
     protected IContributionItem[] getContributionItems() {
         IWorkbenchPart part = null;
         ISelection selection = null;
@@ -146,8 +149,10 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
         return items;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.menus.IWorkbenchContribution#initialize(org.eclipse.ui.services.IServiceLocator)
+     */
     public void initialize(IServiceLocator serviceLocator) {
         fServiceLocator = serviceLocator;
     }
-    
 }
