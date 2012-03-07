@@ -25,7 +25,6 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 
 public class RepositoryRoot extends PlatformObject {
 
@@ -444,22 +443,15 @@ public class RepositoryRoot extends PlatformObject {
 		return (CVSTag[])tagSet.toArray(new CVSTag[0]);
 	}
 	
-	/**
-	 * Return the cache key (path) for the given folder path. For root projects
-	 * it returns the folder the project is mapped to as the tag source. For
-	 * non-root projects it returns only the first segment of the path because
-	 * for the time being tag lists are kept for the remote ancestors of the
-	 * resource that is a direct child of the remote root.
-	 *
-	 * @see TagSource
-	 * @see #addTags(String, CVSTag[])
-	 *
-	 * @param remotePath
-	 *            the remote folder path
-	 * @return the cache key (path) for the given folder path
+	/*
+	 * Return the cache key (path) for the given folder path.
+	 * This has been changed to cache the tags directly 
+	 * with the folder to better support non-root projects.
+	 * However, resources in the local workspace use the folder
+	 * the project is mapped to as the tag source (see TagSource)
 	 */
 	private String getCachePathFor(String remotePath) {
-		return new Path(null, remotePath).segment(0);
+		return remotePath;
 	}
 	
 	/**

@@ -82,7 +82,6 @@ public class RepositoriesViewTests extends EclipseTest {
 
 		// create project
 		IProject project = getUniqueTestProject("TestBranchSubmoduleChildrenProject");
-		buildResources(project, new String[] { "file1.txt" }, true);
 		// share project under module
 		shareProject(getRepository(), project,
 				moduleName + "/" + project.getName(), DEFAULT_MONITOR);
@@ -128,16 +127,28 @@ public class RepositoriesViewTests extends EclipseTest {
 
 		// create project
 		IProject project = getUniqueTestProject("TestTagSubmoduleChildrenProject");
-		buildResources(project, new String[] { "file1.txt" }, true);
 		// share project under module
 		shareProject(getRepository(), project,
 				moduleName + "/" + project.getName(), DEFAULT_MONITOR);
 		assertValidCheckout(project);
 
+		// make some changes
+		addResources(project, new String[] { "file1.txt" }, true);
+
 		// tag project
 		CVSTag tag = new CVSTag(versionName, CVSTag.VERSION);
 
 		tagProject(project, tag, true);
+
+		// refresh branches for module
+		// TODO Remove when Bug 372862 is committed, adding tag for submodule
+		// should automatically add it to module
+		CVSUIPlugin
+				.getPlugin()
+				.getRepositoryManager()
+				.refreshDefinedTags(
+						getRepository().getRemoteFolder(moduleName, null),
+						true, true, DEFAULT_MONITOR);
 
 		RemoteContentProvider rcp = new RemoteContentProvider();
 		Object[] categories = rcp.getChildren(getRepositoryRoot());
