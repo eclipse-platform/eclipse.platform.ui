@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public class ProjectContentTypes {
 
 		private IScopeContext getDelegate() {
 			if (!usesContentTypePreferences(project.getName()))
-				return ProjectContentTypes.INSTANCE_SCOPE;
+				return InstanceScope.INSTANCE;
 			return projectScope;
 		}
 
@@ -94,8 +94,6 @@ public class ProjectContentTypes {
 	}
 
 	private static final String CONTENT_TYPE_PREF_NODE = "content-types"; //$NON-NLS-1$
-
-	static final InstanceScope INSTANCE_SCOPE = new InstanceScope();
 
 	private static final String PREF_LOCAL_CONTENT_TYPE_SETTINGS = "enabled"; //$NON-NLS-1$
 	private static final Preferences PROJECT_SCOPE = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
