@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,8 +185,12 @@ public class MarkerManager implements IManager {
 			markers = info.getMarkers(true);
 			// remove all the matching markers and also the whole 
 			// set if there are no remaining markers
-			markers.removeAll(matching);
-			info.setMarkers(markers.size() == 0 ? null : markers);
+			if (markers.size() == matching.length) {
+				info.setMarkers(null);
+			} else {
+				markers.removeAll(matching);
+				info.setMarkers(markers);
+			}
 		}
 		info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 		IMarkerSetElement[] changes = new IMarkerSetElement[matching.length];
