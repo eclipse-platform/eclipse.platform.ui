@@ -511,13 +511,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		ContextInjectionFactory.inject(page, model.getContext());
 		windowContext.set(IWorkbenchPage.class, page);
-		firePageOpened();
 
 		menuManager.setOverrides(menuOverride);
 		((CoolBarToTrimManager) getCoolBarManager2()).setOverrides(toolbarOverride);
 
 		// Fill the action bars
 		fillActionBars(FILL_ALL_ACTION_BARS);
+		firePageOpened();
 
 		List<MPerspectiveStack> ps = modelService.findElements(model, null,
 				MPerspectiveStack.class, null);
