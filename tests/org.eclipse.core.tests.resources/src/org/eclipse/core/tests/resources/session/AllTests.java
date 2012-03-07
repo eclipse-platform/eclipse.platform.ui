@@ -54,6 +54,7 @@ public class AllTests extends TestCase {
 		suite.addTest(ProjectDescriptionDynamicTest.suite());
 		suite.addTest(TestBug202384.suite());
 		suite.addTest(TestBug369177.suite());
+		suite.addTest(TestBug316182.suite());
 		return suite;
 	}
 }
