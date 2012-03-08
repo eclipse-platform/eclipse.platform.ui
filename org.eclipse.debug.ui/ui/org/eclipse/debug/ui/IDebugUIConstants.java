@@ -362,6 +362,13 @@ public interface IDebugUIConstants {
 	 */
 	public static final String IMG_LCL_LOCK = "IMG_LCL_LOCK"; //$NON-NLS-1$	
 	
+    /**
+     * Add action image identifier.
+     * 
+     * @since 3.8
+     */
+    public static final String IMG_LCL_ADD = "IMG_LCL_MONITOR_EXPRESSION"; //$NON-NLS-1$
+
 	/**
 	 * Remove all action image identifier
 	 * 

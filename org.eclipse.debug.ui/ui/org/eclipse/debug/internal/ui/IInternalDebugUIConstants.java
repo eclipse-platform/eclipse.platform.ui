@@ -33,7 +33,11 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_LCL_SHOW_LOGICAL_STRUCTURE = "IMG_LCL_SHOW_LOGICAL_STRUCTURE"; //$NON-NLS-1$
     public static final String IMG_LCL_RUN_TO_LINE= "IMG_LCL_RUN_TO_LINE"; //$NON-NLS-1$
     public static final String IMG_SRC_LOOKUP_MENU = "IMG_SRC_LOOKUP_MENU"; //$NON-NLS-1$
-    public static final String IMG_LCL_MONITOR_EXPRESSION= "IMG_LCL_MONITOR_EXPRESSION"; //$NON-NLS-1$
+    
+    /**
+     * @deprecated Use IDebugUIConstants#IMG_LCL_ADD
+     */
+    public static final String IMG_LCL_MONITOR_EXPRESSION= IDebugUIConstants.IMG_LCL_ADD;
     public static final String IMG_LCL_REMOVE_MEMORY= "IMG_LCL_REMOVE_MEMORY"; //$NON-NLS-1$
     public static final String IMG_LCL_RESET_MEMORY= "IMG_LCL_RESET_MEMORY";//$NON-NLS-1$
     public static final String IMG_LCL_COPY_VIEW_TO_CLIPBOARD = "IMG_LCL_COPY_VIEW_TO_CLIPBOARD"; //$NON-NLS-1$
