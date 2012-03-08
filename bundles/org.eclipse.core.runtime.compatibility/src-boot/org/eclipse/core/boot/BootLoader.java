@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.osgi.framework.ServiceReference;
  * In Eclipse 3.0 the runtime has been refactored such that the <code>BootLoader</code>
  * class is no longer relevant.  Most of the function found on <code>BootLoader</code> is
  * however still supported and has been relocated described in the method comments.
+ * This API will be deleted in a future release. See bug 370248 for details.
  * <p>
  * This interface must only be used by plug-ins 
  * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.

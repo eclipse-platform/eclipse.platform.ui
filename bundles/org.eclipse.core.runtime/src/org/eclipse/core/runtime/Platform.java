@@ -476,6 +476,7 @@ public final class Platform {
 	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
 	 * for data access and modifications.  
 	 * Consider using <code>ISecurePreferences#put(String, String, boolean)</code> as a replacement of this method.
+	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
 	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
 		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
@@ -517,6 +518,7 @@ public final class Platform {
 	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
 	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
 	 * for data access and modifications.  
+	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
 	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
 		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
@@ -579,6 +581,7 @@ public final class Platform {
 	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
 	 * for data access and modifications.  
 	 * Consider using <code>ISecurePreferences#clear()</code> as a replacement of this method.
+	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
 	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
 		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
@@ -616,6 +619,7 @@ public final class Platform {
 	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
 	 * for data access and modifications.  
 	 * Consider using <code>ISecurePreferences#get(String, String)</code> as a replacement of this method.
+	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
 	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
 		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
@@ -796,6 +800,7 @@ public final class Platform {
 	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
 	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
 	 * for data access and modifications.  
+	 * This API will be deleted in a future release. See bug 370248 for details.
 	 */
 	public static String getProtectionSpace(URL resourceUrl) {
 		return AuthorizationHandler.getProtectionSpace(resourceUrl);

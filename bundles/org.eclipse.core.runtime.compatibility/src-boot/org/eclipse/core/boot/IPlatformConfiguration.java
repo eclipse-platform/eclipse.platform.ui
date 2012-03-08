@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import java.net.URL;
  * <code>IPlatformConfiguration</code> is part of the Update story and as such has
  * been moved to {@link org.eclipse.update.configurator.IPlatformConfiguration} in the 
  * <code>org.eclipse.update.configurator</code> plug-in.
+ * This API will be deleted in a future release. See bug 370248 for details.
  * <p>
  * This interface must only be used by plug-ins 
  * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.

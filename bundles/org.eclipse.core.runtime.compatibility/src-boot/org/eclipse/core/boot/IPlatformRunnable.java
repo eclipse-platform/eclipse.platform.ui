@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ package org.eclipse.core.boot;
  * </p>
  * @deprecated In Eclipse 3.0 the boot plug-in and packages were deprecated.
  * This class has been replaced by an equivalent class in the org.eclipse.core.runtime package.
+ * This API will be deleted in a future release. See bug 370248 for details.
  * 
  * @see org.eclipse.core.runtime.IPlatformRunnable
  */
