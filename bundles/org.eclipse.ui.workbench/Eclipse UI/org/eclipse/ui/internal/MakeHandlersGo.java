@@ -32,6 +32,7 @@ import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.E4HandlerProxy;
@@ -70,28 +71,29 @@ public class MakeHandlersGo extends AbstractHandler implements IElementUpdater {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		WorkbenchPlugin.log("Calling \"" + event.getCommand() //$NON-NLS-1$
 				+ "\" command directly"); //$NON-NLS-1$
-		Object obj = event.getApplicationContext();
-		if (obj instanceof IEvaluationContext) {
-			IHandlerService hs = (IHandlerService) workbench.getService(IHandlerService.class);
-			if (hs != null) {
-				ParameterizedCommand pcmd = generateCommand(event);
-				if (pcmd != null) {
-					Event e = null;
-					if (event.getTrigger() instanceof Event) {
-						e = (Event) event.getTrigger();
-					}
-					try {
+		IHandlerService hs = (IHandlerService) workbench.getService(IHandlerService.class);
+		if (hs != null) {
+			ParameterizedCommand pcmd = generateCommand(event);
+			if (pcmd != null) {
+				Event e = null;
+				if (event.getTrigger() instanceof Event) {
+					e = (Event) event.getTrigger();
+				}
+				try {
+					Object obj = event.getApplicationContext();
+					if (obj instanceof IEvaluationContext) {
 						return hs.executeCommandInContext(pcmd, e, (IEvaluationContext) obj);
-					} catch (NotDefinedException e1) {
-						// Because of the expectations of 3.x, this should
-						// go nowhere
-					} catch (NotEnabledException e1) {
-						// Because of the expectations of 3.x, this should
-						// go nowhere
-					} catch (NotHandledException e1) {
-						// Because of the expectations of 3.x, this should
-						// go nowhere
 					}
+					return hs.executeCommand(pcmd, e);
+				} catch (NotDefinedException e1) {
+					// Because of the expectations of 3.x, this should
+					// go nowhere
+				} catch (NotEnabledException e1) {
+					// Because of the expectations of 3.x, this should
+					// go nowhere
+				} catch (NotHandledException e1) {
+					// Because of the expectations of 3.x, this should
+					// go nowhere
 				}
 			}
 		}
@@ -100,6 +102,11 @@ public class MakeHandlersGo extends AbstractHandler implements IElementUpdater {
 
 	private ParameterizedCommand generateCommand(ExecutionEvent event) {
 		Command cmd = event.getCommand();
+		if (cmd == null) {
+			ICommandService commandService = (ICommandService) workbench
+					.getService(ICommandService.class);
+			cmd = commandService.getCommand(commandId);
+		}
 		if (event.getParameters().isEmpty()) {
 			return new ParameterizedCommand(cmd, null);
 		}
