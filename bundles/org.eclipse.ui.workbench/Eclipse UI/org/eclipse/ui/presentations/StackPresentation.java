@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,8 @@ import org.eclipse.ui.ISizeProvider;
  * 
  * @since 3.0
  * @deprecated The presentation API is no longer used and has no effect. Refer
- *             to the platform porting guide for further details.
+ *             to the platform porting guide for further details. This API will
+ *             be deleted in a future release. See bug 370248 for details.
  */
 @Deprecated
 public abstract class StackPresentation implements ISizeProvider {
