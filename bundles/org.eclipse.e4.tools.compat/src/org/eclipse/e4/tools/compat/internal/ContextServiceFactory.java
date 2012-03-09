@@ -20,6 +20,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.tools.services.IClipboardService;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.viewers.ISelection;
@@ -63,11 +64,27 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			BundleContext bundleContext = bundle.getBundleContext();
 			IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(bundleContext);
 
+			
 			final IEclipseContext appContext = serviceContext.createChild("WorkbenchContext"); //$NON-NLS-1$
 			appContext.set(Display.class, Display.getCurrent());
 			appContext.set(Logger.class, new WorkbenchLogger());
 			appContext.set(IClipboardService.class, new ClipboardServiceImpl());
 			appContext.set(Realm.class, Realm.getDefault());
+			
+			final Display d = Display.getCurrent();
+			appContext.set(UISynchronize.class, new UISynchronize() {
+				
+				@Override
+				public void syncExec(Runnable runnable) {
+					d.syncExec(runnable);
+				}
+				
+				@Override
+				public void asyncExec(Runnable runnable) {
+					d.asyncExec(runnable);
+				}
+			});
+			
 			IContributionFactory contributionFactory = ContextInjectionFactory.make(ReflectionContributionFactory.class, appContext);
 			appContext.set(IContributionFactory.class.getName(),contributionFactory);
 			
