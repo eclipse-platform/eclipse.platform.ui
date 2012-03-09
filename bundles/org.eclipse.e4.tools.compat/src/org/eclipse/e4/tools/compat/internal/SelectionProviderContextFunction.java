@@ -15,9 +15,9 @@ import java.util.List;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.services.ISelectionProviderService;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-
 
 public class SelectionProviderContextFunction extends ContextFunction {
 
@@ -27,12 +27,18 @@ public class SelectionProviderContextFunction extends ContextFunction {
 			public void setSelection(Object selection) {
 				ISelectionProvider pv = context.get(ISelectionProvider.class);
 				
-				if( selection instanceof List<?> ) {
-					pv.setSelection(new StructuredSelection((List<?>)selection));	
+				if( selection == null ) {
+					pv.setSelection(StructuredSelection.EMPTY);
+				} else if (selection instanceof ISelection) {
+					pv.setSelection((ISelection) selection);
+				} else if (selection instanceof List<?>) {
+					pv.setSelection(new StructuredSelection((List<?>) selection));
+				} else if (selection instanceof Object[]) {
+					pv.setSelection(new StructuredSelection(
+							(Object[]) selection));
 				} else {
 					pv.setSelection(new StructuredSelection(selection));
 				}
-				
 			}
 		};
 	}
