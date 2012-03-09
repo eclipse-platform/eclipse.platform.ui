@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -148,7 +147,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	private boolean decrementRefCount(Map referenceMap, Object key) {
 		boolean result = false;
 		Integer refCount = (Integer) referenceMap.get(key);
-		Assert.isTrue(refCount != null);
+		if (refCount == null)
+			Assert.isTrue(false, key + ": " + ((Saveable) key).getName()); //$NON-NLS-1$
 		if (refCount.intValue() == 1) {
 			referenceMap.remove(key);
 			result = true;
