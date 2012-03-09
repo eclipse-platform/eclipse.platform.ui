@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -43,12 +44,15 @@ import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction
 import org.eclipse.debug.internal.ui.actions.variables.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.variables.ToggleDetailPaneAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.viewers.model.ViewerAdapterService;
 import org.eclipse.debug.internal.ui.viewers.model.VirtualFindAction;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewActionOverride;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputRequestor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -931,6 +935,21 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		action= new VirtualFindAction(getVariablesViewer());
 		setAction(VARIABLES_FIND_ELEMENT_ACTION, action);
 	} 	
+
+
+	public IAction getAction(String actionID) {
+		IViewerInputProvider inputProvider = ViewerAdapterService.getInputProvider(getViewer().getInput());
+		if (inputProvider instanceof IAdaptable) {
+			Object x = ((IAdaptable) inputProvider).getAdapter(IViewActionOverride.class);
+			if (x instanceof IViewActionOverride) {
+				IAction action = ((IViewActionOverride) x).getAction(getPresentationContext(), actionID);
+				if (action != null) {
+					return action;
+				}
+			}
+		}
+		return super.getAction(actionID);
+	}
 	
 	/* (non-Javadoc)
 	 * 
