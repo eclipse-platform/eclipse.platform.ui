@@ -24,14 +24,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -44,15 +47,13 @@ import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction
 import org.eclipse.debug.internal.ui.actions.variables.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.variables.ToggleDetailPaneAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.viewers.model.ViewerAdapterService;
 import org.eclipse.debug.internal.ui.viewers.model.VirtualFindAction;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewActionOverride;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewActionProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputRequestor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -288,6 +289,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	private ViewerInputService fInputService;
 	
+	private Map fGlobalActionMap = new HashMap();
+	
 	/**
 	 * Viewer input requester used to update the viewer once the viewer input has been
 	 * resolved.
@@ -337,27 +340,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * Sash weights for a specific detail pane type
 	 */
 	protected static final String DETAIL_PANE_TYPE = "DETAIL_PANE_TYPE"; //$NON-NLS-1$
-	
-	/**
-	 * Key for "Find..." action.
-	 */
-	protected static final String VARIABLES_FIND_ELEMENT_ACTION = FIND_ACTION + ".Variables"; //$NON-NLS-1$
-
-	/**
-	 * Key for "Select All" action.
-	 */
-	protected static final String VARIABLES_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
-	
-	/**
-	 * Key for "Copy" action.
-	 */
-	protected static final String VARIABLES_COPY_ACTION = COPY_ACTION + ".Variables"; //$NON-NLS-1$	
-	
-	/**
-	 * Key for "Paste" action.
-	 */
-	protected static final String VARIABLES_PASTE_ACTION = PASTE_ACTION + ".Variables"; //$NON-NLS-1$	
-	
+		
     /**
      * Visits deltas to determine if details should be displayed
      */
@@ -453,7 +436,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {
 	    setViewerInput(update.getInputElement());
-        updateAction(VARIABLES_FIND_ELEMENT_ACTION);
         updateAction(FIND_ACTION);
 	}
 	
@@ -595,7 +577,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	/**
 	 * Returns sash weights stored in the given memento or <code>null</code> if none.
 	 * 
-	 * @param memento 
+	 * @param memento Memento to read sash weights from
 	 * @return sash weights or <code>null</code>
 	 */
 	private int[] getWeights(IMemento memento) {
@@ -661,9 +643,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION;
 	}
-		
+	
 	/**
 	 * Create and return the main tree viewer that displays variable.
+	 * @param parent Viewer's parent control
+	 * @return The created viewer.
 	 */
 	protected TreeModelViewer createTreeViewer(Composite parent) {
 		
@@ -675,11 +659,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			public void focusGained(FocusEvent e) {
 				fTreeHasFocus = true;
 				fSelectionProvider.setActiveProvider(variablesViewer);
-				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
-				setAction(COPY_ACTION, getAction(VARIABLES_COPY_ACTION));
-				setAction(PASTE_ACTION, getAction(VARIABLES_PASTE_ACTION));
-				setAction(FIND_ACTION, getAction(VARIABLES_FIND_ELEMENT_ACTION));
-				getViewSite().getActionBars().updateActionBars();
+				setGlobalActions();
 			}
 			
 			public void focusLost(FocusEvent e){
@@ -687,10 +667,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			    // This should allow toolbar actions to remain active when the view
 			    // is de-activated but still visible.
 			    // Bug 316850.
-				setAction(SELECT_ALL_ACTION, null);
-				setAction(COPY_ACTION,null);
-				setAction(FIND_ACTION, null);
-				setAction(PASTE_ACTION, null);
+				clearGlobalActions();
 				getViewSite().getActionBars().updateActionBars();
 			}
 		});
@@ -712,11 +689,32 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		return variablesViewer;
 	}
 
-	
-	
+	private void setGlobalActions() {
+		for (Iterator entryItr = fGlobalActionMap.entrySet().iterator(); entryItr.hasNext();) {
+			Map.Entry entry = (Map.Entry)entryItr.next();
+			String actionID = (String)entry.getKey();
+			IAction action = getOverrideAction(actionID);
+			if (action == null) {
+				action = (IAction)entry.getValue();
+			}
+			setAction(actionID, action);
+		}
+		getViewSite().getActionBars().updateActionBars();		
+	}
+
+	private void clearGlobalActions() {
+		for (Iterator keyItr = fGlobalActionMap.keySet().iterator(); keyItr.hasNext();) {
+			String id = (String)keyItr.next();
+			setAction(id, null);
+		}
+		getViewSite().getActionBars().updateActionBars();		
+	}
+
 	/**
 	 * Returns the active debug context for this view based on the view's 
 	 * site IDs.
+	 * 
+	 * @return Active debug context for this view.
 	 * 
 	 * @since 3.7
 	 */
@@ -793,6 +791,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * - underneath the main tree view
 	 * - to the right of the main tree view
 	 * - not visible
+	 * @param orientation Detail pane orientation to set.
+	 * 
+	 * @see IDebugPreferenceConstants#VARIABLES_DETAIL_PANE_AUTO
+	 * @see IDebugPreferenceConstants#VARIABLES_DETAIL_PANE_HIDDEN
+	 * @see IDebugPreferenceConstants#VARIABLES_DETAIL_PANE_UNDERNEATH
 	 */
 	public void setDetailPaneOrientation(String orientation) {
 		if (!IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_AUTO.equals(orientation) && orientation.equals(fCurrentDetailPaneOrientation)) {
@@ -891,6 +894,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * <li> both panes have not yet been made visible</li>
 	 * <li> one of the values persisted before is an invalid value</li>
 	 * </ul>
+	 * @return The last sash weights.
 	 */
 	protected int[] getLastSashWeights() {
 		if (fLastSashWeights == null) {
@@ -906,6 +910,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	/**
 	 * Set the current relative weights of the controls in the sash form, so that
 	 * the sash form can be reset to this layout at a later time.
+	 * @param weights Weight to add.
 	 */
 	protected void setLastSashWeights(int[] weights) {
 		fLastSashWeights = weights;
@@ -933,40 +938,63 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		setAction("ChangeVariableValue", action); //$NON-NLS-1$
 		
 		action= new VirtualFindAction(getVariablesViewer());
-		setAction(VARIABLES_FIND_ELEMENT_ACTION, action);
+		setGlobalAction(FIND_ACTION, action);
 	} 	
 
-
+	/**
+	 * Adds the given action to the set of global actions managed by this 
+	 * variables view.  Global actions are cleard and reset whenever the detail 
+	 * pane is activated to allow the detail pane to set the actions as 
+	 * well.
+	 * 
+	 * @param actionID Action ID that the given action implements.
+	 * @param action Action implementation.
+	 * 
+	 * @since 3.8
+	 */
+	protected void setGlobalAction(String actionID, IAction action) {
+		fGlobalActionMap.put(actionID, action);
+	}
+	
 	public IAction getAction(String actionID) {
-		IViewerInputProvider inputProvider = ViewerAdapterService.getInputProvider(getViewer().getInput());
-		if (inputProvider instanceof IAdaptable) {
-			Object x = ((IAdaptable) inputProvider).getAdapter(IViewActionOverride.class);
-			if (x instanceof IViewActionOverride) {
-				IAction action = ((IViewActionOverride) x).getAction(getPresentationContext(), actionID);
-				if (action != null) {
-					return action;
-				}
+		// Check if model overrides the action. Global action overrides are 
+		// checked in setGlobalActions() so skip them here.
+		if (!fGlobalActionMap.containsKey(actionID)) {
+			IAction overrideAction = getOverrideAction(actionID);
+			if (overrideAction != null) {
+				return overrideAction;
 			}
 		}
 		return super.getAction(actionID);
 	}
 	
-	/* (non-Javadoc)
-	 * 
-	 * Save the copy action so we can restore it on focus lost/gain
-	 * 
-	 * @see org.eclipse.debug.ui.AbstractDebugView#createContextMenu(org.eclipse.swt.widgets.Control)
-	 */
-	protected void createContextMenu(Control menuControl) {
-		super.createContextMenu(menuControl);
-		setAction(VARIABLES_COPY_ACTION, getAction(COPY_ACTION));
-		setAction(VARIABLES_PASTE_ACTION, getAction(PASTE_ACTION));
+	private IAction getOverrideAction(String actionID) {
+		Viewer viewer = getViewer();
+		if (viewer != null) {
+			IViewActionProvider actionProvider = (IViewActionProvider) DebugPlugin.getAdapter(
+					viewer.getInput(), IViewActionProvider.class);
+			if (actionProvider != null) {
+				IAction action = actionProvider.getAction(getPresentationContext(), actionID);
+				if (action != null) {
+					return action;
+				}
+			}
+		}
+		return null;
 	}
-
+	
+	public void updateObjects() {
+		super.updateObjects();
+		if (fTreeHasFocus) {
+			setGlobalActions();
+			getViewSite().getActionBars().updateActionBars();
+		}
+	}
+	
 	/**
 	 * Creates the actions that allow the orientation of the detail pane to be changed.
 	 * 
-	 * @param viewer 
+	 * @param viewer Viewer to create actions for.
 	 */
 	private void createOrientationActions(TreeModelViewer viewer) {
 		IActionBars actionBars = getViewSite().getActionBars();
@@ -1039,10 +1067,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	* @param menu The menu to add the item to.
 	*/
 	protected void fillContextMenu(IMenuManager menu) {
-
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
-		menu.add(getAction(VARIABLES_FIND_ELEMENT_ACTION));
+		menu.add(getAction(FIND_ACTION));
 		ChangeVariableValueAction changeValueAction = (ChangeVariableValueAction)getAction("ChangeVariableValue"); //$NON-NLS-1$
 		if (changeValueAction.isApplicable()) {
 		    menu.add(changeValueAction); 
@@ -1064,6 +1091,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
    /**
 	 * Lazily instantiate and return a selection listener that populates the detail pane,
 	 * but only if the detail is currently visible. 
+	 * 
+	 * @return Created selection listener
 	 */
     protected ISelectionChangedListener getTreeSelectionChangedListener() {
         if (fTreeSelectionChangedListener == null) {
@@ -1201,6 +1230,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	protected void updateAction(String actionId) {
 		IAction action= getAction(actionId);
+		if (action == null) {
+			action = (IAction)fGlobalActionMap.get(actionId);
+		}
 		if (action instanceof IUpdate) {
 			((IUpdate) action).update();
 		}
@@ -1238,7 +1270,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 
 	/**
 	 * Updates actions and sets the viewer input when a context is activated.
-	 * @param selection
+	 * @param selection New selection to activate.
 	 */
 	protected void contextActivated(ISelection selection) {
 		if (!isAvailable() || !isVisible()) {
@@ -1315,13 +1347,15 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	
 	/** 
 	 * Sets whether logical structures are being displayed
+	 * @param flag If true, turns the logical structures on.
 	 */
 	public void setShowLogicalStructure(boolean flag) {
 	    getPresentationContext().setProperty(PRESENTATION_SHOW_LOGICAL_STRUCTURES, Boolean.valueOf(flag));
 	}	
 	
 	/** 
-	 * Returns whether logical structures are being displayed 
+	 * Returns whether logical structures are being displayed
+	 * @return Returns true if logical structures should be shown. 
 	 */
 	public boolean isShowLogicalStructure() {
 		Boolean show = (Boolean) getPresentationContext().getProperty(PRESENTATION_SHOW_LOGICAL_STRUCTURES);
@@ -1384,7 +1418,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fVisitor.reset();
 		delta.accept(fVisitor);
 		
-		updateAction(VARIABLES_FIND_ELEMENT_ACTION);
+		updateAction(FIND_ACTION);
         updateAction("CollapseAll");
 	}
 
@@ -1400,7 +1434,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				showViewer();
 			}
 			if (TreePath.EMPTY.equals(update.getElementPath())) {
-			    updateAction(VARIABLES_FIND_ELEMENT_ACTION);
+			    updateAction(FIND_ACTION);
 			    updateAction("CollapseAll");
 			}
 		}

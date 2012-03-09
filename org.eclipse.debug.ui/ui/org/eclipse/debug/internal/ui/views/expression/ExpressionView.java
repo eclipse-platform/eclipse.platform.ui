@@ -83,7 +83,7 @@ public class ExpressionView extends VariablesView {
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
-		menu.add(getAction(VARIABLES_FIND_ELEMENT_ACTION));
+		menu.add(getAction(FIND_ACTION));
         ChangeVariableValueAction changeValueAction = (ChangeVariableValueAction)getAction("ChangeVariableValue"); //$NON-NLS-1$
         if (changeValueAction.isApplicable()) {
             menu.add(changeValueAction); 
@@ -128,7 +128,6 @@ public class ExpressionView extends VariablesView {
         } else {
             setViewerInput(DebugPlugin.getDefault().getExpressionManager());
         }
-        updateAction(VARIABLES_FIND_ELEMENT_ACTION);
         updateAction(FIND_ACTION);
 	}
 	
@@ -170,7 +169,6 @@ public class ExpressionView extends VariablesView {
     	configure(fPasteAction, IWorkbenchCommandConstants.EDIT_PASTE, PASTE_ACTION, ISharedImages.IMG_TOOL_PASTE);
     	fEditInPlaceAction = new EditWatchExpressinInPlaceAction(this);
         configure(fEditInPlaceAction, IWorkbenchCommandConstants.FILE_RENAME, ActionFactory.RENAME.getId(), null);
-    	
     }
     
     public void dispose() {
@@ -195,7 +193,7 @@ public class ExpressionView extends VariablesView {
     		String imgId) {
     	setAction(defId, action);
     	action.setActionDefinitionId(defId);
-    	getViewSite().getActionBars().setGlobalActionHandler(globalId, action);
+    	setGlobalAction(globalId, action);
     	if (imgId != null) {
     	    action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
     	}

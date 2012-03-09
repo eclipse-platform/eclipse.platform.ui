@@ -13,8 +13,10 @@ package org.eclipse.debug.examples.ui.pda.adapters;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
+import org.eclipse.debug.examples.core.pda.model.PDAStackFrame;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewActionProvider;
 
 
 /**
@@ -26,6 +28,7 @@ public class AdapterFactory implements IAdapterFactory {
 	
 	private static IElementContentProvider fgTargetAdapter = new PDADebugTargetContentProvider();
 	private static IModelProxyFactory fgFactory = new ModelProxyFactory();
+	private static IViewActionProvider fgViewActionProvider = new PDAViewActionProvider();
 
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IElementContentProvider.class.equals(adapterType)) {
@@ -38,11 +41,16 @@ public class AdapterFactory implements IAdapterFactory {
 				return fgFactory;
 			}
 		}
+		if (IViewActionProvider.class.equals(adapterType)) {
+			if (adaptableObject instanceof PDAStackFrame) {
+				return fgViewActionProvider;
+			}
+		}
 		return null;
 	}
 
 	public Class[] getAdapterList() {
-		return new Class[]{IElementContentProvider.class, IModelProxyFactory.class};
+		return new Class[]{IElementContentProvider.class, IModelProxyFactory.class, IViewActionProvider.class};
 	}
 
 }

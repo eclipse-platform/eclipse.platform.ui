@@ -60,7 +60,7 @@ public class ModulesView extends VariablesView {
     protected void fillContextMenu( IMenuManager menu ) {
         menu.add( new Separator( IDebugUIConstants.EMPTY_MODULES_GROUP ) );
         menu.add( new Separator( IDebugUIConstants.MODULES_GROUP ) );
-        menu.add(getAction(VARIABLES_FIND_ELEMENT_ACTION));
+        menu.add(getAction(FIND_ACTION));
         menu.add(new Separator());
         IAction action = new AvailableDetailPanesAction(this);
         if (isDetailPaneVisible() && action.isEnabled()) {
