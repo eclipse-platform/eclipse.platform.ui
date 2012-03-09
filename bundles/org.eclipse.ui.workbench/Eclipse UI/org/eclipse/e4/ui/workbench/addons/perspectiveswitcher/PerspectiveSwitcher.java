@@ -34,6 +34,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -109,6 +111,7 @@ public class PerspectiveSwitcher {
 
 	Color borderColor, curveColor;
 	Control toolParent;
+	IPropertyChangeListener propertyChangeListener;
 
 	private EventHandler selectionHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -264,6 +267,8 @@ UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
 		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL,
 				labelHandler);
 
+		setPropertyChangeListener();
+
 	}
 
 	@PreDestroy
@@ -277,6 +282,8 @@ UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(selectionHandler);
 		eventBroker.unsubscribe(labelHandler);
+
+		PrefUtil.getAPIPreferenceStore().removePropertyChangeListener(propertyChangeListener);
 	}
 
 	@PostConstruct
@@ -608,6 +615,19 @@ UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
 		});
 		showtextMenuItem.setSelection(PrefUtil.getAPIPreferenceStore().getBoolean(
 				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+	}
+
+	private void setPropertyChangeListener() {
+		propertyChangeListener = new IPropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+				if (IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR
+						.equals(propertyChangeEvent.getProperty())) {
+					changeShowText((Boolean) propertyChangeEvent.getNewValue());
+				}
+			}
+		};
+		PrefUtil.getAPIPreferenceStore().addPropertyChangeListener(propertyChangeListener);
 	}
 
 	private void changeShowText(boolean showText) {
