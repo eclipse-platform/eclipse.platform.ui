@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,8 @@ public class Accessor {
 
 	/**
 	 * Creates an accessor for the given <code>instance</code> and
-	 * <code>class</code>. Only non-inherited members that particular
-	 * <code>class</code> can be accessed.
+	 * <code>clazz</code>. Only non-inherited members of that particular
+	 * class can be accessed.
 	 *
 	 * @param instance the instance
 	 * @param clazz the class
@@ -49,12 +49,12 @@ public class Accessor {
 
 	/**
 	 * Creates an accessor for the given <code>instance</code> and
-	 * <code>class</code>. Only non-inherited members that particular
-	 * <code>class</code> can be accessed.
+	 * <code>className</code>. Only non-inherited members of that particular
+	 * class can be accessed.
 	 *
 	 * @param instance the instance
 	 * @param className the name of the class
-	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
+	 * @param classLoader the class loader to use, e.g. <code>getClass().getClassLoader()</code>
 	 */
 	public Accessor(Object instance, String className, ClassLoader classLoader) {
 		Assert.isNotNull(instance);
@@ -79,7 +79,7 @@ public class Accessor {
 	 * is not the case.</p>
 	 *
 	 * @param className the name of the class
-	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
+	 * @param classLoader the class loader to use, e.g. <code>getClass().getClassLoader()</code>
 	 * @param constructorArgs the constructor arguments which must all be instance of Object
 	 */
 	public Accessor(String className, ClassLoader classLoader, Object[] constructorArgs) {
@@ -90,7 +90,7 @@ public class Accessor {
 	 * Creates an accessor for the given class.
 	 *
 	 * @param className the name of the class
-	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
+	 * @param classLoader the class loader to use, e.g. <code>getClass().getClassLoader()</code>
 	 * @param constructorTypes the types of the constructor arguments
 	 * @param constructorArgs the constructor arguments
 	 */
@@ -132,7 +132,7 @@ public class Accessor {
 	 * </p>
 	 *
 	 * @param className the name of the class
-	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
+	 * @param classLoader the class loader to use, e.g. <code>getClass().getClassLoader()</code>
 	 */
 	public Accessor(String className, ClassLoader classLoader) {
 		try {
