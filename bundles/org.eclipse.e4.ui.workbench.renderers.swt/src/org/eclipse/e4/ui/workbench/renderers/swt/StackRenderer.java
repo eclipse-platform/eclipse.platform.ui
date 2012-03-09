@@ -824,16 +824,29 @@ public class StackRenderer extends LazyStackRenderer {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				CTabItem item = ctf.getItem(new Point(e.x, e.y));
-				if (item == null)
-					return;
 
-				if (e.button == 2) {
+				// If the user middle clicks on a tab, close it
+				if (item != null && e.button == 2) {
 					closePart(item, false);
-				} else if (e.button == 1) {
-					MUIElement ele = (MUIElement) item.getData(OWNING_ME);
-					if (ele.getParent().getSelectedElement() == ele) {
-						Control ctrl = (Control) ele.getWidget();
-						ctrl.setFocus();
+				}
+
+				// If the user clicks on the tab or empty stack space, call
+				// setFocus()
+				if (e.button == 1) {
+					if (item == null) {
+						Rectangle clientArea = ctf.getClientArea();
+						if (!clientArea.contains(e.x, e.y)) {
+							// User clicked in empty space
+							item = ctf.getSelection();
+						}
+					}
+
+					if (item != null) {
+						MUIElement ele = (MUIElement) item.getData(OWNING_ME);
+						if (ele.getParent().getSelectedElement() == ele) {
+							Control ctrl = (Control) ele.getWidget();
+							ctrl.setFocus();
+						}
 					}
 				}
 			}
@@ -870,6 +883,15 @@ public class StackRenderer extends LazyStackRenderer {
 				Point relativePoint = ctf.getDisplay().map(null, ctf,
 						absolutePoint);
 				CTabItem eventTabItem = ctf.getItem(relativePoint);
+
+				// If click happened in empty area, still show the menu
+				if (eventTabItem == null) {
+					Rectangle clientArea = ctf.getClientArea();
+					if (!clientArea.contains(e.x, e.y)) {
+						eventTabItem = ctf.getSelection();
+					}
+				}
+
 				if (eventTabItem != null) {
 					MUIElement uiElement = (MUIElement) eventTabItem
 							.getData(AbstractPartRenderer.OWNING_ME);
