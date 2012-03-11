@@ -9,9 +9,6 @@
  *     Christian Plesner Hansen (plesner@quenta.org) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.source;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -132,38 +129,94 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		if (document == null || offset < 0 || offset > document.getLength())
 			return null;
 
-		int start;
-		int end;
-		if (length >= 0) {
-			start= offset;
-			end= offset + length;
-		} else {
-			end= offset;
-			start= offset + length;
+		//maybe a bracket is selected
+		IRegion region= match(document, offset, length);
+		fAnchor= ICharacterPairMatcher.LEFT; //always set the anchor to LEFT
+		if (region != null) {
+			return region;
 		}
 
-		int sourceCaretOffset= offset + length;
-		int adjustment= getOffsetAdjustment(document, sourceCaretOffset, length);
-		sourceCaretOffset+= adjustment;
-
+		//bracket is not selected
 		try {
-			for (int offset1= sourceCaretOffset; offset1 >= 0; offset1--) {
-				char prevChar= document.getChar(Math.max(offset1 - 1, 0));
-				if (fPairs.contains(prevChar) && fPairs.isStartCharacter(prevChar)) {
-					IRegion match= performMatch(document, offset1);
-					if (match != null) {
-						int matchOffset= match.getOffset();
-						int matchLength= match.getLength();
-						if ((matchOffset <= start) && (matchOffset + matchLength > start) && (matchOffset < end) && (matchOffset + matchLength >= end)) {
-							return match;
-						}
-					}
-				}
-			}
+			final String partition1= TextUtilities.getContentType(document, fPartitioning, offset, false);
+			final DocumentPartitionAccessor partDoc= new DocumentPartitionAccessor(document, fPartitioning, partition1);
+			return findEnclosingPeers(document, partDoc, offset, length, 0, document.getLength());
 		} catch (BadLocationException ble) {
+			fAnchor= -1;
 			return null;
 		}
-		return null;
+	}
+
+	/**
+	 * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension#isMatchedChar(char)
+	 * @since 3.8
+	 */
+	public boolean isMatchedChar(char ch) {
+		return fPairs.contains(ch);
+	}
+
+	/**
+	 * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension#isMatchedChar(char,
+	 *      org.eclipse.jface.text.IDocument, int)
+	 * @since 3.8
+	 */
+	public boolean isMatchedChar(char ch, IDocument document, int offset) {
+		return isMatchedChar(ch);
+	}
+
+	/**
+	 * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension#isRecomputationOfEnclosingPairRequired(org.eclipse.jface.text.IDocument,
+	 *      org.eclipse.jface.text.IRegion, org.eclipse.jface.text.IRegion)
+	 * @since 3.8
+	 */
+	public boolean isRecomputationOfEnclosingPairRequired(IDocument document, IRegion currentSelection, IRegion previousSelection) {
+		int previousStartOffset= previousSelection.getOffset();
+		int currentStartOffset= currentSelection.getOffset();
+		int previousEndOffset= previousStartOffset + previousSelection.getLength();
+		int currentEndOffset= currentStartOffset + currentSelection.getLength();
+
+		try {
+			String prevEndContentType= TextUtilities.getContentType(document, fPartitioning, previousEndOffset, false);
+			String currEndContentType= TextUtilities.getContentType(document, fPartitioning, currentEndOffset, false);
+			if (!prevEndContentType.equals(currEndContentType))
+				return true;
+			
+			String prevStartContentType= TextUtilities.getContentType(document, fPartitioning, previousEndOffset, false);
+			String currStartContentType= TextUtilities.getContentType(document, fPartitioning, currentEndOffset, false);
+			if (!prevStartContentType.equals(currStartContentType))
+				return true;
+			
+			int start;
+			int end;
+			if (currentEndOffset > previousEndOffset) {
+				start= previousEndOffset;
+				end= currentEndOffset;
+			} else {
+				start= currentEndOffset;
+				end= previousEndOffset;
+			}
+			for (int i= start; i < end; i++) {
+				if (isMatchedChar(document.getChar(i))) {
+					return true;
+				}
+			}
+			
+			if (currentStartOffset > previousStartOffset) {
+				start= previousStartOffset;
+				end= currentStartOffset;
+			} else {
+				start= currentStartOffset;
+				end= previousStartOffset;
+			}
+			for (int i= start; i < end; i++) {
+				if (isMatchedChar(document.getChar(i))) {
+					return true;
+				}
+			}
+		} catch (BadLocationException e) {
+			//do nothing
+		}
+		return false;
 	}
 
 	/**
@@ -261,6 +314,106 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		return -1;
 	}
 
+	/*
+	 * Performs the actual work of finding enclosing peer characters for #findEnclosingPeerCharacters(IDocument, int, int).
+	 */
+	private IRegion findEnclosingPeers(IDocument document, DocumentPartitionAccessor doc, int offset, int length, int lowerBoundary, int upperBoundary) throws BadLocationException {
+		char[] pairs= fPairs.fPairs;
+	
+		int start;
+		int end;
+		if (length >= 0) {
+			start= offset;
+			end= offset + length;
+		} else {
+			end= offset;
+			start= offset + length;
+		}
+	
+		boolean lowerFound= false;
+		boolean upperFound= false;
+		int[][] counts= new int[pairs.length][2];
+		int pos1= doc.getNextPosition(start, false);
+		int pos2= start;
+	
+		while ((pos1 >= lowerBoundary && !lowerFound) || (pos2 < upperBoundary && !upperFound)) {
+			for (int i= 0; i < counts.length; i++) {
+				counts[i][0]= counts[i][1]= 0;
+			}
+	
+			outer1: while (pos1 >= lowerBoundary && !lowerFound) {
+				final char c= doc.getChar(pos1);
+				int i= getCharacterIndex(c, document, pos1);
+				if (i != -1 && doc.inPartition(pos1)) {
+					if (i % 2 == 0) {
+						counts[i / 2][0]--; //start
+					} else {
+						counts[i / 2][0]++; //end
+					}
+					for (int j= 0; j < counts.length; j++) {
+						if (counts[j][0] == -1) {
+							lowerFound= true;
+							break outer1;
+						}
+					}
+				}
+				pos1= doc.getNextPosition(pos1, false);
+			}
+	
+			outer2: while (pos2 < upperBoundary && !upperFound) {
+				final char c= doc.getChar(pos2);
+				int i= getCharacterIndex(c, document, pos2);
+				if (i != -1 && doc.inPartition(pos2)) {
+					if (i % 2 == 0) {
+						counts[i / 2][1]++; //start
+					} else {
+						counts[i / 2][1]--; //end
+					}
+					for (int j= 0; j < counts.length; j++) {
+						if (counts[j][1] == -1 && counts[j][0] == -1) {
+							upperFound= true;
+							break outer2;
+						}
+					}
+				}
+				pos2= doc.getNextPosition(pos2, true);
+			}
+	
+			if (pos1 > start || pos2 < end) {
+				//match inside selection => discard
+				pos1= doc.getNextPosition(pos1, false);
+				pos2= doc.getNextPosition(pos2, true);
+				lowerFound= false;
+				upperFound= false;
+			}
+		}
+		pos2++;
+		if (pos1 < lowerBoundary || pos2 > upperBoundary)
+			return null;
+		return new Region(pos1, pos2 - pos1);
+	}
+
+	/**
+	 * Determines the index of the character in the char array passed to the constructor of the pair
+	 * matcher.
+	 * 
+	 * @param ch the character
+	 * @param document the document
+	 * @param offset the offset in document
+	 * @return the index of the character in the char array passed to the constructor of the pair
+	 *         matcher, and -1 if the character is not one of the matched characters
+	 * @since 3.8
+	 */
+	private int getCharacterIndex(char ch, IDocument document, int offset) {
+		char[] pairs= fPairs.fPairs;
+		for (int i= 0; i < pairs.length; i++) {
+			if (pairs[i] == ch && isMatchedChar(ch, document, offset)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	/* @see ICharacterPairMatcher#getAnchor() */
 	public int getAnchor() {
 		return fAnchor;
@@ -285,6 +438,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		private final IDocument fDocument;
 		private final String fPartitioning, fPartition;
 		private ITypedRegion fCachedPartition;
+		private int fLength;
 
 		/**
 		 * Creates a new partitioned document for the specified document.
@@ -298,6 +452,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 			fDocument= doc;
 			fPartitioning= partitioning;
 			fPartition= partition;
+			fLength= doc.getLength();
 		}
 
 		/**
@@ -338,7 +493,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		}
 
 		/**
-		 * Returns the next position to query in the search.  The position
+		 * Returns the next position to query in the search. The position
 		 * is not guaranteed to be in this document's partition.
 		 *
 		 * @param pos an offset within the document
@@ -347,8 +502,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		 */
 		public int getNextPosition(int pos, boolean searchForward) {
 			final ITypedRegion partition= getPartition(pos);
-			if (partition == null) return simpleIncrement(pos, searchForward);
-			if (fPartition.equals(partition.getType()))
+			if (partition == null || fPartition.equals(partition.getType()))
 				return simpleIncrement(pos, searchForward);
 			if (searchForward) {
 				int end= partition.getOffset() + partition.getLength();
@@ -376,7 +530,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		 */
 		private ITypedRegion getPartition(int pos) {
 			if (fCachedPartition == null || !contains(fCachedPartition, pos)) {
-				Assert.isTrue(pos >= 0 && pos <= fDocument.getLength());
+				Assert.isTrue(pos >= 0 && pos <= fLength);
 				try {
 					fCachedPartition= TextUtilities.getPartition(fDocument, fPartitioning, pos, false);
 				} catch (BadLocationException e) {
@@ -405,28 +559,18 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		}
 
 		/**
-		 * Returns true if the specified character pair occurs in one
-		 * of the character pairs.
-		 *
+		 * Returns true if the specified character occurs in one of the character pairs.
+		 * 
 		 * @param c a character
 		 * @return true exactly if the character occurs in one of the pairs
 		 */
 		public boolean contains(char c) {
-			return getAllCharacters().contains(new Character(c));
-		}
-
-		private Set/*<Character>*/ fCharsCache= null;
-		/**
-		 * @return A set containing all characters occurring in character pairs.
-		 */
-		private Set/*<Character>*/ getAllCharacters() {
-			if (fCharsCache == null) {
-				Set/*<Character>*/ set= new HashSet/*<Character>*/();
-				for (int i= 0; i < fPairs.length; i++)
-					set.add(new Character(fPairs[i]));
-				fCharsCache= set;
+			char[] pairs= fPairs;
+			for (int i= 0, n= pairs.length; i < n; i++) {
+				if (c == pairs[i])
+					return true;
 			}
-			return fCharsCache;
+			return false;
 		}
 
 		/**

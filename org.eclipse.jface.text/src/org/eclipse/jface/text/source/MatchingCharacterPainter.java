@@ -20,21 +20,27 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPaintPositionManager;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextInputListener;
+import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextEvent;
 
 /**
- * Highlights the peer character matching the character near the caret position.
- * This painter can be configured with an
- * {@link org.eclipse.jface.text.source.ICharacterPairMatcher}.
+ * Highlights the peer character matching the character near the caret position, or a pair of peer
+ * characters enclosing the caret position. This painter can be configured with an
+ * {@link org.eclipse.jface.text.source.ICharacterPairMatcher} or an
+ * {@link org.eclipse.jface.text.source.ICharacterPairMatcherExtension}.
  * <p>
- * Clients instantiate and configure object of this class.</p>
- *
+ * Clients instantiate and configure an object of this class.
+ * </p>
+ * 
  * @since 2.1
  */
 public final class MatchingCharacterPainter implements IPainter, PaintListener {
@@ -55,13 +61,62 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	private Position fPairPosition= new Position(0, 0);
 	/** The anchor indicating whether the character is left or right of the caret */
 	private int fAnchor;
-	/** Whether to highlight enclosing peer characters or not. */
-	private boolean fHighlightEnclosingPeerCharcters;
-	/** Whether to highlight the character at caret location or not. */
+
+	/**
+	 * Whether to highlight enclosing peer characters or not.
+	 * 
+	 * @since 3.8
+	 */
+	private boolean fHighlightEnclosingPeerCharacters;
+
+	/**
+	 * Whether to highlight the character at caret location or not.
+	 * 
+	 * @since 3.8
+	 */
 	private boolean fHighlightCharacterAtCaretLocation;
-	/** Whether a character is present at caret location or not. */
+
+	/**
+	 * Whether a character is present at caret location or not.
+	 * 
+	 * @since 3.8
+	 */
 	private boolean fCharacterPresentAtCaretLocation;
 
+	/**
+	 * The document this painter is associated with.
+	 * 
+	 * @since 3.8
+	 */
+	private IDocument fDocument;
+
+	/**
+	 * The previous selection, used to determine the need for computing enclosing brackets.
+	 * 
+	 * @since 3.8
+	 */
+	private IRegion fPreviousSelection;
+
+	/**
+	 * Previous length of the document this painter is associated with.
+	 * 
+	 * @since 3.8
+	 */
+	private int fPreviousLengthOfDocument;
+
+	/**
+	 * Whether the input document has been replaced or not.
+	 * 
+	 * @since 3.8
+	 */
+	private boolean fDocumentChanged;
+
+	/**
+	 * The text viewer change listener.
+	 * 
+	 * @since 3.8
+	 */
+	private TextListener fTextListener;
 
 	/**
 	 * Creates a new MatchingCharacterPainter for the given source viewer using the given character
@@ -75,6 +130,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		fSourceViewer= sourceViewer;
 		fMatcher= matcher;
 		fTextWidget= sourceViewer.getTextWidget();
+		fDocument= fSourceViewer.getDocument();
 	}
 
 	/**
@@ -95,7 +151,8 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 * @since 3.8
 	 */
 	public void setHighlightEnclosingPeerCharacters(boolean highlightEnclosingPeerCharcters) {
-		fHighlightEnclosingPeerCharcters= highlightEnclosingPeerCharcters;
+		fHighlightEnclosingPeerCharacters= highlightEnclosingPeerCharcters;
+		installUninstallTextListener(highlightEnclosingPeerCharcters);
 	}
 
 	/**
@@ -112,6 +169,10 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 */
 	public void dispose() {
 		if (fMatcher != null) {
+			if (fMatcher instanceof ICharacterPairMatcherExtension && fTextListener != null) {
+				installUninstallTextListener(false);
+			}
+
 			fMatcher.clear();
 			fMatcher= null;
 		}
@@ -185,7 +246,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			offset -= region.getOffset();
 		}
 
-		if (fHighlightCharacterAtCaretLocation || (fHighlightEnclosingPeerCharcters && !fCharacterPresentAtCaretLocation)) {
+		if (fHighlightCharacterAtCaretLocation || (fHighlightEnclosingPeerCharacters && !fCharacterPresentAtCaretLocation)) {
 			draw(gc, offset, 1);
 			draw(gc, offset + length - 1, 1);
 		} else {
@@ -262,7 +323,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 */
 	public void paint(int reason) {
 
-		IDocument document= fSourceViewer.getDocument();
+		IDocument document= fDocument;
 		if (document == null) {
 			deactivate(false);
 			return;
@@ -276,7 +337,28 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			ICharacterPairMatcherExtension matcher= (ICharacterPairMatcherExtension)fMatcher;
 			pair= matcher.match(document, selection.getOffset(), selection.getLength());
 			characterPresentAtCaretLocation= (pair != null);
-			if (pair == null && fHighlightEnclosingPeerCharcters) {
+			if (pair == null && fHighlightEnclosingPeerCharacters) {
+
+				int length= document.getLength();
+				boolean lengthChanged= length != fPreviousLengthOfDocument;
+				fPreviousLengthOfDocument= length;
+
+				if (reason != IPainter.CONFIGURATION && !fDocumentChanged && !lengthChanged && selection.equals(fPreviousSelection)) {
+					return;
+				}
+
+				if (reason == IPainter.TEXT_CHANGE) {
+					fPreviousSelection= selection;
+					return;
+				}
+
+				fDocumentChanged= false;
+				if (reason != IPainter.CONFIGURATION && !lengthChanged && fPreviousSelection != null && reason != IPainter.INTERNAL) {
+					if (!matcher.isRecomputationOfEnclosingPairRequired(document, selection, fPreviousSelection)) {
+						fPreviousSelection= selection;
+						return;
+					}
+				}
 				pair= matcher.findEnclosingPeerCharacters(document, selection.getOffset(), selection.getLength());
 			}
 		} else {
@@ -288,6 +370,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			characterPresentAtCaretLocation= (pair != null);
 		}
 
+		fPreviousSelection= selection;
 		if (pair == null) {
 			deactivate(true);
 			return;
@@ -339,5 +422,96 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 */
 	public void setPositionManager(IPaintPositionManager manager) {
 		fPaintPositionManager= manager;
+	}
+
+	/**
+	 * Installs or uninstalls the text listener depending on the boolean parameter.
+	 * 
+	 * @param install <code>true</code> to install the text listener, <code>false</code> to uninstall 
+	 * 
+	 * @since 3.8
+	 */
+	private void installUninstallTextListener(boolean install) {
+		if (!(fMatcher instanceof ICharacterPairMatcherExtension))
+			return;
+	
+		if (install) {
+			fTextListener= new TextListener();
+			fSourceViewer.addTextInputListener(fTextListener);
+			fSourceViewer.addTextListener(fTextListener);
+		} else {
+			if (fTextListener != null) {
+				fSourceViewer.removeTextInputListener(fTextListener);
+				fSourceViewer.removeTextListener(fTextListener);
+				fTextListener= null;
+			}
+		}
+	}
+
+	/**
+	 * Listens to document changes and if required by those document changes causes a re-computation
+	 * of matching characters.
+	 * 
+	 * @since 3.8
+	 */
+	private class TextListener implements ITextListener, ITextInputListener {
+
+		/**
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument,
+		 *      org.eclipse.jface.text.IDocument)
+		 */
+		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+			//do nothing
+		}
+
+		/**
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument,
+		 *      org.eclipse.jface.text.IDocument)
+		 */
+		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
+			fDocument= newInput;
+			fDocumentChanged= true;
+		}
+
+		/**
+		 * @see org.eclipse.jface.text.ITextListener#textChanged(org.eclipse.jface.text.TextEvent)
+		 */
+		public void textChanged(TextEvent event) {
+			if (!fHighlightEnclosingPeerCharacters || !(fMatcher instanceof ICharacterPairMatcherExtension))
+				return;
+
+			String text= event.getText();
+			String replacedText= event.getReplacedText();
+
+			boolean viewerRedrawState= event.getViewerRedrawState();
+			DocumentEvent documentEvent= event.getDocumentEvent();
+			if (documentEvent == null && !viewerRedrawState)
+				return;
+
+			ICharacterPairMatcherExtension matcher= (ICharacterPairMatcherExtension)fMatcher;
+			boolean found= searchForCharacters(text, matcher) || searchForCharacters(replacedText, matcher);
+
+			if (found || (documentEvent == null && viewerRedrawState)) {
+				paint(IPainter.INTERNAL);
+			}
+		}
+
+		/**
+		 * Searches for matched characters in the given string.
+		 * 
+		 * @param text the string to search
+		 * @param matcher the pair matcher
+		 * @return <code>true</code> if a matched character is found, <code>false</code> otherwise
+		 */
+		private boolean searchForCharacters(String text, ICharacterPairMatcherExtension matcher) {
+			if (text == null)
+				return false;
+			for (int i= 0; i < text.length(); i++) {
+				if (matcher.isMatchedChar(text.charAt(i))) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
