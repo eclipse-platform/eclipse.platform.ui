@@ -19,15 +19,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
-import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
@@ -108,7 +108,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	protected boolean computeDefaultStyle = false;
 
-	private Map elementsContext = null;
+	private Map<Object, CSSElementContext> elementsContext = null;
 
 	/**
 	 * CSS Error Handler to intercept error while parsing, applying styles.
@@ -120,23 +120,20 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	private IResourcesRegistry resourcesRegistry;
 
 	/**
-	 * ICSSPropertyHandlerProvider
+	 * An ordered list of ICSSPropertyHandlerProvider
 	 */
-	private List propertyHandlerProviders = new ArrayList();
+	protected List<ICSSPropertyHandlerProvider> propertyHandlerProviders = new ArrayList<ICSSPropertyHandlerProvider>();
 
-	private Map currentCSSPropertiesApplyed = new HashMap();
+	private Map<String, String> currentCSSPropertiesApplyed = new HashMap<String, String>();
 
 	private boolean throwError;
 
-	private Map valueConverters = null;
+	private Map<Object, ICSSValueConverter> valueConverters = null;
 
 	protected HashMap widgetsMap = new HashMap();
 	
 	private boolean parseImport;
 	
-	//Map containing k: ElementAdapters o: Map of PropertyHandlers (k: name o: handler))
-	public  HashMap propertyHandlerMap = new HashMap();
-
 	public AbstractCSSEngine() {
 		this(new DocumentCSSImpl());
 	}
@@ -532,7 +529,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			CSSStyleDeclaration style, String pseudo) {
 		// Apply style
 		currentCSSPropertiesApplyed.clear();
-		List handlers2 = null;
+		List<ICSSPropertyHandler2> handlers2 = null;
 		for (int i = 0; i < style.getLength(); i++) {
 			String property = style.item(i);
 			CSSValue value = style.getPropertyCSSValue(property);
@@ -550,7 +547,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				}
 				if (propertyHandler2 != null) {
 					if (handlers2 == null)
-						handlers2 = new ArrayList();
+						handlers2 = new ArrayList<ICSSPropertyHandler2>();
 					if (!handlers2.contains(propertyHandler2))
 						handlers2.add(propertyHandler2);
 				}
@@ -561,8 +558,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			}
 		}
 		if (handlers2 != null) {
-			for (Iterator iterator = handlers2.iterator(); iterator.hasNext();) {
-				ICSSPropertyHandler2 handler2 = (ICSSPropertyHandler2) iterator
+			for (Iterator<ICSSPropertyHandler2> iterator = handlers2.iterator(); iterator
+					.hasNext();) {
+				ICSSPropertyHandler2 handler2 = iterator
 						.next();
 				try {
 					handler2.onAllCSSPropertiesApplyed(element, this);
@@ -669,9 +667,10 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	public CSSStyleDeclaration getDefaultStyleDeclaration(Object widget,
 			CSSStyleDeclaration newStyle, String pseudoE) {
 		CSSStyleDeclaration style = null;
-		for (Iterator iterator = propertyHandlerProviders.iterator(); iterator
+		for (Iterator<ICSSPropertyHandlerProvider> iterator = propertyHandlerProviders
+				.iterator(); iterator
 				.hasNext();) {
-			ICSSPropertyHandlerProvider provider = (ICSSPropertyHandlerProvider) iterator
+			ICSSPropertyHandlerProvider provider = iterator
 					.next();
 			try {
 				style = provider.getDefaultCSSStyleDeclaration(this, widget,
@@ -735,44 +734,31 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/**
 	 * Delegates the handle method.
 	 * 
-	 * @param control
+	 * @param element
+	 *            may be a widget or a node or some object
 	 * @param property
 	 * @param value
+	 * @param pseudo
 	 */
-	public ICSSPropertyHandler applyCSSProperty(Object widget, String property,
+	public ICSSPropertyHandler applyCSSProperty(Object element,
+			String property,
 			CSSValue value, String pseudo) throws Exception {
-		if (currentCSSPropertiesApplyed.containsKey(property))
+		if (currentCSSPropertiesApplyed.containsKey(property)) {
 			// CSS Property was already applied, ignore it.
 			return null;
-		//Collection handlers = getCSSPropertyHandlers(property);
-//		if (handlers == null) {
-//			if (throwError)
-//				throw new UnsupportedPropertyException(property);
-//			return null;
-//		}
-		boolean found = false;
-		ICSSPropertyHandler handler = null;
-		Object tmpMap = propertyHandlerMap.get(widget.getClass().getName());
-		if (tmpMap != null) {
-			handler = (ICSSPropertyHandler) ((HashMap) tmpMap).get(property);
-			if (handler != null) found = true;
 		}
-		//go up in the hierarchy and try to find a match
-		if (!found) {
-			Class parentClass = widget.getClass().getSuperclass();
-			do {
-			tmpMap = propertyHandlerMap.get(parentClass.getName());
-			if (tmpMap != null) {
-				handler = (ICSSPropertyHandler) ((HashMap) tmpMap).get(property);
-				if (handler != null) found = true;
+
+		element = getElement(element); // in case we're passed a node
+		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
+			Collection<ICSSPropertyHandler> handlers = provider
+					.getCSSPropertyHandlers(element, property);
+			if (handlers == null) {
+				continue;
 			}
-			parentClass = parentClass.getSuperclass(); }
-			while (!found && parentClass != ElementAdapter.class);
-		}
-		
-		if (handler != null) {
-			try {
-					boolean result = handler.applyCSSProperty(widget, property,
+			for (ICSSPropertyHandler handler : handlers) {
+				try {
+					boolean result = handler.applyCSSProperty(element,
+							property,
 							value, pseudo, this);
 					if (result) {
 						// Add CSS Property to flag that this CSS Property was
@@ -780,30 +766,33 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 						currentCSSPropertiesApplyed.put(property, property);
 						return handler;
 					}
-	
-			} catch (Exception e) {
-				if (throwError
-						|| (!throwError && !(e instanceof UnsupportedPropertyException)))
-					handleExceptions(e);
+				} catch (Exception e) {
+					if (throwError
+							|| (!throwError && !(e instanceof UnsupportedPropertyException)))
+						handleExceptions(e);
+				}
 			}
 		}
-		return handler;
+
+		return null;
 	}
 
-	public String retrieveCSSProperty(Object widget, String property,
+	public String retrieveCSSProperty(Object element, String property,
 			String pseudo) {
 		try {
-			Collection handlers = getCSSPropertyHandlers(property);
-			if (handlers == null) {
-				return null;
-			}
-			for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
-				ICSSPropertyHandler handler = (ICSSPropertyHandler) iterator
-						.next();
-				String value = handler.retrieveCSSProperty(widget, property,
-						pseudo, this);
-				if (!StringUtils.isEmpty(value))
-					return value;
+			element = getElement(element); // in case we're passed a node
+			for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
+				Collection<ICSSPropertyHandler> handlers = provider
+						.getCSSPropertyHandlers(element, property);
+				if (handlers == null) {
+					continue;
+				}
+				for (ICSSPropertyHandler handler : handlers) {
+					String value = handler.retrieveCSSProperty(element,
+							property, pseudo, this);
+					if (!StringUtils.isEmpty(value))
+						return value;
+				}
 			}
 		} catch (Exception e) {
 			handleExceptions(e);
@@ -813,13 +802,13 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	public String[] getCSSCompositePropertiesNames(String property) {
 		try {
-			Collection handlers = getCSSPropertyHandlers(property);
+			Collection<ICSSPropertyHandler> handlers = getCSSPropertyHandlers(property);
 			if (handlers == null) {
 				return null;
 			}
-			for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
-				ICSSPropertyHandler handler = (ICSSPropertyHandler) iterator
-						.next();
+			for (Iterator<ICSSPropertyHandler> iterator = handlers.iterator(); iterator
+					.hasNext();) {
+				ICSSPropertyHandler handler = iterator.next();
 				if (handler instanceof ICSSPropertyCompositeHandler) {
 					ICSSPropertyCompositeHandler compositeHandler = (ICSSPropertyCompositeHandler) handler;
 					if (compositeHandler.isCSSPropertyComposite(property))
@@ -832,26 +821,16 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		return null;
 	}
 
-	protected Collection getCSSPropertyHandlers(String property)
-			throws Exception {
-		Collection handlers = new ArrayList();
-		Iterator iter = propertyHandlerMap.values().iterator();
-		while (iter.hasNext()) {
-			HashMap  tmp = (HashMap) iter.next();
-			Object o = tmp.get(property);
-			if (o != null) {
-				handlers.add(o);
-			}
-		}
-		for (Iterator iterator = propertyHandlerProviders.iterator(); iterator
-				.hasNext();) {
-			ICSSPropertyHandlerProvider provider = (ICSSPropertyHandlerProvider) iterator
-					.next();
-			Collection h = provider.getCSSPropertyHandlers(property);
+	protected Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
+			String property) throws Exception {
+		Collection<ICSSPropertyHandler> handlers = new ArrayList<ICSSPropertyHandler>();
+		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
+			Collection<ICSSPropertyHandler> h = provider
+					.getCSSPropertyHandlers(property);
 			if (handlers == null) {
 				handlers = h;
 			} else {
-				handlers = new ArrayList(handlers);
+				handlers = new ArrayList<ICSSPropertyHandler>(handlers);
 				handlers.addAll(h);
 			}
 		}
@@ -864,25 +843,12 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 * @param node
 	 * @return the property names and handlers
 	 */
-	public Map<String, ICSSPropertyHandler> getCSSPropertyHandlers(
-			CSSStylableElement node) {
-		Map<String, ICSSPropertyHandler> handlerMap = new HashMap<String, ICSSPropertyHandler>();
-		Class<?> clazz = node.getClass();
-		while (clazz != Object.class) {
-			if (propertyHandlerMap.containsKey(clazz.getName())) {
-				@SuppressWarnings("unchecked")
-				Map<String, ICSSPropertyHandler> clazzHandlers = (Map<String, ICSSPropertyHandler>) propertyHandlerMap
-						.get(clazz.getName());
-				for (Entry<String, ICSSPropertyHandler> entry : clazzHandlers
-						.entrySet()) {
-					if (!handlerMap.containsKey(entry.getKey())) {
-						handlerMap.put(entry.getKey(), entry.getValue());
-					}
-				}
-			}
-			clazz = clazz.getSuperclass();
+	public Collection<String> getCSSProperties(Object element) {
+		Set<String> properties = new HashSet<String>();
+		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
+			properties.addAll(provider.getCSSProperties(element));
 		}
-		return handlerMap;
+		return properties;
 	}
 
 	/*--------------- Dynamic pseudo classes -----------------*/
@@ -976,7 +942,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	public CSSElementContext getCSSElementContext(Object element) {
 		Object o = getNativeWidget(element);
-		return (CSSElementContext) getElementsContext().get(o);
+		return getElementsContext().get(o);
 	}
 
 	public Object getNativeWidget(Object element) {
@@ -987,9 +953,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		return o;
 	}
 
-	protected Map getElementsContext() {
+	protected Map<Object, CSSElementContext> getElementsContext() {
 		if (elementsContext == null)
-			elementsContext = new HashMap();
+			elementsContext = new HashMap<Object, CSSElementContext>();
 		return elementsContext;
 	}
 
@@ -1057,9 +1023,10 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	public void dispose() {
 		reset();
 		// Call dispose for each CSSStylableElement which was registered
-		Collection contexts = elementsContext.values();
-		for (Iterator iterator = contexts.iterator(); iterator.hasNext();) {
-			CSSElementContext context = (CSSElementContext) iterator.next();
+		Collection<CSSElementContext> contexts = elementsContext.values();
+		for (Iterator<CSSElementContext> iterator = contexts.iterator(); iterator
+				.hasNext();) {
+			CSSElementContext context = iterator.next();
 			Element element = context.getElement();
 			if (element instanceof CSSStylableElement) {
 				((CSSStylableElement) element).dispose();
@@ -1105,7 +1072,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	public void registerCSSValueConverter(ICSSValueConverter converter) {
 		if (valueConverters == null)
-			valueConverters = new HashMap();
+			valueConverters = new HashMap<Object, ICSSValueConverter>();
 		valueConverters.put(converter.getToType(), converter);
 	}
 
@@ -1117,7 +1084,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	public ICSSValueConverter getCSSValueConverter(Object toType) {
 		if (valueConverters != null) {
-			return (ICSSValueConverter) valueConverters.get(toType);
+			return valueConverters.get(toType);
 		}
 		return null;
 	}

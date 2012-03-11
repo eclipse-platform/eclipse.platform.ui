@@ -21,6 +21,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.w3c.dom.css.CSSValue;
 
+/**
+ * We support some additional SWT-specific values
+ */
 public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandler{
 
 	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyAlignmentSWTHandler();
@@ -44,7 +47,9 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 				button.setAlignment(SWT.UP);
 			} else if ("down".equals(stringValue)){
 				button.setAlignment(SWT.DOWN);
-			} 
+			} else if ("inherit".equals(stringValue)) {
+				// todo
+			}
 			
 		}
 		else if (control instanceof Label) {
@@ -60,6 +65,8 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 				label.setAlignment(SWT.TRAIL);
 			} else if ("center".equals(stringValue)){
 				label.setAlignment(SWT.CENTER);
+			} else if ("inherit".equals(stringValue)) {
+				// todo
 			} 
 		}
 	

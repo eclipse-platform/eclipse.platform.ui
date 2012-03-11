@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.e4.ui.css.swt" id="org.eclipse.e4.ui.css.swt.property.handler" name="Properties"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point binds a handler class for a set of properties for a particular type of DOM elements.
       </documentation>
    </annotation>
 
@@ -48,6 +48,11 @@
    </element>
 
    <element name="handler">
+      <annotation>
+         <documentation>
+            A handler defines a binding from a set of property names to a property handler for a particular DOM element.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="property-name" minOccurs="1" maxOccurs="unbounded"/>
@@ -55,14 +60,14 @@
          <attribute name="composite" type="boolean">
             <annotation>
                <documentation>
-                  
+                  If true, then this handler represents a composite CSS Property (e.g., &quot;background&quot; is CSS Property composed with background-color, background-image, and others).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="adapter" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  This property handler applies only to DOM elements of this type.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.e4.ui.css.core.dom.ElementAdapter:"/>
@@ -72,7 +77,7 @@
          <attribute name="handler" type="string">
             <annotation>
                <documentation>
-                  
+                  This class implements the property setting.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler"/>
@@ -87,48 +92,61 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The CSS property name.  If not officially part of the W3C&apos;s &lt;a href=&quot;http://www.w3.org/TR/CSS2/&quot;&gt;CSS 2 Standard&lt;/a&gt; then the property should be prefixed.  For example, SWT-specific properties are prefixed with &lt;tt&gt;-swt-&lt;/tt&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="deprecated" type="boolean">
+            <annotation>
+               <documentation>
+                  If true, indicates this property-name is deprecated.  The first use may log a warning as to the deprecation state.  Defaults to false.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <annotation>
-      <appinfo>
-         <meta.section type="since"/>
-      </appinfo>
-      <documentation>
-         [Enter the first release in which this extension point appears.]
-      </documentation>
-   </annotation>
 
    <annotation>
       <appinfo>
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;extension point=&quot;org.eclipse.e4.ui.css.swt.property.handler&quot;&gt;
+  &lt;handler
+      adapter=&quot;org.eclipse.e4.ui.css.swt.dom.ControlElement&quot;
+      composite=&quot;true&quot;
+      handler=&quot;org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyBackgroundSWTHandler&quot;&gt;
+    &lt;property-name name=&quot;background&quot;/&gt;
+    &lt;property-name name=&quot;background-color&quot;/&gt;
+    &lt;property-name name=&quot;background-image&quot;/&gt;
+  &lt;/handler&gt;
+&lt;/extension&gt;
+
       </documentation>
    </annotation>
 
-   <annotation>
-      <appinfo>
-         <meta.section type="apiinfo"/>
-      </appinfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
 
    <annotation>
       <appinfo>
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         Supplied interfaces provide abstract classes to simplify implementation.
       </documentation>
    </annotation>
 
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2008 - 2012 Angelo Zerr and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which accompanies
+this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
 
 </schema>

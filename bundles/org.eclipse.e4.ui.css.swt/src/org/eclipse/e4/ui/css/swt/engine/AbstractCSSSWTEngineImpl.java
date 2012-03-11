@@ -38,14 +38,6 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 	public AbstractCSSSWTEngineImpl(Display display, boolean lazyApplyingStyles) {
 		this.display = display;
 		
-		// Register SWT Element Provider to retrieve
-		// w3c Element SWTElement coming from SWT widget.
-		//super.setElementProvider(SWTElementProvider.INSTANCE);
-
-		/** Initialize CSS Property Handlers * */
-
-		this.initializeCSSPropertyHandlers();
-
 		/** Initialize SWT CSSValue converter * */
 
 		// Register SWT RGB CSSValue Converter
@@ -70,6 +62,7 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 			new CSSSWTApplyStylesListener(display, this);
 		}
 		
+		initializeCSSPropertyHandlers();
 //		SWTElement.setEngine(display, this);
 	}
 

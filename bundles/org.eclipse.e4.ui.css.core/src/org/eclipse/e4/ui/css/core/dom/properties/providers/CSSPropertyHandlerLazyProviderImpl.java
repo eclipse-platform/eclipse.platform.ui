@@ -14,10 +14,8 @@ package org.eclipse.e4.ui.css.core.dom.properties.providers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -33,34 +31,29 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 		AbstractCSSPropertyHandlerProvider {
 
 	// List of package names containing handlers class for properties
-	private List packageNames = new ArrayList();
+	private List<String> packageNames = new ArrayList<String>();
 
 	// Map used as a cache for properties handlers found
-	private Map propertyToHandlersMap = new HashMap();
+	private Map<String, List<ICSSPropertyHandler>> propertyToHandlersMap = new HashMap<String, List<ICSSPropertyHandler>>();
 
 	/**
 	 * Return the list of PropertiesHandler corresponding to the property name
 	 * given as argument
 	 */
-	public Collection getCSSPropertyHandlers(String property) throws Exception {
+	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
+			String property) throws Exception {
+
 		// Test if ICSSPropertyHandler List was stored into cache
 		// with key property
-		Map propertyHandlers = getPropertyToHandlersMap();
-		Object h = propertyHandlers.get(property);
-		if (h != null) {
-			// Test if there
-			if (h instanceof List)
-				return (List) h;
-			return null;
+		Map<String, List<ICSSPropertyHandler>> propertyHandlers = getPropertyToHandlersMap();
+		if (propertyHandlers.containsKey(property)) {
+			return propertyHandlers.get(property);
 		}
 
-		List handlers = null;
+		List<ICSSPropertyHandler> handlers = null;
 		try {
 			String handlerClassName = getHandlerClassName(property);
-			for (Iterator iterator = packageNames.iterator(); iterator
-					.hasNext();) {
-				String packageName = (String) iterator.next();
-
+			for (String packageName : packageNames) {
 				ICSSPropertyHandler handler = getCSSPropertyHandler(
 						packageName, handlerClassName);
 				if (handler != null) {
@@ -70,7 +63,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 //								+ ", with class=" + packageName + "."
 //								+ handlerClassName);
 					if (handlers == null)
-						handlers = new ArrayList();
+						handlers = new ArrayList<ICSSPropertyHandler>();
 					handlers.add(handler);
 				}
 			}
@@ -81,10 +74,7 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 //							+ property + ", for class=" + handlerClassName);
 //			}
 		} finally {
-			if (handlers != null)
-				propertyHandlers.put(property, handlers);
-			else
-				propertyHandlers.put(property, "__HANDLER_NOT_FOUND__");
+			propertyHandlers.put(property, handlers);
 		}
 		return handlers;
 	}
@@ -100,9 +90,9 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 		propertyToHandlersMap = null;
 	}
 
-	protected Map getPropertyToHandlersMap() {
+	protected Map<String, List<ICSSPropertyHandler>> getPropertyToHandlersMap() {
 		if (propertyToHandlersMap == null)
-			propertyToHandlersMap = new HashMap();
+			propertyToHandlersMap = new HashMap<String, List<ICSSPropertyHandler>>();
 		return propertyToHandlersMap;
 	}
 
@@ -118,7 +108,8 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 			String handlerClassName) throws Exception {
 		String handlerClass = packageName + "." + handlerClassName;
 		try {
-			Class clazz = this.getClass().getClassLoader().loadClass(
+			Class<?> clazz = this.getClass().getClassLoader()
+					.loadClass(
 					handlerClass);
 			Object instance = clazz.newInstance();
 			if (!(instance instanceof ICSSPropertyHandler)) {
@@ -199,6 +190,18 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 			}
 		}
 		return stylableElement.getDefaultStyleDeclaration(pseudoE);
+	}
+
+	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
+			Object element, String property) throws Exception {
+		return getCSSPropertyHandlers(property);
+	}
+
+	public Collection<String> getCSSProperties(Object element) {
+		Map<String, List<ICSSPropertyHandler>> propertyHandlers = getPropertyToHandlersMap();
+		// FIXME: could walk the package names, look for the classes matching
+		// the class pattern and go from there
+		return propertyHandlers.keySet();
 	}
 
 }

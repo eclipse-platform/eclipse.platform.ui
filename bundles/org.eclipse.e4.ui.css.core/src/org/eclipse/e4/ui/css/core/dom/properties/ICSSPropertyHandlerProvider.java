@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.css.core.dom.properties;
 
 import java.util.Collection;
-
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -33,7 +32,8 @@ public interface ICSSPropertyHandlerProvider {
 	 * @return
 	 * @throws Exception
 	 */
-	public Collection getCSSPropertyHandlers(String property) throws Exception;
+	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
+			String property) throws Exception;
 
 	/**
 	 * Return the default CSS style declaration of the <code>element</code>
@@ -49,4 +49,26 @@ public interface ICSSPropertyHandlerProvider {
 	public CSSStyleDeclaration getDefaultCSSStyleDeclaration(CSSEngine engine,
 			Object element, CSSStyleDeclaration newStyle, String pseudoE)
 			throws Exception;
+
+	/**
+	 * Return list of {@link ICSSPropertyHandler} linked to the CSS Property
+	 * <code>property</code> for the provided element.
+	 * 
+	 * @param element
+	 *            the DOM element
+	 * @param property
+	 * @return the handlers for the element
+	 * @throws Exception
+	 */
+	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
+			Object element, String property) throws Exception;
+
+	/**
+	 * Return the list of applicable properties for <code>element</code>
+	 * 
+	 * @param element
+	 *            the DOM element
+	 */
+	public Collection<String> getCSSProperties(Object element);
+
 }

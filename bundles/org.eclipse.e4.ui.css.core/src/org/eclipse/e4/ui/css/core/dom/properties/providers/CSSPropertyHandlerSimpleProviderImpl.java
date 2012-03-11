@@ -11,13 +11,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom.properties.providers;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler;
@@ -33,7 +31,7 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 
 /**
  * CSS property handler with static strategy. {@link ICSSPropertyHandler} are
- * retrieved afetre the CSS Engine register the handler with
+ * retrieved after the CSS Engine register the handler with
  * registerCSSPropertyHandler method.
  */
 public class CSSPropertyHandlerSimpleProviderImpl extends
@@ -43,15 +41,15 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 	 * Default <code>Map</code> of <code>ICSSPropertyHandler</code> stored
 	 * under a CSS property <code>name</code> key.
 	 */
-	private static Map defaultCSSProperties = new HashMap();
+	private static Map<String, Class<? extends ICSSPropertyHandler>> defaultCSSProperties = new HashMap<String, Class<? extends ICSSPropertyHandler>>();
 
-	private Map propertiesHandler = new HashMap();
+	private Map<Class<?>, List<ICSSPropertyHandler>> propertiesHandler = new HashMap<Class<?>, List<ICSSPropertyHandler>>();
 
 	/**
 	 * Custom <code>Map</code> of <code>ICSSPropertyHandler</code> stored
 	 * under a CSS property <code>name</code> key.
 	 */
-	private Map customCSSProperties = new HashMap();
+	private Map<String, Class<? extends ICSSPropertyHandler>> customCSSProperties = new HashMap<String, Class<? extends ICSSPropertyHandler>>();
 
 	/**
 	 * True if custom CSS properties is merged with default CSS Properties.
@@ -186,40 +184,38 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 				ICSSPropertyPaddingHandler.class);
 	}
 
-	public Collection getCSSPropertyHandlers(String property) throws Exception {
-		Class cl = getCSSPropertyHandlerClass(property);
-		return (Collection) propertiesHandler.get(cl);
+	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
+			String property) throws Exception {
+		Class<? extends ICSSPropertyHandler> cl = getCSSPropertyHandlerClass(property);
+		return propertiesHandler.get(cl);
 	}
 
 	/*--------------- CSS Property Handler -----------------*/
 
-	public void registerCSSPropertyHandler(Class cl, ICSSPropertyHandler handler) {
-		Object h = propertiesHandler.get(cl);
-		if (h != null) {
-			if (h instanceof List) {
-				List handlers = (List) h;
-				handlers.add(handler);
-			}
-		} else {
-			List handlers = new ArrayList();
-			handlers.add(handler);
-			propertiesHandler.put(cl, handlers);
+	public void registerCSSPropertyHandler(Class<?> cl,
+			ICSSPropertyHandler handler) {
+		List<ICSSPropertyHandler> handlers = propertiesHandler.get(cl);
+		if (handlers == null) {
+			propertiesHandler.put(cl,
+					handlers = new LinkedList<ICSSPropertyHandler>());
 		}
+		handlers.add(handler);
 	}
 
-	protected Class getCSSPropertyHandlerClass(String property) {
+	protected Class<? extends ICSSPropertyHandler> getCSSPropertyHandlerClass(
+			String property) {
 		initializeCSSPropertiesIfNeed();
-		return (Class) customCSSProperties.get(property);
+		return customCSSProperties.get(property);
 
 	}
 
 	public void registerCSSProperty(String propertyName,
-			Class propertyHandlerClass) {
+			Class<? extends ICSSPropertyHandler> propertyHandlerClass) {
 		customCSSProperties.put(propertyName, propertyHandlerClass);
 	}
 
 	public static void registerDefaultCSSProperty(String propertyName,
-			Class propertyHandlerClass) {
+			Class<? extends ICSSPropertyHandler> propertyHandlerClass) {
 		defaultCSSProperties.put(propertyName, propertyHandlerClass);
 	}
 
@@ -233,7 +229,7 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 		isCSSPropertiesInitialized = true;
 	}
 
-	public Collection getAllCSSPropertyNames() {
+	public Collection<String> getAllCSSPropertyNames() {
 		initializeCSSPropertiesIfNeed();
 		return customCSSProperties.keySet();
 	}
@@ -257,9 +253,8 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 
 		// Default style must be computed.
 		StringBuffer style = null;
-		Collection propertyNames = getAllCSSPropertyNames();
-		for (Iterator iterator = propertyNames.iterator(); iterator.hasNext();) {
-			String propertyName = (String) iterator.next();
+		Collection<String> propertyNames = getAllCSSPropertyNames();
+		for (String propertyName : propertyNames) {
 			String s = getCSSPropertyStyle(engine, stylableElement,
 					propertyName, pseudoE);
 			if (s != null) {
@@ -277,4 +272,14 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 		}
 		return null;
 	}
+
+	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
+			Object element, String property) throws Exception {
+		return getCSSPropertyHandlers(property);
+	}
+
+	public Collection<String> getCSSProperties(Object element) {
+		return getAllCSSPropertyNames();
+	}
+
 }

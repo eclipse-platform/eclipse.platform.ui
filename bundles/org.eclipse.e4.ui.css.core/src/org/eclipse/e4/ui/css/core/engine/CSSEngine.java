@@ -13,8 +13,7 @@ package org.eclipse.e4.ui.css.core.engine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.Map;
-import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
+import java.util.Collection;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
@@ -514,13 +513,13 @@ public interface CSSEngine {
 	public CSSElementContext getCSSElementContext(Object node);
 
 	/**
-	 * Return the set of property names and handlers for the provided node.
+	 * Return the set of property names applicable to the provided node.
 	 * 
 	 * @param node
-	 * @return the property names and handlers
+	 *            the DOM node or an element
+	 * @return the property names
 	 */
-	public Map<String, ICSSPropertyHandler> getCSSPropertyHandlers(
-			CSSStylableElement node);
+	public Collection<String> getCSSProperties(Object node);
 
 	/**
 	 * Return array of CSS property name of the CSS <code>property</code>.

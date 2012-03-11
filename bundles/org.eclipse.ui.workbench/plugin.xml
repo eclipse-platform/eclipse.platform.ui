@@ -30,7 +30,11 @@
             composite="false"
             handler="org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcherCSSHandler">
          <property-name
-               name="perspective-keyline-color">
+               name="-e4-perspective-keyline-color">
+         </property-name>
+         <property-name
+               name="perspective-keyline-color"
+               deprecated="true">
          </property-name>
       </handler>
    </extension>
