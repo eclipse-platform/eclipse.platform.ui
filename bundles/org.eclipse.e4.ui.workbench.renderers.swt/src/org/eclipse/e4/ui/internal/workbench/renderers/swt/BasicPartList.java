@@ -52,7 +52,11 @@ public class BasicPartList extends AbstractTableInformationControl {
 		}
 
 		public Image getImage(Object element) {
-			return getLabelImage(((MUILabel) element).getIconURI());
+			String iconURI = ((MUILabel) element).getIconURI();
+			if (iconURI == null) {
+				return null;
+			}
+			return getLabelImage(iconURI);
 		}
 
 		public String getToolTipText(Object element) {
