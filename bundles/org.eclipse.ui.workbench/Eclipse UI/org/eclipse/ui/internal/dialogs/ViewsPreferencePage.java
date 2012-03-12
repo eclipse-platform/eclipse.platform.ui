@@ -137,9 +137,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 	@Override
 	protected void performDefaults() {
+		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).performDefaults();
 		engine.setTheme(defaultTheme, true);
 		themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
-
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		enableAnimations.setSelection(apiStore
 				.getDefaultBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -189,7 +190,17 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			}
 			Path p = new Path(source.getURI());
 			IPath trim = p.removeLastSegments(1);
+		
 			URL url = FileLocator.resolve(new URL(trim.addTrailingSeparator().toString() + ((CSSImportRule) rule).getHref()));
+		    File testFile = new File(url.getFile());
+		    if (!testFile.exists()) {
+		    	//look in platform default
+		    	String path = getResourcesLocatorManager().resolve(((CSSImportRule) rule).getHref());
+		    	testFile = new File(new URL(path).getFile());
+		    	if (testFile.exists()) {
+		    		url = new URL(path);
+		    	}
+		    }
 			InputStream stream = url.openStream();
 			InputSource tempStream = new InputSource();
 			tempStream.setURI(url.toString());
