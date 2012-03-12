@@ -23,8 +23,10 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.emf.ecore.EObject;
 
 public class MenuThemeProcessor extends AbstractThemeProcessor {
-
-	private static final String BUNDLE_ID = "bundleclass://org.eclipse.e4.demo.contacts"; //$NON-NLS-1$
+	// should be bundleclass, see bug 374961
+	// private static final String BUNDLE_ID =
+	// "bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.processors.MenuThemeProcessor
+	private static final String BUNDLE_ID = "platform:/plugin/org.eclipse.e4.demo.contacts"; //$NON-NLS-1$
 	
 	@Inject
 	@Named("menu:org.eclipse.ui.main.menu")
