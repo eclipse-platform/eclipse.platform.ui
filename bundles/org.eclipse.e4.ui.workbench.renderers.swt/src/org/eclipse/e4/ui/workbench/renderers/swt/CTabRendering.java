@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Pattern;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -406,6 +407,19 @@ public class CTabRendering extends CTabFolderRenderer {
 					SWT.COLOR_WHITE);
 		gc.setBackground(selectedTabFillColor);
 		gc.setForeground(selectedTabFillColor);
+		Color gradientTop = null;
+		Pattern backgroundPattern = null;
+		if (!active) {
+			RGB blendColor = gc.getDevice()
+					.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW).getRGB();
+			RGB topGradient = blend(blendColor, parent.getParent()
+					.getBackground().getRGB(), 40);
+			gradientTop = new Color(gc.getDevice(), topGradient);
+			backgroundPattern = new Pattern(gc.getDevice(), 0, 0, 0,
+					bounds.height + 1, gradientTop, gc.getDevice()
+							.getSystemColor(SWT.COLOR_WHITE));
+			gc.setBackgroundPattern(backgroundPattern);
+		}
 		int[] tmpPoints = new int[index];
 		System.arraycopy(points, 0, tmpPoints, 0, index);
 		gc.fillPolygon(tmpPoints);
@@ -413,11 +427,21 @@ public class CTabRendering extends CTabFolderRenderer {
 		if (tabOutlineColor == null)
 			tabOutlineColor = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
 		gc.setForeground(tabOutlineColor);
-		// if (active)
+		Color gradientLineTop = null;
+		Pattern foregroundPattern = null;
+		if (!active) {
+			RGB blendColor = gc.getDevice()
+					.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW).getRGB();
+			RGB topGradient = blend(blendColor, tabOutlineColor.getRGB(), 40);
+			gradientLineTop = new Color(gc.getDevice(), topGradient);
+			foregroundPattern = new Pattern(gc.getDevice(), 0, 0, 0,
+					bounds.height + 1, gradientLineTop, gc.getDevice()
+							.getSystemColor(SWT.COLOR_WHITE));
+			gc.setForegroundPattern(foregroundPattern);
+		}
 		gc.drawPolyline(tmpPoints);
 		Rectangle rect = null;
 		gc.setClipping(rect);
-	
 
 		if (active) {
 			if (outerKeyline == null)
@@ -426,6 +450,15 @@ public class CTabRendering extends CTabFolderRenderer {
 			gc.drawPolyline(shape);
 		} else {
 			gc.drawLine(startX, 0, endX, 0);
+			if (gradientTop != null)
+				gradientTop.dispose();
+			if (backgroundPattern != null)
+				backgroundPattern.dispose();
+			if (gradientLineTop != null)
+				gradientLineTop.dispose();
+			if (foregroundPattern != null)
+				foregroundPattern.dispose();
+
 		}
 	}
 
@@ -598,6 +631,18 @@ public class CTabRendering extends CTabFolderRenderer {
 			finalArray[j + 1] = tempY;
 		}
 		return finalArray;
+	}
+
+	static RGB blend(RGB c1, RGB c2, int ratio) {
+		int r = blend(c1.red, c2.red, ratio);
+		int g = blend(c1.green, c2.green, ratio);
+		int b = blend(c1.blue, c2.blue, ratio);
+		return new RGB(r, g, b);
+	}
+
+	static int blend(int v1, int v2, int ratio) {
+		int b = (ratio * v1 + (100 - ratio) * v2) / 100;
+		return Math.min(255, b);
 	}
 
 	void drawShadow(final Display display, Rectangle bounds, GC gc) {
