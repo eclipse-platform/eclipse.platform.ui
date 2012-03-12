@@ -181,8 +181,8 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 			if (!prevEndContentType.equals(currEndContentType))
 				return true;
 			
-			String prevStartContentType= TextUtilities.getContentType(document, fPartitioning, previousEndOffset, false);
-			String currStartContentType= TextUtilities.getContentType(document, fPartitioning, currentEndOffset, false);
+			String prevStartContentType= TextUtilities.getContentType(document, fPartitioning, previousStartOffset, true);
+			String currStartContentType= TextUtilities.getContentType(document, fPartitioning, currentStartOffset, true);
 			if (!prevStartContentType.equals(currStartContentType))
 				return true;
 			
