@@ -1223,8 +1223,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		WorkbenchWindow result = (WorkbenchWindow) windowContext.get(IWorkbenchWindow.class
 				.getName());
 		if (result == null) {
-			boolean wasVisible = window.isVisible();
-			window.setVisible(false);
 			result = new WorkbenchWindow(input, descriptor);
 
 			if (newWindow) {
@@ -1237,8 +1235,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			ContextInjectionFactory.inject(result, windowContext);
 			windowContext.set(IWorkbenchWindow.class.getName(), result);
-			window.setVisible(wasVisible);
-			result.getShell().setFocus();
 
 			if (application.getSelectedElement() == window) {
 				application.getContext().set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, result);
