@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
@@ -26,7 +27,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -42,7 +42,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
 import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.css.sac.InputSource;
 import org.w3c.dom.Element;
@@ -402,6 +406,35 @@ public class ThemeEngine implements IThemeEngine {
 				e.printStackTrace();
 			}
 		}
+		sendThemeChangeEvent(restore);
+	}
+
+	/**
+	 * Broadcast theme-change event using OSGi Event Admin.
+	 */
+	private void sendThemeChangeEvent(boolean restore) {
+		EventAdmin eventAdmin = getEventAdmin();
+		if (eventAdmin == null) {
+			return;
+		}
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put(IThemeEngine.Events.THEME, currentTheme);
+		data.put(IThemeEngine.Events.ENGINE, engine);
+		data.put(IThemeEngine.Events.DISPLAY, display);
+		data.put(IThemeEngine.Events.RESTORE, restore);
+		Event event = new Event(IThemeEngine.Events.THEME_CHANGED, data);
+		eventAdmin.sendEvent(event); // synchronous
+	}
+
+	private EventAdmin getEventAdmin() {
+		Bundle bundle = FrameworkUtil.getBundle(this.getClass());
+		if (bundle == null) {
+			return null;
+		}
+		BundleContext context = bundle.getBundleContext();
+		ServiceReference<EventAdmin> eventAdminRef = context
+				.getServiceReference(EventAdmin.class);
+		return context.getService(eventAdminRef);
 	}
 
 	public synchronized List<ITheme> getThemes() {

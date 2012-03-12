@@ -45,5 +45,7 @@ public class CssSwtTestSuite extends TestSuite {
 		//other
 		addTestSuite(DescendentTest.class);  
 
+		addTestSuite(ThemeTest.class);
+
 	}
 }

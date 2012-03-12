@@ -10,13 +10,20 @@
  ******************************************************************************/
 package org.eclipse.e4.demo.contacts;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class BundleActivatorImpl implements BundleActivator {
@@ -32,12 +39,31 @@ public class BundleActivatorImpl implements BundleActivator {
 
 	private IPath stateLocation;
 
+	private ServiceRegistration<EventHandler> themeListenerRegistration;
+	private EventHandler themeListener = new EventHandler() {
+		public void handleEvent(Event event) {
+			themeChanged(event);
+		}
+	};
+
 	public void start(BundleContext context) throws Exception {
 		instance = this;
 		this.context = context;
+
+		Dictionary<String, String> properties = new Hashtable<String, String>();
+		properties.put(EventConstants.EVENT_TOPIC,
+				IThemeEngine.Events.THEME_CHANGED);
+		themeListenerRegistration = context.registerService(EventHandler.class,
+				themeListener, properties);
+
 	}
 
 	public void stop(BundleContext context) throws Exception {
+		if (themeListenerRegistration != null) {
+			themeListenerRegistration.unregister();
+			themeListenerRegistration = null;
+		}
+
 		this.context = null;
 		instance = null;
 	}
@@ -72,4 +98,14 @@ public class BundleActivatorImpl implements BundleActivator {
 		return instance;
 	}
 
+	private void themeChanged(Event event) {
+		System.out.println(">>> THEME CHANGED");
+		System.out.println("  TOPIC: " + event.getTopic());
+		System.out.println("  Theme: "
+				+ event.getProperty(IThemeEngine.Events.THEME));
+		System.out.println("  CSS Engine: "
+				+ event.getProperty(IThemeEngine.Events.ENGINE));
+		System.out.println("  Display: "
+				+ event.getProperty(IThemeEngine.Events.DISPLAY));
+	}
 }

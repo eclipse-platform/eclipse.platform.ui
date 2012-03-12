@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Tom Schindl and others.
+ * Copyright (c) 2010, 2012 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Brian de Alwis <bsd@mt.ca> - theme-change event API and implementation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.theme;
 
 import java.util.List;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -22,6 +25,52 @@ import org.w3c.dom.css.CSSStyleDeclaration;
  */
 public interface IThemeEngine {
 	public static final String DEFAULT_THEME_ID = "org.eclipse.e4.ui.workbench.swt.theme.default";
+
+	/**
+	 * The IThemeEngine may broadcast an event using the OSGi EventAdmin
+	 * service, if available, to notify of theme changes. The event will contain
+	 * several attributes to provide the context of the event.
+	 * 
+	 * <p>
+	 * NB: this event topic and attribute list may change and should not yet be
+	 * considered as API.
+	 * </p>
+	 */
+	public static interface Events {
+		public static final String TOPIC = "org/eclipse/e4/ui/css/swt/theme/ThemeManager";
+		public static final String THEME_CHANGED = TOPIC + "/themeChanged";
+
+		// attributes that can be tested in event handlers
+
+		/**
+		 * Attribute for the new theme
+		 * 
+		 * @see ITheme
+		 */
+		public static final String THEME = "theme";
+
+		/**
+		 * Attribute for the affected display
+		 * 
+		 * @see Display
+		 */
+		public static final String DISPLAY = "display";
+
+		/**
+		 * Attribute for the CSS Engine
+		 * 
+		 * @see CSSEngine
+		 */
+		public static final String ENGINE = "engine";
+
+		/**
+		 * Attribute describing the theme change is persist state. If true, then
+		 * the theme will be restored on subsequent startups.
+		 * 
+		 * @see Boolean
+		 */
+		public static final String RESTORE = "restore";
+	}
 
 	/**
 	 * Register a theme

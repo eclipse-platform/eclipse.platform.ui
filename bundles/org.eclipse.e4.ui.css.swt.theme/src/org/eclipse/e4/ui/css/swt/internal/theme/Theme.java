@@ -37,6 +37,12 @@ public class Theme implements ITheme {
 	public String getOsVersion() {
 		return this.osVersion;
 	}
+
+	@Override
+	public String toString() {
+		return "Theme [id=" + id + ", label='" + label + "', osVersion="
+				+ osVersion + "]";
+	}
 	
 	
 }
