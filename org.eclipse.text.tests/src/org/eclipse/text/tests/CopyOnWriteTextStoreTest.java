@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 			super(new GapTextStore());
 		}
 		ITextStore getStore() {
-			return (ITextStore)new Accessor(this, CopyOnWriteTextStore.class).get("fTextStore");
+			return fTextStore;
 		}
 		String get() {
 			return get(0, getLength());
@@ -68,7 +68,7 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 		// check that underlying text store is not modifiable
 		boolean failed= false;
 		try {
-			fText.getStore().replace(0, 0, null);
+			fText.getStore().replace(0,0,null);
 		} catch (UnsupportedOperationException uoe) {
 			failed= true;
 		}
@@ -91,7 +91,7 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 		// check that underlying text store is not modifiable
 		boolean failed= false;
 		try {
-			fText.getStore().replace(0, 0, null);
+			fText.getStore().replace(0,0,null);
 		} catch (UnsupportedOperationException uoe) {
 			failed= true;
 		}
