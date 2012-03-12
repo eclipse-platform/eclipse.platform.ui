@@ -494,7 +494,7 @@ public class PartServiceImpl implements EPartService {
 				MPart candidate = partActivationHistory.getActivationCandidate(perspective);
 				if (candidate != null) {
 					modelService.bringToTop(candidate);
-					partActivationHistory.activate(candidate, false);
+					activate(candidate, true, false);
 					return;
 				}
 			}
