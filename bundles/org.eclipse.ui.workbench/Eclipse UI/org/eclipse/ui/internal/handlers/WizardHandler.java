@@ -328,7 +328,7 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 			return;
 		IWizardDescriptor wizard = getWizardRegistry().findWizard(wizardId);
 		if (wizard != null) {
-			element.setText(wizard.getLabel());
+			element.setText(wizard.getLabel() + "..."); //$NON-NLS-1$
 			element.setTooltip(wizard.getDescription());
 			element.setIcon(wizard.getImageDescriptor());
 		}
