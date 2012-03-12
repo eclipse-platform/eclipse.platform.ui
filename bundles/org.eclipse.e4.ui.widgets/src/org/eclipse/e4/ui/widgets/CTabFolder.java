@@ -2906,6 +2906,7 @@ public void setMRUVisible(boolean show) {
 	if (mru == show) return;
 	mru = show;
 	if (!mru) {
+		if (firstIndex == -1) return;
 		int idx = firstIndex;
 		int next = 0;
 		for (int i = firstIndex; i < items.length; i++) {
