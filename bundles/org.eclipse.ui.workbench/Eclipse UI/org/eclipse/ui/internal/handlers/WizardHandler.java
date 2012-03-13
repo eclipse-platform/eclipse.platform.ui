@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -33,6 +34,7 @@ import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LegacyResourceSupport;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
 import org.eclipse.ui.internal.dialogs.NewWizard;
@@ -328,7 +330,7 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 			return;
 		IWizardDescriptor wizard = getWizardRegistry().findWizard(wizardId);
 		if (wizard != null) {
-			element.setText(wizard.getLabel() + "..."); //$NON-NLS-1$
+			element.setText(NLS.bind(WorkbenchMessages.WizardHandler_menuLabel, wizard.getLabel()));
 			element.setTooltip(wizard.getDescription());
 			element.setIcon(wizard.getImageDescriptor());
 		}

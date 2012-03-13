@@ -404,6 +404,7 @@ public class WorkbenchMessages extends NLS {
 	public static String NewWizardsRegistryReader_otherCategory;
 	public static String NewWizardDropDown_text;
 	
+	public static String WizardHandler_menuLabel;
 	public static String WorkbenchWizard_errorMessage;
 	public static String WorkbenchWizard_errorTitle;
 	public static String WizardTransferPage_selectAll;
