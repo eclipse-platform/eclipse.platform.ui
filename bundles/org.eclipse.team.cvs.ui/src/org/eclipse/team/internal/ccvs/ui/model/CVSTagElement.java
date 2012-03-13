@@ -11,9 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui.model;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Date;
+import java.util.Locale;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
@@ -24,7 +25,6 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation.RemoteFolderFilter;
-import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 
@@ -115,64 +115,11 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 		return ((CVSTagElement) o).root;
 	}
 
-	protected Object[] fetchChildren(Object o, IProgressMonitor monitor)
-			throws TeamException {
-		if (tag.getType() == CVSTag.BRANCH) {
-			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(NLS.bind(
-					CVSUIMessages.RemoteFolderElement_fetchingRemoteChildren,
-					new String[] { root.toString() }), 100);
-			try {
-				ICVSRemoteResource[] children = CVSUIPlugin
-						.getPlugin()
-						.getRepositoryManager()
-						.getFoldersForTag(root, tag,
-								Policy.subMonitorFor(monitor, 50));
-				if (getWorkingSet() != null)
-					children = CVSUIPlugin.getPlugin().getRepositoryManager()
-							.filterResources(getWorkingSet(), children);
-				return getTopLevelRemoteFolders(children,
-						Policy.subMonitorFor(monitor, 50));
-			} finally {
-				monitor.done();
-			}
-		}
+	protected Object[] fetchChildren(Object o, IProgressMonitor monitor) throws TeamException {
 		ICVSRemoteResource[] children = CVSUIPlugin.getPlugin().getRepositoryManager().getFoldersForTag(root, tag, monitor);
 		if (getWorkingSet() != null)
 			children = CVSUIPlugin.getPlugin().getRepositoryManager().filterResources(getWorkingSet(), children);
 		return children;
-	}
-
-	private ICVSRemoteResource[] getTopLevelRemoteFolders(
-			ICVSRemoteResource[] children, IProgressMonitor monitor)
-			throws CVSException {
-		Set result = new HashSet();
-		monitor.beginTask(NLS.bind(
-				CVSUIMessages.RemoteFolderElement_fetchingRemoteChildren,
-				new String[] { root.toString() }), children.length);
-		try {
-			RepositoryRoot repositoryRoot = CVSUIPlugin.getPlugin()
-					.getRepositoryManager().getRepositoryRootFor(root);
-			for (int i = 0; i < children.length; i++) {
-				result.add(getTopLevelRemoteFolder(children[i], repositoryRoot,
-						Policy.subMonitorFor(monitor, 1)));
-			}
-			return (ICVSRemoteResource[]) result
-					.toArray(new ICVSRemoteResource[result.size()]);
-		} finally {
-			monitor.done();
-		}
-	}
-
-	private ICVSRemoteResource getTopLevelRemoteFolder(
-			ICVSRemoteResource remoteResource, RepositoryRoot repositoryRoot,
-			IProgressMonitor monitor) throws CVSException {
-		IPath repositoryPath = new Path(
-				remoteResource.getRepositoryRelativePath());
-		if (repositoryPath.segmentCount() == 1)
-			return remoteResource;
-		return repositoryRoot.getRemoteFolder(repositoryPath.segment(0), tag,
-				monitor);
 	}
 
 	public void fetchDeferredChildren(Object o, IElementCollector collector, IProgressMonitor monitor) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,15 +142,11 @@ public class RepositoryManager {
 		Set result = new HashSet();
 		RepositoryRoot root = (RepositoryRoot)repositoryRoots.get(location.getLocation(false));
 		if (root != null) {
-			String[] paths = root.getKnownRemotePaths();
-			for (int i = 0; i < paths.length; i++) {
-				String path = paths[i];
-				CVSTag[] tags = root.getAllKnownTags(path);
-				for (int j = 0; j < tags.length; j++) {
-					CVSTag tag = tags[j];
-					if (tag.getType() == tagType)
-						result.add(tag);
-				}
+			CVSTag[] tags = root.getAllKnownTags();
+			for (int i = 0; i < tags.length; i++) {
+				CVSTag tag = tags[i];
+				if (tag.getType() == tagType)
+					result.add(tag);
 			}
 		}
 		return (CVSTag[])result.toArray(new CVSTag[0]);
@@ -225,16 +221,68 @@ public class RepositoryManager {
 			Set result = new HashSet();
 			// Get the tags for the location
 			RepositoryRoot root = getRepositoryRootFor(location);
-			String[] paths = root.getKnownRemotePaths();
+			String[] paths = root.getRemoteChildrenForTag(null, tag);
 			for (int i = 0; i < paths.length; i++) {
 				String path = paths[i];
-				List tags = Arrays.asList(root.getAllKnownTags(path));
-				if (tags.contains(tag)) {
-					ICVSRemoteFolder remote = root.getRemoteFolder(path, tag, Policy.subMonitorFor(monitor, 100));
-					result.add(remote);
-				}
+				ICVSRemoteFolder remote = root.getRemoteFolder(path, tag,
+						Policy.subMonitorFor(monitor, 100));
+				result.add(remote);
 			}
 			return (ICVSRemoteResource[])result.toArray(new ICVSRemoteResource[result.size()]);
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * Returns a list of child resources for given folder that are known to
+	 * contain given tag. If the return list is empty than given tag exists
+	 * directly in given folder and its children should be retrieved directly
+	 * from the repository.
+	 *
+	 * NOTE: Resources are cached only for tags of type CVSTag.Branch and
+	 * CVSTag.Version. Other types of tags will always return empty list.
+	 *
+	 * @param location
+	 *            CVS repository location
+	 * @param parentFolder
+	 *            folder to check tags for
+	 * @param tag
+	 * @param monitor
+	 * @return a list of remote resources that are known to contain given tag or
+	 *         empty list if resources should be retrieved from the repository
+	 * @throws CVSException
+	 */
+	public ICVSRemoteResource[] getCachedChildrenForTag(
+			ICVSRepositoryLocation location, ICVSRemoteFolder parentFolder,
+			CVSTag tag, IProgressMonitor monitor) throws CVSException {
+		if (tag == null || tag.getType() == CVSTag.HEAD
+				|| tag.getType() == CVSTag.DATE) {
+			// folders are kept in cache only for tags and versions
+			return new ICVSRemoteResource[0];
+		}
+		monitor = Policy.monitorFor(monitor);
+		Set result = new HashSet();
+		RepositoryRoot root = getRepositoryRootFor(location);
+		// if remote folder is null return the subfolders of repository root
+		String[] paths = root.getRemoteChildrenForTag(
+				parentFolder == null ? null : RepositoryRoot
+						.getRemotePathFor(parentFolder), tag);
+		monitor.beginTask(NLS
+				.bind(CVSUIMessages.RemoteFolderElement_fetchingRemoteChildren,
+						new String[] { NLS.bind(
+								CVSUIMessages.RemoteFolderElement_nameAndTag,
+								new String[] { parentFolder.getName(),
+										tag.getName() }) }), 10 * paths.length);
+		try {
+			for (int i = 0; i < paths.length; i++) {
+				String path = paths[i];
+				ICVSRemoteFolder remote = root.getRemoteFolder(path, tag,
+						Policy.subMonitorFor(monitor, 10));
+				result.add(remote);
+			}
+			return (ICVSRemoteResource[]) result
+					.toArray(new ICVSRemoteResource[result.size()]);
 		} finally {
 			monitor.done();
 		}

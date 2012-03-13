@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,7 @@ public class RepositoryRoot extends PlatformObject {
 	
 	ICVSRepositoryLocation root;
 	String name;
-	// Map of String (remote folder path) -> TagCacheEntry
-	Map versionAndBranchTags = new HashMap();
+	TagCacheEntry rootTagCacheEntry = new TagCacheEntry(Path.ROOT, null);
 	// Map of String (remote folder path) -> Set (file paths that are project relative)
 	Map autoRefreshFiles = new HashMap();
 	// Map of String (module name) -> ICVSRemoteFolder (that is a defined module)
@@ -44,12 +43,34 @@ public class RepositoryRoot extends PlatformObject {
 	List dateTags = new ArrayList();
 	
 	public static class TagCacheEntry {
-	    Set tags = new HashSet();
-	    long lastAccessTime;
-        private static final int CACHE_LIFESPAN_IN_DAYS = 7;
-        public TagCacheEntry() {
-            accessed();
-        }
+		IPath path;
+		// Set of tags found for this path
+		private Set tags = new HashSet();
+		// String(last path segment) -> TagCacheEntry for child paths
+		Map children = new HashMap();
+		TagCacheEntry parent;
+		long lastAccessTime;
+		private static final int CACHE_LIFESPAN_IN_DAYS = 7;
+
+		public TagCacheEntry(IPath path, TagCacheEntry parent) {
+			this.path = path;
+			this.parent = parent;
+			accessed();
+		}
+
+		public Set getTags() {
+			accessed();
+			return tags;
+		}
+
+		public Iterator getChildrenIterator() {
+			return this.children.values().iterator();
+		}
+
+		public boolean isEmpty() {
+			return getTags().isEmpty() && children.isEmpty();
+		}
+
         public boolean isExpired() {
             long currentTime = System.currentTimeMillis();
             long ms = currentTime - lastAccessTime;
@@ -58,9 +79,10 @@ public class RepositoryRoot extends PlatformObject {
             int days = hours / 24;
             return days > CACHE_LIFESPAN_IN_DAYS;
         }
-        public void accessed() {
-            lastAccessTime = System.currentTimeMillis();
-        }
+
+		private void accessed() {
+			lastAccessTime = System.currentTimeMillis();
+		}
 	}
 	
 	public RepositoryRoot(ICVSRepositoryLocation root) {
@@ -189,7 +211,10 @@ public class RepositoryRoot extends PlatformObject {
 	 * 
 	 * It is the responsibility of the caller to ensure that the given remote path is valid.
 	 */
-	public void addTags(String remotePath, CVSTag[] tags) {	
+	public void addTags(String remotePath, CVSTag[] tags) {
+		if (tags.length == 0) {
+			return;
+		}
 		addDateTags(tags);
 		addVersionAndBranchTags(remotePath, tags);
 	}
@@ -201,23 +226,19 @@ public class RepositoryRoot extends PlatformObject {
 			}
 		}
 	}
+
 	private void addVersionAndBranchTags(String remotePath, CVSTag[] tags) {
-		// Get the name to cache the version tags with
-		String name = getCachePathFor(remotePath);
-		
-		// Make sure there is a table for the ancestor that holds the tags
-		TagCacheEntry entry = (TagCacheEntry)versionAndBranchTags.get(name);
-		if (entry == null) {
-		    entry = new TagCacheEntry();
-			versionAndBranchTags.put(name, entry);
-		} else {
-		    entry.accessed();
-		}
-		
+		TagCacheEntry entry = getTagCacheEntryFor(remotePath, true);
+
 		// Store the tag with the appropriate ancestor
 		for (int i = 0; i < tags.length; i++) {
-			if(tags[i].getType() != CVSTag.DATE){
-				entry.tags.add(tags[i]);
+			if (tags[i].getType() != CVSTag.DATE) {
+				Set parentTags = new HashSet();
+				addAllKnownTagsForParents(entry, parentTags);
+				if (!parentTags.contains(tags[i])) {
+					entry.getTags().add(tags[i]);
+					removeTagFromChildrenCacheEntries(entry, tags[i]);
+				}
 			}
 		}
 	}
@@ -263,20 +284,42 @@ public class RepositoryRoot extends PlatformObject {
 	}
 
 	private void removeVersionAndBranchTags(String remotePath, CVSTag[] tags) {
-		// Get the name to cache the version tags with
-		String name = getCachePathFor(remotePath);
-		
-		// Make sure there is a table for the ancestor that holds the tags
-		TagCacheEntry entry = (TagCacheEntry)versionAndBranchTags.get(name);
-		if (entry == null) {
-			return;
+		TagCacheEntry entry = getTagCacheEntryFor(remotePath, false);
+		// remove tags from this path and its children
+		if (entry != null) {
+			removeTagsFromChildrenCacheEntries(entry, tags);
 		}
-		
-		// Store the tag with the appropriate ancestor
+
+		// remove tags from all parents of this path
+		entry = getKnownParentTagCacheEntryFor(remotePath);
 		for (int i = 0; i < tags.length; i++) {
-			entry.tags.remove(tags[i]);
+			if (entry.getTags().contains(tags[i])) {
+				entry.getTags().remove(tags[i]);
+				continue;
+			}
+			TagCacheEntry currentEntry = entry;
+			while (currentEntry.parent != null) {
+				if (currentEntry.parent.getTags().contains(tags[i])) {
+					// remove tag from parent and add it to siblings
+					currentEntry.parent.getTags().remove(tags[i]);
+					Iterator siblingIterator = currentEntry.parent
+							.getChildrenIterator();
+					while (siblingIterator.hasNext()) {
+						TagCacheEntry sibling = (TagCacheEntry) siblingIterator
+								.next();
+						if (!sibling.equals(currentEntry)) {
+							sibling.getTags().add(tags[i]);
+						}
+					}
+					break;
+				} else {
+					currentEntry = currentEntry.parent;
+				}
+			}
 		}
-		entry.accessed();
+		if (entry.isEmpty()) {
+			removeTagCacheEntry(entry);
+		}
 	}
 
 	/**
@@ -286,8 +329,7 @@ public class RepositoryRoot extends PlatformObject {
 	 * @return String[]
 	 */
 	public String[] getAutoRefreshFiles(String remotePath) {
-		String name = getCachePathFor(remotePath);
-		Set files = (Set)autoRefreshFiles.get(name);
+		Set files = (Set) autoRefreshFiles.get(remotePath);
 		if (files == null || files.isEmpty()) {
 			// convert the default relative file paths to full paths
 			if (isDefinedModuleName(remotePath)) {
@@ -323,44 +365,64 @@ public class RepositoryRoot extends PlatformObject {
 				}
 			}
 			if (isDefault) {
-				this.autoRefreshFiles.remove(getCachePathFor(remotePath));
+				this.autoRefreshFiles.remove(remotePath);
 				return;
 			}
 		}
-		this.autoRefreshFiles.put(getCachePathFor(remotePath), newFiles);
+		this.autoRefreshFiles.put(remotePath, newFiles);
 	}
 
 	/**
 	 * Fetches tags from auto-refresh files.
 	 */
-	public CVSTag[] refreshDefinedTags(ICVSFolder folder, boolean recurse, IProgressMonitor monitor) throws TeamException {
+	public CVSTag[] refreshDefinedTags(ICVSFolder folder, boolean recurse,
+			IProgressMonitor monitor) throws TeamException {
 		monitor = Policy.monitorFor(monitor);
-	    monitor.beginTask(null, 100);
-	    CVSTag[] tags = null;
-	    if (!recurse && !folder.getFolderSyncInfo().isVirtualDirectory()) {
-	        // Only try the auto-refresh file(s) if we are not recursing into sub-folders
-	        tags = fetchTagsUsingAutoRefreshFiles(folder, Policy.subMonitorFor(monitor, 50));
-	    }
-        if (tags == null || tags.length == 0) {
-            // There we're no tags found on the auto-refresh files or we we're aksed to go deep
-            // Try using the log command
-            tags = fetchTagsUsingLog(folder, recurse, Policy.subMonitorFor(monitor, 50));
-        }
-		if (tags != null && tags.length > 0) {
-		    String remotePath = getRemotePathFor(folder);
-			addTags(remotePath, tags);
+		monitor.beginTask(null, recurse ? 210 : 100);
+		try {
+			CVSTag[] tags = null;
+			if (!folder.getFolderSyncInfo().isVirtualDirectory()) {
+				// Only try the auto-refresh file(s) if we are not recursing
+				// into sub-folders
+				tags = fetchTagsUsingAutoRefreshFiles(folder,
+						Policy.subMonitorFor(monitor, 50));
+			}
+			if (tags == null || tags.length == 0) {
+				// There we're no tags found on the auto-refresh files or we
+				// we're asked to go deep
+				// Try using the log command
+				tags = fetchTagsUsingLog(folder,
+						Policy.subMonitorFor(monitor, 50));
+			}
+			if (tags != null && tags.length > 0) {
+				String remotePath = getRemotePathFor(folder);
+				addTags(remotePath, tags);
+				return tags;
+			}
+			if (recurse) {
+				Set tagsSet = new HashSet();
+				folder.fetchChildren(Policy.subMonitorFor(monitor, 10));
+				ICVSResource[] children = folder
+						.members(ICVSFolder.FOLDER_MEMBERS);
+				for (int i = 0; i < children.length; i++) {
+					tagsSet.addAll(Arrays.asList(refreshDefinedTags(
+							(ICVSFolder) children[i], recurse, Policy
+									.subMonitorFor(monitor,
+											100 / children.length))));
+				}
+				tags = (CVSTag[]) tagsSet.toArray(new CVSTag[tagsSet.size()]);
+			}
+			return tags;
+		} finally {
+			monitor.done();
 		}
-		monitor.done();
-		return tags;
 	}
-	
-    private CVSTag[] fetchTagsUsingLog(ICVSFolder folder, final boolean recurse, IProgressMonitor monitor) throws CVSException {
+
+    private CVSTag[] fetchTagsUsingLog(ICVSFolder folder, IProgressMonitor monitor) throws CVSException {
         LogEntryCache logEntries = new LogEntryCache();
         RemoteLogOperation operation = new RemoteLogOperation(null, new ICVSRemoteResource[] { asRemoteResource(folder) }, null, null, logEntries) {
             protected Command.LocalOption[] getLocalOptions(CVSTag tag1,CVSTag tag2) {
                 Command.LocalOption[] options = new Command.LocalOption[] {};
-                if (recurse) 
-                    return options;
                 Command.LocalOption[] newOptions = new Command.LocalOption[options.length + 1];
                 System.arraycopy(options, 0, newOptions, 0, options.length);
                 newOptions[options.length] = Command.DO_NOT_RECURSE;
@@ -442,16 +504,85 @@ public class RepositoryRoot extends PlatformObject {
 		}
 		return (CVSTag[])tagSet.toArray(new CVSTag[0]);
 	}
-	
-	/*
-	 * Return the cache key (path) for the given folder path.
-	 * This has been changed to cache the tags directly 
-	 * with the folder to better support non-root projects.
-	 * However, resources in the local workspace use the folder
-	 * the project is mapped to as the tag source (see TagSource)
-	 */
-	private String getCachePathFor(String remotePath) {
-		return remotePath;
+
+	private TagCacheEntry getTagCacheEntryFor(String remotePath, boolean create) {
+		String[] segments = new Path(null, remotePath).segments();
+		TagCacheEntry currentTagCacheEntry = rootTagCacheEntry;
+		for (int i = 0; i < segments.length; i++) {
+			String segment = segments[i];
+			if (currentTagCacheEntry.children.containsKey(segment)) {
+				currentTagCacheEntry = (TagCacheEntry) currentTagCacheEntry.children
+						.get(segment);
+				continue;
+			}
+			if (!create) {
+				return null;
+			}
+			TagCacheEntry newTagCacheEntry = new TagCacheEntry(new Path(null,
+					remotePath).removeLastSegments(segments.length - (i + 1)),
+					currentTagCacheEntry);
+			currentTagCacheEntry.children.put(segment, newTagCacheEntry);
+			currentTagCacheEntry = newTagCacheEntry;
+		}
+		return currentTagCacheEntry;
+	}
+
+	private TagCacheEntry getKnownParentTagCacheEntryFor(String remotePath) {
+		String[] segments = new Path(null, remotePath).segments();
+		TagCacheEntry currentTagCacheEntry = rootTagCacheEntry;
+		for (int i = 0; i < segments.length; i++) {
+			String segment = segments[i];
+			if (currentTagCacheEntry.children.containsKey(segment)) {
+				currentTagCacheEntry = (TagCacheEntry) currentTagCacheEntry.children
+						.get(segment);
+			} else {
+				break; // we reached the last existing parent
+			}
+		}
+		return currentTagCacheEntry;
+	}
+
+	private void removeTagsFromChildrenCacheEntries(TagCacheEntry entry,
+			CVSTag[] tags) {
+		for (int i = 0; i < tags.length; i++) {
+			removeTagFromChildrenCacheEntries(entry, tags[i]);
+		}
+		entry.getTags().removeAll(Arrays.asList(tags));
+		if (entry.isEmpty()) {
+			// remove this entry when the last tags where removed
+			// keep the entry if there are any children that have tags
+			removeTagCacheEntry(entry);
+		}
+	}
+
+	private void removeTagCacheEntry(TagCacheEntry entry) {
+		if (entry.parent == null) {
+			// We cannot remove root tag cache entry
+			return;
+		}
+		Map newParentChildren = new HashMap();
+		newParentChildren.putAll(entry.parent.children);
+		newParentChildren.remove(entry.path.lastSegment());
+		entry.parent.children = newParentChildren;
+		if (entry.parent.isEmpty()) {
+			// remove parents if they no longer carry any value
+			removeTagCacheEntry(entry.parent);
+		}
+	}
+
+	private void removeTagFromChildrenCacheEntries(TagCacheEntry entry,
+			CVSTag tag) {
+		Iterator childrenIterator = entry.getChildrenIterator();
+		while (childrenIterator.hasNext()) {
+			TagCacheEntry child = (TagCacheEntry) childrenIterator.next();
+			removeTagFromChildrenCacheEntries(child, tag);
+			child.getTags().remove(tag);
+			if (child.isEmpty()) {
+				// remove this entry when the last tag was removed
+				// keep the entry if there are any children that have tags
+				removeTagCacheEntry(child);
+			}
+		}
 	}
 	
 	/**
@@ -496,13 +627,13 @@ public class RepositoryRoot extends PlatformObject {
 				attributes.put(RepositoriesViewContentHandler.TYPE_ATTRIBUTE, RepositoriesViewContentHandler.DEFINED_MODULE_TYPE);
 			}
 			attributes.put(RepositoriesViewContentHandler.PATH_ATTRIBUTE, name);
-			TagCacheEntry entry = (TagCacheEntry)versionAndBranchTags.get(path);
+			TagCacheEntry entry = getTagCacheEntryFor(path, false);
 			boolean writeOutTags = entry != null && !entry.isExpired();
 			if (writeOutTags)
 			    attributes.put(RepositoriesViewContentHandler.LAST_ACCESS_TIME_ATTRIBUTE, Long.toString(entry.lastAccessTime));
 			writer.startTag(RepositoriesViewContentHandler.MODULE_TAG, attributes, true);
 			if (writeOutTags) {
-				Iterator tagIt = entry.tags.iterator();
+				Iterator tagIt = entry.getTags().iterator();
 				while (tagIt.hasNext()) {
 					CVSTag tag = (CVSTag)tagIt.next();
 					writeATag(writer, attributes, tag, RepositoriesViewContentHandler.TAG_TAG);
@@ -530,34 +661,81 @@ public class RepositoryRoot extends PlatformObject {
 		writer.startAndEndTag(s, attributes, true);
 	}
 
+	private void addAllKnownTagsForParents(TagCacheEntry entry, Set tags) {
+		if (entry.parent != null) {
+			addAllKnownTagsForParents(entry.parent, tags);
+		}
+		tags.addAll(entry.getTags());
+	}
+
+	private void addAllKnownTagsForChildren(TagCacheEntry entry, Set tags) {
+		Iterator childrenIterator = entry.getChildrenIterator();
+		while (childrenIterator.hasNext()) {
+			TagCacheEntry child = (TagCacheEntry) childrenIterator.next();
+			addAllKnownTagsForChildren(child, tags);
+		}
+		tags.addAll(entry.getTags());
+	}
+
 	/**
 	 * Method getKnownTags.
 	 * @param remotePath
 	 * @return CVSTag[]
 	 */
 	public CVSTag[] getAllKnownTags(String remotePath) {
-	    TagCacheEntry entry = (TagCacheEntry)versionAndBranchTags.get(getCachePathFor(remotePath));
-		if(entry != null){
-		    entry.accessed();
-			CVSTag [] tags1 = (CVSTag[]) entry.tags.toArray(new CVSTag[entry.tags.size()]);
-			CVSTag[] tags2 = getDateTags();
-			int len = tags1.length + tags2.length;
-			CVSTag[] tags = new CVSTag[len];
-			for(int i = 0; i < len; i++){
-				if(i < tags1.length){
-					tags[i] = tags1[i];
-				}else{
-					tags[i] = tags2[i-tags1.length];
-				}
-			}
-			return tags;
+		Set tags = new HashSet();
+		addAllKnownTagsForParents(getKnownParentTagCacheEntryFor(remotePath),
+				tags);
+		TagCacheEntry entry = getTagCacheEntryFor(remotePath, false);
+		if (entry != null) {
+			addAllKnownTagsForChildren(entry, tags);
 		}
-		return getDateTags();
+		return (CVSTag[]) tags.toArray(new CVSTag[tags.size()]);
+	}
+
+	public CVSTag[] getAllKnownTags() {
+		Set tags = new HashSet();
+		addAllKnownTagsForChildren(rootTagCacheEntry, tags);
+		return (CVSTag[]) tags.toArray(new CVSTag[tags.size()]);
+	}
+
+	public String[] getRemoteChildrenForTag(String remotePath, CVSTag tag) {
+		TagCacheEntry entry;
+		if (remotePath == null) {
+			entry = rootTagCacheEntry;
+		} else {
+			entry = getTagCacheEntryFor(remotePath, false);
+		}
+		if (entry == null) {
+			return new String[0];
+		}
+
+		Set paths = new HashSet();
+		Iterator childrenIterator = entry.getChildrenIterator();
+		while (childrenIterator.hasNext()) {
+			TagCacheEntry child = (TagCacheEntry) childrenIterator.next();
+			Set childTags = new HashSet();
+			addAllKnownTagsForChildren(child, childTags);
+			if (childTags.contains(tag)) {
+				paths.add(child.path.toString());
+			}
+		}
+		return (String[]) paths.toArray(new String[paths.size()]);
+	}
+
+	private Set getKnownRemotePaths(TagCacheEntry entry) {
+		Set paths = new HashSet();
+		Iterator childrenIterator = entry.getChildrenIterator();
+		while (childrenIterator.hasNext()) {
+			paths.addAll(getKnownRemotePaths((TagCacheEntry) childrenIterator
+					.next()));
+		}
+		paths.add(entry.path.toString());
+		return paths;
 	}
 
 	public String[] getKnownRemotePaths() {
-		Set paths = new HashSet();
-		paths.addAll(versionAndBranchTags.keySet());
+		Set paths = getKnownRemotePaths(rootTagCacheEntry);
 		paths.addAll(autoRefreshFiles.keySet());
 		return (String[]) paths.toArray(new String[paths.size()]);
 	}
@@ -577,7 +755,7 @@ public class RepositoryRoot extends PlatformObject {
 	public boolean tagIsKnown(ICVSRemoteResource remoteResource) {
 		if (remoteResource instanceof ICVSRemoteFolder) {
 			ICVSRemoteFolder folder = (ICVSRemoteFolder) remoteResource;
-			String path = getCachePathFor(folder.getRepositoryRelativePath());
+			String path = folder.getRepositoryRelativePath();
 			CVSTag[] tags = getAllKnownTags(path);
 			CVSTag tag = folder.getTag();
 			for (int i = 0; i < tags.length; i++) {
@@ -612,7 +790,7 @@ public class RepositoryRoot extends PlatformObject {
      * as it was read from the persistent store.
      */
     /* package */ void setLastAccessedTime(String remotePath, long lastAccessTime) {
-	    TagCacheEntry entry = (TagCacheEntry)versionAndBranchTags.get(getCachePathFor(remotePath));
+		TagCacheEntry entry = getTagCacheEntryFor(remotePath, false);
 		if(entry != null){
 		    entry.lastAccessTime = lastAccessTime;
 		}
