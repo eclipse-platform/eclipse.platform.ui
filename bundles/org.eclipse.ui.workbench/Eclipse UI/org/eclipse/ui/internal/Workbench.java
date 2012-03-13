@@ -2239,11 +2239,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 			throws WorkbenchException {
 		IPerspectiveDescriptor descriptor = getPerspectiveRegistry().findPerspectiveWithId(
 				perspectiveId);
-		if (descriptor == null) {
-			throw new WorkbenchException(NLS.bind(
-					WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective, perspectiveId));
-		}
-
 		try {
 			MWindow window = BasicFactoryImpl.eINSTANCE.createTrimmedWindow();
 			return openWorkbenchWindow(input, descriptor, window, true);
