@@ -517,10 +517,22 @@ public class MinMaxAddon {
 		return null;
 	}
 
+	boolean isEmptyPerspectiveStack(MUIElement element) {
+		if (!(element instanceof MPerspectiveStack))
+			return false;
+		MPerspectiveStack ps = (MPerspectiveStack) element;
+		return ps.getChildren().size() == 0;
+	}
+
 	void minimize(MUIElement element) {
 		// Can't minimize a non-rendered element
 		if (!element.isToBeRendered())
 			return;
+
+		if (isEmptyPerspectiveStack(element)) {
+			element.setVisible(false);
+			return;
+		}
 
 		createTrim(element);
 		element.setVisible(false);
@@ -531,6 +543,12 @@ public class MinMaxAddon {
 	}
 
 	void restore(MUIElement element) {
+		if (isEmptyPerspectiveStack(element)) {
+			element.setVisible(true);
+			element.getTags().remove(MINIMIZED_BY_ZOOM);
+			return;
+		}
+
 		MWindow window = modelService.getTopLevelWindowFor(element);
 		String trimId = element.getElementId() + getMinimizedElementSuffix(element);
 		MToolControl trimStack = (MToolControl) modelService.find(trimId, window);
@@ -567,8 +585,18 @@ public class MinMaxAddon {
 			}
 
 			// Minimize the Perspective Stack
-			if (persp != null) {
-				MUIElement perspStack = persp.getParent();
+			MUIElement perspStack = null;
+			if (persp == null) {
+				// special case for windows with no perspectives (eg bug 372614:
+				// intro part with no perspectives). We know we're outside
+				// of the perspective stack, so find it top-down
+				List<MPerspectiveStack> pStacks = modelService.findElements(win, null,
+						MPerspectiveStack.class, null);
+				perspStack = (pStacks.size() > 0) ? pStacks.get(0) : null;
+			} else {
+				perspStack = persp.getParent();
+			}
+			if (perspStack != null) {
 				if (perspStack.getElementId() == null || perspStack.getElementId().length() == 0)
 					perspStack.setElementId("PerspectiveStack"); //$NON-NLS-1$
 
