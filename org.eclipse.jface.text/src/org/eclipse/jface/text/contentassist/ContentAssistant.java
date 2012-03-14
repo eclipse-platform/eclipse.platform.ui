@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Guy Gurfinkel, guy.g@zend.com - [content assist][api] provide better access to ContentAssistant - https://bugs.eclipse.org/bugs/show_bug.cgi?id=169954
  *     Anton Leherbauer (Wind River Systems) - [content assist][api] ContentAssistEvent should contain information about auto activation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=193728
+ *     Marcel Bruch, bruch@cs.tu-darmstadt.de - [content assist] Allow to re-sort proposals - https://bugs.eclipse.org/bugs/show_bug.cgi?id=350991
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -985,6 +986,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	private boolean fIsColoredLabelsSupportEnabled= false;
 
+	/**
+	 * The sorter used to sort completion proposals when filtering was triggered.
+	 * 
+	 * @since 3.8
+	 */
+	private ICompletionProposalSorter fSorter;
 
 	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
@@ -1374,6 +1381,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		fContextInfoPopup= fContentAssistSubjectControlAdapter.createContextInfoPopup(this);
 		fProposalPopup= fContentAssistSubjectControlAdapter.createCompletionProposalPopup(this, controller);
+		fProposalPopup.setSorter(fSorter);
 
 		registerHandler(SELECT_NEXT_PROPOSAL_COMMAND_ID, fProposalPopup.createProposalSelectionHandler(CompletionProposalPopup.ProposalSelectionHandler.SELECT_NEXT));
 		registerHandler(SELECT_PREVIOUS_PROPOSAL_COMMAND_ID, fProposalPopup.createProposalSelectionHandler(CompletionProposalPopup.ProposalSelectionHandler.SELECT_PREVIOUS));
@@ -2462,4 +2470,18 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		fIsColoredLabelsSupportEnabled= isEnabled;
 	}
 
+	/**
+	 * Sets the sorter used to sort proposal completions after filtering is triggered.
+	 * 
+	 * @param sorter the sorter used for reordering the proposals, or <code>null</code> if no
+	 *            proposal reordering is needed
+	 * @since 3.8
+	 * @see CompletionProposalPopup#setSorter(ICompletionProposalSorter)
+	 */
+	public void setSorter(ICompletionProposalSorter sorter) {
+		fSorter= sorter;
+		if (fProposalPopup != null) {
+			fProposalPopup.setSorter(fSorter);
+		}
+	}
 }

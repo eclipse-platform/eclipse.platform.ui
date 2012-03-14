@@ -8,10 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sean Montgomery, sean_montgomery@comcast.net - https://bugs.eclipse.org/bugs/show_bug.cgi?id=116454
+ *     Marcel Bruch, bruch@cs.tu-darmstadt.de - [content assist] Allow to re-sort proposals - https://bugs.eclipse.org/bugs/show_bug.cgi?id=350991
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.osgi.util.TextProcessor;
@@ -429,6 +432,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private boolean fIsColoredLabelsSupportEnabled= false;
 
+	/**
+	 * The most recent sorter. Used when sorting proposals after filtering is requested by a completion engine. The sorter may
+	 * be <code>null</code>.
+	 * 
+	 * @since 3.8
+	 */
+	private ICompletionProposalSorter fSorter;
 
 	/**
 	 * Creates a new completion proposal popup for the given elements.
@@ -1084,7 +1094,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	/**
-	 * Initializes the proposal selector with these given proposals.
+	 * Initializes the proposal selector with these given proposals. If a proposal sorter is
+	 * configured, the given proposals are sorted before.
+	 * 
 	 * @param proposals the proposals
 	 * @param isFilteredSubset if <code>true</code>, the proposal table is
 	 *        not cleared, but the proposals that are not in the passed array
@@ -1106,6 +1118,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				proposals= new ICompletionProposal[] { fEmptyProposal };
 			}
 
+			sortProposals(proposals);
 			fFilteredProposals= proposals;
 			final int newLen= proposals.length;
 			if (USE_VIRTUAL) {
@@ -1831,4 +1844,30 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return new ProposalSelectionHandler(operationCode);
 	}
 
+	/**
+	 * Sets the sorter to use when resorting is required by one of the completion engines.
+	 * 
+	 * @param sorter the new sorter to be used, or <code>null</code> if no sorter is needed
+	 * @since 3.8
+	 */
+	public void setSorter(ICompletionProposalSorter sorter) {
+		fSorter= sorter;
+	}
+
+	/**
+	 * Sorts the given proposal array if a sorter is configured. Does nothing otherwise.
+	 * 
+	 * @param proposals the new proposals to display in the popup window
+	 * @since 3.8
+	 */
+	private void sortProposals(final ICompletionProposal[] proposals) {
+		if (fSorter != null) {
+			Arrays.sort(proposals, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					return fSorter.compare((ICompletionProposal)o1,
+							(ICompletionProposal)o2);
+				}
+			});
+		}
+	}
 }
