@@ -32,6 +32,8 @@ import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 
 public class ContextsDebugProcessor {
 
+	private final String DESCRIPTOR_ID = "org.eclipse.e4.core.contexts.debug.ui.view"; //$NON-NLS-1$
+
 	@Inject
 	public ContextsDebugProcessor() {
 		// placeholder
@@ -40,10 +42,14 @@ public class ContextsDebugProcessor {
 	@Execute
 	public void addDebugDescriptor(MApplication application) {
 		List<MPartDescriptor> descriptors = application.getDescriptors();
+		for (MPartDescriptor desc : descriptors) {
+			if (DESCRIPTOR_ID.equals(desc.getElementId()))
+				return; // we already have a descriptor
+		}
 
 		MPartDescriptor descriptor = BasicFactoryImpl.eINSTANCE.createPartDescriptor();
 		descriptor.setLabel("Contexts"); // XXX translate
-		descriptor.setElementId("org.eclipse.e4.core.contexts.debug.ui.view");
+		descriptor.setElementId(DESCRIPTOR_ID);
 		descriptor.setCategory("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
 
 		List<String> tags = descriptor.getTags();
@@ -55,7 +61,7 @@ public class ContextsDebugProcessor {
 		descriptor.setContributionURI("bundleclass://org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.ContextsView");
 		descriptor.setIconURI("platform:/plugin/org.eclipse.e4.core.contexts.debug/icons/full/obj16/contexts.gif");
 
-		application.getDescriptors().add(descriptor);
+		descriptors.add(descriptor);
 	}
 
 }
