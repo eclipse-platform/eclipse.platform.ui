@@ -183,6 +183,7 @@ public class PatchReader {
 		String diffArgs= null;
 		String fileName= null;
 		List headerLines = new ArrayList();
+		boolean foundDiff= false;
 
 		// read leading garbage
 		reread= line!=null;
@@ -197,8 +198,9 @@ public class PatchReader {
 			if (line.startsWith("Index: ")) { //$NON-NLS-1$
 				fileName= line.substring(7).trim();
 			} else if (line.startsWith("diff")) { //$NON-NLS-1$
-				if (!this.fIsGitPatch && GIT_PATCH_PATTERN.matcher(line).matches())
+				if (!foundDiff && GIT_PATCH_PATTERN.matcher(line).matches())
 					this.fIsGitPatch= true;
+				foundDiff= true;
 				diffArgs= line.substring(4).trim();
 			} else if (line.startsWith("--- ")) { //$NON-NLS-1$
 				line= readUnifiedDiff(diffs, lr, line, diffArgs, fileName);
