@@ -15,6 +15,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.actions.RelaunchLastAction;
 
 /**
  * Re-launches the last profile-mode launch
@@ -28,8 +29,8 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class ProfileLastAction extends RelaunchLastAction {
 
-	/**
-	 * @see RelaunchLastAction#getMode()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.RelaunchLastAction#getMode()
 	 */
 	public String getMode() {
 		return ILaunchManager.PROFILE_MODE;
@@ -42,8 +43,8 @@ public class ProfileLastAction extends RelaunchLastAction {
 		return IDebugUIConstants.ID_PROFILE_LAUNCH_GROUP;
 	}
 
-	/**
-	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getText()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.RelaunchLastAction#getText()
 	 */
 	protected String getText() {
 		if(LaunchingResourceManager.isContextLaunchEnabled()) {
@@ -54,8 +55,8 @@ public class ProfileLastAction extends RelaunchLastAction {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getTooltipText()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.RelaunchLastAction#getTooltipText()
 	 */
 	protected String getTooltipText() {
 		return IInternalDebugCoreConstants.EMPTY_STRING;
