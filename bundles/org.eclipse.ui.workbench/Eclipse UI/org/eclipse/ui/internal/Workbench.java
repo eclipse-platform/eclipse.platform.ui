@@ -1677,15 +1677,26 @@ UIEvents.Context.TOPIC_CONTEXT,
 					}
 				});
 		
-		MPartDescriptor descriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
-				.createPartDescriptor();
-		descriptor.getTags().add("Editor"); //$NON-NLS-1$
-		descriptor.setCloseable(true);
-		descriptor.setAllowMultiple(true);
-		descriptor.setElementId(CompatibilityEditor.MODEL_ELEMENT_ID);
-		descriptor.setContributionURI(CompatibilityPart.COMPATIBILITY_EDITOR_URI);
-		descriptor.setCategory("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
-		application.getDescriptors().add(descriptor);
+		boolean found = false;
+		List<MPartDescriptor> currentDescriptors = application.getDescriptors();
+		for (MPartDescriptor desc : currentDescriptors) {
+			// do we have a matching descriptor?
+			if (desc.getElementId().equals(CompatibilityEditor.MODEL_ELEMENT_ID)) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			MPartDescriptor descriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+					.createPartDescriptor();
+			descriptor.getTags().add("Editor"); //$NON-NLS-1$
+			descriptor.setCloseable(true);
+			descriptor.setAllowMultiple(true);
+			descriptor.setElementId(CompatibilityEditor.MODEL_ELEMENT_ID);
+			descriptor.setContributionURI(CompatibilityPart.COMPATIBILITY_EDITOR_URI);
+			descriptor.setCategory("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
+			application.getDescriptors().add(descriptor);
+		}
 
 		WorkbenchPlugin.getDefault().getViewRegistry();
 	}

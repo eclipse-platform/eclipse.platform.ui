@@ -82,60 +82,82 @@ public class ViewRegistry implements IViewRegistry {
 		for (IExtension extension : point.getExtensions()) {
 			for (IConfigurationElement element : extension.getConfigurationElements()) {
 				if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
-					MPartDescriptor descriptor = BasicFactoryImpl.eINSTANCE.createPartDescriptor();
-					descriptor.setLabel(element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
 					String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-					descriptor.setElementId(id);
-					if (id.equals(IPageLayout.ID_RES_NAV)
-							|| id.equals(IPageLayout.ID_PROJECT_EXPLORER)) {
-						descriptor.setCategory("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
-					} else if (id.equals(IPageLayout.ID_OUTLINE)) {
-						descriptor.setCategory("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
-					} else {
-						descriptor.setCategory("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
+					MPartDescriptor descriptor = null;
+					List<MPartDescriptor> currentDescriptors = application.getDescriptors();
+					for (MPartDescriptor desc : currentDescriptors) {
+						// do we have a matching descriptor?
+						if (desc.getElementId().equals(id)) {
+							descriptor = desc;
+							break;
+						}
 					}
-
-					List<String> tags = descriptor.getTags();
-					tags.add("View"); //$NON-NLS-1$
-
-					descriptor.setCloseable(true);
-					descriptor.setAllowMultiple(Boolean.parseBoolean(element
-							.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
-					descriptor.setContributionURI(CompatibilityPart.COMPATIBILITY_VIEW_URI);
-
-					String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-					if (iconURI == null) {
-						descriptor.setIconURI(MenuHelper.getImageUrl(workbench.getSharedImages()
-								.getImageDescriptor(ISharedImages.IMG_DEF_VIEW)));
-					} else if (!iconURI.startsWith("platform:/plugin/")) { //$NON-NLS-1$
-						StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
-						builder.append(element.getContributor().getName()).append('/');
-
-						// FIXME: need to get rid of $nl$ properly
-						if (iconURI.startsWith("$nl$")) { //$NON-NLS-1$
-							iconURI = iconURI.substring(4);
+					ViewCategory category = null;
+					if (descriptor == null) { // create a new descriptor
+						descriptor = BasicFactoryImpl.eINSTANCE.createPartDescriptor();
+						descriptor.setLabel(element
+								.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
+						descriptor.setElementId(id);
+						if (id.equals(IPageLayout.ID_RES_NAV)
+								|| id.equals(IPageLayout.ID_PROJECT_EXPLORER)) {
+							descriptor.setCategory("org.eclipse.e4.primaryNavigationStack"); //$NON-NLS-1$
+						} else if (id.equals(IPageLayout.ID_OUTLINE)) {
+							descriptor.setCategory("org.eclipse.e4.secondaryNavigationStack"); //$NON-NLS-1$
+						} else {
+							descriptor.setCategory("org.eclipse.e4.secondaryDataStack"); //$NON-NLS-1$
 						}
 
-						builder.append(iconURI);
-						descriptor.setIconURI(builder.toString());
-					} else {
-						descriptor.setIconURI(iconURI);
+						List<String> tags = descriptor.getTags();
+						tags.add("View"); //$NON-NLS-1$
+
+						descriptor.setCloseable(true);
+						descriptor.setAllowMultiple(Boolean.parseBoolean(element
+								.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
+						descriptor.setContributionURI(CompatibilityPart.COMPATIBILITY_VIEW_URI);
+
+						String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+						if (iconURI == null) {
+							descriptor.setIconURI(MenuHelper.getImageUrl(workbench
+									.getSharedImages().getImageDescriptor(
+											ISharedImages.IMG_DEF_VIEW)));
+						} else if (!iconURI.startsWith("platform:/plugin/")) { //$NON-NLS-1$
+							StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
+							builder.append(element.getContributor().getName()).append('/');
+
+							// FIXME: need to get rid of $nl$ properly
+							if (iconURI.startsWith("$nl$")) { //$NON-NLS-1$
+								iconURI = iconURI.substring(4);
+							}
+
+							builder.append(iconURI);
+							descriptor.setIconURI(builder.toString());
+						} else {
+							descriptor.setIconURI(iconURI);
+						}
+
+						String categoryId = element
+								.getAttribute(IWorkbenchRegistryConstants.ATT_CATEGORY);
+						category = findCategory(categoryId);
+						if (category == null) {
+							tags.add("categoryTag:" + WorkbenchMessages.ICategory_other); //$NON-NLS-1$	
+						} else {
+							tags.add("categoryTag:" + category.getLabel()); //$NON-NLS-1$
+						}
+
+						application.getDescriptors().add(descriptor);
 					}
 
 					ViewDescriptor viewDescriptor = new ViewDescriptor(application, descriptor,
 							element);
-
-					application.getDescriptors().add(descriptor);
 					descriptors.put(descriptor.getElementId(), viewDescriptor);
 
-					String categoryId = element
-							.getAttribute(IWorkbenchRegistryConstants.ATT_CATEGORY);
-					ViewCategory category = findCategory(categoryId);
-
 					if (category == null) {
-						tags.add("categoryTag:" + WorkbenchMessages.ICategory_other); //$NON-NLS-1$	
-					} else {
-						tags.add("categoryTag:" + category.getLabel()); //$NON-NLS-1$
+						String categoryId = element
+								.getAttribute(IWorkbenchRegistryConstants.ATT_CATEGORY);
+						category = findCategory(categoryId);
+					}
+
+					if (category != null) {
 						category.addDescriptor(viewDescriptor);
 					}
 				}
