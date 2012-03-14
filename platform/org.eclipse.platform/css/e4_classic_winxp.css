@@ -6,19 +6,19 @@
 }
 
 .MPartStack {
-  -swt-tab-renderer: null;
-  -swt-selected-tabs-background: #FFFFFF #ECE9D8 100%;
-  -swt-simple: false;
-  -swt-mru-visible: true;
+  swt-tab-renderer: null;
+  swt-selected-tabs-background: #FFFFFF #ECE9D8 100%;
+  swt-simple: false;
+  swt-mru-visible: true;
 }
 
 
 .MPartStack.active {
-  -swt-selected-tabs-background: #E5EDFC #99BAF3 100%;
+  swt-selected-tabs-background: #E5EDFC #99BAF3 100%;
 }
 
 #PerspectiveSwitcher  {
-	-e4-perspective-keyline-color: #ECE9D8 #FFFFFF;
+	eclipse-perspective-keyline-color: #ECE9D8 #FFFFFF;
 }
 
 .MToolControl.TrimStack {
