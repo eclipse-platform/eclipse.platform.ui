@@ -22,14 +22,15 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-import org.eclipse.compare.patch.IFilePatch2;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
+import org.eclipse.compare.patch.IFilePatch2;
 
 public class PatchReader {
 
@@ -107,8 +108,6 @@ public class PatchReader {
 		if (line != null && line.startsWith(PatchReader.MULTIPROJECTPATCH_HEADER)) {
 			this.fIsWorkspacePatch= true;
 		} else {
-			if (line != null && GIT_PATCH_PATTERN.matcher(line).matches())
-				this.fIsGitPatch = true;
 			parse(lr, line);
 			return;
 		}
@@ -198,6 +197,8 @@ public class PatchReader {
 			if (line.startsWith("Index: ")) { //$NON-NLS-1$
 				fileName= line.substring(7).trim();
 			} else if (line.startsWith("diff")) { //$NON-NLS-1$
+				if (!this.fIsGitPatch && GIT_PATCH_PATTERN.matcher(line).matches())
+					this.fIsGitPatch= true;
 				diffArgs= line.substring(4).trim();
 			} else if (line.startsWith("--- ")) { //$NON-NLS-1$
 				line= readUnifiedDiff(diffs, lr, line, diffArgs, fileName);
