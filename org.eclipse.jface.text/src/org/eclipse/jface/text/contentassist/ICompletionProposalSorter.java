@@ -30,8 +30,7 @@ public interface ICompletionProposalSorter {
 	 * @param p1 the first proposal to be compared
 	 * @param p2 the second proposal to be compared
 	 * @return a negative integer, zero, or a positive integer as the first argument is less than,
-	 *         equal to, or greater than the second.
-	 * 
+	 *         equal to, or greater than the second
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(ICompletionProposal p1, ICompletionProposal p2);

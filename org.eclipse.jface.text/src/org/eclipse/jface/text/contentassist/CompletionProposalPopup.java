@@ -433,8 +433,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private boolean fIsColoredLabelsSupportEnabled= false;
 
 	/**
-	 * The most recent sorter. Used when sorting proposals after filtering is requested by a completion engine. The sorter may
-	 * be <code>null</code>.
+	 * The sorter to be used for sorting the proposals or <code>null</code> if no sorting is
+	 * requested.
 	 * 
 	 * @since 3.8
 	 */
@@ -1118,7 +1118,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 				proposals= new ICompletionProposal[] { fEmptyProposal };
 			}
 
-			sortProposals(proposals);
+			if (fSorter != null)
+				sortProposals(proposals);
+
 			fFilteredProposals= proposals;
 			final int newLen= proposals.length;
 			if (USE_VIRTUAL) {
@@ -1845,29 +1847,29 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	/**
-	 * Sets the sorter to use when resorting is required by one of the completion engines.
+	 * Sets the proposal sorter.
 	 * 
-	 * @param sorter the new sorter to be used, or <code>null</code> if no sorter is needed
+	 * @param sorter the sorter to be used, or <code>null</code> if no sorting is requested
 	 * @since 3.8
+	 * @see ContentAssistant#setSorter(ICompletionProposalSorter)
 	 */
 	public void setSorter(ICompletionProposalSorter sorter) {
 		fSorter= sorter;
 	}
 
 	/**
-	 * Sorts the given proposal array if a sorter is configured. Does nothing otherwise.
+	 * Sorts the given proposal array.
 	 * 
 	 * @param proposals the new proposals to display in the popup window
+	 * @throws NullPointerException if no sorter has been set
 	 * @since 3.8
 	 */
 	private void sortProposals(final ICompletionProposal[] proposals) {
-		if (fSorter != null) {
-			Arrays.sort(proposals, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					return fSorter.compare((ICompletionProposal)o1,
-							(ICompletionProposal)o2);
-				}
-			});
-		}
+		Arrays.sort(proposals, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return fSorter.compare((ICompletionProposal)o1,
+						(ICompletionProposal)o2);
+			}
+		});
 	}
 }

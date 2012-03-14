@@ -987,7 +987,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private boolean fIsColoredLabelsSupportEnabled= false;
 
 	/**
-	 * The sorter used to sort completion proposals when filtering was triggered.
+	 * The sorter to be used for sorting the proposals or <code>null</code> if no sorting is
+	 * requested.
 	 * 
 	 * @since 3.8
 	 */
@@ -2471,12 +2472,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Sets the sorter used to sort proposal completions after filtering is triggered.
+	 * Sets the proposal sorter.
 	 * 
-	 * @param sorter the sorter used for reordering the proposals, or <code>null</code> if no
-	 *            proposal reordering is needed
+	 * @param sorter the sorter to be used, or <code>null</code> if no sorting is requested
 	 * @since 3.8
-	 * @see CompletionProposalPopup#setSorter(ICompletionProposalSorter)
 	 */
 	public void setSorter(ICompletionProposalSorter sorter) {
 		fSorter= sorter;
