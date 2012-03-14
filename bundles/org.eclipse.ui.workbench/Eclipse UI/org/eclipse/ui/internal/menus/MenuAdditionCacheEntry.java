@@ -358,6 +358,7 @@ public class MenuAdditionCacheEntry {
 		control.setElementId(id);
 		control.setContributionURI(CompatibilityWorkbenchWindowControlContribution.CONTROL_CONTRIBUTION_URI);
 		ControlContributionRegistry.add(id, element);
+		control.setVisibleWhen(MenuHelper.getVisibleWhen(element));
 		return control;
 	}
 
