@@ -15,14 +15,14 @@
 }
 
 .MPartStack {
-    tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-    unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
-    outer-keyline-color: #FFFFFF;
-	inner-keyline-color: #FFFFFF;
+    -swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+    -swt-unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
+    -swt-outer-keyline-color: #FFFFFF;
+	-swt-inner-keyline-color: #FFFFFF;
 	font-size: 9;
-	simple: true;
+	-swt-simple: true;
 	padding: 0px 10px 11px;
-	mru-visible: false;
+	-swt-mru-visible: false;
 }
 
 .MTrimBar#org-eclipse-ui-main-toolbar {
@@ -30,13 +30,13 @@
 }
 
 .MPartStack.active {
-	unselected-tabs-color: #E6E3C3 #EDEACA #FFFFFF 100% 100%;
-    outer-keyline-color: #BFCDA4;
-	inner-keyline-color: #FFFFFF;
+	-swt-unselected-tabs-color: #E6E3C3 #EDEACA #FFFFFF 100% 100%;
+    -swt-outer-keyline-color: #BFCDA4;
+	-swt-inner-keyline-color: #FFFFFF;
 	tab-outline: #B6BCCC;
 }
 
 #PerspectiveSwitcher  {
 	background-color: #F5F3ED #F0ECE0 100%;
-	perspective-keyline-color: #A7B680 #A7B680;
+	-e4-perspective-keyline-color: #A7B680 #A7B680;
 }

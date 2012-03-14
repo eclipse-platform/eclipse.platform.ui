@@ -7,8 +7,8 @@
 
 .MPartStack {
 	font-size: 11;
-	simple: false;
-	mru-visible: false;
+	-swt-simple: false;
+	-swt-mru-visible: false;
 }
 
 .MTrimBar {
@@ -21,20 +21,20 @@
 
 .MPartStack.active {
 	unselected-tabs-color: #DCDCDC #E1E1E1 #FFFFFF 100% 100%;
-    outer-keyline-color: #B4B4B4;
+    -swt-outer-keyline-color: #B4B4B4;
     tab-outline: #B4B4B4;
 }
 
 #PerspectiveSwitcher { 
 	background-color: #EBEBEB #E2E2E2 100%;
-	perspective-keyline-color: #B4B4B4 #B4B4B4;
+	-e4-perspective-keyline-color: #B4B4B4 #B4B4B4;
 }
 
 #org-eclipse-ui-editorss {
-   tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-   unselected-tabs-color: #F0F0F0 #F0F0F0 #F0F0F0 100% 100%;
-   outer-keyline-color: #B4B4B4;
-   inner-keyline-color: #F0F0F0;
+   -swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+   -swt-unselected-tabs-color: #F0F0F0 #F0F0F0 #F0F0F0 100% 100%;
+   -swt-outer-keyline-color: #B4B4B4;
+   -swt-inner-keyline-color: #F0F0F0;
    tab-outline: #F0F0F0;
    color: #F0F0F0;
    tab-height: 8px;
@@ -42,7 +42,7 @@
 }
 
 CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active {
-   shadow-visible: false;
+   -swt-shadow-visible: false;
 }
 
 CTabFolder Canvas {

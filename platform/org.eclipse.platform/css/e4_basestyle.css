@@ -7,24 +7,24 @@
 }
 
 .MPartStack {
-    tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-    unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
-    outer-keyline-color: #FFFFFF;
-	inner-keyline-color: #FFFFFF;
+    -swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+    -swt-unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
+    -swt-outer-keyline-color: #FFFFFF;
+	-swt-inner-keyline-color: #FFFFFF;
 	padding: 0px 9px 10px;
 	tab-outline: #B6BCCC;
-	shadow-visible: true;
-	mru-visible: false;
+	-swt-shadow-visible: true;
+	-swt-mru-visible: false;
 }
 
 .MPartStack.active {
-	inner-keyline-color: #FFFFFF;
+	-swt-inner-keyline-color: #FFFFFF;
 	tab-outline: #B6BCCC;
-	shadow-visible: true;
+	-swt-shadow-visible: true;
 }
 
 #PerspectiveSwitcher {
-	perspective-keyline-color: #AAB0BF #AAB0BF;
+	-e4-perspective-keyline-color: #AAB0BF #AAB0BF;
 }
 
 .MToolControl.TrimStack {

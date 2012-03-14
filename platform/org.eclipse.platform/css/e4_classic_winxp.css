@@ -6,19 +6,19 @@
 }
 
 .MPartStack {
-  tab-renderer: null;
-  selected-tabs-background: #FFFFFF #ECE9D8 100%;
-  simple: false;
-  mru-visible: true;
+  -swt-tab-renderer: null;
+  -swt-selected-tabs-background: #FFFFFF #ECE9D8 100%;
+  -swt-simple: false;
+  -swt-mru-visible: true;
 }
 
 
 .MPartStack.active {
-  selected-tabs-background: #E5EDFC #99BAF3 100%;
+  -swt-selected-tabs-background: #E5EDFC #99BAF3 100%;
 }
 
 #PerspectiveSwitcher  {
-	perspective-keyline-color: #ECE9D8 #FFFFFF;
+	-e4-perspective-keyline-color: #ECE9D8 #FFFFFF;
 }
 
 .MToolControl.TrimStack {
