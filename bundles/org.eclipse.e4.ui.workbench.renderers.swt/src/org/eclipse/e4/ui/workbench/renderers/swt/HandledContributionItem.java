@@ -322,7 +322,6 @@ public class HandledContributionItem extends ContributionItem {
 		widget.setData(AbstractPartRenderer.OWNING_ME, model);
 
 		update(null);
-		updateIcons();
 
 		if (updateService != null) {
 			unreferenceRunnable = updateService.registerElementForUpdate(
@@ -375,7 +374,6 @@ public class HandledContributionItem extends ContributionItem {
 		toolItemUpdater.registerItem(this);
 
 		update(null);
-		updateIcons();
 		hookCheckListener();
 
 		if (updateService != null) {
@@ -444,6 +442,7 @@ public class HandledContributionItem extends ContributionItem {
 		} else if (widget instanceof ToolItem) {
 			updateToolItem();
 		}
+		updateIcons();
 	}
 
 	private void updateMenuItem() {
