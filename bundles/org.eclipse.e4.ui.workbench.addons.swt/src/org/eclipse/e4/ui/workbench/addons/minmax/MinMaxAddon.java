@@ -654,11 +654,15 @@ public class MinMaxAddon {
 	 * @param win
 	 */
 	private void restoreMaximizedElement(final MUIElement element, MWindow win) {
+		MPerspective elePersp = modelService.getPerspectiveFor(element);
 		List<String> maxTag = new ArrayList<String>();
 		maxTag.add(MAXIMIZED);
 		List<MUIElement> curMax = modelService.findElements(win, null, MUIElement.class, maxTag);
 		if (curMax.size() > 0) {
 			for (MUIElement maxElement : curMax) {
+				MPerspective maxPersp = modelService.getPerspectiveFor(maxElement);
+				if (maxPersp != elePersp)
+					continue;
 				if (maxElement == element)
 					continue;
 				ignoreTagChanges = true;
