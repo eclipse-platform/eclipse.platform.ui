@@ -150,6 +150,9 @@ public class ModelAssembler {
 						E4XMIResource r = (E4XMIResource) o.eResource();
 						applicationResource.setID(o, r.getID(o));
 
+						if (contributorURI != null)
+							el.setContributorURI(contributorURI);
+
 						// Remember IDs of subitems
 						TreeIterator<EObject> treeIt = EcoreUtil.getAllContents(o, true);
 						while (treeIt.hasNext()) {
