@@ -118,7 +118,7 @@ public class ThemeEngine implements IThemeEngine {
 									if (modifiedFileName.contains(".css") && modifiedFileName.equals(originalCSSFile)) {  //$NON-NLS-1$
 		//								modifiedStylesheets
 										ArrayList<String> styleSheets = new ArrayList<String>();
-										styleSheets.add("file://" + modifiedFiles[i].getPath());
+										styleSheets.add(modifiedFiles[i].toURI().toString());
 										modifiedStylesheets.put(themeId, styleSheets);
 									}
 								}
