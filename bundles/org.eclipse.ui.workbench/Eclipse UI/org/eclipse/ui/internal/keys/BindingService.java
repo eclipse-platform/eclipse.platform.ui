@@ -375,15 +375,6 @@ public final class BindingService implements IBindingService {
 		bp.read();
 	}
 
-	private MCommand findCommand(String id) {
-		for (MCommand cmd : application.getCommands()) {
-			if (id.equals(cmd.getElementId())) {
-				return cmd;
-			}
-		}
-		return null;
-	}
-
 	private void saveLegacyPreferences(Scheme activeScheme, Binding[] bindings) throws IOException {
 		BindingPersistence.write(activeScheme, bindings);
 		try {
@@ -645,10 +636,7 @@ public final class BindingService implements IBindingService {
 	 */
 	public final void addBinding(final Binding binding) {
 		MBindingTable table = getMTable(binding.getContextId());
-		MKeyBinding keyBinding = createMKeyBinding(binding);
-		if (keyBinding != null) {
-			table.getBindings().add(keyBinding);
-		}
+		createORupdateMKeyBinding(application, table, binding);
 	}
 
 	/**
@@ -671,26 +659,64 @@ public final class BindingService implements IBindingService {
 	}
 
 
-	private MKeyBinding createMKeyBinding(Binding binding) {
-		final MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
-
+	// TBD the "update" procedure should not typically be run.
+	// Add some sort of timestamp on the source files and update
+	// only when it changes
+	// TBD placement: this should be in the "3.x bridge" code
+	static public MKeyBinding createORupdateMKeyBinding(MApplication application,
+			MBindingTable table,
+			Binding binding) {
 		ParameterizedCommand parmCmd = binding.getParameterizedCommand();
 
-		MCommand cmd = findCommand(parmCmd.getId());
+		String id = parmCmd.getId();
+		MCommand cmd = null;
+		for (MCommand appCommand : application.getCommands()) {
+			if (id.equals(appCommand.getElementId())) {
+				cmd = appCommand;
+				break;
+			}
+		}
 		if (cmd == null) {
 			return null;
 		}
-		keyBinding.setCommand(cmd);
-		// keyBinding.setKeySequence(binding.getTriggerSequence().format());
+
+		MKeyBinding keyBinding = null;
+		for (MKeyBinding existingBinding : table.getBindings()) {
+			if (cmd.equals(existingBinding.getCommand())) {
+				keyBinding = existingBinding;
+				break;
+			}
+		}
+
+		if (keyBinding == null) {
+			keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
+			keyBinding.setCommand(cmd);
+			table.getBindings().add(keyBinding);
+		}
 		keyBinding.setKeySequence(binding.getTriggerSequence().format());
 
 		for (Object obj : parmCmd.getParameterMap().entrySet()) {
-			Map.Entry entry = (Map.Entry) obj;
-			MParameter p = CommandsFactoryImpl.eINSTANCE.createParameter();
-			p.setElementId((String) entry.getKey());
-			p.setName((String) entry.getKey());
-			p.setValue((String) entry.getValue());
-			keyBinding.getParameters().add(p);
+			@SuppressWarnings({ "unchecked" })
+			Map.Entry<String, String> entry = (Map.Entry<String, String>) obj;
+
+			String paramID = entry.getKey();
+			if (paramID == null)
+				continue;
+			List<MParameter> bindingParams = keyBinding.getParameters();
+			MParameter p = null;
+			for (MParameter param : bindingParams) {
+				if (paramID.equals(param.getElementId())) {
+					p = param;
+					break;
+				}
+			}
+			if (p == null) {
+				p = CommandsFactoryImpl.eINSTANCE.createParameter();
+				p.setElementId(entry.getKey());
+				keyBinding.getParameters().add(p);
+			}
+			p.setName(entry.getKey());
+			p.setValue(entry.getValue());
 		}
 
 		List<String> tags = keyBinding.getTags();

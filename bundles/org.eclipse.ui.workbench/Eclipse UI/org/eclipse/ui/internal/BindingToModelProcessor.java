@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.commands.CommandManager;
-import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.bindings.EBindingService;
@@ -25,19 +24,14 @@ import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
-import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
-import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.ui.internal.commands.CommandPersistence;
 import org.eclipse.ui.internal.contexts.ContextPersistence;
 import org.eclipse.ui.internal.keys.BindingPersistence;
+import org.eclipse.ui.internal.keys.BindingService;
 
-/**
- * 
- *
- */
 public class BindingToModelProcessor {
 
 	private Map<String, MBindingContext> contexts = new HashMap<String, MBindingContext>();
@@ -64,7 +58,7 @@ public class BindingToModelProcessor {
 		application.getTags().add(
 				EBindingService.ACTIVE_SCHEME_TAG + ':' + bindingManager.getActiveScheme().getId());
 
-		Collection activeBindingsForScheme = bindingManager
+		Collection<?> activeBindingsForScheme = bindingManager
 				.getActiveBindingsDisregardingContextFlat();
 
 		for (Object obj : activeBindingsForScheme) {
@@ -75,9 +69,6 @@ public class BindingToModelProcessor {
 		persistence.dispose();
 	}
 
-	/**
-	 * @param bindingTables
-	 */
 	private void gatherTables(List<MBindingTable> bindingTables) {
 		for (MBindingTable table : bindingTables) {
 			tables.put(table.getBindingContext().getElementId(), table);
@@ -86,49 +77,12 @@ public class BindingToModelProcessor {
 
 	public final void addBinding(final MApplication application, final Binding binding) {
 
+
 		MBindingTable table = tables.get(binding.getContextId());
 		if (table == null) {
 			table = createTable(application, binding.getContextId());
 		}
-		final MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
-		ParameterizedCommand parmCmd = binding.getParameterizedCommand();
-
-		MCommand cmd = commands.get(parmCmd.getId());
-		if (cmd == null) {
-			return;
-		}
-		keyBinding.setCommand(cmd);
-		keyBinding.setKeySequence(binding.getTriggerSequence().format());
-		for (Object obj : parmCmd.getParameterMap().entrySet()) {
-			Map.Entry entry = (Map.Entry) obj;
-			MParameter p = CommandsFactoryImpl.eINSTANCE.createParameter();
-			p.setElementId((String) entry.getKey());
-			p.setName((String) entry.getKey());
-			p.setValue((String) entry.getValue());
-			keyBinding.getParameters().add(p);
-		}
-
-		List<String> tags = keyBinding.getTags();
-		// just add the 'schemeId' tag if it's anything other than the default
-		// scheme id
-		if (binding.getSchemeId() != null
-				&& !binding.getSchemeId().equals(
-						org.eclipse.ui.keys.IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID)) {
-			tags.add(EBindingService.SCHEME_ID_ATTR_TAG + ":" + binding.getSchemeId()); //$NON-NLS-1$
-		}
-		if (binding.getLocale() != null) {
-			tags.add(EBindingService.LOCALE_ATTR_TAG + ":" + binding.getLocale()); //$NON-NLS-1$
-		}
-		if (binding.getPlatform() != null) {
-			tags.add(EBindingService.PLATFORM_ATTR_TAG + ":" + binding.getPlatform()); //$NON-NLS-1$
-		}
-		// just add the 'type' tag if it's a user binding
-		if (binding.getType() == Binding.USER) {
-			tags.add(EBindingService.TYPE_ATTR_TAG + ":user"); //$NON-NLS-1$
-		}
-
-		keyBinding.getTransientData().put(EBindingService.MODEL_TO_BINDING_KEY, binding);
-		table.getBindings().add(keyBinding);
+		BindingService.createORupdateMKeyBinding(application, table, binding);
 	}
 
 	public MBindingContext getBindingContext(MApplication application, String id) {
@@ -151,11 +105,6 @@ public class BindingToModelProcessor {
 		return result;
 	}
 
-	/**
-	 * @param id
-	 * @param rootContext
-	 * @return
-	 */
 	private MBindingContext searchContexts(String id, List<MBindingContext> rootContext) {
 		for (MBindingContext context : rootContext) {
 			if (context.getElementId().equals(id)) {
@@ -169,10 +118,6 @@ public class BindingToModelProcessor {
 		return null;
 	}
 
-	/**
-	 * @param contextId
-	 * @return
-	 */
 	private MBindingTable createTable(MApplication application, String contextId) {
 		MBindingTable table = CommandsFactoryImpl.eINSTANCE.createBindingTable();
 		table.setBindingContext(getBindingContext(application, contextId));
@@ -182,9 +127,6 @@ public class BindingToModelProcessor {
 		return table;
 	}
 
-	/**
-	 * @param commands
-	 */
 	private void gatherCommands(List<MCommand> commandList) {
 		for (MCommand cmd : commandList) {
 			commands.put(cmd.getElementId(), cmd);
@@ -197,9 +139,6 @@ public class BindingToModelProcessor {
 		}
 	}
 
-	/**
-	 * @param ctx
-	 */
 	private void gatherContexts(MBindingContext ctx) {
 		if (ctx == null) {
 			return;
