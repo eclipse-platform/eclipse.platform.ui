@@ -22,10 +22,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -59,12 +55,8 @@ import org.w3c.dom.Document;
  */
 public class ResourceHandler implements IModelResourceHandler {
 
-	private File workbenchData;
-
 	private ResourceSetImpl resourceSetImpl;
-	private URI restoreLocation;
 	private Resource resource;
-	private ModelReconciler reconciler;
 
 	@Inject
 	private Logger logger;
@@ -80,17 +72,22 @@ public class ResourceHandler implements IModelResourceHandler {
 	@Named(E4Workbench.INSTANCE_LOCATION)
 	private Location instanceLocation;
 
-	private boolean saveAndRestore;
-
-	private boolean clearPersistedState;
-
 	/**
 	 * Dictates whether the model should be stored using EMF or with the merging algorithm.
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
 	 * 
 	 */
-	private boolean deltaRestore = true;
+	final private boolean deltaRestore;
+	final private boolean saveAndRestore;
+	final private boolean clearPersistedState;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param saveAndRestore
+	 * @param clearPersistedState
+	 * @param deltaRestore
+	 */
 	@Inject
 	public ResourceHandler(@Named(E4Workbench.PERSIST_STATE) boolean saveAndRestore,
 			@Named(E4Workbench.CLEAR_PERSISTED_STATE) boolean clearPersistedState,
@@ -122,132 +119,44 @@ public class ResourceHandler implements IModelResourceHandler {
 				.put(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI,
 						org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
-		// this.registry = registry;
-		try {
-			workbenchData = new File(URIUtil.toURI(instanceLocation.getURL()));
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-		workbenchData = new File(workbenchData, ".metadata"); //$NON-NLS-1$
-		workbenchData = new File(workbenchData, ".plugins"); //$NON-NLS-1$
-		workbenchData = new File(workbenchData, "org.eclipse.e4.workbench"); //$NON-NLS-1$
-
-		if (deltaRestore) {
-			workbenchData = new File(workbenchData, "deltas.xml"); //$NON-NLS-1$	
-		} else {
-			workbenchData = new File(workbenchData, "workbench.xmi"); //$NON-NLS-1$			
-		}
-
-		if (workbenchData != null && clearPersistedState) {
-			if (workbenchData.exists()) {
-				workbenchData.delete();
-			}
-		}
-
-		if (workbenchData != null && saveAndRestore) {
-			restoreLocation = URI.createFileURI(workbenchData.getAbsolutePath());
-		}
-	}
-
-	public long getLastStoreDatetime() {
-		long restoreLastModified = restoreLocation == null ? 0L : new File(
-				restoreLocation.toFileString()).lastModified();
-		return restoreLastModified;
-	}
-
-	public Resource loadRestoredModel() {
-		Activator.trace(Policy.DEBUG_WORKBENCH, "Restoring workbench: " + restoreLocation, null); //$NON-NLS-1$
-		resource = loadResource(restoreLocation);
-		return resource;
-	}
-
-	public Resource loadBaseModel() {
-		Activator.trace(Policy.DEBUG_WORKBENCH,
-				"Initializing workbench: " + applicationDefinitionInstance, null); //$NON-NLS-1$
-		if (deltaRestore) {
-			resource = loadResource(applicationDefinitionInstance);
-		} else {
-			MApplication theApp = loadDefaultModel(applicationDefinitionInstance);
-			resource = resourceSetImpl.createResource(restoreLocation);
-			resource.getContents().add((EObject) theApp);
-		}
-		return resource;
-	}
-
-	private MApplication loadDefaultModel(URI defaultModelPath) {
-		Resource resource = loadResource(defaultModelPath);
-		MApplication app = (MApplication) resource.getContents().get(0);
-		return app;
-	}
-
-	// Ensures that even models with error are loaded!
-	private Resource loadResource(URI uri) {
-		Resource resource;
-		try {
-			resource = resourceSetImpl.getResource(uri, true);
-		} catch (Exception e) {
-			// TODO We could use diagnostics for better analyzing the error
-			logger.error(e);
-			resource = resourceSetImpl.getResource(uri, false);
-		}
-
-		String contributorURI = URIHelper.EMFtoPlatform(uri);
-		if (contributorURI != null) {
-			TreeIterator<EObject> it = EcoreUtil.getAllContents(resource.getContents());
-			while (it.hasNext()) {
-				EObject o = it.next();
-				if (o instanceof MApplicationElement) {
-					((MApplicationElement) o).setContributorURI(contributorURI);
-				}
-			}
-		}
-		return resource;
-	}
-
-	public void save() throws IOException {
-		if (saveAndRestore) {
-			if (deltaRestore && reconciler != null) {
-				try {
-					Document document = (Document) reconciler.serialize();
-
-					// Use a Transformer for output
-					TransformerFactory tFactory = TransformerFactory.newInstance();
-					Transformer transformer = tFactory.newTransformer();
-
-					DOMSource source = new DOMSource(document);
-					File f = new File(restoreLocation.toFileString());
-					f.getParentFile().mkdirs();
-					StreamResult result = new StreamResult(f);
-					transformer.transform(source, result);
-				} catch (Exception e) {
-					if (logger != null) {
-						logger.error(e);
-					}
-				}
-			} else {
-				resource.save(null);
-			}
-		}
 	}
 
 	public Resource loadMostRecentModel() {
-		if (deltaRestore) {
-			try {
-				Resource resource = loadBaseModel();
-				MApplication appElement = (MApplication) resource.getContents().get(0);
-				// Add model items described in the model extension point
-				// This has to be done before commands are put into the context
-				// ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
-				// extProcessor.addModelExtensions();
+		File baseLocation;
+		try {
+			baseLocation = new File(URIUtil.toURI(instanceLocation.getURL()));
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+		baseLocation = new File(baseLocation, ".metadata"); //$NON-NLS-1$
+		baseLocation = new File(baseLocation, ".plugins"); //$NON-NLS-1$
+		baseLocation = new File(baseLocation, "org.eclipse.e4.workbench"); //$NON-NLS-1$
 
-				this.context.set(MApplication.class, appElement);
-				ModelAssembler contribProcessor = ContextInjectionFactory.make(
-						ModelAssembler.class, context);
-				contribProcessor.processModel();
+		// This is temporary code to migrate existing delta files into full models
+		if (deltaRestore && saveAndRestore && !clearPersistedState) {
+			File deltaFile = new File(baseLocation, "deltas.xml"); //$NON-NLS-1$
+			if (deltaFile.exists()) {
+				MApplication appElement = null;
+				try {
+					// create new resource in case code below fails somewhere
+					File workbenchData = new File(baseLocation, "workbench.xmi"); //$NON-NLS-1$			
+					URI restoreLocationNew = URI.createFileURI(workbenchData.getAbsolutePath());
+					resource = resourceSetImpl.createResource(restoreLocationNew);
 
-				if (restoreLocation != null) {
+					Resource oldResource = loadResource(applicationDefinitionInstance);
+					appElement = (MApplication) oldResource.getContents().get(0);
+
+					context.set(MApplication.class, appElement);
+					ModelAssembler contribProcessor = ContextInjectionFactory.make(
+							ModelAssembler.class, context);
+					contribProcessor.processModel();
+
+					File deltaOldFile = new File(baseLocation, "deltas_42M7migration.xml"); //$NON-NLS-1$
+					deltaFile.renameTo(deltaOldFile);
+					URI restoreLocation = URI.createFileURI(deltaOldFile.getAbsolutePath());
+
 					File file = new File(restoreLocation.toFileString());
-					reconciler = new XMLModelReconciler();
+					ModelReconciler reconciler = new XMLModelReconciler();
 					reconciler.recordChanges(appElement);
 
 					if (file.exists()) {
@@ -257,29 +166,45 @@ public class ResourceHandler implements IModelResourceHandler {
 						ModelReconciler modelReconciler = modelReconcilingService
 								.createModelReconciler();
 						document.normalizeDocument();
-						Collection<ModelDelta> deltas = modelReconciler.constructDeltas(resource
+						Collection<ModelDelta> deltas = modelReconciler.constructDeltas(oldResource
 								.getContents().get(0), document);
 						modelReconcilingService.applyDeltas(deltas);
 					}
+				} catch (Exception e) {
+					if (logger != null) {
+						logger.error(e);
+					}
 				}
-			} catch (Exception e) {
-				if (logger != null) {
-					logger.error(e);
-				}
+				if (appElement != null)
+					resource.getContents().add((EObject) appElement);
+				return resource;
 			}
-			return resource;
 		}
 
-		long restoreLastModified = getLastStoreDatetime();
+		File workbenchData = new File(baseLocation, "workbench.xmi"); //$NON-NLS-1$			
+
+		if (clearPersistedState && workbenchData.exists())
+			workbenchData.delete();
+
+		URI restoreLocation = null;
+		if (saveAndRestore)
+			restoreLocation = URI.createFileURI(workbenchData.getAbsolutePath());
+
+		// last stored time-stamp
+		long restoreLastModified = restoreLocation == null ? 0L : new File(
+				restoreLocation.toFileString()).lastModified();
+
 		long lastApplicationModification = getLastApplicationModification();
 
 		boolean restore = restoreLastModified > lastApplicationModification;
 
-		Resource resource;
 		if (restore && saveAndRestore) {
-			resource = loadRestoredModel();
+			resource = loadResource(restoreLocation);
 		} else {
-			resource = loadBaseModel();
+			Resource applicationResource = loadResource(applicationDefinitionInstance);
+			MApplication theApp = (MApplication) applicationResource.getContents().get(0);
+			resource = resourceSetImpl.createResource(restoreLocation);
+			resource.getContents().add((EObject) theApp);
 		}
 
 		// Add model items described in the model extension point
@@ -294,11 +219,37 @@ public class ResourceHandler implements IModelResourceHandler {
 		return resource;
 	}
 
-	/**
-	 * @param applicationDefinitionInstance2
-	 * @return
-	 */
-	public long getLastApplicationModification() {
+	public void save() throws IOException {
+		if (saveAndRestore)
+			resource.save(null);
+	}
+
+	// Ensures that even models with error are loaded!
+	private Resource loadResource(URI uri) {
+		Resource resource;
+		try {
+			resource = resourceSetImpl.getResource(uri, true);
+		} catch (Exception e) {
+			// TODO We could use diagnostics for better analyzing the error
+			logger.error(e);
+			resource = resourceSetImpl.getResource(uri, false);
+		}
+
+		// TODO once we switch from deltas, we only need this once on the default model?
+		String contributorURI = URIHelper.EMFtoPlatform(uri);
+		if (contributorURI != null) {
+			TreeIterator<EObject> it = EcoreUtil.getAllContents(resource.getContents());
+			while (it.hasNext()) {
+				EObject o = it.next();
+				if (o instanceof MApplicationElement) {
+					((MApplicationElement) o).setContributorURI(contributorURI);
+				}
+			}
+		}
+		return resource;
+	}
+
+	private long getLastApplicationModification() {
 		long appLastModified = 0L;
 		ResourceSetImpl resourceSetImpl = new ResourceSetImpl();
 

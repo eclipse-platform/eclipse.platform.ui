@@ -78,17 +78,6 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 		checkData(resource);
 	}
 
-	public void testLoadBaseModel() {
-		URI uri = URI.createPlatformPluginURI(
-				"org.eclipse.e4.ui.tests/xmi/InvalidContainment.e4xmi", true);
-
-		ResourceHandler handler = createHandler(uri);
-		Resource resource = handler.loadBaseModel();
-		assertNotNull(resource);
-		assertEquals(E4XMIResource.class, resource.getClass());
-		checkData(resource);
-	}
-
 	private void checkData(Resource resource) {
 		assertNotNull(resource);
 		assertEquals(1, resource.getContents().size());
