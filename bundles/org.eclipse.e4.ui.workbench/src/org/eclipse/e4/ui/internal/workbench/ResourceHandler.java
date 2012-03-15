@@ -87,6 +87,7 @@ public class ResourceHandler implements IModelResourceHandler {
 	/**
 	 * Dictates whether the model should be stored using EMF or with the merging algorithm.
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
+	 * 
 	 */
 	private boolean deltaRestore = true;
 
