@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -338,7 +338,7 @@ public class CompositeChange extends Change {
 			}
 		}
 		if (undos.size() == 0) {
-			fUndoUntilException= new NullChange(getName());
+			fUndoUntilException= null;
 			return;
 		}
 		Collections.reverse(undos);
@@ -425,14 +425,16 @@ public class CompositeChange extends Change {
 	}
 
 	/**
-	 * Returns the undo object containing all undo changes of those children
-	 * that got successfully executed while performing this change. Returns
-	 * <code>null</code> if all changes were executed successfully.
+	 * Returns the undo object containing all undo changes of those children that got successfully
+	 * executed while performing this change. Returns <code>null</code> if all changes were executed
+	 * successfully or if there's nothing to undo.
 	 * <p>
 	 * This method is not intended to be overridden or extended.
 	 * </p>
-	 * @return the undo object containing all undo changes of those children
-	 *  that got successfully executed while performing this change
+	 * 
+	 * @return the undo object containing all undo changes of those children that got successfully
+	 *         executed while performing this change, or <code>null</code> if all changes were
+	 *         executed successfully or if there's nothing to undo.
 	 */
 	public Change getUndoUntilException() {
 		return fUndoUntilException;

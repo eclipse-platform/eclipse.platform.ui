@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,9 +97,9 @@ public class ChangeExceptionHandler {
 			if (undo != null) {
 				RefactoringUIPlugin.log(status);
 				final ErrorDialog dialog= new RefactorErrorDialog(fParent,
-					RefactoringUIMessages.ChangeExceptionHandler_refactoring,
-					Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, fName),
-					status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
+						change.getName(),
+						Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, fName),
+						status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
 				int result= dialog.open();
 				if (result == IDialogConstants.OK_ID) {
 					performUndo(undo);
@@ -108,9 +108,9 @@ public class ChangeExceptionHandler {
 		}
 		}
 		ErrorDialog dialog= new ErrorDialog(fParent,
-			RefactoringUIMessages.ChangeExceptionHandler_refactoring,
-			Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, fName),
-			status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
+				change.getName(),
+				Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, fName),
+				status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
 		dialog.open();
 	}
 
