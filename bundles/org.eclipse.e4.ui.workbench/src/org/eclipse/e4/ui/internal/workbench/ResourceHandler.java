@@ -156,8 +156,6 @@ public class ResourceHandler implements IModelResourceHandler {
 					URI restoreLocation = URI.createFileURI(deltaOldFile.getAbsolutePath());
 
 					File file = new File(restoreLocation.toFileString());
-					ModelReconciler reconciler = new XMLModelReconciler();
-					reconciler.recordChanges(appElement);
 
 					if (file.exists()) {
 						Document document = DocumentBuilderFactory.newInstance()
