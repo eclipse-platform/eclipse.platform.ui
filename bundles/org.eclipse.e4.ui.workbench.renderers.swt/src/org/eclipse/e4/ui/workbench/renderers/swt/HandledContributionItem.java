@@ -78,6 +78,21 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class HandledContributionItem extends ContributionItem {
+	/**
+	 * Constant from org.eclipse.ui.handlers.RadioState.PARAMETER_ID
+	 */
+	private static final String ORG_ECLIPSE_UI_COMMANDS_RADIO_STATE_PARAMETER = "org.eclipse.ui.commands.radioStateParameter"; //$NON-NLS-1$
+
+	/**
+	 * Constant from org.eclipse.ui.handlers.RadioState.STATE_ID
+	 */
+	private static final String ORG_ECLIPSE_UI_COMMANDS_RADIO_STATE = "org.eclipse.ui.commands.radioState"; //$NON-NLS-1$
+
+	/**
+	 * Constant from org.eclipse.ui.handlers.RegistryToggleState.STATE_ID
+	 */
+	private static final String ORG_ECLIPSE_UI_COMMANDS_TOGGLE_STATE = "org.eclipse.ui.commands.toggleState"; //$NON-NLS-1$
+
 	static class RunnableRunner implements ISafeRunnable {
 		private Runnable runnable;
 
@@ -180,7 +195,7 @@ public class HandledContributionItem extends ContributionItem {
 
 	private IStateListener stateListener = new IStateListener() {
 		public void handleStateChange(State state, Object oldValue) {
-			model.setSelected(((Boolean) state.getValue()).booleanValue());
+			updateState();
 		}
 	};
 
@@ -233,6 +248,12 @@ public class HandledContributionItem extends ContributionItem {
 
 	private IEclipseContext infoContext;
 
+	private State styleState;
+
+	private State toggleState;
+
+	private State radioState;
+
 	public void setModel(MHandledItem item) {
 		model = item;
 		setId(model.getElementId());
@@ -257,12 +278,19 @@ public class HandledContributionItem extends ContributionItem {
 						.trace(Policy.DEBUG_MENUS, "command: " + parmCmd, null); //$NON-NLS-1$
 				model.setWbCommand(parmCmd);
 
-				State state = parmCmd.getCommand()
-						.getState(IMenuStateIds.STYLE);
-				if (state != null) {
-					state.addListener(stateListener);
-					model.setSelected(((Boolean) state.getValue())
-							.booleanValue());
+				styleState = parmCmd.getCommand().getState(IMenuStateIds.STYLE);
+
+				toggleState = parmCmd.getCommand().getState(
+						ORG_ECLIPSE_UI_COMMANDS_TOGGLE_STATE);
+				radioState = parmCmd.getCommand().getState(
+						ORG_ECLIPSE_UI_COMMANDS_RADIO_STATE);
+				updateState();
+				if (styleState != null) {
+					styleState.addListener(stateListener);
+				} else if (toggleState != null) {
+					toggleState.addListener(stateListener);
+				} else if (radioState != null) {
+					radioState.addListener(stateListener);
 				}
 				return;
 			}
@@ -275,11 +303,34 @@ public class HandledContributionItem extends ContributionItem {
 			Activator.trace(Policy.DEBUG_MENUS, "command: " + parmCmd, null); //$NON-NLS-1$
 			model.setWbCommand(parmCmd);
 
-			State state = parmCmd.getCommand().getState(IMenuStateIds.STYLE);
-			if (state != null) {
-				state.addListener(stateListener);
-				model.setSelected(((Boolean) state.getValue()).booleanValue());
+			styleState = parmCmd.getCommand().getState(IMenuStateIds.STYLE);
+
+			toggleState = parmCmd.getCommand().getState(
+					ORG_ECLIPSE_UI_COMMANDS_TOGGLE_STATE);
+			radioState = parmCmd.getCommand().getState(
+					ORG_ECLIPSE_UI_COMMANDS_RADIO_STATE);
+			updateState();
+			if (styleState != null) {
+				styleState.addListener(stateListener);
+			} else if (toggleState != null) {
+				toggleState.addListener(stateListener);
+			} else if (radioState != null) {
+				radioState.addListener(stateListener);
 			}
+		}
+	}
+
+	private void updateState() {
+		if (styleState != null) {
+			model.setSelected(((Boolean) styleState.getValue()).booleanValue());
+		} else if (toggleState != null) {
+			model.setSelected(((Boolean) toggleState.getValue()).booleanValue());
+		} else if (radioState != null && model.getWbCommand() != null) {
+			ParameterizedCommand c = model.getWbCommand();
+			Object parameter = c.getParameterMap().get(
+					ORG_ECLIPSE_UI_COMMANDS_RADIO_STATE_PARAMETER);
+			String value = (String) radioState.getValue();
+			model.setSelected(value != null && value.equals(parameter));
 		}
 	}
 
@@ -655,10 +706,17 @@ public class HandledContributionItem extends ContributionItem {
 
 			ParameterizedCommand command = model.getWbCommand();
 			if (command != null) {
-				State state = command.getCommand()
-						.getState(IMenuStateIds.STYLE);
-				if (state != null) {
-					state.removeListener(stateListener);
+				if (styleState != null) {
+					styleState.removeListener(stateListener);
+					styleState = null;
+				}
+				if (toggleState != null) {
+					toggleState.removeListener(stateListener);
+					toggleState = null;
+				}
+				if (radioState != null) {
+					radioState.removeListener(stateListener);
+					radioState = null;
 				}
 			}
 			widget.dispose();
