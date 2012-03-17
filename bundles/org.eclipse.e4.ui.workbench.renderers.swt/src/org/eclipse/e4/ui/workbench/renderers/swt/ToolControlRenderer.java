@@ -13,11 +13,14 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -36,6 +39,16 @@ public class ToolControlRenderer extends SWTPartRenderer {
 			return null;
 		Composite parentComp = (Composite) parent;
 		MToolControl toolControl = (MToolControl) element;
+
+		if (((Object) toolControl.getParent()) instanceof MToolBar) {
+			IRendererFactory factory = context.get(IRendererFactory.class);
+			AbstractPartRenderer renderer = factory.getRenderer(
+					toolControl.getParent(), parent);
+			if (renderer instanceof ToolBarManagerRenderer) {
+				return null;
+			}
+		}
+
 		Widget parentWidget = (Widget) parent;
 		IEclipseContext parentContext = getContextForParent(element);
 

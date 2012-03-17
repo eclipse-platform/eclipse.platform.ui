@@ -380,7 +380,12 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 					}
 
 					record.updateVisibility(parentContext.getActiveLeaf());
-					manager.update(false);
+					runExternalCode(new Runnable() {
+
+						public void run() {
+							manager.update(false);
+						}
+					});
 					// disposeToolbarIfNecessary(toolbarModel);
 					return true;
 				}

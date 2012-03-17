@@ -3242,6 +3242,39 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(subShell, control.getParent());
 	}
 
+	public void testBug374326() {
+		MTrimmedWindow window = BasicFactoryImpl.eINSTANCE
+				.createTrimmedWindow();
+		MTrimBar trim = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		window.getTrimBars().add(trim);
+
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		trim.getChildren().add(toolBar);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		MToolControl toolControl = MenuFactoryImpl.eINSTANCE
+				.createToolControl();
+		toolControl.setVisible(false);
+		toolControl
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.Bug374326");
+		toolBar.getChildren().add(toolControl);
+		assertNull(toolControl.getObject());
+
+		toolControl.setVisible(true);
+
+		Bug374326 obj = (Bug374326) toolControl.getObject();
+		Shell shell = (Shell) window.getWidget();
+		assertEquals(shell, obj.getControl().getShell());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);

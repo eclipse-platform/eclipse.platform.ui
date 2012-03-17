@@ -54,6 +54,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -159,7 +160,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			AbstractPartRenderer renderer = (AbstractPartRenderer) parent
 					.getRenderer();
-			if (renderer == null)
+			if (renderer == null || parent instanceof MToolBar)
 				return;
 
 			// Re-parent the control based on the visible state

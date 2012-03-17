@@ -141,7 +141,8 @@ public class CleanupAddon {
 	private EventHandler visibilityChangeHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			MUIElement changedObj = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
-			if (changedObj instanceof MTrimBar)
+			if (changedObj instanceof MTrimBar
+					|| ((Object) changedObj.getParent()) instanceof MToolBar)
 				return;
 
 			if (changedObj.getWidget() instanceof Shell) {
@@ -168,7 +169,7 @@ public class CleanupAddon {
 			} else if (changedObj.getWidget() instanceof Control) {
 				Control ctrl = (Control) changedObj.getWidget();
 				MElementContainer<MUIElement> parent = changedObj.getParent();
-				if (parent == null) {
+				if (parent == null || ((Object) parent) instanceof MToolBar) {
 					return;
 				}
 				if (changedObj.isVisible()) {
