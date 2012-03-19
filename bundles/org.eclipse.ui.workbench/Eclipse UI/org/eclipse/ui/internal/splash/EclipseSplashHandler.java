@@ -13,11 +13,10 @@ package org.eclipse.ui.internal.splash;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.branding.IProductConstants;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -69,18 +68,24 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 					"eclipse.buildId", "Unknown Build"); //$NON-NLS-1$ //$NON-NLS-2$
 			// find the specified location.  Not currently API
 			// hardcoded to be sensible with our current splash Graphic
-			String buildIdLocString = product.getProperty("buildIdLocation"); //$NON-NLS-1$
-			final Point buildIdPoint = StringConverter.asPoint(buildIdLocString,
-					new Point(322, 190));
-			getContent().addPaintListener(new PaintListener() {
 
-				public void paintControl(PaintEvent e) {
-					e.gc.setForeground(getForeground());
-					e.gc
-							.drawText(buildId, buildIdPoint.x, buildIdPoint.y,
-									true);
+			String buildIdLocString = product.getProperty("buildIdLocation"); //$NON-NLS-1$
+			String buildIdSize = product.getProperty("buildIdSize"); //$NON-NLS-1$
+			if (buildIdLocString != null) {
+				if (buildIdSize != null) {
+					buildIdLocString += "," + buildIdSize; //$NON-NLS-1$
+				} else {
+					buildIdLocString += ",100,40"; //$NON-NLS-1$
 				}
-			});
+			}
+			Rectangle buildIdRectangle = StringConverter.asRectangle(buildIdLocString,
+					new Rectangle(322, 190, 100, 40));
+
+			Label idLabel = new Label(getContent(), SWT.RIGHT | SWT.WRAP);
+			idLabel.setForeground(getForeground());
+			idLabel.setBounds(buildIdRectangle);
+			idLabel.setText(buildId);
+			
 		}
 		else {
 			getContent(); // ensure creation of the progress
