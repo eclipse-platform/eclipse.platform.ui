@@ -60,6 +60,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
@@ -1619,44 +1620,53 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testShowActionSet() {
 		String id = MockActionDelegate.ACTION_SET_ID;
 
-//		int totalBefore = facade.getActionSetCount(fActivePage);
-
-		// FIXME: No implementation
-		fail("facade.getActionSetCount() had no implementation");
+		int totalBefore = ((WorkbenchPage) fActivePage).getActionSets().length;
 
 		fActivePage.showActionSet(id);
 
-//		facade.assertActionSetId(fActivePage, id, true);
-		
-		// FIXME: No implementation
-		fail("facade.assertActionSetId() had no implementation");
+		IActionSetDescriptor[] sets = ((WorkbenchPage) fActivePage).getActionSets();
+		boolean found = false;
+		for (int i = 0; i < sets.length && !found; i++) {
+			if (id.equals(sets[i].getId())) {
+				found = true;
+			}
+		}
+		assertTrue("Failed for " + id,  found);
 
 
 		// check that the method does not add an invalid action set to itself
 		id = IConstants.FakeID;
 		fActivePage.showActionSet(id);
 
-//		facade.assertActionSetId(fActivePage, id, false);
-//		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
+		sets = ((WorkbenchPage) fActivePage).getActionSets();
+		found = false;
+		for (int i = 0; i < sets.length && !found; i++) {
+			if (id.equals(sets[i].getId())) {
+				found = true;
+			}
+		}
+		assertFalse("Failed for " + id,  found);
+		assertEquals(sets.length, totalBefore + 1);
 	}
 
 	public void testHideActionSet() {
-//		int totalBefore = facade.getActionSetCount(fActivePage);
-		
-		// FIXME: No implementation
-		fail("facade.getActionSetCount() had no implementation");
+		int totalBefore = ((WorkbenchPage) fActivePage).getActionSets().length;
 
 		String id = MockWorkbenchWindowActionDelegate.SET_ID;
 		fActivePage.showActionSet(id);
-//		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
+		assertEquals(((WorkbenchPage) fActivePage).getActionSets().length, totalBefore + 1);
 
 		fActivePage.hideActionSet(id);
-//		assertEquals(facade.getActionSetCount(fActivePage), totalBefore);
+		assertEquals(((WorkbenchPage) fActivePage).getActionSets().length, totalBefore);
 
-//		facade.assertActionSetId(fActivePage, id, false);
-		
-		// FIXME: No implementation
-		fail("facade.assertActionSetId() had no implementation");
+		IActionSetDescriptor[] sets = ((WorkbenchPage) fActivePage).getActionSets();
+		boolean found = false;
+		for (int i = 0; i < sets.length && !found; i++) {
+			if (id.equals(sets[i].getId())) {
+				found = true;
+			}
+		}
+		assertFalse("Failed for " + id,  found);
 
 	}
 

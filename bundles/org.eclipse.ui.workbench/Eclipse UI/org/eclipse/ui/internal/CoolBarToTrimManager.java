@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -26,7 +27,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.AbstractGroupMarker;
-import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -311,8 +311,37 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	 * @see org.eclipse.jface.action.IContributionManager#getItems()
 	 */
 	public IContributionItem[] getItems() {
-		new Exception("CBTTM:getItems()").printStackTrace(); //$NON-NLS-1$
-		return new IContributionItem[0];
+		ArrayList<IContributionItem> items = new ArrayList<IContributionItem>();
+		for (MTrimElement el : trimBar.getChildren()) {
+			if (el instanceof MToolBar) {
+				final MToolBar model = (MToolBar) el;
+				if (model.getTransientData().get(OBJECT) != null) {
+					items.add((IContributionItem) model.getTransientData().get(OBJECT));
+				} else {
+					ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) rendererFactory
+							.getRenderer(model, null);
+					final ToolBarManager manager = renderer.getManager(model);
+					if (manager != null) {
+						final ToolBarContributionItem toolBarContributionItem = new ToolBarContributionItem(
+								manager, model.getElementId()) {
+							@Override
+							public void setVisible(boolean visible) {
+								super.setVisible(visible);
+								model.setVisible(visible);
+							}
+						};
+						model.getTransientData().put(OBJECT, toolBarContributionItem);
+						items.add(toolBarContributionItem);
+					} else if (model.getTags().contains(TOOLBAR_SEPARATOR)) {
+						if (model.getTransientData().get(OBJECT) != null) {
+							items.add((IContributionItem) model.getTransientData().get(OBJECT));
+						}
+						items.add(new GroupMarker(model.getElementId()));
+					}
+				}
+			}
+		}
+		return items.toArray(new IContributionItem[items.size()]);
 	}
 
 	/*
@@ -331,8 +360,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	 * @see org.eclipse.jface.action.IContributionManager#getOverrides()
 	 */
 	public IContributionManagerOverrides getOverrides() {
-		// TODO Auto-generated method stub
-		return null;
+		return toolbarOverrides;
 	}
 
 	/*
@@ -497,6 +525,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 						renderer.clearModelToManager((MToolBar) child, (ToolBarManager) parent);
 					}
 				}
+				workbenchTrimElements.remove(child);
 				
 				children.get(i).setToBeRendered(false);
 				children.remove(i);
@@ -604,6 +633,11 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 					//						System.out.println("update(boolean force): " + el); //$NON-NLS-1$
 					// }
 					fill((MToolBar) el, manager);
+					// TODO: Hack to work around Bug 370961
+					ToolBar tb = manager.getControl();
+					if (tb != null && !tb.isDisposed()) {
+						tb.getShell().layout(new Control[] { tb }, SWT.DEFER);
+					}
 				}
 			}
 		}
@@ -672,30 +706,6 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				separator.setElementId(item.getId());
 				container.getChildren().add(separator);
 				manager.remove(item);
-			} else if (item instanceof ActionContributionItem) {
-				IAction action = ((ActionContributionItem) item).getAction();
-				if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
-					MOpaqueToolItem toolItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
-					toolItem.setOpaqueItem(item);
-					toolItem.setElementId(item.getId());
-					String iconUrl = MenuHelper.getIconURI(action.getImageDescriptor(),
-							application.getContext());
-					 toolItem.setIconURI(iconUrl);
-					String disabledIconURI = MenuHelper.getIconURI(
-							action.getDisabledImageDescriptor(), application.getContext());
-					MenuHelper.setDisabledIconURI(toolItem, disabledIconURI);
-
-					container.getChildren().add(toolItem);
-					renderer.linkModelToContribution(toolItem, item);
-				} else {
-					MToolItem toolItem = MenuHelper.createToolItem(application,
-							(ActionContributionItem) item);
-					manager.remove(item);
-					if (toolItem != null) {
-						container.getChildren().add(toolItem);
-						toolItem.getTransientData().put("Name", action.getToolTipText()); //$NON-NLS-1$						
-					}
-				}
 			} else {
 				MOpaqueToolItem toolItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
 				toolItem.setElementId(item.getId());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,10 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Maintains a reference counted set of action sets, with a visibility mask.
@@ -69,11 +68,9 @@ public class ActionSetManager {
 	private IPropertyListener contextListener;
 	private Map activationsById = new HashMap();
 	private IContextService contextService;
-	private IWorkbenchWindow window;
     
-	public ActionSetManager(IWorkbenchWindow locator) {
+    public ActionSetManager(IServiceLocator locator) {
     	contextService = (IContextService) locator.getService(IContextService.class);
-		window = locator;
 		addListener(getContextListener());
     }
     
@@ -88,8 +85,8 @@ public class ActionSetManager {
 						IActionSetDescriptor desc = (IActionSetDescriptor) source;
 						String id = desc.getId();
 						if (propId == PROP_VISIBLE) {
-							activationsById.put(id, contextService.activateContext(id,
-									new WorkbenchWindowExpression(window)));
+							activationsById.put(id, contextService
+									.activateContext(id));
 						} else if (propId == PROP_HIDDEN) {
 							IContextActivation act = (IContextActivation) activationsById
 									.remove(id);

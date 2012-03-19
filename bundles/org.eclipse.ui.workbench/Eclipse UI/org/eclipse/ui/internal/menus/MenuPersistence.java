@@ -14,9 +14,7 @@ package org.eclipse.ui.internal.menus;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -27,8 +25,6 @@ import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
@@ -49,7 +45,6 @@ final public class MenuPersistence extends RegistryPersistence {
 	private MApplication application;
 	private IEclipseContext appContext;
 	private ArrayList<MenuAdditionCacheEntry> cacheEntries = new ArrayList<MenuAdditionCacheEntry>();
-	private ArrayList<ActionSet> actionContributions = new ArrayList<ActionSet>();
 	private ArrayList<EditorAction> editorActionContributions = new ArrayList<EditorAction>();
 	private ArrayList<ViewAction> viewActionContributions = new ArrayList<ViewAction>();
 
@@ -91,7 +86,6 @@ final public class MenuPersistence extends RegistryPersistence {
 		application.getTrimContributions().removeAll(trimContributions);
 		menuContributions.clear();
 		cacheEntries.clear();
-		actionContributions.clear();
 		editorActionContributions.clear();
 		viewActionContributions.clear();
 		super.dispose();
@@ -117,7 +111,7 @@ final public class MenuPersistence extends RegistryPersistence {
 		super.read();
 
 		readAdditions();
-		readActionSets();
+		// readActionSets();
 		readEditorActions();
 		readViewActions();
 
@@ -175,60 +169,6 @@ final public class MenuPersistence extends RegistryPersistence {
 						trimContributions);
 			}
 		}
-	}
-
-	private void readActionSets() {
-		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
-
-		final IConfigurationElement[] extElements = registry
-				.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_ACTION_SETS);
-		for (IConfigurationElement element : extElements) {
-			if (contributorFilter == null
-					|| contributorFilter.matcher(element.getContributor().getName()).matches()) {
-				configElements.add(element);
-			}
-		}
-
-		Collections.sort(configElements, comparer);
-
-		HashMap<String, ArrayList<MToolBarContribution>> postProcessing = new HashMap<String, ArrayList<MToolBarContribution>>();
-		for (IConfigurationElement element : configElements) {
-			ArrayList<MToolBarContribution> localToolbarContributions = new ArrayList<MToolBarContribution>();
-			ActionSet actionSet = new ActionSet(application, appContext, element);
-			actionContributions.add(actionSet);
-			actionSet.addToModel(menuContributions, localToolbarContributions, trimContributions);
-			toolBarContributions.addAll(localToolbarContributions);
-			postProcessing.put(actionSet.getId(), localToolbarContributions);
-		}
-		for (Entry<String, ArrayList<MToolBarContribution>> entry : postProcessing.entrySet()) {
-			for (MToolBarContribution contribution : entry.getValue()) {
-				String targetParentId = contribution.getParentId();
-				if (entry.getKey().equals(targetParentId)) {
-					continue;
-				}
-				ArrayList<MToolBarContribution> adjunctContributions = postProcessing
-						.get(targetParentId);
-				if (adjunctContributions == null) {
-					continue;
-				}
-				boolean processed = false;
-				Iterator<MToolBarContribution> i = adjunctContributions.iterator();
-				while (i.hasNext() && !processed) {
-					MToolBarContribution adjunctContribution = i.next();
-					if (targetParentId.equals(adjunctContribution.getParentId())) {
-						for (MToolBarElement item : adjunctContribution.getChildren()) {
-							if (!(item instanceof MToolBarSeparator) && item.getElementId() != null) {
-								processed = true;
-								contribution.setPositionInParent("before=" + item.getElementId()); //$NON-NLS-1$
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		postProcessing.clear();
 	}
 
 	private void readEditorActions() {

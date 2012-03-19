@@ -130,6 +130,7 @@ import org.eclipse.ui.internal.e4.compatibility.SelectionService;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -213,8 +214,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private MPerspectiveStack _perspectiveStack;
 
 	/**
-	 * Deactivate the last editor's action bars if another type of editor has
-	 * been activated.
+	 * Deactivate the last editor's action bars if another type of editor has //
+	 * * been activated.
 	 * 
 	 * @param part
 	 *            the part that is being activated
@@ -269,9 +270,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		((WorkbenchWindow) getWorkbenchWindow()).getStatusLineManager().update(false);
 
 		IWorkbenchPart workbenchPart = getWorkbenchPart(part);
-		if (workbenchPart instanceof IEditorPart) {
-			navigationHistory.markEditor((IEditorPart) workbenchPart);
-		}
+		actionSwitcher.updateActivePart(workbenchPart);
 	}
 
 	private void updateActivePartSources(MPart part) {
@@ -288,74 +287,45 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	}
 
-	/**
-	 * Calculates the action sets to show for the given part and editor
-	 * 
-	 * @param part
-	 *            the active part, may be <code>null</code>
-	 * @param editor
-	 *            the current editor, may be <code>null</code>, may be the
-	 *            active part
-	 * @return the action sets that are applicable to the given part and editor
-	 */
-	private ArrayList<IActionSetDescriptor> calculateActionSets(IWorkbenchPart part,
-			IEditorPart editor) {
-		ArrayList<IActionSetDescriptor> newActionSets = new ArrayList<IActionSetDescriptor>();
-		if (part != null) {
-			IActionSetDescriptor[] partActionSets = WorkbenchPlugin.getDefault()
-					.getActionSetRegistry().getActionSetsFor(part.getSite().getId());
-			for (IActionSetDescriptor partActionSet : partActionSets) {
-				newActionSets.add(partActionSet);
-			}
-		}
-		if (editor != null && editor != part) {
-			IActionSetDescriptor[] editorActionSets = WorkbenchPlugin.getDefault()
-					.getActionSetRegistry().getActionSetsFor(editor.getSite().getId());
-			for (IActionSetDescriptor editorActionSet : editorActionSets) {
-				newActionSets.add(editorActionSet);
-			}
-		}
-		return newActionSets;
-	}
+	private void updateActionSets(Perspective oldPersp, Perspective newPersp) {
+		// Update action sets
 
-	/**
-	 * Updates the actions we are showing for the active part and current
-	 * editor.
-	 * 
-	 * @param newActionSets
-	 *            the action sets to show
-	 */
-	private void updateActionSets(ArrayList<IActionSetDescriptor> newActionSets) {
-		if (oldActionSets.equals(newActionSets)) {
-			return;
-		}
-
-		WorkbenchWindow workbenchWindow = (WorkbenchWindow) getWorkbenchWindow();
-		IContextService service = (IContextService) workbenchWindow
-				.getService(
-				IContextService.class);
+		IContextService service = (IContextService) legacyWindow.getService(IContextService.class);
 		try {
 			service.deferUpdates(true);
+			if (newPersp != null) {
+				IActionSetDescriptor[] newAlwaysOn = newPersp.getAlwaysOnActionSets();
+				for (int i = 0; i < newAlwaysOn.length; i++) {
+					IActionSetDescriptor descriptor = newAlwaysOn[i];
 
-			// show the new
-			for (IActionSetDescriptor newActionSet : newActionSets) {
-				actionSets.showAction(newActionSet);
+					actionSets.showAction(descriptor);
+				}
+
+				IActionSetDescriptor[] newAlwaysOff = newPersp.getAlwaysOffActionSets();
+				for (int i = 0; i < newAlwaysOff.length; i++) {
+					IActionSetDescriptor descriptor = newAlwaysOff[i];
+
+					actionSets.maskAction(descriptor);
+				}
 			}
 
-			// hide the old
-			for (IActionSetDescriptor oldActionSet : oldActionSets) {
-				actionSets.hideAction(oldActionSet);
-			}
+			if (oldPersp != null) {
+				IActionSetDescriptor[] newAlwaysOn = oldPersp.getAlwaysOnActionSets();
+				for (int i = 0; i < newAlwaysOn.length; i++) {
+					IActionSetDescriptor descriptor = newAlwaysOn[i];
 
-			oldActionSets = newActionSets;
+					actionSets.hideAction(descriptor);
+				}
+
+				IActionSetDescriptor[] newAlwaysOff = oldPersp.getAlwaysOffActionSets();
+				for (int i = 0; i < newAlwaysOff.length; i++) {
+					IActionSetDescriptor descriptor = newAlwaysOff[i];
+
+					actionSets.unmaskAction(descriptor);
+				}
+			}
 		} finally {
 			service.deferUpdates(false);
-		}
-
-		if (getPerspective() != null) {
-			workbenchWindow.updateActionSets();
-			workbenchWindow.firePerspectiveChanged(WorkbenchPage.this, getPerspective(),
-					CHANGE_ACTION_SET_SHOW);
 		}
 	}
 
@@ -377,7 +347,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		window.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
 				editor == null ? null : editor.getEditorInput());
 
-		updateActionSets(calculateActionSets(getWorkbenchPart(part), editor));
+		if (editor != null) {
+			navigationHistory.markEditor(editor);
+		}
+		actionSwitcher.updateTopEditor(editor);
 	}
 
 	public void updateShowInSources(MPart part) {
@@ -517,11 +490,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     
     private ActionSetManager actionSets;
 
-    /**
-     * The action sets that were last requested to be shown.
-     */
-	private ArrayList<IActionSetDescriptor> oldActionSets = new ArrayList<IActionSetDescriptor>();
-
     private NavigationHistory navigationHistory = new NavigationHistory(this);
     
 
@@ -553,6 +521,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
     };
 
+	private ActionSwitcher actionSwitcher = new ActionSwitcher();
 
 	private IExtensionTracker tracker;
     
@@ -562,6 +531,256 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     
 	private IWorkingSet[] workingSets = new IWorkingSet[0];
 	private String aggregateWorkingSetId;
+
+	/**
+	 * Manages editor contributions and action set part associations.
+	 */
+	private class ActionSwitcher {
+		private IWorkbenchPart activePart;
+
+		private IEditorPart topEditor;
+
+		private ArrayList oldActionSets = new ArrayList();
+
+		/**
+		 * Updates the contributions given the new part as the active part.
+		 * 
+		 * @param newPart
+		 *            the new active part, may be <code>null</code>
+		 */
+		public void updateActivePart(IWorkbenchPart newPart) {
+			if (activePart == newPart) {
+				return;
+			}
+
+			boolean isNewPartAnEditor = newPart instanceof IEditorPart;
+			if (isNewPartAnEditor) {
+				String oldId = null;
+				if (topEditor != null) {
+					oldId = topEditor.getSite().getId();
+				}
+				String newId = newPart.getSite().getId();
+
+				// if the active part is an editor and the new editor
+				// is the same kind of editor, then we don't have to do
+				// anything
+				if (activePart == topEditor && newId.equals(oldId)) {
+					activePart = newPart;
+					topEditor = (IEditorPart) newPart;
+					return;
+				}
+
+				// remove the contributions of the old editor
+				// if it is a different kind of editor
+				if (oldId != null && !oldId.equals(newId)) {
+					deactivateContributions(topEditor, true);
+				}
+
+				// if a view was the active part, disable its contributions
+				if (activePart != null && activePart != topEditor) {
+					deactivateContributions(activePart, true);
+				}
+
+				// show (and enable) the contributions of the new editor
+				// if it is a different kind of editor or if the
+				// old active part was a view
+				if (!newId.equals(oldId) || activePart != topEditor) {
+					activateContributions(newPart, true);
+				}
+
+			} else if (newPart == null) {
+				if (activePart != null) {
+					// remove all contributions
+					deactivateContributions(activePart, true);
+				}
+			} else {
+				// new part is a view
+
+				// if old active part is a view, remove all contributions,
+				// but if old part is an editor only disable
+				if (activePart != null) {
+					deactivateContributions(activePart, activePart instanceof IViewPart);
+				}
+
+				activateContributions(newPart, true);
+			}
+
+			ArrayList newActionSets = null;
+			if (isNewPartAnEditor || (activePart == topEditor && newPart == null)) {
+				newActionSets = calculateActionSets(newPart, null);
+			} else {
+				newActionSets = calculateActionSets(newPart, topEditor);
+			}
+
+			if (!updateActionSets(newActionSets)) {
+				updateActionBars();
+			}
+
+			if (isNewPartAnEditor) {
+				topEditor = (IEditorPart) newPart;
+			} else if (activePart == topEditor && newPart == null) {
+				// since we removed all the contributions, we clear the top
+				// editor
+				topEditor = null;
+			}
+
+			activePart = newPart;
+		}
+
+		/**
+		 * Updates the contributions given the new part as the topEditor.
+		 * 
+		 * @param newEditor
+		 *            the new top editor, may be <code>null</code>
+		 */
+		public void updateTopEditor(IEditorPart newEditor) {
+			if (topEditor == newEditor) {
+				return;
+			}
+
+			if (activePart == topEditor) {
+				updateActivePart(newEditor);
+				return;
+			}
+
+			String oldId = null;
+			if (topEditor != null) {
+				oldId = topEditor.getSite().getId();
+			}
+			String newId = null;
+			if (newEditor != null) {
+				newId = newEditor.getSite().getId();
+			}
+			if (oldId == null ? newId == null : oldId.equals(newId)) {
+				// we don't have to change anything
+				topEditor = newEditor;
+				return;
+			}
+
+			// Remove the contributions of the old editor
+			if (topEditor != null) {
+				deactivateContributions(topEditor, true);
+			}
+
+			// Show (disabled) the contributions of the new editor
+			if (newEditor != null) {
+				activateContributions(newEditor, false);
+			}
+
+			ArrayList newActionSets = calculateActionSets(activePart, newEditor);
+			if (!updateActionSets(newActionSets)) {
+				updateActionBars();
+			}
+
+			topEditor = newEditor;
+		}
+
+		/**
+		 * Activates the contributions of the given part. If <code>enable</code>
+		 * is <code>true</code> the contributions are visible and enabled,
+		 * otherwise they are disabled.
+		 * 
+		 * @param part
+		 *            the part whose contributions are to be activated
+		 * @param enable
+		 *            <code>true</code> the contributions are to be enabled, not
+		 *            just visible.
+		 */
+		private void activateContributions(IWorkbenchPart part, boolean enable) {
+			PartSite site = (PartSite) part.getSite();
+			site.activateActionBars(enable);
+		}
+
+		/**
+		 * Deactivates the contributions of the given part. If
+		 * <code>remove</code> is <code>true</code> the contributions are
+		 * removed, otherwise they are disabled.
+		 * 
+		 * @param part
+		 *            the part whose contributions are to be deactivated
+		 * @param remove
+		 *            <code>true</code> the contributions are to be removed, not
+		 *            just disabled.
+		 */
+		private void deactivateContributions(IWorkbenchPart part, boolean remove) {
+			PartSite site = (PartSite) part.getSite();
+			site.deactivateActionBars(remove);
+		}
+
+		/**
+		 * Calculates the action sets to show for the given part and editor
+		 * 
+		 * @param part
+		 *            the active part, may be <code>null</code>
+		 * @param editor
+		 *            the current editor, may be <code>null</code>, may be the
+		 *            active part
+		 * @return the new action sets
+		 */
+		private ArrayList calculateActionSets(IWorkbenchPart part, IEditorPart editor) {
+			ArrayList newActionSets = new ArrayList();
+			if (part != null) {
+				IActionSetDescriptor[] partActionSets = WorkbenchPlugin.getDefault()
+						.getActionSetRegistry().getActionSetsFor(part.getSite().getId());
+				for (int i = 0; i < partActionSets.length; i++) {
+					newActionSets.add(partActionSets[i]);
+				}
+			}
+			if (editor != null && editor != part) {
+				IActionSetDescriptor[] editorActionSets = WorkbenchPlugin.getDefault()
+						.getActionSetRegistry().getActionSetsFor(editor.getSite().getId());
+				for (int i = 0; i < editorActionSets.length; i++) {
+					newActionSets.add(editorActionSets[i]);
+				}
+			}
+			return newActionSets;
+		}
+
+		/**
+		 * Updates the actions we are showing for the active part and current
+		 * editor.
+		 * 
+		 * @param newActionSets
+		 *            the action sets to show
+		 * @return <code>true</code> if the action sets changed
+		 */
+		private boolean updateActionSets(ArrayList newActionSets) {
+			if (oldActionSets.equals(newActionSets)) {
+				return false;
+			}
+
+			IContextService service = (IContextService) legacyWindow
+					.getService(IContextService.class);
+			try {
+				service.deferUpdates(true);
+
+				// show the new
+				for (int i = 0; i < newActionSets.size(); i++) {
+					actionSets.showAction((IActionSetDescriptor) newActionSets.get(i));
+				}
+
+				// hide the old
+				for (int i = 0; i < oldActionSets.size(); i++) {
+					actionSets.hideAction((IActionSetDescriptor) oldActionSets.get(i));
+				}
+
+				oldActionSets = newActionSets;
+
+			} finally {
+				service.deferUpdates(false);
+			}
+			Perspective persp = getActivePerspective();
+			if (persp == null) {
+				return false;
+			}
+
+			legacyWindow.updateActionSets(); // this calls updateActionBars
+			legacyWindow.firePerspectiveChanged(WorkbenchPage.this, getPerspective(),
+					CHANGE_ACTION_SET_SHOW);
+			return true;
+		}
+
+	}
 
 	private EPartService partService;
 
@@ -638,6 +857,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPart mpart = findPart(part);
 		if (mpart != null) {
 			partService.activate(mpart);
+			actionSwitcher.updateActivePart(part);
 		}
 	}
 
@@ -989,11 +1209,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		switch (mode) {
 		case VIEW_ACTIVATE:
 			partService.showPart(part, PartState.ACTIVATE);
+			if (part.getObject() instanceof CompatibilityView) {
+				CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
+				actionSwitcher.updateActivePart(compatibilityView.getPart());
+			}
 			break;
 		case VIEW_VISIBLE:
 			MPart activePart = partService.getActivePart();
 			if (activePart == null) {
 				partService.showPart(part, PartState.ACTIVATE);
+				if (part.getObject() instanceof CompatibilityView) {
+					CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
+					actionSwitcher.updateActivePart(compatibilityView.getPart());
+				}
 			} else {
 				part = ((PartServiceImpl) partService).addPart(part);
 				MPlaceholder activePlaceholder = activePart.getCurSharedRef();
@@ -1408,6 +1636,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				}
 			}
 			modelService.removePerspectiveModel(persp, window);
+			modelToPerspectiveMapping.remove(persp);
 		}
 	}
 
@@ -1471,6 +1700,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		viewReferences.clear();
 		editorReferences.clear();
 		sortedPerspectives.clear();
+		modelToPerspectiveMapping.clear();
 
 		if (unsetPage) {
 			legacyWindow.setActivePage(null);
@@ -2157,9 +2387,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPerspective curPersp = ps.getSelectedElement();
 		if (curPersp == null)
 			return null;
+		return getPerspectiveDesc(curPersp.getElementId());
+	}
 
+	public IPerspectiveDescriptor getPerspectiveDesc(String id) {
 		IPerspectiveDescriptor desc = PlatformUI.getWorkbench().getPerspectiveRegistry()
-				.findPerspectiveWithId(curPersp.getElementId());
+				.findPerspectiveWithId(id);
 		return desc;
 	}
 
@@ -2271,24 +2504,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see IWorkbenchPage
      */
     public void hideActionSet(String actionSetID) {
-		MPerspective persp = getCurrentPerspective();
-		if (persp == null)
+		MPerspective mpersp = getCurrentPerspective();
+		if (mpersp == null)
 			return;
 
 		// Remove Tags
 		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
-		if (persp.getTags().contains(tag)) {
-			persp.getTags().remove(tag);
-
-			// ActionSetManager does reference counting to determine visibility
-			// so don't add action sets that have already been added
-			IActionSetDescriptor descriptor = WorkbenchPlugin.getDefault().getActionSetRegistry()
-					.findActionSet(actionSetID);
-			if (descriptor != null) {
-				actionSets.hideAction(descriptor);
-			}
+		if (mpersp.getTags().contains(tag)) {
+			mpersp.getTags().remove(tag);
 		}
-
+		Perspective persp = getActivePerspective();
+		if (persp != null) {
+			persp.removeActionSet(actionSetID);
+			legacyWindow.updateActionSets();
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_HIDE);
+		}
 		addHiddenItems(tag);
     }
 
@@ -2337,7 +2567,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		this.legacyWindow = w;
         this.input = input;
         actionSets = new ActionSetManager(w);
-
+		initActionSetListener();
 	}
 
 	@PostConstruct
@@ -2445,6 +2675,23 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		}
 	}
 
+	ArrayList getPerspectiveExtensionActionSets(String id) {
+		IPerspectiveDescriptor desc = getWorkbenchWindow().getWorkbench().getPerspectiveRegistry()
+				.findPerspectiveWithId(id);
+		if (desc != null) {
+			MPerspective temporary = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+			ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService,
+					partService, temporary, desc, this, true);
+
+			PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
+			reader.setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET });
+			reader.extendLayout(null, id, modelLayout);
+			return new ArrayList(ModeledPageLayout.getIds(temporary,
+					ModeledPageLayout.ACTION_SET_TAG));
+		}
+		return null;
+	}
+
 	/**
 	 * Copies action set extensions from the temporary perspective to the other
 	 * one.
@@ -2513,10 +2760,11 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 
 			MPerspective oldPersp = (MPerspective) event.getProperty(UIEvents.EventTags.OLD_VALUE);
 			MPerspective newPersp = (MPerspective) event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			updatePerspectiveActionSets(oldPersp, newPersp);
+			// updatePerspectiveActionSets(oldPersp, newPersp);
 
-			((CoolBarToTrimManager) legacyWindow.getCoolBarManager2()).updateAll(true);
-			legacyWindow.menuManager.updateAll(true);
+			// ((CoolBarToTrimManager)
+			// legacyWindow.getCoolBarManager2()).updateAll(true);
+			// legacyWindow.menuManager.updateAll(true);
 
 			List<MPart> hiddenParts = new ArrayList<MPart>();
 			List<MPart> visibleParts = new ArrayList<MPart>();
@@ -2560,17 +2808,18 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 				firePartVisible(visiblePart);
 			}
 
+			updateActionSets(getPerspective(oldPersp), getPerspective(newPersp));
+
 			// might've been set to null if we were closing the perspective
 			if (newPersp != null) {
-				IPerspectiveRegistry registry = getWorkbenchWindow().getWorkbench()
-						.getPerspectiveRegistry();
-				IPerspectiveDescriptor perspective = registry.findPerspectiveWithId(newPersp
+				IPerspectiveDescriptor perspective = getPerspectiveDesc(newPersp
 						.getElementId());
 				legacyWindow.firePerspectiveActivated(WorkbenchPage.this, perspective);
 
 				sortedPerspectives.remove(perspective);
 				sortedPerspectives.add(perspective);
 			}
+			legacyWindow.updateActionSets();
 		}
 	};
 
@@ -3021,6 +3270,7 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		if (dummyPerspective == null) {
 			// instantiate a dummy perspective perspective
 			dummyPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+			dummyPerspective.setElementId(persp.getElementId());
 
 			IPerspectiveFactory factory = ((PerspectiveDescriptor) desc).createFactory();
 			ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService,
@@ -3035,9 +3285,10 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		String hiddenItems = dummyPerspective.getPersistedState().get(ModeledPageLayout.HIDDEN_ITEMS_KEY);
 		persp.getPersistedState().put(ModeledPageLayout.HIDDEN_ITEMS_KEY, hiddenItems);
 		
-		legacyWindow.getMenuManager().updateAll(true);
-		((ICoolBarManager2) ((WorkbenchWindow) getWorkbenchWindow()).getCoolBarManager2())
-				.resetItemOrder();
+		// legacyWindow.getMenuManager().updateAll(true);
+		// ((ICoolBarManager2) ((WorkbenchWindow)
+		// getWorkbenchWindow()).getCoolBarManager2())
+		// .resetItemOrder();
 
 		// Hide placeholders for parts that exist in the 'global' areas
 		modelService.hideLocalPlaceholders(window, dummyPerspective);
@@ -3070,7 +3321,8 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		}
 
 		// deactivate and activate other action sets as
-		updatePerspectiveActionSets(persp, dummyPerspective);
+		updateActionSets(getPerspective(persp), getPerspective(dummyPerspective));
+		modelToPerspectiveMapping.remove(dummyPerspective);
 
 		// migrate the tags
 		List<String> tags = persp.getTags();
@@ -3083,44 +3335,27 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		legacyWindow.firePerspectiveChanged(this, desc, CHANGE_RESET_COMPLETE);
 	}
 
-	private void updatePerspectiveActionSets(MPerspective currentPerspective,
-			MPerspective newPerspective) {
-		List<String> oldTemp = ModeledPageLayout.getIds(currentPerspective,
-				ModeledPageLayout.ACTION_SET_TAG);
-		List<String> newTemp = ModeledPageLayout.getIds(newPerspective,
-				ModeledPageLayout.ACTION_SET_TAG);
-
-		// remove action sets that are visible in both perspectives so that a
-		// unique set is created
-		List<String> oldActionSets = new ArrayList<String>(oldTemp);
-		oldActionSets.removeAll(newTemp);
-		List<String> newActionSets = new ArrayList<String>(newTemp);
-		newActionSets.removeAll(oldTemp);
-
-		IContextService contextService = window.getContext().get(IContextService.class);
-		try {
-			contextService.deferUpdates(true);
-
-			// deactivate action sets that are no longer valid
-			for (String oldId : oldActionSets) {
-				IActionSetDescriptor actionSet = WorkbenchPlugin.getDefault()
-						.getActionSetRegistry().findActionSet(oldId);
-				if (actionSet != null) {
-					actionSets.hideAction(actionSet);
-				}
-			}
-
-			// activate the new ones
-			for (String newId : newActionSets) {
-				IActionSetDescriptor actionSet = WorkbenchPlugin.getDefault()
-						.getActionSetRegistry().findActionSet(newId);
-				if (actionSet != null) {
-					actionSets.showAction(actionSet);
-				}
-			}
-		} finally {
-			contextService.deferUpdates(false);
-		}
+	private void initActionSetListener() {
+		// actionSets.addListener(new IPropertyListener() {
+		// public void propertyChanged(Object source, int propId) {
+		// if (source instanceof IActionSetDescriptor) {
+		// final IActionSetDescriptor desc = (IActionSetDescriptor) source;
+		// final String actionSetId = ModeledPageLayout.ACTION_SET_TAG +
+		// desc.getId();
+		// final MPerspective currentPerspective = getCurrentPerspective();
+		// if (currentPerspective != null) {
+		// final List<String> tags = currentPerspective.getTags();
+		// if (propId == ActionSetManager.PROP_VISIBLE) {
+		// if (!tags.contains(actionSetId)) {
+		// tags.add(actionSetId);
+		// }
+		// } else if (propId == ActionSetManager.PROP_HIDDEN) {
+		// tags.remove(actionSetId);
+		// }
+		// }
+		// }
+		// }
+		// });
 	}
 
     /**
@@ -3285,6 +3520,22 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		}
 	}
 
+	private HashMap<MPerspective, Perspective> modelToPerspectiveMapping = new HashMap<MPerspective, Perspective>();
+
+	private Perspective getPerspective(MPerspective mperspective) {
+		if (mperspective == null) {
+			return null;
+		}
+		if (!modelToPerspectiveMapping.containsKey(mperspective)) {
+			Perspective p = new Perspective(
+					(PerspectiveDescriptor) getPerspectiveDesc(mperspective.getElementId()),
+					mperspective, this);
+			modelToPerspectiveMapping.put(mperspective, p);
+			p.initActionSets();
+		}
+		return modelToPerspectiveMapping.get(mperspective);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -3312,7 +3563,6 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 				// this perspective already exists, switch to this one
 				perspectives.setSelectedElement(mperspective);
 				mperspective.getContext().activate();
-				legacyWindow.firePerspectiveActivated(this, perspective);
 				return;
 			}
 		}
@@ -3357,10 +3607,17 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		perspectives.getChildren().add(modelPerspective);
 		// activate it
 		perspectives.setSelectedElement(modelPerspective);
+
 		modelPerspective.getContext().activate();
-		legacyWindow.firePerspectiveActivated(this, perspective);
 
 		UIEvents.publishEvent(UIEvents.UILifeCycle.PERSPECTIVE_OPENED, modelPerspective);
+	}
+
+	void perspectiveActionSetChanged(Perspective perspective, IActionSetDescriptor descriptor,
+			int changeType) {
+		if (perspective == getActivePerspective()) {
+			actionSets.change(descriptor, changeType);
+		}
 	}
 
 
@@ -3448,26 +3705,19 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
      * @see IWorkbenchPage
      */
     public void showActionSet(String actionSetID) {
-		MPerspective persp = getPerspectiveStack().getSelectedElement();
-		if (persp == null) {
-			return;
-		}
-
-		// Add Tags
-		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
-		if (!persp.getTags().contains(tag)) {
-			persp.getTags().add(tag);
-
-			// ActionSetManager does reference counting to determine visibility
-			// so don't add action sets that have already been added
-			IActionSetDescriptor descriptor = WorkbenchPlugin.getDefault().getActionSetRegistry()
-					.findActionSet(actionSetID);
-			if (descriptor != null) {
-				actionSets.showAction(descriptor);
-			}
-		}
-
-		removeHiddenItems(tag);
+    	 Perspective persp = getActivePerspective();
+         if (persp != null) {
+             ActionSetRegistry reg = WorkbenchPlugin.getDefault()
+                  .getActionSetRegistry();
+             
+             IActionSetDescriptor desc = reg.findActionSet(actionSetID);
+             if (desc != null) {
+                 persp.addActionSet(desc);
+                 legacyWindow.updateActionSets();
+                 legacyWindow.firePerspectiveChanged(this, getPerspective(),
+                         CHANGE_ACTION_SET_SHOW);
+             }
+         }
     }
 
     /**
@@ -3699,6 +3949,10 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 	public MPerspective getCurrentPerspective() {
 		MPerspectiveStack stack = getPerspectiveStack();
 		return stack == null ? null : stack.getSelectedElement();
+	}
+
+	Perspective getActivePerspective() {
+		return getPerspective(getCurrentPerspective());
 	}
 
     /*
@@ -3982,7 +4236,7 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 	}
 
 	void updatePerspectiveActionSets() {
-		updatePerspectiveActionSets(null, getPerspectiveStack().getSelectedElement());
+		updateActionSets(null, getActivePerspective());
 	}
 
 	void fireInitialPartVisibilityEvents() {
@@ -4502,5 +4756,13 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 
 		persp.getTags().removeAll(existingNewWizards);
 		persp.getTags().addAll(newWizards);
+	}
+
+	/**
+	 * 
+	 */
+	public void resetToolBarLayout() {
+		ICoolBarManager2 mgr = (ICoolBarManager2) legacyWindow.getCoolBarManager2();
+		mgr.resetItemOrder();
 	}
 }
