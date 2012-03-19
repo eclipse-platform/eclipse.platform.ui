@@ -28,10 +28,10 @@ import org.eclipse.e4.ui.services.internal.events.EventBroker;
 public class EventBrokerFactory extends ContextFunction {
 	@Override
 	public Object compute(IEclipseContext context) {
-		EventBroker broker = context.get(EventBroker.class);
+        EventBroker broker = context.getLocal(EventBroker.class);
 		if (broker == null) {
-			broker = ContextInjectionFactory.make(EventBroker.class, context);
-			context.set(EventBroker.class, broker);
+            broker = ContextInjectionFactory.make(EventBroker.class, context);
+            context.set(EventBroker.class, broker);
 		}
 		return broker;
 	}

@@ -327,6 +327,33 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		checkForFailures(allTesters, windowTester);
 	}
 
+	// Verify bug 374534
+	public void testBrokerCleanup() {
+		final String testTopic = "test/374534";
+		IEventBroker appEB = applicationContext.get(IEventBroker.class);
+
+		IEclipseContext childContext = applicationContext.createChild();
+		IEventBroker childEB = childContext.get(IEventBroker.class);
+		assertFalse("child context has same IEventBroker", appEB == childEB);
+
+		final boolean seen[] = { false };
+		childEB.subscribe(testTopic, new EventHandler() {
+			public void handleEvent(Event event) {
+				seen[0] = true;
+			}
+		});
+
+		// ensure the EBs are wired up
+		assertFalse(seen[0]);
+		appEB.send(testTopic, null);
+		assertTrue(seen[0]);
+
+		seen[0] = false;
+		childContext.dispose();
+		appEB.send(testTopic, null);
+		assertFalse(seen[0]);
+	}
+
 	/**
 	 * @param allTesters
 	 * @param tester
