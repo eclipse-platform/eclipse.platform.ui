@@ -50,7 +50,11 @@
 		  </property>
     <property
           name="buildIdLocation"
-          value="334,180">
+          value="300,180">
+    </property>
+    <property
+          name="buildIdSize"
+          value="140,40">
     </property>
       </product> 
     </extension> 
