@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -510,6 +510,20 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 					Policy.log(e);
 					return 1;
 				}
+
+				// compare hosts
+				compare = compareStringOrNull(uri1.getHost(), uri2.getHost());
+				if (compare != 0)
+					return compare;
+				// compare user infos
+				compare = compareStringOrNull(uri1.getUserInfo(), uri2.getUserInfo());
+				if (compare != 0)
+					return compare;
+				// compare ports
+				int port1 = uri1.getPort();
+				int port2 = uri2.getPort();
+				if (port1 != port2)
+					return port1 - port2;
 
 				IPath path1 = new Path(uri1.getPath());
 				IPath path2 = new Path(uri2.getPath());
