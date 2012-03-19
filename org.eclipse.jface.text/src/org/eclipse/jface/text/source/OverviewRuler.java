@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -773,15 +773,18 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 						yy= computeY(startLine, infos);
 						
 						if (ANNOTATION_HEIGHT_SCALABLE) {
-							int numbersOfLines= document.getNumberOfLines(annotationOffset, annotationLength);
-							// don't count empty trailing lines
+							int numberOfLines= document.getNumberOfLines(annotationOffset, annotationLength);
+							// don't count empty trailing line
 							IRegion lastLine= document.getLineInformationOfOffset(annotationOffset + annotationLength);
 							if (lastLine.getOffset() == annotationOffset + annotationLength) {
-								numbersOfLines -= 2;
-								int yy2= computeY(startLine + numbersOfLines, infos);
+								numberOfLines--;
+							}
+							if (numberOfLines > 1) {
+								int yy2= computeY(startLine + numberOfLines - 1, infos);
 								hh= Math.max(yy2 - yy, ANNOTATION_HEIGHT);
-							} else
+							} else {
 								hh= ANNOTATION_HEIGHT;
+							}
 						}
 						fAnnotationHeight= hh;
 						
@@ -913,7 +916,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * @param y_coordinate the y-coordinate
 	 * @param annotationRect <code>true</code> to only consider the position of a drawn annotation rectangle,
 	 * 	<code>false</code> to consider the whole line
-	 * @return the corresponding document lines as {firstLine, lastLine}, or {-1, -1} if no lines correspond to the y-coordinate 
+	 * @return the corresponding document lines as {firstLine, lastLine}, or {-1, -1} if no lines correspond to the y-coordinate
 	 */
 	private int[] toLineNumbers(int y_coordinate, boolean annotationRect) {
 		// this is the inverse of #computeY(int, WidgetInfos)
