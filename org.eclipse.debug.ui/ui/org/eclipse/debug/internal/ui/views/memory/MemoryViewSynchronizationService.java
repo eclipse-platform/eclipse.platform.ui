@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -73,7 +74,7 @@ public class MemoryViewSynchronizationService implements
 		/**
 		 * If the property matches one of the filters, the property
 		 * is valid and the view should be notified about its change.
-		 * @param property
+		 * @param property the property
 		 * @return if the property is specified in the filter
 		 */
 		public boolean isValidProperty(String property){
@@ -92,7 +93,7 @@ public class MemoryViewSynchronizationService implements
 		/**
 		 * Set property filters, indicating what property change events
 		 * the listener is interested in.
-		 * @param filters
+		 * @param filters the property filters or <code>null</code>
 		 */
 		public void setPropertyFilters(String[] filters){	
 			fFilters = filters;
@@ -165,7 +166,7 @@ public class MemoryViewSynchronizationService implements
 	}
 	
 	/**
-	 * Clean up when the plugin is shutdown
+	 * Clean up when the plug-in is shutdown
 	 */
 	public void shutdown()
 	{
@@ -205,7 +206,7 @@ public class MemoryViewSynchronizationService implements
 	
 	/**
 	 * Fire property change events
-	 * @param propertyId
+	 * @param evt the event to fire
 	 */
 	public void firePropertyChanged(final PropertyChangeEvent evt)
 	{
@@ -286,7 +287,7 @@ public class MemoryViewSynchronizationService implements
 		
 		// Do not handle any property changed event as the
 		// sync service is being enabled.
-		// Otheriwse, current sync info provider may overwrite
+		// Otherwise, current sync info provider may overwrite
 		// sync info unexpectedly.  We want to sync with the rendering
 		// that is last changed.
 		if (fEnableState == ENABLING)
@@ -299,14 +300,14 @@ public class MemoryViewSynchronizationService implements
 		
 		if (DEBUG_SYNC_SERVICE)
 		{
-			System.out.println("SYNC SERVICE RECEIVED CHANGED EVENT:"); //$NON-NLS-1$
-			System.out.println("Source:  " + rendering); //$NON-NLS-1$
-			System.out.println("Property:  " + propertyId); //$NON-NLS-1$
-			System.out.println("Value:  " + value); //$NON-NLS-1$
+			DebugUIPlugin.trace("SYNC SERVICE RECEIVED CHANGED EVENT:"); //$NON-NLS-1$
+			DebugUIPlugin.trace("Source:  " + rendering); //$NON-NLS-1$
+			DebugUIPlugin.trace("Property:  " + propertyId); //$NON-NLS-1$
+			DebugUIPlugin.trace("Value:  " + value); //$NON-NLS-1$
 			
 			if (value instanceof BigInteger)
 			{
-				System.out.println("Value in hex:  " + ((BigInteger)value).toString(16)); //$NON-NLS-1$
+				DebugUIPlugin.trace("Value in hex:  " + ((BigInteger)value).toString(16)); //$NON-NLS-1$
 			}
 		}
 		
@@ -401,15 +402,15 @@ public class MemoryViewSynchronizationService implements
 	 */
 	public void setSynchronizationProvider(IMemoryRendering rendering) {
 		
-		if (DEBUG_SYNC_SERVICE)
-			System.out.println("SYNCHRONIZATION PROVIDER: " + rendering); //$NON-NLS-1$
-		
-		if (fSyncServiceProvider != null)
+		if (DEBUG_SYNC_SERVICE) {
+			DebugUIPlugin.trace("SYNCHRONIZATION PROVIDER: " + rendering); //$NON-NLS-1$
+		}
+		if (fSyncServiceProvider != null) {
 			fSyncServiceProvider.removePropertyChangeListener(this);
-		
-		if (rendering != null)
+		}
+		if (rendering != null) {
 			rendering.addPropertyChangeListener(this);
-		
+		}
 		fSyncServiceProvider = rendering;
 	}
 	

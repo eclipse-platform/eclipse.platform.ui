@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2011 IBM Corporation and others.
+ *  Copyright (c) 2006, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -50,7 +50,6 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncCopyTableRende
 import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncPrintTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncTableRenderingCellModifier;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncTableRenderingViewer;
-import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncVirtualContentTableViewer;
 import org.eclipse.debug.internal.ui.views.memory.renderings.CopyTableRenderingToClipboardAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingDialog;
@@ -1675,9 +1674,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	private  synchronized void  reloadTable(final BigInteger topAddress) {
 		
-		if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-			System.out.println(this + " reload at: " + topAddress.toString(16)); //$NON-NLS-1$
-		
+		if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+			DebugUIPlugin.trace(this + " reload at: " + topAddress.toString(16)); //$NON-NLS-1$
+		}
 		fContentDescriptor.setLoadAddress(topAddress);
 		fContentDescriptor.setNumLines(getNumLinesToLoad());
 		fTableViewer.setTopIndex(topAddress);

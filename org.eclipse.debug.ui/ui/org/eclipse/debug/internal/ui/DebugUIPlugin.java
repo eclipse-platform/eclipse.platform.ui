@@ -24,26 +24,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.ibm.icu.text.MessageFormat;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.packageadmin.PackageAdmin;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.util.tracker.ServiceTracker;
-
-import org.w3c.dom.Document;
-
-import org.eclipse.osgi.service.debug.DebugOptions;
-import org.eclipse.osgi.service.debug.DebugOptionsListener;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
-
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -59,36 +45,6 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.Window;
-
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.progress.IProgressConstants2;
-import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.services.IEvaluationService;
-import org.eclipse.ui.themes.IThemeManager;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -118,11 +74,47 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
-
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
+import org.eclipse.osgi.service.debug.DebugTrace;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.IProgressConstants2;
+import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.services.IEvaluationService;
+import org.eclipse.ui.themes.IThemeManager;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.util.tracker.ServiceTracker;
+import org.w3c.dom.Document;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The Debug UI Plug-in.
@@ -148,6 +140,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	public static boolean DEBUG_DELTAS = false;
 	public static boolean DEBUG_STATE_SAVE_RESTORE = false;
 	public static String DEBUG_PRESENTATION_ID = null;
+	public static boolean DEBUG_DYNAMIC_LOADING = false;
 	
 	static final String DEBUG_FLAG = "org.eclipse.debug.ui/debug";
 	static final String DEBUG_BREAKPOINT_DELTAS_FLAG = "org.eclipse.debug.ui/debug/viewers/breakpointDeltas";
@@ -160,6 +153,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	static final String DEBUG_DELTAS_FLAG ="org.eclipse.debug.ui/debug/viewers/deltas";
 	static final String DEBUG_STATE_SAVE_RESTORE_FLAG = "org.eclipse.debug.ui/debug/viewers/stateSaveRestore";
 	static final String DEBUG_PRESENTATION_ID_FLAG ="org.eclipse.debug.ui/debug/viewers/presentationId";
+	static final String DEBUG_DYNAMIC_LOADING_FLAG = "org.eclipse.debug.ui/debug/memory/dynamicLoading";
+	/**
+	 * The {@link DebugTrace} object to print to OSGi tracing
+	 * @since 3.8
+	 */
+	private static DebugTrace fgDebugTrace;
 	
 	/**
 	 * The singleton debug plug-in instance
@@ -280,15 +279,29 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	}
 	
 	/**
-	 * If the debug flag is set the specified message is printed to the console
-	 * @param message the message to print the {@link System#out}
+	 * Prints the given message to System.out and to the OSGi tracing (if started)
+	 * @param option the option or <code>null</code>
+	 * @param message the message to print or <code>null</code>
+	 * @param throwable the {@link Throwable} or <code>null</code>
+	 * @since 3.8
 	 */
-	public static void debug(String message) {
-		if (DEBUG) {
-			System.out.println(message);
+	public static void trace(String option, String message, Throwable throwable) {
+		System.out.println(message);
+		if(fgDebugTrace != null) {
+			fgDebugTrace.trace(option, message, throwable);
 		}
 	}
-		
+	
+	/**
+	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
+	 * 
+	 * @param message the message or <code>null</code>
+	 * @since 3.8
+	 */
+	public static void trace(String message) {
+		trace(null, message, null);
+	}
+	
 	/**
 	 * Returns the singleton instance of the debug plug-in.
 	 * @return the singleton {@link DebugUIPlugin}
@@ -601,16 +614,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
 	 */
 	public void optionsChanged(DebugOptions options) {
+		fgDebugTrace = options.newDebugTrace(getUniqueIdentifier());
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
-		DEBUG_BREAKPOINT_DELTAS = DEBUG & options.getBooleanOption(DEBUG_BREAKPOINT_DELTAS_FLAG, false);
-		DEBUG_MODEL = DEBUG & options.getBooleanOption(DEBUG_MODEL_FLAG, false);
-		DEBUG_VIEWER = DEBUG & options.getBooleanOption(DEBUG_VIEWER_FLAG, false);
-		DEBUG_BREADCRUMB = DEBUG & options.getBooleanOption(DEBUG_BREADCRUMB_FLAG, false);
-		DEBUG_TREE_VIEWER_DROPDOWN = DEBUG & options.getBooleanOption(DEBUG_TREE_VIEWER_DROPDOWN_FLAG, false);
-		DEBUG_CONTENT_PROVIDER = DEBUG & options.getBooleanOption(DEBUG_CONTENT_PROVIDER_FLAG, false);
-		DEBUG_UPDATE_SEQUENCE = DEBUG & options.getBooleanOption(DEBUG_UPDATE_SEQUENCE_FLAG, false);
-		DEBUG_DELTAS = DEBUG & options.getBooleanOption(DEBUG_DELTAS_FLAG, false);
-		DEBUG_STATE_SAVE_RESTORE = DEBUG & options.getBooleanOption(DEBUG_STATE_SAVE_RESTORE_FLAG, false);
+		DEBUG_BREAKPOINT_DELTAS = DEBUG && options.getBooleanOption(DEBUG_BREAKPOINT_DELTAS_FLAG, false);
+		DEBUG_MODEL = DEBUG && options.getBooleanOption(DEBUG_MODEL_FLAG, false);
+		DEBUG_VIEWER = DEBUG && options.getBooleanOption(DEBUG_VIEWER_FLAG, false);
+		DEBUG_BREADCRUMB = DEBUG && options.getBooleanOption(DEBUG_BREADCRUMB_FLAG, false);
+		DEBUG_TREE_VIEWER_DROPDOWN = DEBUG && options.getBooleanOption(DEBUG_TREE_VIEWER_DROPDOWN_FLAG, false);
+		DEBUG_CONTENT_PROVIDER = DEBUG && options.getBooleanOption(DEBUG_CONTENT_PROVIDER_FLAG, false);
+		DEBUG_UPDATE_SEQUENCE = DEBUG && options.getBooleanOption(DEBUG_UPDATE_SEQUENCE_FLAG, false);
+		DEBUG_DELTAS = DEBUG && options.getBooleanOption(DEBUG_DELTAS_FLAG, false);
+		DEBUG_STATE_SAVE_RESTORE = DEBUG && options.getBooleanOption(DEBUG_STATE_SAVE_RESTORE_FLAG, false);
+		DEBUG_DYNAMIC_LOADING = DEBUG && options.getBooleanOption(DEBUG_DYNAMIC_LOADING_FLAG, false);
 		if(DEBUG) {
 			DEBUG_PRESENTATION_ID = options.getOption(DEBUG_PRESENTATION_ID_FLAG, IInternalDebugCoreConstants.EMPTY_STRING);
 			if(IInternalDebugCoreConstants.EMPTY_STRING.equals(DEBUG_PRESENTATION_ID)) {

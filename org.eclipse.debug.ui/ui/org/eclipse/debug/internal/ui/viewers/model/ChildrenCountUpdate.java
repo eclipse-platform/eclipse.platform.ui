@@ -133,7 +133,7 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 			viewCount = getContentProvider().modelToViewChildCount(elementPath, fCount);
 		}
 		if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-			System.out.println("setChildCount(" + getElement() + ", modelCount: " + fCount + " viewCount: " + viewCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			DebugUIPlugin.trace("setChildCount(" + getElement() + ", modelCount: " + fCount + " viewCount: " + viewCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		// Special case for element 0 in a set of filtered elements:  
 		// Child 0 is automatically updated by the tree at the same time that the child count is requested. Therefore, 

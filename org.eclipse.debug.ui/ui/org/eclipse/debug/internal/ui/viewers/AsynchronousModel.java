@@ -99,7 +99,7 @@ public abstract class AsynchronousModel {
 			buffer.append(" ("); //$NON-NLS-1$
 			buffer.append(this);
 			buffer.append(")"); //$NON-NLS-1$
-			DebugUIPlugin.debug(buffer.toString());
+			DebugUIPlugin.trace(buffer.toString());
 		}
 	}
 	
@@ -130,7 +130,7 @@ public abstract class AsynchronousModel {
 			buffer.append(" ("); //$NON-NLS-1$
 			buffer.append(this);
 			buffer.append(")"); //$NON-NLS-1$
-			DebugUIPlugin.debug(buffer.toString());
+			DebugUIPlugin.trace(buffer.toString());
 		}
         fDisposed = true;
         cancelPendingUpdates();
@@ -585,8 +585,8 @@ public abstract class AsynchronousModel {
     	        parentNode.setChildren(newChildren);
             }
             if (DebugUIPlugin.DEBUG_MODEL) {
-            	DebugUIPlugin.debug("CHILDREN CHANGED: " + parentNode); //$NON-NLS-1$
-            	DebugUIPlugin.debug(toString());
+            	DebugUIPlugin.trace("CHILDREN CHANGED: " + parentNode); //$NON-NLS-1$
+            	DebugUIPlugin.trace(toString());
             }
         }
         

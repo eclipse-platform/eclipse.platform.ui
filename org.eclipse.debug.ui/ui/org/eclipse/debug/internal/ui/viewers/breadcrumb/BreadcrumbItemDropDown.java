@@ -258,8 +258,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	 * Opens the drop down menu.
 	 */
 	public void showMenu() {
-		if (DebugUIPlugin.DEBUG_BREADCRUMB)
-			System.out.println("BreadcrumbItemDropDown.showMenu()"); //$NON-NLS-1$
+		if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+			DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()"); //$NON-NLS-1$
+		}
 
 		if (!fEnabled || fMenuIsShown)
 			return;
@@ -267,9 +268,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		fMenuIsShown= true;
 
 		fShell= new Shell(fToolBar.getShell(), SWT.RESIZE | SWT.TOOL | SWT.ON_TOP);
-		if (DebugUIPlugin.DEBUG_BREADCRUMB)
-			System.out.println("	creating new shell"); //$NON-NLS-1$
-
+		if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+			DebugUIPlugin.trace("	creating new shell"); //$NON-NLS-1$
+		}
 	      
         fShell.addControlListener(new ControlAdapter() {
             /*
@@ -321,23 +322,26 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 
 				switch (event.type) {
 					case SWT.FocusIn:
-						if (DebugUIPlugin.DEBUG_BREADCRUMB)
-							System.out.println("focusIn - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
+						if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+							DebugUIPlugin.trace("focusIn - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
+						}
 
 						if (!isFocusBreadcrumbTreeFocusWidget && !isFocusWidgetParentShell) {
-							if (DebugUIPlugin.DEBUG_BREADCRUMB)
-								System.out.println("==> closing shell since focus in other widget"); //$NON-NLS-1$
+							if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+								DebugUIPlugin.trace("==> closing shell since focus in other widget"); //$NON-NLS-1$
+							}
 							shell.close();
 						}
 						break;
 
 					case SWT.FocusOut:
-						if (DebugUIPlugin.DEBUG_BREADCRUMB)
-							System.out.println("focusOut - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
-
+						if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+							DebugUIPlugin.trace("focusOut - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
+						}
 						if (event.display.getActiveShell() == null) {
-							if (DebugUIPlugin.DEBUG_BREADCRUMB)
-								System.out.println("==> closing shell since event.display.getActiveShell() != shell"); //$NON-NLS-1$
+							if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+								DebugUIPlugin.trace("==> closing shell since event.display.getActiveShell() != shell"); //$NON-NLS-1$
+							}
 							shell.close();
 						}
 						break;
@@ -369,8 +373,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if (DebugUIPlugin.DEBUG_BREADCRUMB)
-					System.out.println("==> shell disposed"); //$NON-NLS-1$
+				if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+					DebugUIPlugin.trace("==> shell disposed"); //$NON-NLS-1$
+				}
 
 				display.removeFilter(SWT.FocusIn, focusListener);
 				display.removeFilter(SWT.FocusOut, focusListener);
@@ -385,9 +390,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 			}
 
 			public void shellClosed(ShellEvent e) {
-				if (DebugUIPlugin.DEBUG_BREADCRUMB)
-					System.out.println("==> shellClosed"); //$NON-NLS-1$
-
+				if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+					DebugUIPlugin.trace("==> shellClosed"); //$NON-NLS-1$
+				}
 				if (!fMenuIsShown)
 					return;
 

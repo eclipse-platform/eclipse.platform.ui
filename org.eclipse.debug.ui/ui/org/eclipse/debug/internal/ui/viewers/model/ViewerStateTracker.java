@@ -275,7 +275,7 @@ class ViewerStateTracker {
                             ModelDelta stateDelta = (ModelDelta) fViewerStates.get(keyMementoString);
                             if (stateDelta != null) {
                                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
-                                    System.out.println("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - MATCHING STATE FOUND"); //$NON-NLS-1$ //$NON-NLS-2$
+                                	DebugUIPlugin.trace("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - MATCHING STATE FOUND"); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
 
                                 // Process start of restore in an async cycle because we may still be inside inputChanged() 
@@ -286,8 +286,8 @@ class ViewerStateTracker {
                                             ModelDelta stateDelta2 = (ModelDelta) fViewerStates.remove(keyMementoString);
                                             if (stateDelta2 != null) {
                                                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
-                                                    System.out.println("STATE RESTORE BEGINS"); //$NON-NLS-1$
-                                                    System.out.println("\tRESTORE: " + stateDelta2.toString()); //$NON-NLS-1$
+                                                	DebugUIPlugin.trace("STATE RESTORE BEGINS"); //$NON-NLS-1$
+                                                	DebugUIPlugin.trace("\tRESTORE: " + stateDelta2.toString()); //$NON-NLS-1$
                                                     notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
                                                 }
                                                 stateDelta2.setElement(input);
@@ -296,14 +296,14 @@ class ViewerStateTracker {
                                             }
                                         } else {
                                             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
-                                                System.out.println("STATE RESTORE CANCELED."); //$NON-NLS-1$
+                                            	DebugUIPlugin.trace("STATE RESTORE CANCELED."); //$NON-NLS-1$
                                             }
                                         }
                                     }
                                 });
                             } else {
                                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
-                                    System.out.println("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - NO MATCHING STATE"); //$NON-NLS-1$ //$NON-NLS-2$
+                                	DebugUIPlugin.trace("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - NO MATCHING STATE"); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
                             }
                         } catch (IOException e) {
@@ -324,7 +324,7 @@ class ViewerStateTracker {
                 public void processReqeusts() {
                     notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
                     if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                        System.out.println("STATE RESTORE INPUT COMARE BEGIN : " + fRequest); //$NON-NLS-1$
+                    	DebugUIPlugin.trace("STATE RESTORE INPUT COMARE BEGIN : " + fRequest); //$NON-NLS-1$
                     }
                     notifyStateUpdate(input, TreeModelContentProvider.UPDATE_BEGINS, fRequest);
                     defaultProvider.encodeElements(new IElementMementoRequest[] { fRequest });
@@ -354,7 +354,7 @@ class ViewerStateTracker {
             manager.processReqeusts();
         } else {
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
-                System.out.println("STATE RESTORE: No input memento provider"); //$NON-NLS-1$
+            	DebugUIPlugin.trace("STATE RESTORE: No input memento provider"); //$NON-NLS-1$
             }            
         }
     }
@@ -367,7 +367,7 @@ class ViewerStateTracker {
         if (fContentProvider.getViewer() == null) return; // Not initialized yet.
         
         if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
-            System.out.println("STATE APPEND BEGIN: " + path.getLastSegment()); //$NON-NLS-1$
+        	DebugUIPlugin.trace("STATE APPEND BEGIN: " + path.getLastSegment()); //$NON-NLS-1$
         }
 
         // build a model delta representing expansion and selection state
@@ -381,7 +381,7 @@ class ViewerStateTracker {
             // Path to save the state was not found or there was no 
             // (expansion) state to save!  Abort.
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                System.out.println("STATE APPEND CANCEL: Element " + path.getLastSegment() + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
+            	DebugUIPlugin.trace("STATE APPEND CANCEL: Element " + path.getLastSegment() + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
             }
             return;
         }
@@ -400,7 +400,7 @@ class ViewerStateTracker {
         });
 
         if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-            System.out.println("\tAPPEND DELTA: " + appendDeltaRoot); //$NON-NLS-1$
+        	DebugUIPlugin.trace("\tAPPEND DELTA: " + appendDeltaRoot); //$NON-NLS-1$
         }
 
         if (fPendingState != null) {
@@ -408,10 +408,10 @@ class ViewerStateTracker {
             // preserve
             // that restore along with the restore that was completed.
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                System.out.println("\tAPPEND OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
+            	DebugUIPlugin.trace("\tAPPEND OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
             }
 
-            // If the append delta is generated for a sub-tree, copy the pending dela 
+            // If the append delta is generated for a sub-tree, copy the pending delta 
             // attributes into the pending delta.
             if (path.getSegmentCount() > 0) {
                 fPendingState.accept( new IModelDeltaVisitor() {
@@ -456,7 +456,7 @@ class ViewerStateTracker {
                         copyIntoDelta(pendingDeltaNode, saveDeltaNode);
                     } else {
                         if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                            System.out.println("\tSKIPPED: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
+                        	DebugUIPlugin.trace("\tSKIPPED: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
                         }
                     }
 
@@ -481,11 +481,11 @@ class ViewerStateTracker {
             }
             fPendingState = appendDeltaRoot;
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                System.out.println("STATE APPEND COMPLETE " + fPendingState); //$NON-NLS-1$
+            	DebugUIPlugin.trace("STATE APPEND COMPLETE " + fPendingState); //$NON-NLS-1$
             }
         } else {
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                System.out.println("STATE APPEND CANCELED: No Data"); //$NON-NLS-1$
+            	DebugUIPlugin.trace("STATE APPEND CANCELED: No Data"); //$NON-NLS-1$
             }
         }
     }
@@ -503,14 +503,14 @@ class ViewerStateTracker {
         IElementMementoProvider stateProvider = ViewerAdapterService.getMementoProvider(input);
         if (stateProvider != null) {
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                System.out.println("STATE SAVE BEGIN: " + input); //$NON-NLS-1$
+            	DebugUIPlugin.trace("STATE SAVE BEGIN: " + input); //$NON-NLS-1$
             }
 
             // build a model delta representing expansion and selection state
             final ModelDelta saveDeltaRoot = new ModelDelta(input, IModelDelta.NO_CHANGE);
             buildViewerState(saveDeltaRoot);
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                System.out.println("\tSAVE DELTA FROM VIEW:\n" + saveDeltaRoot); //$NON-NLS-1$
+            	DebugUIPlugin.trace("\tSAVE DELTA FROM VIEW:\n" + saveDeltaRoot); //$NON-NLS-1$
             }
 
             // check if pending restore reveal
@@ -534,7 +534,7 @@ class ViewerStateTracker {
             		}
                 } else {
                     if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                        System.out.println("\tSKIPPED: " + revealDelta.getElement()); //$NON-NLS-1$
+                    	DebugUIPlugin.trace("\tSKIPPED: " + revealDelta.getElement()); //$NON-NLS-1$
                     }
                 }
             }
@@ -544,7 +544,7 @@ class ViewerStateTracker {
                 // preserve
                 // that restore along with the restore that was completed.
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                    System.out.println("\tSAVE OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
+                	DebugUIPlugin.trace("\tSAVE OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
                 }
 
                 IModelDeltaVisitor pendingStateVisitor = new IModelDeltaVisitor() {
@@ -580,7 +580,7 @@ class ViewerStateTracker {
                             copyIntoDelta(pendingDeltaNode, saveDeltaNode);
                         } else {
                             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                                System.out.println("\tSKIPPED: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
+                            	DebugUIPlugin.trace("\tSKIPPED: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
                             }
                         }
 
@@ -604,7 +604,7 @@ class ViewerStateTracker {
                 encodeDelta(saveDeltaRoot, stateProvider);
             } else {
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                    System.out.println("STATE SAVE CANCELED, NO DATA"); //$NON-NLS-1$
+                	DebugUIPlugin.trace("STATE SAVE CANCELED, NO DATA"); //$NON-NLS-1$
                 }
             }
         }
@@ -703,7 +703,7 @@ class ViewerStateTracker {
 
                 notifyStateUpdate(input, TreeModelContentProvider.UPDATE_COMPLETE, request);
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                    System.out.println("\tSTATE END: " + request); //$NON-NLS-1$
+                	DebugUIPlugin.trace("\tSTATE END: " + request); //$NON-NLS-1$
                 }
 
                 if (!request.isCanceled() && (request.getStatus() == null || request.getStatus().isOK())) {
@@ -722,7 +722,7 @@ class ViewerStateTracker {
                             DebugUIPlugin.log(e);
                         }
                         if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                            System.out.println("STATE SAVE COMPLETED: " + rootDelta); //$NON-NLS-1$
+                        	DebugUIPlugin.trace("STATE SAVE COMPLETED: " + rootDelta); //$NON-NLS-1$
                         }
                         stateSaveComplete(input, this);
                     }
@@ -746,7 +746,7 @@ class ViewerStateTracker {
                 }
                 fRequests.clear();
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                    System.out.println("STATE SAVE ABORTED: " + rootDelta.getElement()); //$NON-NLS-1$
+                	DebugUIPlugin.trace("STATE SAVE ABORTED: " + rootDelta.getElement()); //$NON-NLS-1$
                 }
                 stateSaveComplete(input, this);
             }
@@ -923,7 +923,7 @@ class ViewerStateTracker {
                     int newFlags = deltaFlags & ~mask;
                     if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                         if (deltaFlags != newFlags) {
-                            System.out.println("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        	DebugUIPlugin.trace("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         }
                     }
                     ((ModelDelta)delta).setFlags(newFlags);
@@ -952,7 +952,7 @@ class ViewerStateTracker {
                             int newFlags = deltaFlags & ~mask;
                             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                                 if (deltaFlags != newFlags) {
-                                    System.out.println("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                	DebugUIPlugin.trace("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                 }
                             }
                             ((ModelDelta)delta).setFlags(newFlags);
@@ -968,7 +968,7 @@ class ViewerStateTracker {
                         
                         if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
                             if (delta.getFlags() != IModelDelta.NO_CHANGE) {
-                                System.out.println("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(delta.getFlags()) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            	DebugUIPlugin.trace("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(delta.getFlags()) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             }
                         }
                         ((ModelDelta)delta).setFlags(IModelDelta.NO_CHANGE);
@@ -1032,7 +1032,7 @@ class ViewerStateTracker {
                                     knowsChildCount, checkChildrenRealized);
                                 fCompareRequestsInProgress.put(key, compareRequest);
                                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                                    System.out.println("\tSTATE BEGIN: " + compareRequest); //$NON-NLS-1$
+                                	DebugUIPlugin.trace("\tSTATE BEGIN: " + compareRequest); //$NON-NLS-1$
                                 }
                                 notifyStateUpdate(element, TreeModelContentProvider.UPDATE_BEGINS, compareRequest);
                                 provider.compareElements(new IElementCompareRequest[] { compareRequest });
@@ -1086,7 +1086,7 @@ class ViewerStateTracker {
              * int)
              */
             public boolean visit(IModelDelta delta, int depth) {
-                // Filster out the CONTENT flags from the delta flags, the content
+                // Filter out the CONTENT flags from the delta flags, the content
                 // flag is only used as a marker indicating that all the sub-elements
                 // of a given delta have been retrieved.  
                 int flags = (delta.getFlags() & ~IModelDelta.CONTENT);
@@ -1132,7 +1132,7 @@ class ViewerStateTracker {
 
             private void removeDelta(IModelDelta delta) {
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                    System.out.println("\tRESTORE REMOVED: " + delta.getElement()); //$NON-NLS-1$
+                	DebugUIPlugin.trace("\tRESTORE REMOVED: " + delta.getElement()); //$NON-NLS-1$
                 }
 
                 delta.accept(new IModelDeltaVisitor() {
@@ -1154,7 +1154,7 @@ class ViewerStateTracker {
             // postpone until then. 
             if (fPendingSetTopItem == null) {
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                    System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
+                	DebugUIPlugin.trace("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
                 }
 
                 notifyStateUpdate(fPendingState.getElement(), STATE_RESTORE_SEQUENCE_COMPLETE, null);
@@ -1181,14 +1181,14 @@ class ViewerStateTracker {
         if (knowsHasChildren) {
             if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                    System.out.println("\tRESTORE EXPAND: " + treePath.getLastSegment()); //$NON-NLS-1$
+                	DebugUIPlugin.trace("\tRESTORE EXPAND: " + treePath.getLastSegment()); //$NON-NLS-1$
                 }
                 viewer.expandToLevel(treePath, 1);
                 delta.setFlags(delta.getFlags() & ~IModelDelta.EXPAND);
             }
             if ((delta.getFlags() & IModelDelta.COLLAPSE) != 0) {
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                    System.out.println("\tRESTORE COLLAPSE: " + treePath.getLastSegment()); //$NON-NLS-1$
+                	DebugUIPlugin.trace("\tRESTORE COLLAPSE: " + treePath.getLastSegment()); //$NON-NLS-1$
                 }
                 // Check auto-expand before collapsing an element (bug 335734)
                 int autoexpand = fContentProvider.getViewer().getAutoExpandLevel();
@@ -1202,7 +1202,7 @@ class ViewerStateTracker {
         if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
             delta.setFlags(delta.getFlags() & ~IModelDelta.SELECT);
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                System.out.println("\tRESTORE SELECT: " + treePath.getLastSegment()); //$NON-NLS-1$
+            	DebugUIPlugin.trace("\tRESTORE SELECT: " + treePath.getLastSegment()); //$NON-NLS-1$
             }
             ITreeSelection currentSelection = (ITreeSelection)viewer.getSelection();
             if (currentSelection == null || currentSelection.isEmpty()) {
@@ -1283,7 +1283,7 @@ class ViewerStateTracker {
             (knowsHasChildren && !viewer.getHasChildren(treePath)) ) 
         {
             if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                System.out.println("\tRESTORE CONTENT: " + treePath.getLastSegment()); //$NON-NLS-1$
+            	DebugUIPlugin.trace("\tRESTORE CONTENT: " + treePath.getLastSegment()); //$NON-NLS-1$
             }
             delta.setFlags(delta.getFlags() & ~IModelDelta.CONTENT);            
         }
@@ -1329,7 +1329,7 @@ class ViewerStateTracker {
                 int index = viewer.findElementIndex(parentPath, fPathToReveal.getLastSegment());
                 if (index >= 0) { 
                     if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                        System.out.println("\tRESTORE REVEAL: " + fPathToReveal.getLastSegment()); //$NON-NLS-1$
+                    	DebugUIPlugin.trace("\tRESTORE REVEAL: " + fPathToReveal.getLastSegment()); //$NON-NLS-1$
                     }
                     viewer.reveal(parentPath, index);
                     
@@ -1372,7 +1372,7 @@ class ViewerStateTracker {
             
             if (fPendingState == null) {
                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                    System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
+                	DebugUIPlugin.trace("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
                 }
                 notifyStateUpdate(fModelInput, STATE_RESTORE_SEQUENCE_COMPLETE, null);
             } else {
@@ -1488,7 +1488,7 @@ class ViewerStateTracker {
     void compareFinished(ElementCompareRequest request, ModelDelta delta) {
         notifyStateUpdate(request.getViewerInput(), TreeModelContentProvider.UPDATE_COMPLETE, request);
         if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-            System.out.println("\tSTATE END: " + request + " = " + false); //$NON-NLS-1$ //$NON-NLS-2$
+        	DebugUIPlugin.trace("\tSTATE END: " + request + " = " + false); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         fCompareRequestsInProgress.remove(new CompareRequestKey(request.getElementPath(), delta));

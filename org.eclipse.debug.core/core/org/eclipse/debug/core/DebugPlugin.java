@@ -1138,7 +1138,7 @@ public class DebugPlugin extends Plugin {
 			Object[] listeners= getEventListeners();
 			if (DebugOptions.DEBUG_EVENTS) {
 				for (int i = 0; i < fEvents.length; i++) {
-					System.out.println(fEvents[i]);
+					DebugOptions.trace(fEvents[i].toString());
 				}
 			}
 			for (int i= 0; i < listeners.length; i++) {

@@ -1057,7 +1057,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		
 		Widget parentItem = getParentWidget(item);
 		if (DebugUIPlugin.DEBUG_VIEWER) {
-			DebugUIPlugin.debug("SET DATA [" + index + "]: " + parentItem);  //$NON-NLS-1$//$NON-NLS-2$
+			DebugUIPlugin.trace("SET DATA [" + index + "]: " + parentItem);  //$NON-NLS-1$//$NON-NLS-2$
 		}
 		ModelNode node = null;
 		// first, see if the parent element is in the model
@@ -1095,7 +1095,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			node = getModel().getRootNode();
 			if (node == null) {
 				if (DebugUIPlugin.DEBUG_VIEWER) {
-					DebugUIPlugin.debug("\tFAILED - root model node is null"); //$NON-NLS-1$
+					DebugUIPlugin.trace("\tFAILED - root model node is null"); //$NON-NLS-1$
 				}
 				return;
 			}
@@ -1103,7 +1103,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 				ModelNode[] childrenNodes = node.getChildrenNodes();
 				if (childrenNodes == null) {
 					if (DebugUIPlugin.DEBUG_VIEWER) {
-						DebugUIPlugin.debug("\tFAILED - no children nodes for " + node); //$NON-NLS-1$
+						DebugUIPlugin.trace("\tFAILED - no children nodes for " + node); //$NON-NLS-1$
 					}
 					return;
 				}
@@ -1112,7 +1112,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 					node = childrenNodes[pindex];
 				} else {
 					if (DebugUIPlugin.DEBUG_VIEWER) {
-						DebugUIPlugin.debug("\tFAILED - no children nodes for " + node); //$NON-NLS-1$
+						DebugUIPlugin.trace("\tFAILED - no children nodes for " + node); //$NON-NLS-1$
 					}
 					return;
 				}
@@ -1125,12 +1125,12 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			mapElement(node, item);
     		item.setData(node.getElement());
     		if (DebugUIPlugin.DEBUG_VIEWER) {
-				DebugUIPlugin.debug("\titem mapped: " + node); //$NON-NLS-1$
+				DebugUIPlugin.trace("\titem mapped: " + node); //$NON-NLS-1$
     		}
     		internalRefresh(node);
 		} else {
 			if (DebugUIPlugin.DEBUG_VIEWER) {
-				DebugUIPlugin.debug("\tFAILED - unable to find corresponding node"); //$NON-NLS-1$
+				DebugUIPlugin.trace("\tFAILED - unable to find corresponding node"); //$NON-NLS-1$
 			}
 		}		
 	}

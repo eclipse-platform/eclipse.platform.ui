@@ -52,7 +52,6 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 			contentProvider.clearFilters(elementPath);
 		}
         if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-			System.out.println("setHasChildren(" + getElement() + " >> " + fHasChildren); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		contentProvider.getViewer().setHasChildren(elementPath, fHasChildren);
 		if (fHasChildren) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -268,9 +268,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		fSelectionKey = getSelectionKeyFromCursor();
 		fPendingSelection = null;
 		
-		if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-			System.out.println(Thread.currentThread().getName() + " cursor moved selection is: " + ((BigInteger)fSelectionKey).toString(16)); //$NON-NLS-1$
-		
+		if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+			DebugUIPlugin.trace(Thread.currentThread().getName() + " cursor moved selection is: " + ((BigInteger)fSelectionKey).toString(16)); //$NON-NLS-1$
+		}
 		// now check to see if the cursor is approaching buffer limit
 		handleScrollBarSelection();
 		fireSelectionChanged(fSelectionKey);
@@ -323,9 +323,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
-					if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-						System.out.println(getRendering() + " set cursor selection " + ((BigInteger)key).toString(16)); //$NON-NLS-1$
-					
+					if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+						DebugUIPlugin.trace(getRendering() + " set cursor selection " + ((BigInteger)key).toString(16)); //$NON-NLS-1$
+					}
 					if (fPendingSelection != null && fPendingSelection != key)
 						return Status.OK_STATUS;
 					
@@ -344,10 +344,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					fSelectionKey = key;
 					fPendingSelection = null;
 					
-					if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-					{
-						System.out.println(getRendering() + " set cursor selection, row is " + getTable().getItem(newLocation[0]).getData()); //$NON-NLS-1$
-						System.out.println(getRendering() + " set cursor selection, model is " + getVirtualContentModel().getElement(newLocation[0])); //$NON-NLS-1$
+					if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+						DebugUIPlugin.trace(getRendering() + " set cursor selection, row is " + getTable().getItem(newLocation[0]).getData()); //$NON-NLS-1$
+						DebugUIPlugin.trace(getRendering() + " set cursor selection, model is " + getVirtualContentModel().getElement(newLocation[0])); //$NON-NLS-1$
 					}
 					
 					fTableCursor.setSelection(newLocation[0], newLocation[1]);
@@ -479,12 +478,14 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		}
 		Object oldSelectionKey = null;
 		try {
-			if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+			if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING)
 			{
-				if (oldTopIndexKey != null)
-					System.out.println(getRendering() + " preserve top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
-				else
-					System.out.println("top index key is null, nothing to preserve"); //$NON-NLS-1$
+				if (oldTopIndexKey != null) {
+					DebugUIPlugin.trace(getRendering() + " preserve top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
+				}
+				else {
+					DebugUIPlugin.trace("top index key is null, nothing to preserve"); //$NON-NLS-1$
+				}
 			}
 
 			if (fPendingSelection != null)
@@ -492,12 +493,14 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			else
 				oldSelectionKey = getSelectionKey();
 			
-			if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+			if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING)
 			{
-				if (oldTopIndexKey != null)
-					System.out.println(getRendering() + " preserve selection: " + ((BigInteger)oldSelectionKey).toString(16)); //$NON-NLS-1$
-				else
-					System.out.println("selection key is null, nothing to preserve"); //$NON-NLS-1$
+				if (oldTopIndexKey != null) {
+					DebugUIPlugin.trace(getRendering() + " preserve selection: " + ((BigInteger)oldSelectionKey).toString(16)); //$NON-NLS-1$
+				}
+				else { 
+					DebugUIPlugin.trace("selection key is null, nothing to preserve"); //$NON-NLS-1$
+				}
 			}
 			
 			// perform the update
@@ -507,16 +510,17 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			
 			if (oldSelectionKey != null)
 			{
-				if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-					System.out.println(getRendering() + " preserved selection " + ((BigInteger)oldSelectionKey).toString(16)); //$NON-NLS-1$
+				if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+					DebugUIPlugin.trace(getRendering() + " preserved selection " + ((BigInteger)oldSelectionKey).toString(16)); //$NON-NLS-1$
+				}
 				setSelection(oldSelectionKey);
 			}
 			
 			if (getPendingSetTopIndexKey() != null)
 			{
-				if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING) {
+				if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
 					if (oldTopIndexKey != null) {
-						System.out.println(getRendering() + " finished top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
+						DebugUIPlugin.trace(getRendering() + " finished top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
 					}
 				}
 				setTopIndex(getPendingSetTopIndexKey());
@@ -525,8 +529,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			{
 				setTopIndex(oldTopIndexKey);
 				
-				if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-					System.out.println(getRendering() + " finished top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
+				if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+					DebugUIPlugin.trace(getRendering() + " finished top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
+				}
 			}
 		}
 	}

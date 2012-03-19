@@ -302,7 +302,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 
     /**
      * Finds the model proxy that an element with a given path is associated with.
-     * @param path Path of the elemnt.
+     * @param path Path of the element.
      * @return Element's model proxy.
      */
     private IModelProxy getElementProxy(TreePath path) {
@@ -324,7 +324,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     }
 
     /**
-     * Uninstalls each model proxy
+     * Removes all model proxies
      */
     private void disposeAllModelProxies() {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
@@ -345,7 +345,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     }
     
     /**
-     * Uninstalls the model proxy installed for the given element, if any.
+     * Removes the model proxy installed for the given element, if any.
      * @param path the {@link TreePath} to dispose the model proxy for
      */
     private void disposeModelProxy(TreePath path) {
@@ -386,14 +386,14 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     }
 
     /**
-     * Executes the mdoel proxy in UI thread.
+     * Executes the model proxy in UI thread.
      * @param delta Delta to process
      * @param proxy Proxy that fired the delta.
      */
     private void doModelChanged(IModelDelta delta, IModelProxy proxy) {
         if (!proxy.isDisposed()) {
             if (DebugUIPlugin.DEBUG_DELTAS && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                DebugUIPlugin.debug("RECEIVED DELTA: " + delta.toString()); //$NON-NLS-1$
+                DebugUIPlugin.trace("RECEIVED DELTA: " + delta.toString()); //$NON-NLS-1$
             }
 
             updateModel(delta, getModelDeltaMask());
@@ -588,12 +588,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         requests.add(update);
         if (begin) {
             if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                System.out.println("MODEL SEQUENCE BEGINS"); //$NON-NLS-1$
+                DebugUIPlugin.trace("MODEL SEQUENCE BEGINS"); //$NON-NLS-1$
             }
             notifyUpdate(UPDATE_SEQUENCE_BEGINS, null);
         }
         if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-            System.out.println("\tBEGIN - " + update); //$NON-NLS-1$
+            DebugUIPlugin.trace("\tBEGIN - " + update); //$NON-NLS-1$
         }
         notifyUpdate(UPDATE_BEGINS, update);
     }
@@ -608,7 +608,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     		ViewerUpdateMonitor update = (ViewerUpdateMonitor)updates.get(i);
 	        notifyUpdate(UPDATE_COMPLETE, update);
 	        if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-	            System.out.println("\tEND - " + update); //$NON-NLS-1$
+	            DebugUIPlugin.trace("\tEND - " + update); //$NON-NLS-1$
 	        }
     	}
     	
@@ -639,7 +639,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	                    // fRequestsInProgress map.  This way updateStarted() will not send a 
 	                    // redundant "UPDATE SEQUENCE STARTED" notification.
 	                    trigger(update.getSchedulingPath());
-	                    if (requests.isEmpty()) {
+	                    if (requests != null && requests.isEmpty()) {
 	                        fRequestsInProgress.remove(update.getSchedulingPath());
 	                    }
 	            	} else {
@@ -649,7 +649,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
             	}
                 if (fRequestsInProgress.isEmpty() && fWaitingRequests.isEmpty()) {
                     if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                        System.out.println("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
+                        DebugUIPlugin.trace("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
                     }
                     notifyUpdate(UPDATE_SEQUENCE_COMPLETE, null);
                 }            	
@@ -852,10 +852,9 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * Requests are processed in order such that updates to 
      * children are delayed until updates for parent elements are completed.
      * This allows the expansion/selection state of the elements to be 
-     * properly restored as new elements are retreived from model.  
+     * properly restored as new elements are retrieved from model.  
      * </p>
-     * 
-     * @param The schedulingPath path or requests to start processing.  May 
+     * @param schedulingPath schedulingPath path or requests to start processing.  May 
      * be <code>null</code> to start the shortest path request.
      */
     private void trigger(TreePath schedulingPath) {
@@ -975,7 +974,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                         }
                         reCreate.add(childrenUpdate);
                         if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                            System.out.println("canceled update in progress handling REMOVE: " + childrenUpdate); //$NON-NLS-1$
+                            DebugUIPlugin.trace("canceled update in progress handling REMOVE: " + childrenUpdate); //$NON-NLS-1$
                         }
                     }
                 }
@@ -991,7 +990,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                     if (childrenUpdate.getOffset() > modelIndex) {
                         ((ChildrenUpdate) childrenUpdate).setOffset(childrenUpdate.getOffset() - 1);
                         if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                            System.out.println("modified waiting update handling REMOVE: " + childrenUpdate); //$NON-NLS-1$
+                            DebugUIPlugin.trace("modified waiting update handling REMOVE: " + childrenUpdate); //$NON-NLS-1$
                         }
                     }
                 }
@@ -1050,7 +1049,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	 * Checks if there are outstanding updates that may replace the element 
 	 * at given path. 
 	 * @param path Path of element to check.
-	 * @return Returns true if there are outsanding updates.
+	 * @return Returns true if there are outstanding updates.
 	 */
     boolean areElementUpdatesPending(TreePath path) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
@@ -1183,7 +1182,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 			if (shouldFilter(parentPath, element)) {
 				addFilteredIndex(parentPath, modelIndex, element);
 				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-					System.out.println("[filtered] handleAdd(" + delta.getElement() + ") > modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$
+					DebugUIPlugin.trace("[filtered] handleAdd(" + delta.getElement() + ") > modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				// it was filtered so the child count does not change
 			} else {
@@ -1193,7 +1192,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                 int viewIndex = modelToViewIndex(parentPath, modelIndex);
 				int viewCount = modelToViewChildCount(parentPath, count);
 				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-					System.out.println("handleAdd(" + delta.getElement() + ") viewIndex: " + viewIndex + " modelIndex: " + modelIndex + " viewCount: " + viewCount + " modelCount: " + count); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					DebugUIPlugin.trace("handleAdd(" + delta.getElement() + ") viewIndex: " + viewIndex + " modelIndex: " + modelIndex + " viewCount: " + viewCount + " modelCount: " + count); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				}
 				getViewer().setChildCount(parentPath, viewCount);
 				getViewer().autoExpand(parentPath);
@@ -1204,7 +1203,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 			}	        
 		} else {
 			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-				System.out.println("handleAdd(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.trace("handleAdd(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		    doUpdateChildCount(getViewerTreePath(delta.getParentDelta()));
 		}
@@ -1251,7 +1250,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	        if (childCount > 0) {
 	            int viewCount = modelToViewChildCount(elementPath, childCount);
 	            if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-	                System.out.println("[expand] setChildCount(" + delta.getElement() + ", (model) " + childCount + " (view) " + viewCount); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	                DebugUIPlugin.trace("[expand] setChildCount(" + delta.getElement() + ", (model) " + childCount + " (view) " + viewCount); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	            }
 	            getViewer().setChildCount(elementPath, viewCount);	            
 	        }
@@ -1275,7 +1274,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 			int viewIndex = modelToViewIndex(parentPath, modelIndex);
 			if (viewIndex >= 0) {
 				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-					System.out.println("[expand] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					DebugUIPlugin.trace("[expand] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				treeViewer.replace(parentPath, viewIndex, delta.getElement());
 			} else {
@@ -1290,7 +1289,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		if (childCount > 0) {
 			int viewCount = modelToViewChildCount(elementPath, childCount);
 			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-				System.out.println("[expand] setChildCount(" + delta.getElement() + ", (model) " + childCount + " (view) " + viewCount); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				DebugUIPlugin.trace("[expand] setChildCount(" + delta.getElement() + ", (model) " + childCount + " (view) " + viewCount); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			treeViewer.setChildCount(elementPath, viewCount);
 	        if (!treeViewer.getExpandedState(elementPath)) {
@@ -1315,7 +1314,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		// Element is filtered - if no longer filtered, insert the element
 		if (shouldFilter(parentPath, element)) {
 			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-				System.out.println("[unfilter] abort unfilter element: " + element + ", (model) " + modelIndex);  //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.trace("[unfilter] abort unfilter element: " + element + ", (model) " + modelIndex);  //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			// still filtered, stop
 			return -1;
@@ -1325,7 +1324,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		int viewIndex = modelToViewIndex(parentPath, modelIndex);
 		if (viewIndex >= 0) {
 			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-				System.out.println("[unfilter] insert(" + parentPath.getLastSegment() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + element); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				DebugUIPlugin.trace("[unfilter] insert(" + parentPath.getLastSegment() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + element); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			getViewer().insert(parentPath, element, viewIndex);
 			return viewIndex;
@@ -1342,7 +1341,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 
 	protected void handleRemove(IModelDelta delta) {
 		if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-			System.out.println("handleRemove(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.trace("handleRemove(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		IModelDelta parentDelta = delta.getParentDelta();
 		IInternalTreeModelViewer treeViewer = getViewer();
@@ -1373,7 +1372,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		if (modelIndex >= 0) {
 			// found the element
 			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-				System.out.println(" - (found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				DebugUIPlugin.trace(" - (found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			rescheduleUpdates(parentPath, modelIndex);
 			getViewer().remove(parentPath, viewIndex);
@@ -1384,7 +1383,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 			// did not find the element, but found an unmapped item.
 			// remove the unmapped item in it's place and update filters
 			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-				System.out.println(" - (not found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex + " unmapped index: " + unmappedIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				DebugUIPlugin.trace(" - (not found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex + " unmapped index: " + unmappedIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			modelIndex = viewToModelIndex(parentPath, unmappedIndex);
 			rescheduleUpdates(parentPath, modelIndex);
@@ -1402,7 +1401,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		// failing that, refresh the parent to properly update for non-visible/unmapped children
 		// and update filtered indexes
 		if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-			System.out.println(" - (not found) remove/refresh(" + delta.getElement()); //$NON-NLS-1$
+			DebugUIPlugin.trace(" - (not found) remove/refresh(" + delta.getElement()); //$NON-NLS-1$
 		}
 		getViewer().remove(getViewerTreePath(delta));
 		clearFilters(parentPath);
@@ -1465,12 +1464,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 				if (modelCount > 0) {
 					int viewCount = modelToViewChildCount(parentPath, modelCount);
 					if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-						System.out.println("[select] setChildCount(" + parentDelta.getElement() + ", (model) " + parentDelta.getChildCount() + " (view) " + viewCount ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						DebugUIPlugin.trace("[select] setChildCount(" + parentDelta.getElement() + ", (model) " + parentDelta.getChildCount() + " (view) " + viewCount ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					treeViewer.setChildCount(parentPath, viewCount);
 				}
 				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-					System.out.println("[select] replace(" + parentDelta.getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					DebugUIPlugin.trace("[select] replace(" + parentDelta.getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				treeViewer.replace(parentPath, viewIndex, delta.getElement());
 			}
@@ -1510,7 +1509,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 			int viewIndex = modelToViewIndex(parentPath, modelIndex);
 			if (viewIndex >= 0) {
 				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-					System.out.println("[reveal] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					DebugUIPlugin.trace("[reveal] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				treeViewer.replace(parentPath, viewIndex, delta.getElement());
 			} else {
@@ -1546,7 +1545,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );        
         
 		if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-			System.out.println("updateChildCount(" + getElement(treePath) + ", " + currentChildCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			DebugUIPlugin.trace("updateChildCount(" + getElement(treePath) + ", " + currentChildCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		doUpdateChildCount(treePath);
 	}
@@ -1559,7 +1558,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	    
 		int modelIndex = viewToModelIndex(parentPath, viewIndex);
 		if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-			System.out.println("updateElement("+ getElement(parentPath) + ", " + viewIndex + ") > modelIndex = " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			DebugUIPlugin.trace("updateElement("+ getElement(parentPath) + ", " + viewIndex + ") > modelIndex = " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		doUpdateElement(parentPath, modelIndex);		
 	}
@@ -1571,7 +1570,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
 	    
 		if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-			System.out.println("updateHasChildren(" + getElement(path)); //$NON-NLS-1$
+			DebugUIPlugin.trace("updateHasChildren(" + getElement(path)); //$NON-NLS-1$
 		}
 		doUpdateHasChildren(path);
 	}

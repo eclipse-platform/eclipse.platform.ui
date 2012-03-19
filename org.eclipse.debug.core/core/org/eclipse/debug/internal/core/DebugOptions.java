@@ -14,6 +14,7 @@ import java.util.Hashtable;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
+import org.eclipse.osgi.service.debug.DebugTrace;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -33,6 +34,12 @@ public class DebugOptions implements DebugOptionsListener {
 	static final String DEBUG_FLAG_EVENTS = "org.eclipse.debug.core/debug/events"; //$NON-NLS-1$
 	
 	/**
+	 * The {@link DebugTrace} object to print to OSGi tracing
+	 * @since 3.8
+	 */
+	private static DebugTrace fgDebugTrace;
+	
+	/**
 	 * Constructor
 	 * @param context the bundle context
 	 */
@@ -46,8 +53,33 @@ public class DebugOptions implements DebugOptionsListener {
 	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
 	 */
 	public void optionsChanged(org.eclipse.osgi.service.debug.DebugOptions options) {
+		fgDebugTrace = options.newDebugTrace(DebugPlugin.getUniqueIdentifier());
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
 		DEBUG_COMMANDS = DEBUG & options.getBooleanOption(DEBUG_FLAG_COMMANDS, false);
 		DEBUG_EVENTS = DEBUG & options.getBooleanOption(DEBUG_FLAG_EVENTS, false);
+	}
+	
+	/**
+	 * Prints the given message to System.out and to the OSGi tracing (if started)
+	 * @param option the option or <code>null</code>
+	 * @param message the message to print or <code>null</code>
+	 * @param throwable the {@link Throwable} or <code>null</code>
+	 * @since 3.8
+	 */
+	public static void trace(String option, String message, Throwable throwable) {
+		System.out.println(message);
+		if(fgDebugTrace != null) {
+			fgDebugTrace.trace(option, message, throwable);
+		}
+	}
+	
+	/**
+	 * Prints the given message to System.out and to the OSGi tracing (if enabled)
+	 * 
+	 * @param message the message or <code>null</code>
+	 * @since 3.8
+	 */
+	public static void trace(String message) {
+		trace(null, message, null);
 	}
 }

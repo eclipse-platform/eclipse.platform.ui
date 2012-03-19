@@ -127,7 +127,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	
 	/**
 	 * Constructs a new label provider on the given display
-	 * @param viewer Viewer that this label provieer is used with.
+	 * @param viewer Viewer that this label provider is used with.
 	 */
 	public TreeModelLabelProvider(IInternalTreeModelViewer viewer) {
 		fViewer = viewer;
@@ -326,9 +326,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
      * @param backgrounds Array of RGB values for background colors, may be 
      * <code>null</code>.
      * @param checked Whether given item should be checked.
-     * @param grayed Whether given item's checkbox shoudl be grayed.
-     * @see ITreeModelLabelProviderTarget#setElementData(TreePath, int, String[], ImageDescriptor[], FontData[], RGB[], RGB[])
-     * @see ITreeModelCheckProviderTarget#setElementChecked(TreePath, boolean, boolean)
+     * @param grayed Whether given item's checkbox should be grayed.
      */
     void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
         FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds, boolean checked, boolean grayed) 
@@ -359,7 +357,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	
     /**
     * Cancels all running updates for the given element.  If seachFullPath is true,
-    * all updtes will be canceled which have the given element anywhere in their 
+    * all updates will be canceled which have the given element anywhere in their 
     * patch.   
     * @param element element to search for.
     * @param searchFullPath flag whether to look for the element in the full path
@@ -452,12 +450,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		
 		if (begin) {
 			if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-				System.out.println("LABEL SEQUENCE BEGINS"); //$NON-NLS-1$
+				DebugUIPlugin.trace("LABEL SEQUENCE BEGINS"); //$NON-NLS-1$
 			}
 			notifyUpdate(TreeModelContentProvider.UPDATE_SEQUENCE_BEGINS, null);
 		}
         if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-			System.out.println("\tBEGIN - " + update); //$NON-NLS-1$
+        	DebugUIPlugin.trace("\tBEGIN - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(TreeModelContentProvider.UPDATE_BEGINS, update);
 	}
@@ -471,12 +469,12 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		fUpdatesInProgress.remove(update);
 		
         if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-			System.out.println("\tEND - " + update); //$NON-NLS-1$
+        	DebugUIPlugin.trace("\tEND - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(TreeModelContentProvider.UPDATE_COMPLETE, update);
 		if (fUpdatesInProgress.isEmpty()) {
             if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-				System.out.println("LABEL SEQUENCE ENDS"); //$NON-NLS-1$
+            	DebugUIPlugin.trace("LABEL SEQUENCE ENDS"); //$NON-NLS-1$
 			}
 			notifyUpdate(TreeModelContentProvider.UPDATE_SEQUENCE_COMPLETE, null);
 		}

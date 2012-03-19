@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,8 +48,6 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 	private ListenerList fPresentationErrorListeners;
 	private Object fTopIndexKey;
 
-	public static boolean DEBUG_DYNAMIC_LOADING = false;
-	
 	public AsyncVirtualContentTableViewer(Composite parent, int style) {
 		super(parent, style);
 		fVirtualContentListeners = new ListenerList();
@@ -182,8 +180,9 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 						int idx = getVirtualContentModel().indexOfKey(topIndexKey);
 						if (idx >= 0)
 						{
-							if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-								System.out.println("actual set top index: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+							if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+								DebugUIPlugin.trace("actual set top index: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+							}
 							fPendingTopIndexKey = null;
 							setTopIndexKey(topIndexKey);
 							getTable().setTopIndex(idx);							
@@ -191,14 +190,16 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 							
 							if (getTable().getTopIndex() != idx  )
 							{
-								if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-									System.out.println(">>> FAILED set top index : " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+								if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+									DebugUIPlugin.trace(">>> FAILED set top index : " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+								}
 
 								// only retry if we have pending updates
 								if (hasPendingUpdates())
 								{
-									if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-										System.out.println(">>> Retry top index: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+									if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+										DebugUIPlugin.trace(">>> Retry top index: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+									}
 
 									fPendingTopIndexKey = topIndexKey;
 								}
@@ -206,8 +207,9 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 						}
 						else
 						{
-							if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-								System.out.println("cannot find key, put it back to the queue: " + topIndexKey); //$NON-NLS-1$
+							if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+								DebugUIPlugin.trace("cannot find key, put it back to the queue: " + topIndexKey); //$NON-NLS-1$
+							}
 							fPendingTopIndexKey = topIndexKey;
 						}
 						
@@ -298,10 +300,10 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 	
 	public void topIndexChanged()
 	{
-		if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+		if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING)
 		{
 			MemorySegment a = (MemorySegment)getTable().getItem(getTable().getTopIndex()).getData();
-			System.out.println(Thread.currentThread().getName() + " " + this + " handle scroll bar moved:  top index: " + a.getAddress().toString(16)); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.trace(Thread.currentThread().getName() + " " + this + " handle scroll bar moved:  top index: " + a.getAddress().toString(16)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		setTopIndexKey(getVirtualContentModel().getKey(getTable().getTopIndex()));
@@ -384,8 +386,9 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 	private void addKeyToQueue(Object topIndexKey)
 	{
 		synchronized(fTopIndexQueue){
-			if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-				System.out.println(" >>> add to top index queue: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+			if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+				DebugUIPlugin.trace(" >>> add to top index queue: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+			}
 			fTopIndexQueue.add(topIndexKey);
 		}
 	}
@@ -393,8 +396,9 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 	private void removeKeyFromQueue(Object topIndexKey)
 	{
 		synchronized(fTopIndexQueue){
-			if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-				System.out.println(" >>> remove frome top index queue: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+			if (DebugUIPlugin.DEBUG_DYNAMIC_LOADING) {
+				DebugUIPlugin.trace(" >>> remove frome top index queue: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+			}
 			fTopIndexQueue.remove(topIndexKey);
 		}
 	}

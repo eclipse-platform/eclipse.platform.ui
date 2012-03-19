@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems and others.
+ * Copyright (c) 2009, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,9 +85,9 @@ public abstract class TreeViewerDropDown {
 
         fDropDownViewer.addOpenListener(new IOpenListener() {
             public void open(OpenEvent event) {
-                if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN)
-                    System.out.println("BreadcrumbItemDropDown.showMenu()$treeViewer>open"); //$NON-NLS-1$
-
+                if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
+                	DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()$treeViewer>open"); //$NON-NLS-1$
+                }
                 openElement(event.getSelection());
             }
         });
@@ -96,9 +96,9 @@ public abstract class TreeViewerDropDown {
         
         tree.addMouseListener(new MouseListener() {
             public void mouseUp(MouseEvent e) {
-                if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN)
-                    System.out.println("BreadcrumbItemDropDown.showMenu()$treeViewer>mouseUp"); //$NON-NLS-1$
-
+                if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
+                	DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()$treeViewer>mouseUp"); //$NON-NLS-1$
+                }
                 if (e.button != 1)
                     return;
 
@@ -271,9 +271,9 @@ public abstract class TreeViewerDropDown {
         boolean treeHasFocus= !tree.isDisposed() && tree.isFocusControl();
 
         if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
-            System.out.println("    isDisposed: " + tree.isDisposed()); //$NON-NLS-1$
-            System.out.println("    shell hasFocus: " + (!tree.isDisposed() && tree.isFocusControl())); //$NON-NLS-1$
-            System.out.println("    tree hasFocus: " + treeHasFocus); //$NON-NLS-1$
+        	DebugUIPlugin.trace("    isDisposed: " + tree.isDisposed()); //$NON-NLS-1$
+        	DebugUIPlugin.trace("    shell hasFocus: " + (!tree.isDisposed() && tree.isFocusControl())); //$NON-NLS-1$
+        	DebugUIPlugin.trace("    tree hasFocus: " + treeHasFocus); //$NON-NLS-1$
         }
 
         if (tree.isDisposed())

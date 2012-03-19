@@ -110,7 +110,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         
         private IPropertyChangeListener fOrganizersListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
-                // For any property changes in breakpiont organizers, refresh the containers.
+                // For any property changes in breakpoint organizers, refresh the containers.
                 updateContainers();
             }
         };
@@ -194,7 +194,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 buildInstallDelta(rootDelta, fContainer);
 
                 if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
-                    System.out.println("PROXY INSTALLED (" + proxy + ")\n"); //$NON-NLS-1$ //$NON-NLS-2$
+                	DebugUIPlugin.trace("PROXY INSTALLED (" + proxy + ")\n"); //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
                 proxy.postModelChanged(rootDelta, false);
@@ -204,7 +204,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         synchronized void proxyDisposed(BreakpointManagerProxy proxy) {
             fProxies.remove(proxy);
             if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
-                System.out.println("PROXY DISPOSED (" + proxy + ")\n"); //$NON-NLS-1$ //$NON-NLS-2$
+            	DebugUIPlugin.trace("PROXY DISPOSED (" + proxy + ")\n"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
 
@@ -265,7 +265,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                     appendModelDeltaToElement(delta, newBreakpoint, IModelDelta.SELECT);
                 }
                 if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
-                    System.out.println("POST BREAKPOINT DELTA (setOrganizers)\n"); //$NON-NLS-1$
+                	DebugUIPlugin.trace("POST BREAKPOINT DELTA (setOrganizers)\n"); //$NON-NLS-1$
                 }
                 postModelChanged(delta, false); 
             }            
@@ -362,7 +362,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 
                 if (changed) {
                     if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
-                        System.out.println("POST BREAKPOINT DELTA (setFilterSelection)\n"); //$NON-NLS-1$
+                    	DebugUIPlugin.trace("POST BREAKPOINT DELTA (setFilterSelection)\n"); //$NON-NLS-1$
                     }
                     postModelChanged(delta, false); 
                 }
@@ -399,7 +399,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
             synchronized (this) {
                 if (buildTrackSelectionDelta(delta, fContainer, bpsSet)) {
                     if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
-                        System.out.println("POST BREAKPOINT DELTA (trackSelection)\n"); //$NON-NLS-1$
+                    	DebugUIPlugin.trace("POST BREAKPOINT DELTA (trackSelection)\n"); //$NON-NLS-1$
                     }
                     BreakpointManagerProxy[] proxies = getProxies();
                     for (int i = 0; i < proxies.length; i++) {
@@ -477,7 +477,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                     }
                 
                     if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
-                        System.out.println("POST BREAKPOINT DELTA (breakpointsAddedInput)\n"); //$NON-NLS-1$
+                        DebugUIPlugin.trace("POST BREAKPOINT DELTA (breakpointsAddedInput)\n"); //$NON-NLS-1$
                     }
                     postModelChanged(delta, false); 
                 }
@@ -499,7 +499,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 
                 if (removed) {
                     if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
-                        System.out.println("POST BREAKPOINT DELTA (breakpointsRemovedInput)\n"); //$NON-NLS-1$
+                    	DebugUIPlugin.trace("POST BREAKPOINT DELTA (breakpointsRemovedInput)\n"); //$NON-NLS-1$
                     }
                     postModelChanged(delta, false); 
                 }
@@ -539,7 +539,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                     appendModelDelta(fContainer, delta, IModelDelta.STATE | IModelDelta.CONTENT, filteredBreakpoints[i]); // content flag triggers detail refresh
 
                 if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
-                    System.out.println("POST BREAKPOINT DELTA (breakpointsChanged)\n"); //$NON-NLS-1$
+                    DebugUIPlugin.trace("POST BREAKPOINT DELTA (breakpointsChanged)\n"); //$NON-NLS-1$
                 }
                 postModelChanged(delta, false); 
             }            
@@ -849,10 +849,10 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
     }
     
     /**
-     * Handles the event when a presentation context is dispoed.
+     * Handles the event when a presentation context is disposed.
      * Sub-classes may override to perform additional cleanup.
      * 
-     * @param context Presetnation context that was disposed.
+     * @param context Presentation context that was disposed.
      */
     protected void contextDisposed(IPresentationContext context) {
         List removed = new ArrayList(1);
@@ -867,7 +867,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
             }
         }
 
-        // Dispose the removed input datas
+        // Dispose the removed input data
         for (int i = 0; i < removed.size(); i++) {
             ((InputData)removed.get(i)).dispose();
         }

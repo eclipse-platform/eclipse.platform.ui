@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,11 +68,11 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 		protected IStatus run(IProgressMonitor monitor) {
 			run = true;
 			if (DebugOptions.DEBUG_COMMANDS) {
-				System.out.print("can execute command: " + AbstractDebugCommand.this); //$NON-NLS-1$
+				DebugOptions.trace("can execute command: " + AbstractDebugCommand.this); //$NON-NLS-1$
 			}
 			if (monitor.isCanceled()) {
 				if (DebugOptions.DEBUG_COMMANDS) {
-					System.out.println(" >> *CANCELED* <<"); //$NON-NLS-1$
+					DebugOptions.trace(" >> *CANCELED* <<"); //$NON-NLS-1$
 				}
 				request.cancel();
 			}
@@ -85,7 +85,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 						request.setEnabled(false);
 						request.cancel();
 						if (DebugOptions.DEBUG_COMMANDS) {
-							System.out.println(" >> false (no adapter)"); //$NON-NLS-1$
+							DebugOptions.trace(" >> false (no adapter)"); //$NON-NLS-1$
 						}
 					}
 				}
@@ -99,15 +99,15 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 				try {
 					boolean executable = isExecutable(targets, monitor, request);
 					if (DebugOptions.DEBUG_COMMANDS) {
-						System.out.println(" >> " + executable); //$NON-NLS-1$
+						DebugOptions.trace(" >> " + executable); //$NON-NLS-1$
 					}
 					request.setEnabled(executable);
 				} catch (CoreException e) {
 					request.setStatus(e.getStatus());
 					request.setEnabled(false);
 					if (DebugOptions.DEBUG_COMMANDS) {
-						System.out.println(" >> ABORTED"); //$NON-NLS-1$
-						System.out.println("\t" + e.getStatus().getMessage()); //$NON-NLS-1$
+						DebugOptions.trace(" >> ABORTED"); //$NON-NLS-1$
+						DebugOptions.trace("\t" + e.getStatus().getMessage()); //$NON-NLS-1$
 					}
 				}
 			}
@@ -140,7 +140,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 					request.cancel();
 					request.done();
 					if (DebugOptions.DEBUG_COMMANDS) {
-						System.out.println(" >> *CANCELED* <<" + AbstractDebugCommand.this); //$NON-NLS-1$
+						DebugOptions.trace(" >> *CANCELED* <<" + AbstractDebugCommand.this); //$NON-NLS-1$
 					}
 				}
 				getJobManager().removeJobChangeListener(this);
@@ -200,7 +200,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 		Job job = new Job(getExecuteTaskName()) {
 			protected IStatus run(IProgressMonitor monitor) {
 				if (DebugOptions.DEBUG_COMMANDS) {
-					System.out.println("execute: " + AbstractDebugCommand.this); //$NON-NLS-1$
+					DebugOptions.trace("execute: " + AbstractDebugCommand.this); //$NON-NLS-1$
 				}
 				Object[] elements = request.getElements();
 				Object[] targets = new Object[elements.length];
@@ -214,7 +214,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 				} catch (CoreException e) {
 					request.setStatus(e.getStatus());
 					if (DebugOptions.DEBUG_COMMANDS) {
-						System.out.println("\t" + e.getStatus().getMessage()); //$NON-NLS-1$
+						DebugOptions.trace("\t" + e.getStatus().getMessage()); //$NON-NLS-1$
 					}
 				}
 				request.done();
