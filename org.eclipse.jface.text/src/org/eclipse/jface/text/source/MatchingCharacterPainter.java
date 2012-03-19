@@ -355,6 +355,10 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 				fDocumentChanged= false;
 				if (reason != IPainter.CONFIGURATION && !lengthChanged && fPreviousSelection != null && reason != IPainter.INTERNAL) {
 					if (!matcher.isRecomputationOfEnclosingPairRequired(document, selection, fPreviousSelection)) {
+						if (fCharacterPresentAtCaretLocation && !fHighlightCharacterAtCaretLocation) {
+							fCharacterPresentAtCaretLocation= false;
+							handleDrawRequest(null);
+						}
 						fPreviousSelection= selection;
 						return;
 					}
