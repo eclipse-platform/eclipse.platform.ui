@@ -563,6 +563,12 @@
    </filesystem>
 </extension>
 <extension
+      point="org.eclipse.core.filesystem.filesystems">
+   <filesystem scheme="remote">
+      <run class="org.eclipse.core.tests.internal.filesystem.remote.RemoteFileSystem"/>
+   </filesystem>
+</extension>
+<extension
       id="modelProvider"
       point="org.eclipse.core.resources.modelProviders">
    <modelProvider
