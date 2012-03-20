@@ -163,7 +163,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 				try {
 					fillArgs(actualArgs, keys, active);
 				} finally {
-					resumeRecoding();
+					resumeRecording();
 				}
 			}
 		}
@@ -207,7 +207,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		current.push(null);
 	}
 
-	synchronized public void resumeRecoding() {
+	synchronized public void resumeRecording() {
 		Stack<Computation> current = EclipseContext.getCalculatedComputations();
 		Computation plug = current.pop();
 		if (plug != null)

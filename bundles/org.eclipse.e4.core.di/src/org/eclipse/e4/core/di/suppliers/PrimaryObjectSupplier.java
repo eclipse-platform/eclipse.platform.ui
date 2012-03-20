@@ -54,6 +54,6 @@ abstract public class PrimaryObjectSupplier {
 	/**
 	 * Resume tracking access to the supplier's objects.
 	 */
-	abstract public void resumeRecoding();
+	abstract public void resumeRecording();
 
 }

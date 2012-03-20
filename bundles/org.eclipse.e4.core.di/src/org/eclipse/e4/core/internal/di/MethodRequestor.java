@@ -65,7 +65,7 @@ public class MethodRequestor extends Requestor {
 			if (!wasAccessible)
 				method.setAccessible(false);
 			if (pausedRecording)
-				primarySupplier.resumeRecoding();
+				primarySupplier.resumeRecording();
 			clearResolvedArgs();
 		}
 		return result;
