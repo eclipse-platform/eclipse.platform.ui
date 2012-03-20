@@ -217,7 +217,8 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 	static public ContextObjectSupplier getObjectSupplier(IEclipseContext context, IInjector injector) {
 		if (context == null)
 			return null;
-		ContextObjectSupplier supplier = context.getLocal(ContextObjectSupplier.class);
+		// don't track this dependency if we are called in RaT
+		ContextObjectSupplier supplier = (ContextObjectSupplier) ((EclipseContext) context).internalGet((EclipseContext) context, ContextObjectSupplier.class.getName(), true);
 		if (supplier != null)
 			return supplier;
 		ContextObjectSupplier objectSupplier = new ContextObjectSupplier(context, injector);
