@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 
 /**
  * Tests for the basic context injection functionality
@@ -307,5 +308,20 @@ public class ContextInjectionTest extends TestCase {
 		assertEquals(testDouble, userObject.inputDouble);
 		assertTrue(userObject.finishOverrideCalled);
 	}
+	
+    public void testBug374421() {
+    	try {
+	        IEclipseContext context = EclipseContextFactory.create();
+	        context.runAndTrack(new RunAndTrack() {
+	            public boolean changed(IEclipseContext context) {
+	                IEclipseContext staticContext = EclipseContextFactory.create();
+	                ContextInjectionFactory.make(Object.class, context, staticContext);
+	                return true;
+	            }
+	        });
+    	} catch (StackOverflowError e) {
+    		fail("See bug 374421 for details.");
+    	}
+    }
 
 }
