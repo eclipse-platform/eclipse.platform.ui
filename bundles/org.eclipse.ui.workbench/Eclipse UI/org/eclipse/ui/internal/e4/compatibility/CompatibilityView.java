@@ -14,6 +14,8 @@ package org.eclipse.ui.internal.e4.compatibility;
 import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -36,15 +38,20 @@ import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.ViewActionBuilder;
 import org.eclipse.ui.internal.ViewReference;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 
@@ -106,32 +113,18 @@ public class CompatibilityView extends CompatibilityPart {
 	protected boolean createPartControl(IWorkbenchPart legacyPart, Composite parent) {
 		part.getContext().set(IViewPart.class, (IViewPart) legacyPart);
 
-		IEclipseContext context = getModel().getContext();
-		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
+		final IEclipseContext partContext = getModel().getContext();
+		IRendererFactory rendererFactory = partContext.get(IRendererFactory.class);
 
 		// Some views (i.e. Console) require that the actual ToolBar be
 		// instantiated before they are
-		IActionBars actionBars = ((IViewPart) legacyPart).getViewSite().getActionBars();
+		final IActionBars actionBars = ((IViewPart) legacyPart).getViewSite().getActionBars();
 		ToolBarManager tbm = (ToolBarManager) actionBars.getToolBarManager();
 		Composite toolBarParent = new Composite(parent, SWT.NONE);
 		tbm.createControl(toolBarParent);
 
 		MenuManager mm = (MenuManager) actionBars.getMenuManager();
 		MMenu menu = getViewMenu();
-		if (menu != null) {
-			AbstractPartRenderer apr = rendererFactory.getRenderer(menu, parent);
-			if (apr instanceof MenuManagerRenderer) {
-				MenuManagerRenderer renderer = (MenuManagerRenderer) apr;
-				renderer.linkModelToManager(menu, mm);
-			}
-		}
-
-		super.createPartControl(legacyPart, parent);
-
-		// dispose the tb, it will be re-created when the tab is shown
-		toolBarParent.dispose();
-
-		menu = getViewMenu();
 		if (menu == null) {
 			menu = MenuFactoryImpl.eINSTANCE.createMenu();
 			menu.setElementId(part.getElementId());
@@ -145,9 +138,6 @@ public class CompatibilityView extends CompatibilityPart {
 		if (apr instanceof MenuManagerRenderer) {
 			MenuManagerRenderer renderer = (MenuManagerRenderer) apr;
 			renderer.linkModelToManager(menu, mm);
-			// create opaque items for any contribution items that were added
-			// directly to the manager
-			renderer.reconcileManagerToModel(mm, menu);
 		}
 
 		// Construct the toolbar (if necessary)
@@ -160,7 +150,64 @@ public class CompatibilityView extends CompatibilityPart {
 		apr = rendererFactory.getRenderer(toolbar, parent);
 		if (apr instanceof ToolBarManagerRenderer) {
 			((ToolBarManagerRenderer) apr).linkModelToManager(toolbar, tbm);
+		}
+
+		super.createPartControl(legacyPart, parent);
+
+		// dispose the tb, it will be re-created when the tab is shown
+		toolBarParent.dispose();
+
+		apr = rendererFactory.getRenderer(menu, parent);
+		if (apr instanceof MenuManagerRenderer) {
+			MenuManagerRenderer renderer = (MenuManagerRenderer) apr;
+			// create opaque items for any contribution items that were added
+			// directly to the manager
+			renderer.reconcileManagerToModel(mm, menu);
+		}
+
+		apr = rendererFactory.getRenderer(toolbar, parent);
+		if (apr instanceof ToolBarManagerRenderer) {
+			// create opaque items for any contribution items that were added
+			// directly to the manager
 			((ToolBarManagerRenderer) apr).reconcileManagerToModel(tbm, toolbar);
+		}
+
+		final IContextFunction func = new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				final ViewActionBuilder actionBuilder = new ViewActionBuilder();
+				actionBuilder.readActionExtensions(getView());
+				ActionDescriptor[] actionDescriptors = actionBuilder.getExtendedActions();
+				if (actionDescriptors != null) {
+					IHandlerService hs = partContext.get(IHandlerService.class);
+					for (int i = 0; i < actionDescriptors.length; i++) {
+						ActionDescriptor actionDescriptor = actionDescriptors[i];
+
+						if (actionDescriptor != null) {
+							IAction action = actionDescriptors[i].getAction();
+
+							if (action != null && action.getActionDefinitionId() != null) {
+								hs.activateHandler(action.getActionDefinitionId(),
+										new ActionHandler(action));
+							}
+						}
+					}
+				}
+				actionBars.updateActionBars();
+				final Runnable dispose = new Runnable() {
+
+					public void run() {
+						actionBuilder.dispose();
+					}
+				};
+				return dispose;
+			}
+		};
+		if (toolbar.getWidget() == null) {
+			toolbar.getTransientData().put(ToolBarManagerRenderer.POST_PROCESSING_FUNCTION, func);
+		} else {
+			toolbar.getTransientData().put(ToolBarManagerRenderer.POST_PROCESSING_DISPOSE,
+					func.compute(partContext));
 		}
 
 		return true;

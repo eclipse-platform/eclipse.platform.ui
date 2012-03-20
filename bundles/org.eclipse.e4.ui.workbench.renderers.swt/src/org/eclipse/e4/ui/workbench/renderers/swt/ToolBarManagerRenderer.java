@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -70,6 +71,9 @@ import org.osgi.service.event.EventHandler;
  * Create a contribute part.
  */
 public class ToolBarManagerRenderer extends SWTPartRenderer {
+
+	public static final String POST_PROCESSING_FUNCTION = "ToolBarManagerRenderer.postProcess.func"; //$NON-NLS-1$
+	public static final String POST_PROCESSING_DISPOSE = "ToolBarManagerRenderer.postProcess.dispose"; //$NON-NLS-1$
 
 	private static final String TOOL_BAR_MANAGER_RENDERER_DRAG_HANDLE = "ToolBarManagerRenderer.dragHandle"; //$NON-NLS-1$
 	private Map<MToolBar, ToolBarManager> modelToManager = new HashMap<MToolBar, ToolBarManager>();
@@ -848,6 +852,31 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			for (MOpaqueToolItem model : oldModelItems) {
 				clearModelToContribution(model,
 						(IContributionItem) model.getOpaqueItem());
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#postProcess
+	 * (org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	@Override
+	public void postProcess(MUIElement element) {
+		if (element instanceof MToolBar) {
+			MToolBar toolbarModel = (MToolBar) element;
+			if (toolbarModel.getTransientData().containsKey(
+					POST_PROCESSING_FUNCTION)) {
+				Object obj = toolbarModel.getTransientData().get(
+						POST_PROCESSING_FUNCTION);
+				if (obj instanceof IContextFunction) {
+					IContextFunction func = (IContextFunction) obj;
+					final IEclipseContext ctx = getContext(toolbarModel);
+					toolbarModel.getTransientData().put(
+							POST_PROCESSING_DISPOSE, func.compute(ctx));
+				}
 			}
 		}
 	}

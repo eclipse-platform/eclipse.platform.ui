@@ -46,7 +46,6 @@ final public class MenuPersistence extends RegistryPersistence {
 	private IEclipseContext appContext;
 	private ArrayList<MenuAdditionCacheEntry> cacheEntries = new ArrayList<MenuAdditionCacheEntry>();
 	private ArrayList<EditorAction> editorActionContributions = new ArrayList<EditorAction>();
-	private ArrayList<ViewAction> viewActionContributions = new ArrayList<ViewAction>();
 
 	private ArrayList<MMenuContribution> menuContributions = new ArrayList<MMenuContribution>();
 	private ArrayList<MToolBarContribution> toolBarContributions = new ArrayList<MToolBarContribution>();
@@ -87,7 +86,6 @@ final public class MenuPersistence extends RegistryPersistence {
 		menuContributions.clear();
 		cacheEntries.clear();
 		editorActionContributions.clear();
-		viewActionContributions.clear();
 		super.dispose();
 	}
 	/*
@@ -113,7 +111,6 @@ final public class MenuPersistence extends RegistryPersistence {
 		readAdditions();
 		// readActionSets();
 		readEditorActions();
-		readViewActions();
 
 		ArrayList<MMenuContribution> tmp = new ArrayList<MMenuContribution>(menuContributions);
 		menuContributions.clear();
@@ -199,42 +196,6 @@ final public class MenuPersistence extends RegistryPersistence {
 		}
 	}
 
-	private void readViewActions() {
-		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
-
-		final IConfigurationElement[] extElements = registry
-				.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_VIEW_ACTIONS);
-		for (IConfigurationElement element : extElements) {
-			if (contributorFilter == null
-					|| contributorFilter.matcher(element.getContributor().getName()).matches()) {
-				configElements.add(element);
-			}
-		}
-
-		Collections.sort(configElements, comparer);
-
-		for (IConfigurationElement element : configElements) {
-			IConfigurationElement[] children = element.getChildren();
-			// go in reverse order
-			for (int i = children.length - 1; i >= 0; i--) {
-				IConfigurationElement child = children[i];
-				if (child.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION)) {
-					ViewAction viewAction = new ViewAction(application, appContext, element, child,
-							false);
-					viewActionContributions.add(viewAction);
-					viewAction.addToModel(menuContributions, toolBarContributions,
-							trimContributions);
-				} else if (child.getName().equals(IWorkbenchRegistryConstants.TAG_MENU)) {
-					ViewAction viewAction = new ViewAction(application, appContext, element, child,
-							true);
-					viewActionContributions.add(viewAction);
-					viewAction.addToModel(menuContributions, toolBarContributions,
-							trimContributions);
-				}
-			}
-		}
-	}
 
 	private boolean isProgramaticContribution(IConfigurationElement menuAddition) {
 		return menuAddition.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) != null;
