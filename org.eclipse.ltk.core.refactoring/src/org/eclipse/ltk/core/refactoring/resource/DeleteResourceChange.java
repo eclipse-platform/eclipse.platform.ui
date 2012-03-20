@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.ltk.core.refactoring.resource;
 
 import java.net.URI;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,9 +47,9 @@ import org.eclipse.ltk.internal.core.refactoring.resource.undostates.ResourceUnd
  */
 public class DeleteResourceChange extends ResourceChange {
 
-	private IPath fResourcePath;
-	private boolean fForceOutOfSync;
-	private boolean fDeleteContent;
+	private final IPath fResourcePath;
+	private final boolean fForceOutOfSync;
+	private final boolean fDeleteContent;
 	private ChangeDescriptor fDescriptor;
 
 	/**
@@ -70,6 +71,7 @@ public class DeleteResourceChange extends ResourceChange {
 	 * The content delete is not undoable. This setting only applies to projects and is not used when deleting files or folders.
 	 */
 	public DeleteResourceChange(IPath resourcePath, boolean forceOutOfSync, boolean deleteContent) {
+		Assert.isNotNull(resourcePath);
 		fResourcePath= resourcePath;
 		fForceOutOfSync= forceOutOfSync;
 		fDeleteContent= deleteContent;
@@ -132,7 +134,8 @@ public class DeleteResourceChange extends ResourceChange {
 			if (resource == null || !resource.exists()) {
 				if (fDeleteContent)
 					return null; // see https://bugs.eclipse.org/343584
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), RefactoringCoreMessages.DeleteResourceChange_error_resource_not_exists));
+				String message= Messages.format(RefactoringCoreMessages.DeleteResourceChange_error_resource_not_exists, BasicElementLabels.getPathLabel(fResourcePath.makeRelative(), false));
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), message));
 			}
 
 			// make sure all files inside the resource are saved so restoring works
