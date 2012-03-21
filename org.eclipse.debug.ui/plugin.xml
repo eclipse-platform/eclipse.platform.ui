@@ -666,6 +666,10 @@
                 id="org.eclipse.debug.ui.main.toolbar"
                 label="%DebugActionSet.label">
              <separator
+                   name="breakpointGroup"
+                   visible="true">
+             </separator>
+             <separator
                    name="threadGroup"
                    visible="true">
              </separator>
@@ -692,10 +696,6 @@
              <separator
                    name="renderGroup"
                    visible="false">
-             </separator>
-             <separator
-                   name="breakpointGroup"
-                   visible="true">
              </separator>
           </toolbar>
        </menuContribution>
