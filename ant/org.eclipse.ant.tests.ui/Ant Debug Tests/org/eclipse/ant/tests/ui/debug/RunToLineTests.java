@@ -83,7 +83,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	}
 	
 	/**
-	 * Test a run to line, with no extra breakpoints in seperate VM.
+	 * Test a run to line, with no extra breakpoints in separate VM.
 	 * 
 	 * @throws Exception
 	 */
@@ -103,7 +103,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	
 	/**
 	 * Test a run to line, with an extra breakpoint, and preference to skip in a 
-	 * seperate VM
+	 * separate VM
 	 * 
 	 * @throws Exception
 	 */
@@ -183,10 +183,12 @@ public class RunToLineTests extends AbstractAntDebugTest {
                     IRunToLineTarget adapter = (IRunToLineTarget) editor.getAdapter(IRunToLineTarget.class);
                     assertNotNull("no run to line adapter", adapter);
                     IDocumentProvider documentProvider = editor.getDocumentProvider();
+                    assertNotNull("The document provider should not be null for: "+editor.getTitle(), documentProvider);
                     try {
                         // position cursor to line
                         documentProvider.connect(this);
                         IDocument document = documentProvider.getDocument(editor.getEditorInput());
+                        assertNotNull("The document should be available for: "+editor.getTitle(), document);
                         int lineOffset = document.getLineOffset(lineNumber - 1); // document is 0 based!
                         documentProvider.disconnect(this);
                         editor.selectAndReveal(lineOffset, 0);
