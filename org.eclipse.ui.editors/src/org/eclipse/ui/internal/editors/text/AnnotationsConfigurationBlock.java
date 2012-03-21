@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -582,7 +582,8 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		image= registry.get(annotationType);
 		if (image == null) {
-			ImageDescriptor descriptor= preference.getImageDescriptor();
+			AnnotationPreference delegatingPreference= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(annotationType);
+			ImageDescriptor descriptor= delegatingPreference.getImageDescriptor();
 			if (descriptor != null) {
 				registry.put(annotationType, descriptor);
 				image= registry.get(annotationType);
@@ -599,7 +600,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 
 		if (image == null)
-			return image;
+			return null;
 
 		// create custom image
 		final int SIZE= 16; // square images
