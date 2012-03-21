@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 				setValue(attribute, preference.getValue(attribute));
 			markCached(attribute);
 		}
-		return getValue(attribute);
+		return super.getValue(attribute);
 	}
 
 	private boolean getBooleanAttributeValue(Object attribute) {
@@ -256,4 +256,27 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 		return getBooleanAttributeValue(SHOW_IN_NAVIGATION_DROPDOWN_VALUE);
 	}
 
+	/*
+	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getTextStylePreferenceKey()
+	 * @since 3.8
+	 */
+	public String getTextStylePreferenceKey() {
+		return (String)getAttributeValue(TEXT_STYLE_PREFERENCE_KEY);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getTextStyleValue()
+	 * @since 3.8
+	 */
+	public String getTextStyleValue() {
+		return (String)getAttributeValue(TEXT_STYLE_PREFERENCE_VALUE);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getValue(java.lang.Object)
+	 * @since 3.8
+	 */
+	public Object getValue(Object attribute) {
+		return getAttributeValue(attribute);
+	}
 }
