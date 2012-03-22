@@ -682,7 +682,10 @@ public final class BindingService implements IBindingService {
 
 		MKeyBinding keyBinding = null;
 		for (MKeyBinding existingBinding : table.getBindings()) {
-			if (cmd.equals(existingBinding.getCommand())) {
+			if (cmd.equals(existingBinding.getCommand())
+					&& existingBinding.getKeySequence() != null
+					&& existingBinding.getKeySequence().equals(
+							binding.getTriggerSequence().format())) {
 				keyBinding = existingBinding;
 				break;
 			}

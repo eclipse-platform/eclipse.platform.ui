@@ -328,14 +328,16 @@ public class BindingProcessingAddon {
 							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
 									.copy((EObject) binding);
 							oldBinding.setCommand((MCommand) oldObj);
-							updateBinding(oldBinding, false, null);
+							updateBinding(oldBinding, false,
+									((EObject) binding).eContainer());
 							updateBinding(binding, true, null);
 						} else if (UIEvents.KeySequence.KEYSEQUENCE
 								.equals(attrName)) {
 							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
 									.copy((EObject) binding);
 							oldBinding.setKeySequence((String) oldObj);
-							updateBinding(oldBinding, false, null);
+							updateBinding(oldBinding, false,
+									((EObject) binding).eContainer());
 							updateBinding(binding, true, null);
 						}
 					} else if (UIEvents.KeyBinding.PARAMETERS.equals(attrName)) {
@@ -346,7 +348,8 @@ public class BindingProcessingAddon {
 							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
 									.copy((EObject) binding);
 							oldBinding.getParameters().remove(newObj);
-							updateBinding(oldBinding, false, null);
+							updateBinding(oldBinding, false,
+									((EObject) binding).eContainer());
 							updateBinding(binding, true, null);
 						} else if (UIEvents.EventTypes.REMOVE.equals(event
 								.getProperty(UIEvents.EventTags.TYPE))) {
@@ -355,7 +358,8 @@ public class BindingProcessingAddon {
 							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
 									.copy((EObject) binding);
 							oldBinding.getParameters().add((MParameter) oldObj);
-							updateBinding(oldBinding, false, null);
+							updateBinding(oldBinding, false,
+									((EObject) binding).eContainer());
 							updateBinding(binding, true, null);
 						}
 					}
