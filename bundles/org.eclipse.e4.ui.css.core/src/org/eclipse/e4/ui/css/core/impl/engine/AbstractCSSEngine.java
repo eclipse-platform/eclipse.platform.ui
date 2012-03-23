@@ -125,7 +125,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 */
 	protected List<ICSSPropertyHandlerProvider> propertyHandlerProviders = new ArrayList<ICSSPropertyHandlerProvider>();
 
-	private Map<String, String> currentCSSPropertiesApplyed = new HashMap<String, String>();
+	private Map<String, String> currentCSSPropertiesApplyed;
 
 	private boolean throwError;
 
@@ -539,7 +539,10 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	public void applyStyleDeclaration(Object element,
 			CSSStyleDeclaration style, String pseudo) {
 		// Apply style
-		currentCSSPropertiesApplyed.clear();
+		boolean avoidanceCacheInstalled = currentCSSPropertiesApplyed == null;
+		if (avoidanceCacheInstalled) {
+			currentCSSPropertiesApplyed = new HashMap<String, String>();
+		}
 		List<ICSSPropertyHandler2> handlers2 = null;
 		for (int i = 0; i < style.getLength(); i++) {
 			String property = style.item(i);
@@ -580,6 +583,10 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				}
 			}
 		}
+		if (avoidanceCacheInstalled) {
+			currentCSSPropertiesApplyed = null;
+		}
+
 	}
 
 	/*
@@ -754,7 +761,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	public ICSSPropertyHandler applyCSSProperty(Object element,
 			String property,
 			CSSValue value, String pseudo) throws Exception {
-		if (currentCSSPropertiesApplyed.containsKey(property)) {
+		if (currentCSSPropertiesApplyed != null
+				&& currentCSSPropertiesApplyed.containsKey(property)) {
 			// CSS Property was already applied, ignore it.
 			return null;
 		}
@@ -774,7 +782,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 					if (result) {
 						// Add CSS Property to flag that this CSS Property was
 						// applied.
-						currentCSSPropertiesApplyed.put(property, property);
+						if (currentCSSPropertiesApplyed != null) {
+							currentCSSPropertiesApplyed.put(property, property);
+						}
 						return handler;
 					}
 				} catch (Exception e) {
