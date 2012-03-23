@@ -385,7 +385,11 @@ public class InjectorImpl implements IInjector {
 	}
 
 	private void reportUnresolvedArgument(Requestor requestor, int argIndex) {
-		throw new InjectionException(resolutionError(requestor, argIndex));
+		String msg = resolutionError(requestor, argIndex);
+		if (shouldDebug) {
+			LogHelper.logError(msg, null);
+		}
+		throw new InjectionException(msg);
 	}
 
 	private String resolutionError(Requestor requestor, int argIndex) {
