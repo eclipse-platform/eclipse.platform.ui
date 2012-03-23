@@ -681,7 +681,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 			if (theShell != null && theShell.getParent() != null)
 				return;
 
-			if (display.getActiveShell().getParent() != null)
+			if (display.getActiveShell() != null && display.getActiveShell().getParent() != null)
 				return;
 
 			if (DEBUG) {
