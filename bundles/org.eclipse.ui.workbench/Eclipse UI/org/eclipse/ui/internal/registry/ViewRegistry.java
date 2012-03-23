@@ -92,7 +92,6 @@ public class ViewRegistry implements IViewRegistry {
 							break;
 						}
 					}
-					ViewCategory category = null;
 					if (descriptor == null) { // create a new descriptor
 						descriptor = BasicFactoryImpl.eINSTANCE.createPartDescriptor();
 						descriptor.setElementId(id);
@@ -138,7 +137,7 @@ public class ViewRegistry implements IViewRegistry {
 
 					String categoryId = element
 							.getAttribute(IWorkbenchRegistryConstants.ATT_CATEGORY);
-					category = findCategory(categoryId);
+					ViewCategory category = findCategory(categoryId);
 					if (category == null) {
 						tags.add("categoryTag:" + WorkbenchMessages.ICategory_other); //$NON-NLS-1$	
 					} else {
@@ -149,6 +148,9 @@ public class ViewRegistry implements IViewRegistry {
 					ViewDescriptor viewDescriptor = new ViewDescriptor(application, descriptor,
 							element);
 					descriptors.put(descriptor.getElementId(), viewDescriptor);
+					if (category != null) {
+						category.addDescriptor(viewDescriptor);
+					}
 				}
 			}
 		}
