@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Shell;
+import org.w3c.dom.Node;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Shell}.
@@ -61,8 +62,13 @@ public class ShellElement extends CompositeElement {
 		Shell shell = getShell();
 		// Add Shell listener
 		shell.addShellListener(shellListener);
+    }
 
-	}
+    public Node getParentNode() {
+        // Shells are considered as root notes; see bug 375069 
+        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=375069
+        return null;
+    }
 
 	private Shell getShell() {
 		return (Shell) getNativeWidget();

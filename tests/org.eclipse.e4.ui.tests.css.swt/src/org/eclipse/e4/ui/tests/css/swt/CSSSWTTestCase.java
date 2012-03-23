@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 public class CSSSWTTestCase extends TestCase {
@@ -72,4 +73,16 @@ public class CSSSWTTestCase extends TestCase {
 		    assertEquals(expected[i], actual[i]);			
 		}
 	}
+
+    @Override
+    protected void tearDown() throws Exception {
+        Display display = Display.getDefault();
+        if (!display.isDisposed()) {
+            for (Shell shell : display.getShells()) {
+                shell.dispose();
+            }
+        }
+        super.tearDown();
+    }
+
 }

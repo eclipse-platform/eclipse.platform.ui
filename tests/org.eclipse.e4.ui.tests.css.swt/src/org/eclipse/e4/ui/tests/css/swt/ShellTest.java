@@ -10,6 +10,7 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -74,5 +75,52 @@ public class ShellTest extends CSSSWTTestCase {
 		FontData fontData = shellToTest.getFont().getFontData()[0];
 		assertEquals(SWT.ITALIC, fontData.getStyle());		
 	}
+
+    // bug 375069: ensure children aren't caught up in parent
+    public void test375069ChildShellDifferentiation() throws Exception {
+        Display display = Display.getDefault();
+        CSSEngine engine = createEngine("Shell.parent { font-style: italic; }", display);
+
+        Shell parent = new Shell(display, SWT.NONE);
+        WidgetElement.setCSSClass(parent, "parent");
+        Shell child = new Shell(parent, SWT.NONE);
+        WidgetElement.setCSSClass(child, "child");
+        parent.open();
+        child.open();
+        engine.applyStyles(parent, true);
+        engine.applyStyles(child, true);
+
+
+        assertEquals(1, parent.getFont().getFontData().length);
+        FontData fontData = parent.getFont().getFontData()[0];
+        assertEquals(SWT.ITALIC, fontData.getStyle());
+
+        assertEquals(1, child.getFont().getFontData().length);
+        fontData = child.getFont().getFontData()[0];
+        assertNotSame(SWT.ITALIC, fontData.getStyle());
+    }
+
+    // bug 375069: ensure children shells are still captured by Shell
+    public void test375069AllShell() throws Exception {
+        Display display = Display.getDefault();
+        CSSEngine engine = createEngine("Shell { font-style: italic; }", display);
+
+        Shell parent = new Shell(display, SWT.NONE);
+        WidgetElement.setCSSClass(parent, "parent");
+        Shell child = new Shell(parent, SWT.NONE);
+        WidgetElement.setCSSClass(parent, "child");
+        parent.open();
+        child.open();
+        engine.applyStyles(parent, true);
+        engine.applyStyles(child, true);
+
+        assertEquals(1, parent.getFont().getFontData().length);
+        FontData fontData = parent.getFont().getFontData()[0];
+        assertEquals(SWT.ITALIC, fontData.getStyle());
+
+        assertEquals(1, child.getFont().getFontData().length);
+        fontData = child.getFont().getFontData()[0];
+        assertEquals(SWT.ITALIC, fontData.getStyle());
+    }
 
 }
