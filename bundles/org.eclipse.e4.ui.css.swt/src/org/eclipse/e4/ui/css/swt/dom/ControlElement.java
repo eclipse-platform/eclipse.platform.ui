@@ -86,10 +86,10 @@ public class ControlElement extends WidgetElement {
 		if (!dynamicEnabled) return; 
 		
 		Control control = getControl();
-		// Remove focus listener
-		control.removeFocusListener(focusListener);
-		// Add mouse track listener
-		control.removeMouseTrackListener(mouseHoverListener);
+		if (!control.isDisposed()) {
+			control.removeFocusListener(focusListener);
+			control.removeMouseTrackListener(mouseHoverListener);
+		}
 	}
 
 	public boolean isPseudoInstanceOf(String s) {

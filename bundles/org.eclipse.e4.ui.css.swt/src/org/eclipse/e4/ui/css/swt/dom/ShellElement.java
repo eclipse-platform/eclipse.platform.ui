@@ -14,6 +14,7 @@ import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.w3c.dom.Node;
 
@@ -56,19 +57,19 @@ public class ShellElement extends CompositeElement {
 	public void initialize() {
 		super.initialize();
 
+		Shell shell = getShell();
+
 		if (!dynamicEnabled) return; 
 		
-		
-		Shell shell = getShell();
 		// Add Shell listener
 		shell.addShellListener(shellListener);
-    }
+	}
 
-    public Node getParentNode() {
-        // Shells are considered as root notes; see bug 375069 
-        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=375069
-        return null;
-    }
+	public Node getParentNode() {
+		// Shells are considered as root notes; see bug 375069 
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=375069
+		return null;
+	}
 
 	private Shell getShell() {
 		return (Shell) getNativeWidget();
@@ -80,8 +81,9 @@ public class ShellElement extends CompositeElement {
 		if (!dynamicEnabled) return; 
 		
 		Shell shell = getShell();
-		// Remove Shell listener
-		shell.removeShellListener(shellListener);
+		if (!shell.isDisposed()) {
+			shell.removeShellListener(shellListener);
+		}
 	}
 
 	public boolean isPseudoInstanceOf(String s) {
@@ -90,5 +92,4 @@ public class ShellElement extends CompositeElement {
 		}
 		return super.isPseudoInstanceOf(s);
 	}
-	
 }

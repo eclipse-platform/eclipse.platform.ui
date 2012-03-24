@@ -56,16 +56,15 @@ public abstract class AbstractCSSPropertyHandlerProvider implements
 			String pseudo) {
 		String propertyValue = engine.retrieveCSSProperty(stylableElement,
 				propertyName, pseudo);
-		StringBuffer style = null;
-		// if (propertyValue != null) {
-		if (style == null)
-			style = new StringBuffer();
+		if (propertyValue == null) {
+			return null;
+		}
+		StringBuffer style = new StringBuffer();
 		style.append(propertyName);
 		style.append(":");
 		style.append(propertyValue);
 		style.append(";");
-		// }
-		return (style == null ? null : style.toString());
+		return style.toString();
 	}
 
 	/**

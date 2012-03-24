@@ -48,8 +48,9 @@ public class TextElement extends ControlElement {
 		if (!dynamicEnabled) return; 
 		
 		Text text = getText();
-		text.removeModifyListener(modifyListener);
-
+		if (!text.isDisposed()) {
+			text.removeModifyListener(modifyListener);
+		}
 	}
 
 	protected Text getText() {

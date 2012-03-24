@@ -48,7 +48,9 @@ public class ScaleElement extends ControlElement {
 		if (!dynamicEnabled) return; 
 		
 		Scale scale = getScale();
-		scale.removeSelectionListener(selectionListener);
+		if (!scale.isDisposed()) {
+			scale.removeSelectionListener(selectionListener);
+		}
 	}
 
 	public String getAttribute(String attr) {
