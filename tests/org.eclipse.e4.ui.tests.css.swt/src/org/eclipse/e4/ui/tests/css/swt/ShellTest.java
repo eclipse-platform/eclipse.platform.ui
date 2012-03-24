@@ -108,7 +108,7 @@ public class ShellTest extends CSSSWTTestCase {
         Shell parent = new Shell(display, SWT.NONE);
         WidgetElement.setCSSClass(parent, "parent");
         Shell child = new Shell(parent, SWT.NONE);
-        WidgetElement.setCSSClass(parent, "child");
+		WidgetElement.setCSSClass(child, "child");
         parent.open();
         child.open();
         engine.applyStyles(parent, true);
@@ -122,5 +122,75 @@ public class ShellTest extends CSSSWTTestCase {
         fontData = child.getFont().getFontData()[0];
         assertEquals(SWT.ITALIC, fontData.getStyle());
     }
+
+	// bug 375069: ensure children shells are still captured by Shell
+	public void testShellParentage() throws Exception {
+		Display display = Display.getDefault();
+		CSSEngine engine = createEngine(
+				"Shell[parentage='parent'] { font-style: italic; }", display);
+
+		Shell parent = new Shell(display, SWT.NONE);
+		WidgetElement.setID(parent, "parent");
+		Shell child = new Shell(parent, SWT.NONE);
+		WidgetElement.setID(child, "child");
+		parent.open();
+		child.open();
+		engine.applyStyles(parent, true);
+		engine.applyStyles(child, true);
+
+		assertEquals(1, parent.getFont().getFontData().length);
+		FontData fontData = parent.getFont().getFontData()[0];
+		assertNotSame(SWT.ITALIC, fontData.getStyle());
+
+		assertEquals(1, child.getFont().getFontData().length);
+		fontData = child.getFont().getFontData()[0];
+		assertEquals(SWT.ITALIC, fontData.getStyle());
+	}
+
+	public void testShellUnparentedPseudoelement() throws Exception {
+		Display display = Display.getDefault();
+		CSSEngine engine = createEngine(
+				"Shell:swt-unparented { font-style: italic; }", display);
+
+		Shell parent = new Shell(display, SWT.NONE);
+		WidgetElement.setCSSClass(parent, "parent");
+		Shell child = new Shell(parent, SWT.NONE);
+		WidgetElement.setCSSClass(child, "child");
+		parent.open();
+		child.open();
+		engine.applyStyles(parent, true);
+		engine.applyStyles(child, true);
+
+		assertEquals(1, parent.getFont().getFontData().length);
+		FontData fontData = parent.getFont().getFontData()[0];
+		assertEquals(SWT.ITALIC, fontData.getStyle());
+
+		assertEquals(1, child.getFont().getFontData().length);
+		fontData = child.getFont().getFontData()[0];
+		assertNotSame(SWT.ITALIC, fontData.getStyle());
+	}
+
+	public void testShellParentedPseudoelement() throws Exception {
+		Display display = Display.getDefault();
+		CSSEngine engine = createEngine(
+				"Shell:swt-parented { font-style: italic; }", display);
+
+		Shell parent = new Shell(display, SWT.NONE);
+		WidgetElement.setCSSClass(parent, "parent");
+		Shell child = new Shell(parent, SWT.NONE);
+		WidgetElement.setCSSClass(child, "child");
+		parent.open();
+		child.open();
+		engine.applyStyles(parent, true);
+		engine.applyStyles(child, true);
+
+		assertEquals(1, parent.getFont().getFontData().length);
+		FontData fontData = parent.getFont().getFontData()[0];
+		assertNotSame(SWT.ITALIC, fontData.getStyle());
+
+		assertEquals(1, child.getFont().getFontData().length);
+		fontData = child.getFont().getFontData()[0];
+		assertEquals(SWT.ITALIC, fontData.getStyle());
+	}
 
 }

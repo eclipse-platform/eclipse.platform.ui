@@ -90,6 +90,37 @@ public class ShellElement extends CompositeElement {
 		if ("active".equals(s)) {
 			return this.isActive;
 		}
+		if ("swt-parented".equals(s)) {
+			return getShell().getParent() != null;
+		}
+		if ("swt-unparented".equals(s)) {
+			return getShell().getParent() == null;
+		}
 		return super.isPseudoInstanceOf(s);
+	}
+
+	@Override
+	public String getAttribute(String attr) {
+		if("title".equals(attr)) {
+			String title = getShell().getText();
+			return title != null ? title : "";
+		}
+		if ("parentage".equals(attr)) {
+			Shell shell = getShell();
+			Composite parent = shell.getParent();
+			if (parent == null) {
+				return "";
+			}
+			StringBuilder sb = new StringBuilder();
+			do {
+				String id = WidgetElement.getID(parent);
+				if (id != null && id.length() > 0) {
+					sb.append(id).append(' ');
+				}
+				parent = parent.getParent();
+			} while (parent != null);
+			return sb.toString().trim();
+		}
+		return super.getAttribute(attr);
 	}
 }
