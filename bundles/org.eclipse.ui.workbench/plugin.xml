@@ -34,7 +34,7 @@
          </property-name>
          <property-name
                name="perspective-keyline-color"
-               deprecated="true">
+               deprecated="renamed as eclipse-perspective-keyline-color">
          </property-name>
       </handler>
    </extension>

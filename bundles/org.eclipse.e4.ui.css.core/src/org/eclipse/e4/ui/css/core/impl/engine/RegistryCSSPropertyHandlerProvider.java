@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Brian de Alwis and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Brian de Alwis - cobbled together from other sources  
+ *     Angelo Zerr <angelo.zerr@gmail.com> - likely source of initial implementation
+ *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
 import java.util.ArrayList;
@@ -25,39 +36,51 @@ import org.w3c.dom.css.CSSValue;
 
 public class RegistryCSSPropertyHandlerProvider extends
 		AbstractCSSPropertyHandlerProvider {
+	private static final String ATTR_COMPOSITE = "composite";
+	private static final String ATTR_ADAPTER = "adapter";
+	private static final String ATTR_NAME = "name";
+	private static final String ATTR_PROPERTY_NAME = "property-name";
+	private static final String ATTR_HANDLER = "handler";
+	private static final String ATTR_DEPRECATED = "deprecated";
+
 	private static final String PROPERTY_HANDLERS_EXTENSION_POINT = "org.eclipse.e4.ui.css.swt.property.handler";
 
 	private IExtensionRegistry registry;
-	private boolean hasDeprecatedProperties = false; // mild optimization
+	private boolean hasDeprecatedProperties = false; // mild optimization for
+														// getCSSProperties()
 
 	private Map<String, Map<String, ICSSPropertyHandler>> propertyHandlerMap;
 
 	public RegistryCSSPropertyHandlerProvider(IExtensionRegistry registry) {
-		this.registry = registry;
-
-		initialize();
+		this(registry, PROPERTY_HANDLERS_EXTENSION_POINT);
 	}
 
-	public void initialize() {
-		Map<String, Map<String, ICSSPropertyHandler>> handlersMap = new HashMap<String, Map<String, ICSSPropertyHandler>>();
+	public RegistryCSSPropertyHandlerProvider(IExtensionRegistry registry,
+			String extensionPointId) {
+		this.registry = registry;
+		// FIXME: should install a registry listener to make this dynamic
+		initialize(extensionPointId);
+	}
 
-		IExtensionPoint extPoint = registry
-				.getExtensionPoint(PROPERTY_HANDLERS_EXTENSION_POINT);
+	protected void initialize(String extensionPointId) {
+		Map<String, Map<String, ICSSPropertyHandler>> handlersMap = new HashMap<String, Map<String, ICSSPropertyHandler>>();
+		IExtensionPoint extPoint = registry.getExtensionPoint(extensionPointId);
 		for (IExtension e : extPoint.getExtensions()) {
 			for (IConfigurationElement ce : e.getConfigurationElements()) {
-				if (ce.getName().equals("handler")) {
-					String name = ce.getAttribute("composite");
-					String adapter = ce.getAttribute("adapter");
+				if (ce.getName().equals(ATTR_HANDLER)) {
+					// a single handler may implement a number of properties
+					String name = ce.getAttribute(ATTR_COMPOSITE);
+					String adapter = ce.getAttribute(ATTR_ADAPTER);
 					// if (className.equals(adapter)) {
 					IConfigurationElement[] children = ce.getChildren();
 					String[] names = new String[children.length];
-					boolean[] deprecated = new boolean[children.length];
+					String[] deprecated = new String[children.length];
 					for (int i = 0; i < children.length; i++) {
-						if (children[i].getName().equals("property-name")) {
-							names[i] = children[i].getAttribute("name");
-							deprecated[i] = Boolean.valueOf(children[i]
-									.getAttribute("deprecated"));
-							if (deprecated[i]) {
+						if (children[i].getName().equals(ATTR_PROPERTY_NAME)) {
+							names[i] = children[i].getAttribute(ATTR_NAME);
+							deprecated[i] = children[i]
+									.getAttribute(ATTR_DEPRECATED);
+							if (deprecated[i] != null) {
 								hasDeprecatedProperties = true;
 							}
 						}
@@ -72,21 +95,24 @@ public class RegistryCSSPropertyHandlerProvider extends
 											adaptersMap = new HashMap<String, ICSSPropertyHandler>());
 						}
 						if (!adaptersMap.containsKey(name)) {
-							Object t = ce.createExecutableExtension("handler");
+							Object t = ce
+									.createExecutableExtension(ATTR_HANDLER);
 							if (t instanceof ICSSPropertyHandler) {
 								for (int i = 0; i < names.length; i++) {
-									adaptersMap.put(names[i],
-													deprecated[i] ? new DeprecatedPropertyHandlerWrapper(
-															(ICSSPropertyHandler) t)
-															: (ICSSPropertyHandler) t);
+									adaptersMap
+											.put(names[i],
+													deprecated[i] == null ? (ICSSPropertyHandler) t
+															: new DeprecatedPropertyHandlerWrapper(
+																	(ICSSPropertyHandler) t,
+																	deprecated[i]));
 								}
 							} else {
-								System.err
-										.println("invalid property handler for "
-												+ name + "");
+								logError("invalid property handler for " + name);
 							}
 						}
 					} catch (CoreException e1) {
+						logError("invalid property handler for " + name + ": "
+								+ e1);
 					}
 				}
 			}
@@ -202,13 +228,22 @@ public class RegistryCSSPropertyHandlerProvider extends
 		return properties;
 	}
 
-	private static class DeprecatedPropertyHandlerWrapper implements
+	protected void logError(String message) {
+		// we log as an error to ensure it's shown
+		RuntimeLog.log(new Status(IStatus.ERROR, "org.eclipse.e4.ui.css.core",
+				message));
+	}
+
+	private class DeprecatedPropertyHandlerWrapper implements
 			ICSSPropertyHandler {
 		private ICSSPropertyHandler delegate;
+		private String message;
 		private Set<String> logged = new HashSet<String>();
 
-		DeprecatedPropertyHandlerWrapper(ICSSPropertyHandler handler) {
+		DeprecatedPropertyHandlerWrapper(ICSSPropertyHandler handler,
+				String message) {
 			delegate = handler;
+			this.message = message;
 		}
 
 		public boolean applyCSSProperty(Object element, String property,
@@ -229,11 +264,9 @@ public class RegistryCSSPropertyHandlerProvider extends
 		private void logIfNecessary(String property) {
 			if (!logged.contains(property)) {
 				logged.add(property);
-				RuntimeLog.log(new Status(IStatus.ERROR,
-						"org.eclipse.e4.ui.css.core",
-						"CSS property has been deprecated: " + property));
+				logError("CSS property '" + property
+						+ "' has been deprecated: " + message);
 			}
 		}
-
 	}
 }

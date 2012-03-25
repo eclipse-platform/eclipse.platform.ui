@@ -96,10 +96,10 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="deprecated" type="boolean">
+         <attribute name="deprecated" type="string">
             <annotation>
                <documentation>
-                  If true, indicates this property-name is deprecated.  The first use may log a warning as to the deprecation state.  Defaults to false.
+                  If specified, indicates this property-name is deprecated.  Specifies a deprecation message typically intended to indicate alternatives to using this property.  This message is typically logged on first use of this property-name.
                </documentation>
             </annotation>
          </attribute>
@@ -122,7 +122,6 @@
     &lt;property-name name=&quot;background-image&quot;/&gt;
   &lt;/handler&gt;
 &lt;/extension&gt;
-
       </documentation>
    </annotation>
 
