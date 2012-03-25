@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
+import java.util.HashSet;
+
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
@@ -190,6 +192,22 @@ public class ShellTest extends CSSSWTTestCase {
 
 		assertEquals(1, child.getFont().getFontData().length);
 		fontData = child.getFont().getFontData()[0];
+		assertEquals(SWT.ITALIC, fontData.getStyle());
+	}
+
+	public void testSwtDataClassAttribute() throws Exception {
+		Display display = Display.getDefault();
+		CSSEngine engine = createEngine(
+				"Shell[swt-data-class ~= 'java.util.HashSet'] { font-style: italic; }",
+				display);
+
+		Shell parent = new Shell(display, SWT.NONE);
+		parent.setData(new HashSet<Object>());
+		parent.open();
+		engine.applyStyles(parent, true);
+
+		assertEquals(1, parent.getFont().getFontData().length);
+		FontData fontData = parent.getFont().getFontData()[0];
 		assertEquals(SWT.ITALIC, fontData.getStyle());
 	}
 

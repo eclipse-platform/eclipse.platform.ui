@@ -174,6 +174,18 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		} else if (attr.equals("class")) {
 			String result = getCSSClass(widget);
 			return result != null ? result : "";
+		} else if ("swt-data-class".equals(attr)) {
+			Object data = widget.getData();
+			if (data == null) {
+				return "";
+			}
+			StringBuilder sb = new StringBuilder();
+			for (Class<?> clazz = data.getClass(); clazz != Object.class; sb
+					.append(' ')) {
+				sb.append(clazz.getName());
+				clazz = clazz.getSuperclass();
+			}
+			return sb.toString();
 		}
 		Object o = widget.getData(attr.toLowerCase());
 		if (o != null)
