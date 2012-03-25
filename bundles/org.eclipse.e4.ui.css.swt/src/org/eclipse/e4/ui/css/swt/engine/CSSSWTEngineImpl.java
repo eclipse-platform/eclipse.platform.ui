@@ -13,9 +13,11 @@ package org.eclipse.e4.ui.css.swt.engine;
 
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.ui.css.core.impl.engine.RegistryCSSPropertyHandlerProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -54,6 +56,22 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 	protected void initializeCSSPropertyHandlers() {
 		propertyHandlerProviders.add(new RegistryCSSPropertyHandlerProvider(
 				RegistryFactory.getRegistry()));
+	}
+
+	public void reapply() {
+		Shell[] shells = display.getShells();
+		for (Shell s : shells) {
+			try {
+				s.setRedraw(false);
+				s.reskin(SWT.ALL);
+				applyStyles(s, true);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				s.setRedraw(true);
+			}
+		}
 	}
 
 }

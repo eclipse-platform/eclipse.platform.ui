@@ -35,4 +35,8 @@ public class CSSXMLEngineImpl extends CSSEngineImpl {
 		super.registerCSSPropertyHandler(ICSSPropertyFontHandler.class,
 				CSSPropertyFontXMLHandler.INSTANCE);
 	}
+
+	public void reapply() {
+		// TODO Auto-generated method stub
+	}
 }

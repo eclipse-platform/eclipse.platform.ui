@@ -39,9 +39,7 @@ import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -385,19 +383,7 @@ public class ThemeEngine implements IThemeEngine {
 				}
 			}
 
-			Shell[] shells = display.getShells();
-			for (Shell s : shells) {
-				try {
-					s.setRedraw(false);
-					s.reskin(SWT.ALL);
-					applyStyles(s, true);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					s.setRedraw(true);
-				}
-			}
+			engine.reapply();
 		}
 		
 		if (restore) {

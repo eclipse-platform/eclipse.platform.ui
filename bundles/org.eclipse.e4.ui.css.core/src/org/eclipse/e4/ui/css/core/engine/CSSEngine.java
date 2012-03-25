@@ -535,4 +535,9 @@ public interface CSSEngine {
 	 * @param e
 	 */
 	public void handleExceptions(Exception e);
+
+	/**
+	 * Reapply the styles to the objects managed by this engine.
+	 */
+	public void reapply();
 }

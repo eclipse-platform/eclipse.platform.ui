@@ -82,7 +82,17 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	 * @param widget SWT widget which is styled by an engine
 	 */
 	public static CSSEngine getEngine(Widget widget) {
-		return (CSSEngine) widget.getDisplay().getData(CSSSWTConstants.CSS_ENGINE_KEY);
+		return getEngine(widget.getDisplay());
+	}
+
+	/**
+	 * Convenience method for getting the CSS engine responsible for a widget.
+	 * 
+	 * @param display
+	 *            SWT display which is styled by an engine
+	 */
+	public static CSSEngine getEngine(Display display) {
+		return (CSSEngine) display.getData(CSSSWTConstants.CSS_ENGINE_KEY);
 	}
 
 	/**
