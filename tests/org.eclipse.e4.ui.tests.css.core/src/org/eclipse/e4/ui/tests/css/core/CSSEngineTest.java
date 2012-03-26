@@ -25,6 +25,9 @@ public class CSSEngineTest extends TestCase {
 		public void setWidgetProvider(Class clazz, IElementProvider provider) {
 			widgetsMap.put(clazz.getName(), provider);
 		}
+
+		public void reapply() {
+		}
 	}
 
 	public abstract static class BaseElement extends ElementAdapter {
