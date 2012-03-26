@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Siemens AG and others.
+ * Copyright (c) 2010, 2012 Siemens AG and others.
  * 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,6 +11,9 @@
  ******************************************************************************/
 
 package org.eclipse.e4.demo.contacts.processors;
+
+import java.util.List;
+import org.eclipse.e4.core.di.annotations.Execute;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,6 +30,23 @@ public class ToolbarThemeProcessor extends AbstractThemeProcessor {
 	@Inject
 	@Named("toolbar:org.eclipse.ui.main.toolbar")
 	private MToolBar toolbar;
+
+	private final static String PROCESSOR_ID = "org.eclipse.e4.demo.contacts.processor.toolbar"; 
+
+	@Execute
+	public void process() {
+		
+		MApplication theApp = getApplication(); 
+		List<String> tags = theApp.getTags();
+		for(String tag : tags) {
+			if (PROCESSOR_ID.equals(tag))
+				return; // already processed
+		}
+		if (!check())
+			return;
+		tags.add(PROCESSOR_ID);
+		super.process();
+	}
 
 	@Override
 	protected boolean check() {
