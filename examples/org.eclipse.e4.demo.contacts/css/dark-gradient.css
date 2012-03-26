@@ -72,5 +72,6 @@ CTabItem.active:selected {
 }
 
 Shell {
+    swt-background-mode: default;
     background-color: gradient radial #575757 #101010 60%;
 }

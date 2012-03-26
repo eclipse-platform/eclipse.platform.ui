@@ -75,4 +75,5 @@ CTabItem.active:selected {
 
 Shell {
     background-color: #e8e8e8 #cccccc 60%;
+    swt-background-mode: default;
 }

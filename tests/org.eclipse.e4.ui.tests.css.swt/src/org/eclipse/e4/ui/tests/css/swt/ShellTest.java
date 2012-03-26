@@ -211,4 +211,9 @@ public class ShellTest extends CSSSWTTestCase {
 		assertEquals(SWT.ITALIC, fontData.getStyle());
 	}
 
+	public void testBackgroundMode() throws Exception {
+		Shell shellToTest = createTestShell("Shell { swt-background-mode: force; }");
+		assertEquals(SWT.INHERIT_FORCE, shellToTest.getBackgroundMode());
+	}
+
 }

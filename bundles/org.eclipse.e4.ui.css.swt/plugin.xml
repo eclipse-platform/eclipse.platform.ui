@@ -440,6 +440,13 @@
                name="padding-bottom">
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CompositeElement"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSBackgroundModePropertyHandler">
+         <property-name
+               name="swt-background-mode">
+         </property-name>
+      </handler>
    </extension>
                
 
