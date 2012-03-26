@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic http://www.eclipse.org/ui/2010/UIModel/application#//ui/basic http://www.eclipse.org/ui/2010/UIModel/application/ui/menu http://www.eclipse.org/ui/2010/UIModel/application#//ui/menu" xmi:id="_GRxcMXk5Ed-55voCTyIpVQ" bindingContexts="_SeXUHO8EEd6FC9cDb6iV7y">
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic http://www.eclipse.org/ui/2010/UIModel/application#//ui/basic http://www.eclipse.org/ui/2010/UIModel/application/ui/menu http://www.eclipse.org/ui/2010/UIModel/application#//ui/menu" xmi:id="_GRxcMXk5Ed-55voCTyIpVQ" elementId="org.eclipse.e4.demo.contacts.application" bindingContexts="_SeXUHO8EEd6FC9cDb6iV7y">
   <children xsi:type="basic:TrimmedWindow" xmi:id="_SeXUAe8EEd6FC9cDb6iV7g" elementId="org.eclipse.e4.demo.contacts.main" selectedElement="_SeXUCu8EEd6FC9cDb6iV7g" label="%windowTitle" x="20" y="20" width="700" height="480">
     <children xsi:type="basic:PartSashContainer" xmi:id="_SeXUCu8EEd6FC9cDb6iV7g" elementId="_SeXUCu8EEd6FC9cDb6iV7g" horizontal="true">
       <children xsi:type="basic:PartStack" xmi:id="_SeXUC-8EEd6FC9cDb6iV7g" elementId="_SeXUC-8EEd6FC9cDb6iV7g" containerData="30">
@@ -23,7 +23,7 @@
       <children xsi:type="menu:Menu" xmi:id="_7xM0QEIiEeGeqfJPkAYvgA" label="%windowMenu">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_CSog8EIjEeGeqfJPkAYvgA" label="%menuLabelPreferences" command="_oKvyEEIiEeGeqfJPkAYvgA"/>
       </children>
-      <children xsi:type="menu:Menu" xmi:id="_F9_YYEIjEeGeqfJPkAYvgA" label="%helpMenu">
+      <children xsi:type="menu:Menu" xmi:id="_F9_YYEIjEeGeqfJPkAYvgA" elementId="org.eclipse.e4.demo.contacts.mainmenu.help" label="%helpMenu">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_-SFcoEIiEeGeqfJPkAYvgA" label="%menuLabelAbout" command="_gMuLkEIiEeGeqfJPkAYvgA"/>
       </children>
     </mainMenu>
