@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.model.internal;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -115,13 +117,13 @@ public class ModelUtils {
 				
 				if( index >= 0 && list.size() > index ) {
 					flag = false;
-					list.addAll(index, elements);
+					mergeList(list,  elements, index);
 				}
 			}
 			
 			// If there was no match append it to the list
 			if( flag ) {
-				list.addAll(elements);
+				mergeList(list,  elements, -1);
 			}
 			
 			return copy;
@@ -138,6 +140,37 @@ public class ModelUtils {
 		}
 		
 		return Collections.emptyList();
+	}
+	
+	private static void mergeList(List list,  List<MApplicationElement> elements, int index) {
+		MApplicationElement[] tmp = new MApplicationElement[elements.size()];
+		elements.toArray(tmp);
+		for(MApplicationElement element : tmp) {
+			String elementID = element.getElementId();
+			boolean found = false;
+			if ((elementID != null) && (!elementID.isEmpty())) {
+				for(Object existingObject : list) {
+					if (!(existingObject instanceof MApplicationElement))
+						continue;
+					MApplicationElement existingEObject = (MApplicationElement) existingObject;
+					if (!elementID.equals(existingEObject.getElementId()))
+						continue;
+					if (EcoreUtil.equals((EObject)existingEObject, (EObject)element)) {
+						found = true; // skip 
+						break;
+					} else { // replace
+						EcoreUtil.replace((EObject)existingEObject, (EObject)element);
+						found = true; 
+					}
+				}
+			}
+			if (!found) {
+				if (index == -1)
+					list.add(element);
+				else
+					list.add(index, element);
+			}
+		}
 	}
 
 	public static IEclipseContext getContainingContext(MApplicationElement element) {
