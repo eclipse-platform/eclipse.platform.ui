@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -365,10 +365,13 @@ public class ModeledPageLayout implements IPageLayout {
 				// this part
 				part.setToBeRendered(true);
 
-				// there should only be view references for views that are
+				// there should only be view references for 3.x views that are
 				// visible to the end user, that is, the tab items are being
 				// drawn
-				if (visible && createReferences) {
+				if (visible
+						&& createReferences
+						&& CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(descriptor
+								.getContributionURI())) {
 					page.createViewReferenceForPart(part, id);
 				}
 				return ph;
