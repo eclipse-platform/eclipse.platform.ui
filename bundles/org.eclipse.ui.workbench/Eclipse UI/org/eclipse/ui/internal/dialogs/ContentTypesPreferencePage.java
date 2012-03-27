@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -37,6 +38,8 @@ import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -390,7 +393,22 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 				if (charset == null) {
 					charset = ""; //$NON-NLS-1$
 				}
-				setButton.setEnabled(!charset.equals(charsetField.getText()));
+				setButton.setEnabled(!charset.equals(charsetField.getText())
+						&& getErrorMessage() == null);
+			}
+		});
+
+		charsetField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				String errorMessage = null;
+				String text = charsetField.getText();
+				try {
+					if (text.length() != 0 && !Charset.isSupported(text))
+						errorMessage = WorkbenchMessages.ContentTypes_unsupportedEncoding;
+				} catch (IllegalCharsetNameException ex) {
+					errorMessage = WorkbenchMessages.ContentTypes_unsupportedEncoding;
+				}
+				setErrorMessage(errorMessage);
 			}
 		});
 
