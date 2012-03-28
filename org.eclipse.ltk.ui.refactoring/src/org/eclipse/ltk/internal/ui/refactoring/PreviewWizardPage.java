@@ -444,10 +444,11 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		tbm.update(true);
 
 		final ToolBar toolBar= tbm.getControl();
+		
+		// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=375354 :
 		toolBar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			/*
 			 * @see org.eclipse.swt.accessibility.AccessibleAdapter#getName(org.eclipse.swt.accessibility.AccessibleEvent)
-			 * @since 3.8
 			 */
 			public void getName(AccessibleEvent e) {
 				if (e.childID != ACC.CHILDID_SELF)
