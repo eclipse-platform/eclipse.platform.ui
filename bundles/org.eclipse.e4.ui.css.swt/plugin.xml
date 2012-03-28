@@ -201,6 +201,19 @@
                name="margin">
          </property-name>
       </handler>
+      
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabItemElement"
+            composite="true"
+            handler="org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler">
+         <property-name
+               name="color">
+         </property-name>
+         <property-name
+               name="text-transform">
+         </property-name>
+      </handler>
+      
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabItemElement"
             composite="true"
