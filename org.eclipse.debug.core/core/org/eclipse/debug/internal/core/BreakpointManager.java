@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -55,9 +55,14 @@ import org.eclipse.debug.core.model.IBreakpointImportParticipant;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * The breakpoint manager manages all registered breakpoints
- * for the debug plug-in. It is instantiated by the debug plug-in at startup.
- *
+ * The breakpoint manager manages all registered breakpoints for the Debug plug-in. It is
+ * instantiated by the Debug plug-in at startup.
+ * <p>
+ * <strong>Note:</strong> This manager is created while the Debug plug-in is started, but it
+ * will not automatically be initialized. Client code that expects markers and breakpoints to be
+ * initialized must call {@link #ensureInitialized()}.
+ * </p>
+ * 
  * @see IBreakpointManager
  */
 public class BreakpointManager implements IBreakpointManager, IResourceChangeListener {
@@ -399,18 +404,21 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 		return temp;
 	}
-	
+
 	/**
-	 * Perform any initialization of the manager. 
-	 * 
-	 * Called when {@link DebugPlugin#start(org.osgi.framework.BundleContext)} is called.
+	 * Ensures that this manager is initialized.
+	 * <p>
+	 * This manager is created while the Debug plug-in is started, but it will not automatically
+	 * be initialized. Client code that expects markers and breakpoints to be initialized must call
+	 * this method.
+	 * </p>
 	 * 
 	 * @since 3.8
 	 */
-	public void start() {
+	public void ensureInitialized() {
 		getBreakpoints0();
 	}
-	
+
 	/**
 	 * The BreakpointManager waits to load the breakpoints
 	 * of the workspace until a request is made to retrieve the 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
@@ -40,7 +41,17 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  */
 
 public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
-	
+
+	/**
+	 * Creates a breakpoint.
+	 * 
+	 * @since 3.8
+	 */
+	public Breakpoint() {
+		// Make sure that the breakpoint manager is initialized (for details see bug 54993)
+		((BreakpointManager)DebugPlugin.getDefault().getBreakpointManager()).ensureInitialized();
+	}
+
 	/**
 	 * Underlying marker.
 	 */
@@ -51,6 +62,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	 */
 	public void setMarker(IMarker marker) throws CoreException {
 		fMarker= marker;
+
 	}
 	
 	/**
