@@ -10,7 +10,7 @@
  *     Kai Tödter - initial implementation
  ******************************************************************************/
 
-Label {
+Label, Button[style~='SWT.CHECK'] {
 	font: Verdana 8px;
 	color: rgb(240, 240, 240);
 }
@@ -48,21 +48,30 @@ Table {
 
 .MTrimBar {
 	background-color: #777777 #373737 #202020 50% 50%;
-	color: white;
+	color: rgb(150, 150, 150);
 	font: Verdana 8px;
 }
 
 CTabFolder {
-	simple: true;
+	/* The tab rendering background for the min/max toolbar pulls 
+	 * background from the tabfolder's background (or it's parent?)
+	 * and so the gradient doesn't come through. So just set the
+	 * tabfolder's background to a color */
+	/*background-color: #777777 #373737 #202020 50% 50%;*/
+	background-color: #202020;
+	color: rgb(150, 150, 150);
+	simple: true;	
 }
 
 CTabItem {
-	color: rgb(150, 150, 150);
+	background-color: #4a4a4a #101010 60%;
+	color: rgb(240, 240, 240);
 	font: Verdana 8px;
 }
 
 CTabItem:selected {
 	background-color: #4a4a4a #101010 60%;
+	color: rgb(240, 240, 240);
 	font: Verdana 8px;
 }
 
