@@ -73,7 +73,6 @@ public class CSSPropertyBackgroundSWTHandler extends
 					// tab folder selection manages gradients
 					folder.setSelectionBackground(newColor);
 				} else {
-					GradientBackgroundListener.remove((Control) widget);
 					folder.setBackground(newColor);
 				}
 			} else if (widget instanceof Control) {
