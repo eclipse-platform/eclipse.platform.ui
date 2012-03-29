@@ -92,6 +92,8 @@ public class Measure extends CSSValueImpl {
 			return CSS_DIMENSION;
 		case LexicalUnit.SAC_OPERATOR_COMMA:
 			return CSS_CUSTOM;  //TODO don't think this is right, see bug #278139
+		case LexicalUnit.SAC_INHERIT:
+			return CSS_INHERIT;
 		}
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED - LexicalUnit type: " + value.getLexicalUnitType());
@@ -114,12 +116,18 @@ public class Measure extends CSSValueImpl {
 		case LexicalUnit.SAC_PIXEL:
 		case LexicalUnit.SAC_CENTIMETER:
 		case LexicalUnit.SAC_EM:
+		case LexicalUnit.SAC_EX:
+		case LexicalUnit.SAC_PICA:
+		case LexicalUnit.SAC_POINT:
 		case LexicalUnit.SAC_INCH:
+		case LexicalUnit.SAC_DEGREE:
 			return String.valueOf(value.getFloatValue()) + value.getDimensionUnitText();
 		case LexicalUnit.SAC_URI:
 			return "url(" + value.getStringValue() + ")";
 		case LexicalUnit.SAC_OPERATOR_COMMA:
 			return ",";
+		case LexicalUnit.SAC_INHERIT:
+			return "inherit";
 		}
 		return value.getStringValue();
 	}
