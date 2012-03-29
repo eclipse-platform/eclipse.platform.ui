@@ -2391,7 +2391,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	public IPerspectiveDescriptor getPerspectiveDesc(String id) {
-		IPerspectiveDescriptor desc = PlatformUI.getWorkbench().getPerspectiveRegistry()
+		IPerspectiveRegistry perspectiveRegistry = PlatformUI.getWorkbench().getPerspectiveRegistry();
+		// registry may be null on shutdown
+		if (perspectiveRegistry == null) {
+			return null;
+		}
+		IPerspectiveDescriptor desc = perspectiveRegistry
 				.findPerspectiveWithId(id);
 		return desc;
 	}
