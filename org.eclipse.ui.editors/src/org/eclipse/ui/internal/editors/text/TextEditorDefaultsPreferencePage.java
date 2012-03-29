@@ -19,17 +19,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -48,7 +42,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -60,7 +53,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.jface.util.Util;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -848,8 +840,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		addCheckBox(appearanceComposite, showMagnet, new BooleanDomain(), 0);
 
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_showWhitespaceCharacters;
+		String linkText= TextEditorMessages.TextEditorDefaultsPreferencePage_showWhitespaceCharactersLinkText;
 		Preference showWhitespaceCharacters= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_WHITESPACE_CHARACTERS, label, null);
-		addCheckBoxWithLink(appearanceComposite, showWhitespaceCharacters, new BooleanDomain(), 0, new SelectionAdapter() {
+		addCheckBoxWithLink(appearanceComposite, showWhitespaceCharacters, linkText, new BooleanDomain(), 0, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Dialog dialog= new WhitespaceCharacterPainterOptionsDialog(Display.getDefault().getActiveShell(), fOverlayStore);
 				dialog.open();
@@ -1137,7 +1130,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		return checkBox;
 	}
 
-	Button addCheckBoxWithLink(Composite parent, final Preference preference, final Domain domain, int indentation, final SelectionListener listener) {
+	private Button addCheckBoxWithLink(Composite parent, final Preference preference, String linkText, final Domain domain, int indentation, final SelectionListener listener) {
 		GridData gd= new GridData(GridData.FILL, GridData.FILL, true, false);
 		gd.horizontalSpan= 3;
 		gd.horizontalIndent= indentation;
@@ -1153,63 +1146,29 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		final Button checkBox= new Button(composite, SWT.CHECK);
 		checkBox.setFont(JFaceResources.getDialogFont());
+		checkBox.setText(preference.getName());
 		gd= new GridData(GridData.FILL, GridData.CENTER, false, false);
-		int offset= Util.isMac() ? -4 : Util.isLinux() ? -2 : /* Windows et al. */ 3;
-		gd.widthHint= checkBox.computeSize(SWT.DEFAULT, SWT.DEFAULT).x + offset;
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				checkboxControlChanged(preference, domain, checkBox);
 			}
 		});
-		checkBox.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			public void getName(AccessibleEvent e) {
-				e.result= LegacyActionTools.removeMnemonics(preference.getName().replaceAll("</?[aA][^>]*>", "")); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		});
 
 		gd= new GridData(GridData.FILL, GridData.CENTER, false, false);
-
 		Link link= new Link(composite, SWT.NONE);
-		link.setText(preference.getName());
+		link.setText(linkText);
 		link.setLayoutData(gd);
-
-		// toggle checkbox when user clicks unlinked text in link:
-		final boolean[] linkSelected= { false };
-		link.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				linkSelected[0]= true;
-				if (listener != null) {
+		if (listener != null) {
+			link.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
 					listener.widgetSelected(e);
 				}
-			}
-		});
-		link.addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				linkSelected[0]= false;
-			}
-			public void mouseUp(MouseEvent e) {
-				if (!linkSelected[0]) {
-					checkBox.setSelection(!checkBox.getSelection());
-					checkBox.setFocus();
-					linkSelected[0]= false;
-					checkboxControlChanged(preference, domain, checkBox);
-				}
-			}
-		});
-		link.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit == true) {
-					e.detail= SWT.TRAVERSE_NONE;
-					checkBox.setSelection(!checkBox.getSelection());
-					checkBox.setFocus();
-					linkSelected[0]= false;
-					checkboxControlChanged(preference, domain, checkBox);
-				}
-			}
-		});
+			});
+		}
 
 		fInitializers.add(fInitializerFactory.create(preference, checkBox));
+
 		return checkBox;
 	}
 
