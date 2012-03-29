@@ -153,20 +153,6 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			redrawAll();
 		} else if (reason == CONFIGURATION || reason == INTERNAL) {
 			redrawAll();
-		} else if (reason == TEXT_CHANGE) {
-			// redraw current line only
-			try {
-				IRegion lineRegion =
-					document.getLineInformationOfOffset(getDocumentOffset(fTextWidget.getCaretOffset()));
-				int widgetOffset= getWidgetOffset(lineRegion.getOffset());
-				int charCount= fTextWidget.getCharCount();
-				int redrawLength= Math.min(lineRegion.getLength(), charCount - widgetOffset);
-				if (widgetOffset >= 0 && redrawLength > 0) {
-					fTextWidget.redrawRange(widgetOffset, redrawLength, true);
-				}
-			} catch (BadLocationException e) {
-				// ignore
-			}
 		}
 	}
 
@@ -216,7 +202,6 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			clientArea.width-= leftMargin + rightMargin;
 			clipping.intersect(clientArea);
 			gc.setClipping(clientArea);
-			
 			if (fIsAdvancedGraphicsPresent) {
 				int alpha= gc.getAlpha();
 				gc.setAlpha(fAlpha);
@@ -505,43 +490,6 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		Point pos= fTextWidget.getLocationAtOffset(offset);
 		gc.setForeground(fg);
 		gc.drawString(s, pos.x, pos.y + baslineDelta, true);
-	}
-
-	/**
-	 * Convert a document offset to the corresponding widget offset.
-	 *
-	 * @param documentOffset the document offset
-	 * @return widget offset
-	 */
-	private int getWidgetOffset(int documentOffset) {
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
-			return extension.modelOffset2WidgetOffset(documentOffset);
-		}
-		IRegion visible= fTextViewer.getVisibleRegion();
-		int widgetOffset= documentOffset - visible.getOffset();
-		if (widgetOffset > visible.getLength()) {
-			return -1;
-		}
-		return widgetOffset;
-	}
-
-	/**
-	 * Convert a widget offset to the corresponding document offset.
-	 *
-	 * @param widgetOffset the widget offset
-	 * @return document offset
-	 */
-	private int getDocumentOffset(int widgetOffset) {
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
-			return extension.widgetOffset2ModelOffset(widgetOffset);
-		}
-		IRegion visible= fTextViewer.getVisibleRegion();
-		if (widgetOffset > visible.getLength()) {
-			return -1;
-		}
-		return widgetOffset + visible.getOffset();
 	}
 
 }
