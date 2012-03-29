@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
 <stringAttribute key="application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
 <booleanAttribute key="askclear" value="false"/>
 <booleanAttribute key="automaticAdd" value="true"/>
@@ -32,6 +33,7 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.e4.ui.tests.css.swt.CssSwtTestSuite"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.e4.ui.tests.css.swt"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <stringAttribute key="product" value="org.eclipse.sdk.ide"/>
 <booleanAttribute key="run_in_ui_thread" value="true"/>

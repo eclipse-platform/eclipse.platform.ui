@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.swt.SWT;
@@ -597,54 +596,55 @@ public class CTabItemTest extends CSSSWTTestCase {
 		}
 	}
 
-//	public void testForeground() throws Exception {
-//		CTabFolder folder = createTestTabFolder("CTabItem { color: #0000ff }",
-//				false);
-//		assertEquals(new RGB(0, 0, 255), folder.getForeground().getRGB());
-//
-//		for (int i = 0; i < folder.getItemCount(); i++) {
-//			assertEquals("#0000ff", engine.retrieveCSSProperty(folder
-//					.getItem(i), "color", null));
-//		}
-//	}
-//
-//	public void testForeground2() throws Exception {
-//		CTabFolder folder = createTestTabFolder(false);
-//		Color preStyledSelectionForeground = folder.getSelectionForeground();
-//
-//		RGB rgb = new RGB(0, 0, 255);
-//		String colour = "#0000ff";
-//
-//		// we want to make sure we pick a unique colour so that we actually test that the selection's colour has not changed
-//		if (rgb.equals(preStyledSelectionForeground.getRGB())) {
-//			rgb = new RGB(0, 255, 0);
-//			colour = "#00ff00";
-//		}
-//
-//		CSSEngine engine = createEngine("CTabItem { color: " + colour + " }",
-//				folder.getDisplay());
-//		engine.applyStyles(folder, true);
-//
-//		assertEquals(rgb, folder.getForeground().getRGB());
-//
-//		for (int i = 0; i < folder.getItemCount(); i++) {
-//			assertEquals(colour, engine.retrieveCSSProperty(folder.getItem(i),
-//					"color", null));
-//		}
-//
-//		assertEquals(preStyledSelectionForeground.getRGB(), folder
-//				.getSelectionForeground().getRGB());
-//	}
-//
-//	public void testSelectionForeground() throws Exception {
-//		CTabFolder folder = createTestTabFolder(
-//				"CTabItem:selected { color: #00ff00 }", false);
-//		assertEquals(new RGB(0, 255, 0), folder.getSelectionForeground()
-//				.getRGB());
-//
-//		for (int i = 0; i < folder.getItemCount(); i++) {
-//			assertEquals("#00ff00", engine.retrieveCSSProperty(folder
-//					.getItem(i), "color", "selected"));
-//		}
-//	}
+	public void testForeground() throws Exception {
+		CTabFolder folder = createTestTabFolder("CTabItem { color: #0000ff }",
+				false);
+		assertEquals(new RGB(0, 0, 255), folder.getForeground().getRGB());
+
+		for (int i = 0; i < folder.getItemCount(); i++) {
+			assertEquals("#0000ff", engine.retrieveCSSProperty(
+					folder.getItem(i), "color", null));
+		}
+	}
+
+	public void testForeground2() throws Exception {
+		CTabFolder folder = createTestTabFolder(false);
+		Color preStyledSelectionForeground = folder.getSelectionForeground();
+
+		RGB rgb = new RGB(0, 0, 255);
+		String colour = "#0000ff";
+
+		// we want to make sure we pick a unique colour so that we actually test
+		// that the selection's colour has not changed
+		if (rgb.equals(preStyledSelectionForeground.getRGB())) {
+			rgb = new RGB(0, 255, 0);
+			colour = "#00ff00";
+		}
+
+		CSSEngine engine = createEngine("CTabItem { color: " + colour + " }",
+				folder.getDisplay());
+		engine.applyStyles(folder, true);
+
+		assertEquals(rgb, folder.getForeground().getRGB());
+
+		for (int i = 0; i < folder.getItemCount(); i++) {
+			assertEquals(colour, engine.retrieveCSSProperty(folder.getItem(i),
+					"color", null));
+		}
+
+		assertEquals(preStyledSelectionForeground.getRGB(), folder
+				.getSelectionForeground().getRGB());
+	}
+
+	public void testSelectionForeground() throws Exception {
+		CTabFolder folder = createTestTabFolder(
+				"CTabItem:selected { color: #00ff00 }", false);
+		assertEquals(new RGB(0, 255, 0), folder.getSelectionForeground()
+				.getRGB());
+
+		for (int i = 0; i < folder.getItemCount(); i++) {
+			assertEquals("#00ff00", engine.retrieveCSSProperty(
+					folder.getItem(i), "color", "selected"));
+		}
+	}
 }
