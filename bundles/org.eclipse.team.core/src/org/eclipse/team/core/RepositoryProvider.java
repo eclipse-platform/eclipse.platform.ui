@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -488,7 +488,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 */
 	final public static RepositoryProvider getProvider(IProject project) {
 		try {					
-			if(project.isAccessible()) {
+			if (project.isAccessible()) {
 				
 				//-----------------------------
 				//First, look for the session property
@@ -525,13 +525,14 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 						}
 					}
 				}
+				markAsUnshared(project);
 			}
 		} catch(CoreException e) {
 			if (!isAcceptableException(e)) {
 				TeamPlugin.log(e);
 			}
+			markAsUnshared(project);
 		}
-        markAsUnshared(project);
 		return null;
 	}
 	
@@ -555,7 +556,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 */
 	final public static RepositoryProvider getProvider(IProject project, String id) {
 		try {
-			if(project.isAccessible()) {
+			if (project.isAccessible()) {
 				// Look for an existing provider first to avoid accessing persistent properties
 				RepositoryProvider provider = lookupProviderProp(project);  //throws core, we will reuse the catching already here
 				if(provider != null) {
@@ -598,13 +599,14 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 						return (RepositoryProvider)project.getNature(id);
 					}			
 				}
+				markAsUnshared(project);
 			}
 		} catch(CoreException e) {
 			if (!isAcceptableException(e)) {
 				TeamPlugin.log(e);
 			}
+			markAsUnshared(project);
 		}
-        markAsUnshared(project);
 		return null;
 	}
 	
