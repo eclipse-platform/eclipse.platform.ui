@@ -17,17 +17,18 @@ package org.eclipe.debug.tests.viewer.model;
  */
 public interface ITestModelUpdatesListenerConstants {
     
-    public static final int LABEL_SEQUENCE_COMPLETE =       0X00000001;
-    public static final int CONTENT_SEQUENCE_COMPLETE =     0X00000002;
-    public static final int CONTENT_SEQUENCE_STARTED =      0X00020000;
+    public static final int LABEL_SEQUENCE_COMPLETE =      0X00000001;
+    public static final int CONTENT_SEQUENCE_COMPLETE =    0X00000002;
+    public static final int CONTENT_SEQUENCE_STARTED =     0X00020000;
     public static final int LABEL_UPDATES =                0X00000004;
-    public static final int LABEL_SEQUENCE_STARTED =        0X00040000;
+    public static final int LABEL_SEQUENCE_STARTED =       0X00040000;
     public static final int HAS_CHILDREN_UPDATES =         0X00000008;
     public static final int HAS_CHILDREN_UPDATES_STARTED = 0X00080000;
     public static final int CHILD_COUNT_UPDATES =          0X00000010;
     public static final int CHILD_COUNT_UPDATES_STARTED =  0X00100000;
     public static final int CHILDREN_UPDATES =             0X00000020;
     public static final int CHILDREN_UPDATES_STARTED =     0X00200000;
+    public static final int CHILDREN_UPDATES_RUNNING =     0X00400000;
     public static final int MODEL_CHANGED_COMPLETE =       0X00000040; 
     public static final int MODEL_PROXIES_INSTALLED =      0X00000080;
     public static final int STATE_SAVE_COMPLETE =          0X00000100;

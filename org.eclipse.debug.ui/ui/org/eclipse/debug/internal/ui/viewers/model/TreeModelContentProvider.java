@@ -639,13 +639,13 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	                    // fRequestsInProgress map.  This way updateStarted() will not send a 
 	                    // redundant "UPDATE SEQUENCE STARTED" notification.
 	                    trigger(update.getSchedulingPath());
-	                    if (requests != null && requests.isEmpty()) {
-	                        fRequestsInProgress.remove(update.getSchedulingPath());
-	                    }
 	            	} else {
 	            		// Update may be removed from in progress list if it was canceled by schedule().
 	                    Assert.isTrue( update.isCanceled() );
 	            	}
+                    if (requests != null && requests.isEmpty()) {
+                        fRequestsInProgress.remove(update.getSchedulingPath());
+                    }
             	}
                 if (fRequestsInProgress.isEmpty() && fWaitingRequests.isEmpty()) {
                     if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
@@ -755,6 +755,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * @param update the update the schedule
      */
     private void schedule(final ViewerUpdateMonitor update) {
+    	Assert.isTrue(getViewer().getDisplay().getThread() == Thread.currentThread());
+    	
         TreePath schedulingPath = update.getSchedulingPath();
         List requests = (List) fWaitingRequests.get(schedulingPath);
         if (requests == null) {
@@ -780,6 +782,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
             if (inProgressList == null || inProgressList.isEmpty()) {
                 getViewer().getDisplay().asyncExec(new Runnable() {
                     public void run() {
+                    	if (isDisposed()) return;
                         trigger(update.getSchedulingPath());
                     }
                 });
@@ -858,6 +861,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      * be <code>null</code> to start the shortest path request.
      */
     private void trigger(TreePath schedulingPath) {
+    	Assert.isTrue(getViewer().getDisplay().getThread() == Thread.currentThread());
+    	
         if (fWaitingRequests.isEmpty()) {
             return;
         }

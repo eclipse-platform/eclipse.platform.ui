@@ -484,7 +484,11 @@ public class TestModelUpdatesListener
             if (!fChildCountUpdatesScheduled.isEmpty()) return false;
         }
         if ( (flags & CHILDREN_UPDATES_STARTED) != 0) {
+        	// Some children updates have already been started or completed.
             if (fChildrenUpdatesRunning.isEmpty() && fChildrenUpdatesCompleted.isEmpty()) return false;
+        }
+        if ( (flags & CHILDREN_UPDATES_RUNNING) != 0) {
+        	if (!isFinishedChildrenRunning()) return false;
         }
         if ( (flags & CHILDREN_UPDATES) != 0) {
             if (!fChildrenUpdatesScheduled.isEmpty()) return false;
@@ -522,9 +526,40 @@ public class TestModelUpdatesListener
             	return false;
             }
         }
-
         
         return true;
+    }
+
+    /**
+     * Returns true if all children updates that were scheduled are either currently 
+     * running or have already completed.
+     * 
+     * @see CHILDREN_UPDATES_RUNNING
+     * @return
+     */
+    private boolean isFinishedChildrenRunning() {
+    	// All children updates that have been scheduled are either running or completed.
+    	int scheduledCount = 0;
+    	for (Iterator itr = fChildrenUpdatesScheduled.values().iterator(); itr.hasNext();) {
+    		scheduledCount += ((Set)itr.next()).size();
+    	}
+    	
+    	int runningCount = 0;
+    	for (Iterator itr = fChildrenUpdatesRunning.iterator(); itr.hasNext();) {
+    		IChildrenUpdate update = ((IChildrenUpdate)itr.next());
+    		Set set = (Set)fChildrenUpdatesScheduled.get( update.getElementPath() );
+    		for (int i = update.getOffset(); set != null && i < update.getOffset() + update.getLength(); i++) {
+        		if (set.contains(new Integer(i))) runningCount++; 
+    		}
+    	}
+    	for (Iterator itr = fChildrenUpdatesCompleted.iterator(); itr.hasNext();) {
+    		IChildrenUpdate update = ((IChildrenUpdate)itr.next());
+    		Set set = (Set)fChildrenUpdatesScheduled.get( update.getElementPath() );
+    		for (int i = update.getOffset(); set != null && i < update.getOffset() + update.getLength(); i++) {
+        		if (set.contains(new Integer(i))) runningCount++; 
+    		}
+    	}
+    	return scheduledCount == runningCount;
     }
     
     public void updateStarted(IViewerUpdate update) {

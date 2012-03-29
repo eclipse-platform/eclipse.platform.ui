@@ -353,14 +353,13 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
             model.postDelta(new ModelDelta(rootElement, IModelDelta.CONTENT));
     
             // Wait for the delta to be processed.
-            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES | CHILDREN_UPDATES_STARTED)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     
             // Update the model
             removeElement(model, 0, true);
             addElement(model, "1", 0, true);
         }
     }
-
 
     /**
      * This test forces the viewer to cancel updates then process them at once.
@@ -526,6 +525,44 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         model.setQeueueingUpdate(false);
         while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     }
+    
+    /**
+     * This test removes an element while there are updates running on its 
+     * sub-tree.  With a precise timing this operation caused Bug 373790.
+     * <p>
+     * See Bug 373790 - Debug view stays busy after Resume
+     * </p>
+     * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#rescheduleUpdates
+     */
+    public void testCancelUpdates5() throws InterruptedException {
+        TestModel model = TestModel.simpleMultiLevel();
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY);
+
+        // Refresh the viewer so that updates are generated.
+        fListener.reset();
+        TreePath path = model.findElement("2");
+        fListener.addUpdates(path, model.getElement(path), 1, CHILD_COUNT_UPDATES);
+        fListener.addChildreUpdate(path, 0);
+        model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
+        
+        // Wait for the delta to be processed and child updates for "2" to get started.
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES | CHILDREN_UPDATES_RUNNING)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+
+        // Remove element "2"
+        removeElement(model, 1, true);
+        
+        // Wait for all updates to finish.
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+    }
+
     
     private void completeQueuedUpdatesOfType(TestModel model, Class updateClass) {
         List updatesToComplete = new LinkedList();
