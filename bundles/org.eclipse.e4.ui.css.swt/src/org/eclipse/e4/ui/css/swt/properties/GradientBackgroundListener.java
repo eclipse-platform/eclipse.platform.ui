@@ -40,13 +40,20 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 public class GradientBackgroundListener implements Listener {
+	private static Map<Control, GradientBackgroundListener> handlers = new HashMap<Control, GradientBackgroundListener>();
+	private static boolean isRadialSupported;
+
 	private Gradient grad;
 	private final Control control;
 	private boolean radialGradient;
-	private static Map<Control, GradientBackgroundListener> handlers = new HashMap<Control, GradientBackgroundListener>();
-	private static boolean isRadialSupported;
 	Image gradientImage;
 	
+	private DisposeListener disposeListener = new DisposeListener() {
+		public void widgetDisposed(DisposeEvent e) {
+			dispose();
+		}
+	};
+
 	static {
 		// The following code tries to instantiate a
 		// java.awt.RadialGradientPaint that is only available in Java 6 and
@@ -67,14 +74,22 @@ public class GradientBackgroundListener implements Listener {
 		this.grad = grad;
 		this.control = control;
 		control.addListener(SWT.Resize, this);
-		control.addDisposeListener(new DisposeListener() {
-			
-			public void widgetDisposed(DisposeEvent e) {
-				if (gradientImage != null && !gradientImage.isDisposed())
-				gradientImage.dispose();
-				gradientImage = null;
+		control.addDisposeListener(disposeListener);
+	}
+
+	public void dispose() {
+		grad = null;
+		if (control != null && !control.isDisposed()) {
+			control.removeListener(SWT.Resize, this);
+			control.removeDisposeListener(disposeListener);
+			if (control.getBackgroundImage() == gradientImage) {
+				control.setBackgroundImage(null);
 			}
-		});
+		}
+		if (gradientImage != null && !gradientImage.isDisposed()) {
+			gradientImage.dispose();
+		}
+		gradientImage = null;
 	}
 
 	public static void handle(Control control, Gradient grad) {
@@ -82,9 +97,17 @@ public class GradientBackgroundListener implements Listener {
 		if (handler == null) {
 			handler = new GradientBackgroundListener(control, grad);
 			handlers.put(control, handler);
+			handler.handleEvent(null);
 		} else {
 			handler.grad = grad;
 			handler.handleEvent(null);
+		}
+	}
+
+	public static void remove(Control control) {
+		GradientBackgroundListener handler = handlers.remove(control);
+		if (handler != null) {
+			handler.dispose();
 		}
 	}
 
@@ -94,14 +117,18 @@ public class GradientBackgroundListener implements Listener {
 			return;
 		}
 		
+		// hold onto our old image for disposal, if necessary
 		Image oldImage = control.getBackgroundImage();
+		if(oldImage != gradientImage) {
+			oldImage = null;
+		}
 		
 		/*
-		 * Draw the new background.
+		 * Draw the new background.  Radial backgrounds have to be generated
+		 * for the full size of the control's size; linear backgrounds are
+		 * just a slice for the control's height that is then repeated. 
 		 */
 
-//		Image newImage;
-		
 		// If Java 5 or lower is used, radial gradients are not supported yet
 		// and they will be replaced by linear gradients
 		if (grad.isRadial() && isRadialSupported) {
@@ -122,50 +149,37 @@ public class GradientBackgroundListener implements Listener {
 			// + (System.currentTimeMillis() - startTime) + " ms");
 			gradientImage = new Image(control.getDisplay(), imagedata);
 			radialGradient = true;
-		} else {
-			if( oldImage == null || oldImage.isDisposed() || oldImage.getBounds().height != size.y || radialGradient || event == null ) {
-				radialGradient = false;
-				boolean verticalGradient = grad.getVerticalGradient();
-				int x = verticalGradient? 2 : size.x;
-				int y = verticalGradient ? size.y : 2;
-				gradientImage = new Image(control.getDisplay(), x, y);
-				GC gc = new GC(gradientImage);
-				List<Color> colors = new ArrayList<Color>();
-				for (Iterator iterator = grad.getRGBs().iterator(); iterator
-						.hasNext();) {
-					RGB rgb = (RGB) iterator.next();
-					Color color = new Color(control.getDisplay(), rgb.red,
-							rgb.green, rgb.blue);
-					colors.add(color);
-				}
-				fillGradient(gc, new Rectangle(0, 0, x, y), colors,
-						CSSSWTColorHelper.getPercents(grad), grad.getVerticalGradient());
-				gc.dispose();
-				for (Iterator<Color> iterator = colors.iterator(); iterator
-						.hasNext();) {
-					Color c = iterator.next();
-					c.dispose(); // Dispose colors too.
-				}
-			} else {
-				// Avoid destroying the image
-				oldImage = null;
-				gradientImage = null;
+		} else if (oldImage == null || oldImage.isDisposed()
+				|| oldImage.getBounds().height != size.y || radialGradient
+				|| event == null) {
+			radialGradient = false;
+			boolean verticalGradient = grad.getVerticalGradient();
+			int x = verticalGradient? 2 : size.x;
+			int y = verticalGradient ? size.y : 2;
+			gradientImage = new Image(control.getDisplay(), x, y);
+			GC gc = new GC(gradientImage);
+			List<Color> colors = new ArrayList<Color>();
+			for (Iterator iterator = grad.getRGBs().iterator(); iterator
+					.hasNext();) {
+				RGB rgb = (RGB) iterator.next();
+				Color color = new Color(control.getDisplay(), rgb.red,
+						rgb.green, rgb.blue);
+				colors.add(color);
+			}
+			fillGradient(gc, new Rectangle(0, 0, x, y), colors,
+					CSSSWTColorHelper.getPercents(grad), grad.getVerticalGradient());
+			gc.dispose();
+			for (Iterator<Color> iterator = colors.iterator(); iterator
+					.hasNext();) {
+				Color c = iterator.next();
+				c.dispose(); // Dispose colors too.
 			}
 		}
-		
-		if( gradientImage != null ) {
-			/*
-			 * Set the new background.
-			 */
-			control.setBackgroundImage(gradientImage);			
+		if (gradientImage != null) {
+			control.setBackgroundImage(gradientImage);
 		}
-		
-		/*
-		 * Dispose the old background image.
-		 */
-		if (oldImage != null && !oldImage.isDisposed()) {
-//			oldImage.dispose();
-//			oldImage = null;
+		if (oldImage != null && oldImage != gradientImage) {
+			oldImage.dispose();
 		}
 	}
 
