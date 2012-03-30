@@ -159,6 +159,7 @@ public class VirtualFindAction extends Action implements IUpdate {
             clientViewer.getDisplay(), 
             SWT.NONE, 
             makeVirtualPresentationContext(clientViewer.getPresentationContext()));
+        fVirtualViewer.setFilters(clientViewer.getFilters());
         fVirtualViewer.addViewerUpdateListener(listener);
         fVirtualViewer.addLabelUpdateListener(listener);
         fVirtualViewer.setInput(input);

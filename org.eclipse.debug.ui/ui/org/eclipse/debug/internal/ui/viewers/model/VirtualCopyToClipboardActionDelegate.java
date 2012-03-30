@@ -213,6 +213,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
             SWT.VIRTUAL, 
             makeVirtualPresentationContext(clientViewer.getPresentationContext()), 
             validator); 
+        virtualViewer.setFilters(clientViewer.getFilters());
         virtualViewer.addLabelUpdateListener(listener);
         virtualViewer.getTree().addItemListener(listener);
         virtualViewer.setInput(input);
@@ -235,6 +236,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
                     Tree parentTree = selection[i].getParent();
                     index = parentTree.indexOf(selection[i]);
                 }
+                index = ((ITreeModelContentProvider)clientViewer.getContentProvider()).viewToModelIndex(parentPath, index);
                 vSelection.add( parentVItem.getItem(new Index(index)) );
             }
         }
@@ -254,7 +256,6 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	 */
 	public void run(final IAction action) {
 	    if (fClientViewer.getSelection().isEmpty()) {
-	        writeBufferToClipboard(new StringBuffer(""));
 	        return;
 	    }
 	    
@@ -319,6 +320,8 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	}
 
 	protected void writeBufferToClipboard(StringBuffer buffer) {
+		if (buffer.length() == 0) return;
+		
         TextTransfer plainTextTransfer = TextTransfer.getInstance();
         Clipboard clipboard= new Clipboard(fClientViewer.getControl().getDisplay());        
 		try {
