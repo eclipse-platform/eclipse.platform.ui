@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public class SymlinkResourceTest extends LocalStoreTest {
 	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=232426">bug 232426</a> 
 	 */
 	public void testBug232426() throws Exception {
-		if (isHudsonOnWin7())
+		if (isWindowsVistaOrHigher())
 			return;
 
 		/* Only run the test if EFS supports symbolic links on this Platform */
@@ -119,7 +119,7 @@ public class SymlinkResourceTest extends LocalStoreTest {
 	}
 
 	public void testBug358830() throws Exception {
-		if (isHudsonOnWin7())
+		if (isWindowsVistaOrHigher())
 			return;
 
 		/* Only run the test if EFS supports symbolic links on this Platform */

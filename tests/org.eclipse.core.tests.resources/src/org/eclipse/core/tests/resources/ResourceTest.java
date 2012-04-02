@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -975,16 +975,5 @@ public abstract class ResourceTest extends CoreTest {
 			}
 		}
 		return devices;
-	}
-
-	/**
-	 * Returns true when run on Hudson Win7 at eclipse.org
-	 */
-	protected boolean isHudsonOnWin7() {
-		boolean isWindows7 = isWindowsMinVersion(6, 1, 0);
-		String hudsonProp = System.getProperty("hudson");
-		System.out.println("Windows 7: " + isWindows7 + ", Hudson prop: " + hudsonProp);
-		// The check against Hudson is disabled temporarily, see Bug 341334
-		return isWindows7 /*&& Boolean.TRUE.toString().equalsIgnoreCase(hudsonProp)*/;
 	}
 }
