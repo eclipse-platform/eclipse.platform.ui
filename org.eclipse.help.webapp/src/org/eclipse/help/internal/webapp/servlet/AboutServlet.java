@@ -100,8 +100,18 @@ public class AboutServlet extends HttpServlet {
 		String title = WebappResources.getString("aboutPlugins", locale); //$NON-NLS-1$
 		buf.append(UrlUtil.htmlEncode(title));
 		buf.append(XHTML_2);
-		buf.append("<table>"); //$NON-NLS-1$
+		String app = System.getProperty("eclipse.application", null); //$NON-NLS-1$
+		String build = System.getProperty("eclipse.buildId", null); //$NON-NLS-1$
+		if (app != null || build != null) {
+			buf.append("<p>"); //$NON-NLS-1$
+			if (app != null)
+				buf.append(WebappResources.getString("application", locale, app) + "<br/>");//$NON-NLS-1$ //$NON-NLS-2$
+			if (build != null)
+				buf.append(WebappResources.getString("buildId", locale, build) + "<br/>");//$NON-NLS-1$ //$NON-NLS-2$
+			buf.append("</p>"); //$NON-NLS-1$
+		}
 
+		buf.append("<table>"); //$NON-NLS-1$
 		List plugins = new ArrayList();
 
 		Bundle[] bundles = HelpWebappPlugin.getContext().getBundles();
