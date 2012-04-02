@@ -20,6 +20,8 @@ import java.util.Set;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
@@ -217,7 +219,11 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 					filteredShortCuts.add(ext);
 				}
 			} 
-			catch (CoreException e) {}
+			catch (CoreException e) {
+				IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Launch shortcut '" + ext.getId() + "' enablement expression caused exception. Shortcut was removed.", e); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.log(status);
+				iter.remove();
+			}
 		}
 		iter = filteredShortCuts.iterator();
 	
