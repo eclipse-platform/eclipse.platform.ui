@@ -178,4 +178,11 @@ public class IndexedVariablePartition extends PlatformObject implements IVariabl
 		return fOriginalVariable.hashCode() + fOffset;
 	}
 
+	public Object getAdapter(Class adapterType) {
+		Object adapter = fOriginalVariable.getAdapter(adapterType);
+		if (adapter != null) {
+			return adapter;
+		}
+		return super.getAdapter(adapterType);
+	}
 }
