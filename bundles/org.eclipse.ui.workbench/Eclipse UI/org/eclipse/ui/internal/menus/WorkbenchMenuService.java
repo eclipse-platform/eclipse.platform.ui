@@ -158,6 +158,8 @@ public class WorkbenchMenuService implements IMenuService {
 		Object contribution;
 		if ((contribution = factoriesToContributions.remove(factory)) != null) {
 			MApplication app = e4Context.get(MApplication.class);
+			if (app == null)
+				return;
 			if (contribution instanceof MMenuContribution) {
 				app.getMenuContributions().remove(contribution);
 			} else if (contribution instanceof MToolBarContribution) {
