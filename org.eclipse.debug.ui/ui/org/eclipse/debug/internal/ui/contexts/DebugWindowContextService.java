@@ -78,19 +78,29 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			id = getCombinedPartId(part);
 		}
 		fProvidersByPartId.put(id, provider);
-		fProviders.add(provider);
-		IWorkbenchPart active = null;
-		IWorkbenchPage activePage = fWindow.getActivePage();
-		if (activePage != null) {
-			active = activePage.getActivePart();
+
+		// Check if provider is a window context provider
+		boolean canSetActive = true;
+        if (provider instanceof IDebugContextProvider2) {
+            canSetActive = ((IDebugContextProvider2) provider).isWindowContextProvider();
+        }
+        // Make the provider active if matches the active part. Otherwise, it 
+        // may still become the active provider if fProviders.isEmpty(). 
+		if (canSetActive) {
+	        IWorkbenchPart activePart = null;
+	        IWorkbenchPage activePage = fWindow.getActivePage();
+	        if (activePage != null) {
+	            activePart = activePage.getActivePart();
+	        }        
+	        canSetActive = (activePart == null && part == null) || (activePart != null && activePart.equals(part));
 		}
-		if (fProviders.size() == 1 && (part == null || part.equals(active))) {
-		    notify(provider);
+		
+		if (canSetActive) {
+		    fProviders.add(0, provider);
 		} else {
-		    ISelection activeContext = provider.getActiveContext();
-		    activeContext = activeContext != null ? activeContext : StructuredSelection.EMPTY;
-            notify(new DebugContextEvent(provider, activeContext, DebugContextEvent.ACTIVATED));
+		    fProviders.add(provider);
 		}
+        notify(provider);
 		provider.addDebugContextListener(this);
 	}
 	
@@ -109,12 +119,13 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
     			if (activeProvider != null) {
     				notify(activeProvider);
     			} else {
+    			    // Removed last provider.  Send empty selection to all listeners.
     				notify(new DebugContextEvent(provider, StructuredSelection.EMPTY, DebugContextEvent.ACTIVATED));
     			}
 			} else {
-	            ISelection activeContext = provider.getActiveContext();
-	            activeContext = activeContext != null ? activeContext : StructuredSelection.EMPTY;			    
-                notify(new DebugContextEvent(provider, activeContext, DebugContextEvent.ACTIVATED));
+			    // Notify listeners of the removed provider with the active window context.
+			    notifyPart(provider.getPart(), 
+			        new DebugContextEvent(provider, getActiveContext(), DebugContextEvent.ACTIVATED));
 			}
 		}
 		provider.removeDebugContextListener(this);
@@ -194,7 +205,14 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			notify(event, getPostListeners(part));
 		}
 	}
-	
+
+	protected void notifyPart(IWorkbenchPart part, DebugContextEvent event) {
+        if (part != null) {
+            notify(event, getListeners(part));
+            notify(event, getPostListeners(part));
+        }
+    }
+
 	protected void notify(final DebugContextEvent event, Object[] listeners) {
 		for (int i = 0; i < listeners.length; i++) {
 			final IDebugContextListener listener = (IDebugContextListener) listeners[i];
