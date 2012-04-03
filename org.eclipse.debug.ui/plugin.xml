@@ -2097,6 +2097,63 @@ M4 = Platform-specific fourth key
              schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
              sequence="M1+M2+,"/>                                    
   	</extension>
+  	
+  	<extension point="org.eclipse.ui.commandImages">
+       <image
+          commandId="org.eclipse.debug.ui.commands.ToggleStepFilters"
+          icon="$nl$/icons/full/elcl16/stepbystep_co.gif"
+          disabledIcon="$nl$/icons/full/dlcl16/stepbystep_co.gif"/>
+       <image
+             commandId="org.eclipse.debug.ui.commands.StepInto"
+             disabledIcon="$nl$/icons/full/dlcl16/stepinto_co.gif"
+             icon="$nl$/icons/full/elcl16/stepinto_co.gif">
+       </image>
+       <image
+             commandId="org.eclipse.debug.ui.commands.StepOver"
+             disabledIcon="$nl$/icons/full/dlcl16/stepover_co.gif"
+             icon="$nl$/icons/full/elcl16/stepover_co.gif">
+       </image>
+       <image
+             commandId="org.eclipse.debug.ui.commands.StepReturn"
+             disabledIcon="$nl$/icons/full/dlcl16/stepreturn_co.gif"
+             icon="$nl$/icons/full/elcl16/stepreturn_co.gif">
+       </image>
+       <image
+             commandId="org.eclipse.debug.ui.commands.Resume"
+             disabledIcon="$nl$/icons/full/dlcl16/resume_co.gif"
+             icon="$nl$/icons/full/elcl16/resume_co.gif">
+       </image>
+       <image
+             commandId="org.eclipse.debug.ui.commands.Terminate"
+             disabledIcon="$nl$/icons/full/dlcl16/terminate_co.gif"
+             icon="$nl$/icons/full/elcl16/terminate_co.gif">
+       </image>
+       <image
+             commandId="org.eclipse.debug.ui.commands.DebugLast"
+             disabledIcon="$nl$/icons/full/dlcl16/debuglast_co.gif"
+             icon="$nl$/icons/full/elcl16/debuglast_co.gif">
+       </image>
+       <image
+             commandId="org.eclipse.debug.ui.commands.RunLast"
+             disabledIcon="$nl$/icons/full/dlcl16/runlast_co.gif"
+             icon="$nl$/icons/full/elcl16/runlast_co.gif">
+       </image>
+       <image
+             commandId="org.eclipse.debug.ui.commands.RunToLine"
+             disabledIcon="$nl$/icons/full/dlcl16/runtoline_co.gif"
+             icon="$nl$/icons/full/elcl16/runtoline_co.gif">
+       </image>
+       <image
+             commandId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
+             disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
+             icon="$nl$/icons/full/obj16/brkp_obj.gif">
+       </image>
+       <image
+             commandId="org.eclipse.debug.ui.commands.Suspend"
+             disabledIcon="$nl$/icons/full/dlcl16/suspend_co.gif"
+             icon="$nl$/icons/full/elcl16/suspend_co.gif">
+       </image>
+    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
       <type
