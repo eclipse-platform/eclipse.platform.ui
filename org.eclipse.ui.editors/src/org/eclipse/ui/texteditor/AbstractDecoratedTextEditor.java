@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1495,7 +1495,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		final IDocumentProvider provider= getDocumentProvider();
 		IEditorInput input= getEditorInput();
 		if (provider != null && input != null) {
-			if (!provider.isDeleted(input) && !isDirty() && input.getAdapter(IFile.class) != null) {
+			if (!isDirty() && input.getAdapter(IFile.class) != null) {
 				IEclipsePreferences pref= InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 				if (pref != null && pref.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false))
 					return;
