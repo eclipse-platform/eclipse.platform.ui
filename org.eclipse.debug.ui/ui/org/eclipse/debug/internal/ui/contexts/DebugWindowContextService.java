@@ -85,7 +85,11 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			active = activePage.getActivePart();
 		}
 		if (fProviders.size() == 1 && (part == null || part.equals(active))) {
-			notify(provider);
+		    notify(provider);
+		} else {
+		    ISelection activeContext = provider.getActiveContext();
+		    activeContext = activeContext != null ? activeContext : StructuredSelection.EMPTY;
+            notify(new DebugContextEvent(provider, activeContext, DebugContextEvent.ACTIVATED));
 		}
 		provider.addDebugContextListener(this);
 	}
@@ -100,13 +104,17 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			}
 			fProvidersByPartId.remove(id);
 			fProviders.remove(index);
+			IDebugContextProvider activeProvider = getActiveProvider();
 			if (index == 0) {
-				IDebugContextProvider activeProvider = getActiveProvider();
-				if (activeProvider != null) {
-					notify(activeProvider);
-				} else {
-					notify(new DebugContextEvent(provider, new StructuredSelection(), DebugContextEvent.ACTIVATED));
-				}
+    			if (activeProvider != null) {
+    				notify(activeProvider);
+    			} else {
+    				notify(new DebugContextEvent(provider, StructuredSelection.EMPTY, DebugContextEvent.ACTIVATED));
+    			}
+			} else {
+	            ISelection activeContext = provider.getActiveContext();
+	            activeContext = activeContext != null ? activeContext : StructuredSelection.EMPTY;			    
+                notify(new DebugContextEvent(provider, activeContext, DebugContextEvent.ACTIVATED));
 			}
 		}
 		provider.removeDebugContextListener(this);
