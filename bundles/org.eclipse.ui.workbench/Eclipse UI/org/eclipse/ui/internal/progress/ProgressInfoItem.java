@@ -495,6 +495,7 @@ public class ProgressInfoItem extends Composite {
 
 		jobImageLabel.setImage(getInfoImage());
 		int percentDone = getPercentDone();
+		ProgressBar currentProgressBar = progressBar;
 
 		JobInfo[] infos = getJobInfos();
 		if (isRunning()) {
@@ -590,6 +591,10 @@ public class ProgressInfoItem extends Composite {
 
 		updateToolBarValues();
 		setMainText();
+
+		if (currentProgressBar != progressBar) {
+			getParent().layout(new Control[] { this });
+		}
 	}
 
 	/**
@@ -724,8 +729,7 @@ public class ProgressInfoItem extends Composite {
 			FormData linkData = new FormData();
 			linkData.top = new FormAttachment(progressBar,
 					IDialogConstants.VERTICAL_SPACING);
-			linkData.left = new FormAttachment(0,
-					IDialogConstants.HORIZONTAL_SPACING);
+			linkData.left = new FormAttachment(progressBar, 0, SWT.LEFT);
 			linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
 			// Give an initial value so as to constrain the link shortening
 			linkData.width = IDialogConstants.INDENT;
@@ -753,7 +757,7 @@ public class ProgressInfoItem extends Composite {
 				linkData.top = new FormAttachment(top,
 						IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(top, 0, SWT.LEFT);
-				linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
+				linkData.right = new FormAttachment(top, 0, SWT.RIGHT);
 				// Give an initial value so as to constrain the link shortening
 				linkData.width = IDialogConstants.INDENT;
 			} else {
