@@ -35,6 +35,8 @@ public class ToolbarThemeProcessor extends AbstractThemeProcessor {
 
 	@Execute
 	public void process() {
+		if (toolbar == null)
+			return;
 		
 		MApplication theApp = getApplication(); 
 		List<String> tags = theApp.getTags();

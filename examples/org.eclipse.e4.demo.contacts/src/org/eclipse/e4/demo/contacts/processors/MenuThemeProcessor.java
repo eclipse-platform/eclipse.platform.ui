@@ -40,6 +40,8 @@ public class MenuThemeProcessor extends AbstractThemeProcessor {
 
 	@Execute
 	public void process() {
+		if (menu == null)
+			return;
 		
 		MApplication theApp = getApplication(); 
 		List<String> tags = theApp.getTags();
