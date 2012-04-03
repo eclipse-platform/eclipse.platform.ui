@@ -453,16 +453,16 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 			// Create Quit command
 			MCommand quitCommand = createCommand("quitCommand", "QuitHandler",
-					"Ctrl+Q", pluginName, fragment, application);
+					"M1+Q", pluginName, fragment, application);
 
 			MCommand openCommand = createCommand("openCommand", "OpenHandler",
-					"Ctrl+O", pluginName, fragment, application);
+					"M1+O", pluginName, fragment, application);
 
 			MCommand saveCommand = createCommand("saveCommand", "SaveHandler",
-					"Ctrl+S", pluginName, fragment, application);
+					"M1+S", pluginName, fragment, application);
 
 			MCommand aboutCommand = createCommand("aboutCommand",
-					"AboutHandler", "Ctrl+A", pluginName, fragment,
+					"AboutHandler", "M1+A", pluginName, fragment,
 					application);
 
 			MTrimmedWindow mainWindow = MBasicFactory.INSTANCE
