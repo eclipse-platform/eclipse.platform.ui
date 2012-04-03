@@ -125,7 +125,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			} else {
 			    // Notify listeners of the removed provider with the active window context.
 			    notifyPart(provider.getPart(), 
-			        new DebugContextEvent(provider, getActiveContext(), DebugContextEvent.ACTIVATED));
+			        new DebugContextEvent(activeProvider, getActiveContext(), DebugContextEvent.ACTIVATED));
 			}
 		}
 		provider.removeDebugContextListener(this);
