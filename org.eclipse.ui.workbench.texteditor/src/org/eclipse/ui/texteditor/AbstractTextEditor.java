@@ -4758,12 +4758,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					close(false);
 			}
 
-		} else {
+		} else if (fHasBeenActivated) {
 
 			title= EditorMessages.Editor_error_activated_outofsync_title;
 			msg= NLSUtility.format(EditorMessages.Editor_error_activated_outofsync_message, inputName);
 
-			if (fHasBeenActivated && MessageDialog.openQuestion(shell, title, msg)) {
+			if (MessageDialog.openQuestion(shell, title, msg)) {
 
 
 				try {
@@ -4780,6 +4780,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						msg= NLSUtility.format(EditorMessages.Editor_error_refresh_outofsync_message, inputName);
 						ErrorDialog.openError(shell, title, msg, x.getStatus());
 					}
+				}
+			} else if (!isDirty()) {
+				// Trigger dummy change to dirty the editor, for details see https://bugs.eclipse.org/344101 .
+				try {
+					IDocument document= provider.getDocument(input);
+					if (document != null)
+						document.replace(0, 0, ""); //$NON-NLS-1$
+				} catch (BadLocationException e) {
+					// Ignore as this can't happen
 				}
 			}
 		}
