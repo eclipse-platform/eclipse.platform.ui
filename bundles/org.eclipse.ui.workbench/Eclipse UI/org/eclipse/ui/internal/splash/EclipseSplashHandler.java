@@ -81,7 +81,7 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 			Rectangle buildIdRectangle = StringConverter.asRectangle(buildIdLocString,
 					new Rectangle(322, 190, 100, 40));
 
-			Label idLabel = new Label(getContent(), SWT.RIGHT | SWT.WRAP);
+			Label idLabel = new Label(getContent(), SWT.RIGHT);
 			idLabel.setForeground(getForeground());
 			idLabel.setBounds(buildIdRectangle);
 			idLabel.setText(buildId);
