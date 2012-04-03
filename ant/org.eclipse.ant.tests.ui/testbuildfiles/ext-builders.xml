@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project-builder" default="def">
+    <description>
+            Builder
+    </description>
+
+    <target name="def" description="description">
+        <echo>DEFAULT</echo>
+    </target>
+
+    <target name="full">
+        <echo>FULL</echo>
+    </target>
+
+    <target name="inc">
+        <echo>INCREMENTAL</echo>
+    </target>
+
+    <target name="auto">
+        <echo>AUTO</echo>
+    </target>
+
+    <target name="clean">
+        <echo>CLEAN</echo>
+    </target>
+
+</project>

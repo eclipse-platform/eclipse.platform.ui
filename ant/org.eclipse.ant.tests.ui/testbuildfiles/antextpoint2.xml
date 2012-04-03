@@ -1,0 +1,7 @@
+<project default="ep-B">
+    <target name="A" />
+    <extension-point name="ep-B" depends="A" />
+    <target name="B" extensionOf="ep-" depends="D" />
+    <target name="C" depends="ep-B" />
+    <target name="D" />
+</project>
