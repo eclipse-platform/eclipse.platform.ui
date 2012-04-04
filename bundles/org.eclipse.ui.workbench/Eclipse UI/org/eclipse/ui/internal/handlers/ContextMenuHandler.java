@@ -14,30 +14,50 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public class ContextMenuHandler extends AbstractHandler {
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Shell shell = HandlerUtil.getActiveShell(event);
+	/**
+	 * @throws ExecutionException
+	 *             {@inheritDoc}
+	 */
+	public Object execute(ExecutionEvent exEvent) throws ExecutionException {
+		Shell shell = HandlerUtil.getActiveShell(exEvent);
 		Display display = shell == null ? Display.getCurrent() : shell.getDisplay();
 		Control focusControl = display.getFocusControl();
 		if (focusControl != null) {
+			Point pt = display.getCursorLocation();
+			Event event = new Event();
+			event.x = pt.x;
+			event.y = pt.y;
+			event.detail = SWT.MENU_KEYBOARD;
+			focusControl.notifyListeners(SWT.MenuDetect, event);
+			if (focusControl.isDisposed())
+				return null;
+			if (!event.doit)
+				return null;
 			Menu menu = focusControl.getMenu();
-			if (menu != null) {
+
+			if (menu != null && !menu.isDisposed()) {
+				if (event.x != pt.x || event.y != pt.y) {
+					menu.setLocation(event.x, event.y);
+				}
 				menu.setVisible(true);
+
 			} else {
 				Point size = focusControl.getSize();
-				Point center = focusControl.toDisplay(Geometry.divide(size, 2));
-
 				Point location = focusControl.toDisplay(0, 0);
 
 				Event mouseEvent = new Event();
 				mouseEvent.widget = focusControl;
-				mouseEvent.x = center.x;
-				mouseEvent.y = center.y;
 
-				Point cursorLoc = display.getCursorLocation();
-				if (cursorLoc.x < location.x || location.x + size.x <= cursorLoc.x
-						|| cursorLoc.y < location.y || location.y + size.y <= cursorLoc.y) {
+				if (event.x < location.x || location.x + size.x <= event.x || event.y < location.y
+						|| location.y + size.y <= event.y) {
+					Point center = focusControl.toDisplay(Geometry.divide(size, 2));
+					mouseEvent.x = center.x;
+					mouseEvent.y = center.y;
 					mouseEvent.type = SWT.MouseMove;
 					display.post(mouseEvent);
+				} else {
+					mouseEvent.x = event.x;
+					mouseEvent.y = event.y;
 				}
 
 				mouseEvent.button = 2;
