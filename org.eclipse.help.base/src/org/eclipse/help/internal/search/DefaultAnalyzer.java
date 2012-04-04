@@ -1,34 +1,34 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2012 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.io.*;
 import com.ibm.icu.text.BreakIterator;
+import java.io.Reader;
 import java.util.Locale;
 import java.util.StringTokenizer;
-
 import org.apache.lucene.analysis.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.base.*;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.apache.lucene.util.Version;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /**
  * Lucene Analyzer. LowerCaseTokenizer->WordTokenStream (uses word breaking in
  * java.text)
  */
 public class DefaultAnalyzer extends Analyzer {
-	/**
-	 * Constructor for Analyzer.
-	 */
+
 	private Locale locale;
 
+	/**
+	 * Creates a new analyzer using the given locale.
+	 */
 	public DefaultAnalyzer(String localeString) {
 		super();
 		// Create a locale object for a given locale string
@@ -45,8 +45,7 @@ public class DefaultAnalyzer extends Analyzer {
 		}
 		if (locale == null && userLocale.getDisplayVariant().length() > 0) {
 			// Check if the locale without variant is supported by BreakIterator
-			Locale countryLocale = new Locale(userLocale.getLanguage(),
-					userLocale.getCountry());
+			Locale countryLocale = new Locale(userLocale.getLanguage(), userLocale.getCountry());
 			for (int i = 0; i < availableLocales.length; i++) {
 				if (countryLocale.equals(availableLocales[i])) {
 					locale = countryLocale;
@@ -82,8 +81,14 @@ public class DefaultAnalyzer extends Analyzer {
 	 * Reader.
 	 */
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
-		return new LowerCaseFilter(new WordTokenStream(fieldName, reader,
-				locale));
+		String tokenizer = System.getProperty("help.lucene.tokenizer"); //$NON-NLS-1$
+		//support reverting to standard lucene tokenizer based on system property
+		if ("standard".equalsIgnoreCase(tokenizer)) { //$NON-NLS-1$
+			Version version = Version.LUCENE_CURRENT;
+			return new LowerCaseFilter(new StandardTokenizer(version, reader));
+		}
+		//default Eclipse tokenizer
+		return new LowerCaseFilter(new WordTokenStream(fieldName, reader, locale));
 	}
 
 	/**
@@ -102,8 +107,7 @@ public class DefaultAnalyzer extends Analyzer {
 		else if (locales.countTokens() == 2)
 			return new Locale(locales.nextToken(), locales.nextToken());
 		else if (locales.countTokens() == 3)
-			return new Locale(locales.nextToken(), locales.nextToken(), locales
-					.nextToken());
+			return new Locale(locales.nextToken(), locales.nextToken(), locales.nextToken());
 		else
 			return Locale.getDefault();
 	}
