@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2006, 2010 IBM Corporation and others.
+ Copyright (c) 2006, 2012 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -13,6 +13,11 @@
 <% 
 	RequestData data = new RequestData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
+	
+	String baseURL = request.getRequestURL().toString();
+	baseURL = baseURL.substring(0,baseURL.lastIndexOf("/")+1);
+	
+	String href = baseURL+request.getParameter("href");
 %>
 
 <html lang="<%=ServletResources.getString("locale", request)%>">
@@ -22,7 +27,7 @@
 
 <script language="JavaScript">
 	function onloadHandler() { 
-		location.href="<%=UrlUtil.JavaScriptEncode(request.getParameter("href"))%>";
+		location.href="<%=UrlUtil.JavaScriptEncode(href)%>";
 	}
 </script>
 
