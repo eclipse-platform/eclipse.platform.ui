@@ -575,7 +575,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		String commandId = globalAction.getActionDefinitionId();
 
 		if (commandId != null) {
-			final Object value = globalActionHandlersByCommandId.get(commandId);
+			final Object value = globalActionHandlersByCommandId.remove(commandId);
 			if (value instanceof ActionHandler) {
 				// This handler is about to get clobbered, so dispose it.
 				final ActionHandler handler = (ActionHandler) value;
