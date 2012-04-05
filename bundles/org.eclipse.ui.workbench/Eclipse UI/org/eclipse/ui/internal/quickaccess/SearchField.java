@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -137,6 +138,7 @@ public class SearchField {
 			void doClose() {
 				dialogHeight = shell.getSize().y;
 				dialogWidth = shell.getSize().x;
+				shell.setVisible(false);
 			}
 
 			QuickAccessElement getPerfectMatch(String filter) {
@@ -167,7 +169,12 @@ public class SearchField {
 		final Table table = quickAccessContents.createTable(shell, Window.getDefaultOrientation());
 		text.addFocusListener(new FocusListener() {
 			public void focusLost(FocusEvent e) {
-				checkFocusLost(table, text);
+				// Once the focus event is complete, check if we should close the shell
+				table.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						checkFocusLost(table, text);
+					}
+				});
 			}
 
 			public void focusGained(FocusEvent e) {
@@ -179,13 +186,17 @@ public class SearchField {
 
 				previousFocusControl = (Control) e.getSource();
 			}
+			
 		});
-		shell.addFocusListener(new FocusListener() {
+		table.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e) {
-				checkFocusLost(table, text);
-			}
-
-			public void focusGained(FocusEvent e) {
+				// Once the focus event is complete, check if we should close
+				// the shell
+				table.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						checkFocusLost(table, text);
+					}
+				});
 			}
 		});
 		text.addModifyListener(new ModifyListener() {
@@ -332,7 +343,14 @@ public class SearchField {
 		int preferredWidth = dialogWidth == -1 ? 350 : dialogWidth;
 		int width = Math.max(preferredWidth, compBounds.width);
 		int height = dialogHeight == -1 ? 250 : dialogHeight;
-
+		
+		// If size would extend past the right edge of the shell, try to move it
+		// to the left of the text
+		Rectangle shellBounds = text.getShell().getBounds();
+		if (compBounds.x + width > shellBounds.x + shellBounds.width){
+			compBounds.x = Math.max(shellBounds.x, (compBounds.x + compBounds.width - width));
+		}
+		
 		shell.setBounds(getConstrainedShellBounds(display, new Rectangle(compBounds.x, compBounds.y
 				+ compBounds.height, width, height)));
 		shell.layout();
@@ -348,26 +366,28 @@ public class SearchField {
 	}
 
 	/**
+	 * Checks if the text or shell has focus. If not, closes the shell.
+	 * 
 	 * @param table
+	 *            the shell's table
 	 * @param text
+	 *            the search text field
 	 */
 	protected void checkFocusLost(final Table table, final Text text) {
-		table.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if (!shell.isDisposed() && !table.isDisposed() && !text.isDisposed()) {
-					if (table.getDisplay().getActiveShell() == table.getShell()) {
-						text.setFocus();
-						return;
-					}
-					if (!shell.isFocusControl() && !table.isFocusControl()
-							&& !text.isFocusControl()) {
-						quickAccessContents.doClose();
-						text.setText(""); //$NON-NLS-1$
-						quickAccessContents.resetProviders();
-					}
-				}
+		if (!shell.isDisposed() && !table.isDisposed() && !text.isDisposed()) {
+			if (table.getDisplay().getActiveShell() == table.getShell()) {
+				// If the user selects the trim shell, leave focus on the text
+				// so shell stays open
+				text.setFocus();
+				return;
 			}
-		});
+			if (!shell.isFocusControl() && !table.isFocusControl()
+					&& !text.isFocusControl()) {
+				quickAccessContents.doClose();
+				text.setText(""); //$NON-NLS-1$
+				quickAccessContents.resetProviders();
+			}
+		}
 	}
 
 	private void restoreDialog() {
