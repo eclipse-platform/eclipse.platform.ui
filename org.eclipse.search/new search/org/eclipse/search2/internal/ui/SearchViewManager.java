@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -94,16 +95,18 @@ public class SearchViewManager {
 		if (activePage != null) {
 			try {
 				ISearchResultViewPart viewPart= null;
-				if (!openInNew)
+				if (!openInNew) {
 					viewPart= findLRUSearchResultView(activePage, avoidPinnedViews);
+				}
 				String secondaryId= null;
 				if (viewPart == null) {
-					if (activePage.findViewReference(NewSearchUI.SEARCH_VIEW_ID) != null) {
+					if (activePage.findViewReference(NewSearchUI.SEARCH_VIEW_ID) != null)
 						secondaryId= String.valueOf(++fViewCount); // avoid a secondary ID because of bug 125315
-					}
-				} else {
+				} else if (!SearchPreferencePage.isViewBroughtToFront())
+					return viewPart;
+				else
 					secondaryId= viewPart.getViewSite().getSecondaryId();
-				}
+
 				return (ISearchResultViewPart) activePage.showView(NewSearchUI.SEARCH_VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
 			} catch (PartInitException ex) {
 				ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message);
