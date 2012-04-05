@@ -1,0 +1,7 @@
+<project default="javacIt">
+	<target name="javacIt">
+		<javac includejavaruntime=""
+			followsymlinks=""
+			includeantruntime=""/>
+	</target>
+</project>

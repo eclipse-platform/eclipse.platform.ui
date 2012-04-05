@@ -1,0 +1,4 @@
+<project ndefault="make">
+	<target name="make">
+	</target>
+</project>
