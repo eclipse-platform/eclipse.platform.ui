@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,13 +68,13 @@ public class ResourcesCompatibilityHelper {
 	}
 
 	public static IHistoryStore createHistoryStore(IPath location, int limit, boolean newImpl, boolean convert, boolean rename) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		Class clazz = Class.forName(COMPATIBILITY_CLASS);
+		Class<?> clazz = Class.forName(COMPATIBILITY_CLASS);
 		Method createMethod = clazz.getDeclaredMethod("createHistoryStore", new Class[] {IPath.class, int.class, boolean.class, boolean.class, boolean.class}); //$NON-NLS-1$
 		return (IHistoryStore) createMethod.invoke(null, new Object[] {location, new Integer(limit), Boolean.valueOf(newImpl), Boolean.valueOf(convert), Boolean.valueOf(rename)});
 	}
 
 	public static IPropertyManager createPropertyManager(boolean newImpl, boolean convert) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		Class clazz = Class.forName(COMPATIBILITY_CLASS);
+		Class<?> clazz = Class.forName(COMPATIBILITY_CLASS);
 		Method createMethod = clazz.getDeclaredMethod("createPropertyManager", new Class[] {boolean.class, boolean.class}); //$NON-NLS-1$
 		return (IPropertyManager) createMethod.invoke(null, new Object[] {Boolean.valueOf(newImpl), Boolean.valueOf(convert)});
 	}
