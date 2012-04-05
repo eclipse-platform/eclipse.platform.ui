@@ -152,11 +152,12 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
     private static final int DROP_DOWN_MIN_WIDTH= 500;
     private static final int DROP_DOWN_MAX_WIDTH= 501;
     
-    private static final int DROP_DOWN_DEFAULT_MIN_HEIGHT= 300;
+    private static final int DROP_DOWN_DEFAULT_MIN_HEIGHT= 100;
     private static final int DROP_DOWN_DEFAULT_MAX_HEIGHT= 500;
 
     private static final String DIALOG_SETTINGS= "BreadcrumbItemDropDown"; //$NON-NLS-1$
     private static final String DIALOG_HEIGHT= "height"; //$NON-NLS-1$
+    private static final String DIALOG_WIDTH= "width"; //$NON-NLS-1$
 
 	private final BreadcrumbItem fParent;
 	private final Composite fParentComposite;
@@ -166,6 +167,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	private boolean fEnabled;
 	private Shell fShell;
     private boolean fIsResizingProgrammatically;
+    private int fCurrentWidth = -1;
+    private int fCurrentHeight = -1;
+    
 
 	public BreadcrumbItemDropDown(BreadcrumbItem parent, Composite composite) {
 		fParent= parent;
@@ -281,6 +285,9 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
                     return;
                 
                 Point size= fShell.getSize();
+                fCurrentWidth = size.x;
+                fCurrentHeight = size.y;
+                getDialogSettings().put(DIALOG_WIDTH, size.x);
                 getDialogSettings().put(DIALOG_HEIGHT, size.y);
             }
         });
@@ -418,6 +425,14 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	    return settings;
 	}
 	    
+	private int getMaxWidth() {
+	    try {
+	        return getDialogSettings().getInt(DIALOG_WIDTH);
+	    } catch (NumberFormatException e) {
+	        return DROP_DOWN_MAX_WIDTH;
+	    }
+	}
+
 	private int getMaxHeight() {
 	    try {
 	        return getDialogSettings().getInt(DIALOG_HEIGHT);
@@ -438,7 +453,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 
 		Point size = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
 		int height= Math.max(Math.min(size.y, getMaxHeight()), DROP_DOWN_DEFAULT_MIN_HEIGHT);
-		int width= Math.max(Math.min(size.x, DROP_DOWN_MAX_WIDTH), DROP_DOWN_MIN_WIDTH);
+		int width= Math.max(getMaxWidth(), DROP_DOWN_MIN_WIDTH);
 
 		int imageBoundsX= 0;
 		if (fParent.getImage() != null) {
@@ -470,6 +485,8 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
         fIsResizingProgrammatically= true;
         try {
             shell.setSize(width, height);
+            fCurrentWidth = width;
+            fCurrentHeight = height;
         } finally {
             fIsResizingProgrammatically= false;
         }
@@ -517,46 +534,45 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	 * @param shell the shell to resize
 	 */
 	private void resizeShell(final Shell shell) {
-		Point size= shell.getSize();
-		int currentWidth= size.x;
-		int currentHeight= size.y;
-
         int maxHeight= getMaxHeight();
+        int maxWidth = getMaxWidth();
         
-        if (currentHeight >= maxHeight && currentWidth >= DROP_DOWN_MAX_WIDTH)
+        if (fCurrentHeight >= maxHeight && fCurrentWidth >= maxWidth)
 			return;
 
 		Point preferedSize= shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
 		int newWidth;
-        if (currentWidth >= DROP_DOWN_MAX_WIDTH) {
-			newWidth= currentWidth;
+        if (fCurrentWidth >= DROP_DOWN_MAX_WIDTH) {
+			newWidth= fCurrentWidth;
 		} else {
 		    // Workaround for bug 319612: Do not resize width below the 
 		    // DROP_DOWN_MIN_WIDTH.  This can happen because the Shell.getSize()
 		    // is incorrectly small on Linux.
-            newWidth= Math.min(Math.max(Math.max(preferedSize.x, currentWidth), DROP_DOWN_MIN_WIDTH), DROP_DOWN_MAX_WIDTH);
+            newWidth= Math.min(Math.max(Math.max(preferedSize.x, fCurrentWidth), DROP_DOWN_MIN_WIDTH), maxWidth);
 		}
 		int newHeight;
-        if (currentHeight >= maxHeight) {
-			newHeight= currentHeight;
+        if (fCurrentHeight >= maxHeight) {
+			newHeight= fCurrentHeight;
 		} else {
-            newHeight= Math.min(Math.max(preferedSize.y, currentHeight), maxHeight);
+            newHeight= Math.min(Math.max(preferedSize.y, fCurrentHeight), maxHeight);
 		}
 
-		if (newHeight != currentHeight || newWidth != currentWidth) {
+		if (newHeight != fCurrentHeight || newWidth != fCurrentWidth) {
 			shell.setRedraw(false);
 			try {
                 fIsResizingProgrammatically= true;
 				shell.setSize(newWidth, newHeight);
+				fCurrentWidth = newWidth;
+				fCurrentHeight = newHeight;
 				
 				Point location = shell.getLocation();
 				Point newLocation = location;
 				if (!isLeft()) {
-					newLocation = new Point(newLocation.x - (newWidth - currentWidth), newLocation.y);
+					newLocation = new Point(newLocation.x - (newWidth - fCurrentWidth), newLocation.y);
 				}
 				if (!isTop()) {
-                    newLocation = new Point(newLocation.x, newLocation.y - (newHeight - currentHeight));
+                    newLocation = new Point(newLocation.x, newLocation.y - (newHeight - fCurrentHeight));
 				}				    
 				if (!location.equals(newLocation)) {
 	                shell.setLocation(newLocation.x, newLocation.y);
