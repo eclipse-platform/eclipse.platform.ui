@@ -482,7 +482,7 @@
          </action>
          <action
                id="org.eclipse.debug.internal.ui.actions.RunDropDownAction"
-               toolbarPath="org.eclipse.debug.ui.launch.toolbar/launchGroup"
+               toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
                hoverIcon="$nl$/icons/full/etool16/run_exc.gif"
                class="org.eclipse.debug.internal.ui.actions.RunToolbarAction"
                disabledIcon="$nl$/icons/full/dtool16/run_exc.gif"
@@ -517,7 +517,7 @@
          </action>
          <action
                id="org.eclipse.debug.internal.ui.actions.DebugDropDownAction"
-               toolbarPath="org.eclipse.debug.ui.launch.toolbar/launchGroup"
+               toolbarPath="org.eclipse.debug.ui.launchActionSet/debug"
                hoverIcon="$nl$/icons/full/etool16/debug_exc.gif"
                class="org.eclipse.debug.internal.ui.actions.DebugToolbarAction"
                disabledIcon="$nl$/icons/full/dtool16/debug_exc.gif"
