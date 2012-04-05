@@ -60,6 +60,9 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
 
    <element name="handler">
       <annotation>
+         <appInfo>
+           <meta.element labelAttribute="commandId"/>
+         </appInfo>
          <documentation>
             &lt;p&gt;Associated a command with a handler implementation.&lt;/p&gt;
          </documentation>
