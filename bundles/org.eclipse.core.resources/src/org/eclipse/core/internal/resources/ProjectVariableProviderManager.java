@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2012 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ public class ProjectVariableProviderManager {
 	}
 
 	private static Map<String, Descriptor> descriptors;
+	private static Descriptor[] descriptorsArray;
 	private static ProjectVariableProviderManager instance;
 
 	public synchronized static ProjectVariableProviderManager getDefault() {
@@ -82,7 +83,7 @@ public class ProjectVariableProviderManager {
 
 	public Descriptor[] getDescriptors() {
 		lazyInitialize();
-		return descriptors.values().toArray(new Descriptor[descriptors.size()]);
+		return descriptorsArray; 
 	}
 
 	protected void lazyInitialize() {
@@ -109,6 +110,7 @@ public class ProjectVariableProviderManager {
 				}
 			}
 		}
+		descriptorsArray = descriptors.values().toArray(new Descriptor[descriptors.size()]);
 	}
 
 	public Descriptor findDescriptor(String name) {
