@@ -158,6 +158,7 @@ public class TeamUI {
 	 * @throws CoreException
 	 *             if an error occurs while trying to create a page extension
 	 * @since 3.6
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static IScmUrlImportWizardPage[] getPages(final String importerId)
 			throws CoreException {
