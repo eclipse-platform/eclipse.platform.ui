@@ -682,7 +682,8 @@ public class StackRenderer extends LazyStackRenderer {
 
 		CTabItem cti = findItemForPart(element, stack);
 		if (cti != null) {
-			if (element.getWidget() != null)
+			if (element.getWidget() != null
+					&& cti.getControl() != element.getWidget())
 				cti.setControl((Control) element.getWidget());
 			return;
 		}
