@@ -28,7 +28,6 @@
    </extension>
    
    <extension
-      id="org.eclipse.e4.xwt.content-types"
       point="org.eclipse.core.contenttype.contentTypes">
      <content-type
           base-type="org.eclipse.core.runtime.xml"
