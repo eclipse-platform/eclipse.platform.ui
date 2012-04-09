@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -57,8 +58,12 @@ public class ContextProcessingAddon {
 	private void defineContexts(MBindingContext parent, MBindingContext current) {
 		Context context = contextManager.getContext(current.getElementId());
 		if (!context.isDefined()) {
-			context.define(current.getName(), current.getDescription(), parent == null ? null
-					: parent.getElementId());
+			String localizedName = LocalizationHelper.getLocalized(current.getName(), current,
+					application.getContext());
+			String localizedDescriptor = LocalizationHelper.getLocalized(current.getDescription(),
+					current, application.getContext());
+			context.define(localizedName, localizedDescriptor,
+					parent == null ? null : parent.getElementId());
 		}
 		for (MBindingContext child : current.getChildren()) {
 			defineContexts(current, child);
