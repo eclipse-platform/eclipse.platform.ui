@@ -122,10 +122,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 
     private List fCompletedUpdates = new ArrayList();
     
-    private Runnable fCompletedUpdatesJob;
+    private Runnable fCompletedUpdatesRunnable;
 
     private ViewerStateTracker fStateTracker = new ViewerStateTracker(this);
-    
+
+    private Runnable fTriggerUpdatesRunnable;
+
     /**
      * Update type constants
      */
@@ -787,12 +789,14 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                 }
             }
             if (inProgressList == null || inProgressList.isEmpty()) {
-                getViewer().getDisplay().asyncExec(new Runnable() {
+            	fTriggerUpdatesRunnable = new Runnable() {
                     public void run() {
+                    	if (fTriggerUpdatesRunnable != this) return;
                     	if (isDisposed()) return;
                         trigger(update.getSchedulingPath());
                     }
-                });
+                };
+                getViewer().getDisplay().asyncExec(fTriggerUpdatesRunnable);
             }
         } else {
             // there are waiting requests: coalesce with existing request and add to list
@@ -1595,20 +1599,29 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	 */
 	void scheduleViewerUpdate(ViewerUpdateMonitor update) {
 	    Display display;
+	    Runnable updateJob = null;
 	    synchronized(this) {
 	        if (isDisposed()) return;
 	        display = getViewer().getDisplay();
 	        fCompletedUpdates.add(update);
-            if (fCompletedUpdatesJob == null) {
-	            fCompletedUpdatesJob = new Runnable() {
+            if (fCompletedUpdatesRunnable == null) {
+	            fCompletedUpdatesRunnable = new Runnable() {
 	                public void run() {
 	                    if (!isDisposed()) {
 	                        performUpdates();
 	                    }
 	                }
 	            };
-	            display.asyncExec(fCompletedUpdatesJob);
-	        }
+	            updateJob = fCompletedUpdatesRunnable;
+            }
+	    }
+	    
+	    if (updateJob != null) {
+            if (Thread.currentThread() == display.getThread()) {
+            	performUpdates();
+            } else {
+            	display.asyncExec(updateJob);
+            }
 	    }
 	}
 
@@ -1619,12 +1632,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
 	    
         List jobCompletedUpdates;
-        synchronized(TreeModelContentProvider.this) {
+        synchronized(this) {
             if (isDisposed()) {
                 return;
             }
             jobCompletedUpdates = fCompletedUpdates;
-            fCompletedUpdatesJob = null;
+            fCompletedUpdatesRunnable = null;
             fCompletedUpdates = new ArrayList();
         }
         // necessary to check if viewer is disposed
