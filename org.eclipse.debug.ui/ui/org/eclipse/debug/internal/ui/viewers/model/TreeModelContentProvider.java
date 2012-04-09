@@ -104,6 +104,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     private ListenerList fUpdateListeners = new ListenerList();
 
     /**
+     * Flag indicating whether we are currently in a model sequence.
+     * @see IViewerUpdateListener
+     */
+    private boolean fModelSequenceRunning = false;
+    
+    /**
      * Map of updates in progress: element path -> list of requests
      */
     private Map fRequestsInProgress = new HashMap();
@@ -194,7 +200,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         if (newInput != null) {
             installModelProxy(newInput, TreePath.EMPTY);
             fStateTracker.restoreViewerState(newInput);
-        }
+        } 
     }
 
     public void addViewerUpdateListener(IViewerUpdateListener listener) {
@@ -579,14 +585,14 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     void updateStarted(ViewerUpdateMonitor update) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
         
-        boolean begin = fRequestsInProgress.isEmpty();
         List requests = (List) fRequestsInProgress.get(update.getSchedulingPath());
         if (requests == null) {
             requests = new ArrayList();
             fRequestsInProgress.put(update.getSchedulingPath(), requests);
         }
         requests.add(update);
-        if (begin) {
+        if (!fModelSequenceRunning) {
+        	fModelSequenceRunning = true;
             if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
                 DebugUIPlugin.trace("MODEL SEQUENCE BEGINS"); //$NON-NLS-1$
             }
@@ -647,7 +653,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                         fRequestsInProgress.remove(update.getSchedulingPath());
                     }
             	}
-                if (fRequestsInProgress.isEmpty() && fWaitingRequests.isEmpty()) {
+                if (fRequestsInProgress.isEmpty() && fWaitingRequests.isEmpty() && fModelSequenceRunning) {
+                	fModelSequenceRunning = false;
                     if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
                         DebugUIPlugin.trace("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
                     }
