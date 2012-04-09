@@ -274,7 +274,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
      * <br>
      * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304066">bug 304066</a> 
      */
-    public void _X_testContentPlusAddRemoveUpdateRaceConditionsElement() throws InterruptedException {
+    public void testContentPlusAddRemoveUpdateRaceConditionsElement() throws InterruptedException {
         TestModel model = TestModel.simpleSingleLevel();
         fViewer.setAutoExpandLevel(-1);
 

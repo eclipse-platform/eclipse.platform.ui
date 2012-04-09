@@ -391,7 +391,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         
         // Note: in past it was observed sub-optimal coalescing in this test due 
         // to scattered update requests from viewer.
-        Assert.assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
+        Assert.assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 5) );
     }
 
 
