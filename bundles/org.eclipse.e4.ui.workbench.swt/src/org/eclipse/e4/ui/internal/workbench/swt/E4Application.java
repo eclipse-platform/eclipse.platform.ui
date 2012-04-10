@@ -77,6 +77,7 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -218,10 +219,8 @@ public class E4Application implements IApplication {
 				appContext);
 		appModel.setContext(appContext);
 
-		String rtlMode = getArgValue(E4Workbench.RTL_MODE, applicationContext,
-				false);
-		appModel.getTransientData().put(E4Workbench.RTL_MODE,
-				"rtl".equals(rtlMode));
+		boolean isRtl = ((Window.getDefaultOrientation() & SWT.RIGHT_TO_LEFT) != 0);
+		appModel.getTransientData().put(E4Workbench.RTL_MODE, isRtl);
 
 		// for compatibility layer: set the application in the OSGi service
 		// context (see Workbench#getInstance())
