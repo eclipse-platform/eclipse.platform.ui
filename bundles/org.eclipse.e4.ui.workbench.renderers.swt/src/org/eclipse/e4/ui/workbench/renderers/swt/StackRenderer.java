@@ -550,7 +550,12 @@ public class StackRenderer extends LazyStackRenderer {
 		if (util == null)
 			return result;
 
-		CSSValue value = util.getCSSValue(control, "MPartStack", "mru-visible"); //$NON-NLS-1$ //$NON-NLS-2$
+		CSSValue value = util.getCSSValue(control,
+				"MPartStack", "swt-mru-visible"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (value == null) {
+			value = util.getCSSValue(control, "MPartStack", "mru-visible"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		if (value == null)
 			return result;
 

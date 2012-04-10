@@ -76,8 +76,6 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 	private EPartService partService;
 
-	private boolean alphabetical;
-
 	public BasicPartList(Shell parent, int shellStyle, int treeStyler,
 			EPartService partService, MElementContainer<?> input,
 			ISWTResourceUtilities utils, boolean alphabetical) {
@@ -85,7 +83,10 @@ public class BasicPartList extends AbstractTableInformationControl {
 		this.partService = partService;
 		this.input = input;
 		this.utils = utils;
-		this.alphabetical = alphabetical;
+		if (alphabetical && getTableViewer() != null) {
+			getTableViewer().setComparator(new ViewerComparator());
+		}
+
 	}
 
 	private Image getLabelImage(String iconURI) {
@@ -104,9 +105,6 @@ public class BasicPartList extends AbstractTableInformationControl {
 		table.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false,
 				false));
 		TableViewer tableViewer = new TableViewer(table);
-		if (alphabetical) {
-			tableViewer.setComparator(new ViewerComparator());
-		}
 		tableViewer.addFilter(new NamePatternFilter());
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setLabelProvider(new BasicStackListLabelProvider());
