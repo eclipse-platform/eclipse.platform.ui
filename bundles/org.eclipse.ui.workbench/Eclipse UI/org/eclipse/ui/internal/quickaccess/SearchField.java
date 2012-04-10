@@ -216,6 +216,12 @@ public class SearchField {
 					text.setText(""); //$NON-NLS-1$
 					if (previousFocusControl != null && !previousFocusControl.isDisposed())
 						previousFocusControl.setFocus();
+				} else if (e.keyCode == SWT.ARROW_UP) {
+					// Windows moves caret left/right when pressing up/down,
+					// avoid this as the table selection changes for up/down
+					e.doit = false;
+				} else if (e.keyCode == SWT.ARROW_DOWN) {
+					e.doit = false;
 				}
 			}
 		});
