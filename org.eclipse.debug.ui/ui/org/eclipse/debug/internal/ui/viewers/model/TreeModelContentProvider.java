@@ -1185,6 +1185,11 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	
  	protected void handleAdd(IModelDelta delta) {
 		IModelDelta parentDelta = delta.getParentDelta();
+		if (parentDelta == null) {
+		    DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+		    return;
+		}
+
 		TreePath parentPath = getViewerTreePath(parentDelta);
 		Object element = delta.getElement();
 		int count = parentDelta.getChildCount();
@@ -1352,7 +1357,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 
 	protected void handleInsert(IModelDelta delta) {
 		// TODO: filters
-		getViewer().insert(getViewerTreePath(delta.getParentDelta()), delta.getElement(), delta.getIndex());
+        IModelDelta parentDelta = delta.getParentDelta();
+        if (parentDelta == null) {
+            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+            return;
+        }
+		getViewer().insert(getViewerTreePath(parentDelta), delta.getElement(), delta.getIndex());
 	}
 
 	protected void handleRemove(IModelDelta delta) {
@@ -1360,6 +1370,10 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 			DebugUIPlugin.trace("handleRemove(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		IModelDelta parentDelta = delta.getParentDelta();
+		if (parentDelta == null) {
+            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+		    return;
+		}
 		IInternalTreeModelViewer treeViewer = getViewer();
 		TreePath parentPath = getViewerTreePath(parentDelta);
 		Object element = delta.getElement();
@@ -1425,7 +1439,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	}
 
 	protected void handleReplace(IModelDelta delta) {
-		TreePath parentPath = getViewerTreePath(delta.getParentDelta());
+	    IModelDelta parentDelta = delta.getParentDelta();
+	    if (parentDelta == null) {
+	        DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+	        return;
+	    }
+		TreePath parentPath = getViewerTreePath(parentDelta);
 		int index = delta.getIndex();
 		if (index < 0) {
 		    index = fTransform.indexOfFilteredElement(parentPath, delta.getElement());
@@ -1471,7 +1490,11 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		// empty the selection before replacing elements to avoid materializing elements (@see bug 305739)
 		treeViewer.clearSelectionQuiet();
 		if (modelIndex >= 0) {
-			IModelDelta parentDelta = delta.getParentDelta();
+	        IModelDelta parentDelta = delta.getParentDelta();
+	        if (parentDelta == null) {
+	            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+	            return;
+	        }
 			TreePath parentPath = getViewerTreePath(parentDelta);
 			int viewIndex = modelToViewIndex(parentPath, modelIndex);
 			if (viewIndex >= 0) {
@@ -1502,11 +1525,13 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 
 	protected void handleReveal(IModelDelta delta) {
 		IModelDelta parentDelta = delta.getParentDelta();
-		if (parentDelta != null) {
-			handleExpand(parentDelta);
-			reveal(delta);
-            cancelRestore(getViewerTreePath(delta), IModelDelta.REVEAL);
-		}
+        if (parentDelta == null) {
+            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+            return;
+        }
+        handleExpand(parentDelta);
+        reveal(delta);
+        cancelRestore(getViewerTreePath(delta), IModelDelta.REVEAL);
 	}
 	
 	/**

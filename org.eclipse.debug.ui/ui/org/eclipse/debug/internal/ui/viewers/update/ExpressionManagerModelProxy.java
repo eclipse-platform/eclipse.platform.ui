@@ -68,15 +68,15 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	 * @see org.eclipse.debug.internal.core.IExpressionsListener2#expressionsMoved(org.eclipse.debug.core.model.IExpression[], int)
 	 */
 	public void expressionsMoved(IExpression[] expressions, int index){
-		ModelDelta delta = new ModelDelta(getExpressionManager(), IModelDelta.NO_CHANGE);
 		int count = getElementsCount();
+        ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
 			delta.addNode(expression, IModelDelta.REMOVED);
 		}
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
-			delta.addNode(expression, index+i, IModelDelta.ADDED, count);
+			delta.addNode(expression, index+i, IModelDelta.ADDED, -1);
 		}
 		fireModelChanged(delta);
 	}
@@ -86,10 +86,10 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	 */
 	public void expressionsInserted(IExpression[] expressions, int index){
 	    int count = getElementsCount();
-		ModelDelta delta = new ModelDelta(getExpressionManager(), IModelDelta.NO_CHANGE);
+        ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
-			delta.addNode(expression, index+i, IModelDelta.ADDED | IModelDelta.INSTALL, count);
+			delta.addNode(expression, index+i, IModelDelta.ADDED | IModelDelta.INSTALL, -1);
 		}
 		fireModelChanged(delta);
 	}
@@ -100,13 +100,12 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	public void expressionsAdded(IExpression[] expressions) {
 	    int index = getExpressionManager().getExpressions().length - expressions.length;
 	    int count = getElementsCount();
-        ModelDelta delta = new ModelDelta(getExpressionManager(), IModelDelta.NO_CHANGE);
+        ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
         for (int i = 0; i < expressions.length; i++) {
             IExpression expression = expressions[i];
-            delta.addNode(expression, index+i, IModelDelta.ADDED | IModelDelta.INSTALL, count);
+            delta.addNode(expression, index+i, IModelDelta.ADDED | IModelDelta.INSTALL, -1);
         }
         fireModelChanged(delta);
-		updateExpressions(expressions, IModelDelta.ADDED | IModelDelta.INSTALL);
 	}
 
 	/* (non-Javadoc)
