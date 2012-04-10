@@ -658,6 +658,36 @@ public final class BindingService implements IBindingService {
 
 	}
 
+	static private boolean isSameBinding(MKeyBinding existingBinding, MCommand cmd, Binding binding) {
+		// see org.eclipse.jface.bindings.Binding#equals(final Object object)
+		if (!cmd.equals(existingBinding.getCommand()))
+			return false;
+		String existingKeySequence = existingBinding.getKeySequence();
+		if (existingKeySequence == null)
+			return false;
+		if (!existingKeySequence.equals(binding.getTriggerSequence().format()))
+			return false;
+
+		// tags to look for:
+		ArrayList<String> expectedTagList = new ArrayList<String>(4);
+
+		String schemeId = binding.getSchemeId();
+		if (schemeId != null && !schemeId.equals(BindingPersistence.getDefaultSchemeId())) {
+			expectedTagList.add(EBindingService.SCHEME_ID_ATTR_TAG + ":" + schemeId); //$NON-NLS-1$
+		}
+		String locale = binding.getLocale();
+		if (locale != null) {
+			expectedTagList.add(EBindingService.LOCALE_ATTR_TAG + ":" + locale); //$NON-NLS-1$
+		}
+		String platform = binding.getPlatform();
+		if (platform != null) {
+			expectedTagList.add(EBindingService.PLATFORM_ATTR_TAG + ":" + platform); //$NON-NLS-1$
+		}
+		if (binding.getType() == Binding.USER) {
+			expectedTagList.add(EBindingService.TYPE_ATTR_TAG + ":user"); //$NON-NLS-1$
+		}
+		return existingBinding.getTags().equals(expectedTagList);
+	}
 
 	// TBD the "update" procedure should not typically be run.
 	// Add some sort of timestamp on the source files and update
@@ -682,10 +712,13 @@ public final class BindingService implements IBindingService {
 
 		MKeyBinding keyBinding = null;
 		for (MKeyBinding existingBinding : table.getBindings()) {
-			if (cmd.equals(existingBinding.getCommand())
-					&& existingBinding.getKeySequence() != null
-					&& existingBinding.getKeySequence().equals(
-							binding.getTriggerSequence().format())) {
+			Binding b = (Binding) existingBinding.getTransientData().get(
+					EBindingService.MODEL_TO_BINDING_KEY);
+			if (binding.equals(b)) {
+				keyBinding = existingBinding;
+				break;
+			}
+			if (isSameBinding(existingBinding, cmd, binding)) {
 				keyBinding = existingBinding;
 				break;
 			}
