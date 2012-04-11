@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
     Copyright (c) 2005, 2009 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
@@ -10,6 +11,9 @@
  -->
 
 <index>
-   <entry keyword="keyword1">      <topic href="topic1.html" title="topic0"/>      <topic href="topic2.html" label="topic1"/>      <topic href="topic3.html" title="topic2" label = "topic3"/>
+   <entry keyword="keyword1">
+      <topic href="topic1.html" title="topic0"/>
+      <topic href="topic2.html" label="topic1"/>
+      <topic href="topic3.html" title="topic2" label = "topic3"/>
    </entry>
 </index>

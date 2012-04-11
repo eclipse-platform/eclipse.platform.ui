@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
     Copyright (c) 2005, 2010 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
@@ -85,7 +86,13 @@
       <description>
          The dialog should be closed and the Search Scope should now display the name &quot;workbench&quot;. Note: Sometimes the search bar is not updated right away, so you may have to wait a bit.
       </description>
-   </item>   <item         title="Check Toc is Filtered">      <description>         Click on the contents tab to show the table of contents. Verify that only one book, &quot;Workbench User Guide&quot; shows.      </description>   </item>
+   </item>
+   <item
+         title="Check Toc is Filtered">
+      <description>
+         Click on the contents tab to show the table of contents. Verify that only one book, &quot;Workbench User Guide&quot; shows.
+      </description>
+   </item>
    <item title="Search again" dialog="false" skip="false">
       <description>
    Search again for the same word, &quot;participation&quot;. You should see fewer results than were returned by the unscoped search.
@@ -105,5 +112,11 @@
       <description>
          Click on the &quot;Contents&quot; tab at the bottom of the navigation tree. This should redisplay the navigation tree as you left it before switching to the search results tab.
       </description>
-   </item>   <item         title="Show all">      <description>         Click on &quot;Scope&quot; and in the scope dialog select the radio button &quot;Show All&quot;      </description>   </item>
+   </item>
+   <item
+         title="Show all">
+      <description>
+         Click on &quot;Scope&quot; and in the scope dialog select the radio button &quot;Show All&quot;
+      </description>
+   </item>
 </cheatsheet>

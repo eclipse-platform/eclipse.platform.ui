@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
     Copyright (c) 2005, 2010 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
@@ -17,7 +18,9 @@
       <topic href="data/help/index/topic2.html#someAnchor" label="keyword2"/>
    </entry>
    <entry keyword="keyword3">
-      <topic href="data/help/index/topic2.html" label="topic2"/>      <topic href="data/help/index/topic3.html#someAnchor" label="topic3"/>      <topic href="data/help/index/topic3.html#anotherAnchor" label="child4"/>
+      <topic href="data/help/index/topic2.html" label="topic2"/>
+      <topic href="data/help/index/topic3.html#someAnchor" label="topic3"/>
+      <topic href="data/help/index/topic3.html#anotherAnchor" label="child4"/>
    </entry>
    <entry keyword="keyword4">
       <topic href="data/help/index/topicDoesntExist.html" title="nonexistant"/>
@@ -63,5 +66,44 @@
    </entry>
    <entry keyword="overhead">
       <topic href="data/help/index/topic1.html" label="overhead"/>
-   </entry>   <entry keyword="character &gt;">      <topic href="data/help/index/topic1.html" label="character &gt;"/>   </entry>   <entry keyword="character &lt;">      <topic href="data/help/index/topic1.html" label="character &lt;"/>   </entry>   <entry  keyword="character &amp;">      <topic href="data/help/index/topic1.html" title="character &amp;"/>   </entry>   <entry keyword="character '">      <topic href="data/help/index/topic1.html" title="character '"/>   </entry>   <entry keyword="character &quot;">      <topic href="data/help/index/topic1.html" title="character &quot;"/>   </entry>   <entry keyword="bundle">     <topic href="data/help/index/topic1.html" title = "loading"/>     <entry keyword = "development environment">         <topic href="data/help/index/topic2.html" title = "dev"/>     </entry>  </entry>  <entry keyword="Error - this entry is empty"/>  <entry keyword="plug-in">      <see keyword="bundle"/>      <see keyword="PDE"/>      <see keyword="invalidSee"/>  </entry>  <entry keyword="PDE">      <see keyword="bundle">          <subpath keyword = "development environment" />      </see>  </entry>  <entry keyword="special characters">      <see keyword="character &gt;"/>      <see keyword="character &lt;"/>      <see keyword="character &amp;"/>      <see keyword="character '"/>      <see keyword="character &quot;"/>  </entry>
+   </entry>
+   <entry keyword="character &gt;">
+      <topic href="data/help/index/topic1.html" label="character &gt;"/>
+   </entry>
+   <entry keyword="character &lt;">
+      <topic href="data/help/index/topic1.html" label="character &lt;"/>
+   </entry>
+   <entry  keyword="character &amp;">
+      <topic href="data/help/index/topic1.html" title="character &amp;"/>
+   </entry>
+   <entry keyword="character '">
+      <topic href="data/help/index/topic1.html" title="character '"/>
+   </entry>
+   <entry keyword="character &quot;">
+      <topic href="data/help/index/topic1.html" title="character &quot;"/>
+   </entry>
+   <entry keyword="bundle">
+     <topic href="data/help/index/topic1.html" title = "loading"/>
+     <entry keyword = "development environment">
+         <topic href="data/help/index/topic2.html" title = "dev"/>
+     </entry>
+  </entry>
+  <entry keyword="Error - this entry is empty"/>
+  <entry keyword="plug-in">
+      <see keyword="bundle"/>
+      <see keyword="PDE"/>
+      <see keyword="invalidSee"/>
+  </entry>
+  <entry keyword="PDE">
+      <see keyword="bundle">
+          <subpath keyword = "development environment" />
+      </see>
+  </entry>
+  <entry keyword="special characters">
+      <see keyword="character &gt;"/>
+      <see keyword="character &lt;"/>
+      <see keyword="character &amp;"/>
+      <see keyword="character '"/>
+      <see keyword="character &quot;"/>
+  </entry>
 </index>

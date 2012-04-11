@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
      Copyright (c) 2005, 2009 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
@@ -35,7 +36,10 @@
       <description>
          In this step we will change the preferences and ensure they all work.
       </description>
-      <subitem label="Open help preferences" skip="false">         <command               required="false"               serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.help.ui.browsersPreferencePage)"/>
+      <subitem label="Open help preferences" skip="false">
+         <command
+               required="false"
+               serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.help.ui.browsersPreferencePage)"/>
       </subitem>
       <subitem label="Change help preferences to open window context help in an infopop, dialog context help in an infopop, open help view documents - in editor." skip="false">
       </subitem>
@@ -47,7 +51,10 @@
       </subitem>
       <subitem label="Click &quot;Package Explorer View&quot; link.  This should launch help web browser, and display &quot;Package Explorer View&quot; document on the right and the list of related topics on the left.  The link called &quot;Package Explorer View&quot; should be selected." skip="false">
       </subitem>
-      <subitem label="Open help preferences" skip="false">         <command               required="false"               serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.help.ui.browsersPreferencePage)"/>
+      <subitem label="Open help preferences" skip="false">
+         <command
+               required="false"
+               serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.help.ui.browsersPreferencePage)"/>
       </subitem>
       <subitem label="Press &quot;F1&quot;  (Ctrl+F1 on GTK, Help on Mac).  An infopop should open." skip="false">
       </subitem>
