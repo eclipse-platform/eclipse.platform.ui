@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,14 +53,14 @@ public class RulerEnableDisableBreakpointAction extends RulerBreakpointAction im
 		if (fBreakpoint != null) {
 			try {
 				if (fBreakpoint.isEnabled()) {
-					setText(ActionMessages.RulerEnableDisableBreakpointAction_2);
+					setText(ActionMessages.RulerEnableDisableBreakpointAction_2 + '\t' + ActionMessages.RulerEnableDisableBreakpointAction_4);
 				} else {
-					setText(ActionMessages.RulerEnableDisableBreakpointAction_3);
+					setText(ActionMessages.RulerEnableDisableBreakpointAction_3 + '\t' + ActionMessages.RulerEnableDisableBreakpointAction_4);
 				}
 			} catch (CoreException e) {
 			}
 		} else {
-			setText(ActionMessages.RulerEnableDisableBreakpointAction_2);
+			setText(ActionMessages.RulerEnableDisableBreakpointAction_2 + '\t' + ActionMessages.RulerEnableDisableBreakpointAction_4);
 		}
 	}
 

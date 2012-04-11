@@ -67,7 +67,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	 * @param rulerInfo specifies location the user has double-clicked
 	 */
 	public ToggleBreakpointAction(IWorkbenchPart part, IDocument document, IVerticalRulerInfo rulerInfo) {
-		super(ActionMessages.ToggleBreakpointAction_0);
+		super(ActionMessages.ToggleBreakpointAction_0 + '\t' + ActionMessages.ToggleBreakpointAction_3);
 		fPart = part;
 		fDocument = document;
 		fRulerInfo = rulerInfo;
