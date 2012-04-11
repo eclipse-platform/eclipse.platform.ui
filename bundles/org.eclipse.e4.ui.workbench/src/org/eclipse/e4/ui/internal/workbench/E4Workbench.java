@@ -20,6 +20,7 @@ import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -161,7 +162,10 @@ public class E4Workbench implements IWorkbench {
 				EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
 				List<MHandler> handlers = container.getHandlers();
 				for (MHandler handler : handlers) {
-					String commandId = handler.getCommand().getElementId();
+					MCommand command = handler.getCommand();
+					if (command == null)
+						continue;
+					String commandId = command.getElementId();
 					if (handler.getObject() == null) {
 						handler.setObject(cf.create(handler.getContributionURI(), context));
 					}
