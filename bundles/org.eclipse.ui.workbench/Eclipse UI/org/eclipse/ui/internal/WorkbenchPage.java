@@ -3909,16 +3909,18 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 				MPerspectiveStack.class, null).get(0);
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 
-		IPerspectiveDescriptor[] descs = new IPerspectiveDescriptor[perspectiveStack.getChildren()
-				.size()];
-		int count = 0;
+		ArrayList<IPerspectiveDescriptor> tmp = new ArrayList<IPerspectiveDescriptor>(
+				perspectiveStack.getChildren().size());
 		for (MPerspective persp : perspectiveStack.getChildren()) {
 			String perspectiveId = persp.getElementId();
 			IPerspectiveDescriptor desc = registry.findPerspectiveWithId(perspectiveId);
 			if (desc != null) {
-				descs[count++] = desc;
+				tmp.add(desc);
 			}
 		}
+		IPerspectiveDescriptor[] descs = new IPerspectiveDescriptor[tmp.size()];
+		tmp.toArray(descs);
+
 		return descs;
 	}
 
