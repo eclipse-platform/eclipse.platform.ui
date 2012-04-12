@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,18 +142,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	public static String DEBUG_PRESENTATION_ID = null;
 	public static boolean DEBUG_DYNAMIC_LOADING = false;
 	
-	static final String DEBUG_FLAG = "org.eclipse.debug.ui/debug";
-	static final String DEBUG_BREAKPOINT_DELTAS_FLAG = "org.eclipse.debug.ui/debug/viewers/breakpointDeltas";
-	static final String DEBUG_MODEL_FLAG = "org.eclipse.debug.ui/debug/viewers/model";
-	static final String DEBUG_VIEWER_FLAG = "org.eclipse.debug.ui/debug/viewers/viewer";
-	static final String DEBUG_BREADCRUMB_FLAG = "org.eclipse.debug.ui/debug/breadcrumb";
-	static final String DEBUG_TREE_VIEWER_DROPDOWN_FLAG = "org.eclipse.debug.ui/debug/breadcrumb";
-	static final String DEBUG_CONTENT_PROVIDER_FLAG ="org.eclipse.debug.ui/debug/viewers/contentProvider";
-	static final String DEBUG_UPDATE_SEQUENCE_FLAG = "org.eclipse.debug.ui/debug/viewers/updateSequence";
-	static final String DEBUG_DELTAS_FLAG ="org.eclipse.debug.ui/debug/viewers/deltas";
-	static final String DEBUG_STATE_SAVE_RESTORE_FLAG = "org.eclipse.debug.ui/debug/viewers/stateSaveRestore";
-	static final String DEBUG_PRESENTATION_ID_FLAG ="org.eclipse.debug.ui/debug/viewers/presentationId";
-	static final String DEBUG_DYNAMIC_LOADING_FLAG = "org.eclipse.debug.ui/debug/memory/dynamicLoading";
+	static final String DEBUG_FLAG = "org.eclipse.debug.ui/debug"; //$NON-NLS-1$
+	static final String DEBUG_BREAKPOINT_DELTAS_FLAG = "org.eclipse.debug.ui/debug/viewers/breakpointDeltas"; //$NON-NLS-1$
+	static final String DEBUG_MODEL_FLAG = "org.eclipse.debug.ui/debug/viewers/model"; //$NON-NLS-1$
+	static final String DEBUG_VIEWER_FLAG = "org.eclipse.debug.ui/debug/viewers/viewer"; //$NON-NLS-1$
+	static final String DEBUG_BREADCRUMB_FLAG = "org.eclipse.debug.ui/debug/breadcrumb"; //$NON-NLS-1$
+	static final String DEBUG_TREE_VIEWER_DROPDOWN_FLAG = "org.eclipse.debug.ui/debug/breadcrumb"; //$NON-NLS-1$
+	static final String DEBUG_CONTENT_PROVIDER_FLAG ="org.eclipse.debug.ui/debug/viewers/contentProvider"; //$NON-NLS-1$
+	static final String DEBUG_UPDATE_SEQUENCE_FLAG = "org.eclipse.debug.ui/debug/viewers/updateSequence"; //$NON-NLS-1$
+	static final String DEBUG_DELTAS_FLAG ="org.eclipse.debug.ui/debug/viewers/deltas"; //$NON-NLS-1$
+	static final String DEBUG_STATE_SAVE_RESTORE_FLAG = "org.eclipse.debug.ui/debug/viewers/stateSaveRestore"; //$NON-NLS-1$
+	static final String DEBUG_PRESENTATION_ID_FLAG ="org.eclipse.debug.ui/debug/viewers/presentationId"; //$NON-NLS-1$
+	static final String DEBUG_DYNAMIC_LOADING_FLAG = "org.eclipse.debug.ui/debug/memory/dynamicLoading"; //$NON-NLS-1$
 	/**
 	 * The {@link DebugTrace} object to print to OSGi tracing
 	 * @since 3.8

@@ -1186,7 +1186,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
  	protected void handleAdd(IModelDelta delta) {
 		IModelDelta parentDelta = delta.getParentDelta();
 		if (parentDelta == null) {
-		    DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+		    DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null )); //$NON-NLS-1$ //$NON-NLS-2$
 		    return;
 		}
 
@@ -1359,7 +1359,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		// TODO: filters
         IModelDelta parentDelta = delta.getParentDelta();
         if (parentDelta == null) {
-            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null )); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 		getViewer().insert(getViewerTreePath(parentDelta), delta.getElement(), delta.getIndex());
@@ -1371,7 +1371,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		}
 		IModelDelta parentDelta = delta.getParentDelta();
 		if (parentDelta == null) {
-            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null )); //$NON-NLS-1$ //$NON-NLS-2$
 		    return;
 		}
 		IInternalTreeModelViewer treeViewer = getViewer();
@@ -1441,7 +1441,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	protected void handleReplace(IModelDelta delta) {
 	    IModelDelta parentDelta = delta.getParentDelta();
 	    if (parentDelta == null) {
-	        DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+	        DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null )); //$NON-NLS-1$ //$NON-NLS-2$
 	        return;
 	    }
 		TreePath parentPath = getViewerTreePath(parentDelta);
@@ -1492,7 +1492,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		if (modelIndex >= 0) {
 	        IModelDelta parentDelta = delta.getParentDelta();
 	        if (parentDelta == null) {
-	            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+	            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null )); //$NON-NLS-1$ //$NON-NLS-2$
 	            return;
 	        }
 			TreePath parentPath = getViewerTreePath(parentDelta);
@@ -1526,7 +1526,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	protected void handleReveal(IModelDelta delta) {
 		IModelDelta parentDelta = delta.getParentDelta();
         if (parentDelta == null) {
-            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null ));
+            DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null )); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         handleExpand(parentDelta);

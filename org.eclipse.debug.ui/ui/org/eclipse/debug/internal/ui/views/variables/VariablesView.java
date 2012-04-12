@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -142,6 +142,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	IPerspectiveListener, IModelChangedListener,
 		IViewerUpdateListener, IDetailPaneContainer2, ISaveablePart2 {
 	
+	private static final String COLLAPSE_ALL = "CollapseAll"; //$NON-NLS-1$
+
 	/**
 	 * Selection provider wrapping an exchangeable active selection provider.
 	 * Sends out a selection changed event when the active selection provider changes.
@@ -927,7 +929,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		setAction("ToggleContentProviders", action); //$NON-NLS-1$
 		
 		action = new CollapseAllAction((TreeModelViewer)getViewer());
-		setAction("CollapseAll", action); //$NON-NLS-1$
+		setAction(COLLAPSE_ALL, action); 
 		IHandlerService hs = (IHandlerService) getSite().getService(IHandlerService.class);
 		if (hs != null) {
 			hs.activateHandler(CollapseAllHandler.COMMAND_ID, new ActionHandler(action));
@@ -1057,7 +1059,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
 		tbm.add(getAction("ToggleContentProviders")); //$NON-NLS-1$
-		tbm.add(getAction("CollapseAll")); //$NON-NLS-1$
+		tbm.add(getAction(COLLAPSE_ALL)); 
 	}
 
    /**
@@ -1419,7 +1421,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		delta.accept(fVisitor);
 		
 		updateAction(FIND_ACTION);
-        updateAction("CollapseAll");
+        updateAction(COLLAPSE_ALL);
 	}
 
 	/* (non-Javadoc)
@@ -1435,7 +1437,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			}
 			if (TreePath.EMPTY.equals(update.getElementPath())) {
 			    updateAction(FIND_ACTION);
-			    updateAction("CollapseAll");
+			    updateAction(COLLAPSE_ALL);
 			}
 		}
 	}

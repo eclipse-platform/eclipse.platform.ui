@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Wind River Systems and others.
+ * Copyright (c) 2011, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 
 /**
  * Virtual item, which is analogous to the SWT's tree item.  This class is used
@@ -516,21 +517,21 @@ public class VirtualItem {
     
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-        toStringItem(buffer, "");
+        toStringItem(buffer, IInternalDebugCoreConstants.EMPTY_STRING);
         return buffer.toString();
     }
     
     void toStringItem(StringBuffer buffer, String indent) {
         buffer.append(indent);
         buffer.append(toStringElement());
-        buffer.append("\n");
-        indent = indent + "  ";
+        buffer.append("\n"); //$NON-NLS-1$
+        indent = indent + "  "; //$NON-NLS-1$
         for (int i = 0; i < fItemCount; i++) {
             VirtualItem item = (VirtualItem)fItems.get(new Index(i));
             if (item != null) {
                 item.toStringItem(buffer, indent);
             } else {
-                buffer.append("<no item>\n");
+                buffer.append("<no item>\n"); //$NON-NLS-1$
             }
         }
     }
@@ -544,6 +545,6 @@ public class VirtualItem {
         if (data != null) {
             return data.toString();
         }
-        return "<no data>";
+        return "<no data>"; //$NON-NLS-1$
     }
 }
