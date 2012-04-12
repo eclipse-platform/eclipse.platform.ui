@@ -6,7 +6,12 @@ Bundle-Version: 3.8.0.qualifier
 Bundle-Activator: org.eclipse.debug.internal.ui.DebugUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.debug.internal.ui;x-friends:="org.eclipse.jdt.debug.ui,org.eclipse.wst.jsdt.debug.ui,org.eclipse.jdt.debug.tests",
+Export-Package: org.eclipse.debug.internal.ui;
+  x-friends:="org.eclipse.jdt.debug.ui,
+   org.eclipse.wst.jsdt.debug.ui,
+   org.eclipse.jdt.debug.tests,
+   org.eclipse.debug.tests,
+   org.eclipse.debug.examples.ui",
  org.eclipse.debug.internal.ui.actions;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.breakpointGroups;x-internal:=true,
  org.eclipse.debug.internal.ui.actions.breakpoints;x-internal:=true,
@@ -25,7 +30,7 @@ Export-Package: org.eclipse.debug.internal.ui;x-friends:="org.eclipse.jdt.debug.
  org.eclipse.debug.internal.ui.elements.adapters;x-friends:="org.eclipse.jdt.debug.ui",
  org.eclipse.debug.internal.ui.importexport.breakpoints;x-internal:=true,
  org.eclipse.debug.internal.ui.importexport.launchconfigurations;x-internal:=true,
- org.eclipse.debug.internal.ui.launchConfigurations;x-internal:=true,
+ org.eclipse.debug.internal.ui.launchConfigurations;x-friends:="org.eclipse.debug.tests",
  org.eclipse.debug.internal.ui.memory;x-internal:=true,
  org.eclipse.debug.internal.ui.memory.provisional;x-internal:=true,
  org.eclipse.debug.internal.ui.model.elements;x-friends:="org.eclipse.debug.examples.ui,org.eclipse.jdt.debug.ui,org.eclipse.wst.jsdt.debug.ui",
@@ -33,9 +38,9 @@ Export-Package: org.eclipse.debug.internal.ui;x-friends:="org.eclipse.jdt.debug.
  org.eclipse.debug.internal.ui.sourcelookup;x-internal:=true,
  org.eclipse.debug.internal.ui.sourcelookup.browsers;x-internal:=true,
  org.eclipse.debug.internal.ui.stringsubstitution;x-friends:="org.eclipse.jdt.debug.ui",
- org.eclipse.debug.internal.ui.viewers;x-internal:=true,
+ org.eclipse.debug.internal.ui.viewers;x-friends:="org.eclipse.debug.examples.ui",
  org.eclipse.debug.internal.ui.viewers.breadcrumb;x-internal:=true,
- org.eclipse.debug.internal.ui.viewers.model;x-friends:="org.eclipse.debug.tests,org.eclipse.jdt.debug.tests",
+ org.eclipse.debug.internal.ui.viewers.model;x-friends:="org.eclipse.debug.tests,org.eclipse.jdt.debug.tests,org.eclipse.debug.examples.ui",
  org.eclipse.debug.internal.ui.viewers.model.provisional;
   x-friends:="org.eclipse.cdt.dsf.gdb.ui,
    org.eclipse.cdt.dsf.ui,

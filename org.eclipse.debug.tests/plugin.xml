@@ -16,17 +16,17 @@
    <extension point="org.eclipse.debug.ui.memoryRenderings">
       <renderingType
             id="rendering_type_1"
-            name="Rendering One"
+            name="%renderingType.name"
             class="org.eclipe.debug.tests.view.memory.RenderingTypeDelegate">
       </renderingType>
       <renderingType
             id="rendering_type_2"
-            name="Rendering Two"
+            name="%renderingType.name.0"
             class="org.eclipe.debug.tests.view.memory.RenderingTypeDelegate">
       </renderingType>
       <renderingType
             id="rendering_type_3"
-            name="Rendering Default"
+            name="%renderingType.name.1"
             class="org.eclipe.debug.tests.view.memory.RenderingTypeDelegate">
       </renderingType>      
       <renderingBindings
@@ -60,12 +60,12 @@
             delegate="org.eclipe.debug.tests.launching.TestLaunchDelegate"
             id="org.eclipse.debug.tests.launch.type"
             modes="run, debug"
-            name="Test Launch Type">
+            name="%launchConfigurationType.name">
       </launchConfigurationType>
    </extension>
    <extension
         id="debugFS"
-        name="Debug File System"
+        name="%extension.name"
         point="org.eclipse.core.filesystem.filesystems">
      <filesystem
            scheme="debug">

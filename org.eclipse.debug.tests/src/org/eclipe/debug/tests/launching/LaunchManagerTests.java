@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	 */
 	public void testGenereateConfigName() {
 		String configname = "launch_configuration";
-		String name = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configname);
+		String name = getLaunchManager().generateLaunchConfigurationName(configname);
 		assertTrue("the name nust be '"+configname+"'", name.equals(configname));
 	}
 	
@@ -45,7 +45,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	 */
 	public void testGenereateConfigNameBadChar() {
 		String configname = "config:name";
-		String name = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configname);
+		String name = getLaunchManager().generateLaunchConfigurationName(configname);
 		assertEquals("config name should be '"+configname+"'", configname, name);
 	}
 	
@@ -65,7 +65,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	public void testGenerateConfigNameReservedName() {
 		if(Platform.OS_WIN32.equals(Platform.getOS())) {
 			String configname = "aux";
-			String name = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configname);
+			String name = getLaunchManager().generateLaunchConfigurationName(configname);
 			assertEquals("config name should be '"+configname+"'", configname, name);
 		}
 	}
@@ -174,10 +174,10 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	public void testGenerateNameExistingConfig() throws Exception {
 		String configname = "x.y.z.configname";
 		getLaunchConfiguration(configname);
-		String name = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configname);
+		String name = getLaunchManager().generateLaunchConfigurationName(configname);
 		assertEquals("the configuration name should have been "+configname+" (1)", configname+" (1)", name);
 		getLaunchConfiguration(name);
-		name = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
+		name = getLaunchManager().generateLaunchConfigurationName(name);
 		assertEquals("the configuration name should have been "+configname+" (2)", configname+" (2)", name);
 		ILaunchConfiguration config = getLaunchConfiguration(configname);
 		if(config != null) {

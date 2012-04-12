@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,11 +45,11 @@ public class StatusHandlerTests extends TestCase {
 	 */
 	public void testDisableStatusHandlers() {
 		try {
-			Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, false, new InstanceScope());
+			Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, false, InstanceScope.INSTANCE);
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(STATUS);
 			assertNull("status handler extension should be disabled", handler);
 		} finally {
-			Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, true, new InstanceScope());
+			Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, true, InstanceScope.INSTANCE);
 		}
 	}
 
