@@ -271,6 +271,10 @@ public class CocoaUIEnhancer extends CocoaUtil implements IStartup {
 	 * @since 3.2
 	 */
 	protected void modifyWindowShell(final IWorkbenchWindow window) {
+		// The toolbar button is not available since Mac OSX 10.7
+		if (OS.VERSION >= 0x1070) {
+			return;
+		}
 		// only add the button when either the cool bar or perspective bar
 		// is initially visible. This is so that RCP applications can choose to
 		// use
