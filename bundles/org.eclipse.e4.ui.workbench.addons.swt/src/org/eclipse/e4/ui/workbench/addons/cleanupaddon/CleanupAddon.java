@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.renderers.swt.SashLayout;
@@ -62,7 +63,8 @@ public class CleanupAddon {
 				// Determine the elements that should *not* ever be auto-destroyed
 				if (container instanceof MApplication || container instanceof MPerspectiveStack
 						|| container instanceof MMenuElement || container instanceof MTrimBar
-						|| container instanceof MToolBar || container instanceof MArea) {
+						|| container instanceof MToolBar || container instanceof MArea
+						|| container.getTags().contains(IPresentationEngine.NO_AUTO_COLLAPSE)) {
 					return;
 				}
 
@@ -262,6 +264,11 @@ public class CleanupAddon {
 				if (!container.isToBeRendered())
 					container.setToBeRendered(true);
 			} else {
+				// Never hide the container marked as no_close
+				if (container.getTags().contains(IPresentationEngine.NO_AUTO_COLLAPSE)) {
+					return;
+				}
+
 				int visCount = modelService.countRenderableChildren(container);
 
 				// Remove stacks with no visible children from the display (but not the

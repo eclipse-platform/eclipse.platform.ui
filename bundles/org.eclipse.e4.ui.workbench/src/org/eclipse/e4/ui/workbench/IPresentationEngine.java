@@ -43,6 +43,11 @@ public interface IPresentationEngine {
 	public static final String NO_CLOSE = "NoClose"; //$NON-NLS-1$
 
 	/**
+	 * Don't remove the element from the display even if it has no displayable children
+	 */
+	public static final String NO_AUTO_COLLAPSE = "NoAutoCollapse"; //$NON-NLS-1$
+
+	/**
 	 * When applied as a tag to an MUIElement inhibits moving the element (ie. through DnD...
 	 */
 	public static final String NO_MOVE = "NoMove"; //$NON-NLS-1$
@@ -69,10 +74,10 @@ public interface IPresentationEngine {
 	public static String MINIMIZED_BY_ZOOM = "MinimizedByZoom"; //$NON-NLS-1$
 
 	/**
-	 * This key should be used to add an optional String to an element that is a
-	 * URI to the elements disabled icon.  This is used, for example, by Toolbar Items
-	 * which, in Eclipse SDK, provide a unique icon for disabled tool items that look better
-	 * than the OS default graying on the default icon.
+	 * This key should be used to add an optional String to an element that is a URI to the elements
+	 * disabled icon. This is used, for example, by Toolbar Items which, in Eclipse SDK, provide a
+	 * unique icon for disabled tool items that look better than the OS default graying on the
+	 * default icon.
 	 * 
 	 * There is a strong argument to be made that this disabledIconURI actually be part of the model
 	 */
