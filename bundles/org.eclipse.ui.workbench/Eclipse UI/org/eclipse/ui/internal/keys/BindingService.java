@@ -696,6 +696,8 @@ public final class BindingService implements IBindingService {
 	static public MKeyBinding createORupdateMKeyBinding(MApplication application,
 			MBindingTable table,
 			Binding binding) {
+		boolean addToTable = false;
+
 		ParameterizedCommand parmCmd = binding.getParameterizedCommand();
 
 		String id = parmCmd.getId();
@@ -725,9 +727,9 @@ public final class BindingService implements IBindingService {
 		}
 
 		if (keyBinding == null) {
+			addToTable = true;
 			keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
 			keyBinding.setCommand(cmd);
-			table.getBindings().add(keyBinding);
 		}
 		keyBinding.setKeySequence(binding.getTriggerSequence().format());
 
@@ -773,6 +775,9 @@ public final class BindingService implements IBindingService {
 			tags.add(EBindingService.TYPE_ATTR_TAG + ":user"); //$NON-NLS-1$
 		}
 		keyBinding.getTransientData().put(EBindingService.MODEL_TO_BINDING_KEY, binding);
+		if (addToTable) {
+			table.getBindings().add(keyBinding);
+		}
 		return keyBinding;
 	}
 
