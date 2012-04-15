@@ -23,11 +23,13 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.internal.tools.ToolsPlugin;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
@@ -205,7 +207,8 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			dbc.bindValue(textProp.observe(t), BeanProperties.value("name", String.class).observe(clazz));
+			dbc.bindValue(textProp.observe(t), BeanProperties.value("name", String.class).observe(clazz), 
+					new UpdateValueStrategy().setBeforeSetValidator(new ClassnameValidator()),null);
 
 			new Label(parent, SWT.NONE);
 		}
@@ -324,18 +327,12 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 		public IStatus validate(Object value) {
 			String name = value.toString();
-			char[] ar = name.toCharArray();
-			for (char c : ar) {
-				if (!Character.isJavaIdentifierPart(c)) {
-					return new Status(IStatus.ERROR, "", "'" + c + "' is not allowed in a Class-Name");
-				}
-			}
+			if (name.length()==0)
+				return new Status(IStatus.ERROR,ToolsPlugin.PLUGIN_ID,"Name must not be empty");
+			if ((name.indexOf('.')!=-1)||(name.trim().indexOf(' ')!=-1))
+				return new Status(IStatus.ERROR,ToolsPlugin.PLUGIN_ID,"Name must not be qualified or contain spaces");
 
-			if (!Character.isJavaIdentifierStart(ar[0])) {
-				return new Status(IStatus.ERROR, "", "'" + ar[0] + "' is not allowed as the first character of a Class-Name");
-			}
-
-			return Status.OK_STATUS;
+			return JavaConventions.validateJavaTypeName(name,JavaCore.VERSION_1_3,JavaCore.VERSION_1_3);
 		}
 	}
 
