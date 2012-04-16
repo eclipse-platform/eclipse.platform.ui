@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -143,6 +143,8 @@ public class ActionMessages extends NLS {
     public static String ToggleBreakpointAction_0;
     public static String ToggleBreakpointAction_1;
     public static String ToggleBreakpointAction_2;
+
+	public static String ToggleBreakpointAction_3;
 	public static String ToggleStepFiltersAction_0;
 	public static String ToggleStepFiltersAction_1;
 
@@ -192,6 +194,8 @@ public class ActionMessages extends NLS {
     public static String RulerEnableDisableBreakpointAction_1;
     public static String RulerEnableDisableBreakpointAction_2;
     public static String RulerEnableDisableBreakpointAction_3;
+
+	public static String RulerEnableDisableBreakpointAction_4;
 
     public static String DisconnectAction_0;
     public static String DisconnectAction_3;
