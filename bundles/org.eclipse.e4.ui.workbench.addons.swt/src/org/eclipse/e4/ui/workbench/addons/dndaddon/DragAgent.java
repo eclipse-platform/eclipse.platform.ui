@@ -161,6 +161,9 @@ abstract class DragAgent {
 			cancelDrag();
 		}
 
+		if (dropAgent != null)
+			dropAgent.dragLeave(dragElement, info);
+
 		if (dragPH == null)
 			return;
 

@@ -16,6 +16,8 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -116,8 +118,21 @@ public class SashRenderer extends SWTPartRenderer {
 			return newRect;
 		}
 
+		// Check to see if this is a new PSC added 'above' the previous 'root'
+		// sash
+		Composite sashComposite = null;
+		MPartSashContainer psc = (MPartSashContainer) element;
+		for (MPartSashContainerElement psce : psc.getChildren()) {
+			if (psce instanceof MPartSashContainer
+					&& psce.getWidget() instanceof Composite) {
+				// 'Adopt' the previous root's layout / composite
+				sashComposite = (Composite) psce.getWidget();
+				bindWidget(psce, new Rectangle(0, 0, 0, 0));
+			}
+		}
 		// This is a 'root' sash container, create a composite
-		Composite sashComposite = new Composite((Composite) parent, SWT.NONE);
+		if (sashComposite == null)
+			sashComposite = new Composite((Composite) parent, SWT.NONE);
 		sashComposite.setLayout(new SashLayout(sashComposite, element));
 
 		return sashComposite;

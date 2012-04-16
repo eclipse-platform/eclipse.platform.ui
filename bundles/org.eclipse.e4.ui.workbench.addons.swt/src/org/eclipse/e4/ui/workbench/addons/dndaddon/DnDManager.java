@@ -29,6 +29,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.events.DragDetectListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Cursor;
@@ -80,6 +82,7 @@ class DnDManager {
 			dragAgent = getDragAgent(info);
 			if (dragAgent != null) {
 				dragging = true;
+				isCtrlPressed = (e.stateMask & SWT.CTRL) != 0;
 				startDrag();
 			}
 		}
@@ -92,6 +95,8 @@ class DnDManager {
 
 	private List<Image> images = new ArrayList<Image>();
 	private List<Rectangle> imageRects = new ArrayList<Rectangle>();
+
+	protected boolean isCtrlPressed;
 
 	public void addImage(Rectangle imageRect, Image image) {
 		imageRects.add(imageRect);
@@ -169,23 +174,43 @@ class DnDManager {
 		overlayFrame = null;
 	}
 
+	private void track() {
+		Display.getCurrent().syncExec(new Runnable() {
+			public void run() {
+				info.update();
+				dragAgent.track(info);
+
+				// Hack: Spin the event loop
+				update();
+			}
+		});
+	}
+
 	protected void startDrag() {
 		// Create a new tracker for this drag instance
 		tracker = new Tracker(Display.getCurrent(), SWT.NULL);
 		tracker.setStippled(true);
 		setRectangle(offScreenRect);
 
+		tracker.addKeyListener(new KeyListener() {
+			public void keyReleased(KeyEvent e) {
+				if (e.keyCode == SWT.CTRL) {
+					isCtrlPressed = false;
+					track();
+				}
+			}
+
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.CTRL) {
+					isCtrlPressed = true;
+					track();
+				}
+			}
+		});
+
 		tracker.addListener(SWT.Move, new Listener() {
 			public void handleEvent(final Event event) {
-				Display.getCurrent().syncExec(new Runnable() {
-					public void run() {
-						info.update();
-						dragAgent.track(info);
-
-						// Hack: Spin the event loop
-						update();
-					}
-				});
+				track();
 			}
 		});
 

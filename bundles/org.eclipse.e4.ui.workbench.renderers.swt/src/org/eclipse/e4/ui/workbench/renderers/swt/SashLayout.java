@@ -203,7 +203,7 @@ public class SashLayout extends Layout {
 	}
 
 	private Rectangle getRectangle(MUIElement element) {
-		if (element instanceof MGenericTile<?>)
+		if (element.getWidget() instanceof Rectangle)
 			return (Rectangle) element.getWidget();
 		else if (element.getWidget() instanceof Control)
 			return ((Control) (element.getWidget())).getBounds();

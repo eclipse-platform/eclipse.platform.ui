@@ -313,7 +313,7 @@ public interface EModelService {
 	 *            The percentage of the area to be occupied by the inserted element
 	 */
 	public void insert(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
-			int where, int ratio);
+			int where, float ratio);
 
 	/**
 	 * Created a separate (detached) window containing the given element.

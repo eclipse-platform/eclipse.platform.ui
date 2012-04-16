@@ -88,7 +88,8 @@ public class CleanupAddon {
 							}
 
 							// Remove it from the model if it has no children at all
-							if (container.getChildren().size() == 0) {
+							MElementContainer<?> lclContainer = container;
+							if (lclContainer.getChildren().size() == 0) {
 								MElementContainer<MUIElement> parent = container.getParent();
 								if (parent != null && !lastStack) {
 									container.setToBeRendered(false);

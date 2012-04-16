@@ -512,7 +512,7 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	private void combine(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
-			MPartSashContainer newSash, boolean newFirst, int ratio) {
+			MPartSashContainer newSash, boolean newFirst, float ratio) {
 		MElementContainer<MUIElement> curParent = relTo.getParent();
 		int index = curParent.getChildren().indexOf(relTo);
 		curParent.getChildren().remove(relTo);
@@ -526,7 +526,7 @@ public class ModelServiceImpl implements EModelService {
 
 		// Set up the container data before adding the new sash to the model
 		// To raise the granularity assume 100% == 10,000
-		int adjustedPct = ratio * 100;
+		int adjustedPct = (int) (ratio * 10000);
 		toInsert.setContainerData(Integer.toString(adjustedPct));
 		relTo.setContainerData(Integer.toString(10000 - adjustedPct));
 
@@ -543,33 +543,81 @@ public class ModelServiceImpl implements EModelService {
 	 * int, int)
 	 */
 	public void insert(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
-			int where, int ratio) {
-		if (toInsert == null || relTo == null)
-			return;
+			int where, float ratio) {
+		assert (toInsert != null && relTo != null);
+		assert (ratio > 0 && ratio < 100);
 
-		// Ensure the ratio is sane
-		if (ratio == 0)
-			ratio = 1000;
-		if (ratio > 10000)
-			ratio = 9000;
+		MUIElement relToParent = relTo.getParent();
 
 		// determine insertion order
-		boolean newFirst = where == ABOVE || where == LEFT_OF;
+		boolean insertBefore = where == ABOVE || where == LEFT_OF;
+		boolean horizontal = where == LEFT_OF || where == RIGHT_OF;
 
-		// The only thing we can add sashes to is an MPartSashContainer or an MWindow so
-		// find the correct place to start the insertion
+		// Case 1: 'relTo' is already an MPSC, can we just add to it ?
+		// Case 2: relTo's parent is an MPSC, can we just add to it ?
+		// Case 3: We need to make a new Sash and replace relTo with it after 'combining' toInsert
+		// and relTo
+		if (relTo instanceof MPartSashContainer
+				&& directionsMatch((MPartSashContainer) relTo, horizontal)) {
+			MPartSashContainer psc = (MPartSashContainer) relTo;
+			int totalVisWwight = 0;
+			for (MUIElement child : psc.getChildren()) {
+				if (child.isToBeRendered())
+					totalVisWwight += getWeight(child);
+			}
+			int insertWeight = (int) ((2 ^ totalVisWwight) * ratio);
+			toInsert.setContainerData(Integer.toString(insertWeight));
+			if (insertBefore)
+				psc.getChildren().add(0, toInsert);
+			else
+				psc.getChildren().add(toInsert);
+		} else if (relToParent instanceof MPartSashContainer
+				&& directionsMatch((MPartSashContainer) relToParent, horizontal)) {
+			MPartSashContainer psc = (MPartSashContainer) relToParent;
+			int relToIndex = psc.getChildren().indexOf(relTo);
+
+			int relToWeight = getWeight(relTo);
+			int insertWeight = (int) (relToWeight * ratio);
+			toInsert.setContainerData(Integer.toString(insertWeight));
+			relTo.setContainerData(Integer.toString(relToWeight - insertWeight));
+
+			if (insertBefore)
+				psc.getChildren().add(relToIndex, toInsert);
+			else {
+				int insertIndex = relToIndex + 1;
+				if (insertIndex < psc.getChildren().size())
+					psc.getChildren().add(insertIndex, toInsert);
+				else
+					psc.getChildren().add(toInsert);
+			}
+		} else {
+			MPartSashContainer newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
+			newSash.setHorizontal(horizontal);
+			combine(toInsert, relTo, newSash, insertBefore, ratio);
+		}
+
+		if (relToParent != null)
+			return;
+
+		// We're either relative to an MPSC or to some
+		// The only thing we can add sashes to is an MPartSashContainer, an MWindow or an
+		// MPerspective find the correct place to start the insertion
 		MUIElement insertRoot = relTo.getParent();
+		if (insertRoot instanceof MPerspective)
+			insertRoot = relTo;
 		while (insertRoot != null && !(insertRoot instanceof MWindow)
+				&& !(insertRoot instanceof MPerspective)
 				&& !(insertRoot instanceof MPartSashContainer)) {
 			relTo = (MPartSashContainerElement) insertRoot;
 			insertRoot = insertRoot.getParent();
 		}
 
-		if (insertRoot instanceof MWindow || insertRoot instanceof MArea) {
+		if (insertRoot instanceof MWindow || insertRoot instanceof MArea
+				|| insertRoot instanceof MPerspective) {
 			// OK, we're certainly going to need a new sash
 			MPartSashContainer newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 			newSash.setHorizontal(where == LEFT_OF || where == RIGHT_OF);
-			combine(toInsert, relTo, newSash, newFirst, ratio);
+			combine(toInsert, relTo, newSash, insertBefore, ratio);
 		} else if (insertRoot instanceof MGenericTile<?>) {
 			MGenericTile<MUIElement> curTile = (MGenericTile<MUIElement>) insertRoot;
 
@@ -578,23 +626,23 @@ public class ModelServiceImpl implements EModelService {
 				MPartSashContainer newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 				newSash.setHorizontal(false);
 				newSash.setContainerData(relTo.getContainerData());
-				combine(toInsert, relTo, newSash, newFirst, ratio);
+				combine(toInsert, relTo, newSash, insertBefore, ratio);
 			} else if (!curTile.isHorizontal() && (where == LEFT_OF || where == RIGHT_OF)) {
 				MPartSashContainer newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 				newSash.setHorizontal(true);
 				newSash.setContainerData(relTo.getContainerData());
-				combine(toInsert, relTo, newSash, newFirst, ratio);
+				combine(toInsert, relTo, newSash, insertBefore, ratio);
 			} else {
 				// We just need to add to the existing sash
 				int relToIndex = relTo.getParent().getChildren().indexOf(relTo);
-				if (newFirst) {
+				if (insertBefore) {
 					curTile.getChildren().add(relToIndex, toInsert);
 				} else {
 					curTile.getChildren().add(relToIndex + 1, toInsert);
 				}
 
 				// Adjust the sash weights by taking the ratio
-				int relToWeight = 100;
+				int relToWeight = 10000;
 				if (relTo.getContainerData() != null) {
 					try {
 						relToWeight = Integer.parseInt(relTo.getContainerData());
@@ -607,6 +655,22 @@ public class ModelServiceImpl implements EModelService {
 				toInsert.setContainerData(Integer.toString(toInsertWeight));
 			}
 		}
+	}
+
+	private int getWeight(MUIElement element) {
+		int relToWeight = 10000;
+		if (element.getContainerData() != null) {
+			try {
+				relToWeight = Integer.parseInt(element.getContainerData());
+			} catch (NumberFormatException e) {
+			}
+		}
+		return relToWeight;
+	}
+
+	private boolean directionsMatch(MPartSashContainer psc, boolean horizontal) {
+		boolean pscHorizontal = psc.isHorizontal();
+		return (pscHorizontal && horizontal) || (!pscHorizontal && !horizontal);
 	}
 
 	/*
