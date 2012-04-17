@@ -196,9 +196,11 @@ public class ResourceHandler implements IModelResourceHandler {
 
 		boolean restore = restoreLastModified > lastApplicationModification;
 
+		resource = null;
 		if (restore && saveAndRestore) {
 			resource = loadResource(restoreLocation);
-		} else {
+		}
+		if (resource == null) {
 			Resource applicationResource = loadResource(applicationDefinitionInstance);
 			MApplication theApp = (MApplication) applicationResource.getContents().get(0);
 			resource = resourceSetImpl.createResource(restoreLocation);
@@ -229,8 +231,8 @@ public class ResourceHandler implements IModelResourceHandler {
 			resource = resourceSetImpl.getResource(uri, true);
 		} catch (Exception e) {
 			// TODO We could use diagnostics for better analyzing the error
-			logger.error(e);
-			resource = resourceSetImpl.getResource(uri, false);
+			logger.error(e, "Unable to load resource " + uri.toString()); //$NON-NLS-1$
+			return null;
 		}
 
 		// TODO once we switch from deltas, we only need this once on the default model?
