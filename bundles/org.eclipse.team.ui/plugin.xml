@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-    Copyright (c) 2001, 2011 IBM Corporation and others.
+    Copyright (c) 2001, 2012 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -167,10 +167,11 @@
                tooltip="%CompareLocalHistory.tooltip"/>
          <action
                class="org.eclipse.team.internal.ui.history.ReplaceLocalHistory"
+               enablesFor="1"
+               helpContextId="org.eclipse.compare.replace_with_edition_action_context"
                id="org.eclipse.team.ui.replaceLocalHistory"
                label="%ReplaceLocalHistory.label"
                menubarPath="replaceWithMenu/replaceWithGroup"
-               enablesFor="1"
                overrideActionId="replaceFromHistory"
                tooltip="%ReplaceLocalHistory.tooltip"/>
          <action
