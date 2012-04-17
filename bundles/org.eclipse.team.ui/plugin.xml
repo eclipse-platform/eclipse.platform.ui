@@ -119,12 +119,13 @@
             adaptable="true"
             id="org.eclipse.team.ui.ProjectContributions">
          <action
-               label="%ConfigureProject.label"
-               tooltip="%ConfigureProject.tooltip"
                class="org.eclipse.team.internal.ui.actions.ConfigureProjectAction"
-               menubarPath="team.main/projectGroup"
                enablesFor="1"
-               id="nonbound.org.eclipse.team.ui.ConfigureProject">
+               helpContextId="org.eclipse.team.ui.share_project_action_context"
+               id="nonbound.org.eclipse.team.ui.ConfigureProject"
+               label="%ConfigureProject.label"
+               menubarPath="team.main/projectGroup"
+               tooltip="%ConfigureProject.tooltip">
          </action>
         <enablement>
 		  <not>
@@ -189,13 +190,14 @@
             adaptable="true"
             id="org.eclipse.team.ui.ResourceMappingContributions">
          <action
-               label="%ApplyPatch.label"
-               tooltip="%ApplyPatch.tooltip"
                class="org.eclipse.team.internal.ui.actions.ApplyPatchAction"
-               menubarPath="team.main/applyPatchGroup"
-               enablesFor="*"
                definitionId="org.eclipse.team.ui.applyPatch"
-               id="org.eclipse.team.ui.applyPatch">
+               enablesFor="*"
+               helpContextId="org.eclipse.team.ui.apply_patch_action_context"
+               id="org.eclipse.team.ui.applyPatch"
+               label="%ApplyPatch.label"
+               menubarPath="team.main/applyPatchGroup"
+               tooltip="%ApplyPatch.tooltip">
          </action>
       </objectContribution>
    </extension>
