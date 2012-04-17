@@ -127,10 +127,6 @@ public class CompatibilityEditor extends CompatibilityPart {
 			}
 		}
 
-		// Flush ant deferred layouts and do an explicit one...see bug 375576
-		parent.getDisplay().readAndDispatch();
-		parent.layout(true, true);
-
 		return true;
 	}
 

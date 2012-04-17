@@ -4285,6 +4285,7 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 	}
 
 	private void firePartActivated(MPart part) {
+
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			final IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
@@ -4292,6 +4293,16 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 			if (partReference == null) {
 				WorkbenchPlugin.log("Reference is null in firePartActivated"); //$NON-NLS-1$
 				return;
+			}
+
+			if (partListenerList.size() + partListener2List.size() == 0)
+				return;
+
+			// Flush deferred layouts if needed, see bug 375576 for details
+			Object widget = part.getWidget();
+			if (widget instanceof Composite) {
+				Composite parent = (Composite) widget;
+				parent.getDisplay().readAndDispatch();
 			}
 
 			for (final Object listener : partListenerList.getListeners()) {
@@ -4343,6 +4354,16 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		SaveablesList saveablesList = (SaveablesList) getWorkbenchWindow().getService(
 				ISaveablesLifecycleListener.class);
 		saveablesList.postOpen(part);
+		
+		if (partListenerList.size() + partListener2List.size() == 0)
+			return;
+
+		// Flush deferred layouts if needed, see bug 375576 for details
+		MPart model = compatibilityPart.getModel();
+		if (model != null && (model.getWidget() instanceof Composite)) {
+			Composite parent = (Composite) model.getWidget();
+			parent.getDisplay().readAndDispatch();
+		}
 
 		for (final Object listener : partListenerList.getListeners()) {
 			SafeRunner.run(new SafeRunnable() {
@@ -4432,6 +4453,16 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		if (client instanceof CompatibilityPart) {
 			final IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
 			final IWorkbenchPartReference partReference = getReference(workbenchPart);
+
+			if (partListenerList.size() + partListener2List.size() == 0)
+				return;
+
+			// Flush deferred layouts if needed, see bug 375576 for details
+			Object widget = part.getWidget();
+			if (widget instanceof Composite) {
+				Composite parent = (Composite) widget;
+				parent.getDisplay().readAndDispatch();
+			}
 
 			for (final Object listener : partListenerList.getListeners()) {
 				SafeRunner.run(new SafeRunnable() {
