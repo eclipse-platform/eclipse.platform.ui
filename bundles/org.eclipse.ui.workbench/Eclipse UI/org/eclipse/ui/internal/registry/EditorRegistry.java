@@ -773,7 +773,11 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
                 deletedEditorIDs[j] = idMementos[j]
                         .getString(IWorkbenchConstants.TAG_ID);
             }
-            FileEditorMapping mapping = getMappingFor(name + "." + extension); //$NON-NLS-1$
+			String key = name;
+			if (extension != null && extension.length() > 0) {
+				key = key + "." + extension; //$NON-NLS-1$
+			}
+			FileEditorMapping mapping = getMappingFor(key);
             if (mapping == null) {
                 mapping = new FileEditorMapping(name, extension);
             }
