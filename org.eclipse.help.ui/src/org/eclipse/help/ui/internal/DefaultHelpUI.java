@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2000, 2012 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -11,9 +11,7 @@ package org.eclipse.help.ui.internal;
 
 import java.net.URL;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
-import org.eclipse.help.IContextProvider;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -25,14 +23,19 @@ import org.eclipse.help.ui.internal.views.ContextHelpPart;
 import org.eclipse.help.ui.internal.views.HelpTray;
 import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.help.ui.internal.views.ReusableHelpPart;
-import org.eclipse.jface.dialogs.DialogTray;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.osgi.service.environment.Constants;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.jface.dialogs.DialogTray;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -157,13 +160,11 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				}
 			} else {
 				// check the dialog
-				if (activeShell != null) {
-					Object data = activeShell.getData();
-					if (data instanceof TrayDialog) {
-						IContext context = ContextHelpPart.findHelpContext(c);
-						displayContextAsHelpTray(activeShell, context);
-						return;
-					}
+				Object data = activeShell.getData();
+				if (data instanceof TrayDialog) {
+					IContext context = ContextHelpPart.findHelpContext(c);
+					displayContextAsHelpTray(activeShell, context);
+					return;
 				}
 				warnNoOpenPerspective(window);
 			}
@@ -301,9 +302,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				if (!noInfopop && winfopop) {
-					IWorkbenchPart activePart = page.getActivePart();
 					Control c = window.getShell().getDisplay().getFocusControl();
-					displayContextAsInfopop(context, x, y, activePart, c);
+					displayContextAsInfopop(context, x, y, c);
 					return;
 				}
 				try {
@@ -349,7 +349,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			return;
 		}
 		// we are here either as a fallback or because of the user preferences
-		displayContextAsInfopop(context, x, y, null, null);
+		displayContextAsInfopop(context, x, y, null);
 	}
 
 	/*
@@ -380,20 +380,11 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		return activeShell != null && activeShell.equals(window.getShell());
 	}
 
-	private void displayContextAsInfopop(IContext context, int x, int y, IWorkbenchPart activePart, Control c) {
+	private void displayContextAsInfopop(IContext context, int x, int y, Control c) {
 		if (f1Dialog != null) {
 			f1Dialog.close();
 		}
-		if (activePart != null) {
-			IContextProvider provider = (IContextProvider) activePart
-				.getAdapter(IContextProvider.class);
-			if (provider != null ) {
-				IContext providerContext = provider.getContext(c);
-				if ( providerContext != null ) {
-					context = providerContext;
-				}
-			}
-		}
+
 		if (context != null) {
 			/*
 			 * If the context help has no description text and exactly one
