@@ -29,6 +29,7 @@ public final class CommandsTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public CommandsTestSuite() {
+		addTest(new TestSuite(CommandExecutionTest.class));
 		addTest(new TestSuite(Bug66182Test.class));
 		addTest(new TestSuite(Bug70503Test.class));
 		addTest(new TestSuite(Bug73756Test.class));
