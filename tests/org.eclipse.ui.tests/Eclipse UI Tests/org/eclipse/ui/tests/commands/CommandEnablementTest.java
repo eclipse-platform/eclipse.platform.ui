@@ -278,7 +278,7 @@ public class CommandEnablementTest extends UITestCase {
 		IMenuService menuService = (IMenuService) fWorkbench.getService(IMenuService.class);
 		menuService.populateContributionManager(manager, MenuUtil.menuUri(menuId));
 		IContributionItem[] items = manager.getItems();
-		assertTrue(items.length ==1);
+		assertEquals(1, items.length);
 		assertTrue(items[0] instanceof CommandContributionItem);
 		CommandContributionItem item = (CommandContributionItem) items[0];
 
