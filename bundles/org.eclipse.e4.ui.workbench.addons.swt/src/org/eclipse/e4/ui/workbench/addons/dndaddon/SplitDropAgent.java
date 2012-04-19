@@ -88,6 +88,12 @@ public class SplitDropAgent extends DropAgent {
 			dropStack = (MPartStack) parent;
 		}
 
+		// We can't split ourselves with if the element being dragged is the only element in the
+		// stack (we check for '2' because the dragAgent puts a Drag Placeholder in the stack)
+		MUIElement dragParent = dragElement.getParent();
+		if (dragParent == dropStack && dropStack.getChildren().size() == 2)
+			return false;
+
 		weight = dropStack.getContainerData();
 		dropCTF = (CTabFolder) dropStack.getWidget();
 
