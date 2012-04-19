@@ -83,6 +83,8 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * collection is <code>null</code> if there are no listeners.
 	 */
 	private transient ListenerList executionListeners = null;
+	
+	boolean shouldFireEvents = true;
 
 	/**
 	 * The handler currently associated with this command. This value may be
@@ -453,6 +455,10 @@ public final class Command extends NamedHandleObjectWithState implements
 			NotEnabledException, NotHandledException {
 		firePreExecute(event);
 		final IHandler handler = this.handler;
+		if ("org.eclipse.ui.internal.MakeHandlersGo".equals(handler.getClass() //$NON-NLS-1$
+				.getName())) {
+			return handler.execute(event);
+		}
 
 		if (!isDefined()) {
 			final NotDefinedException exception = new NotDefinedException(
@@ -529,6 +535,10 @@ public final class Command extends NamedHandleObjectWithState implements
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
 					+ "not defined: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		
+		if (!shouldFireEvents) {
+			return;
+		}
 
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
@@ -558,6 +568,10 @@ public final class Command extends NamedHandleObjectWithState implements
 					+ "not enabled: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
+		if (!shouldFireEvents) {
+			return;
+		}
+
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -584,6 +598,10 @@ public final class Command extends NamedHandleObjectWithState implements
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
 					+ "not handled: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		
+		if (!shouldFireEvents) {
+			return;
+		}
 
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
@@ -609,6 +627,10 @@ public final class Command extends NamedHandleObjectWithState implements
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
 					+ "failure: id=" + getId() + "; exception=" + e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		
+		if (!shouldFireEvents) {
+			return;
+		}
 
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
@@ -633,6 +655,10 @@ public final class Command extends NamedHandleObjectWithState implements
 					+ "success: id=" + getId() + "; returnValue=" //$NON-NLS-1$ //$NON-NLS-2$
 					+ returnValue);
 		}
+		
+		if (!shouldFireEvents) {
+			return;
+		}
 
 		if (executionListeners != null) {
 			final Object[] listeners = executionListeners.getListeners();
@@ -655,6 +681,10 @@ public final class Command extends NamedHandleObjectWithState implements
 		if (DEBUG_COMMAND_EXECUTION) {
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
 					+ "starting: id=" + getId() + "; event=" + event); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		if (!shouldFireEvents) {
+			return;
 		}
 
 		if (executionListeners != null) {
