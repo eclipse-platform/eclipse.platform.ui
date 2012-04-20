@@ -20,6 +20,7 @@ import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.IHandlerListener;
+import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -61,7 +62,8 @@ public class E4HandlerProxy implements IHandlerListener {
 	@Execute
 	public Object execute(IEclipseContext context,
 			@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms, @Optional Event trigger,
-			@Optional IEvaluationContext staticContext) throws ExecutionException {
+			@Optional IEvaluationContext staticContext) throws ExecutionException,
+			NotHandledException {
 		Activator.trace(Policy.DEBUG_CMDS, "execute " + command + " and " //$NON-NLS-1$ //$NON-NLS-2$
 				+ handler + " with: " + context, null); //$NON-NLS-1$
 		IEvaluationContext appContext = staticContext;
@@ -69,7 +71,20 @@ public class E4HandlerProxy implements IHandlerListener {
 			appContext = new ExpressionContext(context);
 		}
 		ExecutionEvent event = new ExecutionEvent(command, parms, trigger, appContext);
-		return handler.execute(event);
+		if (handler != null && handler.isHandled()) {
+			try {
+				final Object returnValue = handler.execute(event);
+				CommandProxy.firePostExecuteSuccess(command, returnValue);
+				return returnValue;
+			} catch (ExecutionException exception) {
+				CommandProxy.firePostExecuteFailure(command, exception);
+				throw exception;
+			}
+		}
+		final NotHandledException e = new NotHandledException(
+				"There is no handler to execute for command " + command.getId()); //$NON-NLS-1$
+		CommandProxy.fireNotHandled(command, e);
+		throw e;
 	}
 
 	public IHandler getHandler() {

@@ -29,12 +29,11 @@ import org.eclipse.e4.core.services.log.Logger;
  *
  */
 public class HandlerServiceImpl implements EHandlerService {
-	/**
-	 * 
-	 */
 	private static final String TMP_STATIC_CONTEXT = "tmp-staticContext"; //$NON-NLS-1$
 	public final static String H_ID = "handler::"; //$NON-NLS-1$
 	public final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
+	public final static String CAN_EXECUTE = "HandlerServiceImpl.canExecute"; //$NON-NLS-1$
+	public final static String NOT_HANDLED = "HandlerServiceImpl.notHandled"; //$NON-NLS-1$
 
 	/**
 	 * @param context
@@ -51,6 +50,8 @@ public class HandlerServiceImpl implements EHandlerService {
 	@Inject
 	@Optional
 	private Logger logger;
+
+	public Object preExecute = null;
 
 	/*
 	 * (non-Javadoc)
@@ -77,6 +78,7 @@ public class HandlerServiceImpl implements EHandlerService {
 			staticContext.set((String) entry.getKey(), entry.getValue());
 		}
 		staticContext.set(PARM_MAP, parms);
+		staticContext.set(ParameterizedCommand.class, command);
 	}
 
 	/*
@@ -107,6 +109,7 @@ public class HandlerServiceImpl implements EHandlerService {
 		try {
 			Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
 					executionContext, staticContext, Boolean.TRUE));
+			staticContext.set(CAN_EXECUTE, result);
 			return result.booleanValue();
 		} catch (Exception e) {
 			if (Command.DEBUG_HANDLERS && logger != null) {
@@ -147,15 +150,22 @@ public class HandlerServiceImpl implements EHandlerService {
 
 	public Object executeHandler(ParameterizedCommand command, IEclipseContext staticContext) {
 		String commandId = command.getId();
-		Object handler = lookUpHandler(context, commandId);
-		if (handler == null) {
-			return null;
-		}
-
 		final IEclipseContext executionContext = getExecutionContext();
 		addParms(command, staticContext);
+		if (preExecute != null) {
+			ContextInjectionFactory.invoke(preExecute, Execute.class, executionContext,
+					staticContext, null);
+		}
+		Object handler = lookUpHandler(context, commandId);
+		if (handler == null) {
+			staticContext.set(NOT_HANDLED, Boolean.TRUE);
+			return null;
+		}
+		staticContext.remove(NOT_HANDLED);
+
 		Object rc = ContextInjectionFactory.invoke(handler, CanExecute.class, executionContext,
 				staticContext, Boolean.TRUE);
+		staticContext.set(CAN_EXECUTE, rc);
 		if (Boolean.FALSE.equals(rc))
 			return null;
 		return ContextInjectionFactory.invoke(handler, Execute.class, executionContext,

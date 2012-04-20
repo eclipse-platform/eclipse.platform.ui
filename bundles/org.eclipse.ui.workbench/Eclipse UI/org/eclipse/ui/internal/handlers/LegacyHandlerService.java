@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import javax.inject.Named;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -40,6 +42,8 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
@@ -260,6 +264,31 @@ public class LegacyHandlerService implements IHandlerService {
 		this.defaultExpression = defaultExpression;
 	}
 
+	public void initPreExecuteHook() {
+		EHandlerService hs = eclipseContext.get(EHandlerService.class);
+		if (hs instanceof HandlerServiceImpl) {
+			HandlerServiceImpl impl = (HandlerServiceImpl) hs;
+			impl.preExecute = new Object() {
+				@Execute
+				public void execute(IEclipseContext context, ParameterizedCommand command,
+						@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms,
+						@Optional Event trigger, @Optional IEvaluationContext staticContext) {
+					if (command == null) {
+						return;
+					}
+					IEvaluationContext appContext = staticContext;
+					if (appContext == null) {
+						appContext = new ExpressionContext(context);
+					}
+					ExecutionEvent event = new ExecutionEvent(command.getCommand(), parms, trigger,
+							appContext);
+					CommandProxy.firePreExecute(command.getCommand(), event);
+				}
+			};
+		}
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -461,7 +490,23 @@ public class LegacyHandlerService implements IHandlerService {
 			staticContext.set(Event.class, event);
 		}
 		try {
-			return hs.executeHandler(command, staticContext);
+			final Object rc = hs.executeHandler(command, staticContext);
+			if (staticContext.get(HandlerServiceImpl.NOT_HANDLED) == Boolean.TRUE) {
+				final NotHandledException e = new NotHandledException(
+						"There is no handler to execute for command " + command.getId()); //$NON-NLS-1$
+				CommandProxy.fireNotHandled(command.getCommand(), e);
+				throw e;
+			}
+			final Object obj = staticContext.get(HandlerServiceImpl.CAN_EXECUTE);
+			if (obj instanceof Boolean) {
+				if (!((Boolean) obj).booleanValue()) {
+					final NotEnabledException exception = new NotEnabledException(
+							"Trying to execute the disabled command " + command.getId()); //$NON-NLS-1$
+					CommandProxy.fireNotEnabled(command.getCommand(), exception);
+					throw exception;
+				}
+			}
+			return rc;
 		} catch (InjectionException e) {
 			rethrow(e);
 			throw e;
@@ -497,7 +542,23 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 		EHandlerService hs = eclipseContext.get(EHandlerService.class);
 		try {
-			return hs.executeHandler(command, staticContext);
+			final Object rc = hs.executeHandler(command, staticContext);
+			if (staticContext.get(HandlerServiceImpl.NOT_HANDLED) == Boolean.TRUE) {
+				final NotHandledException e = new NotHandledException(
+						"There is no handler to execute for command " + command.getId()); //$NON-NLS-1$
+				CommandProxy.fireNotHandled(command.getCommand(), e);
+				throw e;
+			}
+			final Object obj = staticContext.get(HandlerServiceImpl.CAN_EXECUTE);
+			if (obj instanceof Boolean) {
+				if (!((Boolean) obj).booleanValue()) {
+					final NotEnabledException exception = new NotEnabledException(
+							"Trying to execute the disabled command " + command.getId()); //$NON-NLS-1$
+					CommandProxy.fireNotEnabled(command.getCommand(), exception);
+					throw exception;
+				}
+			}
+			return rc;
 		} catch (InjectionException e) {
 			rethrow(e);
 			throw e;

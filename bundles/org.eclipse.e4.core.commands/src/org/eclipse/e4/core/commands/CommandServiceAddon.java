@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.core.commands;
 
+import java.lang.reflect.Field;
 import javax.annotation.PostConstruct;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.e4.core.commands.internal.CommandServiceImpl;
@@ -27,6 +28,7 @@ public class CommandServiceAddon {
 	public void init(IEclipseContext context) {
 		// global command service. There can be only one ... per application :-)
 		CommandManager manager = new CommandManager();
+		setCommandFireEvents(manager, false);
 		context.set(CommandManager.class, manager);
 		CommandServiceImpl service = ContextInjectionFactory
 				.make(CommandServiceImpl.class, context);
@@ -34,5 +36,29 @@ public class CommandServiceAddon {
 
 		// handler service - a mediator service
 		context.set(EHandlerService.class.getName(), new HandlerServiceCreationFunction());
+	}
+
+	/**
+	 * @param manager
+	 * @param b
+	 */
+	private void setCommandFireEvents(CommandManager manager, boolean b) {
+		try {
+			Field f = CommandManager.class.getDeclaredField("shouldCommandFireEvents"); //$NON-NLS-1$
+			f.setAccessible(true);
+			f.set(manager, Boolean.valueOf(b));
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
