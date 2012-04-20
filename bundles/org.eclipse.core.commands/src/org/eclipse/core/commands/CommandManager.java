@@ -266,6 +266,8 @@ public final class CommandManager extends HandleObjectManager implements
 	 * <code>null</code> if there are no listeners.
 	 */
 	private ListenerList executionListeners = null;
+	
+	boolean commandFireEvents = true;
 
 	/**
 	 * The help context identifiers ({@link String}) for a handler ({@link IHandler}).
@@ -546,6 +548,7 @@ public final class CommandManager extends HandleObjectManager implements
 		Command command = (Command) handleObjectsById.get(commandId);
 		if (command == null) {
 			command = new Command(commandId);
+			command.shouldFireEvents = commandFireEvents;
 			handleObjectsById.put(commandId, command);
 			command.addCommandListener(this);
 
@@ -1046,6 +1049,13 @@ public final class CommandManager extends HandleObjectManager implements
 			ExecutionException exception) {
 		if (executionListener != null) {
 			executionListener.postExecuteFailure(commandId, exception);
+		}
+	}
+	
+	void fireNotHandled(final String commandId,
+			final NotHandledException exception) {
+		if (executionListener != null) {
+			executionListener.notHandled(commandId, exception);
 		}
 	}
 }
