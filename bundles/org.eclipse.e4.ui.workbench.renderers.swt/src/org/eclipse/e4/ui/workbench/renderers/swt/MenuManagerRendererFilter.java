@@ -269,7 +269,7 @@ public class MenuManagerRendererFilter implements Listener {
 			evalContext = modelService.getContainingContext(menuModel);
 		}
 		updateElementVisibility(menuModel, renderer, menuManager, evalContext,
-				true, true);
+				2, true);
 
 		// last thing to do, kill the event and update the menu manager
 		event.type = SWT.None;
@@ -306,7 +306,7 @@ public class MenuManagerRendererFilter implements Listener {
 	 */
 	public static void updateElementVisibility(final MMenu menuModel,
 			MenuManagerRenderer renderer, MenuManager menuManager,
-			final IEclipseContext evalContext, boolean recurse,
+			final IEclipseContext evalContext, final int recurseLevel,
 			boolean updateEnablement) {
 		final ExpressionContext exprContext = new ExpressionContext(evalContext);
 		HashSet<ContributionRecord> records = new HashSet<ContributionRecord>();
@@ -320,12 +320,13 @@ public class MenuManagerRendererFilter implements Listener {
 				MenuManagerRenderer.updateVisibility(menuManager, element,
 						exprContext);
 			}
-			if (recurse && element.isVisible() && element instanceof MMenu) {
+			if (recurseLevel > 0 && element.isVisible()
+					&& element instanceof MMenu) {
 				MMenu childMenu = (MMenu) element;
 				MenuManager childManager = renderer.getManager(childMenu);
 				if (childManager != null) {
 					updateElementVisibility(childMenu, renderer, childManager,
-							evalContext, false, false);
+							evalContext, recurseLevel - 1, false);
 				}
 			}
 

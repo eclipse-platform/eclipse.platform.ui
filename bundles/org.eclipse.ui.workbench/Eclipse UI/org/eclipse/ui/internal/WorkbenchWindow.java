@@ -564,7 +564,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							return;
 						}
 						MenuManagerRendererFilter.updateElementVisibility(mainMenu, renderer,
-								menuManager, windowContext.getActiveLeaf(), true, false);
+								menuManager, windowContext.getActiveLeaf(), 1, false);
 						menuManager.update(true);
 					} finally {
 						canUpdateMenus = true;
