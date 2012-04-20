@@ -11,20 +11,15 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map;
 import javax.inject.Named;
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.IHandlerListener;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -64,10 +59,9 @@ public class E4HandlerProxy implements IHandlerListener {
 	}
 
 	@Execute
-	public Object execute(IEclipseContext context, CommandManager manager,
+	public Object execute(IEclipseContext context,
 			@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms, @Optional Event trigger,
-			@Optional IEvaluationContext staticContext) throws ExecutionException,
-			NotDefinedException, NotHandledException {
+			@Optional IEvaluationContext staticContext) throws ExecutionException {
 		Activator.trace(Policy.DEBUG_CMDS, "execute " + command + " and " //$NON-NLS-1$ //$NON-NLS-2$
 				+ handler + " with: " + context, null); //$NON-NLS-1$
 		IEvaluationContext appContext = staticContext;
@@ -75,57 +69,7 @@ public class E4HandlerProxy implements IHandlerListener {
 			appContext = new ExpressionContext(context);
 		}
 		ExecutionEvent event = new ExecutionEvent(command, parms, trigger, appContext);
-		if (!command.isDefined()) {
-			final NotDefinedException exception = new NotDefinedException(
-					"Trying to execute a command that is not defined. " //$NON-NLS-1$
-							+ command.getId());
-			manager.fireNotDefined(command.getId(), exception);
-			throw exception;
-		}
-		if (handler != null && handler.isHandled()) {
-			try {
-				final Object returnValue = handler.execute(event);
-				manager.firePostExecuteSuccess(command.getId(), returnValue);
-				return returnValue;
-			} catch (final ExecutionException e) {
-				manager.firePostExecuteFailure(command.getId(), e);
-				throw e;
-			}
-		}
-		final NotHandledException e = new NotHandledException(
-				"There is no handler to execute for command " + command.getId()); //$NON-NLS-1$
-		fireNotHandled(manager, e);
-		throw e;
-	}
-
-	private Method fireNotHandled = null;
-
-	private void fireNotHandled(CommandManager manager, final NotHandledException e) {
-		if (fireNotHandled == null) {
-			try {
-				fireNotHandled = CommandManager.class.getMethod("fireNotHandled", String.class, //$NON-NLS-1$
-						NotHandledException.class);
-				fireNotHandled.setAccessible(true);
-			} catch (SecurityException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (NoSuchMethodException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		try {
-			fireNotHandled.invoke(manager, command.getId(), e);
-		} catch (IllegalArgumentException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InvocationTargetException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		return handler.execute(event);
 	}
 
 	public IHandler getHandler() {

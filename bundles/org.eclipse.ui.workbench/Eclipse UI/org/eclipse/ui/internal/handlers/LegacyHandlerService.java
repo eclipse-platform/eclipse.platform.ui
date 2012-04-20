@@ -11,17 +11,12 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import javax.inject.Named;
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -45,8 +40,6 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
-import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
@@ -267,31 +260,6 @@ public class LegacyHandlerService implements IHandlerService {
 		this.defaultExpression = defaultExpression;
 	}
 
-	public void initPreExecuteHook() {
-		EHandlerService hs = eclipseContext.get(EHandlerService.class);
-		if (hs instanceof HandlerServiceImpl) {
-			HandlerServiceImpl impl = (HandlerServiceImpl) hs;
-			impl.preExecute = new Object() {
-				@Execute
-				public void execute(IEclipseContext context, CommandManager manager,
-						@Optional ParameterizedCommand command,
-						@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms,
-						@Optional Event trigger, @Optional IEvaluationContext staticContext) {
-					if (command == null) {
-						return;
-					}
-					IEvaluationContext appContext = staticContext;
-					if (appContext == null) {
-						appContext = new ExpressionContext(context);
-					}
-					ExecutionEvent event = new ExecutionEvent(command.getCommand(), parms, trigger,
-							appContext);
-					manager.firePreExecute(command.getId(), event);
-				}
-			};
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -493,24 +461,7 @@ public class LegacyHandlerService implements IHandlerService {
 			staticContext.set(Event.class, event);
 		}
 		try {
-			final CommandManager manager = eclipseContext.get(CommandManager.class);
-			final Object rc = hs.executeHandler(command, staticContext);
-			if (staticContext.get("NotHandled") == Boolean.TRUE) { //$NON-NLS-1$
-				final NotHandledException e = new NotHandledException(
-						"There is no handler to execute for command " + command.getId()); //$NON-NLS-1$
-				fireNotHandled(manager, command, e);
-				throw e;
-			}
-			final Object obj = staticContext.get("CanExecute"); //$NON-NLS-1$
-			if (obj instanceof Boolean) {
-				if (!((Boolean) obj).booleanValue()) {
-					final NotEnabledException exception = new NotEnabledException(
-							"Trying to execute the disabled command " + command.getId()); //$NON-NLS-1$
-					manager.fireNotEnabled(command.getId(), exception);
-					throw exception;
-				}
-			}
-			return rc;
+			return hs.executeHandler(command, staticContext);
 		} catch (InjectionException e) {
 			rethrow(e);
 			throw e;
@@ -519,37 +470,6 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 	}
 
-	private Method fireNotHandled = null;
-
-	private void fireNotHandled(CommandManager manager, ParameterizedCommand command,
-			final NotHandledException e) {
-		if (fireNotHandled == null) {
-			try {
-				fireNotHandled = CommandManager.class.getDeclaredMethod(
-						"fireNotHandled", String.class, //$NON-NLS-1$
-						NotHandledException.class);
-				fireNotHandled.setAccessible(true);
-			} catch (SecurityException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (NoSuchMethodException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		try {
-			fireNotHandled.invoke(manager, command.getId(), e);
-		} catch (IllegalArgumentException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InvocationTargetException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -577,24 +497,7 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 		EHandlerService hs = eclipseContext.get(EHandlerService.class);
 		try {
-			final CommandManager manager = eclipseContext.get(CommandManager.class);
-			final Object rc = hs.executeHandler(command, staticContext);
-			if (staticContext.get("NotHandled") == Boolean.TRUE) { //$NON-NLS-1$
-				final NotHandledException e = new NotHandledException(
-						"There is no handler to execute for command " + command.getId()); //$NON-NLS-1$
-				fireNotHandled(manager, command, e);
-				throw e;
-			}
-			final Object obj = staticContext.get("CanExecute"); //$NON-NLS-1$
-			if (obj instanceof Boolean) {
-				if (!((Boolean) obj).booleanValue()) {
-					final NotEnabledException exception = new NotEnabledException(
-							"Trying to execute the disabled command " + command.getId()); //$NON-NLS-1$
-					manager.fireNotEnabled(command.getId(), exception);
-					throw exception;
-				}
-			}
-			return rc;
+			return hs.executeHandler(command, staticContext);
 		} catch (InjectionException e) {
 			rethrow(e);
 			throw e;

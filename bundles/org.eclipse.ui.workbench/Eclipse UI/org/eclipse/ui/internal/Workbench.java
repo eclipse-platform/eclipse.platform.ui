@@ -2084,7 +2084,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 			public void runWithException() {
 				handlerService[0] = new LegacyHandlerService(e4Context);
-				((LegacyHandlerService) handlerService[0]).initPreExecuteHook();
 				e4Context.set(IHandlerService.class.getName(), handlerService[0]);
 				handlerService[0].readRegistry();
 			}

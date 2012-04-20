@@ -29,12 +29,6 @@ import org.eclipse.e4.core.services.log.Logger;
  *
  */
 public class HandlerServiceImpl implements EHandlerService {
-	public Object preExecute = new Object() {
-		@Execute
-		void execute() {
-		}
-	};
-
 	/**
 	 * 
 	 */
@@ -83,7 +77,6 @@ public class HandlerServiceImpl implements EHandlerService {
 			staticContext.set((String) entry.getKey(), entry.getValue());
 		}
 		staticContext.set(PARM_MAP, parms);
-		staticContext.set(ParameterizedCommand.class, command);
 	}
 
 	/*
@@ -114,9 +107,6 @@ public class HandlerServiceImpl implements EHandlerService {
 		try {
 			Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
 					executionContext, staticContext, Boolean.TRUE));
-			if (staticContext != null) {
-				staticContext.set("CanExecute", result); //$NON-NLS-1$
-			}
 			return result.booleanValue();
 		} catch (Exception e) {
 			if (Command.DEBUG_HANDLERS && logger != null) {
@@ -157,26 +147,15 @@ public class HandlerServiceImpl implements EHandlerService {
 
 	public Object executeHandler(ParameterizedCommand command, IEclipseContext staticContext) {
 		String commandId = command.getId();
-		if (staticContext != null) {
-			staticContext.remove("NotHandled"); //$NON-NLS-1$
-		}
-		final IEclipseContext executionContext = getExecutionContext();
-		addParms(command, staticContext);
-		ContextInjectionFactory.invoke(preExecute, Execute.class, executionContext, staticContext,
-				null);
 		Object handler = lookUpHandler(context, commandId);
 		if (handler == null) {
-			if (staticContext != null) {
-				staticContext.set("NotHandled", Boolean.TRUE); //$NON-NLS-1$
-			}
 			return null;
 		}
 
+		final IEclipseContext executionContext = getExecutionContext();
+		addParms(command, staticContext);
 		Object rc = ContextInjectionFactory.invoke(handler, CanExecute.class, executionContext,
 				staticContext, Boolean.TRUE);
-		if (staticContext != null) {
-			staticContext.set("CanExecute", rc); //$NON-NLS-1$
-		}
 		if (Boolean.FALSE.equals(rc))
 			return null;
 		return ContextInjectionFactory.invoke(handler, Execute.class, executionContext,
