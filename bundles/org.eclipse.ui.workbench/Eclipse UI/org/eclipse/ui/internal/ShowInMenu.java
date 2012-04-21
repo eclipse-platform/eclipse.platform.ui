@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,6 +243,9 @@ public class ShowInMenu extends ContributionItem implements
 				viewDescriptor.getId());
 		parm.parameters = targetId;
 		parm.label = viewDescriptor.getLabel();
+		if (parm.label.length() > 0) {
+			parm.mnemonic = parm.label.substring(0, 1);
+		}
 		parm.icon = viewDescriptor.getImageDescriptor();
 		return new CommandContributionItem(parm);
 	}
