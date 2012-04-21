@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
@@ -158,9 +159,6 @@ public class ShowInMenu extends ContributionItem implements
 		innerMgr.removeAll();
 
 		IWorkbenchPart sourcePart = getSourcePart();
-		if (sourcePart == null) {
-			return;
-		}
 		ShowInContext context = getContext(sourcePart);
 		if (context == null) {
 			return;
@@ -178,7 +176,7 @@ public class ShowInMenu extends ContributionItem implements
 				innerMgr.add(cci);
 			}
 		}
-		if (innerMgr instanceof MenuManager) {
+		if (sourcePart != null && innerMgr instanceof MenuManager) {
 			ISourceProviderService sps = (ISourceProviderService) locator
 					.getService(ISourceProviderService.class);
 			ISourceProvider sp = sps
@@ -234,7 +232,7 @@ public class ShowInMenu extends ContributionItem implements
 	 * @param viewDescriptor
 	 * @return the show in command contribution item
 	 */
-	private IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {
+	protected IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {
 		CommandContributionItemParameter parm = new CommandContributionItemParameter(
 				locator, viewDescriptor.getId(), IWorkbenchCommandConstants.NAVIGATE_SHOW_IN,
 				CommandContributionItem.STYLE_PUSH);
@@ -287,7 +285,11 @@ public class ShowInMenu extends ContributionItem implements
 	private IWorkbenchPart getSourcePart() {
 		IWorkbenchWindow window = getWindow();
 		
-		if(window == null)	return null;
+		if (window == null)
+			return null;
+		Shell shell = window.getShell();
+		if (shell == null || shell != shell.getDisplay().getActiveShell())
+			return null;
 		
 		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
@@ -313,7 +315,7 @@ public class ShowInMenu extends ContributionItem implements
 	 * or <code>null</code> if it does not provide one.
 	 * 
 	 * @param sourcePart
-	 *            the source part
+	 *            the source part or <code>null</code>
 	 * @return the <code>IShowInTargetList</code> or <code>null</code>
 	 */
 	private IShowInTargetList getShowInTargetList(IWorkbenchPart sourcePart) {
@@ -334,18 +336,20 @@ public class ShowInMenu extends ContributionItem implements
 	 * 
 	 * @return the <code>ShowInContext</code> to show or <code>null</code>
 	 */
-	private ShowInContext getContext(IWorkbenchPart sourcePart) {
-		IShowInSource source = getShowInSource(sourcePart);
-		if (source != null) {
-			ShowInContext context = source.getShowInContext();
-			if (context != null) {
-				return context;
+	protected ShowInContext getContext(IWorkbenchPart sourcePart) {
+		if (sourcePart != null) {
+			IShowInSource source = getShowInSource(sourcePart);
+			if (source != null) {
+				ShowInContext context = source.getShowInContext();
+				if (context != null) {
+					return context;
+				}
+			} else if (sourcePart instanceof IEditorPart) {
+				Object input = ((IEditorPart) sourcePart).getEditorInput();
+				ISelectionProvider sp = sourcePart.getSite().getSelectionProvider();
+				ISelection sel = sp == null ? null : sp.getSelection();
+				return new ShowInContext(input, sel);
 			}
-		} else if (sourcePart instanceof IEditorPart) {
-			Object input = ((IEditorPart) sourcePart).getEditorInput();
-			ISelectionProvider sp = sourcePart.getSite().getSelectionProvider();
-			ISelection sel = sp == null ? null : sp.getSelection();
-			return new ShowInContext(input, sel);
 		}
 		return null;
 	}
@@ -354,7 +358,7 @@ public class ShowInMenu extends ContributionItem implements
 	 * Returns the view descriptors to show in the dialog.
 	 */
 	private IViewDescriptor[] getViewDescriptors(IWorkbenchPart sourcePart) {
-		String srcId = sourcePart.getSite().getId();
+		String srcId = sourcePart == null ? null : sourcePart.getSite().getId();
 		ArrayList ids = getShowInPartIds(sourcePart);
 		ArrayList descs = new ArrayList();
 		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
