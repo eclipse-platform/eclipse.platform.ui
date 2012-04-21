@@ -15,10 +15,15 @@ import java.util.Collections;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -38,15 +43,25 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.IViewDescriptor;
 
 
 /**
@@ -82,7 +97,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 	protected void fillContextMenu(IMenuManager menuManager) {
 		super.fillContextMenu(menuManager);
 
-		IStructuredSelection selectedItems = getSelectedItems();
+		final IStructuredSelection selectedItems = getSelectedItems();
 		if (selectedItems.isEmpty()) {
 			return;
 		}
@@ -92,6 +107,8 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 			return;
 		}
 
+		menuManager.add(new Separator());
+		
 		// Add 'Open' menu item
 		OpenFileAction openFileAction = new OpenFileAction(activePage) {
 			public void run() {
@@ -99,33 +116,82 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 			}
 		};
 		openFileAction.selectionChanged(selectedItems);
-		if (!openFileAction.isEnabled()) {
-			return;
+		if (openFileAction.isEnabled()) {
+			menuManager.add(openFileAction);
+			
+			IAdaptable selectedAdaptable = getSelectedAdaptable();
+			if (selectedAdaptable != null) {
+				
+				// Add 'Open With' sub-menu
+				MenuManager subMenu = new MenuManager(IDEWorkbenchMessages.OpenResourceDialog_openWithMenu_label);
+				OpenWithMenu openWithMenu = new OpenWithMenu(activePage, selectedAdaptable) {
+					/*
+					 * (non-Javadoc)
+					 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.IEditorDescriptor, boolean)
+					 */
+					protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
+						computeResult();
+						setResult(Collections.EMPTY_LIST);
+						close();
+						super.openEditor(editorDescriptor, openUsingDescriptor);
+					}
+				};
+				subMenu.add(openWithMenu);
+				menuManager.add(subMenu);
+			}
 		}
-		menuManager.add(new Separator());
-		menuManager.add(openFileAction);
-
-		IAdaptable selectedAdaptable = getSelectedAdaptable();
-		if (selectedAdaptable == null) {
-			return;
-		}
-
-		// Add 'Open With...'  sub-menu
-		MenuManager subMenu = new MenuManager(IDEWorkbenchMessages.OpenResourceDialog_openWithMenu_label);
-		OpenWithMenu openWithMenu = new OpenWithMenu(activePage, selectedAdaptable) {
-			/*
-			 * (non-Javadoc)
-			 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.IEditorDescriptor, boolean)
+		
+		
+		// Add 'Show In' sub-menu
+		MenuManager showInMenuManager = new MenuManager(IDEWorkbenchMessages.OpenResourceDialog_showInMenu_label);
+		ShowInMenu showInMenu = new ShowInMenu() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.ShowInMenu#getContext(org.eclipse.ui.IWorkbenchPart)
 			 */
-			protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
-				computeResult();
-				setResult(Collections.EMPTY_LIST);
-				close();
-				super.openEditor(editorDescriptor, openUsingDescriptor);
+			protected ShowInContext getContext(IWorkbenchPart sourcePart) {
+				return new ShowInContext(null, selectedItems);
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.internal.ShowInMenu#getContributionItem(org.eclipse.ui.views.IViewDescriptor)
+			 */
+			protected IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {
+				final String targetId= viewDescriptor.getId();
+				String label = '&' + viewDescriptor.getLabel();
+				ImageDescriptor icon = viewDescriptor.getImageDescriptor();
+				Action action = new Action(label, icon) {
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.action.Action#run()
+					 */
+					public void run() {
+						computeResult();
+						setResult(Collections.EMPTY_LIST);
+						close();
+						
+						IWorkbenchPage page = getActivePage();
+						IViewPart view;
+						try {
+							view = page.showView(targetId);
+							IShowInTarget target = getShowInTarget(view);
+							if (!(target != null && target.show(getContext(null)))) {
+								page.getWorkbenchWindow().getShell().getDisplay().beep();
+							}
+						} catch (PartInitException e) {
+							StatusManager.getManager().handle(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+											IStatus.ERROR, "", e)); //$NON-NLS-1$
+						}
+					}
+					private IShowInTarget getShowInTarget(IWorkbenchPart targetPart) {
+						return (IShowInTarget) org.eclipse.ui.internal.util.Util.getAdapter(targetPart, IShowInTarget.class);
+					}
+				};
+				action.setId(targetId);
+				return new ActionContributionItem(action);
 			}
 		};
-		subMenu.add(openWithMenu);
-		menuManager.add(subMenu);
+        showInMenu.setId(ContributionItemFactory.VIEWS_SHOW_IN.getId());
+        showInMenu.initialize(activePage.getWorkbenchWindow());
+		showInMenuManager.add(showInMenu);
+		menuManager.add(showInMenuManager);
 	}
 
 	/*
