@@ -17,8 +17,6 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.ResourceHandler;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -67,39 +65,41 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 
 	}
 
-	public void testLoadMostRecent() {
-		URI uri = URI.createPlatformPluginURI(
-				"org.eclipse.e4.ui.tests/xmi/InvalidContainment.e4xmi", true);
+	// TBD the test is not valid - resource handler does not know how to create
+	// a "default" model. My be we could add a "default default" model? 
+	// public void testLoadMostRecent() {
+	// URI uri = URI.createPlatformPluginURI(
+	// "org.eclipse.e4.ui.tests/xmi/InvalidContainment.e4xmi", true);
+	//
+	// ResourceHandler handler = createHandler(uri);
+	// Resource resource = handler.loadMostRecentModel();
+	// assertNotNull(resource);
+	// assertEquals(E4XMIResource.class, resource.getClass());
+	// checkData(resource);
+	// }
 
-		ResourceHandler handler = createHandler(uri);
-		Resource resource = handler.loadMostRecentModel();
-		assertNotNull(resource);
-		assertEquals(E4XMIResource.class, resource.getClass());
-		checkData(resource);
-	}
-
-	private void checkData(Resource resource) {
-		assertNotNull(resource);
-		assertEquals(1, resource.getContents().size());
-		MApplication app = (MApplication) resource.getContents().get(0);
-		assertEquals(1, app.getChildren().size());
-		MWindow w = app.getChildren().get(0);
-		assertEquals("window1", w.getElementId());
-		assertEquals(2, w.getChildren().size());
-		MPartStack stack = (MPartStack) w.getChildren().get(0);
-		assertEquals("window1.partstack1", stack.getElementId());
-		assertEquals(2, stack.getChildren().size());
-		assertEquals("window1.partstack1.part1", stack.getChildren().get(0)
-				.getElementId());
-		assertEquals("window1.partstack1.inputpart1", stack.getChildren()
-				.get(1).getElementId());
-
-		stack = (MPartStack) w.getChildren().get(1);
-		assertEquals("window1.partstack2", stack.getElementId());
-		assertEquals(1, stack.getChildren().size());
-		assertEquals("window1.partstack2.part1", stack.getChildren().get(0)
-				.getElementId());
-	}
+	// private void checkData(Resource resource) {
+	// assertNotNull(resource);
+	// assertEquals(1, resource.getContents().size());
+	// MApplication app = (MApplication) resource.getContents().get(0);
+	// assertEquals(1, app.getChildren().size());
+	// MWindow w = app.getChildren().get(0);
+	// assertEquals("window1", w.getElementId());
+	// assertEquals(2, w.getChildren().size());
+	// MPartStack stack = (MPartStack) w.getChildren().get(0);
+	// assertEquals("window1.partstack1", stack.getElementId());
+	// assertEquals(2, stack.getChildren().size());
+	// assertEquals("window1.partstack1.part1", stack.getChildren().get(0)
+	// .getElementId());
+	// assertEquals("window1.partstack1.inputpart1", stack.getChildren()
+	// .get(1).getElementId());
+	//
+	// stack = (MPartStack) w.getChildren().get(1);
+	// assertEquals("window1.partstack2", stack.getElementId());
+	// assertEquals(1, stack.getChildren().size());
+	// assertEquals("window1.partstack2.part1", stack.getChildren().get(0)
+	// .getElementId());
+	// }
 
 	public void testModelProcessor() {
 		URI uri = URI.createPlatformPluginURI(
