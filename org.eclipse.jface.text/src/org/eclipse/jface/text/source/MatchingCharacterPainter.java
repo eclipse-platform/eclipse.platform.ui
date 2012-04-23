@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPaintPositionManager;
 import org.eclipse.jface.text.IPainter;
@@ -431,7 +430,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Installs or uninstalls the text listener depending on the boolean parameter.
 	 * 
-	 * @param install <code>true</code> to install the text listener, <code>false</code> to uninstall 
+	 * @param install <code>true</code> to install the text listener, <code>false</code> to uninstall
 	 * 
 	 * @since 3.8
 	 */
@@ -484,20 +483,14 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			if (!fHighlightEnclosingPeerCharacters || !(fMatcher instanceof ICharacterPairMatcherExtension))
 				return;
 
-			String text= event.getText();
-			String replacedText= event.getReplacedText();
-
-			boolean viewerRedrawState= event.getViewerRedrawState();
-			DocumentEvent documentEvent= event.getDocumentEvent();
-			if (documentEvent == null && !viewerRedrawState)
+			if (!event.getViewerRedrawState())
 				return;
 
+			String text= event.getText();
+			String replacedText= event.getReplacedText();
 			ICharacterPairMatcherExtension matcher= (ICharacterPairMatcherExtension)fMatcher;
-			boolean found= searchForCharacters(text, matcher) || searchForCharacters(replacedText, matcher);
-
-			if (found || (documentEvent == null && viewerRedrawState)) {
+			if (searchForCharacters(text, matcher) || searchForCharacters(replacedText, matcher))
 				paint(IPainter.INTERNAL);
-			}
 		}
 
 		/**
