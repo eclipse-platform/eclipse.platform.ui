@@ -420,6 +420,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	boolean initializationDone = false;
 
+	private WorkbenchWindow windowBeingCreated = null;
+
 	/**
 	 * Creates a new workbench.
 	 * 
@@ -1223,18 +1225,23 @@ public final class Workbench extends EventManager implements IWorkbench {
 		WorkbenchWindow result = (WorkbenchWindow) windowContext.get(IWorkbenchWindow.class
 				.getName());
 		if (result == null) {
+			if (windowBeingCreated != null)
+				return windowBeingCreated;
 			result = new WorkbenchWindow(input, descriptor);
-
-			if (newWindow) {
-				Point size = result.getWindowConfigurer().getInitialSize();
-				window.setWidth(size.x);
-				window.setHeight(size.y);
-				application.getChildren().add(window);
-				application.setSelectedElement(window);
+			windowBeingCreated = result;
+			try {
+				if (newWindow) {
+					Point size = result.getWindowConfigurer().getInitialSize();
+					window.setWidth(size.x);
+					window.setHeight(size.y);
+					application.getChildren().add(window);
+					application.setSelectedElement(window);
+				}
+				ContextInjectionFactory.inject(result, windowContext);
+				windowContext.set(IWorkbenchWindow.class.getName(), result);
+			} finally {
+				windowBeingCreated = null;
 			}
-
-			ContextInjectionFactory.inject(result, windowContext);
-			windowContext.set(IWorkbenchWindow.class.getName(), result);
 
 			if (application.getSelectedElement() == window) {
 				application.getContext().set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, result);
