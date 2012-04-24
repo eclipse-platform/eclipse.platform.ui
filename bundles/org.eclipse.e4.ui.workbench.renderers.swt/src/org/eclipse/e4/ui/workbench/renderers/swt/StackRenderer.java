@@ -635,7 +635,9 @@ public class StackRenderer extends LazyStackRenderer {
 							public void controlResized(ControlEvent e) {
 								// Force a layout of the TB / CTF
 								if (!ctf.isDisposed()) {
-									ctf.getTopRight().pack();
+									Control tr = ctf.getTopRight();
+									if (tr != null && !tr.isDisposed())
+										ctf.getTopRight().pack();
 									ctf.layout(true, true);
 								}
 							}
