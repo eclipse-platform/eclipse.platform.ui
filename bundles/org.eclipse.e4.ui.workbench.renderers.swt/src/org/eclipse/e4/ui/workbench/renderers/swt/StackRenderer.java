@@ -55,6 +55,8 @@ import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.Accessible;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuDetectEvent;
@@ -612,7 +614,7 @@ public class StackRenderer extends LazyStackRenderer {
 		getTRComposite(ctf).setVisible(false);
 	}
 
-	public void adjustTR(CTabFolder ctf, MPart part) {
+	public void adjustTR(final CTabFolder ctf, MPart part) {
 		// Clear the current info
 		clearTR(ctf);
 
@@ -622,8 +624,28 @@ public class StackRenderer extends LazyStackRenderer {
 		// Show the TB, create one if necessary
 		if (part.getToolbar() != null && part.getToolbar().isToBeRendered()) {
 			part.getToolbar().setVisible(true);
-			renderer.createGui(part.getToolbar(), getTRComposite(ctf),
-					part.getContext());
+			Object tbObj = renderer.createGui(part.getToolbar(),
+					getTRComposite(ctf), part.getContext());
+			// The TB renderer actually wraps the TB in a Composite
+			if (tbObj instanceof Composite) {
+				Control[] kids = ((Composite) tbObj).getChildren();
+				for (Control kid : kids) {
+					if (kid instanceof ToolBar) {
+						kid.addControlListener(new ControlListener() {
+							public void controlResized(ControlEvent e) {
+								// Force a layout of the TB / CTF
+								if (!ctf.isDisposed()) {
+									ctf.getTopRight().pack();
+									ctf.layout(true, true);
+								}
+							}
+
+							public void controlMoved(ControlEvent e) {
+							}
+						});
+					}
+				}
+			}
 		}
 
 		setupMenuButton(part, ctf);
