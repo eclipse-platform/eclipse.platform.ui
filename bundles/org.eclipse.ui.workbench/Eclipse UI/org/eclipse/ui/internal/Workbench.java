@@ -115,7 +115,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -420,8 +419,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private IEventBroker eventBroker;
 
 	boolean initializationDone = false;
-
-	private WorkbenchWindow activatedWindow;
 
 	/**
 	 * Creates a new workbench.
@@ -936,10 +933,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *            The window which just closed; should not be <code>null</code>.
 	 */
 	protected void fireWindowClosed(final IWorkbenchWindow window) {
-		if (activatedWindow == window) {
-			// Do not hang onto it so it can be GC'ed
-			activatedWindow = null;
-		}
 		Object list[] = getListeners();
 		for (int i = 0; i < list.length; i++) {
 			final IWindowListener l = (IWindowListener) list[i];
@@ -1209,60 +1202,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return null;
 		}
 
-		// Look at the current shell and up its parent
-		// hierarchy for a workbench window.
-		Control shell = display.getActiveShell();
-		while (shell != null) {
-			Object data = shell.getData();
-			if (data instanceof IWorkbenchWindow) {
-				return (IWorkbenchWindow) data;
-			}
-			shell = shell.getParent();
+		MWindow activeWindow = application.getSelectedElement();
+		if (activeWindow == null && !application.getChildren().isEmpty()) {
+			activeWindow = application.getChildren().get(0);
 		}
 
-		// Look for the window that was last known being
-		// the active one
-		WorkbenchWindow win = getActivatedWindow();
-		if (win != null) {
-			return win;
-		}
-
-		// Look at all the shells and pick the first one
-		// that is a workbench window.
-		Shell shells[] = display.getShells();
-		for (int i = 0; i < shells.length; i++) {
-			Object data = shells[i].getData();
-			if (data instanceof IWorkbenchWindow) {
-				return (IWorkbenchWindow) data;
-			}
-		}
-
-		// Can't find anything!
-		return null;
-	}
-
-	/*
-	 * Returns the workbench window which was last known being the active one,
-	 * or <code> null </code> .
-	 */
-	private WorkbenchWindow getActivatedWindow() {
-		if (activatedWindow != null) {
-			Shell shell = activatedWindow.getShell();
-			if (shell != null && !shell.isDisposed()) {
-				return activatedWindow;
-			}
-		}
-
-		return null;
-	}
-
-	/*
-	 * Sets the workbench window which was last known being the active one, or
-	 * <code> null </code> .
-	 */
-	/* package */
-	void setActivatedWindow(WorkbenchWindow window) {
-		activatedWindow = window;
+		return createWorkbenchWindow(getDefaultPageInput(), getPerspectiveRegistry()
+				.findPerspectiveWithId(getPerspectiveRegistry().getDefaultPerspective()),
+				activeWindow, false);
 	}
 
 	IWorkbenchWindow createWorkbenchWindow(IAdaptable input, IPerspectiveDescriptor descriptor,

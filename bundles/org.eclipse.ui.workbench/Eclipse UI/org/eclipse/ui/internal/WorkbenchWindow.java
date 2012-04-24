@@ -1766,7 +1766,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			public void shellActivated(ShellEvent event) {
 				shellActivated = true;
 				serviceLocator.activate();
-				getWorkbenchImpl().setActivatedWindow(WorkbenchWindow.this);
 				if (getActivePage() != null) {
 					getWorkbenchImpl().fireWindowActivated(WorkbenchWindow.this);
 				}
