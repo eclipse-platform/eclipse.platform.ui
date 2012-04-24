@@ -638,6 +638,12 @@
             sequence="CTRL+Y"
             schemeId="org.eclipse.ui.emacsAcceleratorConfiguration" />
       <key
+            commandId="org.eclipse.ui.edit.paste"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="CTRL+Y"
+            platform="gtk"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.edit.selectAll"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="CTRL+X H"
