@@ -260,6 +260,8 @@ public final class CommandManager extends HandleObjectManager implements
 	 * manager.
 	 */
 	private IExecutionListenerWithChecks executionListener = null;
+	
+	private boolean shouldCommandFireEvents = true;
 
 	/**
 	 * The collection of execution listeners. This collection is
@@ -546,6 +548,7 @@ public final class CommandManager extends HandleObjectManager implements
 		Command command = (Command) handleObjectsById.get(commandId);
 		if (command == null) {
 			command = new Command(commandId);
+			command.shouldFireEvents = shouldCommandFireEvents;
 			handleObjectsById.put(commandId, command);
 			command.addCommandListener(this);
 
