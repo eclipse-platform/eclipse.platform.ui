@@ -198,10 +198,7 @@ public class ShowInMenu extends ContributionItem implements
 			ExpressionContext eContext = new ExpressionContext(workbenchWindow.getModel()
 					.getContext());
 			ContributionsAnalyzer.gatherMenuContributions(menuModel,
-					application.getMenuContributions(), menuModel.getElementId(), toContribute,
-					eContext, true);
-			ContributionsAnalyzer.gatherMenuContributions(menuModel,
-					application.getMenuContributions(), location, toContribute, eContext, false);
+					application.getMenuContributions(), location, toContribute, eContext, true);
 			ContributionsAnalyzer.addMenuContributions(menuModel, toContribute,
 					menuContributionsToRemove);
 
