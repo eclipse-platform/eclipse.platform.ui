@@ -11,42 +11,32 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 public class SplitFeedbackOverlay {
 	final Display display = Display.getCurrent();
 
-	private boolean outerDrop = false;
-	private int curSide = 0;
 	private Shell feedbackShell;
-	private List<Rectangle> rects = new ArrayList<Rectangle>();
-	private Label msgBox;
-	private Rectangle caRect;
-
+	private int curSide = 0;
 	private float ratio;
 
-	private boolean onEdge;
+	private List<Rectangle> rects = new ArrayList<Rectangle>();
+	private Rectangle outerRect;
 
-	public SplitFeedbackOverlay(Shell dragShell, Rectangle rect, int side, boolean onEdge,
-			float pct, boolean ctrlPressed) {
-		caRect = rect;
+	public SplitFeedbackOverlay(Shell dragShell, Rectangle rect, int side, float pct,
+			boolean enclosed, boolean modified) {
+		outerRect = rect;
 		curSide = side;
 		ratio = pct;
-		this.onEdge = onEdge;
 
 		feedbackShell = new Shell(dragShell, SWT.NO_TRIM);
 		feedbackShell.setBounds(dragShell.getBounds());
 
-		if (onEdge)
-			msgBox = createMessageBox(feedbackShell, rect);
-
 		// Show the appropriate feedback rectangles
-		setOuterDrop(ctrlPressed);
+		setFeedback(enclosed, modified);
 
 		defineRegion();
 		feedbackShell.setVisible(true);
@@ -55,14 +45,13 @@ public class SplitFeedbackOverlay {
 	public void dispose() {
 		if (feedbackShell != null && !feedbackShell.isDisposed())
 			feedbackShell.dispose();
-		msgBox = null;
 	}
 
-	private void showRects(Rectangle rect, int side, boolean enclosed, float ratio) {
-		if (side == 0)
+	private void showRects(boolean enclosed) {
+		if (curSide == 0)
 			return;
 
-		Rectangle ca = new Rectangle(rect.x, rect.y, rect.width, rect.height);
+		Rectangle ca = new Rectangle(outerRect.x, outerRect.y, outerRect.width, outerRect.height);
 		rects.clear();
 
 		if (enclosed) {
@@ -77,16 +66,16 @@ public class SplitFeedbackOverlay {
 		int pctHeight = (int) (ca.height * ratio);
 
 		Rectangle r1 = null, r2 = null;
-		if (side == SWT.LEFT) {
+		if (curSide == SWT.LEFT) {
 			r1 = new Rectangle(ca.x, ca.y, pctWidth, ca.height);
 			r2 = new Rectangle(ca.x + r1.width + 2, ca.y, ca.width - (pctWidth + 2), ca.height);
-		} else if (side == SWT.RIGHT) {
+		} else if (curSide == SWT.RIGHT) {
 			r1 = new Rectangle(ca.x, ca.y, ca.width - pctWidth, ca.height);
 			r2 = new Rectangle(ca.x + r1.width + 2, ca.y, pctWidth - 2, ca.height);
-		} else if (side == SWT.TOP) {
+		} else if (curSide == SWT.TOP) {
 			r1 = new Rectangle(ca.x, ca.y, ca.width, pctHeight);
 			r2 = new Rectangle(ca.x, ca.y + pctHeight + 2, ca.width, ca.height - (pctHeight + 2));
-		} else if (side == SWT.BOTTOM) {
+		} else if (curSide == SWT.BOTTOM) {
 			r1 = new Rectangle(ca.x, ca.y, ca.width, ca.height - pctHeight);
 			r2 = new Rectangle(ca.x, ca.y + r1.height + 2, ca.width, pctHeight - 2);
 		}
@@ -100,10 +89,6 @@ public class SplitFeedbackOverlay {
 		for (Rectangle r : rects) {
 			rgn.add(r);
 			rgn.subtract(r.x + 2, r.y + 2, r.width - 4, r.height - 4);
-		}
-
-		if (msgBox != null && !msgBox.isDisposed()) {
-			rgn.add(msgBox.getBounds());
 		}
 
 		if (feedbackShell.getRegion() != null && !feedbackShell.getRegion().isDisposed())
@@ -120,49 +105,14 @@ public class SplitFeedbackOverlay {
 		rects.add(rect);
 	}
 
-	private Label createMessageBox(final Shell shell, Rectangle bounds) {
-		Label msgArea = new Label(shell, SWT.BORDER | SWT.CENTER);
-		msgArea.setText("Press 'Ctrl' to drop outside the perspective");
-
-		Point msgSize = msgArea.computeSize(-1, -1);
-		msgSize.x += 20;
-		msgArea.setSize(msgSize);
-
-		Point dsCenter = new Point(bounds.x + (bounds.width / 2), bounds.y + (bounds.height / 2));
-
-		Rectangle msgBounds = new Rectangle(dsCenter.x - (msgSize.x / 2), dsCenter.y
-				- (msgSize.y / 2), msgSize.x, msgSize.y);
-		msgBounds = Display.getCurrent().map(null, feedbackShell, msgBounds);
-		msgArea.setBounds(msgBounds);
-
-		return msgArea;
-	}
-
-	public void setOuterDrop(boolean newVal) {
-		outerDrop = newVal;
-
-		if (outerDrop && onEdge) {
-			if (msgBox != null && !msgBox.isDisposed()) {
-				msgBox.setBackground(msgBox.getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW));
-				msgBox.setForeground(msgBox.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			}
-
-			feedbackShell.setBackground(display.getSystemColor(SWT.COLOR_DARK_YELLOW));
-		} else {
-			if (msgBox != null && !msgBox.isDisposed()) {
-				msgBox.setBackground(msgBox.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
-				msgBox.setForeground(msgBox.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			}
-
+	public void setFeedback(boolean enclosed, boolean modified) {
+		if (!modified)
 			feedbackShell.setBackground(display.getSystemColor(SWT.COLOR_GREEN));
-		}
+		else
+			feedbackShell.setBackground(display.getSystemColor(SWT.COLOR_DARK_YELLOW));
 
-		showRects(caRect, curSide, !(outerDrop && onEdge), ratio);
+		showRects(enclosed);
 		defineRegion();
 		feedbackShell.update();
-	}
-
-	public boolean getOuterDock() {
-		return outerDrop;
 	}
 }

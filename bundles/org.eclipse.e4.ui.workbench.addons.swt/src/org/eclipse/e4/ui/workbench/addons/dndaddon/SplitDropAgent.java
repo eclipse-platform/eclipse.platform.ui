@@ -34,25 +34,24 @@ import org.eclipse.swt.widgets.Display;
 public class SplitDropAgent extends DropAgent {
 	private static final int NOWHERE = -1;
 
+	private int curDockLocation = NOWHERE;
+	private boolean onEdge = false;
+
 	private MPartStack dropStack;
 	private CTabFolder dropCTF;
 	private Rectangle clientBounds;
 	private String weight;
-	private int curDockLocation = NOWHERE;
 
 	private Rectangle ctfBounds;
 
 	private MUIElement outerRelTo;
 	private Rectangle ocBounds;
-	private boolean onEdge = false;
-	boolean isInnerDock = false;
 
 	private SplitFeedbackOverlay feedback = null;
 
 	/**
-	 * @param modelService
-	 *            The model service related to this agent
-	 * 
+	 * @param manager
+	 *            the DnDManager using this agent
 	 */
 	public SplitDropAgent(DnDManager manager) {
 		super(manager);
@@ -189,15 +188,14 @@ public class SplitDropAgent extends DropAgent {
 		if (!clientBounds.contains(info.cursorPos))
 			return false;
 
-		boolean curNeedsExit = onEdge;
+		boolean wasOnEdge = onEdge;
+		int dockLocation = getDockLocation(info);
 
-		onEdge = dndManager.isCtrlPressed;
 		if (feedback != null) {
-			feedback.setOuterDrop(onEdge);
+			feedback.setFeedback(getEnclosed(), getModified());
 		}
 
-		int dockLocation = getDockLocation(info);
-		if (dockLocation == curDockLocation && curNeedsExit == onEdge)
+		if (dockLocation == curDockLocation && wasOnEdge == onEdge)
 			return true;
 
 		if (dropStack == dragElement && !onEdge)
@@ -211,6 +209,33 @@ public class SplitDropAgent extends DropAgent {
 		} else {
 			unDock(dragElement);
 			dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_NO));
+		}
+
+		return true;
+	}
+
+	/**
+	 * for 'edges' you can modify the effect of the drop. If the drop area is at the edge of the
+	 * perspective stack a modified drop will place it *outside* the perspectives. If the drop area
+	 * is the shared area then a modified drop will drop *inside* the shared area.
+	 * 
+	 * @return Whether this is a 'modified' drop.
+	 */
+	private boolean getModified() {
+		if (!onEdge)
+			return false;
+		return dndManager.isModified;
+	}
+
+	/**
+	 * @return Whether the feedback should show an outer 'enclosing' rectangle or two separate
+	 *         rectangles.
+	 */
+	private boolean getEnclosed() {
+		if (onEdge) {
+			if (outerRelTo instanceof MPerspectiveStack)
+				return !getModified();
+			return getModified(); // 'Inner' drop
 		}
 
 		return true;
@@ -251,8 +276,11 @@ public class SplitDropAgent extends DropAgent {
 		}
 
 		float pct = (float) (onEdge ? 0.34 : 0.50);
-		feedback = new SplitFeedbackOverlay(dndManager.getDragShell(), feedbackBounds, side,
-				onEdge, pct, dndManager.isCtrlPressed);
+
+		if (feedback != null)
+			feedback.dispose();
+		feedback = new SplitFeedbackOverlay(dndManager.getDragShell(), feedbackBounds, side, pct,
+				getEnclosed(), getModified());
 	}
 
 	private void clearFeedback() {
@@ -312,7 +340,7 @@ public class SplitDropAgent extends DropAgent {
 		if (onEdge) {
 			relTo = (MPartSashContainerElement) outerRelTo;
 			if (outerRelTo instanceof MPerspectiveStack) {
-				if (!feedback.getOuterDock())
+				if (getModified())
 					relTo = (MPartSashContainerElement) ((MPerspectiveStack) outerRelTo)
 							.getSelectedElement().getChildren().get(0);
 			}

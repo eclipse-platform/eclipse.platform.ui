@@ -75,15 +75,16 @@ class DnDManager {
 
 	DragDetectListener dragDetector = new DragDetectListener() {
 		public void dragDetected(DragDetectEvent e) {
-			if (e.widget.isDisposed())
+			if (dragging || e.widget.isDisposed())
 				return;
 
 			info.update(e);
 			dragAgent = getDragAgent(info);
 			if (dragAgent != null) {
 				dragging = true;
-				isCtrlPressed = (e.stateMask & SWT.CTRL) != 0;
+				isModified = (e.stateMask & SWT.MOD1) != 0;
 				startDrag();
+				dragging = false;
 			}
 		}
 	};
@@ -96,7 +97,7 @@ class DnDManager {
 	private List<Image> images = new ArrayList<Image>();
 	private List<Rectangle> imageRects = new ArrayList<Rectangle>();
 
-	protected boolean isCtrlPressed;
+	protected boolean isModified;
 
 	public void addImage(Rectangle imageRect, Image image) {
 		imageRects.add(imageRect);
@@ -194,15 +195,15 @@ class DnDManager {
 
 		tracker.addKeyListener(new KeyListener() {
 			public void keyReleased(KeyEvent e) {
-				if (e.keyCode == SWT.CTRL) {
-					isCtrlPressed = false;
+				if (e.keyCode == SWT.MOD1) {
+					isModified = false;
 					track();
 				}
 			}
 
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.CTRL) {
-					isCtrlPressed = true;
+				if (e.keyCode == SWT.MOD1) {
+					isModified = true;
 					track();
 				}
 			}
