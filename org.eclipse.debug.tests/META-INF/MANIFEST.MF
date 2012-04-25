@@ -18,5 +18,6 @@ Export-Package: org.eclipe.debug.tests.launching,
  org.eclipe.debug.tests.view.memory,
  org.eclipe.debug.tests.viewer.model,
  org.eclipse.debug.tests,
+ org.eclipse.debug.tests.breakpoint,
  org.eclipse.debug.tests.expressions,
  org.eclipse.debug.tests.statushandlers

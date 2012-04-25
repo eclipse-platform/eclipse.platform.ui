@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Freescale Semiconductor - Bug 293618, Breakpoints view sorts up to first colon only
  *******************************************************************************/
 package org.eclipse.debug.tests;
 
@@ -30,6 +31,7 @@ import org.eclipe.debug.tests.viewer.model.VirtualViewerLazyModeTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerSelectionTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerStateTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerUpdateTests;
+import org.eclipse.debug.tests.breakpoint.BreakpointOrderingTests;
 import org.eclipse.debug.tests.statushandlers.StatusHandlerTests;
 
 /**
@@ -52,6 +54,7 @@ public class AutomatedSuite extends TestSuite {
 	 * Constructs the automated test suite. Adds all tests. 
 	 */
 	public AutomatedSuite() {
+		addTest(new TestSuite(BreakpointOrderingTests.class));
 	    // Note: jface viewer tests were moved out of nightly tests 
 	    // due to frequent problems on nightly build machines. 
 	    // (Bug 343308). 

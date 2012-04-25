@@ -45,7 +45,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	 */
 	public void testGenereateConfigNameBadChar() {
 		String configname = "config:name";
-		String name = getLaunchManager().generateLaunchConfigurationName(configname);
+		String name = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configname);
 		assertEquals("config name should be '"+configname+"'", configname, name);
 	}
 	
@@ -65,8 +65,8 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	public void testGenerateConfigNameReservedName() {
 		if(Platform.OS_WIN32.equals(Platform.getOS())) {
 			String configname = "aux";
-			String name = getLaunchManager().generateLaunchConfigurationName(configname);
-			assertEquals("config name should be '"+configname+"'", configname, name);
+			String name = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configname);
+			assertEquals("config name should be 'aux'", configname, name);
 		}
 	}
 	
