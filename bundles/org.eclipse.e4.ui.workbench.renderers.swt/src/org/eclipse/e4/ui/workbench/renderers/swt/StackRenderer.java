@@ -807,7 +807,7 @@ public class StackRenderer extends LazyStackRenderer {
 				MPlaceholder placeholder = (MPlaceholder) child;
 				child = placeholder.getRef();
 
-				if (child.getCurSharedRef() != placeholder) {
+				if (child == null || child.getCurSharedRef() != placeholder) {
 					// if this placeholder isn't currently managing this
 					// element, no need to do anything about its toolbar, just
 					// return here
