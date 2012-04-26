@@ -285,6 +285,11 @@ public final class EvaluationService implements IEvaluationService {
 	 * @see org.eclipse.ui.services.IEvaluationService#requestEvaluation(java.lang.String)
 	 */
 	public void requestEvaluation(String propertyName) {
+		// Trigger evaluation of properties via context
+		String pokeVar = propertyName + ".evaluationServiceLink"; //$NON-NLS-1$
+		context.remove(pokeVar);
+		context.set(pokeVar, "link"); //$NON-NLS-1$
+
 		String[] sourceNames = new String[] { propertyName };
 		startSourceChange(sourceNames);
 		for (EvaluationReference ref : refs) {
