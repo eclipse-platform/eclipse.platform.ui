@@ -60,7 +60,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.progress.UIJob;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -179,6 +178,58 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 			return null;
 		}
 	}
+
+	/**
+	 * Use a customized UI job so that nested jobs with a scheduling rule are 
+	 * not prevented from running.
+	 * See bug 377593 
+	 */
+	private abstract class MyUIJob extends Job {
+		public MyUIJob(String name) {
+			super(name);
+			setSystem(true);
+			setPriority(Job.INTERACTIVE);
+			setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(this));
+		}
+		
+		protected IStatus run(final IProgressMonitor monitor) {
+	        if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+	        Display asyncDisplay = DebugUIPlugin.getStandardDisplay();
+	        if (asyncDisplay == null || asyncDisplay.isDisposed()) {
+	            return Status.CANCEL_STATUS;
+	        }
+	        asyncDisplay.asyncExec(new Runnable() {
+	            public void run() {
+	                IStatus result = null;
+	                Throwable throwable = null;
+	                try {
+	                    if (monitor.isCanceled()) {
+							result = Status.CANCEL_STATUS;
+						} else {
+	                        result = runInUIThread(monitor);
+	                    }
+
+	                } catch(Throwable t){
+	                	throwable = t;
+	                } finally {
+	                    if (result == null) {
+							result = new Status(IStatus.ERROR,
+	                                PlatformUI.PLUGIN_ID, IStatus.ERROR,
+	                                LaunchConfigurationsMessages.PerspectiveManager_Error_1,
+	                                throwable);
+						}
+	                    done(result);
+	                }
+	            }
+	        });
+	        return Job.ASYNC_FINISH;
+		}
+		
+	    public abstract IStatus runInUIThread(IProgressMonitor monitor);
+
+	}
 	
 	/**
 	 * A listing of <code>PerspectiveContext</code>s
@@ -288,7 +339,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		}
 		final String id = perspectiveId;
 		// switch
-		Job switchJob = new UIJob(DebugUIPlugin.getStandardDisplay(), "Perspective Switch Job") { //$NON-NLS-1$
+		Job switchJob = new MyUIJob("Perspective Switch Job") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IWorkbenchWindow window = getWindowForPerspective(id);
 				if (id != null && window != null && shouldSwitchPerspective(window, id, IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE)) {
@@ -299,7 +350,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		};
 		switchJob.setSystem(true);
 		switchJob.setPriority(Job.INTERACTIVE);
-		switchJob.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(this));
+		//switchJob.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(this));
 		switchJob.schedule();
 	}
 
@@ -380,7 +431,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		// this has to be done in an async, such that the workbench
 		// window can be accessed
 		final String targetId = perspectiveId;
-		Job switchJob = new UIJob(DebugUIPlugin.getStandardDisplay(), "Perspective Switch Job") { //$NON-NLS-1$
+		Job switchJob = new MyUIJob("Perspective Switch Job") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IWorkbenchWindow window = null;
 				if (targetId != null) {
