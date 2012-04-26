@@ -68,7 +68,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -452,16 +451,20 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			resource.getContents().add((EObject) application);
 
 			// Create Quit command
-			MCommand quitCommand = createCommand("quitCommand", "QuitHandler",
+			MCommand quitCommand = createCommand("org.eclipse.ui.file.exit",
+					"quitCommand", "QuitHandler",
 					"M1+Q", pluginName, fragment, application);
 
-			MCommand openCommand = createCommand("openCommand", "OpenHandler",
+			MCommand openCommand = createCommand(pluginName + ".open",
+					"openCommand", "OpenHandler",
 					"M1+O", pluginName, fragment, application);
 
-			MCommand saveCommand = createCommand("saveCommand", "SaveHandler",
+			MCommand saveCommand = createCommand("org.eclipse.ui.file.save",
+					"saveCommand", "SaveHandler",
 					"M1+S", pluginName, fragment, application);
 
-			MCommand aboutCommand = createCommand("aboutCommand",
+			MCommand aboutCommand = createCommand(
+					"org.eclipse.ui.help.aboutAction", "aboutCommand",
 					"AboutHandler", "M1+A", pluginName, fragment,
 					application);
 
@@ -640,12 +643,13 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		}
 	}
 
-	private MCommand createCommand(String name, String className,
+	private MCommand createCommand(String commandId, String name,
+			String className,
 			String keyBinding, String projectName, IPackageFragment fragment,
 			MApplication application) {
 		MCommand command = MCommandsFactory.INSTANCE.createCommand();
 		command.setCommandName(name);
-		command.setElementId(projectName + "." + name);
+		command.setElementId(commandId);
 		application.getCommands().add(command);
 		{
 			// Create Quit handler for command
