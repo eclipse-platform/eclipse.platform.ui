@@ -264,10 +264,22 @@ public class ResourceHandler implements IModelResourceHandler {
 		} else if (applicationDefinitionInstance.isPlatformPlugin()) {
 			try {
 				java.net.URL url = new java.net.URL(applicationDefinitionInstance.toString());
+				// can't just use 'url.openConnection()' as it usually returns a
+				// PlatformURLPluginConnection which doesn't expose the
+				// last-modification time. So we try to resolve the file through
+				// the bundle to obtain a BundleURLConnection instead.
 				Object[] obj = PlatformURLPluginConnection.parse(url.getFile().trim(), url);
 				Bundle b = (Bundle) obj[0];
-				URLConnection openConnection = b.getResource((String) obj[1]).openConnection();
-				appLastModified = openConnection.getLastModified();
+				// first try to resolve as an bundle file entry, then as a resource using
+				// the bundle's classpath
+				java.net.URL resolved = b.getEntry((String) obj[1]);
+				if (resolved == null) {
+					resolved = b.getResource((String) obj[1]);
+				}
+				if (resolved != null) {
+					URLConnection openConnection = resolved.openConnection();
+					appLastModified = openConnection.getLastModified();
+				}
 			} catch (Exception e) {
 				// ignore
 			}
