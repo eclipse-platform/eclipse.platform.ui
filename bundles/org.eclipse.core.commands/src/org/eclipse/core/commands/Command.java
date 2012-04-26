@@ -467,8 +467,9 @@ public final class Command extends NamedHandleObjectWithState implements
 		final IHandler handler = this.handler;
 		// workaround for the division of responsibilities to get
 		// bug 369159 working
-		if ("org.eclipse.ui.internal.MakeHandlersGo".equals(handler.getClass() //$NON-NLS-1$
-				.getName())) {
+		if ((handler != null)
+				&& "org.eclipse.ui.internal.MakeHandlersGo".equals(handler.getClass() //$NON-NLS-1$
+								.getName())) {
 			return handler.execute(event);
 		}
 
