@@ -875,7 +875,9 @@ public class StackRenderer extends LazyStackRenderer {
 						MUIElement ele = (MUIElement) item.getData(OWNING_ME);
 						if (ele.getParent().getSelectedElement() == ele) {
 							Control ctrl = (Control) ele.getWidget();
-							ctrl.setFocus();
+							if (ctrl != null) {
+								ctrl.setFocus();
+							}
 						}
 					}
 				}
