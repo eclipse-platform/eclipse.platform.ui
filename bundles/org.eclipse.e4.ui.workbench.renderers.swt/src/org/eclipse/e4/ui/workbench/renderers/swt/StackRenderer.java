@@ -917,7 +917,7 @@ public class StackRenderer extends LazyStackRenderer {
 				// If click happened in empty area, still show the menu
 				if (eventTabItem == null) {
 					Rectangle clientArea = ctf.getClientArea();
-					if (!clientArea.contains(e.x, e.y)) {
+					if (!clientArea.contains(relativePoint)) {
 						eventTabItem = ctf.getSelection();
 					}
 				}
