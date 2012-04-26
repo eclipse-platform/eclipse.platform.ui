@@ -142,14 +142,7 @@ public class MenuHelper {
 	}
 
 	public static String getImageUrl(ImageDescriptor imageDescriptor) {
-		if (imageDescriptor == null)
-			return null;
-		Class<?> idc = imageDescriptor.getClass();
-		if (idc.getName().endsWith("URLImageDescriptor")) { //$NON-NLS-1$
-			URL url = getUrl(idc, imageDescriptor);
-			return url.toExternalForm();
-		}
-		return null;
+		return getIconURI(imageDescriptor, null);
 	}
 
 	private static URL getUrl(Class<?> idc, ImageDescriptor imageDescriptor) {
@@ -1081,12 +1074,9 @@ public class MenuHelper {
 
 		// Attempt to retrieve URIs from the descriptor and convert into a more
 		// durable form in case it's to be persisted
-		String string = descriptor.toString();
-		if (string.startsWith("URLImageDescriptor(")) { //$NON-NLS-1$
-			string = string.substring("URLImageDescriptor(".length()); //$NON-NLS-1$
-			string = string.substring(0, string.length() - 1);
-
-			return rewriteDurableURL(string);
+		if (descriptor.getClass().toString().endsWith("URLImageDescriptor")) { //$NON-NLS-1$
+			URL url = getUrl(descriptor.getClass(), descriptor);
+			return rewriteDurableURL(url.toExternalForm());
 		} else if (descriptor.getClass().toString().endsWith("FileImageDescriptor")) { //$NON-NLS-1$
 			Class<?> sourceClass = getLocation(descriptor);
 			if (sourceClass == null) {
