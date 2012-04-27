@@ -73,11 +73,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	    if (fWindow == null) return; // disposed
 	    
 		IWorkbenchPart part = provider.getPart();
-		String id = null;
-		if (part != null) {
-			id = getCombinedPartId(part);
-		}
-		fProvidersByPartId.put(id, provider);
+		fProvidersByPartId.put( getCombinedPartId(part), provider );
 
 		// Check if provider is a window context provider
 		boolean canSetActive = true;
@@ -107,12 +103,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	public synchronized void removeDebugContextProvider(IDebugContextProvider provider) {
 		int index = fProviders.indexOf(provider);
 		if (index >= 0) {
-			IWorkbenchPart part = provider.getPart();
-			String id = null;
-			if (part != null) {
-				id = getCombinedPartId(part);
-			}
-			fProvidersByPartId.remove(id);
+			fProvidersByPartId.remove( getCombinedPartId(provider.getPart()) );
 			fProviders.remove(index);
 			IDebugContextProvider activeProvider = getActiveProvider();
 			if (index == 0) {
@@ -239,7 +230,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
             outer: for (Iterator itr = fListenersByPartId.keySet().iterator(); itr.hasNext();) { 
                 String listenerPartId = (String)itr.next(); 
                 for (int i = 0; i < fProviders.size(); i++) { 
-                    String providerPartId = getCombinedPartId(((IDebugContextProvider)fProviders.get(i)).getPart()); 
+                    String providerPartId = getCombinedPartId(((IDebugContextProvider)fProviders.get(i)).getPart());
                     if ((listenerPartId == null && providerPartId == null) || 
                         (listenerPartId != null && listenerPartId.equals(providerPartId)))  
                     { 
@@ -274,7 +265,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
             outer: for (Iterator itr = fPostListenersByPartId.keySet().iterator(); itr.hasNext();) { 
                 String listenerPartId = (String)itr.next(); 
                 for (int i = 0; i < fProviders.size(); i++) { 
-                    String providerPartId = getCombinedPartId(((IDebugContextProvider)fProviders.get(i)).getPart()); 
+                    String providerPartId = getCombinedPartId(((IDebugContextProvider)fProviders.get(i)).getPart());
                     if ((listenerPartId == null && providerPartId == null) || 
                         (listenerPartId != null && listenerPartId.equals(providerPartId)))  
                     { 
@@ -417,8 +408,10 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		notify(event);
 	}
 	
-	private String getCombinedPartId(IWorkbenchPart part) { 
-        if (part.getSite() instanceof IViewSite) { 
+	private String getCombinedPartId(IWorkbenchPart part) {
+	    if (part == null) {
+	        return null;
+	    } else if (part.getSite() instanceof IViewSite) { 
             IViewSite site = (IViewSite)part.getSite();
             return getCombinedPartId(site.getId(), site.getSecondaryId());
             
