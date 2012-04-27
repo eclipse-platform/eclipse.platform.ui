@@ -684,13 +684,13 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			}
 			if (item instanceof IToolBarContributionItem) {
 				IToolBarManager manager2 = ((IToolBarContributionItem) item).getToolBarManager();
-				new Exception("fill(MToolBar container, IContributionManager manager) with " //$NON-NLS-1$
-						+ item + " to " + manager2).printStackTrace(); //$NON-NLS-1$
+				//new Exception("fill(MToolBar container, IContributionManager manager) with " //$NON-NLS-1$
+				//		+ item + " to " + manager2).printStackTrace(); //$NON-NLS-1$
 				fill(container, manager2);
 			} else if (item instanceof IContributionManager) {
-				new Exception(
-						"fill(MToolBar container, IContributionManager manager) with rogue contribution manager: " //$NON-NLS-1$
-								+ item).printStackTrace();
+				// new Exception(
+				//		"fill(MToolBar container, IContributionManager manager) with rogue contribution manager: " //$NON-NLS-1$
+				// + item).printStackTrace();
 				fill(container, (IContributionManager) item);
 			} else if (item instanceof CommandContributionItem) {
 				CommandContributionItem cci = (CommandContributionItem) item;
@@ -699,16 +699,12 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				if (toolItem != null) {
 					container.getChildren().add(toolItem);
 				}
-			} else if (item instanceof AbstractGroupMarker) {
-				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
-				separator.setToBeRendered(item.isVisible());
-				separator.setVisible(false);
-				separator.setElementId(item.getId());
-				container.getChildren().add(separator);
-				manager.remove(item);
 			} else {
 				MOpaqueToolItem toolItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
 				toolItem.setElementId(item.getId());
+				if (item instanceof AbstractGroupMarker) {
+					toolItem.setVisible(item.isVisible());
+				}
 				container.getChildren().add(toolItem);
 				renderer.linkModelToContribution(toolItem, item);
 			}

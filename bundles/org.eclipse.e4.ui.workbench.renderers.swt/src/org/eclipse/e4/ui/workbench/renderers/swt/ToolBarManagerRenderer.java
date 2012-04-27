@@ -144,6 +144,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 						parent.update(true);
 						ToolBar tb = parent.getControl();
 						if (tb != null && !tb.isDisposed()) {
+							tb.pack(true);
 							tb.getShell().layout(new Control[] { tb },
 									SWT.DEFER);
 						}
@@ -173,6 +174,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 					// disposeToolbarIfNecessary((MToolBar) tbModel);
 					ToolBar tb = parent.getControl();
 					if (tb != null && !tb.isDisposed()) {
+						tb.pack(true);
 						tb.getShell().layout(new Control[] { tb }, SWT.DEFER);
 					}
 				}
@@ -514,6 +516,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 		ToolBar tb = getToolbarFrom(container.getWidget());
 		if (tb != null) {
+			tb.pack(true);
 			tb.getShell().layout(new Control[] { tb }, SWT.DEFER);
 		}
 	}
@@ -568,6 +571,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			}
 			ToolBar toolbar = (ToolBar) getUIContainer(child);
 			if (toolbar != null && !toolbar.isDisposed()) {
+				toolbar.pack(true);
 				toolbar.getShell().layout(new Control[] { toolbar }, SWT.DEFER);
 			}
 			// disposeToolbarIfNecessary(parentElement);
@@ -581,6 +585,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		processContents(parentElement);
 		ToolBar toolbar = (ToolBar) getUIContainer(element);
 		if (toolbar != null && !toolbar.isDisposed()) {
+			toolbar.pack(true);
 			toolbar.getShell().layout(new Control[] { toolbar }, SWT.DEFER);
 		}
 	}
