@@ -11,12 +11,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.util.impl.resources;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.utils.StringUtils;
@@ -48,7 +48,11 @@ public class ResourcesLocatorManager implements IResourcesLocatorManager {
 	public void registerResourceLocator(IResourceLocator resourceLocator) {
 		if (uriResolvers == null)
 			uriResolvers = new ArrayList();
-		uriResolvers.add(resourceLocator);
+		if (resourceLocator instanceof OSGiResourceLocator) {
+			uriResolvers.add(0, resourceLocator);
+		} else {
+			uriResolvers.add(resourceLocator);
+		}
 	}
 
 	/*
@@ -89,6 +93,7 @@ public class ResourcesLocatorManager implements IResourcesLocatorManager {
 			return null;
 		if (uriResolvers == null)
 			return null;
+		
 		// Loop for IResourceLocator registered and return the InputStream from
 		// the uri resolved
 		// as soon as an IResourceLocator return an uri resolved which is not
