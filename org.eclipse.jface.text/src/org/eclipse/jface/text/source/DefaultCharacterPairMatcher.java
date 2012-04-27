@@ -146,8 +146,12 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 
 		//bracket is not selected
 		try {
-			final String partition1= TextUtilities.getContentType(document, fPartitioning, offset, false);
-			final DocumentPartitionAccessor partDoc= new DocumentPartitionAccessor(document, fPartitioning, partition1);
+			final String partition= TextUtilities.getContentType(document, fPartitioning, offset, false);
+			DocumentPartitionAccessor partDoc= new DocumentPartitionAccessor(document, fPartitioning, partition);
+			IRegion enclosingPeers= findEnclosingPeers(document, partDoc, offset, length, 0, document.getLength());
+			if (enclosingPeers != null)
+				return enclosingPeers;
+			partDoc= new DocumentPartitionAccessor(document, fPartitioning, IDocument.DEFAULT_CONTENT_TYPE);
 			return findEnclosingPeers(document, partDoc, offset, length, 0, document.getLength());
 		} catch (BadLocationException ble) {
 			fAnchor= -1;
