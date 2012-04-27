@@ -192,10 +192,12 @@ public class Cache {
 
 	public void discardAll() {
 		entries.clear();
+		head = tail = null;
 	}
 
 	public void dispose() {
 		discardAll();
 		entries = null;
+		head = tail = null;
 	}
 }

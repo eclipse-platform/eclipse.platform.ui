@@ -75,6 +75,20 @@ public class CacheTest extends TestCase {
 		assertEquals("6.1", bar, foo.getPrevious());
 	}
 
+	public void testDiscardAll() {
+		Cache cache = new Cache(2);
+		assertNull("1.0", cache.getHead());
+		assertNull("1.1", cache.getTail());
+		assertEquals("1.2", 0, cache.size());
+
+		cache.addEntry("foo", "foo");
+		cache.addEntry("bar", "bar");
+		cache.discardAll();
+		assertNull("2.0", cache.getHead());
+		assertNull("2.1", cache.getTail());
+		assertEquals("2.2", 0, cache.size());
+	}
+
 	public void testDiscardHead() {
 		Cache cache = new Cache(2);
 		cache.addEntry("foo", "foo");
