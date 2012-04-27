@@ -337,10 +337,15 @@ public class SplitDropAgent extends DropAgent {
 		MPartSashContainerElement relTo = dropStack;
 		MPartStack toInsert;
 
-		if (onEdge) {
+		if (crossSharedAreaBoundary(dragElement, dropStack)) {
+			System.out.println("Cross Boundary");
+			if (!dndManager.isModified) {
+				relTo = (MPartSashContainerElement) outerRelTo;
+			}
+		} else if (onEdge) {
 			relTo = (MPartSashContainerElement) outerRelTo;
 			if (outerRelTo instanceof MPerspectiveStack) {
-				if (getModified())
+				if (!getModified())
 					relTo = (MPartSashContainerElement) ((MPerspectiveStack) outerRelTo)
 							.getSelectedElement().getChildren().get(0);
 			}
@@ -367,5 +372,18 @@ public class SplitDropAgent extends DropAgent {
 		dndManager.update();
 
 		return true;
+	}
+
+	/**
+	 * @param dragElement
+	 * @param dropStack2
+	 * @return
+	 */
+	private boolean crossSharedAreaBoundary(MUIElement dragElement, MPartStack dropStack) {
+		EModelService ms = dndManager.getModelService();
+		boolean deNotInSA = (ms.getElementLocation(dragElement) & EModelService.IN_SHARED_AREA) == 0;
+		boolean dsInSA = (ms.getElementLocation(dropStack) & EModelService.IN_SHARED_AREA) != 0;
+
+		return deNotInSA && dsInSA;
 	}
 }
