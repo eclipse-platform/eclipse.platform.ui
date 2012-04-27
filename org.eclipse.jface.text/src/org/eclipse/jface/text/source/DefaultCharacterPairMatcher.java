@@ -355,8 +355,16 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		boolean lowerFound= false;
 		boolean upperFound= false;
 		int[][] counts= new int[pairs.length][2];
-		int pos1= doc.getNextPosition(start, false);
-		int pos2= start;
+		char currChar= (start != document.getLength()) ? doc.getChar(start) : Character.MIN_VALUE;
+		int pos1;
+		int pos2;
+		if (fPairs.isEndCharacter(currChar)) {
+			pos1= doc.getNextPosition(start, false);
+			pos2= start;
+		} else {
+			pos1= start;
+			pos2= doc.getNextPosition(start, true);
+		}
 	
 		while ((pos1 >= lowerBoundary && !lowerFound) || (pos2 < upperBoundary && !upperFound)) {
 			for (int i= 0; i < counts.length; i++) {
@@ -401,7 +409,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 				pos2= doc.getNextPosition(pos2, true);
 			}
 	
-			if (pos1 > start || pos2 < end) {
+			if (pos1 > start || pos2 < end - 1) {
 				//match inside selection => discard
 				pos1= doc.getNextPosition(pos1, false);
 				pos2= doc.getNextPosition(pos2, true);
