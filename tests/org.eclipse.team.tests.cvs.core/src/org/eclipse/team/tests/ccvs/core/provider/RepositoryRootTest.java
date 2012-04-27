@@ -11,6 +11,7 @@
 package org.eclipse.team.tests.ccvs.core.provider;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Test;
@@ -394,4 +395,22 @@ public class RepositoryRootTest extends EclipseTest {
 		assertEquals(0, knownTags.length);
 	}
 
+	public void testDateTags() throws CoreException {
+		CVSTag dateTag = new CVSTag(new Date());
+		repositoryManager.addDateTag(getRepository(), dateTag);
+		// verify if date tags are returned by repository manager
+		CVSTag[] dateTags = repositoryManager.getDateTags(getRepository());
+		assertEquals(1, dateTags.length);
+		assertEquals(dateTag, dateTags[0]);
+		dateTags = repositoryManager.getKnownTags(getRepository(), CVSTag.DATE);
+		assertEquals(1, dateTags.length);
+		assertEquals(dateTag, dateTags[0]);
+		// verify if date tags are returned in list of known tags for every
+		// project
+		IProject project = createProject("Project_1", (String) null);
+		CVSTag[] allTags = repositoryManager.getKnownTags(CVSWorkspaceRoot
+				.getCVSFolderFor(project));
+		assertEquals(1, allTags.length);
+		assertEquals(dateTag, allTags[0]);
+	}
 }

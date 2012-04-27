@@ -683,7 +683,7 @@ public class RepositoryRoot extends PlatformObject {
 	 * @return CVSTag[]
 	 */
 	public CVSTag[] getAllKnownTags(String remotePath) {
-		Set tags = new HashSet();
+		Set tags = new HashSet(dateTags);
 		addAllKnownTagsForParents(getKnownParentTagCacheEntryFor(remotePath),
 				tags);
 		TagCacheEntry entry = getTagCacheEntryFor(remotePath, false);
@@ -694,7 +694,7 @@ public class RepositoryRoot extends PlatformObject {
 	}
 
 	public CVSTag[] getAllKnownTags() {
-		Set tags = new HashSet();
+		Set tags = new HashSet(dateTags);
 		addAllKnownTagsForChildren(rootTagCacheEntry, tags);
 		return (CVSTag[]) tags.toArray(new CVSTag[tags.size()]);
 	}
