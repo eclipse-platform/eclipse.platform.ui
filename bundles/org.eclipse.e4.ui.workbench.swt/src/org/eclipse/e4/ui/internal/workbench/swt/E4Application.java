@@ -84,6 +84,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 /**
@@ -98,6 +99,7 @@ public class E4Application implements IApplication {
 	private static final String VERSION_FILENAME = "version.ini"; //$NON-NLS-1$
 	private static final String WORKSPACE_VERSION_KEY = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final String WORKSPACE_VERSION_VALUE = "2"; //$NON-NLS-1$
+	private static final String APPLICATION_MODEL_PATH_DEFAULT = "Application.e4xmi";
 
 	private String[] args;
 
@@ -309,6 +311,12 @@ public class E4Application implements IApplication {
 
 		String appModelPath = getArgValue(E4Workbench.XMI_URI_ARG, appContext,
 				false);
+		if (appModelPath == null || appModelPath.length() == 0) {
+			Bundle brandingBundle = appContext.getBrandingBundle();
+			if (brandingBundle != null)
+				appModelPath = brandingBundle.getSymbolicName() + "/"
+						+ E4Application.APPLICATION_MODEL_PATH_DEFAULT;
+		}
 		Assert.isNotNull(appModelPath, E4Workbench.XMI_URI_ARG
 				+ " argument missing"); //$NON-NLS-1$
 		final URI initialWorkbenchDefinitionInstance = URI
