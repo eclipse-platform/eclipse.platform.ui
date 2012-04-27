@@ -140,6 +140,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 * @since 3.8
 	 */
 	public void setHighlightCharacterAtCaretLocation(boolean highlightCharacterAtCaretLocation) {
+		handleDrawRequest(null); // see https://bugs.eclipse.org/372515
 		fHighlightCharacterAtCaretLocation= highlightCharacterAtCaretLocation;
 	}
 
