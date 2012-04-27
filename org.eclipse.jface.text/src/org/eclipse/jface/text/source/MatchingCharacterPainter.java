@@ -206,7 +206,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Handles a redraw request.
 	 *
-	 * @param gc the GC to draw into.
+	 * @param gc the GC to draw into or <code>null</code> to send a redraw request if necessary 
 	 */
 	private void handleDrawRequest(GC gc) {
 
@@ -260,7 +260,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Highlights the given widget region.
 	 *
-	 * @param gc the GC to draw into
+	 * @param gc the GC to draw into or <code>null</code> to send a redraw request
 	 * @param offset the offset of the widget region
 	 * @param length the length of the widget region
 	 */
