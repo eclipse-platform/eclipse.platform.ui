@@ -31,7 +31,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	private int fAnchor= -1;
 	private final CharPairs fPairs;
 	private final String fPartitioning;
-	private final boolean fCaretInsideMatchedPair;
+	private final boolean fCaretEitherSideOfBracket;
 
 	/**
 	 * Creates a new character pair matcher that matches the specified characters within the
@@ -64,18 +64,18 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 * 
 	 * @param chars a list of characters
 	 * @param partitioning the partitioning to match within
-	 * @param caretInsideMatchedPair controls the matching behavior. When <code>true</code>, the
-	 *            matching start peer will be found when the caret is placed before the end
-	 *            character. When <code>false</code>, the matching start peer will be found when the
-	 *            caret is placed after the end character.
+	 * @param caretEitherSideOfBracket controls the matching behavior. When <code>true</code>, the
+	 *            matching peer will be found when the caret is placed either before or after a
+	 *            character. When <code>false</code>, the matching peer will be found only when the
+	 *            caret is placed after a character.
 	 * @since 3.8
 	 */
-	public DefaultCharacterPairMatcher(char[] chars, String partitioning, boolean caretInsideMatchedPair) {
+	public DefaultCharacterPairMatcher(char[] chars, String partitioning, boolean caretEitherSideOfBracket) {
 		Assert.isLegal(chars.length % 2 == 0);
 		Assert.isNotNull(partitioning);
 		fPairs= new CharPairs(chars);
 		fPartitioning= partitioning;
-		fCaretInsideMatchedPair= caretInsideMatchedPair;
+		fCaretEitherSideOfBracket= caretEitherSideOfBracket;
 	}
 
 	/**
@@ -113,11 +113,19 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		if (document == null || offset < 0 || offset > document.getLength() || Math.abs(length) > 1)
 			return null;
 
-		int sourceCaretOffset= offset + length;
-		int adjustment= getOffsetAdjustment(document, sourceCaretOffset, length);
-		sourceCaretOffset+= adjustment;
-
-		return match(document, sourceCaretOffset);
+		try {
+			int sourceCaretOffset= offset + length;
+			if (Math.abs(length) == 1) {
+				char ch= length > 0 ? document.getChar(offset) : document.getChar(sourceCaretOffset);
+				if (!fPairs.contains(ch))
+					return null;
+			}
+			int adjustment= getOffsetAdjustment(document, sourceCaretOffset, length);
+			sourceCaretOffset+= adjustment;
+			return match(document, sourceCaretOffset);
+		} catch (BadLocationException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -195,7 +203,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 				start= currentEndOffset;
 				end= previousEndOffset;
 			}
-			for (int i= start; i < end; i++) {
+			for (int i= Math.max(start - 1, 0); i <= end; i++) {
 				if (isMatchedChar(document.getChar(i))) {
 					return true;
 				}
@@ -208,7 +216,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 				start= currentStartOffset;
 				end= previousStartOffset;
 			}
-			for (int i= start; i < end; i++) {
+			for (int i= Math.max(start - 1, 0); i <= end; i++) {
 				if (isMatchedChar(document.getChar(i))) {
 					return true;
 				}
@@ -230,7 +238,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 * @since 3.8
 	 */
 	private int getOffsetAdjustment(IDocument document, int offset, int length) {
-		if (length == 0 || Math.abs(length) > 1)
+		if (length == 0 || Math.abs(length) > 1 || offset >= document.getLength())
 			return 0;
 		try {
 			if (length < 0) {
@@ -238,7 +246,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 					return 1;
 				}
 			} else {
-				if (fCaretInsideMatchedPair && fPairs.isEndCharacter(document.getChar(offset - 1))) {
+				if (fCaretEitherSideOfBracket && fPairs.isEndCharacter(document.getChar(offset - 1))) {
 					return -1;
 				}
 			}
@@ -252,11 +260,21 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 * Performs the actual work of matching for #match(IDocument, int).
 	 */
 	private IRegion performMatch(IDocument doc, int caretOffset) throws BadLocationException {
-		final char prevChar= doc.getChar(Math.max(caretOffset - 1, 0));
+		char prevChar= (caretOffset - 1 >= 0) ? doc.getChar(caretOffset - 1) : Character.MIN_VALUE;
 		boolean isForward;
 		final char ch;
-		if (fCaretInsideMatchedPair) {
-			final char currChar= doc.getChar(caretOffset);
+		if (fCaretEitherSideOfBracket) {
+			char currChar= (caretOffset != doc.getLength()) ? doc.getChar(caretOffset) : Character.MIN_VALUE;
+			if (fPairs.isEndCharacter(prevChar) && !fPairs.isEndCharacter(currChar)) { //https://bugs.eclipse.org/bugs/show_bug.cgi?id=372516
+				caretOffset--;
+				currChar= prevChar;
+				prevChar= doc.getChar(Math.max(caretOffset - 1, 0));
+			} else if (fPairs.isStartCharacter(currChar) && !fPairs.contains(prevChar)) {
+				caretOffset++;
+				prevChar= currChar;
+				currChar= doc.getChar(caretOffset);
+			}
+
 			isForward= fPairs.contains(prevChar) && fPairs.isStartCharacter(prevChar);
 			boolean isBackward= fPairs.contains(currChar) && !fPairs.isStartCharacter(currChar);
 			if (!isForward && !isBackward) {
@@ -271,9 +289,9 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		}
 
 		fAnchor= isForward ? ICharacterPairMatcher.LEFT : ICharacterPairMatcher.RIGHT;
-		final int searchStartPosition= isForward ? caretOffset : (fCaretInsideMatchedPair ? caretOffset - 1 : caretOffset - 2);
-		final int adjustedOffset= isForward ? caretOffset - 1 : (fCaretInsideMatchedPair ? caretOffset + 1 : caretOffset);
-		final String partition= TextUtilities.getContentType(doc, fPartitioning, ((!isForward && fCaretInsideMatchedPair) ? caretOffset : caretOffset - 1), false);
+		final int searchStartPosition= isForward ? caretOffset : (fCaretEitherSideOfBracket ? caretOffset - 1 : caretOffset - 2);
+		final int adjustedOffset= isForward ? caretOffset - 1 : (fCaretEitherSideOfBracket ? caretOffset + 1 : caretOffset);
+		final String partition= TextUtilities.getContentType(doc, fPartitioning, ((!isForward && fCaretEitherSideOfBracket) ? caretOffset : Math.max(caretOffset - 1, 0)), false);
 		final DocumentPartitionAccessor partDoc= new DocumentPartitionAccessor(doc, fPartitioning, partition);
 		int endOffset= findMatchingPeer(partDoc, ch, fPairs.getMatching(ch),
 				isForward, isForward ? doc.getLength() : -1, searchStartPosition);

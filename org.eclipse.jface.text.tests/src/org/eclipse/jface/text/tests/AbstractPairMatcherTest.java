@@ -38,10 +38,10 @@ import org.eclipse.jface.text.source.ICharacterPairMatcherExtension;
  */
 public abstract class AbstractPairMatcherTest extends TestCase {
 
-	private final boolean fCaretInsideMatchedPair;
+	private final boolean fCaretEitherSideOfBracket;
 
-	public AbstractPairMatcherTest(boolean caretInsideMatchedPair) {
-		fCaretInsideMatchedPair= caretInsideMatchedPair;
+	public AbstractPairMatcherTest(boolean caretEitherSideOfBracket) {
+		fCaretEitherSideOfBracket= caretEitherSideOfBracket;
 	}
 
 	/**
@@ -51,7 +51,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 * @return the character pair matcher
 	 */
 	protected ICharacterPairMatcher createMatcher(final String chars) {
-		return new DefaultCharacterPairMatcher(chars.toCharArray(), getDocumentPartitioning(), fCaretInsideMatchedPair);
+		return new DefaultCharacterPairMatcher(chars.toCharArray(), getDocumentPartitioning(), fCaretEitherSideOfBracket);
 	}
 
 	/**
@@ -156,7 +156,6 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	public void testIncompleteMatch() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "(% ");
-		performMatch(matcher, "%(  )");
 		performMatch(matcher, "( % )");
 		performMatch(matcher, "%");
 		matcher.dispose();
@@ -325,15 +324,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 			assertNull(region);
 		} else {
 			assertNotNull(region);
-			final boolean isForward= test.isEnclosingTestCase() ? false : test.fPos1 > test.fMatch2;
-			assertEquals(isForward, matcher.getAnchor() == ICharacterPairMatcher.RIGHT);
+			final boolean isBackward= test.isEnclosingTestCase() ? false : test.fPos1 > test.fMatch2;
+			assertEquals(isBackward, matcher.getAnchor() == ICharacterPairMatcher.RIGHT);
 
-			final int offset= (isForward || test.isEnclosingTestCase()) ? test.getOffset() : test.getOffset() - 1;
-			final int length= ((isForward && (!fCaretInsideMatchedPair || test.isSelectionTestCase())) || test.isEnclosingTestCase())
-					? test.getLength()
-					: test.getLength() + 1;
-			assertEquals(length, region.getLength());
-			assertEquals(offset, region.getOffset());
+			assertEquals(test.getLength(), region.getLength());
+			assertEquals(test.getOffset(), region.getOffset());
 		}
 	}
 
@@ -359,16 +354,6 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		int match1= str.indexOf("#");
 		int match2= str.lastIndexOf("#");
 		boolean enclosingTest= match1 != match2;
-
-
-		if (!selectionTest && fCaretInsideMatchedPair) {
-			if (pos1 - 1 >= 0) {
-				char ch= str.charAt(pos1 - 1);
-				if ("()[]{}<>".indexOf(ch) % 2 == 1) {
-					pos1-= 1;
-				}
-			}
-		}
 
 		// account for the length of marker characters
 		if (selectionTest) {
@@ -402,13 +387,35 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 
 		final String stripped= str.replaceAll("%", "").replaceAll("#", "");
 
-		if (enclosingTest)
+		if (enclosingTest) {
 			return new TestCase(stripped, pos1, pos2, match1, match2);
-		else {
-			if (selectionTest)
-				return new TestCase(stripped, pos1, pos2, pos2, match1);
-			else
-				return new TestCase(stripped, pos1, pos2, pos1, match1);
+		} else {
+			if (selectionTest) {
+				return new TestCase(stripped, pos1, pos2, pos1 < match1 ? pos1 : pos2, match1);
+			} else {
+				if (match1 == -1)
+					return new TestCase(stripped, pos1, pos2, pos1, match1);
+
+				match2= match1;
+				match1= pos1;
+				if (!selectionTest && !enclosingTest) {
+					String chars= "()[]{}<>";
+					if (fCaretEitherSideOfBracket && pos1 < stripped.length()) {
+						char ch= stripped.charAt(pos1);
+						char prevCh= pos1 - 1 >= 0 ? stripped.charAt(pos1 - 1) : Character.MIN_VALUE;
+						if (chars.indexOf(ch) % 2 == 1 && chars.indexOf(prevCh) % 2 != 0) {
+							match1++;
+						}
+					}
+					if (pos1 - 1 >= 0) {
+						char ch= stripped.charAt(pos1 - 1);
+						if (chars.indexOf(ch) % 2 == 0) {
+							match1--;
+						}
+					}
+				}
+				return new TestCase(stripped, pos1, pos2, match1, match2);
+			}
 		}
 	}
 

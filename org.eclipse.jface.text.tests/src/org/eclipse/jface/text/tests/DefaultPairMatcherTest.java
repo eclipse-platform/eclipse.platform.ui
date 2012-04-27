@@ -34,8 +34,7 @@ public class DefaultPairMatcherTest extends AbstractPairMatcherTest {
 
 
 	/** Tests that the test case reader works */
-	public void testTestCaseReader() {
-		super.testTestCaseReader();
+	public void testTestCaseReader1() {
 		performReaderTest("#( )%", 3, 0, "( )");
 		performReaderTest("( )%", 3, -1, "( )");
 	}
@@ -61,6 +60,7 @@ public class DefaultPairMatcherTest extends AbstractPairMatcherTest {
 	public void testIncompleteMatch1() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "(  %)");
+		performMatch(matcher, "%(  )");
 		matcher.dispose();
 	}
 
