@@ -4358,13 +4358,6 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		if (partListenerList.size() + partListener2List.size() == 0)
 			return;
 
-		// Flush deferred layouts if needed, see bug 375576 for details
-		MPart model = compatibilityPart.getModel();
-		if (model != null && (model.getWidget() instanceof Composite)) {
-			Composite parent = (Composite) model.getWidget();
-			parent.getDisplay().readAndDispatch();
-		}
-
 		for (final Object listener : partListenerList.getListeners()) {
 			SafeRunner.run(new SafeRunnable() {
 				public void run() throws Exception {
@@ -4456,13 +4449,6 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 
 			if (partListenerList.size() + partListener2List.size() == 0)
 				return;
-
-			// Flush deferred layouts if needed, see bug 375576 for details
-			Object widget = part.getWidget();
-			if (widget instanceof Composite) {
-				Composite parent = (Composite) widget;
-				parent.getDisplay().readAndDispatch();
-			}
 
 			for (final Object listener : partListenerList.getListeners()) {
 				SafeRunner.run(new SafeRunnable() {

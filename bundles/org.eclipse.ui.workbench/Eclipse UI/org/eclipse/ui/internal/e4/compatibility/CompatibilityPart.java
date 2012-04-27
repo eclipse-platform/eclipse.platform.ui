@@ -81,30 +81,19 @@ public abstract class CompatibilityPart {
 	 */
 	private EventHandler widgetSetHandler = new EventHandler() {
 		public void handleEvent(Event event) {
+			if (event.getProperty(UIEvents.EventTags.ELEMENT) != part)
+				return;
+
 			// check that we're looking at our own part and that the widget is
 			// being unset
-			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
-					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
+			if (event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
 				 Assert.isTrue(!composite.isDisposed(),
 										"The widget should not have been disposed at this point"); //$NON-NLS-1$
 				beingDisposed = true;
 				WorkbenchPartReference reference = getReference();
 				// notify the workbench we're being closed
 				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
-			}
-		}
-	};
-
-	/**
-	 * This handler will be notified when the part's client object has been
-	 * un/set.
-	 */
-	private EventHandler objectSetHandler = new EventHandler() {
-		public void handleEvent(Event event) {
-			// check that we're looking at our own part and that the object is
-			// being set
-			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
-					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) != null) {
+			} else {
 				WorkbenchPartReference reference = getReference();
 				// notify the workbench we've been opened
 				((WorkbenchPage) reference.getPage()).firePartOpened(CompatibilityPart.this);
@@ -244,7 +233,6 @@ public abstract class CompatibilityPart {
 	@PostConstruct
 	public void create() {
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, widgetSetHandler);
-		eventBroker.subscribe(UIEvents.Contribution.TOPIC_OBJECT, objectSetHandler);
 
 		WorkbenchPartReference reference = getReference();
 
@@ -341,7 +329,6 @@ public abstract class CompatibilityPart {
 		}
 
 		eventBroker.unsubscribe(widgetSetHandler);
-		eventBroker.unsubscribe(objectSetHandler);
 	}
 
 	/**
