@@ -71,11 +71,6 @@ public class WidgetContentProvider implements ITreeContentProvider {
 			if (item.getControl() != null) {
 				return new Object[] { item.getControl() };
 			}
-		} else if (parentElement instanceof org.eclipse.e4.ui.widgets.CTabItem) {
-			org.eclipse.e4.ui.widgets.CTabItem item = (org.eclipse.e4.ui.widgets.CTabItem) parentElement;
-			if (item.getControl() != null) {
-				return new Object[] { item.getControl() };
-			}
 		} else if (parentElement instanceof Tree) {
 			Tree tree = (Tree) parentElement;
 
@@ -91,12 +86,6 @@ public class WidgetContentProvider implements ITreeContentProvider {
 		} else if (parentElement instanceof CTabFolder) {
 			CTabFolder tabFolder = (CTabFolder) parentElement;
 			CTabItem[] items = tabFolder.getItems();
-			Object[] rv = new Object[items.length];
-			System.arraycopy(items, 0, rv, 0, rv.length);
-			return rv;
-		} else if (parentElement instanceof org.eclipse.e4.ui.widgets.CTabFolder) {
-			org.eclipse.e4.ui.widgets.CTabFolder tabFolder = (org.eclipse.e4.ui.widgets.CTabFolder) parentElement;
-			org.eclipse.e4.ui.widgets.CTabItem[] items = tabFolder.getItems();
 			Object[] rv = new Object[items.length];
 			System.arraycopy(items, 0, rv, 0, rv.length);
 			return rv;

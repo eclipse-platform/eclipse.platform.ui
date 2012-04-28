@@ -121,7 +121,7 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 		} else if (element instanceof TabFolder) {
 			cell.setText("TabFolder"); //$NON-NLS-1$
 			cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_tabfolder_obj));
-		} else if (element instanceof CTabFolder || element instanceof org.eclipse.e4.ui.widgets.CTabFolder) {
+		} else if (element instanceof CTabFolder) {
 			cell.setText("CTabFolder"); //$NON-NLS-1$
 			cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_ctabfolder_obj));
 		} else if (element instanceof Combo) {
@@ -166,12 +166,6 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 		} else if (element instanceof CTabItem) {
 			StyledString s = new StyledString("CTabItem"); //$NON-NLS-1$
 			s.append(" - " + ((CTabItem) element).getText(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-			cell.setStyleRanges(s.getStyleRanges());
-			cell.setText(s.getString());
-			// cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_clabel_obj));
-		} else if (element instanceof org.eclipse.e4.ui.widgets.CTabItem) {
-			StyledString s = new StyledString("CTabItem"); //$NON-NLS-1$
-			s.append(" - " + ((org.eclipse.e4.ui.widgets.CTabItem) element).getText(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			cell.setStyleRanges(s.getStyleRanges());
 			cell.setText(s.getString());
 			// cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_clabel_obj));
