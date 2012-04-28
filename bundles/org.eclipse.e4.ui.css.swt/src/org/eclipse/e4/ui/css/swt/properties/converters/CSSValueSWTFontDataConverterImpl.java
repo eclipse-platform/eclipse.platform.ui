@@ -11,14 +11,13 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.converters;
 
-import org.eclipse.e4.ui.widgets.CTabItem;
-
 import org.eclipse.e4.ui.css.core.dom.properties.converters.AbstractCSSValueConverter;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterConfig;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Control;

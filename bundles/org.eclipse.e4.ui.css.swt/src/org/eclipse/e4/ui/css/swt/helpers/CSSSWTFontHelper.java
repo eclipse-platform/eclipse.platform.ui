@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
-import org.eclipse.e4.ui.widgets.CTabItem;
-
 import org.eclipse.e4.ui.css.core.css2.CSS2FontHelper;
 import org.eclipse.e4.ui.css.core.css2.CSS2FontPropertiesHelpers;
 import org.eclipse.e4.ui.css.core.css2.CSS2PrimitiveValueImpl;
@@ -21,6 +19,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Control;

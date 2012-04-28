@@ -33,12 +33,6 @@
          </widget>
          
          <!-- these should be obviated by 4.2M6 --> 
-         <widget
-               class="org.eclipse.e4.ui.widgets.CTabFolder">
-         </widget>
-         <widget
-               class="org.eclipse.e4.ui.widgets.CTabItem">
-         </widget>
       </provider>
    </extension>
    
