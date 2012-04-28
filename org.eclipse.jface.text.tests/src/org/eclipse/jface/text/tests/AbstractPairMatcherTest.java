@@ -185,12 +185,15 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, "|c #( c| ) ( |c % )# c|");
 		performMatch(matcher, "#( % |a ) a| |b ) b| |c ) c| )#");
 
+		performMatch(matcher, "#( |a % a| )#");
+		performMatch(matcher, "( |a #( a| ( |a % a| ) |a )# a| )");
+
 		performMatch(matcher, "#( % % |a a| )#");
 		performMatch(matcher, "|b #( % % )# b|");
 		performMatch(matcher, "|c #( % % c| ) ( |c )# c|");
 		performMatch(matcher, "|c #( c| ) ( |c % % )# c|");
 		performMatch(matcher, "#( % % |a ) a| |b ) b| |c ) c| )#");
-//		performMatch(matcher, " #( |c ( c| % % |c ) c| )#");
+		performMatch(matcher, " #( |c ( c| % % |c ) c| )#");
 
 		matcher.dispose();
 	}
@@ -269,6 +272,14 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		performMatch(matcher, " (% a < b )# ");
 		performMatch(matcher, " #( a > b )% ");
 		performMatch(matcher, " (% a > b )# ");
+		matcher.dispose();
+	}
+
+	public void testBug377417() {
+		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
+		performMatch(matcher, "#( %  )%#");
+		performMatch(matcher, "#[ %  ]%#");
+		performMatch(matcher, "#{ %  }%#");
 		matcher.dispose();
 	}
 
