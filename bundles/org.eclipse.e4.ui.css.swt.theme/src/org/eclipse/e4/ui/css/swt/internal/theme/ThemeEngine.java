@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.util.impl.resources.FileResourcesLocatorImpl;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
@@ -487,9 +488,12 @@ public class ThemeEngine implements IThemeEngine {
 	
 	public CSSStyleDeclaration getStyle(Object widget) {
 		for (CSSEngine engine : cssEngines) {
-			Element e = engine.getCSSElementContext(widget).getElement();
-			if (e != null) {
-				return engine.getViewCSS().getComputedStyle(e, null);
+			CSSElementContext context = engine.getCSSElementContext(widget);
+			if (context != null) {
+				Element e = context.getElement();
+				if (e != null) {
+					return engine.getViewCSS().getComputedStyle(e, null);
+				}
 			}
 		}
 		return null;

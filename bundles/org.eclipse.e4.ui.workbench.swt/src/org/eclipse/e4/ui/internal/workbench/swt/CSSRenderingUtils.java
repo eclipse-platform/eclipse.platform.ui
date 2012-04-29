@@ -97,6 +97,9 @@ public class CSSRenderingUtils {
 		CSSEngine csseng = WidgetElement.getEngine(styleControl);
 		ControlElement tempEment = (ControlElement) csseng
 				.getElement(styleControl);
+		if (tempEment == null) {
+			return null;
+		}
 
 		// super hack
 		if (className != null)
@@ -124,6 +127,9 @@ public class CSSRenderingUtils {
 		CSSEngine csseng = WidgetElement.getEngine(styleControl);
 		ControlElement tempEment = (ControlElement) csseng
 				.getElement(styleControl);
+		if (tempEment == null) {
+			return null;
+		}
 		if (classId != null)
 			ControlElement.setCSSClass(styleControl, classId); //$NON-NLS-1$
 
