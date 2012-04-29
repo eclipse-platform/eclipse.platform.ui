@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.demo.contacts.databinding.AggregateNameObservableValue;
 import org.eclipse.e4.demo.contacts.model.Contact;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -183,7 +184,7 @@ public class DetailComposite extends Composite {
 
 		final Label label = new Label(parent, SWT.NONE);
 		label.setText(text + "     ");
-		label.setData("org.eclipse.e4.ui.css.id", "SeparatorLabel");
+		WidgetElement.setID(label, "SeparatorLabel");
 		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gridData.horizontalSpan = 3;
 		label.setLayoutData(gridData);

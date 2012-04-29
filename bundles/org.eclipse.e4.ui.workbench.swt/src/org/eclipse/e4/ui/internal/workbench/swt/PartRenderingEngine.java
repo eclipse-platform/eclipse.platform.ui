@@ -35,6 +35,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
@@ -1130,13 +1131,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
 				public void setClassname(Object widget, String classname) {
-					((Widget) widget).setData(
-							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+					WidgetElement.setCSSClass((Widget) widget, classname);
 					engine.applyStyles((Widget) widget, true);
 				}
 
 				public void setId(Object widget, String id) {
-					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+					WidgetElement.setID((Widget) widget, id);
 					engine.applyStyles((Widget) widget, true);
 				}
 
@@ -1150,9 +1150,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 				public void setClassnameAndId(Object widget, String classname,
 						String id) {
-					((Widget) widget).setData(
-							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
-					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+					WidgetElement.setCSSClass((Widget) widget, classname);
+					WidgetElement.setID((Widget) widget, id);
 					engine.applyStyles((Widget) widget, true);
 				}
 
@@ -1161,20 +1160,21 @@ public class PartRenderingEngine implements IPresentationEngine {
 			String cssResourcesURI = (String) appContext
 					.get(E4Workbench.CSS_RESOURCE_URI_ARG);
 			final CSSSWTEngineImpl engine = new CSSSWTEngineImpl(display, true);
+			WidgetElement.setEngine(display, engine);
 			if (cssResourcesURI != null) {
 				engine.getResourcesLocatorManager().registerResourceLocator(
 						new OSGiResourceLocator(cssResourcesURI.toString()));
 			}
+			// FIXME: is this needed?
 			display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$
 			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
 				public void setClassname(Object widget, String classname) {
-					((Widget) widget).setData(
-							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+					WidgetElement.setCSSClass((Widget) widget, classname);
 					engine.applyStyles((Widget) widget, true);
 				}
 
 				public void setId(Object widget, String id) {
-					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+					WidgetElement.setID((Widget) widget, id);
 					engine.applyStyles((Widget) widget, true);
 				}
 
@@ -1193,9 +1193,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 				public void setClassnameAndId(Object widget, String classname,
 						String id) {
-					((Widget) widget).setData(
-							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
-					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+					WidgetElement.setCSSClass((Widget) widget, classname);
+					WidgetElement.setID((Widget) widget, id);
 					engine.applyStyles((Widget) widget, true);
 				}
 

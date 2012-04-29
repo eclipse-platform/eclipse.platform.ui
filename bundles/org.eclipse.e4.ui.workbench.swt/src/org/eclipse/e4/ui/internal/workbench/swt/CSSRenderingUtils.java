@@ -12,12 +12,9 @@ package org.eclipse.e4.ui.internal.workbench.swt;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Inject;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.ControlElement;
-import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
-import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.widgets.ImageBasedFrame;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -30,19 +27,10 @@ import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
 public class CSSRenderingUtils {
-	private ThemeEngine themeEngine;
 
 	// NOTE: The CSS engine 'owns' the image it returns (it caches it)
 	// so we have to cache any rotated versions to match
 	private Map<Image, Image> rotatedImageMap = new HashMap<Image, Image>();
-
-	@Inject
-	@Optional
-	void getThemeEngine(IThemeEngine engine) {
-		if (engine instanceof ThemeEngine) {
-			themeEngine = (ThemeEngine) engine;
-		}
-	}
 
 	public Control frameMeIfPossible(Control toFrame, String classId,
 			boolean vertical, boolean draggable) {
@@ -106,16 +94,13 @@ public class CSSRenderingUtils {
 	@SuppressWarnings("restriction")
 	public CSSValue getCSSValue(Control styleControl, String className,
 			String attributeName) {
-		if (themeEngine == null) {
-			return null;
-		}
-
-		CSSEngine csseng = themeEngine.getCSSEngine();
+		CSSEngine csseng = WidgetElement.getEngine(styleControl);
+		ControlElement tempEment = (ControlElement) csseng
+				.getElement(styleControl);
 
 		// super hack
-		ControlElement tempEment = new ControlElement(styleControl, csseng);
 		if (className != null)
-			ControlElement.setCSSClass(styleControl, className);
+			WidgetElement.setCSSClass(styleControl, className);
 
 		CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
 				.getComputedStyle(tempEment, ""); //$NON-NLS-1$
@@ -136,56 +121,53 @@ public class CSSRenderingUtils {
 		Image image = null;
 
 		//		System.out.println("THeme engine " + themeEngine); //$NON-NLS-1$
-		if (themeEngine instanceof ThemeEngine) {
-			CSSEngine csseng = ((ThemeEngine) themeEngine).getCSSEngine();
+		CSSEngine csseng = WidgetElement.getEngine(styleControl);
+		ControlElement tempEment = (ControlElement) csseng
+				.getElement(styleControl);
+		if (classId != null)
+			ControlElement.setCSSClass(styleControl, classId); //$NON-NLS-1$
 
-			// super hack
-			ControlElement tempEment = new ControlElement(styleControl, csseng);
-			if (classId != null)
-				ControlElement.setCSSClass(styleControl, classId); //$NON-NLS-1$
+		CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
+				.getComputedStyle(tempEment, "");
+		if (styleDeclarations == null)
+			return null;
 
-			CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
-					.getComputedStyle(tempEment, "");
-			if (styleDeclarations == null)
-				return null;
+		CSSValue imagePath = styleDeclarations.getPropertyCSSValue(attName); //$NON-NLS-1$
+		if (imagePath == null)
+			return null;
 
-			CSSValue imagePath = styleDeclarations.getPropertyCSSValue(attName); //$NON-NLS-1$
-			if (imagePath == null)
-				return null;
+		if (imagePath != null
+				&& imagePath.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+			// String imageString = ((CSSPrimitiveValue) imagePath)
+			// .getStringValue();
+			// System.out.println("here" + imageString);
+			try {
+				image = (Image) csseng.convert(imagePath, Image.class,
+						styleControl.getDisplay());
+				if (image != null && frameInts != null) {
+					CSSValue value = styleDeclarations
+							.getPropertyCSSValue("frame-cuts"); //$NON-NLS-1$
+					if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
+						CSSValueList valueList = (CSSValueList) value;
+						if (valueList.getLength() != 4)
+							return null;
 
-			if (imagePath != null
-					&& imagePath.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-				// String imageString = ((CSSPrimitiveValue) imagePath)
-				// .getStringValue();
-				// System.out.println("here" + imageString);
-				try {
-					image = (Image) csseng.convert(imagePath, Image.class,
-							styleControl.getDisplay());
-					if (image != null && frameInts != null) {
-						CSSValue value = styleDeclarations
-								.getPropertyCSSValue("frame-cuts"); //$NON-NLS-1$
-						if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-							CSSValueList valueList = (CSSValueList) value;
-							if (valueList.getLength() != 4)
+						for (int i = 0; i < valueList.getLength(); i++) {
+							CSSValue val = valueList.item(i);
+							if ((val.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)
+									&& ((CSSPrimitiveValue) val)
+											.getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
+								frameInts[i] = (int) ((CSSPrimitiveValue) val)
+										.getFloatValue(CSSPrimitiveValue.CSS_PX);
+							} else {
 								return null;
-
-							for (int i = 0; i < valueList.getLength(); i++) {
-								CSSValue val = valueList.item(i);
-								if ((val.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)
-										&& ((CSSPrimitiveValue) val)
-												.getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
-									frameInts[i] = (int) ((CSSPrimitiveValue) val)
-											.getFloatValue(CSSPrimitiveValue.CSS_PX);
-								} else {
-									return null;
-								}
 							}
-
-							// System.out.println("Results " + frameInts);
 						}
+
+						// System.out.println("Results " + frameInts);
 					}
-				} catch (Exception e1) {
 				}
+			} catch (Exception e1) {
 			}
 		}
 		return image;

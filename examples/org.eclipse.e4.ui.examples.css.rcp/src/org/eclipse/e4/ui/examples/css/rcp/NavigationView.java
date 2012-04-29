@@ -12,7 +12,7 @@ package org.eclipse.e4.ui.examples.css.rcp;
 
 import java.util.ArrayList;
 
-import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -163,10 +163,10 @@ public class NavigationView extends ViewPart {
 	}
 	
 	private void setCSSID(Widget widget, String name) {
-		widget.setData(CSSSWTConstants.CSS_ID_KEY, name);
+		WidgetElement.setID(widget, name);
 		//Ideally just changing the widget's id would trigger a re-styling,
 		//but until bug #260407 is fixed we must call this next line
-		// ApplicationWorkbenchAdvisor.INSTANCE.engine.applyStyles(widget, true);
+		WidgetElement.getEngine(widget).applyStyles(widget, true);
 	}
 
 }

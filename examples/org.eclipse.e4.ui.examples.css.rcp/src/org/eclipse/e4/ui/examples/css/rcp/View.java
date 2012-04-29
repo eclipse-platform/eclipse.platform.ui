@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.examples.css.rcp;
 
-import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -114,10 +114,10 @@ public class View extends ViewPart {
 	}
 
 	private void setCSSClassName(Widget widget, String name) {
-		widget.setData(CSSSWTConstants.CSS_CLASS_NAME_KEY, name);
+		WidgetElement.setCSSClass(widget, name);
 		//Ideally just changing the widget's CSS class would trigger a re-styling,
 		//but until bug #260407 is fixed we must call this next line
-		// ApplicationWorkbenchAdvisor.INSTANCE.engine.applyStyles(widget, true);
+		WidgetElement.getEngine(widget).applyStyles(widget, true);
 	}
 
 	private void updateCSSForReadState() {

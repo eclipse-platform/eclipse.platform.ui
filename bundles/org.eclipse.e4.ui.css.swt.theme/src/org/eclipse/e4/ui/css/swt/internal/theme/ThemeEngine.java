@@ -33,9 +33,9 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.util.impl.resources.FileResourcesLocatorImpl;
-import org.eclipse.e4.ui.css.core.util.impl.resources.HttpResourcesLocatorImpl;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
@@ -175,9 +175,10 @@ public class ThemeEngine implements IThemeEngine {
 		//Resolve to install dir
 		registerResourceLocator(new OSGiResourceLocator("platform:/plugin/org.eclipse.platform/css/"));
 		registerResourceLocator(new FileResourcesLocatorImpl());
-		registerResourceLocator(new HttpResourcesLocatorImpl());
+		// FIXME: perhaps ResourcesLocatorManager shouldn't have a default?
+		// registerResourceLocator(new HttpResourcesLocatorImpl());
 		
-		display.setData("org.eclipse.e4.ui.css.core.engine", engine);
+		WidgetElement.setEngine(display, engine);
 	}
 
 	public synchronized ITheme registerTheme(String id, String label,
