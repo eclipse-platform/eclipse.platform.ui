@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,10 +44,9 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 		}
 
 		public void handleEvent(Event event) {
-			CellLabelProvider provider = viewer.getViewerColumn(event.index)
-					.getLabelProvider();
 			ViewerColumn column = viewer.getViewerColumn(event.index);
-			if (enabledGlobally > 0 || enabledColumns.contains(column)) {
+			if (column != null && (enabledGlobally > 0 || enabledColumns.contains(column))) {
+				CellLabelProvider provider = column.getLabelProvider();
 				if (provider instanceof OwnerDrawLabelProvider) {
 					Object element = event.item.getData();
 					OwnerDrawLabelProvider ownerDrawProvider = (OwnerDrawLabelProvider) provider;
