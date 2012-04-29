@@ -100,6 +100,9 @@ public class CocoaUIHandler {
 	private static final String COMMAND_ID_CLOSE_DIALOG = "org.eclipse.ui.cocoa.closeDialog"; //$NON-NLS-1$
 	private static final String CLOSE_DIALOG_KEYSEQUENCE = "M1+W"; //$NON-NLS-1$
 
+	// tags on the MWindow to indicate full-screen status (MacOS X 10.7+)
+	static final String TAG_FULLSCREEN = "FullScreen"; //$NON-NLS-1$
+
 	static long sel_toolbarButtonClicked_;
 	private static final long NSWindowToolbarButton = 3;
 
@@ -136,6 +139,7 @@ public class CocoaUIHandler {
 	private EventHandler menuListener;
 	private EventHandler menuContributionListener;
 	private EventHandler commandListener;
+	private EventHandler tagListener;
 
 	/**
 	 * 
@@ -305,6 +309,9 @@ public class CocoaUIHandler {
 		if (commandListener != null) {
 			eventBroker.unsubscribe(commandListener);
 		}
+		if (tagListener != null) {
+			eventBroker.unsubscribe(tagListener);
+		}
 	}
 
 	/**
@@ -390,6 +397,7 @@ public class CocoaUIHandler {
 					MWindow window = (MWindow) event
 							.getProperty(UIEvents.EventTags.ELEMENT);
 					modifyWindowShell(window);
+					updateFullScreenStatus(window);
 				}
 			}
 		};
@@ -448,6 +456,30 @@ public class CocoaUIHandler {
 		eventBroker.subscribe(UIEvents.Application.TOPIC_COMMANDS,
 				commandListener);
 
+		// watch for a window's full-screen tag being flipped
+		tagListener = new EventHandler() {
+			public void handleEvent(org.osgi.service.event.Event event) {
+				if (event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MWindow) {
+					MWindow window = (MWindow) event
+							.getProperty(UIEvents.EventTags.ELEMENT);
+					updateFullScreenStatus(window);
+				}
+			}
+		};
+		eventBroker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS,
+				tagListener);
+	}
+
+	/**
+	 * @param window
+	 */
+	protected void updateFullScreenStatus(MWindow window) {
+		// toggle full-screen is only available since MacOS X 10.7
+		if (OS.VERSION < 0x1070 || !(window.getWidget() instanceof Shell)) {
+			return;
+		}
+		Shell shell = (Shell) window.getWidget();
+		shell.setFullScreen(window.getTags().contains(TAG_FULLSCREEN));
 	}
 
 	/**
@@ -468,7 +500,7 @@ public class CocoaUIHandler {
 		}
 		redirectHandledMenuItems(window.getMainMenu());
 
-		// the toolbar button is not available since Mac OSX 10.7
+		// the toolbar button is not available since MacOS X 10.7
 		if (OS.VERSION >= 0x1070) {
 			return;
 		}

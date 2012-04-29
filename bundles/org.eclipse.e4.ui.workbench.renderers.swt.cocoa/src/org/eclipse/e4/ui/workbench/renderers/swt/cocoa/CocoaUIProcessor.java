@@ -15,10 +15,12 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -90,9 +92,65 @@ public class CocoaUIProcessor {
 				MinimizeWindowHandler.class, CONTRIBUTOR_URI);
 		installHandler(
 				defineCommand(
+						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.fullscreenWindow", //$NON-NLS-1$ //$NON-NLS-2$
+						"%command.fullscreen.name", "%command.fullscreen.desc", CONTRIBUTOR_URI), //$NON-NLS-1$//$NON-NLS-2$
+				FullscreenWindowHandler.class, CONTRIBUTOR_URI);
+		MCommand disengageFullscreen = defineCommand(
+				"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.disengageFullscreenWindow", //$NON-NLS-1$ //$NON-NLS-2$
+				"%command.fullscreen.name", "%command.fullscreen.desc", CONTRIBUTOR_URI); //$NON-NLS-1$//$NON-NLS-2$
+		installHandler(disengageFullscreen,
+				DisengageFullscreenWindowHandler.class, CONTRIBUTOR_URI);
+		installHandler(
+				defineCommand(
 						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.zoomWindow", //$NON-NLS-1$ //$NON-NLS-2$
 						"%command.zoom.name", "%command.zoom.desc", CONTRIBUTOR_URI), //$NON-NLS-1$//$NON-NLS-2$
 				ZoomWindowHandler.class, CONTRIBUTOR_URI);
+		installKeybinding(
+				"org.eclipse.ui.contexts.window", "Esc", disengageFullscreen); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Install a keybinding to the provided command.
+	 * 
+	 * @param bindingContextId
+	 *            the keybinding context
+	 * @param keysequence
+	 *            the key sequence to be bound
+	 * @param cmd
+	 *            the command to be bound
+	 */
+	private void installKeybinding(String bindingContextId, String keysequence,
+			MCommand cmd) {
+		// there is a one-to-one mapping between binding contexts and
+		// binding tables, though binding tables may not necessarily
+		// guaranteed an element id.
+		MBindingTable bindingTable = null;
+		for (MBindingTable table : app.getBindingTables()) {
+			for (MKeyBinding binding : table.getBindings()) {
+				// only perform the binding if cmd not already bound
+				if (binding.getCommand() == cmd) {
+					return;
+				}
+			}
+			if (table.getBindingContext() != null
+					&& bindingContextId.equals(table.getBindingContext()
+							.getElementId())) {
+				bindingTable = table;
+			}
+		}
+
+		if (bindingTable == null) {
+			// perhaps we should create it
+			System.err.println("Cannot find table for binding context: " //$NON-NLS-1$
+					+ bindingContextId);
+			return;
+		}
+
+		MKeyBinding binding = MCommandsFactory.INSTANCE.createKeyBinding();
+		binding.setCommand(cmd);
+		binding.setKeySequence(keysequence);
+		binding.setElementId("kb." + cmd.getElementId()); //$NON-NLS-1$
+		bindingTable.getBindings().add(binding);
 	}
 
 	/**
