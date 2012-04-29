@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Tom Schindl and others.
+ * Copyright (c) 2010,2012 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Brian de Alwis - added support for multiple CSS engines
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.internal.theme;
 
@@ -31,16 +32,12 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.util.impl.resources.FileResourcesLocatorImpl;
 import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
-import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
-import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Widget;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -54,10 +51,12 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class ThemeEngine implements IThemeEngine {
 	private List<Theme> themes = new ArrayList<Theme>();
+	private List<CSSEngine> cssEngines = new ArrayList<CSSEngine>();
 
-	private CSSEngine engine;
-	private ITheme currentTheme;
+	// kept for theme notifications only
 	private Display display;
+
+	private ITheme currentTheme;
 
 	private List<String> globalStyles = new ArrayList<String>();
 	private List<IResourceLocator> globalSourceLocators = new ArrayList<IResourceLocator>();
@@ -69,15 +68,8 @@ public class ThemeEngine implements IThemeEngine {
 	private static final String THEMEID_KEY = "themeid";
 
 	public ThemeEngine(Display display) {
-		this.engine = new CSSSWTEngineImpl(display, true);
 		this.display = display;
-		this.engine.setErrorHandler(new CSSErrorHandler() {
 
-			public void error(Exception e) {
-				// TODO Use the logger
-				e.printStackTrace();
-			}
-		});
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IExtensionPoint extPoint = registry
 				.getExtensionPoint("org.eclipse.e4.ui.css.swt.theme");
@@ -177,14 +169,13 @@ public class ThemeEngine implements IThemeEngine {
 		registerResourceLocator(new FileResourcesLocatorImpl());
 		// FIXME: perhaps ResourcesLocatorManager shouldn't have a default?
 		// registerResourceLocator(new HttpResourcesLocatorImpl());
-		
-		WidgetElement.setEngine(display, engine);
 	}
 
 	public synchronized ITheme registerTheme(String id, String label,
 			String basestylesheetURI) throws IllegalArgumentException {
 		return  registerTheme(id, label, basestylesheetURI, "");
 	}
+
 	public synchronized ITheme registerTheme(String id, String label,
 			String basestylesheetURI, String osVersion) throws IllegalArgumentException {
 		for (Theme t : themes) {
@@ -242,12 +233,7 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	private List<String> getAllStyles(String id) {
-		List<String> s = stylesheets.get(id);
-		if (s == null) {
-			s = Collections.emptyList();
-		}
-
-		
+		// check for any modifications first
 		List<String> m = modifiedStylesheets.get(id);
 		if (m != null) {
 			m = new ArrayList<String>(m);
@@ -255,6 +241,11 @@ public class ThemeEngine implements IThemeEngine {
 			return m;
 		}
 		
+		List<String> s = stylesheets.get(id);
+		if (s == null) {
+			s = Collections.emptyList();
+		}
+
 		s = new ArrayList<String>(s);
 		s.addAll(globalStyles);
 		return s;
@@ -338,6 +329,7 @@ public class ThemeEngine implements IThemeEngine {
 	public void setTheme(ITheme theme, boolean restore) {
 		setTheme(theme, restore, false);
 	}
+
 	public void setTheme(ITheme theme, boolean restore, boolean force) {
 		Assert.isNotNull(theme, "The theme must not be null");
 
@@ -345,46 +337,62 @@ public class ThemeEngine implements IThemeEngine {
 			if (currentTheme != null) {
 				for (IResourceLocator l : getResourceLocators(currentTheme
 						.getId())) {
-					engine.getResourcesLocatorManager()
-							.unregisterResourceLocator(l);
+					for (CSSEngine engine : cssEngines) {
+						engine.getResourcesLocatorManager()
+								.unregisterResourceLocator(l);
+					}
 				}
 			}
 
 			this.currentTheme = theme;
-			engine.reset();
+			for (CSSEngine engine : cssEngines) {
+				engine.reset();
+			}
 
 			for (IResourceLocator l : getResourceLocators(theme.getId())) {
-				engine.getResourcesLocatorManager().registerResourceLocator(l);
+				for (CSSEngine engine : cssEngines) {
+					engine.getResourcesLocatorManager()
+							.registerResourceLocator(l);
+				}
 			}
 			for (String stylesheet : getAllStyles(theme.getId())) {
 				URL url;
 				InputStream stream = null;
 				try {
 					url = FileLocator.resolve(new URL(stylesheet.toString()));
-					stream = url.openStream();
-					InputSource source = new InputSource();
-					source.setByteStream(stream);
-					source.setURI(url.toString());
-					engine.parseStyleSheet(source);
+					for (CSSEngine engine : cssEngines) {
+						try {
+							stream = url.openStream();
+							InputSource source = new InputSource();
+							source.setByteStream(stream);
+							source.setURI(url.toString());
+							engine.parseStyleSheet(source);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} finally {
+							if (stream != null) {
+								try {
+									stream.close();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						}
+					}
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} finally {
-					if (stream != null) {
-						try {
-							stream.close();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
 				}
 			}
 
-			engine.reapply();
+			for (CSSEngine engine : cssEngines) {
+				engine.reapply();
+			}
 		}
 		
 		if (restore) {
@@ -409,12 +417,17 @@ public class ThemeEngine implements IThemeEngine {
 			return;
 		}
 		Map<String, Object> data = new HashMap<String, Object>();
+		data.put(IThemeEngine.Events.THEME_ENGINE, this);
 		data.put(IThemeEngine.Events.THEME, currentTheme);
-		data.put(IThemeEngine.Events.ENGINE, engine);
-		data.put(IThemeEngine.Events.DISPLAY, display);
+		data.put(IThemeEngine.Events.DEVICE, display);
 		data.put(IThemeEngine.Events.RESTORE, restore);
 		Event event = new Event(IThemeEngine.Events.THEME_CHANGED, data);
 		eventAdmin.sendEvent(event); // synchronous
+	}
+
+	public List<IResourceLocator> getCurrentResourceLocators() {
+		if(currentTheme == null) { return Collections.emptyList(); }
+		return getResourceLocators(currentTheme.getId());
 	}
 
 	private EventAdmin getEventAdmin() {
@@ -432,14 +445,13 @@ public class ThemeEngine implements IThemeEngine {
 		return Collections.unmodifiableList(new ArrayList<ITheme>(themes));
 	}
 
-	public void applyStyles(Widget widget, boolean applyStylesToChildNodes) {
-		engine.applyStyles(widget, applyStylesToChildNodes);
-	}
-
-	// TODO may not be ideal??
-	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312842
-	public CSSEngine getCSSEngine() {
-		return engine;
+	public void applyStyles(Object widget, boolean applyStylesToChildNodes) {
+		for (CSSEngine engine : cssEngines) {
+			Object element = engine.getElement(widget);
+			if (element != null) {
+				engine.applyStyles(element, applyStylesToChildNodes);
+			}
+		}
 	}
 
 	private String getPreferenceThemeId() {
@@ -473,12 +485,14 @@ public class ThemeEngine implements IThemeEngine {
 		return currentTheme;
 	}
 	
-	public CSSStyleDeclaration getStyle(Widget widget) {
-		Element e = engine.getCSSElementContext(widget).getElement();
-		if( e == null ) {
-			return null;
+	public CSSStyleDeclaration getStyle(Object widget) {
+		for (CSSEngine engine : cssEngines) {
+			Element e = engine.getCSSElementContext(widget).getElement();
+			if (e != null) {
+				return engine.getViewCSS().getComputedStyle(e, null);
+			}
 		}
-		return engine.getViewCSS().getComputedStyle(e, null);
+		return null;
 	}
 
 	public List<String> getStylesheets(ITheme selection) {
@@ -490,9 +504,11 @@ public class ThemeEngine implements IThemeEngine {
 		modifiedStylesheets.put(theme.getId(), paths);
 		setTheme(theme, false, true);
 	}
-	
+
 	public void resetCurrentTheme() {
-		setTheme(currentTheme, false, true);
+		if (currentTheme != null) {
+			setTheme(currentTheme, false, true);
+		}
 	}
 	
 	public List<String> getModifiedStylesheets(ITheme selection) {
@@ -502,5 +518,14 @@ public class ThemeEngine implements IThemeEngine {
 	
 	public void resetModifiedStylesheets(ITheme selection) {
 		List<String> ss = modifiedStylesheets.remove(selection.getId());
+	}
+
+	public void addCSSEngine(CSSEngine cssEngine) {
+		cssEngines.add(cssEngine);
+		resetCurrentTheme();
+	}
+
+	public void removeCSSEngine(CSSEngine cssEngine) {
+		cssEngines.remove(cssEngine);
 	}
 }

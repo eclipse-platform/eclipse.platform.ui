@@ -103,9 +103,9 @@ public class BundleActivatorImpl implements BundleActivator {
 		System.out.println("  TOPIC: " + event.getTopic());
 		System.out.println("  Theme: "
 				+ event.getProperty(IThemeEngine.Events.THEME));
-		System.out.println("  CSS Engine: "
-				+ event.getProperty(IThemeEngine.Events.ENGINE));
-		System.out.println("  Display: "
-				+ event.getProperty(IThemeEngine.Events.DISPLAY));
+		System.out.println("  Theme Engine: "
+				+ event.getProperty(IThemeEngine.Events.THEME_ENGINE));
+		System.out.println("  Device: "
+				+ event.getProperty(IThemeEngine.Events.DEVICE));
 	}
 }

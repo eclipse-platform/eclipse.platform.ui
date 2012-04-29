@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 /**
@@ -50,21 +49,23 @@ public interface IThemeEngine {
 		public static final String THEME = "theme";
 
 		/**
-		 * Attribute for the affected display
+		 * Attribute for the affected rendering device (e.g., an SWT
+		 * {@link Display}). May be null
 		 * 
-		 * @see Display
+		 * @see org.eclipse.swt.graphics.Device
+		 * @see org.eclipse.swt.widgets.Display
 		 */
-		public static final String DISPLAY = "display";
+		public static final String DEVICE = "device";
 
 		/**
-		 * Attribute for the CSS Engine
+		 * Attribute for the associated {@link IThemeEngine} theme engine
 		 * 
-		 * @see CSSEngine
+		 * @see IThemeEngine
 		 */
-		public static final String ENGINE = "engine";
+		public static final String THEME_ENGINE = "themeEngine";
 
 		/**
-		 * Attribute describing the theme change is persist state. If true, then
+		 * Attribute describing the theme change's persist state. If true, then
 		 * the theme will be restored on subsequent startups.
 		 * 
 		 * @see Boolean
@@ -149,7 +150,7 @@ public interface IThemeEngine {
 	 * @param applyStylesToChildNodes
 	 *            if the children should be updated as well
 	 */
-	public void applyStyles(Widget widget, boolean applyStylesToChildNodes);
+	public void applyStyles(Object widget, boolean applyStylesToChildNodes);
 
 	/**
 	 * Get the style currently active for a widget
@@ -158,7 +159,7 @@ public interface IThemeEngine {
 	 *            the widget
 	 * @return the declaration or <code>null</code>
 	 */
-	public CSSStyleDeclaration getStyle(Widget widget);
+	public CSSStyleDeclaration getStyle(Object widget);
 
 	/**
 	 * Restore the previously stored theme
@@ -172,4 +173,8 @@ public interface IThemeEngine {
 	 * @return the current active theme
 	 */
 	public ITheme getActiveTheme();
+
+	public void addCSSEngine(CSSEngine cssswtEngine);
+
+	public void removeCSSEngine(CSSEngine cssswtEngine);
 }
