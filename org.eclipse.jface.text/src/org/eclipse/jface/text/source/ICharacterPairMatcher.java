@@ -83,10 +83,10 @@ public interface ICharacterPairMatcher {
 	IRegion match(IDocument document, int offset);
 
 	/**
-	 * Returns the anchor for the region of the matching peer characters. The anchor
-	 * says whether the character that has been chosen to search for its peer character
-	 * has been left or right of the initial offset.
-	 *
+	 * Returns the anchor for the region of the matching peer characters. The anchor says whether
+	 * the character that has been chosen to search for its peer character has been the left or the
+	 * right character of the pair.
+	 * 
 	 * @return <code>RIGHT</code> or <code>LEFT</code>
 	 */
 	int getAnchor();
