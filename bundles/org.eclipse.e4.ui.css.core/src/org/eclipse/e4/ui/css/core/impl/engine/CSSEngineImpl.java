@@ -30,20 +30,44 @@ import org.w3c.css.sac.ConditionFactory;
 
 public abstract class CSSEngineImpl extends AbstractCSSEngine {
 
+	/* the original extension point was misspelled */
+	private static final String DEPRECATED_ELEMENT_PROVIDER_EXTPOINT = "org.eclipse.e4.u.css.core.elementProvider";
+	private static final String ELEMENT_PROVIDER_EXTPOINT = "org.eclipse.e4.ui.css.core.elementProvider";
+
 	public static final ConditionFactory CONDITIONFACTORY_INSTANCE = new CSSConditionFactoryImpl(
 			null, "class", null, "id");
 
 	private CSSPropertyHandlerSimpleProviderImpl handlerProvider = null;
 
 	private CSSPropertyHandlerLazyProviderImpl lazyHandlerProvider = null;
+	private IExtensionRegistry registry;
 
 	public CSSEngineImpl() {
 		super();
-		//Get Extension points
-		IExtensionRegistry registry = RegistryFactory.getRegistry();
-		IExtensionPoint extPoint = registry
-				.getExtensionPoint("org.eclipse.e4.u.css.core.elementProvider");
-		for (IExtension e : extPoint.getExtensions()) {
+
+		registry = RegistryFactory.getRegistry();
+		if (configureElementProviders(DEPRECATED_ELEMENT_PROVIDER_EXTPOINT)) {
+			System.err.println("Extension point "
+					+ DEPRECATED_ELEMENT_PROVIDER_EXTPOINT
+					+ " is deprecated; use " + ELEMENT_PROVIDER_EXTPOINT);
+		}
+		configureElementProviders(ELEMENT_PROVIDER_EXTPOINT);
+
+		// Register SWT Boolean CSSValue Converter
+		super.registerCSSValueConverter(CSSValueBooleanConverterImpl.INSTANCE);
+	}
+
+	/** @return true if some providers were found */
+	private boolean configureElementProviders(String extensionPointId) {
+		IExtensionPoint extPoint = registry.getExtensionPoint(extensionPointId);
+		if (extPoint == null) {
+			return false;
+		}
+		IExtension[] extensions = extPoint.getExtensions();
+		if (extensions.length == 0) {
+			return false;
+		}
+		for (IExtension e : extensions) {
 			for (IConfigurationElement ce : e.getConfigurationElements()) {
 				String tmp = ce.getName();
 				if (tmp.equals("provider")) {
@@ -60,8 +84,7 @@ public abstract class CSSEngineImpl extends AbstractCSSEngine {
 				}
 			}
 		}
-		// Register SWT Boolean CSSValue Converter
-		super.registerCSSValueConverter(CSSValueBooleanConverterImpl.INSTANCE);
+		return true;
 	}
 
 	public CSSEngineImpl(ExtendedDocumentCSS documentCSS) {

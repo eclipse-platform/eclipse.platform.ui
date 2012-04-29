@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="org.eclipse.e4.ui.css.swt.property.handler" name="%extension-point.properties.name" schema="schema/org.eclipse.e4.ui.css.swt.property.handler.exsd"/>
    <extension
-         point="org.eclipse.e4.u.css.core.elementProvider">
+         point="org.eclipse.e4.ui.css.core.elementProvider">
       <provider
             class="org.eclipse.e4.ui.css.swt.dom.SWTElementProvider">
          <widget
@@ -39,7 +38,7 @@
    
    
    <extension
-         point="org.eclipse.e4.ui.css.swt.property.handler">
+         point="org.eclipse.e4.ui.css.core.propertyHandler">
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.ControlElement"
             composite="true"

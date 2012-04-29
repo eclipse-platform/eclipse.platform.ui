@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.e4.ui.css.swt" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.e4.ui.css.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.e4.ui.css.swt" id="org.eclipse.e4.ui.css.swt.property.handler" name="Properties"/>
+         <meta.schema plugin="org.eclipse.e4.ui.css.core" id="org.eclipse.e4.ui.css.core.propertyHandler" name="Properties"/>
       </appinfo>
       <documentation>
          This extension point binds a handler class for a set of properties for a particular type of DOM elements.
@@ -112,7 +112,7 @@
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         &lt;extension point=&quot;org.eclipse.e4.ui.css.swt.property.handler&quot;&gt;
+         &lt;extension point=&quot;org.eclipse.e4.ui.css.core.propertyHandler&quot;&gt;
   &lt;handler
       adapter=&quot;org.eclipse.e4.ui.css.swt.dom.ControlElement&quot;
       composite=&quot;true&quot;

@@ -43,29 +43,46 @@ public class RegistryCSSPropertyHandlerProvider extends
 	private static final String ATTR_HANDLER = "handler";
 	private static final String ATTR_DEPRECATED = "deprecated";
 
-	private static final String PROPERTY_HANDLERS_EXTENSION_POINT = "org.eclipse.e4.ui.css.swt.property.handler";
+	private static final String PROPERTY_HANDLERS_EXTPOINT = "org.eclipse.e4.ui.css.core.propertyHandler";
+
+	/* the handlers extension point was originally in .swt */
+	private static final String DEPRECATED_PROPERTY_HANDLERS_EXTPOINT = "org.eclipse.e4.ui.css.swt.property.handler";
 
 	private IExtensionRegistry registry;
 	private boolean hasDeprecatedProperties = false; // mild optimization for
 														// getCSSProperties()
 
-	private Map<String, Map<String, ICSSPropertyHandler>> propertyHandlerMap;
+	private Map<String, Map<String, ICSSPropertyHandler>> propertyHandlerMap = new HashMap<String, Map<String, ICSSPropertyHandler>>();;
 
 	public RegistryCSSPropertyHandlerProvider(IExtensionRegistry registry) {
-		this(registry, PROPERTY_HANDLERS_EXTENSION_POINT);
+		this.registry = registry;
+		if (configure(DEPRECATED_PROPERTY_HANDLERS_EXTPOINT)) {
+			System.err.println("Extension point "
+					+ DEPRECATED_PROPERTY_HANDLERS_EXTPOINT
+					+ " is deprecated; use " + PROPERTY_HANDLERS_EXTPOINT);
+		}
+		configure(PROPERTY_HANDLERS_EXTPOINT);
 	}
 
 	public RegistryCSSPropertyHandlerProvider(IExtensionRegistry registry,
 			String extensionPointId) {
 		this.registry = registry;
 		// FIXME: should install a registry listener to make this dynamic
-		initialize(extensionPointId);
+		configure(extensionPointId);
 	}
 
-	protected void initialize(String extensionPointId) {
-		Map<String, Map<String, ICSSPropertyHandler>> handlersMap = new HashMap<String, Map<String, ICSSPropertyHandler>>();
+	/** @return true if some extensions were found */
+	protected boolean configure(String extensionPointId) {
 		IExtensionPoint extPoint = registry.getExtensionPoint(extensionPointId);
-		for (IExtension e : extPoint.getExtensions()) {
+		if (extPoint == null) {
+			return false;
+		}
+		IExtension[] extensions = extPoint.getExtensions();
+		if (extensions.length == 0) {
+			return false;
+		}
+		Map<String, Map<String, ICSSPropertyHandler>> handlersMap = new HashMap<String, Map<String, ICSSPropertyHandler>>();
+		for (IExtension e : extensions) {
 			for (IConfigurationElement ce : e.getConfigurationElements()) {
 				if (ce.getName().equals(ATTR_HANDLER)) {
 					// a single handler may implement a number of properties
@@ -117,7 +134,8 @@ public class RegistryCSSPropertyHandlerProvider extends
 				}
 			}
 		}
-		propertyHandlerMap = handlersMap;
+		propertyHandlerMap.putAll(handlersMap);
+		return true;
 	}
 
 	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(

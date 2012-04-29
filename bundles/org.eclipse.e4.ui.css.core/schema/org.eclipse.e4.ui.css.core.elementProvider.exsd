@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.e4.ui.css.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.e4.ui.css.core" id="org.eclipse.e4.u.css.core.elementProvider" name="element_provider"/>
+         <meta.schema plugin="org.eclipse.e4.ui.css.core" id="org.eclipse.e4.ui.css.core.elementProvider" name="element_provider"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         Maps widgets or objects to an element provider.
       </documentation>
    </annotation>
 
