@@ -38,6 +38,20 @@
             id="org.eclipse.ui.cocoa.arrangeWindowsInFront"
             name="%command.arrangeWindows.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.cocoa.FullscreenWindowHandler"
+            description="%command.fullscreen.desc"
+            id="org.eclipse.ui.cocoa.fullscreenWindow"
+            name="%command.fullscreen.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.cocoa.DisengageFullscreenWindowHandler"
+            description="%command.disengageFullscreen.desc"
+            id="org.eclipse.ui.cocoa.disengageFullscreenWindow"
+            name="%command.disengageFullscreen.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -54,6 +68,13 @@
             platform="cocoa"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M">
+      </key>
+      <key
+            commandId="org.eclipse.ui.cocoa.disengageFullscreenWindow"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            platform="cocoa"
+            sequence="Esc">
       </key>
    </extension>
    <extension
