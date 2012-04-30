@@ -95,6 +95,9 @@ public class CSSRenderingUtils {
 	public CSSValue getCSSValue(Control styleControl, String className,
 			String attributeName) {
 		CSSEngine csseng = WidgetElement.getEngine(styleControl);
+		if (csseng == null) {
+			return null;
+		}
 		ControlElement tempEment = (ControlElement) csseng
 				.getElement(styleControl);
 		if (tempEment == null) {
@@ -123,8 +126,10 @@ public class CSSRenderingUtils {
 			String attName, Integer[] frameInts) {
 		Image image = null;
 
-		//		System.out.println("THeme engine " + themeEngine); //$NON-NLS-1$
 		CSSEngine csseng = WidgetElement.getEngine(styleControl);
+		if (csseng == null) {
+			return null;
+		}
 		ControlElement tempEment = (ControlElement) csseng
 				.getElement(styleControl);
 		if (tempEment == null) {
