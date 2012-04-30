@@ -24,7 +24,7 @@
         </processor>
      </extension>
    <extension
-         point="org.eclipse.e4.ui.css.core.property.handler">
+         point="org.eclipse.e4.ui.css.core.propertyHandler">
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CompositeElement"
             composite="false"
