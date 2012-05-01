@@ -13,6 +13,9 @@ package org.eclipse.core.tests.resources.regression;
 
 import junit.framework.*;
 
+/**
+ * A suite that runs all regression tests.
+ */
 public class AllTests extends TestCase {
 	/**
 	 * AllTests constructor comment.
@@ -63,6 +66,7 @@ public class AllTests extends TestCase {
 		suite.addTest(Bug_329836.suite());
 		suite.addTest(Bug_331445.suite());
 		suite.addTest(Bug_332543.suite());
+		suite.addTest(Bug_378156.suite());
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
 		suite.addTest(IProjectTest.suite());

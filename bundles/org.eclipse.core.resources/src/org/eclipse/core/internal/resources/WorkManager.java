@@ -68,16 +68,16 @@ public class WorkManager implements IManager {
 	 * modifying the workspace tree.
 	 */
 	private final ILock lock;
-	
+
 	/**
 	 * The current depth of running nested operations.
 	 */
 	private int nestedOperations = 0;
-	
+
 	private NotifyRule notifyRule = new NotifyRule();
-	
+
 	private boolean operationCanceled = false;
-	
+
 	/**
 	 * The current depth of prepared operations.
 	 */
@@ -89,7 +89,7 @@ public class WorkManager implements IManager {
 		this.jobManager = Job.getJobManager();
 		this.lock = jobManager.newLock();
 	}
-	
+
 	/**
 	 * Releases the workspace lock without changing the nested operation depth.
 	 * Must be followed eventually by endUnprotected. Any
@@ -154,7 +154,9 @@ public class WorkManager implements IManager {
 		rebalanceNestedOperations();
 		//reset state if this is the end of a top level operation
 		if (preparedOperations == 0)
-			operationCanceled = hasBuildChanges = false;
+			hasBuildChanges = false;
+		//don't let cancelation of this operation affect other operations
+		operationCanceled = false;
 		try {
 			lock.release();
 		} finally {
@@ -188,7 +190,7 @@ public class WorkManager implements IManager {
 	ILock getLock() {
 		return lock;
 	}
-	
+
 	/**
 	 * Returns the scheduling rule used during resource change notifications.
 	 */
