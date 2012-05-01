@@ -16,6 +16,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.actions.RulerBreakpointAction;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -50,17 +51,18 @@ public class RulerEnableDisableBreakpointAction extends RulerBreakpointAction im
 	public void update() {
 		fBreakpoint = getBreakpoint();
 		setEnabled(fBreakpoint != null);
+		String accelerator = DebugUIPlugin.formatKeyBindingString(SWT.MOD2, ActionMessages.RulerEnableDisableBreakpointAction_4);
 		if (fBreakpoint != null) {
 			try {
 				if (fBreakpoint.isEnabled()) {
-					setText(ActionMessages.RulerEnableDisableBreakpointAction_2 + '\t' + ActionMessages.RulerEnableDisableBreakpointAction_4);
+					setText(ActionMessages.RulerEnableDisableBreakpointAction_2 + '\t' + accelerator);
 				} else {
-					setText(ActionMessages.RulerEnableDisableBreakpointAction_3 + '\t' + ActionMessages.RulerEnableDisableBreakpointAction_4);
+					setText(ActionMessages.RulerEnableDisableBreakpointAction_3 + '\t' + accelerator);
 				}
 			} catch (CoreException e) {
 			}
 		} else {
-			setText(ActionMessages.RulerEnableDisableBreakpointAction_2 + '\t' + ActionMessages.RulerEnableDisableBreakpointAction_4);
+			setText(ActionMessages.RulerEnableDisableBreakpointAction_2 + '\t' + accelerator);
 		}
 	}
 

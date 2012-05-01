@@ -78,6 +78,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -963,6 +964,21 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
 	public void launchRemoved(ILaunch launch) {}
+
+	/**
+	 * Formats the given key stroke or click name and the modifier keys 
+	 * to a key binding string that can be used in action texts. 
+	 * 
+	 * @param modifierKeys the modifier keys
+	 * @param keyOrClick a key stroke or click, e.g. "Double Click"
+	 * @return the formatted keyboard shortcut string, e.g. "Shift+Double Click"
+	 * 
+	 * @since 3.8
+	 */
+	public static final String formatKeyBindingString(int modifierKeys, String keyOrClick) {
+		// this should actually all be delegated to KeyStroke class
+		return KeyStroke.getInstance(modifierKeys, KeyStroke.NO_KEY).format() + keyOrClick; 
+	}
 
 	public static boolean DEBUG_TEST_PRESENTATION_ID(IPresentationContext context) {
 	    if (context == null) {
