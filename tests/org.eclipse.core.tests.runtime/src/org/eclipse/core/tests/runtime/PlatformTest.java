@@ -11,8 +11,6 @@
 package org.eclipse.core.tests.runtime;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -62,92 +60,6 @@ public class PlatformTest extends RuntimeTest {
 
 	public static Test suite() {
 		return new TestSuite(PlatformTest.class);
-	}
-
-	public void testKeyRing1() {
-		URL serverUrl = null;
-		try {
-			serverUrl = new URL("http://www.hostname.com/");
-		} catch (MalformedURLException e) {
-			assertTrue("e1", false);
-		}
-
-		String realm = "realm1@hostname.com";
-		String authScheme = "Basic";
-		Map info = new Hashtable(2);
-		info.put("username", "nogard");
-		info.put("password", "secret");
-
-		try {
-			Platform.addAuthorizationInfo(serverUrl, realm, authScheme, info);
-		} catch (CoreException e) {
-			assertTrue("e2", false);
-		}
-
-		info = Platform.getAuthorizationInfo(serverUrl, realm, authScheme);
-
-		assertEquals("00", "nogard", info.get("username"));
-		assertEquals("01", "secret", info.get("password"));
-
-		try {
-			Platform.flushAuthorizationInfo(serverUrl, realm, authScheme);
-		} catch (CoreException e) {
-			assertTrue("e3", false);
-		}
-
-		info = Platform.getAuthorizationInfo(serverUrl, realm, authScheme);
-
-		assertTrue("02", info == null);
-	}
-
-	public void testKeyRing2() {
-		URL url1 = null;
-		URL url2 = null;
-		try {
-			url1 = new URL("http://www.oti.com/file1");
-			url2 = new URL("http://www.oti.com/folder1/");
-		} catch (MalformedURLException e) {
-			assertTrue("00", false);
-		}
-
-		String realm1 = "realm1";
-		String realm2 = "realm2";
-
-		try {
-			Platform.addProtectionSpace(url1, realm1);
-		} catch (CoreException e) {
-			assertTrue("e0", false);
-		}
-
-		assertEquals("00", realm1, Platform.getProtectionSpace(url1));
-		assertEquals("01", realm1, Platform.getProtectionSpace(url2));
-
-		try {
-			Platform.addProtectionSpace(url2, realm1);
-		} catch (CoreException e) {
-			assertTrue("e1", false);
-		}
-
-		assertEquals("02", realm1, Platform.getProtectionSpace(url1));
-		assertEquals("03", realm1, Platform.getProtectionSpace(url2));
-
-		try {
-			Platform.addProtectionSpace(url2, realm2);
-		} catch (CoreException e) {
-			assertTrue("e2", false);
-		}
-
-		assertTrue("04", Platform.getProtectionSpace(url1) == null);
-		assertEquals("05", realm2, Platform.getProtectionSpace(url2));
-
-		try {
-			Platform.addProtectionSpace(url1, realm1);
-		} catch (CoreException e) {
-			assertTrue("e3", false);
-		}
-
-		assertEquals("05", realm1, Platform.getProtectionSpace(url1));
-		assertEquals("06", realm1, Platform.getProtectionSpace(url2));
 	}
 
 	public void testGetCommandLine() {
