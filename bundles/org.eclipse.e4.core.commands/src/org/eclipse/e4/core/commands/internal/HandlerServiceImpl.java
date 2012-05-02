@@ -51,7 +51,7 @@ public class HandlerServiceImpl implements EHandlerService {
 	@Optional
 	private Logger logger;
 
-	public Object preExecute = null;
+	public static Object preExecute = null;
 
 	/*
 	 * (non-Javadoc)

@@ -267,8 +267,7 @@ public class LegacyHandlerService implements IHandlerService {
 	public void initPreExecuteHook() {
 		EHandlerService hs = eclipseContext.get(EHandlerService.class);
 		if (hs instanceof HandlerServiceImpl) {
-			HandlerServiceImpl impl = (HandlerServiceImpl) hs;
-			impl.preExecute = new Object() {
+			HandlerServiceImpl.preExecute = new Object() {
 				@Execute
 				public void execute(IEclipseContext context, ParameterizedCommand command,
 						@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms,

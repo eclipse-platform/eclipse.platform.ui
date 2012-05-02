@@ -265,35 +265,27 @@ public class KeyBindingDispatcher {
 		staticContext.set(Event.class, trigger);
 
 		final boolean commandDefined = command.isDefined();
-		boolean commandEnabled;
+		// boolean commandEnabled;
 		boolean commandHandled;
 
 		try {
-			commandEnabled = handlerService.canExecute(parameterizedCommand, staticContext);
+			// commandEnabled = handlerService.canExecute(parameterizedCommand, staticContext);
 			commandHandled = HandlerServiceImpl.lookUpHandler(context, command.getId()) != null;
 
-			if (!commandEnabled && commandHandled && commandDefined) {
-				if (keyAssistDialog != null) {
-					keyAssistDialog.clearRememberedState();
+			try {
+				handlerService.executeHandler(parameterizedCommand, staticContext);
+			} catch (final Exception e) {
+				commandHandled = false;
+				if (logger != null) {
+					logger.error(e);
 				}
-				return true;
 			}
-			if (commandEnabled) {
-				try {
-					handlerService.executeHandler(parameterizedCommand, staticContext);
-				} catch (final Exception e) {
-					commandHandled = false;
-					if (logger != null) {
-						logger.error(e);
-					}
-				}
-				/*
-				 * Now that the command has executed (and had the opportunity to use the remembered
-				 * state of the dialog), it is safe to delete that information.
-				 */
-				if (keyAssistDialog != null) {
-					keyAssistDialog.clearRememberedState();
-				}
+			/*
+			 * Now that the command has executed (and had the opportunity to use the remembered
+			 * state of the dialog), it is safe to delete that information.
+			 */
+			if (keyAssistDialog != null) {
+				keyAssistDialog.clearRememberedState();
 			}
 		} finally {
 			staticContext.dispose();
