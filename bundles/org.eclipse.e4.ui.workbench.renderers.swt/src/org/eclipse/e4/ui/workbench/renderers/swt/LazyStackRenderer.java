@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -110,9 +111,30 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	public void processContents(MElementContainer<MUIElement> me) {
 		// Lazy Loading: here we only process the contents through childAdded,
 		// we specifically do not render them
-		for (MUIElement part : me.getChildren()) {
-			if (part.isToBeRendered() && part.isVisible())
-				createTab(me, part);
+		IPresentationEngine renderer = (IPresentationEngine) context
+				.get(IPresentationEngine.class.getName());
+
+		for (MUIElement element : me.getChildren()) {
+			if (!element.isToBeRendered() || !element.isVisible())
+				continue;
+			boolean lazy = true;
+
+			// Special case: we also render any placeholder that refers to
+			// an *existing* part, this doesn't break lazy loading since the
+			// part is already there...see bug 378138 for details
+			if (element instanceof MPlaceholder) {
+				MPlaceholder ph = (MPlaceholder) element;
+				if (ph.getRef() instanceof MPart
+						&& ph.getRef().getWidget() != null) {
+					lazy = false;
+				}
+			}
+
+			if (lazy) {
+				createTab(me, element);
+			} else {
+				renderer.createGui(element);
+			}
 		}
 	}
 
