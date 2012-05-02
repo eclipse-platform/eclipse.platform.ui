@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.e4.core.internal.contexts;
 import java.util.Set;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 
 public class ValueComputation extends Computation {
@@ -37,7 +38,7 @@ public class ValueComputation extends Computation {
 		if (cachedValue == NotAValue) // already invalidated
 			return;
 		cachedValue = NotAValue;
-		originatingContext.invalidate(name, ContextChangeEvent.RECALC, event.getOldValue(), scheduled);
+		originatingContext.invalidate(name, ContextChangeEvent.RECALC, event.getOldValue(), IInjector.NOT_A_VALUE, scheduled);
 	}
 
 	public boolean shouldRemove(ContextChangeEvent event) {

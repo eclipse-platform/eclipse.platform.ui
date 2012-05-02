@@ -25,6 +25,7 @@ import java.util.Stack;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.internal.contexts.osgi.ContextDebugHelper;
 
 /**
@@ -236,7 +237,7 @@ public class EclipseContext implements IEclipseContext {
 	 * The given name has been modified or removed in this context. Invalidate all local value
 	 * computations and listeners that depend on this name.
 	 */
-	public void invalidate(String name, int eventType, Object oldValue, Set<Scheduled> scheduled) {
+	public void invalidate(String name, int eventType, Object oldValue, Object newValue, Set<Scheduled> scheduled) {
 		ContextChangeEvent event = new ContextChangeEvent(this, eventType, null, name, oldValue);
 		ValueComputation computation = localValueComputations.get(name);
 		if (computation != null) {
@@ -258,8 +259,17 @@ public class EclipseContext implements IEclipseContext {
 
 		// invalidate this name in child contexts
 		for (EclipseContext childContext : getChildren()) {
-			childContext.invalidate(name, eventType, oldValue, scheduled);
+			// unless it is already set to the same value
+			if (eventType == ContextChangeEvent.ADDED && childContext.isLocalEquals(name, newValue))
+				continue;
+			childContext.invalidate(name, eventType, oldValue, newValue, scheduled);
 		}
+	}
+
+	protected boolean isLocalEquals(String name, Object newValue) {
+		if (!localValues.containsKey(name))
+			return false;
+		return (localValues.get(name) == newValue);
 	}
 
 	private boolean isSetLocally(String name) {
@@ -270,7 +280,7 @@ public class EclipseContext implements IEclipseContext {
 		if (isSetLocally(name)) {
 			Object oldValue = localValues.remove(name);
 			Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
-			invalidate(name, ContextChangeEvent.REMOVED, oldValue, scheduled);
+			invalidate(name, ContextChangeEvent.REMOVED, oldValue, IInjector.NOT_A_VALUE, scheduled);
 			processScheduled(scheduled);
 		}
 	}
@@ -308,7 +318,7 @@ public class EclipseContext implements IEclipseContext {
 		Object oldValue = localValues.put(name, value);
 		if (!containsKey || value != oldValue) {
 			Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
-			invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
+			invalidate(name, ContextChangeEvent.ADDED, oldValue, value, scheduled);
 			processScheduled(scheduled);
 		}
 	}
@@ -329,7 +339,7 @@ public class EclipseContext implements IEclipseContext {
 			}
 			Object oldValue = localValues.put(name, value);
 			if (value != oldValue)
-				invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
+				invalidate(name, ContextChangeEvent.ADDED, oldValue, value, scheduled);
 			return true;
 		}
 
@@ -444,7 +454,7 @@ public class EclipseContext implements IEclipseContext {
 			Object oldValue = get(name);
 			Object newValue = (newParent != null) ? newParent.get(name) : null;
 			if (oldValue != newValue)
-				invalidate(name, ContextChangeEvent.ADDED, oldValue, scheduled);
+				invalidate(name, ContextChangeEvent.ADDED, oldValue, newValue, scheduled);
 		}
 
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.ADDED, null, null, null);
