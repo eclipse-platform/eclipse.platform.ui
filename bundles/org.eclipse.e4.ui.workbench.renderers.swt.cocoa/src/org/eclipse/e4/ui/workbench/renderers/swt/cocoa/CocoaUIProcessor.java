@@ -90,27 +90,26 @@ public class CocoaUIProcessor {
 						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.minimizeWindow", //$NON-NLS-1$ //$NON-NLS-2$
 						"%command.minimize.name", "%command.minimize.desc", CONTRIBUTOR_URI), //$NON-NLS-1$ //$NON-NLS-2$
 				MinimizeWindowHandler.class, CONTRIBUTOR_URI);
-		installHandler(
-				defineCommand(
-						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.fullscreenWindow", //$NON-NLS-1$ //$NON-NLS-2$
-						"%command.fullscreen.name", "%command.fullscreen.desc", CONTRIBUTOR_URI), //$NON-NLS-1$//$NON-NLS-2$
-				FullscreenWindowHandler.class, CONTRIBUTOR_URI);
-		MCommand disengageFullscreen = defineCommand(
-				"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.disengageFullscreenWindow", //$NON-NLS-1$ //$NON-NLS-2$
+
+		MCommand toggleFullscreenCommand = defineCommand(
+				"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.fullscreenWindow", //$NON-NLS-1$ //$NON-NLS-2$
 				"%command.fullscreen.name", "%command.fullscreen.desc", CONTRIBUTOR_URI); //$NON-NLS-1$//$NON-NLS-2$
-		installHandler(disengageFullscreen,
-				DisengageFullscreenWindowHandler.class, CONTRIBUTOR_URI);
+		installHandler(toggleFullscreenCommand, FullscreenWindowHandler.class,
+				CONTRIBUTOR_URI);
+		// COMMAND+ALT+F is taken by Force Return
+		installKeybinding(
+				"org.eclipse.ui.contexts.window", "COMMAND+CTRL+F", toggleFullscreenCommand); //$NON-NLS-1$ //$NON-NLS-2$
+
 		installHandler(
 				defineCommand(
 						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.zoomWindow", //$NON-NLS-1$ //$NON-NLS-2$
 						"%command.zoom.name", "%command.zoom.desc", CONTRIBUTOR_URI), //$NON-NLS-1$//$NON-NLS-2$
 				ZoomWindowHandler.class, CONTRIBUTOR_URI);
-		installKeybinding(
-				"org.eclipse.ui.contexts.window", "Esc", disengageFullscreen); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * Install a keybinding to the provided command.
+	 * Install a keybinding to the provided command, providing the command is
+	 * not already bound to another keybinding.
 	 * 
 	 * @param bindingContextId
 	 *            the keybinding context
@@ -149,7 +148,6 @@ public class CocoaUIProcessor {
 		MKeyBinding binding = MCommandsFactory.INSTANCE.createKeyBinding();
 		binding.setCommand(cmd);
 		binding.setKeySequence(keysequence);
-		binding.setElementId("kb." + cmd.getElementId()); //$NON-NLS-1$
 		bindingTable.getBindings().add(binding);
 	}
 
