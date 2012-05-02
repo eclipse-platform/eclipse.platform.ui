@@ -338,7 +338,6 @@ public class SplitDropAgent extends DropAgent {
 		MPartStack toInsert;
 
 		if (crossSharedAreaBoundary(dragElement, dropStack)) {
-			System.out.println("Cross Boundary");
 			if (!dndManager.isModified) {
 				relTo = (MPartSashContainerElement) outerRelTo;
 			}
