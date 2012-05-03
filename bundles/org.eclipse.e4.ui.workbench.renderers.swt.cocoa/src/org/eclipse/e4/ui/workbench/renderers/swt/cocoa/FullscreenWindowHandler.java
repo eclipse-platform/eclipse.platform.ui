@@ -11,19 +11,19 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt.cocoa;
 
+import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 4.2
  */
 public class FullscreenWindowHandler extends AbstractWindowHandler {
 	@Execute
-	public void execute(MWindow window) {
-		if (window.getTags().contains(CocoaUIHandler.TAG_FULLSCREEN)) {
-			window.getTags().remove(CocoaUIHandler.TAG_FULLSCREEN);
-		} else {
-			window.getTags().add(CocoaUIHandler.TAG_FULLSCREEN);
+	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
+		if (!shell.isDisposed()) {
+			shell.setFullScreen(!shell.getFullScreen());
 		}
 	}
 }

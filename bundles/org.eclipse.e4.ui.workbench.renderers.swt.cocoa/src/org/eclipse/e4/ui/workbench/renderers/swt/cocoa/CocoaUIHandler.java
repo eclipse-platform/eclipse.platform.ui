@@ -100,9 +100,6 @@ public class CocoaUIHandler {
 	private static final String COMMAND_ID_CLOSE_DIALOG = "org.eclipse.ui.cocoa.closeDialog"; //$NON-NLS-1$
 	private static final String CLOSE_DIALOG_KEYSEQUENCE = "M1+W"; //$NON-NLS-1$
 
-	// tags on the MWindow to indicate full-screen status (MacOS X 10.7+)
-	static final String TAG_FULLSCREEN = "FullScreen"; //$NON-NLS-1$
-
 	static long sel_toolbarButtonClicked_;
 	private static final long NSWindowToolbarButton = 3;
 
@@ -478,8 +475,6 @@ public class CocoaUIHandler {
 		if (OS.VERSION < 0x1070 || !(window.getWidget() instanceof Shell)) {
 			return;
 		}
-		Shell shell = (Shell) window.getWidget();
-		shell.setFullScreen(window.getTags().contains(TAG_FULLSCREEN));
 	}
 
 	/**
