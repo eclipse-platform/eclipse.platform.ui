@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -27,8 +28,6 @@ import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
-import org.eclipse.ui.internal.commands.CommandPersistence;
-import org.eclipse.ui.internal.contexts.ContextPersistence;
 import org.eclipse.ui.internal.keys.BindingPersistence;
 import org.eclipse.ui.internal.keys.BindingService;
 
@@ -39,18 +38,23 @@ public class BindingToModelProcessor {
 	private Map<String, MBindingTable> tables = new HashMap<String, MBindingTable>();
 
 	@Execute
-	void process(final MApplication application) {
+	void process(final MApplication application, IEclipseContext context) {
 		gatherContexts(application.getRootContext());
 		gatherCommands(application.getCommands());
 		gatherTables(application.getBindingTables());
 
-		CommandManager commandManager = new CommandManager();
-		CommandPersistence commandPersistence = new CommandPersistence(commandManager);
-		commandPersistence.reRead();
-		ContextManager contextManager = new ContextManager();
-		ContextPersistence contextPersistence = new ContextPersistence(contextManager);
-		contextPersistence.reRead();
+		CommandManager commandManager = context.get(CommandManager.class);
+		if (commandManager == null) {
+			WorkbenchPlugin
+					.log("Command manager was null in org.eclipse.ui.internal.BindingToModelProcessor"); //$NON-NLS-1$
+		}
+		ContextManager contextManager = context.get(ContextManager.class);
+		if (contextManager == null) {
+			WorkbenchPlugin
+					.log("Context manager was null in org.eclipse.ui.internal.BindingToModelProcessor"); //$NON-NLS-1$
+		}
 		BindingManager bindingManager = new BindingManager(contextManager, commandManager);
+		context.set(BindingManager.class, bindingManager);
 		BindingPersistence persistence = new BindingPersistence(bindingManager, commandManager);
 		persistence.read();
 

@@ -27,9 +27,13 @@ public class CommandServiceAddon {
 	@PostConstruct
 	public void init(IEclipseContext context) {
 		// global command service. There can be only one ... per application :-)
-		CommandManager manager = new CommandManager();
-		setCommandFireEvents(manager, false);
-		context.set(CommandManager.class, manager);
+		CommandManager manager = context.get(CommandManager.class);
+		if (manager == null) {
+			manager = new CommandManager();
+			setCommandFireEvents(manager, false);
+			context.set(CommandManager.class, manager);
+		}
+
 		CommandServiceImpl service = ContextInjectionFactory
 				.make(CommandServiceImpl.class, context);
 		context.set(ECommandService.class, service);

@@ -10,8 +10,11 @@ public class ContextServiceAddon {
 	@PostConstruct
 	public void init(IEclipseContext context) {
 		// global context service.
-		ContextManager contextManager = new ContextManager();
-		context.set(ContextManager.class.getName(), contextManager);
+		ContextManager manager = context.get(ContextManager.class);
+		if (manager == null) {
+			manager = new ContextManager();
+			context.set(ContextManager.class, manager);
+		}
 		
 		context.set(EContextService.class.getName(), new ContextContextFunction());
 		context.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
