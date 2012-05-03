@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,20 +124,24 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 			try {
 				output.write(chunk1);
 				output.succeed();
+				doNothing(output);
 				output = new SafeChunkyOutputStream(target);
 				// fake failure
 				output.write(chunk2);
 				output.write(ILocalStoreConstants.BEGIN_CHUNK); // another begin
 				output.succeed();
 				//
+				doNothing(output);
 				output = new SafeChunkyOutputStream(target);
 				output.write(chunk3);
 				output.succeed();
+				doNothing(output);
 				output = new SafeChunkyOutputStream(target);
 				// fake failure
 				output.write(chunk4);
 				output.write(ILocalStoreConstants.END_CHUNK); // another end
 				output.succeed();
+				doNothing(output);
 				//
 				output = new SafeChunkyOutputStream(target);
 				output.write(chunk5);
@@ -184,6 +188,14 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 			fail("3.20", e);
 		}
 		Workspace.clear(target); // make sure there was nothing here before
+	}
+
+	/**
+	 * This method is used to trick the java compiler to avoid reporting 
+	 * a warning that the stream was not closed. In this test we are intentionally
+	 * not closing the stream to test recovery from failure.
+	 */
+	private void doNothing(SafeChunkyOutputStream output) {
 	}
 
 	public void testAlmostEmpty() {

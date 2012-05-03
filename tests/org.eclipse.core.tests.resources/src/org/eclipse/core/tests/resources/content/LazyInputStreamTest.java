@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@ import java.io.*;
 import junit.framework.*;
 import org.eclipse.core.internal.content.LazyInputStream;
 
+/**
+ * Tests for {@link LazyInputStream}.
+ */
 public class LazyInputStreamTest extends TestCase {
 
 	/**
@@ -58,6 +61,7 @@ public class LazyInputStreamTest extends TestCase {
 		stream.skip(10);
 		assertEquals("1.2", '2', stream.read());
 		assertEquals("1.3", 13, stream.getOffset());
+		stream.close();
 	}
 
 	public void testReadBlock() throws UnsupportedEncodingException, IOException {
@@ -95,6 +99,7 @@ public class LazyInputStreamTest extends TestCase {
 		assertEquals("6.0", 30, stream.getOffset());
 		assertEquals("6.1", 0, stream.available());
 		assertEquals("6.2", -1, read);
+		stream.close();
 	}
 
 	public void testMarkAndReset() throws UnsupportedEncodingException, IOException {
@@ -117,6 +122,7 @@ public class LazyInputStreamTest extends TestCase {
 		assertEquals("2.8", 13, stream.getOffset());
 		stream.rewind();
 		assertEquals("3.0", 0, stream.getOffset());
+		stream.close();
 	}
 
 	public void testContentHasEOF() throws IOException {
@@ -127,6 +133,7 @@ public class LazyInputStreamTest extends TestCase {
 		int c = stream.read();
 		assertTrue("1.0", -1 != c);
 		assertEquals("2.0", 0xFF, c);
+		stream.close();
 	}
 
 	public void testVariedContent() throws IOException {
@@ -137,6 +144,7 @@ public class LazyInputStreamTest extends TestCase {
 		OpenLazyInputStream stream = new OpenLazyInputStream(underlying, 7);
 		for (int i = 0; i < VARIOUS_INTS.length; i++)
 			assertEquals("1.0." + i, VARIOUS_INTS[i], stream.read());
+		stream.close();
 	}
 
 	public static Test suite() {

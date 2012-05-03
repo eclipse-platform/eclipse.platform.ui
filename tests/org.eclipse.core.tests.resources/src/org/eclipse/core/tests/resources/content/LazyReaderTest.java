@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@ import java.io.*;
 import junit.framework.*;
 import org.eclipse.core.internal.content.LazyReader;
 
+/**
+ * Tests for {@link LazyReader}.
+ */
 public class LazyReaderTest extends TestCase {
 
 	/**
@@ -56,6 +59,7 @@ public class LazyReaderTest extends TestCase {
 		stream.skip(10);
 		assertEquals("1.2", '2', stream.read());
 		assertEquals("1.3", 13, stream.getOffset());
+		stream.close();
 	}
 
 	public void testReadBlock() throws UnsupportedEncodingException, IOException {
@@ -93,6 +97,7 @@ public class LazyReaderTest extends TestCase {
 		assertEquals("6.0", 30, stream.getOffset());
 		assertFalse("6.1", stream.ready());
 		assertEquals("6.2", -1, read);
+		stream.close();
 	}
 
 	public void testMarkAndReset() throws UnsupportedEncodingException, IOException {
@@ -120,6 +125,7 @@ public class LazyReaderTest extends TestCase {
 		assertEquals("2.12", 13, stream.getOffset());
 		stream.rewind();
 		assertEquals("3.0", 0, stream.getOffset());
+		stream.close();
 	}
 
 	public static Test suite() {
