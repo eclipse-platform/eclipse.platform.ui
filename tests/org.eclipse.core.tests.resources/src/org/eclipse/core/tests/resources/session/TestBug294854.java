@@ -29,6 +29,7 @@ public class TestBug294854 extends WorkspaceSessionTest {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(TestBug294854.class.getName());
+		//		suite.addTest(new TestBug294854("testRenameUsingResourcePath_01"));
 
 		SessionTestSuite scenario1 = new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, "renameUsingProjectDescription");
 		scenario1.addCrashTest(new TestBug294854("testRenameUsingProjectDescription_01"));
@@ -75,13 +76,16 @@ public class TestBug294854 extends WorkspaceSessionTest {
 		return project.exists();
 	}
 
-	public void testRenameUsingProjectDescription_01() throws CoreException {
+	public void testRenameUsingProjectDescription_01() throws CoreException, InterruptedException {
 		IProject project = createProject();
 
 		// move project using IProjectDescription
 		IProjectDescription description = project.getDescription();
 		description.setName(PROJECT_NEW_NAME);
 		project.move(description, true, getMonitor());
+
+		// give a moment for the snapshot to run
+		Thread.sleep(1000);
 
 		// simulate process kill
 		System.exit(1);
@@ -92,11 +96,14 @@ public class TestBug294854 extends WorkspaceSessionTest {
 		assertTrue("2.0", checkProjectExists(PROJECT_NEW_NAME));
 	}
 
-	public void testRenameUsingResourcePath_01() throws CoreException {
+	public void testRenameUsingResourcePath_01() throws CoreException, InterruptedException {
 		IProject project = createProject();
 
 		// move project using IPath
 		project.move(project.getFullPath().removeLastSegments(1).append(PROJECT_NEW_NAME), true, getMonitor());
+
+		// give a moment for the snapshot to run
+		Thread.sleep(1000);
 
 		// simulate process kill
 		System.exit(1);
