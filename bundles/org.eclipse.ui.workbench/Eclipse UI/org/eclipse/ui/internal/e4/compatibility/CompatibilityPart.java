@@ -90,6 +90,7 @@ public abstract class CompatibilityPart {
 				beingDisposed = true;
 				WorkbenchPartReference reference = getReference();
 				// notify the workbench we're being closed
+				((WorkbenchPage) reference.getPage()).firePartHidden(part);
 				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
 			}
 		}

@@ -4500,7 +4500,7 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 	}
 
 	// FIXME: convert me to e4 events!
-	private void firePartHidden(MPart part) {
+	public void firePartHidden(MPart part) {
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
