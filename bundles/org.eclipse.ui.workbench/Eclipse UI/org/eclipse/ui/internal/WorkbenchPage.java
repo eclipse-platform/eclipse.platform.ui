@@ -1655,12 +1655,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPerspective persp = (MPerspective) modelService.find(perspectiveId, window);
 		// check to ensure this perspective actually exists in this window
 		if (persp != null) {
-			MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
-					MPerspectiveStack.class, null).get(0);
-			if (perspectiveStack.getChildren().size() == 1) {
-				closeAllPerspectives(saveParts, closePage);
-			} else {
-				closePerspective(desc, perspectiveId, saveParts);
+			persp.getTags().add("PerspClosing"); //$NON-NLS-1$
+			try {
+				MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
+						MPerspectiveStack.class, null).get(0);
+				if (perspectiveStack.getChildren().size() == 1) {
+					closeAllPerspectives(saveParts, closePage);
+				} else {
+					closePerspective(desc, perspectiveId, saveParts);
+				}
+			} finally {
+				persp.getTags().remove("PerspClosing"); //$NON-NLS-1$
 			}
 		}
 	}

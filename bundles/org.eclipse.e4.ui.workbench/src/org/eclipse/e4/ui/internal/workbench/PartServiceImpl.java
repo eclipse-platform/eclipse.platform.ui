@@ -980,7 +980,7 @@ public class PartServiceImpl implements EPartService {
 			element.setToBeRendered(true);
 			element = placeholder;
 		}
-		
+
 		// render this element
 		element.setToBeRendered(true);
 
@@ -1057,33 +1057,37 @@ public class PartServiceImpl implements EPartService {
 						part);
 			}
 
-			if (parent.getSelectedElement() == toBeRemoved) {
-				// if we're the selected element and we're going to be hidden, need to select
-				// something else
-				MUIElement candidate = partActivationHistory.getSiblingSelectionCandidate(part);
-				candidate = candidate == null ? null
-						: candidate.getCurSharedRef() == null ? candidate : candidate
-								.getCurSharedRef();
-				if (candidate != null && children.contains(candidate)) {
-					parent.setSelectedElement(candidate);
-				} else {
-					for (MUIElement child : children) {
-						if (child != toBeRemoved && child.isToBeRendered()) {
-							parent.setSelectedElement(child);
-							break;
+			MPerspective thePersp = modelService.getPerspectiveFor(toBeRemoved);
+			boolean needNewSel = thePersp == null || !thePersp.getTags().contains("PerspClosing"); //$NON-NLS-1$
+			if (needNewSel) {
+				if (parent.getSelectedElement() == toBeRemoved) {
+					// if we're the selected element and we're going to be hidden, need to select
+					// something else
+					MUIElement candidate = partActivationHistory.getSiblingSelectionCandidate(part);
+					candidate = candidate == null ? null
+							: candidate.getCurSharedRef() == null ? candidate : candidate
+									.getCurSharedRef();
+					if (candidate != null && children.contains(candidate)) {
+						parent.setSelectedElement(candidate);
+					} else {
+						for (MUIElement child : children) {
+							if (child != toBeRemoved && child.isToBeRendered()) {
+								parent.setSelectedElement(child);
+								break;
+							}
 						}
 					}
 				}
-			}
 
-			if (activationCandidate == null) {
-				// nothing else to activate and we're the active child, deactivate
-				if (isActiveChild) {
-					part.getContext().deactivate();
+				if (activationCandidate == null) {
+					// nothing else to activate and we're the active child, deactivate
+					if (isActiveChild) {
+						part.getContext().deactivate();
+					}
+				} else {
+					// activate our candidate
+					activate(activationCandidate);
 				}
-			} else {
-				// activate our candidate
-				activate(activationCandidate);
 			}
 
 			if (toBeRemoved != null) {
