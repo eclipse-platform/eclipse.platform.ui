@@ -91,7 +91,10 @@ import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.bindings.BindingManager;
+import org.eclipse.jface.bindings.BindingManagerEvent;
+import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -2101,7 +2104,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 		initializeCommandResolver();
 
 		// addWindowListener(windowListener);
-		// bindingManager.addBindingManagerListener(bindingManagerListener);
+		bindingManager.addBindingManagerListener(bindingManagerListener);
 
 		serviceLocator.registerService(ISelectionConversionService.class,
 				new SelectionConversionService());
@@ -2828,7 +2831,35 @@ UIEvents.Context.TOPIC_CONTEXT,
 		return contextManager;
 	}
 
+	private final IBindingManagerListener bindingManagerListener = new IBindingManagerListener() {
 
+		public void bindingManagerChanged(BindingManagerEvent bindingManagerEvent) {
+			if (bindingManagerEvent.isActiveBindingsChanged()) {
+				updateActiveWorkbenchWindowMenuManager(true);
+			}
+		}
+	};
+
+	private void updateActiveWorkbenchWindowMenuManager(boolean textOnly) {
+
+		final IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+
+		if (workbenchWindow instanceof WorkbenchWindow) {
+			WorkbenchWindow activeWorkbenchWindow = (WorkbenchWindow) workbenchWindow;
+			if (activeWorkbenchWindow.isClosing()) {
+				return;
+			}
+
+			// Update the action sets.
+			final MenuManager menuManager = activeWorkbenchWindow.getMenuManager();
+
+			if (textOnly) {
+				menuManager.update(IAction.TEXT);
+			} else {
+				menuManager.update(true);
+			}
+		}
+	}
 
 	private ActivityPersistanceHelper activityHelper;
 
