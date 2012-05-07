@@ -81,10 +81,13 @@ class DnDManager {
 			info.update(e);
 			dragAgent = getDragAgent(info);
 			if (dragAgent != null) {
-				dragging = true;
-				isModified = (e.stateMask & SWT.MOD1) != 0;
-				startDrag();
-				dragging = false;
+				try {
+					dragging = true;
+					isModified = (e.stateMask & SWT.MOD1) != 0;
+					startDrag();
+				} finally {
+					dragging = false;
+				}
 			}
 		}
 	};
