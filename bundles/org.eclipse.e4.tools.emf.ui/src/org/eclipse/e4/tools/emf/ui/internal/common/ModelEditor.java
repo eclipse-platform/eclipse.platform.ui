@@ -135,6 +135,7 @@ import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
@@ -635,7 +636,16 @@ public class ModelEditor {
 								try {
 									MApplicationElement o = (MApplicationElement) s.getFirstElement();
 									IScriptingSupport support = (IScriptingSupport) le.createExecutableExtension("class"); //$NON-NLS-1$
-									support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), project == null ? ModelUtils.getContainingContext(o) : null);
+									IEclipseContext ctx = null;
+									if (project == null) {
+										if (o instanceof MContext) {
+											ctx = ((MContext) o).getContext();
+										} else {
+											ctx = ModelUtils.getContainingContext(o);
+										}
+									}
+
+									support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), ctx);
 								} catch (CoreException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
