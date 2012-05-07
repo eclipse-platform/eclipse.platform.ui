@@ -14,6 +14,8 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -122,6 +124,7 @@ public class NewModelFilePage extends WizardPage {
 			if (ssel.size() > 1)
 				return;
 			Object obj = ssel.getFirstElement();
+			
 			if (obj instanceof IResource) {
 				IContainer container;
 				if (obj instanceof IContainer)
@@ -129,6 +132,13 @@ public class NewModelFilePage extends WizardPage {
 				else
 					container = ((IResource) obj).getParent();
 				containerText.setText(container.getFullPath().toString());
+			} else if( obj instanceof IJavaProject ) {
+				IJavaProject container = (IJavaProject) obj;
+				try {
+					containerText.setText(container.getCorrespondingResource().getFullPath().toString());
+				} catch(JavaModelException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		fileText.setText(defaultFilename);
