@@ -42,6 +42,7 @@ import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.commands.ICommandService;
@@ -98,7 +99,9 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
-		bp.dispose();
+		if (bp != null) {
+			bp.dispose();
+		}
 	}
 
 	@Inject
@@ -665,28 +668,37 @@ public final class BindingService implements IBindingService {
 		String existingKeySequence = existingBinding.getKeySequence();
 		if (existingKeySequence == null)
 			return false;
-		if (!existingKeySequence.equals(binding.getTriggerSequence().format()))
+		try {
+			final KeySequence existingSequence = KeySequence.getInstance(existingKeySequence);
+			if (!existingSequence.equals(binding.getTriggerSequence()))
+				return false;
+		} catch (ParseException e) {
 			return false;
+		}
 
 		// tags to look for:
-		ArrayList<String> expectedTagList = new ArrayList<String>(4);
+		final List<String> modelTags = existingBinding.getTags();
 
 		String schemeId = binding.getSchemeId();
 		if (schemeId != null && !schemeId.equals(BindingPersistence.getDefaultSchemeId())) {
-			expectedTagList.add(EBindingService.SCHEME_ID_ATTR_TAG + ":" + schemeId); //$NON-NLS-1$
+			if (!modelTags.contains(EBindingService.SCHEME_ID_ATTR_TAG + ":" + schemeId)) //$NON-NLS-1$
+				return false;
 		}
 		String locale = binding.getLocale();
 		if (locale != null) {
-			expectedTagList.add(EBindingService.LOCALE_ATTR_TAG + ":" + locale); //$NON-NLS-1$
+			if (!modelTags.contains(EBindingService.LOCALE_ATTR_TAG + ":" + locale)) //$NON-NLS-1$
+				return false;
 		}
 		String platform = binding.getPlatform();
 		if (platform != null) {
-			expectedTagList.add(EBindingService.PLATFORM_ATTR_TAG + ":" + platform); //$NON-NLS-1$
+			if (!modelTags.contains(EBindingService.PLATFORM_ATTR_TAG + ":" + platform)) //$NON-NLS-1$
+				return false;
 		}
 		if (binding.getType() == Binding.USER) {
-			expectedTagList.add(EBindingService.TYPE_ATTR_TAG + ":user"); //$NON-NLS-1$
+			if (!modelTags.contains(EBindingService.TYPE_ATTR_TAG + ":user")) //$NON-NLS-1$
+				return false;
 		}
-		return existingBinding.getTags().equals(expectedTagList);
+		return true;
 	}
 
 	// TBD the "update" procedure should not typically be run.
@@ -730,50 +742,52 @@ public final class BindingService implements IBindingService {
 			addToTable = true;
 			keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
 			keyBinding.setCommand(cmd);
-		}
-		keyBinding.setKeySequence(binding.getTriggerSequence().format());
+			keyBinding.setKeySequence(binding.getTriggerSequence().format());
 
-		for (Object obj : parmCmd.getParameterMap().entrySet()) {
-			@SuppressWarnings({ "unchecked" })
-			Map.Entry<String, String> entry = (Map.Entry<String, String>) obj;
+			for (Object obj : parmCmd.getParameterMap().entrySet()) {
+				@SuppressWarnings({ "unchecked" })
+				Map.Entry<String, String> entry = (Map.Entry<String, String>) obj;
 
-			String paramID = entry.getKey();
-			if (paramID == null)
-				continue;
-			List<MParameter> bindingParams = keyBinding.getParameters();
-			MParameter p = null;
-			for (MParameter param : bindingParams) {
-				if (paramID.equals(param.getElementId())) {
-					p = param;
-					break;
+				String paramID = entry.getKey();
+				if (paramID == null)
+					continue;
+				List<MParameter> bindingParams = keyBinding.getParameters();
+				MParameter p = null;
+				for (MParameter param : bindingParams) {
+					if (paramID.equals(param.getElementId())) {
+						p = param;
+						break;
+					}
 				}
+				if (p == null) {
+					p = CommandsFactoryImpl.eINSTANCE.createParameter();
+					p.setElementId(entry.getKey());
+					keyBinding.getParameters().add(p);
+				}
+				p.setName(entry.getKey());
+				p.setValue(entry.getValue());
 			}
-			if (p == null) {
-				p = CommandsFactoryImpl.eINSTANCE.createParameter();
-				p.setElementId(entry.getKey());
-				keyBinding.getParameters().add(p);
+
+			List<String> tags = keyBinding.getTags();
+			// just add the 'schemeId' tag if the binding is for anything other
+			// than
+			// the default scheme
+			if (binding.getSchemeId() != null
+					&& !binding.getSchemeId().equals(BindingPersistence.getDefaultSchemeId())) {
+				tags.add(EBindingService.SCHEME_ID_ATTR_TAG + ":" + binding.getSchemeId()); //$NON-NLS-1$
 			}
-			p.setName(entry.getKey());
-			p.setValue(entry.getValue());
+			if (binding.getLocale() != null) {
+				tags.add(EBindingService.LOCALE_ATTR_TAG + ":" + binding.getLocale()); //$NON-NLS-1$
+			}
+			if (binding.getPlatform() != null) {
+				tags.add(EBindingService.PLATFORM_ATTR_TAG + ":" + binding.getPlatform()); //$NON-NLS-1$
+			}
+			// just add the 'type' tag if it's a user binding
+			if (binding.getType() == Binding.USER) {
+				tags.add(EBindingService.TYPE_ATTR_TAG + ":user"); //$NON-NLS-1$
+			}
 		}
 
-		List<String> tags = keyBinding.getTags();
-		// just add the 'schemeId' tag if the binding is for anything other than
-		// the default scheme
-		if (binding.getSchemeId() != null
-				&& !binding.getSchemeId().equals(BindingPersistence.getDefaultSchemeId())) {
-			tags.add(EBindingService.SCHEME_ID_ATTR_TAG + ":" + binding.getSchemeId()); //$NON-NLS-1$
-		}
-		if (binding.getLocale() != null) {
-			tags.add(EBindingService.LOCALE_ATTR_TAG + ":" + binding.getLocale()); //$NON-NLS-1$
-		}
-		if (binding.getPlatform() != null) {
-			tags.add(EBindingService.PLATFORM_ATTR_TAG + ":" + binding.getPlatform()); //$NON-NLS-1$
-		}
-		// just add the 'type' tag if it's a user binding
-		if (binding.getType() == Binding.USER) {
-			tags.add(EBindingService.TYPE_ATTR_TAG + ":user"); //$NON-NLS-1$
-		}
 		keyBinding.getTransientData().put(EBindingService.MODEL_TO_BINDING_KEY, binding);
 		if (addToTable) {
 			table.getBindings().add(keyBinding);

@@ -141,7 +141,9 @@ public class BindingProcessingAddon {
 		Binding keyBinding = createBinding(bindingContext,
 				binding.getCommand(), binding.getParameters(),
 				binding.getKeySequence(), binding);
-		if (keyBinding != null) {
+		if (keyBinding != null
+				&& !binding.getTags().contains(
+						EBindingService.DELETED_BINDING_TAG)) {
 			bindingTable.addBinding(keyBinding);
 		}
 	}
