@@ -279,7 +279,8 @@ public class SplitDropAgent extends DropAgent {
 
 		if (feedback != null)
 			feedback.dispose();
-		feedback = new SplitFeedbackOverlay(dndManager.getDragShell(), feedbackBounds, side, pct,
+
+		feedback = new SplitFeedbackOverlay(dropCTF.getShell(), feedbackBounds, side, pct,
 				getEnclosed(), getModified());
 	}
 
