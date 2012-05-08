@@ -598,7 +598,6 @@ public class CocoaUIHandler {
 
 	// cribbed from SWT Snippet347
 	private void hookApplicationMenu() {
-		hookAppMenuItem(SWT.ID_QUIT, COMMAND_ID_QUIT);
 		hookAppMenuItem(SWT.ID_PREFERENCES, COMMAND_ID_PREFERENCES);
 		hookAppMenuItem(SWT.ID_ABOUT, COMMAND_ID_ABOUT);
 	}
