@@ -227,7 +227,8 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		imageLabel.setFont(font);
 
 		// text on the right
-		text = new StyledText(infoArea, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
+		text = new StyledText(infoArea, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | SWT.V_SCROLL);
+		text.setAlwaysShowScrollBars(false);
 		
 		// Don't set caret to 'null' as this causes https://bugs.eclipse.org/293263.
 //		text.setCaret(null);
