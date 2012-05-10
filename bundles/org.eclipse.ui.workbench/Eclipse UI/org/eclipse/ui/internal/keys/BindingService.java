@@ -742,7 +742,7 @@ public final class BindingService implements IBindingService {
 			addToTable = true;
 			keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
 			keyBinding.setCommand(cmd);
-			keyBinding.setKeySequence(binding.getTriggerSequence().format());
+			keyBinding.setKeySequence(binding.getTriggerSequence().toString());
 
 			for (Object obj : parmCmd.getParameterMap().entrySet()) {
 				@SuppressWarnings({ "unchecked" })
@@ -814,7 +814,7 @@ public final class BindingService implements IBindingService {
 					continue;
 				}
 				// check equality
-				if (curr.getKeySequence().equals(binding.getTriggerSequence().format())
+				if (curr.getKeySequence().equals(binding.getTriggerSequence().toString())
 						&& curr.getCommand() != null
 						&& curr.getCommand().getElementId().equals(commandId)) {
 
