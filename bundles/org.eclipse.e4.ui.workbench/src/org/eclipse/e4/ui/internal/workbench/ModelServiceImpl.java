@@ -571,7 +571,7 @@ public class ModelServiceImpl implements EModelService {
 				psc.getChildren().add(0, toInsert);
 			else
 				psc.getChildren().add(toInsert);
-		} else if (relToParent instanceof MPartSashContainer
+		} else if (relToParent instanceof MPartSashContainer && !(relToParent instanceof MArea)
 				&& directionsMatch((MPartSashContainer) relToParent, horizontal)) {
 			MPartSashContainer psc = (MPartSashContainer) relToParent;
 			int relToIndex = psc.getChildren().indexOf(relTo);
