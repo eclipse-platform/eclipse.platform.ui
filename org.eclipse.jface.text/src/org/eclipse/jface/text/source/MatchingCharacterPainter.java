@@ -83,7 +83,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	private boolean fCharacterPresentAtCaretLocation;
 
 	/**
-	 * The document this painter is associated with.
+	 * The document this painter is associated with, or <code>null</code>.
 	 * 
 	 * @since 3.8
 	 */
@@ -465,7 +465,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		 *      org.eclipse.jface.text.IDocument)
 		 */
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
-			//do nothing
+			fDocument= null;
 		}
 
 		/**
