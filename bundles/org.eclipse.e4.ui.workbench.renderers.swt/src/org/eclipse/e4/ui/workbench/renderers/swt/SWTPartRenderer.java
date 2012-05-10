@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -167,6 +168,14 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	protected Image getImage(MUILabel element) {
+		if (element instanceof MApplicationElement) {
+			Object image = ((MApplicationElement) element).getTransientData()
+					.get(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY);
+			if (image instanceof Image && !((Image) image).isDisposed()) {
+				return (Image) image;
+			}
+		}
+
 		IEclipseContext localContext = context;
 		String iconURI = element.getIconURI();
 		if (iconURI != null && iconURI.length() > 0) {
