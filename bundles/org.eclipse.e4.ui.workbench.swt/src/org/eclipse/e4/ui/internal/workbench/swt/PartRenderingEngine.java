@@ -187,7 +187,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// Put the control under the 'limbo' shell
 				if (changedElement.getWidget() instanceof Control) {
 					Control ctrl = (Control) changedElement.getWidget();
-					ctrl.getShell().layout(new Control[] { ctrl }, SWT.DEFER);
+
+					if (!(ctrl instanceof Shell)) {
+						ctrl.getShell().layout(new Control[] { ctrl },
+								SWT.DEFER);
+					}
 
 					ctrl.setParent(getLimboShell());
 				}
