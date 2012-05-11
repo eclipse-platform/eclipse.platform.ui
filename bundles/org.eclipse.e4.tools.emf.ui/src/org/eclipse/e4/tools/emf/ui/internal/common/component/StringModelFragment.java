@@ -135,7 +135,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 			Text t = new Text(comp, SWT.BORDER);
 			TextPasteHandler.createFor(t);
-			t.setEditable(false);
+			// t.setEditable(false);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID).observeDetail(getMaster()));
