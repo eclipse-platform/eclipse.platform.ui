@@ -401,6 +401,10 @@ public class LinkedModeUI {
 					return;
 				}
 			}
+
+			// Make sure that any document change is done inside a compound change
+			beginCompoundChangeIfNeeded();
+
 		}
 
 		/*
@@ -501,7 +505,7 @@ public class LinkedModeUI {
 				if (!position.equals(fPreviousPosition))
 					endCompoundChange();
 
-				beginCompoundChange();
+				beginCompoundChangeIfNeeded();
 			}
 
 			fPreviousPosition= position;
@@ -1208,7 +1212,7 @@ public class LinkedModeUI {
 		}
 	}
 
-	private void beginCompoundChange() {
+	private void beginCompoundChangeIfNeeded() {
 		if (!fHasOpenCompoundChange) {
 			ITextViewerExtension extension= (ITextViewerExtension) fCurrentTarget.getViewer();
 			IRewriteTarget target= extension.getRewriteTarget();
