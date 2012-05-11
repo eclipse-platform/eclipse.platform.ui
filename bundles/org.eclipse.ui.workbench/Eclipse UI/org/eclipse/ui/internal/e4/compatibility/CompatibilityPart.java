@@ -28,6 +28,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -53,7 +58,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-public abstract class CompatibilityPart {
+public abstract class CompatibilityPart implements ISelectionChangedListener {
 
 	public static final String COMPATIBILITY_EDITOR_URI = "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor"; //$NON-NLS-1$
 
@@ -151,6 +156,19 @@ public abstract class CompatibilityPart {
 				WorkbenchPlugin.log("Unable to initialize error part", ex.getStatus()); //$NON-NLS-1$
 			}
 		}
+
+		IWorkbenchPartSite site = legacyPart.getSite();
+		if (site != null) {
+			ISelectionProvider selectionProvider = site.getSelectionProvider();
+			if (selectionProvider != null) {
+				selectionProvider.addSelectionChangedListener(this);
+
+				if (selectionProvider instanceof IPostSelectionProvider) {
+					((IPostSelectionProvider) selectionProvider)
+							.addPostSelectionChangedListener(this);
+				}
+			}
+		}
 		return true;
 	}
 
@@ -168,6 +186,21 @@ public abstract class CompatibilityPart {
 	}
 
 	private void invalidate() {
+		if (wrapped != null) {
+			IWorkbenchPartSite site = wrapped.getSite();
+			if (site != null) {
+				ISelectionProvider selectionProvider = site.getSelectionProvider();
+				if (selectionProvider != null) {
+					selectionProvider.removeSelectionChangedListener(this);
+
+					if (selectionProvider instanceof IPostSelectionProvider) {
+						((IPostSelectionProvider) selectionProvider)
+								.removePostSelectionChangedListener(this);
+					}
+				}
+			}
+		}
+
 		WorkbenchPartReference reference = getReference();
 		reference.invalidate();
 
@@ -379,5 +412,11 @@ public abstract class CompatibilityPart {
 
 	public MPart getModel() {
 		return part;
+	}
+	
+	public void selectionChanged(SelectionChangedEvent e) {
+		ESelectionService selectionService = (ESelectionService) part.getContext().get(
+				ESelectionService.class.getName());
+		selectionService.setSelection(e.getSelection());
 	}
 }

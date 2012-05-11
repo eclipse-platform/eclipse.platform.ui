@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
-import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -113,35 +112,11 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) final MPart part) {
-		if (activePart != null) {
-			ISelectionProvider selectionProvider = activePart.getSite().getSelectionProvider();
-			if (selectionProvider != null) {
-				selectionProvider.removeSelectionChangedListener(this);
-
-				if (selectionProvider instanceof IPostSelectionProvider) {
-					((IPostSelectionProvider) selectionProvider)
-							.removePostSelectionChangedListener(this);
-				}
-			}
-			activePart = null;
-		}
-
+		activePart = null;
 		if (part != null) {
 			Object client = part.getObject();
 			if (client instanceof CompatibilityPart) {
 				IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-
-				ISelectionProvider selectionProvider = workbenchPart.getSite()
-						.getSelectionProvider();
-				if (selectionProvider != null) {
-					selectionProvider.addSelectionChangedListener(this);
-
-					if (selectionProvider instanceof IPostSelectionProvider) {
-						((IPostSelectionProvider) selectionProvider)
-								.addPostSelectionChangedListener(this);
-					}
-				}
-
 				activePart = workbenchPart;
 			}
 		}
