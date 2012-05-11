@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -79,7 +80,20 @@ public class StandardTrim {
 		IEclipseContext context = modelService.getContainingContext(toolControl);
 		WorkbenchWindow wbw = (WorkbenchWindow) context.get(IWorkbenchWindow.class);
 		// wbw may be null if workspace is started with no open perspectives.
+		if (wbw == null) {
+			// Create one assuming there's no defined perspective
+			Workbench wb = (Workbench) PlatformUI.getWorkbench();
+			wb.createWorkbenchWindow(wb.getDefaultPageInput(), null,
+					modelService.getTopLevelWindowFor(toolControl), false);
+			wbw = (WorkbenchWindow) context.get(IWorkbenchWindow.class);
+		}
+
 		if (wbw != null) {
+			Workbench wb = (Workbench) PlatformUI.getWorkbench();
+			wb.createWorkbenchWindow(wb.getDefaultPageInput(), null,
+					modelService.getTopLevelWindowFor(toolControl), false);
+			wbw = (WorkbenchWindow) context.get(IWorkbenchWindow.class);
+
 			manager = wbw.getStatusLineManager();
 			manager.createControl(parent);
 		}

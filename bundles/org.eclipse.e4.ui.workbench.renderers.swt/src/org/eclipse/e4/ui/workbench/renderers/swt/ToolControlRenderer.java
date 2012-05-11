@@ -76,7 +76,10 @@ public class ToolControlRenderer extends SWTPartRenderer {
 				toolControl.getContributionURI(), parentContext, localContext);
 		toolControl.setObject(tcImpl);
 		Control[] kids = parentComp.getChildren();
-		assert (kids.length > 0);
+
+		// No kids means that the trim failed curing creation
+		if (kids.length == 0)
+			return null;
 
 		// The new control is assumed to be the last child created
 		// We could safe this up even more by asserting that the
