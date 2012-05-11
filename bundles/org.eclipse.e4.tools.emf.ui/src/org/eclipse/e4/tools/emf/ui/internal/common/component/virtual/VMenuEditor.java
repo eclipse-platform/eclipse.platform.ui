@@ -21,6 +21,8 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -59,6 +61,12 @@ public class VMenuEditor extends AbstractComponentEditor {
 	private List<Action> actions = new ArrayList<Action>();
 	private EStructuralFeature feature;
 
+	public static final String VIEW_MENU_TAG = "ViewMenu"; //$NON-NLS-1$
+
+	enum Types {
+		MENU, POPUP_MENU, VIEW_MENU
+	}
+
 	protected VMenuEditor(EStructuralFeature feature) {
 		super();
 		this.feature = feature;
@@ -76,6 +84,12 @@ public class VMenuEditor extends AbstractComponentEditor {
 			@Override
 			public void run() {
 				handleAdd(MenuPackageImpl.Literals.POPUP_MENU);
+			}
+		});
+		actions.add(new Action(Messages.MenuEditor_Label_ViewMenu, createImageDescriptor(ResourceProvider.IMG_Menu)) {
+			@Override
+			public void run() {
+				handleAddViewMenu();
 			}
 		});
 	}
@@ -202,12 +216,16 @@ public class VMenuEditor extends AbstractComponentEditor {
 		childrenDropDown.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				EClass eclass = (EClass) element;
-				return eclass.getName();
+				if (element == Types.MENU) {
+					return Messages.MenuEditor_Label;
+				} else if (element == Types.POPUP_MENU) {
+					return Messages.PopupMenuEditor_TreeLabel;
+				}
+				return Messages.MenuEditor_Label_ViewMenu;
 			}
 		});
-		childrenDropDown.setInput(new EClass[] { MenuPackageImpl.Literals.MENU, MenuPackageImpl.Literals.POPUP_MENU });
-		childrenDropDown.setSelection(new StructuredSelection(MenuPackageImpl.Literals.MENU));
+		childrenDropDown.setInput(Types.values());
+		childrenDropDown.setSelection(new StructuredSelection(Types.MENU));
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
@@ -215,8 +233,14 @@ public class VMenuEditor extends AbstractComponentEditor {
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
-				handleAdd(eClass);
+				Types t = (Types) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
+				if (t == Types.MENU) {
+					handleAdd(MenuPackageImpl.Literals.MENU);
+				} else if (t == Types.POPUP_MENU) {
+					handleAdd(MenuPackageImpl.Literals.POPUP_MENU);
+				} else {
+					handleAddViewMenu();
+				}
 			}
 		});
 
@@ -256,6 +280,19 @@ public class VMenuEditor extends AbstractComponentEditor {
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 			getEditor().setSelection(handler);
+		}
+	}
+
+	protected void handleAddViewMenu() {
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		menu.getTags().add(VIEW_MENU_TAG);
+		setElementId(menu);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), feature, menu);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(menu);
 		}
 	}
 

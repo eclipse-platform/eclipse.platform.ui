@@ -121,6 +121,7 @@ public class Messages {
 	public String KeyBindingEditor_AddParameter;
 
 	public String MenuEditor_Label;
+	public String MenuEditor_Label_ViewMenu;
 	public String MenuEditor_Description;
 	public String MenuEditor_MenuItems;
 	public String MenuEditor_MenuItemType;

@@ -36,6 +36,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.Text
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor.EClass2EObject;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor.EObject2EClass;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuIconDialogEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -523,7 +524,11 @@ public class MenuEditor extends AbstractComponentEditor {
 			EObject o = (EObject) element;
 			if (o.eContainer() instanceof MWindow) {
 				return Messages.MenuEditor_MainMenu;
+			} else if (menu.getTags().contains(VMenuEditor.VIEW_MENU_TAG)) {
+				return Messages.MenuEditor_Label_ViewMenu;
 			}
+		} else if (menu.getTags().contains(VMenuEditor.VIEW_MENU_TAG)) {
+			return Messages.MenuEditor_Label_ViewMenu;
 		}
 		return Messages.MenuEditor_Label;
 	}
