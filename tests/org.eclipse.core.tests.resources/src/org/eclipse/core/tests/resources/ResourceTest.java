@@ -965,7 +965,18 @@ public abstract class ResourceTest extends CoreTest {
 		String[] devices = new String[2];
 		for (int i = 97/*a*/; i < 123/*z*/; i++) {
 			char c = (char) i;
-			if (new java.io.File(c + ":\\").exists() && new java.io.File(c + ":\\").canWrite()) {
+			java.io.File rootFile = new java.io.File(c + ":\\");
+			if (rootFile.exists() && rootFile.canWrite()) {
+				//sometimes canWrite can return true but we are still not allowed to create a file - see bug 379284.
+				File probe = new File(rootFile, getUniqueString());
+				try {
+					probe.createNewFile();
+				} catch (IOException e) {
+					//can't create a file here.. try another device
+					continue;
+				} finally {
+					probe.delete();
+				}
 				if (devices[0] == null) {
 					devices[0] = c + ":/";
 				} else {
