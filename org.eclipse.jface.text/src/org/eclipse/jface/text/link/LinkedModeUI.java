@@ -503,7 +503,7 @@ public class LinkedModeUI {
 
 				// if the last position is not the same and there is an open change: close it.
 				if (!position.equals(fPreviousPosition))
-					endCompoundChange();
+					endCompoundChangeIfNeeded();
 
 				beginCompoundChangeIfNeeded();
 			}
@@ -838,7 +838,7 @@ public class LinkedModeUI {
 			fPositionListener.linkingFocusLost(fFramePosition, fCurrentTarget);
 
 		// undo
-		endCompoundChange();
+		endCompoundChangeIfNeeded();
 
 		redraw(); // redraw current position being left - usually not needed
 		IDocument oldDoc= fFramePosition == null ? null : fFramePosition.getDocument();
@@ -1122,7 +1122,7 @@ public class LinkedModeUI {
 			return;
 		fIsActive= false;
 
-		endCompoundChange();
+		endCompoundChangeIfNeeded();
 
 		Display display= null;
 		if (fCurrentTarget.fWidget != null && !fCurrentTarget.fWidget.isDisposed())
@@ -1203,7 +1203,7 @@ public class LinkedModeUI {
 			runnable.run();
 	}
 
-	private void endCompoundChange() {
+	private void endCompoundChangeIfNeeded() {
 		if (fHasOpenCompoundChange) {
 			ITextViewerExtension extension= (ITextViewerExtension) fCurrentTarget.getViewer();
 			IRewriteTarget target= extension.getRewriteTarget();
