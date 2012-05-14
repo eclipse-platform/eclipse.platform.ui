@@ -47,8 +47,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -1496,8 +1495,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		IEditorInput input= getEditorInput();
 		if (provider != null && input != null) {
 			if (!isDirty() && input.getAdapter(IFile.class) != null) {
-				IEclipsePreferences pref= InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
-				if (pref != null && pref.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false))
+				if (Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null))
 					return;
 			}
 		}
