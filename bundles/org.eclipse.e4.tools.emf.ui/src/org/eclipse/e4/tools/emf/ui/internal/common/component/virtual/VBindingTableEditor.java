@@ -45,7 +45,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 
 public class VBindingTableEditor extends AbstractComponentEditor {
 	private Composite composite;
@@ -93,6 +92,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 		if (composite == null) {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
+
 		}
 		VirtualEntry<?> o = (VirtualEntry<?>) object;
 		bindingViewer.setInput(o.getList());
@@ -110,10 +110,6 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.VBindingTableEditor_BindingTables);
-			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-
 			bindingViewer = new TableViewer(parent);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			bindingViewer.setContentProvider(cp);

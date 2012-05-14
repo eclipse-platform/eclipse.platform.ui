@@ -45,7 +45,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 
 public class VTrimContributionsEditor extends AbstractComponentEditor {
 	private Composite composite;
@@ -110,10 +109,6 @@ public class VTrimContributionsEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.VTrimContributionsEditor_Contributions);
-			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-
 			viewer = new TableViewer(parent);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);

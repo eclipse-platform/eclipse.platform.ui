@@ -561,7 +561,7 @@ public class ModelEditor {
 			}
 		});
 
-		form.setWeights(new int[] { 1, 2 });
+		form.setWeights(new int[] { 3, 4 });
 
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);

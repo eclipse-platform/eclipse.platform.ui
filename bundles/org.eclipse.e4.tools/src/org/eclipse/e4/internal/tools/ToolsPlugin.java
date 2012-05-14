@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
 public class ToolsPlugin extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.e4.tools"; //$NON-NLS-1$
-
+ 
 	private static ToolsPlugin plugin;
 	
 	private ResourceLocator resourceLocator;
