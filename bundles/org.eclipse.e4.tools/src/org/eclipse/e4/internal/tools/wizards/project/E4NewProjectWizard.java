@@ -160,7 +160,6 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 							IPluginBase pluginBase = model.getPluginBase();
 							String[] dependencyId = new String[] {
 									"javax.inject",
-									"org.eclipse.core.resources",
 									"org.eclipse.core.runtime",
 									"org.eclipse.swt",
 									"org.eclipse.core.databinding",
