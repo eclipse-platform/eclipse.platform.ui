@@ -329,6 +329,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART_SASH_CONTAINER));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.ModelTooling_Common_AddEllipsis);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {

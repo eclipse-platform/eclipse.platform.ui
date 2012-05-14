@@ -233,6 +233,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 			childrenDropDown.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.ModelTooling_Common_AddEllipsis);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
