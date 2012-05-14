@@ -106,7 +106,7 @@ public class Util {
 				lastNumber = number;
 			}
 
-			return prefix + "." + ++lastNumber; //$NON-NLS-1$
+			return (prefix + "." + ++lastNumber).toLowerCase(); //$NON-NLS-1$
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
