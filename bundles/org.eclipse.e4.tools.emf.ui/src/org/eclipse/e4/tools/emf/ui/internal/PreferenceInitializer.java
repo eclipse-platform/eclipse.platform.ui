@@ -26,6 +26,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			String val = StringConverter.asString(new RGB(200, 200, 200));
 			pref.put("notVisibleAndRenderedColor", val);
 		}
+
+		if (pref.get("autoCreateElementId", null) == null) {
+			pref.putBoolean("autoCreateElementId", true);
+		}
 	}
 
 }
