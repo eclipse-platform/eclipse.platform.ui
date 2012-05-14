@@ -56,7 +56,7 @@ public class NewModelFilePage extends WizardPage {
 	public NewModelFilePage(ISelection selection, String defaultFilename) {
 		super("wizardPage");
 		setTitle("New application model");
-		setDescription("This wizard creates a new e4 application model");
+		setDescription("This wizard creates a new Eclipse 4 application model");
 		this.selection = selection;
 		this.defaultFilename = defaultFilename;
 	}

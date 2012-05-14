@@ -65,11 +65,11 @@ public class NewApplicationWizardPage extends WizardPage {
 	private PropertyData[] PROPERTIES;
 
 	protected NewApplicationWizardPage(IProjectProvider projectProvider, AbstractFieldData pluginData) {
-		super("New e4 Application Wizard Page");
+		super("New Eclipse 4 Application Wizard Page");
 		this.projectProvider = projectProvider;
 		this.pluginData = pluginData;
 		data = new HashMap<String, String>();
-		setTitle("e4 Application");
+		setTitle("Eclipse 4 Application");
 		setMessage("Configure application with special values.");
 	}
 
