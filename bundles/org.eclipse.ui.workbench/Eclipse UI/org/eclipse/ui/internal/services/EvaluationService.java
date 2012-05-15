@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,12 +25,15 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.ISources;
@@ -78,6 +82,20 @@ public final class EvaluationService implements IEvaluationService {
 		context = c;
 		ratContext = context.getParent().createChild(getClass().getName());
 		legacyContext = new ExpressionContext(context);
+		ExpressionContext.defaultVariableConverter = new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				Object defaultVariable = context.getActive(IServiceConstants.ACTIVE_SELECTION);
+				if (defaultVariable instanceof IStructuredSelection) {
+					final IStructuredSelection selection = (IStructuredSelection) defaultVariable;
+					return selection.toList();
+				} else if ((defaultVariable instanceof ISelection)
+						&& (!((ISelection) defaultVariable).isEmpty())) {
+					return Collections.singleton(defaultVariable);
+				}
+				return null;
+			}
+		};
 		contextUpdater = new ISourceProviderListener() {
 
 			public void sourceChanged(int sourcePriority, String sourceName, Object sourceValue) {

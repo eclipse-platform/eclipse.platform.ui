@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.workbench.modeling;
 import java.util.Collections;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
 
@@ -24,6 +25,7 @@ public class ExpressionContext implements IEvaluationContext {
 	public static final String ALLOW_ACTIVATION = "org.eclipse.e4.ui.workbench.modeling.ExpressionContext.allowActivation"; //$NON-NLS-1$
 
 	public IEclipseContext eclipseContext;
+	public static IContextFunction defaultVariableConverter = null;
 
 	public ExpressionContext(IEclipseContext eclipseContext) {
 		this.eclipseContext = eclipseContext;
@@ -82,7 +84,12 @@ public class ExpressionContext implements IEvaluationContext {
 	 * @see org.eclipse.core.expressions.IEvaluationContext#getDefaultVariable()
 	 */
 	public Object getDefaultVariable() {
-		Object sel = eclipseContext.getActive(IServiceConstants.ACTIVE_SELECTION);
+		final Object sel;
+		if (defaultVariableConverter != null) {
+			sel = defaultVariableConverter.compute(eclipseContext);
+		} else {
+			sel = eclipseContext.getActive(IServiceConstants.ACTIVE_SELECTION);
+		}
 		return sel == null ? Collections.EMPTY_LIST : sel;
 	}
 
