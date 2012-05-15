@@ -16,8 +16,13 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.ControlElement;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.widgets.ImageBasedFrame;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -56,7 +61,7 @@ public class CSSRenderingUtils {
 	}
 
 	private Image rotateImage(Display display, Image image, Integer[] frameInts) {
-		// Swap teh widths / heights of the 'cuts'
+		// Swap the widths / heights of the 'cuts'
 		if (frameInts != null) {
 			int tmp;
 			tmp = frameInts[0];
@@ -71,9 +76,15 @@ public class CSSRenderingUtils {
 			return rotatedImageMap.get(image);
 
 		// rotate 90 degrees,,,
-		Image rotatedImage = new Image(display, image.getBounds().height,
-				image.getBounds().width);
+		Rectangle bounds = image.getBounds();
+		ImageData imageData = new ImageData(bounds.height, bounds.width, 32,
+				new PaletteData(0xFF0000, 0x00FF00, 0x0000FF));
+		Image rotatedImage = new Image(display, imageData);
 		GC gc = new GC(rotatedImage);
+		RGB rgb = new RGB(0x7d, 0, 0);
+		Color offRed = new Color(display, rgb);
+		gc.setBackground(offRed);
+		gc.fillRectangle(0, 0, bounds.height, bounds.width);
 		Transform t = new Transform(display);
 		int w = image.getBounds().height;
 		int offset = 0; // (w+1) % 2;
@@ -83,7 +94,18 @@ public class CSSRenderingUtils {
 		gc.drawImage(image, 0, 0);
 		gc.dispose();
 		t.dispose();
-
+		offRed.dispose();
+		ImageData alphaData = rotatedImage.getImageData();
+		rotatedImage.dispose();
+		int transparentPix = alphaData.palette.getPixel(rgb);
+		for (int i = 0; i < alphaData.width; i++) {
+			for (int j = 0; j < alphaData.height; j++) {
+				if (alphaData.getPixel(i, j) != transparentPix) {
+					alphaData.setAlpha(i, j, 255);
+				}
+			}
+		}
+		rotatedImage = new Image(display, alphaData);
 		// ...and cache it
 		rotatedImageMap.put(image, rotatedImage);
 
