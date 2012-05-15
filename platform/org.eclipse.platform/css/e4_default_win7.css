@@ -16,7 +16,12 @@
 }
 
 .MTrimBar#org-eclipse-ui-main-toolbar {
-    background-image:  url(./win7.PNG);	
+    background-image:  url(./win7.png);	
+}
+
+.MToolControl.TrimStack {
+	frame-image:  url(./win7TSFrame.png);
+	handle-image:  url(./win7Handle.png);
 }
 
 .MPartStack.active {

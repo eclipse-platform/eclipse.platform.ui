@@ -16,7 +16,12 @@
 }
 
 .MTrimBar#org-eclipse-ui-main-toolbar  {
-    background-image:  url(./gtkGrey.PNG);	
+    background-image:  url(./gtkGrey.png);	
+}
+
+.MToolControl.TrimStack {
+	frame-image:  url(./gtkTSFrame.png);
+	handle-image:  url(./gtkHandle.png);
 }
 
 .MPartStack.active {

@@ -28,7 +28,7 @@
 }
 
 .MToolControl.TrimStack {
-	frame-image:  url(./winXPTSFrame.PNG);
-	handle-image:  url(./winXPHandle.PNG);
+	frame-image:  url(./winXPTSFrame.png);
+	handle-image:  url(./winXPHandle.png);
 	frame-cuts: 5px 1px 5px 16px;
 }

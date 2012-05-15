@@ -18,6 +18,11 @@
     background-color:  #CFCFCF #A8A8A8 100%;	
 }
 
+.MToolControl.TrimStack {
+	frame-image:  url(./macTSFrame.png);
+	handle-image:  url(./macHandle.png);
+}
+
 .MPartStack.active {
 	swt-unselected-tabs-color: #F6F6F6 #D3D3D3 #D1D1D1 #D1D1D1 #D6D6D6 #D6D6D6 #FFFFFF 20% 45% 60% 70% 100% 100%;
     swt-outer-keyline-color: #C4C5C1;
