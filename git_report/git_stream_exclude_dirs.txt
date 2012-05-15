@@ -24,6 +24,10 @@ examples/org.eclipse.e4.demo.e4photo
 examples/org.eclipse.e4.examples.services
 examples/org.eclipse.e4.ui.examples.css
 examples/org.eclipse.e4.ui.examples.css.rcp
+examples/org.eclipse.e4.demo.split.feature
+examples/org.eclipse.e4.demo.split.model
+examples/org.eclipse.e4.demo.split.renderer.swt
+examples/org.eclipse.e4.demo.split.renderer.wb
 features/org.eclipse.e4.rcp
 tests/org.eclipse.e4.core.commands.tests
 tests/org.eclipse.e4.emf.xpath.test
