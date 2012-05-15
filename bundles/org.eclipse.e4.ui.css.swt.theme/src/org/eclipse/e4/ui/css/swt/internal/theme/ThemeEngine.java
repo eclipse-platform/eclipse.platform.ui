@@ -68,6 +68,8 @@ public class ThemeEngine implements IThemeEngine {
 
 	private static final String THEMEID_KEY = "themeid";
 
+	public static final String THEME_PLUGIN_ID = "org.eclipse.e4.ui.css.swt.theme";
+
 	public ThemeEngine(Display display) {
 		this.display = display;
 
