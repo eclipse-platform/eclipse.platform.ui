@@ -224,6 +224,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
+		b.setText(Messages.ModelTooling_Common_AddEllipsis);
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
