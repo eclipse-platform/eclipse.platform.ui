@@ -63,3 +63,4 @@ Export-Package: org.eclipse.ua.tests,
  org.eclipse.ua.tests.plugin,
  org.eclipse.ua.tests.util,
  org.eclipse.ua.tests.browser
+Eclipse-BundleShape: dir
