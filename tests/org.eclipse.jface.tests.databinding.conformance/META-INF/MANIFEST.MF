@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jface.tests.databinding.conformance
 Bundle-Version: 1.1.0.qualifier
+Eclipse-BundleShape: dir
 Require-Bundle: org.junit,
  org.eclipse.core.databinding,
  org.eclipse.jface.databinding,

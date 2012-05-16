@@ -17,3 +17,4 @@ Export-Package: org.eclipse.ui.tests.rcp,
  org.eclipse.ui.tests.rcp.performance,
  org.eclipse.ui.tests.rcp.util
 Bundle-Localization: plugin
+Eclipse-BundleShape: dir
