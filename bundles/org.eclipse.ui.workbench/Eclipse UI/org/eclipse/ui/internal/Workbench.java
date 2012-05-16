@@ -1212,6 +1212,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 			activeWindow = application.getChildren().get(0);
 		}
 
+		// We can't return a window with no widget...it's in the process
+		// of closing...see Bug 379717
+		if (activeWindow != null && activeWindow.getWidget() == null) {
+			return null;
+		}
+
 		return createWorkbenchWindow(getDefaultPageInput(), getPerspectiveRegistry()
 				.findPerspectiveWithId(getPerspectiveRegistry().getDefaultPerspective()),
 				activeWindow, false);
