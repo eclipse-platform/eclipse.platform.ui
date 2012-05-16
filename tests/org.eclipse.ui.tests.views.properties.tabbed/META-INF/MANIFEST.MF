@@ -31,4 +31,4 @@ Export-Package: org.eclipse.ui.tests.views.properties.tabbed,
  org.eclipse.ui.tests.views.properties.tabbed.sections,
  org.eclipse.ui.tests.views.properties.tabbed.text,
  org.eclipse.ui.tests.views.properties.tabbed.views
-
+Eclipse-BundleShape: dir
