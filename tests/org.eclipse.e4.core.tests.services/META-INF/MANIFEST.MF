@@ -21,3 +21,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org
 Export-Package: org.eclipse.e4.core.services.internal.context;x-internal:=true,
  org.eclipse.e4.core.tests.services
+Eclipse-BundleShape: dir

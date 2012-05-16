@@ -27,3 +27,4 @@ Export-Package: org.eclipse.e4.core.internal.tests;x-internal:=true,
  org.eclipse.e4.core.internal.tests.manual;x-internal:=true,
  org.eclipse.e4.core.tests
 Service-Component: OSGI-INF/adder.xml
+Eclipse-BundleShape: dir
