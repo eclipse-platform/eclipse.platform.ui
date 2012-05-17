@@ -58,8 +58,17 @@ public class MenuService implements EMenuService {
 				IRendererFactory.class);
 		AbstractPartRenderer renderer = rendererFactory.getRenderer(mmenu,
 				parentControl);
-		IEclipseContext popupContext = part.getContext().createChild(
-				"popup:" + mmenu.getElementId());
+
+		// Check whether the part's is a multi-page editor, if so use its
+		// context instead
+		IEclipseContext parentContext = part.getContext();
+		if (parentContext.get("MultiPageEditorSite") instanceof IEclipseContext) {
+			parentContext = (IEclipseContext) parentContext
+					.get("MultiPageEditorSite");
+		}
+
+		IEclipseContext popupContext = parentContext.createChild("popup:"
+				+ mmenu.getElementId());
 		mmenu.setContext(popupContext);
 		Object widget = renderer.createWidget(mmenu, parentControl);
 		if (!(widget instanceof Menu)) {

@@ -138,6 +138,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 					}});
 
 		context = site.getModel().getContext().createChild("MultiPageEditorSite"); //$NON-NLS-1$
+		site.getModel().getContext().set("MultiPageEditorSite", context); //$NON-NLS-1$
 		serviceLocator.setContext(context);
 
 		initializeDefaultServices();
