@@ -1,0 +1,34 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Eclipse Team Core Tests
+Bundle-SymbolicName: org.eclipse.team.tests.core; singleton:=true
+Bundle-Version: 3.7.0.qualifier
+Bundle-ClassPath: teamtests.jar
+Bundle-Activator: org.eclipse.core.internal.compatibility.PluginActivator
+Bundle-Vendor: Eclipse.org
+Bundle-Localization: plugin
+Export-Package: org.eclipse.team.tests.core,
+ org.eclipse.team.tests.core.mapping,
+ org.eclipse.team.tests.core.regression,
+ org.eclipse.team.tests.ui,
+ org.eclipse.team.tests.ui.synchronize
+Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
+ org.eclipse.ui.views;resolution:=optional,
+ org.eclipse.jface.text;resolution:=optional,
+ org.eclipse.ui.workbench.texteditor;resolution:=optional,
+ org.eclipse.ui.editors;resolution:=optional,
+ org.eclipse.core.tests.harness,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime.compatibility,
+ org.eclipse.team.core,
+ org.eclipse.team.cvs.core,
+ org.eclipse.team.ui,
+ org.eclipse.team.cvs.ui,
+ org.eclipse.compare,
+ org.eclipse.ui,
+ org.junit,
+ org.eclipse.core.tests.resources,
+ org.eclipse.ui.navigator,
+ org.eclipse.core.filesystem,
+ org.eclipse.compare.tests
+Bundle-ActivationPolicy: lazy

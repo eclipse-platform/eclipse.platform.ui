@@ -10,39 +10,9 @@
         IBM Corporation - initial API and implementation
  -->
 
-<plugin
-   id="org.eclipse.team.tests.core"
-   name="Eclipse Team Core Tests"
-   version="3.7.0.qualifier"
-   provider-name="Eclipse.org">
+<plugin>
 
-   <runtime>
-      <library name="teamtests.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.ui.ide" optional="true"/>
-      <import plugin="org.eclipse.ui.views" optional="true"/>
-      <import plugin="org.eclipse.jface.text" optional="true"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" optional="true"/>
-      <import plugin="org.eclipse.ui.editors" optional="true"/>
-      <import plugin="org.eclipse.core.tests.harness"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
-      <import plugin="org.eclipse.team.core"/>
-      <import plugin="org.eclipse.team.cvs.core"/>
-      <import plugin="org.eclipse.team.ui"/>
-      <import plugin="org.eclipse.team.cvs.ui"/>
-      <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.junit"/>
-      <import plugin="org.eclipse.core.tests.resources"/>
-      <import plugin="org.eclipse.ui.navigator"/>
-      <import plugin="org.eclipse.core.filesystem"/>
-      <import plugin="org.eclipse.compare.tests"/>
-   </requires>
-
+    
 <!-- *************** Repository Providers **************** -->
    <extension
          point="org.eclipse.team.core.repository">
