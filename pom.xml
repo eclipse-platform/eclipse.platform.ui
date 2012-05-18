@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2012 Eclipse Foundation.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Distribution License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/org/documents/edl-v10.php
+ 
+  Contributors:
+     Igor Fedorenko - initial implementation
+-->
+
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.eclipse</groupId>
+    <artifactId>eclipse-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.eclipse.platform.runtime</groupId>
+  <artifactId>eclipse.platform.runtime</artifactId>
+  <version>3.8.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>bundles/org.eclipse.core.boot</module>
+    <module>bundles/org.eclipse.core.contenttype</module>
+    <module>bundles/org.eclipse.core.expressions</module>
+    <module>bundles/org.eclipse.core.jobs</module>
+    <module>bundles/org.eclipse.core.runtime</module>
+    <module>bundles/org.eclipse.core.runtime.compatibility</module>
+    <module>bundles/org.eclipse.core.runtime.compatibility.auth</module>
+    <module>bundles/org.eclipse.core.runtime.compatibility.registry</module>
+    <module>bundles/org.eclipse.core.tools</module>
+    <module>bundles/org.eclipse.e4.core.contexts</module>
+    <module>bundles/org.eclipse.e4.core.di</module>
+    <module>bundles/org.eclipse.e4.core.di.extensions</module>
+    <module>bundles/org.eclipse.e4.core.services</module>
+
+    <module>features/org.eclipse.core.runtime.feature</module>
+    <module>features/org.eclipse.core.tools-feature</module>
+
+    <module>tests/com.google.code.atinject.tck</module>
+    <module>tests/org.eclipse.core.expressions.tests</module>
+    <module>tests/org.eclipse.core.tests.harness</module>
+    <module>tests/org.eclipse.core.tests.runtime</module>
+    <module>tests/org.eclipse.e4.core.tests</module>
+    <module>tests/org.eclipse.e4.core.tests.services</module>
+  </modules>
+</project>

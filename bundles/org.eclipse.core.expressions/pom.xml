@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2012 Eclipse Foundation.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Distribution License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/org/documents/edl-v10.php
+ 
+  Contributors:
+     Igor Fedorenko - initial implementation
+-->
+
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>eclipse.platform.runtime</artifactId>
+    <groupId>org.eclipse.platform.runtime</groupId>
+    <version>3.8.0-SNAPSHOT</version>
+    <relativePath>../../</relativePath>
+  </parent>
+  <groupId>org.eclipse.platform.runtime</groupId>
+  <artifactId>org.eclipse.core.expressions</artifactId>
+  <version>3.4.300-SNAPSHOT</version>
+  <packaging>eclipse-plugin</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <configuration>
+          <!--
+            build.properties  jre.compilation.profile=J2SE-1.3. This is expected to force Tycho ignore 
+            org.w3c.dom package provided by java standard libraries
+
+            META-INF/MANIFEST.MF Import-Package:org.w3c.dom. This is expected to force Tycho resolve org.w3c.dom
+            package from dependencies, i.e. from javax.xml bundle.
+
+            Due to an apparent bug in Tycho the above does not happen and compilation fails with "Access restriction"
+            errors for org.w3c.dom.* classes. As a workaround, we force J2SE-1.4 compilation profile.
+           -->
+          <executionEnvironment>J2SE-1.4</executionEnvironment>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
