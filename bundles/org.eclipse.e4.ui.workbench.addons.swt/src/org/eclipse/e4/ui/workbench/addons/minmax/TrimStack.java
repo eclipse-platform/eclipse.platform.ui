@@ -151,7 +151,8 @@ public class TrimStack {
 
 		Object imageObject = element.getTransientData().get(
 				IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY);
-		if (imageObject != null && imageObject instanceof Image)
+		if (imageObject != null && imageObject instanceof Image
+				&& !((Image) imageObject).isDisposed())
 			result = (Image) imageObject;
 		return result;
 	}
