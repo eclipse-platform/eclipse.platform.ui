@@ -34,6 +34,8 @@ public class BindingTableManager {
 
 	private ContextSet definedTables = ContextSet.EMPTY;
 
+	private String[] activeSchemeIds;
+
 	public void addTable(BindingTable table) {
 		String contextId = getTableId(table.getId());
 		if (eclipseContext.containsKey(contextId)) {
@@ -119,16 +121,42 @@ public class BindingTableManager {
 
 	public Binding getPerfectMatch(ContextSet contextSet, TriggerSequence triggerSequence) {
 		Binding result = null;
+		Binding currentResult = null;
 		List<Context> contexts = contextSet.getContexts();
 		ListIterator<Context> it = contexts.listIterator(contexts.size());
-		while (it.hasPrevious() && result == null) {
+		while (it.hasPrevious()) {
 			Context c = it.previous();
 			BindingTable table = getTable(c.getId());
 			if (table != null) {
-				result = table.getPerfectMatch(triggerSequence);
+				currentResult = table.getPerfectMatch(triggerSequence);
+			}
+			if (currentResult != null) {
+				if (isMostActiveScheme(currentResult)) {
+					return currentResult;
+				}
+				if (result == null) {
+					result = currentResult;
+				} else {
+					int rc = compareSchemes(result.getSchemeId(), currentResult.getSchemeId());
+					if (rc < 0) {
+						result = currentResult;
+					}
+				}
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * @param currentResult
+	 * @return
+	 */
+	private boolean isMostActiveScheme(Binding currentResult) {
+		if (activeSchemeIds == null || activeSchemeIds.length < 2) {
+			return true;
+		}
+		final String mostActive = activeSchemeIds[0];
+		return mostActive == null ? false : mostActive.equals(currentResult.getSchemeId());
 	}
 
 	public Binding getBestSequenceFor(ContextSet contextSet,
@@ -204,5 +232,34 @@ public class BindingTableManager {
 			}
 		}
 		return bindings;
+	}
+
+	/**
+	 * @param activeSchemeIds
+	 */
+	public void setActiveSchemes(String[] activeSchemeIds) {
+		this.activeSchemeIds = activeSchemeIds;
+	}
+
+	/*
+	 * Copied from org.eclipse.jface.bindings.BindingManager.compareSchemes(String, String)
+	 * 
+	 * Returns an in based on scheme 1 < scheme 2
+	 */
+	private final int compareSchemes(final String schemeId1, final String schemeId2) {
+		if (activeSchemeIds == null) {
+			return 0;
+		}
+		if (!schemeId2.equals(schemeId1)) {
+			for (int i = 0; i < activeSchemeIds.length; i++) {
+				final String schemePointer = activeSchemeIds[i];
+				if (schemeId2.equals(schemePointer)) {
+					return 1;
+				} else if (schemeId1.equals(schemePointer)) {
+					return -1;
+				}
+			}
+		}
+		return 0;
 	}
 }

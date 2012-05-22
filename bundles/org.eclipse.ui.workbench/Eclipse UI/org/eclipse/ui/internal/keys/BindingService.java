@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -27,6 +28,8 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.bindings.internal.BindingTable;
+import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
@@ -77,6 +80,9 @@ public final class BindingService implements IBindingService {
 	private BindingManager manager;
 
 	@Inject
+	private BindingTableManager tableManager;
+
+	@Inject
 	@Optional
 	private KeyBindingDispatcher dispatcher;
 
@@ -92,6 +98,15 @@ public final class BindingService implements IBindingService {
 	private GlobalKeyAssistDialog keyAssistDialog;
 
 	private IEclipseContext context;
+
+	@PostConstruct
+	void init() {
+		final Scheme activeScheme = manager.getActiveScheme();
+		if (activeScheme != null) {
+			activeSchemeIds = getSchemeIds(activeScheme.getId());
+			tableManager.setActiveSchemes(activeSchemeIds);
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -405,6 +420,7 @@ public final class BindingService implements IBindingService {
 		// save the active scheme to the model
 		writeSchemeToModel(activeScheme);
 		activeSchemeIds = getSchemeIds(activeScheme.getId());
+		tableManager.setActiveSchemes(activeSchemeIds);
 
 		// weeds out any of the deleted system bindings using the binding
 		// manager
@@ -448,7 +464,7 @@ public final class BindingService implements IBindingService {
 
 			// if we've switched schemes then we need to check to see if we
 			// should override any of the old bindings
-			final Binding conflict = bindingService.getPerfectMatch(binding.getTriggerSequence());
+			final Binding conflict = findPotentialConflict(binding);
 
 			if (conflict != null && conflict.getContextId().equals(binding.getContextId())) {
 				final int rc = compareTo(conflict, binding);
@@ -486,6 +502,15 @@ public final class BindingService implements IBindingService {
 			}
 
 		}
+	}
+
+	private Binding findPotentialConflict(Binding binding) {
+		BindingTable table = tableManager.getTable(binding.getContextId());
+		Binding perfectMatch = table.getPerfectMatch(binding.getTriggerSequence());
+		if (perfectMatch != null) {
+			return perfectMatch;
+		}
+		return bindingService.getPerfectMatch(binding.getTriggerSequence());
 	}
 
 	private final String[] getSchemeIds(String schemeId) {
