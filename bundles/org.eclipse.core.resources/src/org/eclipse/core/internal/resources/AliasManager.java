@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.IPath;
-
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.EFS;
@@ -124,7 +122,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		/**
 		 * Map of FileStore->IResource OR FileStore->ArrayList of (IResource)
 		 */
-		private final SortedMap<IFileStore, Object> map = new TreeMap<IFileStore,Object>(getComparator());
+		private final SortedMap<IFileStore, Object> map = new TreeMap<IFileStore, Object>(getComparator());
 
 		/**
 		 * Adds the given resource to the map, keyed by the given location.
@@ -213,11 +211,11 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		 * whose location overlaps another resource in the map.
 		 */
 		public void overLappingResourcesDo(Doit doit) {
-			Iterator<Map.Entry<IFileStore,Object>> entries = map.entrySet().iterator();
+			Iterator<Map.Entry<IFileStore, Object>> entries = map.entrySet().iterator();
 			IFileStore previousStore = null;
 			IResource previousResource = null;
 			while (entries.hasNext()) {
-				Map.Entry<IFileStore,Object> current = entries.next();
+				Map.Entry<IFileStore, Object> current = entries.next();
 				//value is either single resource or List of resources
 				IFileStore currentStore = current.getKey();
 				IResource currentResource = null;
@@ -351,7 +349,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			return;
 		if (description.getLocationURI() != null)
 			nonDefaultResourceCount++;
-		HashMap<IPath,LinkDescription> links = description.getLinks();
+		HashMap<IPath, LinkDescription> links = description.getLinks();
 		if (links == null)
 			return;
 		for (LinkDescription linkDesc : links.values()) {
@@ -452,7 +450,6 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		});
 		return resources.toArray(new IResource[0]);
 	}
-
 
 	/**
 	 * Returns all aliases of this resource, and any aliases of subtrees of this
@@ -572,16 +569,16 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		 * next alias request.
 		 */
 		switch (event.kind) {
-			case LifecycleEvent.PRE_LINK_CHANGE:
+			case LifecycleEvent.PRE_LINK_CHANGE :
 			case LifecycleEvent.PRE_LINK_DELETE :
 				Resource link = (Resource) event.resource;
 				if (link.isLinked())
 					removeFromLocationsMap(link, link.getStore());
 				//fall through
-			case LifecycleEvent.PRE_FILTER_ADD:
+			case LifecycleEvent.PRE_FILTER_ADD :
 				changedLinks.add(event.resource);
 				break;
-			case LifecycleEvent.PRE_FILTER_REMOVE:
+			case LifecycleEvent.PRE_FILTER_REMOVE :
 				changedLinks.add(event.resource);
 				break;
 			case LifecycleEvent.PRE_LINK_CREATE :
@@ -661,15 +658,14 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		if (delta == null)
 			return;
 		//invalidate location map if there are added or removed projects.
-		if (delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.REMOVED).length > 0)
+		if (delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.REMOVED, IContainer.INCLUDE_HIDDEN).length > 0)
 			changedProjects = true;
-		
+
 		// invalidate location map if any project has the description changed
 		// or was closed/opened
 		IResourceDelta[] changed = delta.getAffectedChildren(IResourceDelta.CHANGED);
 		for (int i = 0; i < changed.length; i++) {
-			if ((changed[i].getFlags() & IResourceDelta.DESCRIPTION) == IResourceDelta.DESCRIPTION 
-					|| (changed[i].getFlags() & IResourceDelta.OPEN) == IResourceDelta.OPEN) {
+			if ((changed[i].getFlags() & IResourceDelta.DESCRIPTION) == IResourceDelta.DESCRIPTION || (changed[i].getFlags() & IResourceDelta.OPEN) == IResourceDelta.OPEN) {
 				changedProjects = true;
 				break;
 			}
@@ -727,7 +723,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 					continue;
 				//project did not require deletion, so fall through below and refresh it
 			}
-			if (!((Resource)alias).isFiltered())
+			if (!((Resource) alias).isFiltered())
 				localManager.refresh(alias, IResource.DEPTH_INFINITE, false, null);
 		}
 	}
