@@ -30,8 +30,36 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
  * manage tables of bindings that can be used to look up commands from keys.
  */
 public class BindingTable {
-	public static final Comparator<Binding> BEST_SEQUENCE = new Comparator<Binding>() {
+	static class BindingComparator implements Comparator<Binding> {
+		private String[] activeSchemeIds;
+
+		private final int compareSchemes(final String schemeId1, final String schemeId2) {
+			if (activeSchemeIds == null || activeSchemeIds.length == 0) {
+				return 0;
+			}
+			if (!schemeId2.equals(schemeId1)) {
+				for (int i = 0; i < activeSchemeIds.length; i++) {
+					final String schemePointer = activeSchemeIds[i];
+					if (schemeId2.equals(schemePointer)) {
+						return 1;
+					} else if (schemeId1.equals(schemePointer)) {
+						return -1;
+					}
+				}
+			}
+			return 0;
+		}
+
+		public void setActiveSchemes(String[] activeSchemeIds) {
+			this.activeSchemeIds = activeSchemeIds;
+		}
+
 		public int compare(Binding o1, Binding o2) {
+			int rc = compareSchemes(o1.getSchemeId(), o2.getSchemeId());
+			if (rc != 0) {
+				return rc;
+			}
+
 			/*
 			 * Check to see which has the least number of triggers in the trigger sequence.
 			 */
@@ -83,7 +111,10 @@ public class BindingTable {
 
 			return strokeCount;
 		}
-	};
+	}
+
+	public static final BindingComparator BEST_SEQUENCE = new BindingComparator();
+
 	private Context tableId;
 	private ArrayList<Binding> bindings = new ArrayList<Binding>();
 	private Map<TriggerSequence, Binding> bindingsByTrigger = new HashMap<TriggerSequence, Binding>();

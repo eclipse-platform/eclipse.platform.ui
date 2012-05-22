@@ -239,6 +239,7 @@ public class BindingTableManager {
 	 */
 	public void setActiveSchemes(String[] activeSchemeIds) {
 		this.activeSchemeIds = activeSchemeIds;
+		BindingTable.BEST_SEQUENCE.setActiveSchemes(activeSchemeIds);
 	}
 
 	/*
