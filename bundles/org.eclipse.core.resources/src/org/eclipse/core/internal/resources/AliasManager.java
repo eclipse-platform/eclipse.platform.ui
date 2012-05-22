@@ -663,7 +663,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 
 		// invalidate location map if any project has the description changed
 		// or was closed/opened
-		IResourceDelta[] changed = delta.getAffectedChildren(IResourceDelta.CHANGED);
+		IResourceDelta[] changed = delta.getAffectedChildren(IResourceDelta.CHANGED, IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < changed.length; i++) {
 			if ((changed[i].getFlags() & IResourceDelta.DESCRIPTION) == IResourceDelta.DESCRIPTION || (changed[i].getFlags() & IResourceDelta.OPEN) == IResourceDelta.OPEN) {
 				changedProjects = true;
