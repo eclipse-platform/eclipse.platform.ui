@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.workbench.texteditor.tests
-Bundle-Version: 3.7.0.qualifier
+Bundle-Version: 3.8.0.qualifier
 Bundle-ClassPath: workbenchtexteditortests.jar
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
@@ -18,3 +18,4 @@ Require-Bundle:
  org.junit;bundle-version="3.8.2",
  org.eclipse.text.tests;bundle-version="[3.5.0,4.0.0)"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Eclipse-BundleShape: dir

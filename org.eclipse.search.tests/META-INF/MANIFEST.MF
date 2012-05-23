@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.search.tests
-Bundle-Version: 3.6.0.qualifier
+Bundle-Version: 3.8.0.qualifier
 Bundle-ClassPath: searchtests.jar
 Bundle-Activator: org.eclipse.search.tests.SearchTestPlugin
 Bundle-Vendor: %providerName
@@ -22,3 +22,4 @@ Require-Bundle:
  org.eclipse.ui.editors;bundle-version="[3.5.0,4.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Eclipse-BundleShape: dir
