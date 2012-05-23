@@ -21,6 +21,6 @@
   </parent>
   <groupId>org.eclipse.platform.runtime</groupId>
   <artifactId>org.eclipse.core.contenttype</artifactId>
-  <version>3.4.100-SNAPSHOT</version>
+  <version>3.4.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

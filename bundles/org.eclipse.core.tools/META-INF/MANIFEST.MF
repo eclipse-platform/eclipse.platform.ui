@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: Core Tools
 Bundle-SymbolicName: org.eclipse.core.tools; singleton=true
-Bundle-Version: 1.5.0.qualifier
+Bundle-Version: 1.5.100.qualifier
 Bundle-Activator: org.eclipse.core.tools.CoreToolsPlugin
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
