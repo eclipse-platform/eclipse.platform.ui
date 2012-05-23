@@ -1676,4 +1676,14 @@ public class WizardProjectsImportPage extends WizardPage implements
 	public Button getCopyCheckbox() {
 		return copyCheckbox;
 	}
+	
+	/**
+	 * Method used for test suite.
+	 * 
+	 * @return Button nested projects checkbox
+	 */
+	public Button getNestedProjectsCheckbox() {
+		return nestedProjectsCheckbox;
+	}
+	
 }
