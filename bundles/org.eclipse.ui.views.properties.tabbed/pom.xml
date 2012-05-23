@@ -21,6 +21,6 @@
   </parent>
   <groupId>eclipse.platform.ui</groupId>
   <artifactId>org.eclipse.ui.views.properties.tabbed</artifactId>
-  <version>3.5.200-SNAPSHOT</version>
+  <version>3.5.300-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
