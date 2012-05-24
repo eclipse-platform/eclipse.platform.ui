@@ -105,8 +105,16 @@ final class HandlerActivation implements IHandlerActivation {
 			active = true;
 		} else {
 			try {
+				active = false;
 				active = activeWhen.evaluate(context) != EvaluationResult.FALSE;
 			} catch (CoreException e) {
+				/*
+				 * Swallow the exception. It simply means the variable is not
+				 * valid (most frequently, that the value is null or has a
+				 * complex core expression with a property tester). This kind of
+				 * information is not really useful to us, so we can just treat
+				 * it as false.
+				 */
 				Activator.trace(Policy.DEBUG_CMDS, "Failed to calculate active", e); //$NON-NLS-1$
 			}
 		}
