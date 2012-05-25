@@ -532,7 +532,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (currentWidget instanceof Control) {
 				Control control = (Control) currentWidget;
 				// make sure the control is visible
-				control.setVisible(true);
+				if (!(element instanceof MPlaceholder))
+					control.setVisible(true);
 
 				if (parentWidget instanceof Composite) {
 					Composite currentParent = control.getParent();
