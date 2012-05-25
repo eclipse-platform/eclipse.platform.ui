@@ -300,6 +300,9 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 					return true;
 				}
 			}
+			if (node.isSymbolicLink() && !node.existsInFileSystem())
+				return true; // Dangling symbolic links are considered to be synchronized.
+
 			if (synchronizeGender(node, target))
 				synchronizeLastModified(node, target);
 			if (targetType == IResource.FILE) {
