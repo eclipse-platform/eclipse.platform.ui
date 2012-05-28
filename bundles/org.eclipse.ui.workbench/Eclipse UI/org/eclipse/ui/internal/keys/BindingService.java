@@ -506,9 +506,11 @@ public final class BindingService implements IBindingService {
 
 	private Binding findPotentialConflict(Binding binding) {
 		BindingTable table = tableManager.getTable(binding.getContextId());
-		Binding perfectMatch = table.getPerfectMatch(binding.getTriggerSequence());
-		if (perfectMatch != null) {
-			return perfectMatch;
+		if (table != null) {
+			Binding perfectMatch = table.getPerfectMatch(binding.getTriggerSequence());
+			if (perfectMatch != null) {
+				return perfectMatch;
+			}
 		}
 		return bindingService.getPerfectMatch(binding.getTriggerSequence());
 	}
