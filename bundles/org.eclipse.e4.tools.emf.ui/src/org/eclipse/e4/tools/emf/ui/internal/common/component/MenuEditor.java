@@ -546,7 +546,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 	protected void handleAdd(EClass eClass, boolean separator) {
 		MMenuElement eObject = (MMenuElement) EcoreUtil.create(eClass);
-
+		setElementId(eObject);
 		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
