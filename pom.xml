@@ -24,7 +24,7 @@
 
   <groupId>org.eclipse.cvs</groupId>
   <artifactId>org.eclipse.cvs</artifactId>
-  <version>1.1.100-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
 </project>
