@@ -203,6 +203,8 @@ public class ResourceHandler implements IModelResourceHandler {
 		if (resource == null) {
 			Resource applicationResource = loadResource(applicationDefinitionInstance);
 			MApplication theApp = (MApplication) applicationResource.getContents().get(0);
+			if (restoreLocation == null)
+				restoreLocation = URI.createFileURI(workbenchData.getAbsolutePath());
 			resource = resourceSetImpl.createResource(restoreLocation);
 			resource.getContents().add((EObject) theApp);
 		}
