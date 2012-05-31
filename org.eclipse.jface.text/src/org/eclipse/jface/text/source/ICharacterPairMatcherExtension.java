@@ -14,7 +14,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * Extension interface {@link org.eclipse.jface.text.source.ICharacterPairMatcher}.
+ * Extension interface for {@link org.eclipse.jface.text.source.ICharacterPairMatcher}.
  * <p>
  * Extends the character pair matcher with the concept of matching peer character and enclosing peer
  * characters for a given selection.
