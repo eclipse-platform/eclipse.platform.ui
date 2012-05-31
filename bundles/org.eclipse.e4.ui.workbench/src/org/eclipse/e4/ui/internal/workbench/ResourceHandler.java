@@ -192,9 +192,10 @@ public class ResourceHandler implements IModelResourceHandler {
 		long restoreLastModified = restoreLocation == null ? 0L : new File(
 				restoreLocation.toFileString()).lastModified();
 
-		long lastApplicationModification = getLastApplicationModification();
-
-		boolean restore = restoreLastModified > lastApplicationModification;
+		// See bug 380663, bug 381219
+		// long lastApplicationModification = getLastApplicationModification();
+		// boolean restore = restoreLastModified > lastApplicationModification;
+		boolean restore = restoreLastModified > 0;
 
 		resource = null;
 		if (restore && saveAndRestore) {
@@ -251,7 +252,7 @@ public class ResourceHandler implements IModelResourceHandler {
 		return resource;
 	}
 
-	private long getLastApplicationModification() {
+	protected long getLastApplicationModification() {
 		long appLastModified = 0L;
 		ResourceSetImpl resourceSetImpl = new ResourceSetImpl();
 
