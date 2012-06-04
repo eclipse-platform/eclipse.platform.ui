@@ -53,19 +53,20 @@
     <module>bundles/org.eclipse.ui.workbench.compatibility</module>
     
     <module>examples/org.eclipse.jface.examples.databinding</module>
-
-    <!-- 
-    <module>examples/org.eclipse.jface.snippets</module>
     <module>examples/org.eclipse.ui.examples.contributions</module>
     <module>examples/org.eclipse.ui.examples.fieldassist</module>
-    <module>examples/org.eclipse.ui.examples.job</module>
     <module>examples/org.eclipse.ui.examples.multipageeditor</module>
-    <module>examples/org.eclipse.ui.examples.navigator</module>
     <module>examples/org.eclipse.ui.examples.propertysheet</module>
-    <module>examples/org.eclipse.ui.examples.rcp.browser</module>
     <module>examples/org.eclipse.ui.examples.readmetool</module>
     <module>examples/org.eclipse.ui.examples.undo</module>
     <module>examples/org.eclipse.ui.examples.views.properties.tabbed.article</module>
+
+    <!-- 
+    <module>examples/org.eclipse.jface.snippets</module>
+    <module>examples/org.eclipse.ui.examples.fieldassist</module>
+    <module>examples/org.eclipse.ui.examples.job</module>
+    <module>examples/org.eclipse.ui.examples.navigator</module>
+    <module>examples/org.eclipse.ui.examples.rcp.browser</module>
     <module>examples/org.eclipse.ui.examples.views.properties.tabbed.hockeyleague</module>
     <module>examples/org.eclipse.ui.examples.views.properties.tabbed.logic</module>
     <module>examples/org.eclipse.ui.forms.examples</module>
