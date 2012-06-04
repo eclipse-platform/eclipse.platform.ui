@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -299,13 +299,15 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * @throws CoreException 
 	 * @see IPathVariableManager#convertToRelative(URI, boolean, String)
 	 */
 	public URI convertToRelative(URI path, boolean force, String variableHint) throws CoreException {
 		return PathVariableUtil.convertToRelative(this, path, null, false, variableHint);
 	}
 
+	/**
+	 * see IPathVariableManager#getURIValue(String)
+	 */
 	public URI getURIValue(String name) {
 		IPath path = getValue(name);
 		if (path != null)
@@ -313,19 +315,18 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		return null;
 	}
 
+	/**
+	 * see IPathVariableManager#setURIValue(String, URI)
+	 */
 	public void setURIValue(String name, URI value) throws CoreException {
-		if (value != null)
-			setValue(name, URIUtil.toPath(value));
-		else
-			setValue(name, null);
+		setValue(name, (value != null ? URIUtil.toPath(value) : null));
 	}
 
+	/**
+	 * @see IPathVariableManager#validateValue(URI)
+	 */
 	public IStatus validateValue(URI path) {
-		if (path != null)
-			validateValue(URIUtil.toPath(path));
-		else
-			validateValue((IPath) null);
-		return null;
+		return validateValue(path != null ? URIUtil.toPath(path) : (IPath) null);
 	}
 
 	public URI resolveURI(URI uri, IResource resource) {
