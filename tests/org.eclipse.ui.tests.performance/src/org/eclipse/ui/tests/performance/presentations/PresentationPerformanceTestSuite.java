@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
 
 /**
  * @since 3.1
@@ -53,10 +53,10 @@ public class PresentationPerformanceTestSuite extends TestSuite {
     // TBD Does it make sense to keep those in 4.x? They should be replaced 
     // by CSS styling performance tests in SWT
     private void addTests(String presentationId) {
-        AbstractPresentationFactory factory = WorkbenchPlugin.getDefault().getPresentationFactory(presentationId);
-        
-        boolean r21Presentation = "org.eclipse.ui.internal.r21presentationFactory".equals(presentationId);
-
+//        AbstractPresentationFactory factory = WorkbenchPlugin.getDefault().getPresentationFactory(presentationId);
+//        
+//        boolean r21Presentation = "org.eclipse.ui.internal.r21presentationFactory".equals(presentationId);
+//
 //        addTest(new PresentationInactivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
 //        addTest(new PresentationInactivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
 //        
