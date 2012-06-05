@@ -64,7 +64,7 @@ CTabFolder {
 	/*background-color: #e3efff #c1d5ef;*/
 	background-color: #c1d5ef;
 	color: white;
-	simple: true;	
+	swt-simple: true;	
 }
 
 CTabItem {
