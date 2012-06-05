@@ -29,7 +29,7 @@
     </mainMenu>
     <trimBars xmi:id="_SeXUAu8EEd6FC9cDb6iV7g" elementId="_SeXUAu8EEd6FC9cDb6iV7g">
       <children xsi:type="menu:ToolBar" xmi:id="toolbar:org.eclipse.ui.main.toolbar" elementId="toolbar:org.eclipse.ui.main.toolbar">
-        <children xsi:type="menu:DirectToolItem" xmi:id="_SeXUBO8EEd6FC9cDb6iV7g" elementId="_SeXUBO8EEd6FC9cDb6iV7g" label="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/disk.png" tooltip="%toolbarSaveTooltip" contributionURI="bundleclass://org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_u17JMK5VEeGIuK3Q_6U7Zg" elementId="org.eclipse.e4.demo.contacts.handledtoolitem.0" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/disk.png" tooltip="%toolbarSaveTooltip" command="contacts.save"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_6RnVUE8FEeCyZoR8urPqaw" elementId="toolbar:org.eclipse.ui.main.toolbar">
         <children xsi:type="menu:HandledToolItem" xmi:id="_Vw4jUE8FEeCyZoR8urPqaw" label="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/user_delete.png" tooltip="%menuLabelDelete" command="contacts.delete"/>
