@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -351,18 +351,13 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 */
 	public void keyPressed(KeyEvent event) {
 
-		if (fActive) {
-			deactivate();
-			return;
-		}
-
-		if (!isRegisteredStateMask(event.keyCode)) {
+		if (!isRegisteredStateMask((event.keyCode | event.stateMask) & SWT.MODIFIER_MASK)) {
 			deactivate();
 			return;
 		}
 
 		fActive= true;
-		fActiveHyperlinkStateMask= event.keyCode;
+//		fActiveHyperlinkStateMask= event.keyCode; // unnecessary and doesn't work for Alt (at least on Windows) 
 
 //			removed for #25871 (hyperlinks could interact with typing)
 //
@@ -396,18 +391,39 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 */
 	public void mouseDown(MouseEvent event) {
 
-		if (!fActive)
-			return;
-
-		if (event.stateMask != fActiveHyperlinkStateMask) {
-			deactivate();
-			return;
+		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
+			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
+				return;
 		}
 
+		if (!isRegisteredStateMask(event.stateMask)) {
+			if (fActive)
+				deactivate();
+			
+			return;
+		}
+		
 		if (event.button != 1) {
 			deactivate();
 			return;
 		}
+		
+		fActive= true;
+		fActiveHyperlinkStateMask= event.stateMask & SWT.MODIFIER_MASK;
+		
+		StyledText text= fTextViewer.getTextWidget();
+		if (text == null || text.isDisposed()) {
+			deactivate();
+			return;
+		}
+
+		if (text.getSelectionCount() != 0) {
+			deactivate();
+			return;
+		}
+
+		fActiveHyperlinks= findHyperlinks();
+		showHyperlinks(false);
 	}
 
 	/*
