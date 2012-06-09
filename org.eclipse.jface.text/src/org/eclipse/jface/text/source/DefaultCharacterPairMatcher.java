@@ -322,14 +322,15 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 */
 	private int findMatchingPeer(DocumentPartitionAccessor doc, char start, char end, boolean searchForward, int boundary, int startPos) throws BadLocationException {
 		int pos= startPos;
+		int nestingLevel= 0;
 		while (pos != boundary) {
 			final char c= doc.getChar(pos);
-			if (doc.isMatch(pos, end)) {
-				return pos;
+			if (c == end && doc.inPartition(pos)) {
+				if (nestingLevel == 0)
+					return pos;
+				nestingLevel--;
 			} else if (c == start && doc.inPartition(pos)) {
-				pos= findMatchingPeer(doc, start, end, searchForward, boundary,
-						doc.getNextPosition(pos, searchForward));
-				if (pos == -1) return -1;
+				nestingLevel++;
 			}
 			pos= doc.getNextPosition(pos, searchForward);
 		}
@@ -494,20 +495,6 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		 */
 		public char getChar(int pos) throws BadLocationException {
 			return fDocument.getChar(pos);
-		}
-
-		/**
-		 * Returns true if the character at the specified position is a valid match for the
-		 * specified end character. To be a valid match, it must be in the appropriate partition and
-		 * equal to the end character.
-		 *
-		 * @param pos an offset within this document
-		 * @param end the end character to match against
-		 * @return true exactly if the position represents a valid match
-		 * @throws BadLocationException if the offset is invalid in this document
-		 */
-		public boolean isMatch(int pos, char end) throws BadLocationException {
-			return getChar(pos) == end && inPartition(pos);
 		}
 
 		/**
