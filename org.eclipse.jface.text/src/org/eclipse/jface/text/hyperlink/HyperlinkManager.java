@@ -118,7 +118,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	private ITextViewer fTextViewer;
 	/** The session is active. */
 	private boolean fActive;
-	/** The key modifier mask. */
+	/** The key modifier mask of the default hyperlink modifier. */
 	private int fHyperlinkStateMask;
 	/**
 	 * The active key modifier mask.
@@ -204,6 +204,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * <p>
 	 * It is allowed to call this method after this
 	 * hyperlink manger has been installed.
+	 * </p>
+	 * <p>
+	 * Note that {@link IHyperlinkDetectorExtension2}s may specify additional state masks.
 	 * </p>
 	 *
 	 * @param eventStateMask the SWT event state mask to activate hyperlink mode
@@ -357,20 +360,8 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		}
 
 		fActive= true;
-//		fActiveHyperlinkStateMask= event.keyCode; // unnecessary and doesn't work for Alt (at least on Windows) 
-
-//			removed for #25871 (hyperlinks could interact with typing)
-//
-//			ITextViewer viewer= getSourceViewer();
-//			if (viewer == null)
-//				return;
-//
-//			IRegion region= getCurrentTextRegion(viewer);
-//			if (region == null)
-//				return;
-//
-//			highlightRegion(viewer, region);
-//			activateCursor(viewer);
+		
+		// do not show hyperlink, since that would often be confusing (e.g. when pressing Ctrl+C)
 	}
 
 	/*
