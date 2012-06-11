@@ -52,10 +52,6 @@ Table {
 	font: Verdana 8px;
 }
 
-ETabFolder {
-	simple: true;
-}
-
 CTabFolder {
 	/* The tab rendering background for the min/max toolbar pulls 
 	 * background from the tabfolder's background (or it's parent?)
