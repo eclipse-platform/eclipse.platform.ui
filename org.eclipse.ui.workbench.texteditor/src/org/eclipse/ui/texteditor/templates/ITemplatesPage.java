@@ -25,8 +25,8 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * </ul>
  * </p>
  * <p>
- * Clients can either implement this interface directly or subclass the
- * {@link AbstractTemplatesPage}.
+ * Clients should not implement this interface directly but subclass {@link AbstractTemplatesPage}
+ * instead.
  * 
  * @see org.eclipse.ui.texteditor.templates.ITemplatesPageExtension
  * @see TemplatesView
