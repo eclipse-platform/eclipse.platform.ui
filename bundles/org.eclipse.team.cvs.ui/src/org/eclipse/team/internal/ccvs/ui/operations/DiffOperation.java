@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,20 +17,21 @@ import org.eclipse.compare.patch.WorkspacePatcherUI;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSCommunicationException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.statushandlers.*;
 
 public abstract class DiffOperation extends SingleCommandOperation {
 
@@ -293,7 +294,12 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			try{
 				super.execute(provider, (IResource[]) subList.toArray(new IResource[subList.size()]), recurse, Policy.subMonitorFor(monitor, ticks));
 			} catch(CVSCommunicationException ex){ // see bug 123430
-				CVSUIPlugin.openError(getShell(), null, null, ex, CVSUIPlugin.PERFORM_SYNC_EXEC | CVSUIPlugin.LOG_OTHER_EXCEPTIONS);
+				StatusAdapter adapter = new StatusAdapter(ex.getStatus());
+				adapter.setProperty(
+						IStatusAdapterConstants.TITLE_PROPERTY,
+						CVSUIMessages.DiffOperation_ErrorsOccurredWhileCreatingThePatch);
+				StatusManager.getManager().handle(adapter,
+						StatusManager.SHOW | StatusManager.NONE);
 			} catch (CVSException ex) {
 				handleCVSException(ex);
 			}
@@ -326,12 +332,16 @@ public abstract class DiffOperation extends SingleCommandOperation {
 		if (toShow.size() > 0) {
 			String msg = may ? CVSUIMessages.DiffOperation_ThePatchMayNotContainAllTheChanges
 					: CVSUIMessages.DiffOperation_ThePatchDoesNotContainAllTheChanges;
-			status = new MultiStatus(CVSProviderPlugin.ID,
-					CVSStatus.SERVER_ERROR,
-					(IStatus[]) toShow.toArray(new IStatus[0]), CVSUIMessages.DiffOperation_ErrorsOccurredWhileCreatingThePatch, null);
-			CVSUIPlugin.openError(getShell(), this.getTaskName(), msg, status,
-					CVSUIPlugin.PERFORM_SYNC_EXEC
-							| CVSUIPlugin.LOG_OTHER_EXCEPTIONS);
+			StatusAdapter adapter = new StatusAdapter(
+					new MultiStatus(
+							CVSProviderPlugin.ID,
+							CVSStatus.SERVER_ERROR,
+							(IStatus[]) toShow.toArray(new IStatus[toShow.size()]),
+							CVSUIMessages.DiffOperation_ErrorsOccurredWhileCreatingThePatch,
+							null));
+			adapter.setProperty(IStatusAdapterConstants.TITLE_PROPERTY, msg);
+			StatusManager.getManager().handle(adapter,
+					StatusManager.SHOW | StatusManager.LOG);
 		}
 	}
 
@@ -523,16 +533,15 @@ public abstract class DiffOperation extends SingleCommandOperation {
 	}
 
 	protected void reportEmptyDiff() {
-        CVSUIPlugin.openDialog(getShell(), new CVSUIPlugin.IOpenableInShell() {
-        	public void open(Shell shell) {
-        		MessageDialog.openInformation(
-        			shell,
-        			CVSUIMessages.GenerateCVSDiff_noDiffsFoundTitle, 
-        			CVSUIMessages.GenerateCVSDiff_noDiffsFoundMsg); 
-        	}
-        }, CVSUIPlugin.PERFORM_SYNC_EXEC);
-	 }
-	
+		StatusAdapter adapter = new StatusAdapter(new Status(IStatus.INFO,
+				CVSProviderPlugin.ID,
+				CVSUIMessages.GenerateCVSDiff_noDiffsFoundMsg));
+		adapter.setProperty(IStatusAdapterConstants.TITLE_PROPERTY,
+				CVSUIMessages.GenerateCVSDiff_noDiffsFoundTitle);
+		StatusManager.getManager().handle(adapter,
+				StatusManager.SHOW);
+	}
+
 	protected ICVSFolder getLocalRoot(CVSTeamProvider provider) throws CVSException {
 		ICVSFolder root = getPatchRootFolder();
 		if (root != null)
