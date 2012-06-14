@@ -23,31 +23,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.compare.internal.ICompareContextIds;
-import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.internal.core.patch.FilePatch2;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.WizardPage;
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -68,12 +45,40 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.WizardPage;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.compare.internal.ICompareContextIds;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.patch.IFilePatch2;
 
 public class InputPatchPage extends WizardPage {
 
@@ -193,21 +198,11 @@ public class InputPatchPage extends WizardPage {
 	 * @return PreviewPatchPage if multi-project patch, PatchTargetPage if single project patch
 	 */
 	public IWizardPage getNextPage() {
+		if (!checkPageComplete())
+			return this;
 
 		WorkspacePatcher patcher= ((PatchWizard) getWizard()).getPatcher();
 		
-		// Read in the patch
-		readInPatch();
-		
-		FilePatch2[] diffs= patcher.getDiffs();
-		if (diffs == null || diffs.length == 0) {
-			String format= PatchMessages.InputPatchPage_NoDiffsFound_format;	
-			String message= MessageFormat.format(format, new String[] { fPatchSource });
-			MessageDialog.openInformation(null,
-				PatchMessages.InputPatchPage_PatchErrorDialog_title, message); 
-			return this;
-		}
-
 		// guess prefix count
 		int guess= 0; // guessPrefix(diffs);
 		patcher.setStripPrefixSegments(guess);
@@ -234,6 +229,22 @@ public class InputPatchPage extends WizardPage {
 
 		// else go on to target selection page
 		return super.getNextPage();
+	}
+
+	boolean checkPageComplete() {
+		WorkspacePatcher patcher= ((PatchWizard)getWizard()).getPatcher();
+
+		// Read in the patch
+		readInPatch();
+
+		IFilePatch2[] diffs= patcher.getDiffs();
+		if (diffs == null || diffs.length == 0) {
+			String format= PatchMessages.InputPatchPage_NoDiffsFound_format;
+			String message= MessageFormat.format(format, new String[] { fPatchSource });
+			MessageDialog.openInformation(null, PatchMessages.InputPatchPage_PatchErrorDialog_title, message);
+			return false;
+		}
+		return true;
 	}
 
 	/*
@@ -309,6 +320,7 @@ public class InputPatchPage extends WizardPage {
 					fPatchRead=true;
 				} catch (Exception ex) {
 					// Ignore. User will be informed of error since patcher contains no diffs
+					setPageComplete(false);
 				}
 			}
 		} finally {
@@ -874,12 +886,10 @@ public class InputPatchPage extends WizardPage {
 					}
 					// maybe it's an URL
 					try {
-						URL url = new URL((String)o);
-						if(url != null) {
-							setInputButtonState(URL);
-							fPatchURLField.setText((String)o);
-							return true;
-						}
+						new URL((String)o);
+						setInputButtonState(URL);
+						fPatchURLField.setText((String)o);
+						return true;
 					} catch (MalformedURLException e) {
 						// ignore
 					}
@@ -906,7 +916,7 @@ public class InputPatchPage extends WizardPage {
 			return false;
 		}
 
-		FilePatch2[] diffs= patcher.getDiffs();
+		IFilePatch2[] diffs= patcher.getDiffs();
 		if (diffs == null || diffs.length == 0)
 			return false;
 		return true;

@@ -264,73 +264,67 @@ public class PatchReader {
 		try {
 			// read lines of hunk
 			while (true) {
-				
+
 				line= reader.readLine();
 				if (line == null)
 					return null;
-					
+
 				if (reader.lineContentLength(line) == 0) {
 					//System.out.println("Warning: found empty line in hunk; ignored");
 					//lines.add(' ' + line);
 					continue;
 				}
-				
+
 				char c= line.charAt(0);
 				switch (c) {
-				case '@':
-					if (line.startsWith("@@ ")) { //$NON-NLS-1$
-						// flush old hunk
-						if (lines.size() > 0) {
-							Hunk.createHunk(diff, oldRange, newRange, lines,encounteredPlus, encounteredMinus, encounteredSpace);
-							lines.clear();
-						}
-								
-						// format: @@ -oldStart,oldLength +newStart,newLength @@
-						extractPair(line, '-', oldRange);
-						extractPair(line, '+', newRange);
-						continue;
-					}
-					break;
-				case ' ':
-					encounteredSpace = true;
-					lines.add(line);
-					continue;
-				case '+':
-					encounteredPlus = true;
-					lines.add(line);
-					continue;
-				case '-':
-					encounteredMinus = true;
-					lines.add(line);
-					continue;
-				case '\\':
-					if (line.indexOf("newline at end") > 0) { //$NON-NLS-1$
-						int lastIndex= lines.size();
-						if (lastIndex > 0) {
-							line= (String) lines.get(lastIndex-1);
-							int end= line.length()-1;
-							char lc= line.charAt(end);
-							if (lc == '\n') {
-								end--;
-								if (end > 0 && line.charAt(end) == '\r')
-									end--;
-							} else if (lc == '\r') {
-								end--;
+					case '@':
+						if (line.startsWith("@@ ")) { //$NON-NLS-1$
+							// flush old hunk
+							if (lines.size() > 0) {
+								Hunk.createHunk(diff, oldRange, newRange, lines, encounteredPlus, encounteredMinus, encounteredSpace);
+								lines.clear();
 							}
-							line= line.substring(0, end+1);
-							lines.set(lastIndex-1, line);
+
+							// format: @@ -oldStart,oldLength +newStart,newLength @@
+							extractPair(line, '-', oldRange);
+							extractPair(line, '+', newRange);
+							continue;
 						}
+						break;
+					case ' ':
+						encounteredSpace= true;
+						lines.add(line);
 						continue;
-					}
-					break;
-				default:
-					if (DEBUG) {
-						int a1= c, a2= 0;
-						if (line.length() > 1)
-							a2= line.charAt(1);
-						System.out.println("char: " + a1 + " " + a2); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					break;
+					case '+':
+						encounteredPlus= true;
+						lines.add(line);
+						continue;
+					case '-':
+						encounteredMinus= true;
+						lines.add(line);
+						continue;
+					case '\\':
+						if (line.indexOf("newline at end") > 0) { //$NON-NLS-1$
+							int lastIndex= lines.size();
+							if (lastIndex > 0) {
+								line= (String)lines.get(lastIndex - 1);
+								int end= line.length() - 1;
+								char lc= line.charAt(end);
+								if (lc == '\n') {
+									end--;
+									if (end > 0 && line.charAt(end) == '\r')
+										end--;
+								} else if (lc == '\r') {
+									end--;
+								}
+								line= line.substring(0, end + 1);
+								lines.set(lastIndex - 1, line);
+							}
+							continue;
+						}
+						break;
+					default:
+						throw new IOException("Invalid patch"); //$NON-NLS-1$
 				}
 				return line;
 			}
