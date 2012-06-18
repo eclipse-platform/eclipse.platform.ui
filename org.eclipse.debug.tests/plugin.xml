@@ -82,5 +82,18 @@
             id="org.eclipse.debug.tests.statusHandler"
             plugin="org.eclipse.debug.tests">
       </statusHandler>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.debug.tests.launch.type1"
+            icon="platform:/plugin/org.eclipse.debug.tests/icons/image1.gif"
+            id="type.image.1">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.debug.tests.launch.type"
+            icon="icons/image2.gif"
+            id="type.image.2">
+      </launchConfigurationTypeImage>
    </extension>   
 </plugin>

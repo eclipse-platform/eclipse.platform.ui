@@ -51,6 +51,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.tests.TestsPlugin;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -1376,6 +1378,26 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertTrue("Renamed and moved config should exist", next.exists());
 		
 	}
+	
+	/**
+	 * Test support for a URL in the 'icon' part of the launchConfigurationTypeImages extension point
+	 * 
+	 * Bug 381175 - [patch] launchConfigurationTypeImage to support platform: style icons
+	 * @throws Exception
+	 */
+	public void testGetTypeImageFromURI() throws Exception {
+		ImageDescriptor descriptor = DebugUITools.getImageDescriptor("org.eclipse.debug.tests.launch.type1");
+		assertNotNull("The image descriptior type.image.1 must exist", descriptor);
+		assertNotSame("The image descriptor is not type.image.1", ImageDescriptor.getMissingImageDescriptor(), descriptor);
+	}
+	
+	/**
+	 * Test support for a declared launch configuration type image
+	 * @throws Exception
+	 */
+	public void testGetTyeImage() throws Exception {
+		ImageDescriptor descriptor = DebugUITools.getImageDescriptor("org.eclipse.debug.tests.launch.type");
+		assertNotNull("The image descriptior type.image.2 must exist", descriptor);
+		assertNotSame("The image descriptor is not type.image.2", ImageDescriptor.getMissingImageDescriptor(), descriptor);
+	}
 }
-
-

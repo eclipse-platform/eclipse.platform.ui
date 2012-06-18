@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui;
 
  
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -1376,6 +1377,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			URL iconURL = FileLocator.find(bundle , new Path(iconPath), null);
 			if (iconURL != null) {
 				return ImageDescriptor.createFromURL(iconURL);
+			} else { // try to search as a URL in case it is absolute path
+				try {
+					iconURL = FileLocator.find(new URL(iconPath));
+					if (iconURL != null) {
+						return ImageDescriptor.createFromURL(iconURL);
+					}
+				} catch (MalformedURLException e) {
+					// return null
+				}
 			}
 		}
 		return null;
