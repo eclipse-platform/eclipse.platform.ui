@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sascha Radike - bug 56642
  *     Martin Oberhuber (Wind River) - [327446] Avoid unnecessary wait-for-build dialog.
+ *     Mohamed Hussein - bug 381175
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
