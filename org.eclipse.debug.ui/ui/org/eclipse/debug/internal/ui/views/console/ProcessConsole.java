@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -82,6 +82,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
 
 import com.ibm.icu.text.MessageFormat;
+
 
 /**
  * A console for a system process with standard I/O streams.
@@ -671,13 +672,18 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
          * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
          */
         protected IStatus run(IProgressMonitor monitor) {
+            String encoding = getEncoding();
             try {
                 byte[] b = new byte[1024];
                 int read = 0;
                 while (fInput != null && read >= 0) {
                     read = fInput.read(b);
                     if (read > 0) {
-                        String s = new String(b, 0, read);
+                        String s;
+                        if (encoding != null)
+                            s = new String(b, 0, read, encoding);
+                        else
+                            s = new String(b, 0, read);
                         streamsProxy.write(s);
                     }
                 }
