@@ -470,7 +470,7 @@ public class WorkbenchMessages extends NLS {
 	// public static String ViewsPreference_currentThemeDescription;
 	// public static String ViewsPreference_currentThemeFormat;
 	public static String ViewsPreference_enableAnimations;
-	// public static String ViewsPreference_useColoredLabels;
+	public static String ViewsPreference_useColoredLabels;
 	// public static String ViewsPreference_override;
 	// public static String ViewsPreference_restartRequestJobName;
 	

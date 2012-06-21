@@ -53,9 +53,12 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private String defaultTheme;
 
 	private Button enableAnimations;
+	private Button useColoredLabels;
 	
 	@Override
 	protected Control createContents(Composite parent) {
+		initializeDialogUnits(parent);
+
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(2, false));
 		new Label(comp, SWT.NONE).setText(WorkbenchMessages.ViewsPreferencePage_Theme);
@@ -83,6 +86,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		});
 
 		createEnableAnimationsPref(comp);
+		createColoredLabelsPref(comp);
 
 		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY))
 				.setSelection(currentTheme);
@@ -90,6 +94,14 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 
 		return comp;
+	}
+
+	private void createColoredLabelsPref(Composite composite) {
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+
+		useColoredLabels = createCheckButton(composite,
+				WorkbenchMessages.ViewsPreference_useColoredLabels,
+				apiStore.getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 	}
 
 	private Button createCheckButton(Composite composite, String text, boolean selection) {
@@ -131,6 +143,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
 				enableAnimations.getSelection());
+		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS,
+				useColoredLabels.getSelection());
 		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).performOK();
 		return super.performOk();
 	}
@@ -143,6 +157,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		enableAnimations.setSelection(apiStore
 				.getDefaultBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
+		useColoredLabels.setSelection(apiStore
+				.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 		super.performDefaults();
 	}
 
