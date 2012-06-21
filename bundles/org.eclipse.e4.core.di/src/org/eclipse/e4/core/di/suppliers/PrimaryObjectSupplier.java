@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.di.suppliers;
 
+import java.lang.ref.WeakReference;
+
 /**
  * The base class for an "object supplier" - something that knows how to instantiate objects
  * corresponding to the object descriptor.
@@ -56,4 +58,16 @@ abstract public class PrimaryObjectSupplier {
 	 */
 	abstract public void resumeRecording();
 
+	/**
+	 * Creates a new reference to the object.
+	 * <p> 
+	 * Suppliers may override to provide improved memory management, for instance, by 
+	 * to tracking references with reference queues.
+	 * </p>
+	 * @param object the referred object
+	 * @return a new weak reference to the object
+	 */
+	public WeakReference<Object> makeReference(Object object) {
+		return new WeakReference<Object>(object);
+	}
 }

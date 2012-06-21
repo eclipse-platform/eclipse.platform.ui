@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -75,7 +77,6 @@ public class EclipseContext implements IEclipseContext {
 
 	private Map<String, HashSet<Computation>> listeners = Collections.synchronizedMap(new HashMap<String, HashSet<Computation>>(10, 0.8f));
 	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
-	private Set<Computation> activeRATs = new HashSet<Computation>();
 
 	final protected Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
 
@@ -88,6 +89,13 @@ public class EclipseContext implements IEclipseContext {
 	private Set<IContextDisposalListener> notifyOnDisposal = new HashSet<IContextDisposalListener>();
 
 	static private ThreadLocal<Stack<Computation>> currentComputation = new ThreadLocal<Stack<Computation>>();
+
+	// I don't think we need to sync referenceQueue access
+	private ReferenceQueue<Object> referenceQueue = new ReferenceQueue<Object>();
+
+	private Map<Reference<?>, TrackableComputationExt> activeComputations = Collections.synchronizedMap(new HashMap<Reference<?>, TrackableComputationExt>());
+
+	private final static Object[] nullArgs = new Object[] {null};
 
 	/**
 	 * A context key (value "activeChildContext") that identifies another {@link IEclipseContext}
@@ -152,12 +160,12 @@ public class EclipseContext implements IEclipseContext {
 			childContext.dispose();
 		}
 
+		activeComputations.clear();
+
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
 		Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
 		Set<Computation> allComputations = getListeners();
 		listeners.clear();
-		allComputations.addAll(activeRATs);
-		activeRATs.clear();
 		for (Computation computation : allComputations) {
 			computation.handleInvalid(event, scheduled);
 		}
@@ -289,13 +297,15 @@ public class EclipseContext implements IEclipseContext {
 		TrackableComputationExt computation = new TrackableComputationExt(runnable, this);
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.INITIAL, null, null, null);
 		boolean result = computation.update(event);
-		if (result)
-			activeRATs.add(computation);
+		if (result) {
+			Reference<Object> ref = computation.getReference();
+			if (ref != null)
+				activeComputations.put(ref, computation);
+		}
 	}
 
 	public void removeRAT(Computation computation) {
-		activeRATs.remove(computation);
-		// also remove from listeners
+		// remove from listeners
 		Collection<HashSet<Computation>> allListeners = listeners.values();
 		for (HashSet<Computation> group : allListeners) {
 			group.remove(computation);
@@ -320,6 +330,18 @@ public class EclipseContext implements IEclipseContext {
 			Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
 			invalidate(name, ContextChangeEvent.ADDED, oldValue, value, scheduled);
 			processScheduled(scheduled);
+		}
+
+		// cleanup unused computation listeners
+		Reference<?> ref = referenceQueue.poll();
+		if (ref != null) {
+			ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.UNINJECTED, nullArgs, null, null);
+			for (; ref != null; ref = referenceQueue.poll()) {
+				TrackableComputationExt obsoleteComputation = activeComputations.remove(ref);
+				if (obsoleteComputation == null)
+					continue;
+				obsoleteComputation.update(event);
+			}
 		}
 	}
 
@@ -732,5 +754,9 @@ public class EclipseContext implements IEclipseContext {
 		});
 		trackAccess(internalName);
 		return internalGet(this, internalName, true);
+	}
+
+	public WeakReference<Object> trackedWeakReference(Object object) {
+		return new WeakReference<Object>(object, referenceQueue);
 	}
 }

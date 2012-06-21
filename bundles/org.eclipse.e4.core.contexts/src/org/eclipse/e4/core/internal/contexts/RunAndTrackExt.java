@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.core.internal.contexts;
 
+import java.lang.ref.Reference;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 
@@ -25,6 +26,10 @@ abstract public class RunAndTrackExt extends RunAndTrack {
 
 	public boolean batchProcess() {
 		return group;
+	}
+
+	public Reference<Object> getReference() {
+		return null;
 	}
 
 	abstract public boolean update(IEclipseContext eventsContext, int eventType, Object[] extraArguments);

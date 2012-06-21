@@ -23,7 +23,7 @@ Export-Package: org.eclipse.e4.core.di;
    org.eclipse.e4.ui.workbench.swt,
    org.eclipse.ui.workbench",
  org.eclipse.e4.core.di.suppliers;x-friends:="org.eclipse.e4.core.contexts,org.eclipse.e4.core.di.extensions,org.eclipse.e4.ui.di",
- org.eclipse.e4.core.internal.di;x-internal:=true,
+ org.eclipse.e4.core.internal.di;x-friends:="org.eclipse.e4.core.contexts",
  org.eclipse.e4.core.internal.di.osgi;x-internal:=true,
  org.eclipse.e4.core.internal.di.shared;x-friends:="org.eclipse.e4.core.contexts,org.eclipse.e4.core.di.extensions"
 Require-Bundle: org.eclipse.osgi;bundle-version="3.6.0";resolution:=optional

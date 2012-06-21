@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Stack;
@@ -21,6 +23,7 @@ import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
+import org.eclipse.e4.core.internal.di.Requestor;
 
 public class ContextObjectSupplier extends PrimaryObjectSupplier {
 
@@ -43,6 +46,12 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			this.context = context;
 		}
 
+		public Reference<Object> getReference() {
+			if (requestor instanceof Requestor)
+				return ((Requestor) requestor).getReference();
+			return super.getReference();
+		}
+
 		public boolean update(IEclipseContext eventsContext, int eventType, Object[] extraArguments) {
 			if (eventType == ContextChangeEvent.INITIAL) {
 				// needs to be done inside runnable to establish dependencies
@@ -52,7 +61,9 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 					IEclipseContext targetContext = (active[i]) ? context.getActiveLeaf() : context;
 					if (ECLIPSE_CONTEXT_NAME.equals(keys[i])) {
 						result[i] = targetContext;
-						targetContext.getParent(); // creates pseudo-link
+						IEclipseContext parent = targetContext.getParent(); // creates pseudo-link
+						if (parent == null)
+							targetContext.get(ECLIPSE_CONTEXT_NAME); // pseudo-link in case there is no parent
 					} else if (targetContext.containsKey(keys[i]))
 						result[i] = targetContext.get(keys[i]);
 				}
@@ -224,6 +235,13 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		ContextObjectSupplier objectSupplier = new ContextObjectSupplier(context, injector);
 		context.set(ContextObjectSupplier.class, objectSupplier);
 		return objectSupplier;
+	}
+
+	public WeakReference<Object> makeReference(Object object) {
+		if (context instanceof EclipseContext) {
+			return ((EclipseContext) context).trackedWeakReference(object);
+		}
+		return super.makeReference(object);
 	}
 
 }

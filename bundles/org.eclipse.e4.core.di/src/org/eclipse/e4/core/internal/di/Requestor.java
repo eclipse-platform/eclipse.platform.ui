@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.di;
 
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.AccessibleObject;
 import org.eclipse.e4.core.di.IInjector;
@@ -43,9 +44,12 @@ abstract public class Requestor implements IRequestor {
 		this.injector = injector;
 		this.primarySupplier = primarySupplier;
 		this.tempSupplier = tempSupplier;
-		if (requestingObject != null)
-			objectRef = new WeakReference<Object>(requestingObject);
-		else
+		if (requestingObject != null) {
+			if (primarySupplier != null)
+				objectRef = primarySupplier.makeReference(requestingObject);
+			else
+				objectRef = new WeakReference<Object>(requestingObject);
+		} else
 			objectRef = null;
 		this.track = track;
 		groupUpdates = (reflectionObject == null) ? false : reflectionObject.isAnnotationPresent(GroupUpdates.class);
@@ -79,6 +83,10 @@ abstract public class Requestor implements IRequestor {
 		if (object == null)
 			return null;
 		return object.getClass();
+	}
+
+	public Reference<Object> getReference() {
+		return objectRef;
 	}
 
 	/**
