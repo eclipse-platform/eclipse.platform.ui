@@ -15,8 +15,10 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -67,6 +69,8 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -93,6 +97,13 @@ public class StackRenderer extends LazyStackRenderer {
 	public static final String TAG_VIEW_MENU = "ViewMenu"; //$NON-NLS-1$
 	private static final String SHELL_CLOSE_EDITORS_MENU = "shell_close_editors_menu"; //$NON-NLS-1$
 	private static final String STACK_SELECTED_PART = "stack_selected_part"; //$NON-NLS-1$
+
+	/**
+	 * Add this tag to prevent the next tab's activation from granting focus to
+	 * the part. This is used to keep the focus on the CTF when traversing the
+	 * tabs using the keyboard.
+	 */
+	private static final String INHIBIT_FOCUS = "InhibitFocus"; //$NON-NLS-1$
 
 	// Minimum characters in for stacks outside the shared area
 	private static int MIN_VIEW_CHARS = 1;
@@ -202,6 +213,27 @@ public class StackRenderer extends LazyStackRenderer {
 				activate((MPart) selElement);
 			}
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#requiresFocus
+	 * (org.eclipse.e4.ui.model.application.ui.basic.MPart)
+	 */
+	@Override
+	protected boolean requiresFocus(MPart element) {
+		MUIElement inStack = element.getCurSharedRef() != null ? element
+				.getCurSharedRef() : element;
+		if (inStack.getParent() != null
+				&& inStack.getParent().getTransientData()
+						.containsKey(INHIBIT_FOCUS)) {
+			inStack.getParent().getTransientData().remove(INHIBIT_FOCUS);
+			return false;
+		}
+
+		return super.requiresFocus(element);
 	}
 
 	private boolean isValid(MUIElement element) {
@@ -835,6 +867,32 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// Match the selected TabItem to its Part
 		final CTabFolder ctf = (CTabFolder) me.getWidget();
+		
+		// Handle traverse events for accessibility
+		ctf.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_ARROW_NEXT
+						|| e.detail == SWT.TRAVERSE_ARROW_PREVIOUS) {
+					me.getTransientData().put(INHIBIT_FOCUS, true);
+				} else if (e.detail == SWT.TRAVERSE_RETURN) {
+					me.getTransientData().remove(INHIBIT_FOCUS);
+					CTabItem cti = ctf.getSelection();
+					if (cti != null) {
+						MUIElement stackElement = (MUIElement) cti
+								.getData(OWNING_ME);
+						if (stackElement instanceof MPlaceholder)
+							stackElement = ((MPlaceholder) stackElement)
+									.getRef();
+						if (stackElement instanceof MPart) {
+							MPart thePart = (MPart) stackElement;
+							ContextInjectionFactory.invoke(thePart.getObject(),
+									Focus.class, thePart.getContext());
+						}
+					}
+				}
+			}
+		});
+
 		ctf.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
