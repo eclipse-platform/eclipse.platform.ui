@@ -187,9 +187,10 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 */
 	protected void handleElementsChanged() {
 		boolean enabled = !fFilteredList.isEmpty();
-		fMessage.setEnabled(enabled);
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=374795
-		// fFilterText.setEnabled(enabled);
+
+		if (fMessage != null && !fMessage.isDisposed())
+			fMessage.setEnabled(enabled);
+
 		fFilteredList.setEnabled(enabled);
 		updateOkState();
 	}
