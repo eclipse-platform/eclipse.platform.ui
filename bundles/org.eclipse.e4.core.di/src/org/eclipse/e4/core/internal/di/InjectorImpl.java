@@ -271,10 +271,11 @@ public class InjectorImpl implements IInjector {
 	}
 
 	private Object internalMake(Class<?> clazz, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier) {
-		if (classesBeingCreated.contains(clazz))
-			throw new InjectionException("Recursive reference trying to create class " + clazz.getName()); //$NON-NLS-1$
+		if (shouldDebug && classesBeingCreated.contains(clazz))
+			LogHelper.logWarning("Possible recursive reference trying to create class \"" + clazz.getName() + "\".", null); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
-			classesBeingCreated.add(clazz);
+			if (shouldDebug)
+				classesBeingCreated.add(clazz);
 
 			boolean isSingleton = clazz.isAnnotationPresent(Singleton.class);
 			if (isSingleton) {
@@ -326,7 +327,8 @@ public class InjectorImpl implements IInjector {
 			}
 			throw new InjectionException("Could not find satisfiable constructor in " + clazz.getName()); //$NON-NLS-1$
 		} finally {
-			classesBeingCreated.remove(clazz);
+			if (shouldDebug)
+				classesBeingCreated.remove(clazz);
 		}
 	}
 

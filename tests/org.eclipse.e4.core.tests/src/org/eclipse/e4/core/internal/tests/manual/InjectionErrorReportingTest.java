@@ -21,6 +21,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.annotations.Creatable;
 
 /**
  * Manual test to observe error reporting. The JUnits in this
@@ -111,6 +112,12 @@ public class InjectionErrorReportingTest extends TestCase {
 		}
 	}
 	
+	@Creatable
+	static class InjectedRecursive {
+		@Inject
+		public InjectedRecursive field;
+	}
+
 	/**
 	 * Shows the error message for an unresolved method argument
 	 */
@@ -234,6 +241,31 @@ public class InjectionErrorReportingTest extends TestCase {
 		assertTrue(exception);
 	}
 	
+	/**
+	 * Manual test to check error message for recursive object creation
+	 */
+	public void testRecursionError() {
+		IEclipseContext context = EclipseContextFactory.create();
+		boolean exception = false;
+		try {
+			ContextInjectionFactory.make(InjectedRecursive.class, context);
+		} catch (InjectionException e) {
+			basicLog(e);
+			exception = true;
+		}
+		assertTrue(exception);
+		
+		context.set(InjectedRecursive.class, new InjectedRecursive());
+		exception = false;
+		try {
+			ContextInjectionFactory.make(InjectedRecursive.class, context);
+		} catch (InjectionException e) {
+			basicLog(e);
+			exception = true;
+		}
+		assertFalse(exception);
+	}
+
 	private void basicLog(InjectionException e) {
 		e.printStackTrace(System.out);
 	}
