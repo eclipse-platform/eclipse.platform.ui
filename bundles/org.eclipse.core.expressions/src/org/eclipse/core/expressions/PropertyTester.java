@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.Platform;
  * </pre>
  * the corresponding implementation class looks like:
  * <pre>
- *   public class MyPackageFragmentTester {
+ *   public class MyPackageFragmentTester extends PropertyTester {
  *       public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
  *           IPackageFragment fragment= (IPackageFragment)receiver;
  *	         if ("isDefaultPackage".equals(property)) {
