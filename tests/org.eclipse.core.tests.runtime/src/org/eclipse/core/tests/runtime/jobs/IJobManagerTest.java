@@ -1395,6 +1395,50 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		waitForCompletion();
 	}
 
+	/**
+	 * Tests setting various kinds of invalid rules on jobs.
+	 */
+	public void testSetInvalidRule() {
+		class InvalidRule implements ISchedulingRule {
+			public boolean isConflicting(ISchedulingRule rule) {
+				return false;
+			}
+
+			public boolean contains(ISchedulingRule rule) {
+				return false;
+			}
+		}
+
+		InvalidRule rule1 = new InvalidRule();
+		InvalidRule rule2 = new InvalidRule();
+		ISchedulingRule multi = MultiRule.combine(rule1, rule2);
+
+		Job job = new Job("job with invalid rule") {
+			protected IStatus run(IProgressMonitor monitor) {
+				return Status.OK_STATUS;
+			}
+		};
+
+		try {
+			job.setRule(rule1);
+			fail("invalid rule");
+		} catch (IllegalArgumentException e) {
+			//expected
+		}
+		try {
+			job.setRule(rule2);
+			fail("invalid rule");
+		} catch (IllegalArgumentException e) {
+			//expected
+		}
+		try {
+			job.setRule(multi);
+			fail("invalid rule");
+		} catch (IllegalArgumentException e) {
+			//expected
+		}
+	}
+
 	public void testSleep() {
 		TestJob job = new TestJob("ParentJob", 10, 100);
 		//sleeping a job that isn't scheduled should have no effect

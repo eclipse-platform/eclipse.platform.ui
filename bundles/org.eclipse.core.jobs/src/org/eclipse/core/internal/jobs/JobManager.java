@@ -1547,6 +1547,13 @@ public class JobManager implements IJobManager {
 		//null rule always valid
 		if (rule == null)
 			return;
+		if (rule instanceof MultiRule) {
+			ISchedulingRule[] children = ((MultiRule) rule).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				Assert.isLegal(children[i] != rule);
+				validateRule(children[i]);
+			}
+		}
 		//contains method must be reflexive
 		Assert.isLegal(rule.contains(rule));
 		//contains method must return false when given an unknown rule
