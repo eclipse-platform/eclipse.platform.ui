@@ -395,8 +395,11 @@ class ThreadJob extends Job {
 	String getRuleStack() {
 		StringBuffer buf = new StringBuffer();
 		buf.append('[');
-		for (int i = 0; i <= top && i < ruleStack.length; i++)
-			buf.append(ruleStack[i]).append(',');
+		for (int i = 0; i <= top && i < ruleStack.length; i++) {
+			buf.append(ruleStack[i]);
+			if (i != top)
+				buf.append(',');
+		}
 		buf.append(']');
 		return buf.toString();
 	}
