@@ -329,7 +329,7 @@ class ThreadJob extends Job {
 		if (JobManager.DEBUG_BEGIN_END)
 			lastPush = (RuntimeException) new RuntimeException().fillInStackTrace();
 		//check for containment last because we don't want to fail again on endRule
-		if (baseRule != null && rule != null && !baseRule.contains(rule))
+		if (baseRule != null && rule != null && !(baseRule.contains(rule) && baseRule.isConflicting(rule)))
 			illegalPush(rule, baseRule);
 	}
 

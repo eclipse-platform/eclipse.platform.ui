@@ -137,6 +137,32 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//		manager.startup();
 	}
 
+	public void testBeginInvalidNestedRules() {
+		final ISchedulingRule root = new PathRule("/");
+		final ISchedulingRule invalid = new ISchedulingRule() {
+			public boolean isConflicting(ISchedulingRule rule) {
+				return this == rule;
+			}
+
+			public boolean contains(ISchedulingRule rule) {
+				return this == rule || root.contains(rule);
+			}
+		};
+		try {
+			Job.getJobManager().beginRule(invalid, null);
+			try {
+				Job.getJobManager().beginRule(root, null);
+				fail("1.0");
+			} catch (IllegalArgumentException e) {
+				// expected
+			} finally {
+				Job.getJobManager().endRule(root);
+			}
+		} finally {
+			Job.getJobManager().endRule(invalid);
+		}
+	}
+
 	/**
 	 * Tests running a job that begins a rule but never ends it
 	 */
