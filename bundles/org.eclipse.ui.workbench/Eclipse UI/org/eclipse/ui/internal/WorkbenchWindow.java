@@ -1144,6 +1144,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		updateDisabled = true;
 
 		try {
+			// Tag the currently active part so we can restore focus on startup
+			WorkbenchPartReference ref = (WorkbenchPartReference) getActivePage()
+					.getActivePartReference();
+			if (ref != null) {
+				ref.getModel().getTags().add(EPartService.ACTIVE_ON_CLOSE_TAG);
+			}
+
 			// Only do the check if it is OK to close if we are not closing
 			// via the workbench as the workbench will check this itself.
 			Workbench workbench = getWorkbenchImpl();

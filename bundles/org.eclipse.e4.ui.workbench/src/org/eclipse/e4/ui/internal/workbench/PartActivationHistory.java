@@ -303,6 +303,15 @@ class PartActivationHistory {
 			}
 		}
 
+		List<String> activeTag = new ArrayList<String>();
+		activeTag.add(EPartService.ACTIVE_ON_CLOSE_TAG);
+		List<MPart> activeCandidates = modelService.findElements(perspective, null, MPart.class,
+				activeTag);
+		if (activeCandidates.size() > 0) {
+			activeCandidates.get(0).getTags().remove(EPartService.ACTIVE_ON_CLOSE_TAG);
+			return activeCandidates.get(0);
+		}
+
 		Collection<MPart> candidates = perspective.getContext().get(EPartService.class).getParts();
 		for (MPart candidate : candidates) {
 			if (isValid(perspective, candidate)) {

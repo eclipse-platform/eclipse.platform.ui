@@ -30,6 +30,12 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 public interface EPartService {
 
 	/**
+	 * Used to tag the currently active part in a presentation for subsequent activation on session
+	 * startup
+	 */
+	public static final String ACTIVE_ON_CLOSE_TAG = "activeOnClose"; //$NON-NLS-1$
+
+	/**
 	 * Applicable states that a part can be in. This will be used in conjunction with
 	 * {@link EPartService#showPart(String, PartState)}.
 	 */
