@@ -211,14 +211,14 @@ class WorkerPool {
 		}
 		Job job = null;
 		try {
-			job = manager.startJob();
+			job = manager.startJob(worker);
 			//spin until a job is found or until we have been idle for too long
 			long idleStart = System.currentTimeMillis();
 			while (manager.isActive() && job == null) {
 				long hint = manager.sleepHint();
 				if (hint > 0)
 					sleep(Math.min(hint, BEST_BEFORE));
-				job = manager.startJob();
+				job = manager.startJob(worker);
 				//if we were already idle, and there are still no new jobs, then
 				// the thread can expire
 				synchronized (this) {

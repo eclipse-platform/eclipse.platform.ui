@@ -1352,6 +1352,20 @@ public class JobTest extends AbstractJobTest {
 
 		//execution thread should reset to null after job is finished
 		assertTrue("9.0", longJob.getThread() == null);
+
+		//when the state is changed to RUNNING, the thread should not be null
+		final Thread[] thread = new Thread[1];
+		IJobChangeListener listener = new JobChangeAdapter() {
+			public void running(IJobChangeEvent event) {
+				thread[0] = event.getJob().getThread();
+			}
+		};
+		longJob.addJobChangeListener(listener);
+		longJob.schedule();
+		waitForState(longJob, Job.RUNNING);
+		longJob.cancel();
+		longJob.removeJobChangeListener(listener);
+		assertNotNull("10.0", thread[0]);
 	}
 
 	/**

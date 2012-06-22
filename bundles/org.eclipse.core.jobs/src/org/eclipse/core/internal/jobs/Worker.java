@@ -48,7 +48,6 @@ public class Worker extends Thread {
 		setPriority(Thread.NORM_PRIORITY);
 		try {
 			while ((currentJob = pool.startJob(this)) != null) {
-				currentJob.setThread(this);
 				IStatus result = Status.OK_STATUS;
 				try {
 					result = currentJob.run(currentJob.getProgressMonitor());

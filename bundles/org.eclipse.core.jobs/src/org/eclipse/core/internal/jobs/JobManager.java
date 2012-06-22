@@ -1472,7 +1472,7 @@ public class JobManager implements IJobManager {
 	 * Returns the next job to be run, or null if no jobs are waiting to run.
 	 * The worker must call endJob when the job is finished running.  
 	 */
-	protected Job startJob() {
+	protected Job startJob(Worker worker) {
 		Job job = null;
 		while (true) {
 			job = nextJob();
@@ -1492,6 +1492,7 @@ public class JobManager implements IJobManager {
 						if (shouldRun && !internal.isAboutToRunCanceled()) {
 							internal.setProgressMonitor(createMonitor(job));
 							//change from ABOUT_TO_RUN to RUNNING
+							internal.setThread(worker);
 							internal.internalSetState(Job.RUNNING);
 							internal.jobStateLock.notifyAll();
 							break;
