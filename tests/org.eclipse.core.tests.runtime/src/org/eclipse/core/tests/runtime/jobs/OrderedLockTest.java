@@ -99,6 +99,7 @@ public class OrderedLockTest extends TestCase {
 			public void run() {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_START);
+				barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
 				lock.acquire();
 				wasInterupted[0] = Thread.currentThread().isInterrupted();
 				lock.release();
@@ -111,7 +112,8 @@ public class OrderedLockTest extends TestCase {
 		lock.acquire();
 		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
 		//make sure thread is blocked
-		Thread.sleep(100);
+		barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+		Thread.sleep(500);
 		t.interrupt();
 		lock.release();
 		t.join();
