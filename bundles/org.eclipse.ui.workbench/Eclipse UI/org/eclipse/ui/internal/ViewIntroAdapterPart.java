@@ -63,18 +63,14 @@ public final class ViewIntroAdapterPart extends ViewPart {
 			if (changedObj != getIntroStack())
 				return;
 
-			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
-			String tag = (String) event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			String oldVal = (String) event.getProperty(UIEvents.EventTags.OLD_VALUE);
-
-			if (UIEvents.EventTypes.ADD.equals(eventType)) {
-				if (IPresentationEngine.MAXIMIZED.equals(tag)) {
-					setStandby(false);
-				}
-			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
-				if (IPresentationEngine.MAXIMIZED.equals(oldVal)) {
-					setStandby(true);
-				}
+			if (UIEvents.isADD(event)
+					&& UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE,
+							IPresentationEngine.MAXIMIZED)) {
+				setStandby(false);
+			} else if (UIEvents.isREMOVE(event)
+					&& UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE,
+							IPresentationEngine.MAXIMIZED)) {
+				setStandby(true);
 			}
 		}
 	};

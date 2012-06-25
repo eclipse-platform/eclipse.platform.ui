@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -51,8 +53,7 @@ public class UIEvents {
 	public static final String UIModelTopicBase = UITopicBase + "/model"; //$NON-NLS-1$
 
 	/**
-	 * E4 UI Event Types.
-	 * Add appropriate utility is<Test> method below if new types added
+	 * E4 UI Event Types. Add appropriate utility is<Test> method below if new types added
 	 */
 	public static interface EventTypes {
 		/**
@@ -64,31 +65,51 @@ public class UIEvents {
 		 */
 		public static final String SET = "SET"; //$NON-NLS-1$
 		/**
-		 * Add event
+		 * Add event: value added is {@link EventTags#NEW_VALUE}
 		 */
 		public static final String ADD = "ADD"; //$NON-NLS-1$
 		/**
-		 * Remove event
+		 * Add many items: values added are {@link EventTags#NEW_VALUE}
+		 */
+		public static final String ADD_MANY = "ADD_MANY";//$NON-NLS-1$
+		/**
+		 * Remove event: value removed is {@link EventTags#OLD_VALUE}
 		 */
 		public static final String REMOVE = "REMOVE"; //$NON-NLS-1$
+		/**
+		 * Remove many event: the values removed are the {@link EventTags#OLD_VALUE} (a collection).
+		 * The former positions of the removed values are provided as an integer array in
+		 * {@link EventTags#POSITION}.
+		 */
+		public static final String REMOVE_MANY = "REMOVE_MANY"; //$NON-NLS-1$
+		/**
+		 * Value moved: the value moved is the {@link EventTags#NEW_VALUE}, the old position is
+		 * {@link EventTags#OLD_VALUE}, and the new position in {@link EventTags#POSITION}.
+		 */
+		public static final String MOVE = "MOVE"; //$NON-NLS-1$
 	}
 
 	/**
 	 * @param event
 	 *            An OSGI event representing a UIEvent
-	 * @return true if it is an add event, false otherwise.
+	 * @return true if it is an add event (i.e., {@link EventTypes#ADD} or
+	 *         {@link EventTypes#ADD_MANY}), or false otherwise.
 	 */
 	public static boolean isADD(Event event) {
-		return UIEvents.EventTypes.ADD.equals(event.getProperty(UIEvents.EventTags.TYPE));
+		Object type = event.getProperty(UIEvents.EventTags.TYPE);
+		return UIEvents.EventTypes.ADD.equals(type) || UIEvents.EventTypes.ADD_MANY.equals(type);
 	}
 
 	/**
 	 * @param event
 	 *            An OSGI event representing a UIEvent
-	 * @return true if it is a remove event, false otherwise.
+	 * @return true if it is a remove event (i.e., {@link EventTypes#REMOVE} or
+	 *         {@link EventTypes#REMOVE_MANY}), or false otherwise.
 	 */
 	public static boolean isREMOVE(Event event) {
-		return UIEvents.EventTypes.REMOVE.equals(event.getProperty(UIEvents.EventTags.TYPE));
+		Object type = event.getProperty(UIEvents.EventTags.TYPE);
+		return UIEvents.EventTypes.REMOVE.equals(type)
+				|| UIEvents.EventTypes.REMOVE_MANY.equals(type);
 	}
 
 	/**
@@ -107,6 +128,51 @@ public class UIEvents {
 	 */
 	public static boolean isCREATE(Event event) {
 		return UIEvents.EventTypes.CREATE.equals(event.getProperty(UIEvents.EventTags.TYPE));
+	}
+
+	/**
+	 * Return true if the specified property contains {@code o}. Intended as a helper function for
+	 * {@link EventTypes#ADD}, {@link EventTypes#ADD_MANY}, {@link EventTypes#REMOVE}, and
+	 * {@link EventTypes#REMOVE_MANY}. If the property is not a container (e.g., a collection or
+	 * array), then return true then if {@code container} is equal to {@code o}.
+	 * 
+	 * @param event
+	 *            the event
+	 * @param propertyName
+	 *            the property name
+	 * @param o
+	 *            the object to check for containment
+	 * @return true if the property value contains {@code o} or is equal to {@code o}
+	 */
+	public static boolean contains(Event event, String propertyName, Object o) {
+		Object container = event.getProperty(propertyName);
+		if (container == null) {
+			return false;
+		} else if (container instanceof Collection<?> && ((Collection<?>) container).contains(o)) {
+			return true;
+		} else if (container instanceof Object[]) {
+			for (Object element : (Object[]) container) {
+				if (o.equals(element)) {
+					return true;
+				}
+			}
+		}
+		return o.equals(container);
+	}
+
+	/**
+	 * Return the provided event property as an iterable. If already a collection, return the
+	 * collection.
+	 * 
+	 * @param event
+	 *            the event object
+	 * @param propertyName
+	 *            the name of the property
+	 * @return an iterable collection over the property elements
+	 */
+	public static Iterable<?> asIterable(Event event, String propertyName) {
+		Object o = event.getProperty(propertyName);
+		return o instanceof Collection<?> ? (Collection<?>) o : Collections.singleton(o);
 	}
 
 	/**
@@ -138,6 +204,10 @@ public class UIEvents {
 		 * The new value
 		 */
 		public static final String NEW_VALUE = "NewValue"; //$NON-NLS-1$
+		/**
+		 * The position (if applicable) of the change within the list.
+		 */
+		public static final String POSITION = "Position"; //$NON-NLS-1$
 	}
 
 	/**
@@ -1140,5 +1210,4 @@ public class UIEvents {
 		// Attributes that can be tested in event handlers
 		public static final String TRIMCONTRIBUTIONS = "trimContributions"; //$NON-NLS-1$
 	}
-
 }

@@ -357,25 +357,22 @@ public class MinMaxAddon {
 				return;
 
 			Object changedObj = event.getProperty(EventTags.ELEMENT);
-			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
-			String tag = (String) event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			String oldVal = (String) event.getProperty(UIEvents.EventTags.OLD_VALUE);
 
 			if (!(changedObj instanceof MUIElement))
 				return;
 
 			final MUIElement changedElement = (MUIElement) changedObj;
 
-			if (UIEvents.EventTypes.ADD.equals(eventType)) {
-				if (MINIMIZED.equals(tag)) {
+			if (UIEvents.isADD(event)) {
+				if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE, MINIMIZED)) {
 					minimize(changedElement);
-				} else if (MAXIMIZED.equals(tag)) {
+				} else if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE, MAXIMIZED)) {
 					maximize(changedElement);
 				}
-			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
-				if (MINIMIZED.equals(oldVal)) {
+			} else if (UIEvents.isREMOVE(event)) {
+				if (UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE, MINIMIZED)) {
 					restore(changedElement);
-				} else if (MAXIMIZED.equals(oldVal)) {
+				} else if (UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE, MAXIMIZED)) {
 					unzoom(changedElement);
 				}
 			}

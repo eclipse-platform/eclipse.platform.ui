@@ -329,21 +329,23 @@ public class WBWRenderer extends SWTPartRenderer {
 					return;
 				MPartStack stack = (MPartStack) changedObj;
 
-				String eventType = (String) event
-						.getProperty(UIEvents.EventTags.TYPE);
-				if (UIEvents.EventTypes.ADD.equals(eventType)) {
-					MUIElement added = (MUIElement) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					if (added == activePart) {
-						styleStack(stack, true);
+				if (UIEvents.isADD(event)) {
+					for (Object o : UIEvents.asIterable(event,
+							UIEvents.EventTags.NEW_VALUE)) {
+						MUIElement added = (MUIElement) o;
+						if (added == activePart) {
+							styleStack(stack, true);
+						}
 					}
-				} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
+				} else if (UIEvents.isREMOVE(event)) {
 					Activator.trace(Policy.DEBUG_RENDERER,
 							"Child Removed", null); //$NON-NLS-1$
-					MUIElement removed = (MUIElement) event
-							.getProperty(UIEvents.EventTags.OLD_VALUE);
-					if (removed == activePart) {
-						styleStack(stack, false);
+					for (Object o : UIEvents.asIterable(event,
+							UIEvents.EventTags.OLD_VALUE)) {
+						MUIElement removed = (MUIElement) o;
+						if (removed == activePart) {
+							styleStack(stack, false);
+						}
 					}
 				}
 			}

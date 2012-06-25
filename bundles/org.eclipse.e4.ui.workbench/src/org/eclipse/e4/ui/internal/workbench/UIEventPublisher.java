@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -103,8 +104,9 @@ public class UIEventPublisher extends EContentAdapter {
 		String topic = null;
 
 		Object notifier = notification.getNotifier();
-		Object oldValue;
-		Object newValue;
+		Object oldValue = null;
+		Object newValue = null;
+		Object position = null;
 
 		if (notifier instanceof MApplicationElement) {
 			// Most EMF events will be these. Even map add and remove events
@@ -112,8 +114,37 @@ public class UIEventPublisher extends EContentAdapter {
 			feature = (EStructuralFeature) notification.getFeature();
 			attributeName = feature.getName();
 			topic = getTopic(feature, getEventType(notification));
-			oldValue = notification.getOldValue();
-			newValue = notification.getNewValue();
+			switch (notification.getEventType()) {
+			case Notification.MOVE:
+				// for MOVE, oldValue is actually the source position
+				oldValue = notification.getOldValue();
+				newValue = notification.getNewValue();
+				position = notification.getPosition();
+				break;
+			case Notification.ADD_MANY:
+				newValue = notification.getNewValue();
+				position = notification.getPosition();
+				break;
+			case Notification.REMOVE_MANY:
+				oldValue = notification.getOldValue();
+				position = notification.getNewValue();
+				break;
+			case Notification.ADD:
+			case Notification.REMOVE:
+				oldValue = notification.getOldValue();
+				newValue = notification.getNewValue();
+				position = notification.getPosition();
+				break;
+			case Notification.SET:
+			case Notification.UNSET:
+				oldValue = notification.getOldValue();
+				newValue = notification.getNewValue();
+				break;
+			default:
+				Activator.log(IStatus.ERROR, getClass().getName()
+						+ ": unhandled EMF Notification code: " //$NON-NLS-1$
+						+ notification.getEventType());
+			}
 		} else if (notifier instanceof StringToObjectMapImpl) {
 			// These are SET events on StringToObjectMap only
 			// StringToObjectMap is ONLY used by MApplicationData.transientData
@@ -167,11 +198,22 @@ public class UIEventPublisher extends EContentAdapter {
 		argMap.put(EventTags.ELEMENT, appElement);
 		argMap.put(EventTags.ATTNAME, attributeName);
 
+		// no need to include UNSET
 		if (notification.getEventType() == Notification.SET
+				|| notification.getEventType() == Notification.MOVE
 				|| notification.getEventType() == Notification.ADD
-				|| notification.getEventType() == Notification.REMOVE) {
-			argMap.put(EventTags.NEW_VALUE, newValue);
-			argMap.put(EventTags.OLD_VALUE, oldValue);
+				|| notification.getEventType() == Notification.ADD_MANY
+				|| notification.getEventType() == Notification.REMOVE
+				|| notification.getEventType() == Notification.REMOVE_MANY) {
+			if (newValue != null) {
+				argMap.put(EventTags.NEW_VALUE, newValue);
+			}
+			if (oldValue != null) {
+				argMap.put(EventTags.OLD_VALUE, oldValue);
+			}
+			if (position != null) {
+				argMap.put(EventTags.POSITION, position);
+			}
 		}
 
 		if (appElement instanceof MUIElement) {
@@ -185,8 +227,20 @@ public class UIEventPublisher extends EContentAdapter {
 		switch (notification.getEventType()) {
 		case Notification.ADD:
 			return EventTypes.ADD;
+
+		case Notification.ADD_MANY:
+			return EventTypes.ADD_MANY;
+
 		case Notification.REMOVE:
 			return EventTypes.REMOVE;
+
+		case Notification.REMOVE_MANY:
+			return EventTypes.REMOVE_MANY;
+
+		case Notification.MOVE:
+			return EventTypes.MOVE;
+
+			// case Notification.UNSET: doesn't appear to be generated
 		case Notification.SET:
 			return EventTypes.SET;
 		}

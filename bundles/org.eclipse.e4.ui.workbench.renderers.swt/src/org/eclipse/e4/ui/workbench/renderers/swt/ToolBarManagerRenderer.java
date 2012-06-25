@@ -219,9 +219,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				return;
 			MToolBar toolbarModel = (MToolBar) event
 					.getProperty(UIEvents.EventTags.ELEMENT);
-			String eventType = (String) event
-					.getProperty(UIEvents.EventTags.TYPE);
-			if (UIEvents.EventTypes.ADD.equals(eventType)) {
+			if (UIEvents.isADD(event)) {
 				Object obj = toolbarModel;
 				processContents((MElementContainer<MUIElement>) obj);
 			}

@@ -85,17 +85,22 @@ public class ContextProcessingAddon {
 			public void handleEvent(Event event) {
 				Object elementObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 				if (elementObj instanceof MBindingContext) {
-					Object newObj = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-					Object oldObj = event.getProperty(UIEvents.EventTags.OLD_VALUE);
-					if (UIEvents.EventTypes.ADD.equals(event.getProperty(UIEvents.EventTags.TYPE))
-							&& newObj instanceof MBindingContext) {
-						MBindingContext newCtx = (MBindingContext) newObj;
-						defineContexts((MBindingContext) elementObj, newCtx);
-					} else if (UIEvents.EventTypes.REMOVE.equals(event
-							.getProperty(UIEvents.EventTags.TYPE))
-							&& oldObj instanceof MBindingContext) {
-						MBindingContext oldCtx = (MBindingContext) oldObj;
-						undefineContext(oldCtx);
+					if (UIEvents.isADD(event)) {
+						for (Object newObj : UIEvents.asIterable(event,
+								UIEvents.EventTags.NEW_VALUE)) {
+							if (newObj instanceof MBindingContext) {
+								MBindingContext newCtx = (MBindingContext) newObj;
+								defineContexts((MBindingContext) elementObj, newCtx);
+							}
+						}
+					} else if (UIEvents.isREMOVE(event)) {
+						for (Object oldObj : UIEvents.asIterable(event,
+								UIEvents.EventTags.OLD_VALUE)) {
+							if (oldObj instanceof MBindingContext) {
+								MBindingContext oldCtx = (MBindingContext) oldObj;
+								undefineContext(oldCtx);
+							}
+						}
 					}
 				}
 			}

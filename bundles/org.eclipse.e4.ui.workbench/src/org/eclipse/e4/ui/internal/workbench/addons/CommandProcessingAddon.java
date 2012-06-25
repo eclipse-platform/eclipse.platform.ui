@@ -74,12 +74,13 @@ public class CommandProcessingAddon {
 		additionHandler = new EventHandler() {
 			public void handleEvent(Event event) {
 				if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
-					if (UIEvents.EventTypes.ADD.equals(event.getProperty(UIEvents.EventTags.TYPE))) {
-						Object obj = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-						if (obj instanceof MCommand) {
-							createCommand((MCommand) obj);
-						} else if (obj instanceof MCategory) {
-							createCategory((MCategory) obj);
+					if (UIEvents.isADD(event)) {
+						for (Object obj : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
+							if (obj instanceof MCommand) {
+								createCommand((MCommand) obj);
+							} else if (obj instanceof MCategory) {
+								createCategory((MCategory) obj);
+							}
 						}
 					}
 				}

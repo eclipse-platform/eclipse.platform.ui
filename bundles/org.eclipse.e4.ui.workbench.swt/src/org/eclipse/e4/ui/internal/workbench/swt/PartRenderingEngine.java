@@ -216,16 +216,21 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			String eventType = (String) event
 					.getProperty(UIEvents.EventTags.TYPE);
-			if (UIEvents.EventTypes.ADD.equals(eventType)) {
-				MUIElement added = (MUIElement) event
-						.getProperty(UIEvents.EventTags.NEW_VALUE);
-				if (added.isToBeRendered())
-					createGui(added, window.getWidget(), window.getContext());
-			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
-				MUIElement removed = (MUIElement) event
-						.getProperty(UIEvents.EventTags.OLD_VALUE);
-				if (removed.getRenderer() != null)
-					removeGui(removed);
+			if (UIEvents.isADD(event)) {
+				for (Object o : UIEvents.asIterable(event,
+						UIEvents.EventTags.NEW_VALUE)) {
+					MUIElement added = (MUIElement) o;
+					if (added.isToBeRendered())
+						createGui(added, window.getWidget(),
+								window.getContext());
+				}
+			} else if (UIEvents.isREMOVE(event)) {
+				for (Object o : UIEvents.asIterable(event,
+						UIEvents.EventTags.NEW_VALUE)) {
+					MUIElement removed = (MUIElement) o;
+					if (removed.getRenderer() != null)
+						removeGui(removed);
+				}
 			}
 		}
 	};
@@ -246,70 +251,74 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if ((!isApplication && renderer == null) || menuChild)
 				return;
 
-			String eventType = (String) event
-					.getProperty(UIEvents.EventTags.TYPE);
-			if (UIEvents.EventTypes.ADD.equals(eventType)) {
+			if (UIEvents.isADD(event)) {
 				Activator.trace(Policy.DEBUG_RENDERER, "Child Added", null); //$NON-NLS-1$
-				MUIElement added = (MUIElement) event
-						.getProperty(UIEvents.EventTags.NEW_VALUE);
+				for (Object o : UIEvents.asIterable(event,
+						UIEvents.EventTags.NEW_VALUE)) {
+					MUIElement added = (MUIElement) o;
 
-				// OK, we have a new -visible- part we either have to create
-				// it or host it under the correct parent. Note that we
-				// explicitly do *not* render non-selected elements in
-				// stacks (to support lazy loading).
-				boolean isStack = changedObj instanceof MGenericStack<?>;
-				boolean hasWidget = added.getWidget() != null;
-				boolean isSelected = added == changedElement
-						.getSelectedElement();
-				boolean renderIt = !isStack || hasWidget || isSelected;
-				if (renderIt) {
-					// NOTE: createGui will call 'childAdded' if successful
-					Object w = createGui(added);
-					if (w instanceof Control && !(w instanceof Shell)) {
-						final Control ctrl = (Control) w;
-						fixZOrder(added);
-						if (!ctrl.isDisposed()) {
-							ctrl.getShell().layout(new Control[] { ctrl },
-									SWT.DEFER);
+					// OK, we have a new -visible- part we either have to create
+					// it or host it under the correct parent. Note that we
+					// explicitly do *not* render non-selected elements in
+					// stacks (to support lazy loading).
+					boolean isStack = changedObj instanceof MGenericStack<?>;
+					boolean hasWidget = added.getWidget() != null;
+					boolean isSelected = added == changedElement
+							.getSelectedElement();
+					boolean renderIt = !isStack || hasWidget || isSelected;
+					if (renderIt) {
+						// NOTE: createGui will call 'childAdded' if successful
+						Object w = createGui(added);
+						if (w instanceof Control && !(w instanceof Shell)) {
+							final Control ctrl = (Control) w;
+							fixZOrder(added);
+							if (!ctrl.isDisposed()) {
+								ctrl.getShell().layout(new Control[] { ctrl },
+										SWT.DEFER);
+							}
 						}
+					} else {
+						if (renderer != null && added.isToBeRendered())
+							renderer.childRendered(changedElement, added);
 					}
-				} else {
-					if (renderer != null && added.isToBeRendered())
-						renderer.childRendered(changedElement, added);
-				}
 
-				// If the element being added is a placeholder, check to see if
-				// it's 'globally visible' and, if so, remove all other
-				// 'local' placeholders referencing the same element.
-				int newLocation = modelService.getElementLocation(added);
-				if (newLocation == EModelService.IN_SHARED_AREA
-						|| newLocation == EModelService.OUTSIDE_PERSPECTIVE) {
-					MWindow topWin = modelService.getTopLevelWindowFor(added);
-					modelService.hideLocalPlaceholders(topWin, null);
+					// If the element being added is a placeholder, check to see
+					// if
+					// it's 'globally visible' and, if so, remove all other
+					// 'local' placeholders referencing the same element.
+					int newLocation = modelService.getElementLocation(added);
+					if (newLocation == EModelService.IN_SHARED_AREA
+							|| newLocation == EModelService.OUTSIDE_PERSPECTIVE) {
+						MWindow topWin = modelService
+								.getTopLevelWindowFor(added);
+						modelService.hideLocalPlaceholders(topWin, null);
+					}
 				}
-			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
+			} else if (UIEvents.isREMOVE(event)) {
 				Activator.trace(Policy.DEBUG_RENDERER, "Child Removed", null); //$NON-NLS-1$
-				MUIElement removed = (MUIElement) event
-						.getProperty(UIEvents.EventTags.OLD_VALUE);
-				// Removing invisible elements is a NO-OP as far as the
-				// renderer is concerned
-				if (!removed.isToBeRendered())
-					return;
+				for (Object o : UIEvents.asIterable(event,
+						UIEvents.EventTags.OLD_VALUE)) {
+					MUIElement removed = (MUIElement) o;
+					// Removing invisible elements is a NO-OP as far as the
+					// renderer is concerned
+					if (!removed.isToBeRendered())
+						continue;
 
-				if (removed.getWidget() instanceof Control) {
-					Control ctrl = (Control) removed.getWidget();
-					ctrl.setLayoutData(null);
-					ctrl.getParent().layout(new Control[] { ctrl },
-							SWT.CHANGED | SWT.DEFER);
+					if (removed.getWidget() instanceof Control) {
+						Control ctrl = (Control) removed.getWidget();
+						ctrl.setLayoutData(null);
+						ctrl.getParent().layout(new Control[] { ctrl },
+								SWT.CHANGED | SWT.DEFER);
+					}
+
+					// Ensure that the element about to be removed is not the
+					// selected element
+					if (changedElement.getSelectedElement() == removed)
+						changedElement.setSelectedElement(null);
+
+					if (renderer != null)
+						renderer.hideChild(changedElement, removed);
 				}
-
-				// Ensure that the element about to be removed is not the
-				// selected element
-				if (changedElement.getSelectedElement() == removed)
-					changedElement.setSelectedElement(null);
-
-				if (renderer != null)
-					renderer.hideChild(changedElement, removed);
 			}
 		}
 	};

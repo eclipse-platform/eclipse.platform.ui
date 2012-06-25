@@ -85,32 +85,34 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	void postConstruct() {
 		childHandler = new EventHandler() {
 			public void handleEvent(Event event) {
-				if (UIEvents.EventTypes.ADD.equals(event
-						.getProperty(UIEvents.EventTags.TYPE))) {
-					Object element = event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					if (element instanceof MUIElement) {
-						Object parent = event
-								.getProperty(UIEvents.EventTags.ELEMENT);
-						IEclipseContext parentContext = getParentContext((MUIElement) element);
-						if (element instanceof MContext) {
-							IEclipseContext context = ((MContext) element)
-									.getContext();
-							if (context != null
-									&& context.getParent() != parentContext) {
-								context.deactivate();
+				if (UIEvents.isADD(event)) {
+					for (Object element : UIEvents.asIterable(event,
+							UIEvents.EventTags.NEW_VALUE)) {
+						if (element instanceof MUIElement) {
+							Object parent = event
+									.getProperty(UIEvents.EventTags.ELEMENT);
+							IEclipseContext parentContext = getParentContext((MUIElement) element);
+							if (element instanceof MContext) {
+								IEclipseContext context = ((MContext) element)
+										.getContext();
+								if (context != null
+										&& context.getParent() != parentContext) {
+									context.deactivate();
+								}
 							}
-						}
-						createGui((MUIElement) element, parent, parentContext);
+							createGui((MUIElement) element, parent,
+									parentContext);
 
-						if (parent instanceof MPartStack) {
-							MPartStack stack = (MPartStack) parent;
-							List<MStackElement> children = stack.getChildren();
-							MStackElement stackElement = (MStackElement) element;
-							if (children.size() == 1
-									&& stackElement.isVisible()
-									&& stackElement.isToBeRendered()) {
-								stack.setSelectedElement(stackElement);
+							if (parent instanceof MPartStack) {
+								MPartStack stack = (MPartStack) parent;
+								List<MStackElement> children = stack
+										.getChildren();
+								MStackElement stackElement = (MStackElement) element;
+								if (children.size() == 1
+										&& stackElement.isVisible()
+										&& stackElement.isToBeRendered()) {
+									stack.setSelectedElement(stackElement);
+								}
 							}
 						}
 					}

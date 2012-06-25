@@ -222,13 +222,6 @@ public class PerspectiveSwitcher {
 			}
 
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
-
-			if (changedObj instanceof MWindow && UIEvents.EventTypes.ADD.equals(eventType)) {
-				MUIElement added = (MUIElement) event.getProperty(UIEvents.EventTags.NEW_VALUE);
-				if (added instanceof MPerspectiveStack) {
-				}
-			}
 
 			if (psME == null || !(changedObj instanceof MPerspectiveStack))
 				return;
@@ -238,29 +231,31 @@ public class PerspectiveSwitcher {
 			if (perspWin != switcherWin)
 				return;
 
-			if (UIEvents.EventTypes.ADD.equals(eventType)) {
-				MPerspective added = (MPerspective) event.getProperty(UIEvents.EventTags.NEW_VALUE);
-				// Adding invisible elements is a NO-OP
-				if (!added.isToBeRendered())
-					return;
+			if (UIEvents.isADD(event)) {
+				for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
+					MPerspective added = (MPerspective) o;
+					// Adding invisible elements is a NO-OP
+					if (!added.isToBeRendered())
+						continue;
 
-				addPerspectiveItem(added);
-			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
-				MPerspective removed = (MPerspective) event
-						.getProperty(UIEvents.EventTags.OLD_VALUE);
-				// Removing invisible elements is a NO-OP
-				if (!removed.isToBeRendered())
-					return;
+					addPerspectiveItem(added);
+				}
+			} else if (UIEvents.isREMOVE(event)) {
+				for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.OLD_VALUE)) {
+					MPerspective removed = (MPerspective) o;
+					// Removing invisible elements is a NO-OP
+					if (!removed.isToBeRendered())
+						continue;
 
-				removePerspectiveItem(removed);
+					removePerspectiveItem(removed);
+				}
 			}
 		}
 	};
 
 	@PostConstruct
 	void init() {
-		eventBroker.subscribe(
-UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, childrenHandler);
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_TOBERENDERED,
 				toBeRenderedHandler);
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT, selectionHandler);

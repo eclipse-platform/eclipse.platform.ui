@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.tests.application.ModelElementTest;
 import org.eclipse.e4.ui.tests.application.ModelRobustnessTest;
 import org.eclipse.e4.ui.tests.application.ResourceHandlerTest;
 import org.eclipse.e4.ui.tests.application.StartupTestSuite;
+import org.eclipse.e4.ui.tests.application.UIEventTypesTest;
 import org.eclipse.e4.ui.tests.reconciler.ModelReconcilerTestSuite;
 import org.eclipse.e4.ui.tests.workbench.Bug308317Test;
 import org.eclipse.e4.ui.tests.workbench.ContextTest;
@@ -46,6 +47,7 @@ public class UIAllTests extends TestSuite {
 
 	public UIAllTests() {
 		addTest(StartupTestSuite.suite());
+		addTestSuite(UIEventTypesTest.class);
 		addTestSuite(Bug299755Test.class);
 		addTestSuite(Bug308220Test.class);
 		addTestSuite(Bug320857Test.class);
