@@ -71,11 +71,9 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		if (target.exists(flags, false))
 			return;
 		/* make sure target's parent exists */
-		if (node.getLevel() == 0) {
-			IContainer parent = target.getParent();
-			if (parent.getType() == IResource.FOLDER)
-				((Folder) target.getParent()).ensureExists(monitor);
-		}
+		IContainer parent = target.getParent();
+		if (parent.getType() == IResource.FOLDER)
+			((Folder) target.getParent()).ensureExists(monitor);
 		/* Use the basic file creation protocol since we don't want to create any content on disk. */
 		info = workspace.createResource(target, false);
 		/* Mark this resource as having unknown children */
