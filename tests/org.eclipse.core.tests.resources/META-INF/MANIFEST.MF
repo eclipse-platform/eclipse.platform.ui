@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Core Tests Resources
 Bundle-SymbolicName: org.eclipse.core.tests.resources; singleton:=true
-Bundle-Version: 3.8.0.qualifier
+Bundle-Version: 3.8.100.qualifier
 Bundle-ClassPath: resourcestests.jar
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
@@ -11,14 +11,20 @@ Export-Package: org.eclipse.core.tests.filesystem,
  org.eclipse.core.tests.internal.builders,
  org.eclipse.core.tests.internal.dtree,
  org.eclipse.core.tests.internal.filesystem.bogus,
+ org.eclipse.core.tests.internal.filesystem.broken,
+ org.eclipse.core.tests.internal.filesystem.bug369177,
  org.eclipse.core.tests.internal.filesystem.ram,
+ org.eclipse.core.tests.internal.filesystem.remote,
+ org.eclipse.core.tests.internal.filesystem.wrapper,
  org.eclipse.core.tests.internal.localstore,
  org.eclipse.core.tests.internal.mapping,
  org.eclipse.core.tests.internal.properties,
+ org.eclipse.core.tests.internal.propertytester,
  org.eclipse.core.tests.internal.resources,
  org.eclipse.core.tests.internal.utils,
  org.eclipse.core.tests.internal.watson,
  org.eclipse.core.tests.resources,
+ org.eclipse.core.tests.resources.content,
  org.eclipse.core.tests.resources.perf,
  org.eclipse.core.tests.resources.refresh,
  org.eclipse.core.tests.resources.regression,
@@ -32,7 +38,7 @@ Require-Bundle: org.eclipse.osgi.services,
  org.eclipse.core.filesystem,
  org.eclipse.core.runtime,
  org.eclipse.core.expressions
-Eclipse-AutoStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.core.tests.internal.resources.TestActivator
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Eclipse-BundleShape: dir
