@@ -77,13 +77,19 @@ public class LocaleTest extends TestCase {
     	SearchTestUtils.searchOneLocale("dhdsahkdshakjd", new String[0], "en"); 
     }   
     
+    /**
+     * Tests that the stemmer properly removes the German "e" suffix.
+     */
     public void testSearchGermanStemming_e() {
     	SearchTestUtils.searchOneLocale("dfskajkfsafaisch", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml"}, "de"); 
     } 
     
+    /**
+     * Tests that the stemmer properly removes the German "en" suffix.
+     */
     public void testSearchGermanStemming_en() {
-    	SearchTestUtils.searchOneLocale("fdsufds", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml"}, "de"); 
-    	SearchTestUtils.searchOneLocale("fdsufds", new String[0], "en");
+    	SearchTestUtils.searchOneLocale("kirch", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml"}, "de"); 
+    	SearchTestUtils.searchOneLocale("kirch", new String[0], "en");
     }
 
     public void testSearchQualifiedNames_en() {
