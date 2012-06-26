@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,6 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.search.IndexingOperation.IndexingException;
 import org.eclipse.help.internal.util.URLCoder;
-import org.eclipse.help.search.LuceneSearchParticipant;
 import org.eclipse.help.search.SearchParticipant;
 import org.osgi.framework.Bundle;
 
@@ -49,7 +48,6 @@ import org.osgi.framework.Bundle;
  */
 public class LocalSearchManager {
 
-	private static final String LUCENE_SEARCH_PARTICIPANT_XP_FULLNAME = "org.eclipse.help.base.luceneSearchParticipants"; //$NON-NLS-1$
 	private static final String SEARCH_PARTICIPANT_XP_FULLNAME = "org.eclipse.help.base.searchParticipant"; //$NON-NLS-1$
 	private static final String SEARCH_PARTICIPANT_XP_NAME = "searchParticipant"; //$NON-NLS-1$
 	private static final String BINDING_XP_NAME = "binding"; //$NON-NLS-1$
@@ -96,10 +94,6 @@ public class LocalSearchManager {
 					Object obj = element.createExecutableExtension("participant"); //$NON-NLS-1$
 					if (obj instanceof SearchParticipant) {
 						participant = (SearchParticipant)obj;
-						participant.init(getId());
-					} else if (obj instanceof LuceneSearchParticipant) {
-						LuceneSearchParticipant luceneParticipant = (LuceneSearchParticipant) obj;
-						participant = new LuceneSearchParticipantAdapter(luceneParticipant);
 						participant.init(getId());
 					}
 				} catch (Throwable t) {
@@ -318,9 +312,8 @@ public class LocalSearchManager {
 	 * 
 	 * @param pluginId
 	 * @param fileName
-	 * @return
+	 * @return The matching participant, or <code>null</code>
 	 */
-
 	public SearchParticipant getParticipant(String pluginId, String fileName) {
 		ArrayList<ParticipantDescriptor> list = getParticipantDescriptors(pluginId);
 		if (list == null)
@@ -366,7 +359,6 @@ public class LocalSearchManager {
 	public Set<String> getPluginsWithSearchParticipants() {
 		HashSet<String> set = new HashSet<String>();
 		addSearchBindings(set);
-		addLuceneSearchBindings(set);
 		// must ask global search participants directly
 	    SearchParticipant[] gps = getGlobalParticipants();
 		for (int i = 0; i < gps.length; i++) {
@@ -394,17 +386,6 @@ public class LocalSearchManager {
 		}
 	}
 	
-	private void addLuceneSearchBindings(HashSet<String> set) {
-		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				LUCENE_SEARCH_PARTICIPANT_XP_FULLNAME);
-
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
-			if (element.getName().equals("binding") || element.getName().equals("searchParticipant"))  //$NON-NLS-1$//$NON-NLS-2$
-				set.add(element.getContributor().getName());
-		}
-	}
-
 	/**
 	 * Loops through all the loaded search participants and notifies them that they can drop the
 	 * cached data to reduce runtime memory footprint.
@@ -415,13 +396,6 @@ public class LocalSearchManager {
 			ParticipantDescriptor desc = iter.next();
 			desc.clear();
 		}
-	}
-
-	private ArrayList<ParticipantDescriptor> createSearchParticipants(String pluginId) {
-		ArrayList<ParticipantDescriptor> list = null;
-		list = getBindingsForPlugin(pluginId, list, SEARCH_PARTICIPANT_XP_FULLNAME);
-		list = getBindingsForPlugin(pluginId, list, LUCENE_SEARCH_PARTICIPANT_XP_FULLNAME);
-		return list;
 	}
 
 	private ArrayList<ParticipantDescriptor> getBindingsForPlugin(String pluginId, ArrayList<ParticipantDescriptor> list, String extensionPointName) {
@@ -536,7 +510,6 @@ public class LocalSearchManager {
 	private void createGlobalSearchParticipants() {
 		globalSearchParticipants = new ArrayList<ParticipantDescriptor>();
 		addSearchParticipants();
-		addLuceneSearchParticipants();
 	}
 	
 	private void addSearchParticipants() {
@@ -555,26 +528,10 @@ public class LocalSearchManager {
 		}
 	}
 
-	private void addLuceneSearchParticipants() {
-		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				LUCENE_SEARCH_PARTICIPANT_XP_FULLNAME);
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
-			if (!element.getName().equals(SEARCH_PARTICIPANT_XP_NAME))
-				continue;
-			if (element.getAttribute("extensions") != null) //$NON-NLS-1$
-				continue;
-			if (!isParticipantEnabled(String.valueOf(true).equals(element.getAttribute("headless")))) //$NON-NLS-1$
-				continue;
-			ParticipantDescriptor desc = new ParticipantDescriptor(element);
-			globalSearchParticipants.add(desc);
-		}
-	}
-
 	private ArrayList<ParticipantDescriptor> getParticipantDescriptors(String pluginId) {
 		ArrayList<ParticipantDescriptor> result = searchParticipantsByPlugin.get(pluginId);
 		if (result == null) {
-			result = createSearchParticipants(pluginId);
+			result = getBindingsForPlugin(pluginId, null, SEARCH_PARTICIPANT_XP_FULLNAME);
 			if (result == null)
 				result = PARTICIPANTS_NOT_FOUND;
 			searchParticipantsByPlugin.put(pluginId, result);

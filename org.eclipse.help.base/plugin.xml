@@ -17,7 +17,6 @@
    <extension-point id="luceneAnalyzer" name="%lucene_analyzer" schema="schema/luceneAnalyzer.exsd"/>
    <extension-point id="browser" name="%browser_extension_point_name" schema="schema/browser.exsd"/>
    <extension-point id="activitySupport" name="%activity_extension_point_name" schema="schema/activitySupport.exsd"/>
-   <extension-point id="luceneSearchParticipants" name="%search_participant_extension_point_name" schema="schema/luceneSearchParticipants.exsd"/>
    <extension-point id="server" name="%server_extension_point_name" schema="schema/server.exsd"/>
    <extension-point id="searchParticipant" name="%help_search_participant_extension_point_name" schema="schema/searchParticipant.exsd"/>
    <extension-point id="scope" name="%help_scope_extension_point_name" schema="schema/scope.exsd"/>

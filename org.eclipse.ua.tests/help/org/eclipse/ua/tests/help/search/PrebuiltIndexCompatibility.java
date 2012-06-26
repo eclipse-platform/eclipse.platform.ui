@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,24 +15,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import junit.framework.*;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.search.AnalyzerDescriptor;
-import org.eclipse.help.internal.search.PluginIndex;
-import org.eclipse.help.internal.search.QueryBuilder;
-import org.eclipse.help.internal.search.SearchIndexWithIndexingProgress;
+import org.eclipse.help.internal.search.*;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.osgi.framework.Bundle;
 

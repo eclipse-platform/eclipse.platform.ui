@@ -64,7 +64,6 @@ import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.eclipse.help.search.IHelpSearchIndex;
 import org.eclipse.help.search.ISearchDocument;
-import org.eclipse.help.search.ISearchIndex;
 import org.eclipse.help.search.SearchParticipant;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -73,7 +72,7 @@ import org.osgi.framework.Version;
 /**
  * Text search index. Documents added to this index can than be searched against a search query.
  */
-public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
+public class SearchIndex implements IHelpSearchIndex {
 
 	private IndexReader ir;
 
