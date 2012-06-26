@@ -106,7 +106,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 
 	public static final String DEPENDENCIES_KEY_ANALYZER = "analyzer"; //$NON-NLS-1$
 
-	private static final String LUCENE_BUNDLE_ID = "org.apache.lucene"; //$NON-NLS-1$
+	private static final String LUCENE_BUNDLE_ID = "org.apache.lucene.core"; //$NON-NLS-1$
 
 	private static final String FIELD_NAME = "name"; //$NON-NLS-1$
 

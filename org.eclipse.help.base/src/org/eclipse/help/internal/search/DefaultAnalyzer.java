@@ -19,8 +19,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /**
- * Lucene Analyzer. LowerCaseTokenizer->WordTokenStream (uses word breaking in
- * java.text)
+ * Lucene Analyzer. LowerCaseFilter->StandardTokenizer.
  */
 public class DefaultAnalyzer extends Analyzer {
 
@@ -81,14 +80,8 @@ public class DefaultAnalyzer extends Analyzer {
 	 * Reader.
 	 */
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
-		String tokenizer = System.getProperty("help.lucene.tokenizer"); //$NON-NLS-1$
-		//support reverting to standard lucene tokenizer based on system property
-		if ("standard".equalsIgnoreCase(tokenizer)) { //$NON-NLS-1$
 			Version version = Version.LUCENE_CURRENT;
-			return new LowerCaseFilter(new StandardTokenizer(version, reader));
-		}
-		//default Eclipse tokenizer
-		return new LowerCaseFilter(new WordTokenStream(fieldName, reader, locale));
+			return new LowerCaseFilter(version, new StandardTokenizer(version, reader));
 	}
 
 	/**
