@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 
 import org.apache.lucene.analysis.*;
-import org.apache.lucene.analysis.tokenattributes.TermAttribute;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.eclipse.help.internal.base.*;
@@ -245,11 +245,10 @@ public class QueryBuilder {
 		Reader reader = new StringReader(text);
 		TokenStream tStream = analyzer.tokenStream(fieldName, reader);
 		
-		TermAttribute termAttribute = (TermAttribute) tStream.getAttribute(TermAttribute.class);
-
+		CharTermAttribute termAttribute = (CharTermAttribute) tStream.getAttribute(CharTermAttribute.class);
 		try {
 			while (tStream.incrementToken()) {
-				String term = termAttribute.term();
+				String term = termAttribute.toString();
 				words.add(term);
 			}
 			reader.close();
