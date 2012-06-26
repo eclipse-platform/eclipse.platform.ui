@@ -627,23 +627,6 @@
       </serviceSelector>
    </extension>
    <extension
-         point="org.eclipse.help.base.luceneSearchParticipants">
-      <searchParticipant
-            headless="false"
-            icon="icons/sample4.gif"
-            id="org.eclipse.ua.tests.luceneTestParticipant"
-            name="Lucene Search Participant Test"
-            participant="org.eclipse.ua.tests.help.search.MockLuceneParticipant">
-      </searchParticipant>
-      <searchParticipant
-            headless="false"
-            icon="icons/sample4.gif"
-            id="org.eclipse.ua.tests.xmlLuceneParticipant"
-            name="XML Lucene Participant"
-            participant="org.eclipse.ua.tests.help.search.MockLuceneXMLParticipant">
-      </searchParticipant>
-   </extension>
-   <extension
          point="org.eclipse.help.base.searchParticipant">
       <searchParticipant
             headless="false"

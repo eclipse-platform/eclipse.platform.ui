@@ -41,7 +41,6 @@ public class AllSearchTests extends TestSuite {
 		addTest(SearchParticipantTest.suite());
 		addTest(SearchParticipantXMLTest.suite());
 		addTest(SearchRanking.suite());
-		addTest(LuceneParticipantTest.suite());
 		addTestSuite(WorkingSetManagerTest.class);
 		addTestSuite(InfocenterWorkingSetManagerTest.class);
 		addTestSuite(PrebuiltIndexCompatibility.class);
