@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -19,6 +17,7 @@ import org.osgi.framework.*;
  * Text Analyzer Descriptor. Encapsulates Lucene Analyzer
  */
 public class AnalyzerDescriptor {
+
 	private Analyzer luceneAnalyzer;
 
 	private String id;
@@ -47,8 +46,8 @@ public class AnalyzerDescriptor {
 		if (this.luceneAnalyzer == null) {
 			this.id = HelpBasePlugin.PLUGIN_ID
 					+ "#" //$NON-NLS-1$
-					+ HelpBasePlugin.getDefault().getBundle().getHeaders().get(
-							Constants.BUNDLE_VERSION) + "?locale=" + locale; //$NON-NLS-1$
+					+ HelpBasePlugin.getDefault().getBundle().getHeaders().get(Constants.BUNDLE_VERSION)
+					+ "?locale=" + locale; //$NON-NLS-1$
 			this.luceneAnalyzer = new DefaultAnalyzer(locale);
 			this.lang = locale;
 		}
@@ -80,7 +79,7 @@ public class AnalyzerDescriptor {
 	public String getLang() {
 		return lang;
 	}
-	
+
 	public String getAnalyzerClassName() {
 		return luceneAnalyzer.getClass().getName();
 	}
@@ -94,9 +93,8 @@ public class AnalyzerDescriptor {
 	 */
 	private Analyzer createAnalyzer(String locale) {
 		// find extension point
-		IConfigurationElement configElements[] = Platform
-				.getExtensionRegistry().getConfigurationElementsFor(
-						HelpBasePlugin.PLUGIN_ID, "luceneAnalyzer"); //$NON-NLS-1$
+		IConfigurationElement configElements[] = Platform.getExtensionRegistry().getConfigurationElementsFor(
+				HelpBasePlugin.PLUGIN_ID, "luceneAnalyzer"); //$NON-NLS-1$
 		for (int i = 0; i < configElements.length; i++) {
 			if (!configElements[i].getName().equals("analyzer")) //$NON-NLS-1$
 				continue;
@@ -104,15 +102,16 @@ public class AnalyzerDescriptor {
 			if (analyzerLocale == null || !analyzerLocale.equals(locale))
 				continue;
 			try {
-				Object analyzer = configElements[i]
-						.createExecutableExtension("class"); //$NON-NLS-1$
-				if (!(analyzer instanceof Analyzer))
+				Object analyzer = configElements[i].createExecutableExtension("class"); //$NON-NLS-1$
+				if (analyzer instanceof AnalyzerFactory)
+					this.luceneAnalyzer = ((AnalyzerFactory) analyzer).create();
+				else if (analyzer instanceof Analyzer)
+					this.luceneAnalyzer = (Analyzer) analyzer;
+				else
 					continue;
 				String pluginId = configElements[i].getContributor().getName();
-				String pluginVersion = (String) Platform
-						.getBundle(pluginId).getHeaders().get(
-								Constants.BUNDLE_VERSION);
-				this.luceneAnalyzer = (Analyzer) analyzer;
+				String pluginVersion = (String) Platform.getBundle(pluginId).getHeaders()
+						.get(Constants.BUNDLE_VERSION);
 				this.id = pluginId + "#" + pluginVersion + "?locale=" + locale; //$NON-NLS-1$ //$NON-NLS-2$
 				this.lang = locale;
 				if (HelpBasePlugin.PLUGIN_ID.equals(pluginId)) {
@@ -126,10 +125,9 @@ public class AnalyzerDescriptor {
 					return this.luceneAnalyzer;
 				}
 			} catch (CoreException ce) {
-				HelpBasePlugin.logError(
-						"Exception occurred creating text analyzer " //$NON-NLS-1$
-								+ configElements[i].getAttribute("class") //$NON-NLS-1$
-								+ " for " + locale + " locale.", ce); //$NON-NLS-1$ //$NON-NLS-2$
+				HelpBasePlugin.logError("Exception occurred creating text analyzer " //$NON-NLS-1$
+						+ configElements[i].getAttribute("class") //$NON-NLS-1$
+						+ " for " + locale + " locale.", ce); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -155,14 +153,14 @@ public class AnalyzerDescriptor {
 			String pluginId = analyzerId.substring(0, numberSignIndex);
 			String version = analyzerId.substring(numberSignIndex + 1, questionMarkIndex);
 			String locale = analyzerId.substring(questionMarkIndex + 1 + "locale=".length()); //$NON-NLS-1$
-			
+
 			// plugin compatible?
 			// must both be org.eclipse.help.base
 			String thisPluginId = id.substring(0, id.indexOf('#'));
 			if (!HelpBasePlugin.PLUGIN_ID.equals(pluginId) || !HelpBasePlugin.PLUGIN_ID.equals(thisPluginId)) {
 				return false;
 			}
-			
+
 			// version compatible?
 			// must both be >= 3.1
 			Version vA = getVersion(id);
@@ -171,7 +169,7 @@ public class AnalyzerDescriptor {
 			if (vA.compareTo(v3_1) < 0 && vB.compareTo(v3_1) < 0) {
 				return false;
 			}
-			
+
 			// locale compatible?
 			// first part must be equal (first two chars)
 			if (!lang.substring(0, 2).equals(locale.substring(0, 2))) {
@@ -181,11 +179,11 @@ public class AnalyzerDescriptor {
 		}
 		return false;
 	}
-	
+
 	private Version getVersion(String id) {
 		int idStart = id.indexOf('#');
 		int idStop = id.indexOf('?');
-		String value = idStop== -1?id.substring(idStart+1):id.substring(idStart+1, idStop);
+		String value = idStop == -1 ? id.substring(idStart + 1) : id.substring(idStart + 1, idStop);
 		return new Version(value);
 	}
 }

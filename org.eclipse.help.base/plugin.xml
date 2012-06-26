@@ -71,15 +71,15 @@
       </analyzer>
       <analyzer
             locale="pt"
-            class="org.apache.lucene.analysis.br.BrazilianAnalyzer">
+            class="org.eclipse.help.internal.search.AnalyzerFactory:pt">
       </analyzer>
       <analyzer
             locale="ja"
-            class="org.apache.lucene.analysis.cjk.CJKAnalyzer">
+            class="org.eclipse.help.internal.search.AnalyzerFactory:ja">
       </analyzer>
       <analyzer
             locale="ko"
-            class="org.apache.lucene.analysis.cjk.CJKAnalyzer">
+            class="org.eclipse.help.internal.search.AnalyzerFactory:ko">
       </analyzer>
       <analyzer
             locale="zh"
@@ -87,27 +87,27 @@
       </analyzer>
       <analyzer
             locale="cs"
-            class="org.apache.lucene.analysis.cz.CzechAnalyzer">
+            class="org.eclipse.help.internal.search.AnalyzerFactory:cs">
       </analyzer>
       <analyzer
             locale="de"
-            class="org.apache.lucene.analysis.de.GermanAnalyzer">
+            class="org.eclipse.help.internal.search.AnalyzerFactory:de">
       </analyzer>
       <analyzer
             locale="el"
-            class="org.apache.lucene.analysis.el.GreekAnalyzer">
+            class="org.eclipse.help.internal.search.AnalyzerFactory:el">
       </analyzer>
       <analyzer
             locale="fr"
-            class="org.apache.lucene.analysis.fr.FrenchAnalyzer">
+            class="org.eclipse.help.internal.search.AnalyzerFactory:fr">
       </analyzer>
       <analyzer
             locale="nl"
-            class="org.apache.lucene.analysis.nl.DutchAnalyzer">
+            class="org.eclipse.help.internal.search.AnalyzerFactory:nl">
       </analyzer>
       <analyzer
             locale="ru"
-            class="org.apache.lucene.analysis.ru.RussianAnalyzer">
+            class="org.eclipse.help.internal.search.AnalyzerFactory:ru">
       </analyzer>
    </extension>
 <!-- Web Browsers -->
