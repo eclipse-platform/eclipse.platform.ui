@@ -89,6 +89,7 @@ public final class WordTokenStream extends Tokenizer {
 					length = end - start;
 					if (length >= buffer.length-1)
 						 buffer = termAtt.resizeBuffer(2+length);
+					termAtt.setLength(length);
 					strbuf.getChars(start, end, buffer, 0);
 					return true;
 				}
