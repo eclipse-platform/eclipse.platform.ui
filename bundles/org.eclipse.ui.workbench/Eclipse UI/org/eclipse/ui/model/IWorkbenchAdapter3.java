@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.model;
 
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 
 /**
@@ -21,7 +20,7 @@ import org.eclipse.jface.viewers.StyledString;
  * @see IWorkbenchAdapter
  * @see WorkbenchLabelProvider
  * @see BaseWorkbenchContentProvider
- * @see DelegatingStyledCellLabelProvider.IStyledLabelProvider
+ * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider
  * 
  * @since 3.7
  */
