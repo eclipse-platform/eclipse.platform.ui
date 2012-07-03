@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1221,13 +1221,12 @@ public class DocumentMerger {
 		return fAllDiffs.iterator();
 	}
 	
-	public boolean isFirstChildDiff(char contributor, int startOffset,
-			Diff diff) {
+	public boolean isFirstChildDiff(char contributor, int childStart, Diff diff) {
 		if (!diff.hasChildren())
 			return false;
 		Diff d = (Diff)diff.fDiffs.get(0);
 		Position p= d.getPosition(contributor);
-		return (p.getOffset() >= startOffset);
+		return (p.getOffset() >= childStart);
 	}
 	
 	public Diff getWrappedDiff(Diff diff, boolean down) {
@@ -1393,7 +1392,7 @@ public class DocumentMerger {
 					} else if (start >= startOffset) {
 						// If we are at or before the first diff, select the 
 						// entire diff so next and previous are symmetrical
-						if (isFirstChildDiff(contributor, startOffset, diff)) {
+						if (isFirstChildDiff(contributor, start, diff)) {
 							return diff;
 						}
 						d= findPrev(contributor, diff.fDiffs, start, end, deep);
