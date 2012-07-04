@@ -34,20 +34,19 @@ public class OrderedLockTest extends TestCase {
 	/**
 	 * Creates n runnables on the given lock and adds them to the given list.
 	 */
-	private void createRunnables(ILock[] locks, int n, ArrayList allRunnables) {
+	private void createRunnables(ILock[] locks, int n, ArrayList<LockAcquiringRunnable> allRunnables) {
 		for (int i = 0; i < n; i++)
 			allRunnables.add(new LockAcquiringRunnable(locks));
 	}
 
-	private void kill(ArrayList allRunnables) {
-		for (Iterator it = allRunnables.iterator(); it.hasNext();) {
-			LockAcquiringRunnable r = (LockAcquiringRunnable) it.next();
-			r.kill();
+	private void kill(ArrayList<LockAcquiringRunnable> allRunnables) {
+		for (Iterator<LockAcquiringRunnable> it = allRunnables.iterator(); it.hasNext();) {
+			it.next().kill();
 		}
 	}
 
 	public void testComplex() {
-		ArrayList allRunnables = new ArrayList();
+		ArrayList<LockAcquiringRunnable> allRunnables = new ArrayList<LockAcquiringRunnable>();
 		LockManager manager = new LockManager();
 		OrderedLock lock1 = manager.newLock();
 		OrderedLock lock2 = manager.newLock();
@@ -63,14 +62,14 @@ public class OrderedLockTest extends TestCase {
 		}
 		kill(allRunnables);
 		for (int i = 0; i < allRunnables.size(); i++) {
-			((LockAcquiringRunnable) allRunnables.get(i)).isDone();
+			allRunnables.get(i).isDone();
 		}
 		//the underlying array has to be empty
 		assertTrue("Locks not removed from graph.", manager.isEmpty());
 	}
 
 	public void testSimple() {
-		ArrayList allRunnables = new ArrayList();
+		ArrayList<LockAcquiringRunnable> allRunnables = new ArrayList<LockAcquiringRunnable>();
 		LockManager manager = new LockManager();
 		OrderedLock lock1 = manager.newLock();
 		OrderedLock lock2 = manager.newLock();
@@ -84,7 +83,7 @@ public class OrderedLockTest extends TestCase {
 		}
 		kill(allRunnables);
 		for (int i = 0; i < allRunnables.size(); i++) {
-			((LockAcquiringRunnable) allRunnables.get(i)).isDone();
+			allRunnables.get(i).isDone();
 		}
 		//the underlying array has to be empty
 		assertTrue("Locks not removed from graph.", manager.isEmpty());
@@ -259,10 +258,9 @@ public class OrderedLockTest extends TestCase {
 		assertTrue("Locks not removed from graph.", manager.isEmpty());
 	}
 
-	private void start(ArrayList allRunnables) {
-		for (Iterator it = allRunnables.iterator(); it.hasNext();) {
-			LockAcquiringRunnable r = (LockAcquiringRunnable) it.next();
-			new Thread(r).start();
+	private void start(ArrayList<LockAcquiringRunnable> allRunnables) {
+		for (Iterator<LockAcquiringRunnable> it = allRunnables.iterator(); it.hasNext();) {
+			new Thread(it.next()).start();
 		}
 	}
 }
