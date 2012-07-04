@@ -15,7 +15,8 @@ import java.util.Vector;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.properties.IPropertyManager;
-import org.eclipse.core.internal.resources.ResourcesCompatibilityHelper;
+import org.eclipse.core.internal.properties.PropertyManager2;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.localstore.LocalStoreTest;
@@ -203,7 +204,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 	}
 
 	public void testCopy() throws Throwable {
-		IPropertyManager manager = ResourcesCompatibilityHelper.createPropertyManager();
+		IPropertyManager manager = new PropertyManager2((Workspace) ResourcesPlugin.getWorkspace());
 		IProject source = projects[0];
 		IFolder sourceFolder = source.getFolder("myfolder");
 		IResource sourceFile = sourceFolder.getFile("myfile.txt");
@@ -273,7 +274,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 
 	public void testDeleteProperties() throws Throwable {
 		/* create common objects */
-		IPropertyManager manager = ResourcesCompatibilityHelper.createPropertyManager();
+		IPropertyManager manager = new PropertyManager2((Workspace) ResourcesPlugin.getWorkspace());
 		IFile target = projects[0].getFile("target");
 		ensureExistsInWorkspace(target, true);
 
@@ -469,7 +470,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 		IProgressMonitor monitor = null;
 
 		// create common objects
-		IPropertyManager manager = ResourcesCompatibilityHelper.createPropertyManager();
+		IPropertyManager manager = new PropertyManager2((Workspace) ResourcesPlugin.getWorkspace());
 		IFile target = projects[0].getFile("target");
 		target.create(null, false, monitor);
 

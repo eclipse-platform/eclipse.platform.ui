@@ -60,12 +60,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		// First, try the canonical version of the inputLocation.
 		// If the inputLocation is different from the canonical version, it will be tried second
 		ArrayList<IPath> results = allPathsForLocationNonCanonical(canonicalLocation);
-		if(results.size()==0 && canonicalLocation!=inputLocation) {
+		if (results.size() == 0 && canonicalLocation != inputLocation) {
 			results = allPathsForLocationNonCanonical(inputLocation);
 		}
 		return results;
 	}
-	
+
 	private ArrayList<IPath> allPathsForLocationNonCanonical(URI inputLocation) {
 		URI location = inputLocation;
 		final boolean isFileLocation = EFS.SCHEME_FILE.equals(inputLocation.getScheme());
@@ -100,7 +100,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 				ProjectDescription description = ((Project) project).internalGetDescription();
 				if (description == null)
 					continue;
-				HashMap<IPath,LinkDescription> links = description.getLinks();
+				HashMap<IPath, LinkDescription> links = description.getLinks();
 				if (links == null)
 					continue;
 				for (LinkDescription link : links.values()) {
@@ -217,10 +217,9 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		int count = 0;
 		for (int i = 0, imax = result.size(); i < imax; i++) {
 			//replace the path in the list with the appropriate resource type
-			IResource resource = resourceFor((IPath)result.get(i), files);
+			IResource resource = resourceFor((IPath) result.get(i), files);
 
-			if (resource == null || ((Resource) resource).isFiltered() || (((memberFlags & IContainer.INCLUDE_HIDDEN) == 0) && resource.isHidden(IResource.CHECK_ANCESTORS)) 
-					|| (((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0) && resource.isTeamPrivateMember(IResource.CHECK_ANCESTORS)))
+			if (resource == null || ((Resource) resource).isFiltered() || (((memberFlags & IContainer.INCLUDE_HIDDEN) == 0) && resource.isHidden(IResource.CHECK_ANCESTORS)) || (((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0) && resource.isTeamPrivateMember(IResource.CHECK_ANCESTORS)))
 				resource = null;
 
 			result.set(i, resource);
@@ -263,7 +262,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * </p>
 	 */
 	public IContainer containerForLocation(IPath location) {
-		return (IContainer) resourceForLocation(location, false); 
+		return (IContainer) resourceForLocation(location, false);
 	}
 
 	/**
@@ -287,7 +286,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 				int segmentsToRemove = projectLocation.segmentCount();
 				IPath path = project.getFullPath().append(location.removeFirstSegments(segmentsToRemove));
 				IResource resource = resourceFor(path, files);
-				if (resource != null && !((Resource)resource).isFiltered())
+				if (resource != null && !((Resource) resource).isFiltered())
 					return resource;
 			}
 		}
@@ -447,7 +446,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		}
 		return false;
 	}
-	
+
 	public boolean fastIsSynchronized(Folder target) {
 		ResourceInfo info = target.getResourceInfo(false, false);
 		if (target.exists(target.getFlags(info), true)) {
@@ -489,7 +488,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		if (_historyStore == null) {
 			IPath location = getWorkspace().getMetaArea().getHistoryStoreLocation();
 			location.toFile().mkdirs();
-			_historyStore = ResourcesCompatibilityHelper.createHistoryStore(location, 256);
+			IFileStore store = EFS.getLocalFileSystem().getStore(location);
+			_historyStore = new HistoryStore2(getWorkspace(), store, 256);
 		}
 		return _historyStore;
 	}
@@ -809,7 +809,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 */
 	public ProjectDescription read(IProject target, boolean creation) throws CoreException {
 		IProgressMonitor monitor = Policy.monitorFor(null);
-		
+
 		//read the project location if this project is being created
 		URI projectLocation = null;
 		ProjectDescription privateDescription = null;

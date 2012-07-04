@@ -33,7 +33,6 @@ public class AllTests extends TestCase {
 		suite.addTest(FileSystemResourceManagerTest.suite());
 		suite.addTest(HistoryBucketTest.suite());
 		suite.addTest(HistoryStoreTest.suite());
-		suite.addTest(HistoryStoreConversionTest.suite());
 		suite.addTest(LocalSyncTest.suite());
 		suite.addTest(MoveTest.suite());
 		suite.addTest(PrefixPoolTest.suite());

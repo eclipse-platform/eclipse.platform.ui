@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.properties.PropertyManager2;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -2500,7 +2503,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			synchronizer = new Synchronizer(this);
 			saveManager = new SaveManager(this);
 			saveManager.startup(null);
-			propertyManager = ResourcesCompatibilityHelper.createPropertyManager();
+			propertyManager = new PropertyManager2((Workspace) ResourcesPlugin.getWorkspace());
 			propertyManager.startup(monitor);
 			charsetManager = new CharsetManager(this);
 			charsetManager.startup(null);
