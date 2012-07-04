@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.Bundle;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -80,9 +82,9 @@ public class CharsetManager implements IManager {
 						try {
 							if (project.isAccessible()) {
 								boolean shouldDisableCharsetDeltaJob = next.getValue().booleanValue();
-								// flush prefs for non-derived resources
+								// flush preferences for non-derived resources
 								flushPreferences(getPreferences(project, false, false, true), shouldDisableCharsetDeltaJob);
-								// flush prefs for derived resources
+								// flush preferences for derived resources
 								flushPreferences(getPreferences(project, false, true, true), shouldDisableCharsetDeltaJob);
 							}
 						} catch (BackingStoreException e) {
@@ -124,7 +126,7 @@ public class CharsetManager implements IManager {
 			boolean resourceChanges = false;
 
 			if ((parent.getFlags() & IResourceDelta.DERIVED_CHANGED) != 0) {
-				// if derived changed, move encoding to correct prefs
+				// if derived changed, move encoding to correct preferences
 				IPath parentPath = parent.getResource().getProjectRelativePath();
 				for (int i = 0; i < affectedResources.length; i++) {
 					IPath affectedPath = new Path(affectedResources[i]);
@@ -133,9 +135,9 @@ public class CharsetManager implements IManager {
 						IResource member = currentProject.findMember(affectedPath);
 						if (member != null) {
 							Preferences targetPrefs = getPreferences(currentProject, true, member.isDerived(IResource.CHECK_ANCESTORS));
-							// if new prefs are different than current
+							// if new preferences are different than current
 							if (!projectPrefs.absolutePath().equals(targetPrefs.absolutePath())) {
-								// remove encoding from old prefs and save in correct prefs
+								// remove encoding from old preferences and save in correct preferences
 								String currentValue = projectPrefs.get(affectedResources[i], null);
 								projectPrefs.remove(affectedResources[i]);
 								targetPrefs.put(affectedResources[i], currentValue);
@@ -172,7 +174,7 @@ public class CharsetManager implements IManager {
 				else
 					affectedResourcesMap.put(Boolean.TRUE, projectDerivedPrefs.keys());
 			} catch (BackingStoreException e) {
-				// problems with the project scope... we gonna miss the changes (but will log)
+				// problems with the project scope... we will miss the changes (but will log)
 				String message = Messages.resources_readingEncoding;
 				Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, currentProject.getFullPath(), message, e));
 				return;
@@ -212,7 +214,7 @@ public class CharsetManager implements IManager {
 					}
 				}
 				if (moveSettingsIfDerivedChanged(projectDelta, currentProject, projectPrefs, affectedResources)) {
-					// if settings were moved between prefs files disable charset listener so we don't react to changes made by ourselves
+					// if settings were moved between preferences files disable charset listener so we don't react to changes made by ourselves
 					projectsToSave.put(currentProject, Boolean.TRUE);
 				}
 			}
@@ -274,15 +276,15 @@ public class CharsetManager implements IManager {
 	public String getCharsetFor(IPath resourcePath, boolean recurse) {
 		Assert.isLegal(resourcePath.segmentCount() >= 1);
 		IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
-		
+
 		Preferences prefs = getPreferences(project, false, false);
 		Preferences derivedPrefs = getPreferences(project, false, true);
-		
+
 		if (prefs == null && derivedPrefs == null)
 			// no preferences found - for performance reasons, short-circuit 
 			// lookup by falling back to workspace's default setting			
 			return recurse ? ResourcesPlugin.getEncoding() : null;
-		
+
 		return internalGetCharsetFor(prefs, derivedPrefs, resourcePath, recurse);
 	}
 
@@ -323,30 +325,30 @@ public class CharsetManager implements IManager {
 		}
 		return null;
 	}
-	
+
 	private String internalGetCharsetFor(Preferences prefs, Preferences derivedPrefs, IPath resourcePath, boolean recurse) {
 		String charset = null;
-		
-		// try to find the encoding in regular and then derived prefs
+
+		// try to find the encoding in regular and then derived preferences
 		if (prefs != null)
 			charset = prefs.get(getKeyFor(resourcePath), null);
 		// derivedPrefs may be not null, only if #isDerivedEncodingStoredSeparately returns true
 		// so the explicit check against #isDerivedEncodingStoredSeparately is not required
 		if (charset == null && derivedPrefs != null)
 			charset = derivedPrefs.get(getKeyFor(resourcePath), null);
-		
+
 		if (!recurse)
 			return charset;
 
 		while (charset == null && resourcePath.segmentCount() > 1) {
 			resourcePath = resourcePath.removeLastSegments(1);
-			// try to find the encoding in regular and then derived prefs
+			// try to find the encoding in regular and then derived preferences
 			if (prefs != null)
-				charset = prefs.get(getKeyFor(resourcePath), null);	
+				charset = prefs.get(getKeyFor(resourcePath), null);
 			if (charset == null && derivedPrefs != null)
 				charset = derivedPrefs.get(getKeyFor(resourcePath), null);
 		}
-		
+
 		// ensure we default to the workspace encoding if none is found
 		return charset == null ? ResourcesPlugin.getEncoding() : charset;
 	}
@@ -387,7 +389,7 @@ public class CharsetManager implements IManager {
 				String path = affectedResources[i];
 				String value = projectDerivedPrefs.get(path, null);
 				projectDerivedPrefs.remove(path);
-				// lazy creation of non-derived prefs
+				// lazy creation of non-derived preferences
 				if (projectRegularPrefs == null)
 					projectRegularPrefs = getPreferences(project, true, false, false);
 				projectRegularPrefs.put(path, value);
@@ -400,7 +402,7 @@ public class CharsetManager implements IManager {
 				job.addChanges(projectsToSave);
 			}
 		} catch (BackingStoreException e) {
-			// problems with the project scope... we gonna miss the changes (but will log)
+			// problems with the project scope... we will miss the changes (but will log)
 			String message = Messages.resources_readingEncoding;
 			Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
 		}
@@ -413,12 +415,18 @@ public class CharsetManager implements IManager {
 	public void setCharsetFor(IPath resourcePath, String newCharset) throws CoreException {
 		// for the workspace root we just set a preference in the instance scope
 		if (resourcePath.segmentCount() == 0) {
-			org.eclipse.core.runtime.Preferences resourcesPreferences = ResourcesPlugin.getPlugin().getPluginPreferences();
+			IEclipsePreferences resourcesPreferences = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 			if (newCharset != null)
-				resourcesPreferences.setValue(ResourcesPlugin.PREF_ENCODING, newCharset);
+				resourcesPreferences.put(ResourcesPlugin.PREF_ENCODING, newCharset);
 			else
-				resourcesPreferences.setToDefault(ResourcesPlugin.PREF_ENCODING);
-			ResourcesPlugin.getPlugin().savePluginPreferences();
+				resourcesPreferences.remove(ResourcesPlugin.PREF_ENCODING);
+			try {
+				resourcesPreferences.flush();
+			} catch (BackingStoreException e) {
+				IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
+				String message = Messages.resources_savingEncoding;
+				throw new ResourceException(IResourceStatus.FAILED_SETTING_CHARSET, project.getFullPath(), message, e);
+			}
 			return;
 		}
 		// for all other cases, we set a property in the corresponding project
@@ -462,7 +470,7 @@ public class CharsetManager implements IManager {
 					if (resource.isDerived(IResource.CHECK_ANCESTORS)) {
 						String value = projectRegularPrefs.get(path, null);
 						projectRegularPrefs.remove(path);
-						// lazy creation of derived prefs
+						// lazy creation of derived preferences
 						if (projectDerivedPrefs == null)
 							projectDerivedPrefs = getPreferences(project, true, true, true);
 						projectDerivedPrefs.put(path, value);
@@ -477,7 +485,7 @@ public class CharsetManager implements IManager {
 				job.addChanges(projectsToSave);
 			}
 		} catch (BackingStoreException e) {
-			// problems with the project scope... we gonna miss the changes (but will log)
+			// problems with the project scope... we will miss the changes (but will log)
 			String message = Messages.resources_readingEncoding;
 			Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
 		}
