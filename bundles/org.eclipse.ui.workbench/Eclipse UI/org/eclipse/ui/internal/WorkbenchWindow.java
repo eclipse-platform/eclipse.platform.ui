@@ -501,6 +501,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		cs.activateContext(IContextService.CONTEXT_ID_WINDOW);
 		cs.getActiveContextIds();
 
+		String title = getWindowConfigurer().basicGetTitle();
+		if (title != null) {
+			getShell().setText(TextProcessor.process(title, TEXT_DELIMITERS));
+		}
+
 		initializeDefaultServices();
 
 		// register with the tracker
