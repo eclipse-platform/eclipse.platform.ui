@@ -112,9 +112,7 @@ import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.util.tracker.ServiceTracker;
 import org.w3c.dom.Document;
 
 import com.ibm.icu.text.MessageFormat;
@@ -214,13 +212,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
     private ImageDescriptorRegistry fImageDescriptorRegistry;
     
     /**
-     * Service tracker and service used for finding plug-ins associated
-     * with a class.
-     */
-    private ServiceTracker fServiceTracker;
-    private PackageAdmin fPackageAdminService;
-    
-    /**
      * A set of <code>ISaveParticipant</code>s that want to contribute to saving via this plugin
      * 
      * @since 3.3
@@ -257,21 +248,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
             fJob.cancel();
         }
     }
-	
-	/**
-	 * Returns the bundle the given class originated from.
-	 * 
-	 * @param clazz a class
-	 * @return the bundle the given class originated from, or <code>null</code>
-	 * 	if unable to be determined
-	 * @since 3.1
-	 */
-	public Bundle getBundle(Class clazz) {
-		if (fPackageAdminService != null) {
-			return fPackageAdminService.getBundle(clazz);
-		}
-		return null;
-	}
 	
 	/**
 	 * Constructs the debug UI plug-in
@@ -482,9 +458,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			
 			DebugElementHelper.dispose();
 			
-			fServiceTracker.close();
-			fPackageAdminService = null;
-			
 			fSaveParticipants.clear();
 			
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(getUniqueIdentifier());
@@ -584,10 +557,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
         // start the breakpoint organizer manager
         BreakpointOrganizerManager.getDefault();
 				
-		fServiceTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
-		fServiceTracker.open();
-		fPackageAdminService = (PackageAdmin) fServiceTracker.getService();
-		
 		getLaunchConfigurationManager().startup();
 		
 		if (PlatformUI.isWorkbenchRunning()) {
