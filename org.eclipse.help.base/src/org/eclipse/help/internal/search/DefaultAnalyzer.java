@@ -22,7 +22,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
  * Lucene Analyzer. LowerCaseTokenizer->WordTokenStream (uses word breaking in
  * java.text)
  */
-public class DefaultAnalyzer extends Analyzer {
+public final class DefaultAnalyzer extends Analyzer {
 
 	private Locale locale;
 

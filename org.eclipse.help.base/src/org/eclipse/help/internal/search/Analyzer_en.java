@@ -17,7 +17,7 @@ import org.apache.lucene.analysis.*;
 /**
  * Lucene Analyzer for English. LowerCaseTokenizer->StopFilter->PorterStemFilter
  */
-public class Analyzer_en extends Analyzer {
+public final class Analyzer_en extends Analyzer {
 	/**
 	 * Constructor for Analyzer_en.
 	 */
