@@ -1146,6 +1146,8 @@ public class PartServiceImpl implements EPartService {
 				return true;
 			case CANCEL:
 				return false;
+			case YES:
+				break;
 			}
 		}
 
