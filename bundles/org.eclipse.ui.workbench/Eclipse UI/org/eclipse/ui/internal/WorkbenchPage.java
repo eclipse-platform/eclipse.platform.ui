@@ -3257,6 +3257,8 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 					case YES:
 						partService.savePart(dirtyParts.get(i), false);
 						break;
+					case CANCEL:
+						break;
 					}
 				}
 			}
