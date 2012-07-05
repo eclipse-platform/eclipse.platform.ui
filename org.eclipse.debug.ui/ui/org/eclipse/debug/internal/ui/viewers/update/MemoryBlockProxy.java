@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mikhail Khodjaiants - Bug 383687 - Memory view is not updated when using Platform renderings
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.viewers.update;
@@ -16,6 +17,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.viewers.Viewer;
 
 public class MemoryBlockProxy extends EventHandlerModelProxy  {
 	
@@ -62,10 +64,12 @@ public class MemoryBlockProxy extends EventHandlerModelProxy  {
 		fMemoryBlock = mb;
 	}
 
-
 	protected DebugEventHandler[] createEventHandlers() {
 		return new DebugEventHandler[]{fDebugEventHandler};
 	}
 
-
+	public void installed(Viewer viewer) {
+		super.installed(viewer);
+		setInstalled(true);
+	}
 }
