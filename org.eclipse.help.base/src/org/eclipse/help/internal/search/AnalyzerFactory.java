@@ -10,24 +10,15 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import org.apache.lucene.analysis.ru.RussianAnalyzer;
-
-import org.apache.lucene.analysis.nl.DutchAnalyzer;
-
-import org.apache.lucene.analysis.fr.FrenchAnalyzer;
-
-import org.apache.lucene.analysis.el.GreekAnalyzer;
-
-import org.apache.lucene.analysis.cz.CzechAnalyzer;
-
-import org.apache.lucene.analysis.cn.ChineseAnalyzer;
-
-import org.apache.lucene.analysis.cjk.CJKAnalyzer;
-
-import org.apache.lucene.analysis.br.BrazilianAnalyzer;
-
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.br.BrazilianAnalyzer;
+import org.apache.lucene.analysis.cjk.CJKAnalyzer;
+import org.apache.lucene.analysis.cz.CzechAnalyzer;
 import org.apache.lucene.analysis.de.GermanAnalyzer;
+import org.apache.lucene.analysis.el.GreekAnalyzer;
+import org.apache.lucene.analysis.fr.FrenchAnalyzer;
+import org.apache.lucene.analysis.nl.DutchAnalyzer;
+import org.apache.lucene.analysis.ru.RussianAnalyzer;
 import org.apache.lucene.util.Version;
 import org.eclipse.core.runtime.*;
 
