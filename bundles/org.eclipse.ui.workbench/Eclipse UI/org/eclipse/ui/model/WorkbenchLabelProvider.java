@@ -223,9 +223,9 @@ public class WorkbenchLabelProvider extends LabelProvider implements
     }
 
 	/**
-	 * Sets the {@link StyledString.Styler} to be used for string decorations.
-	 * By default the {@link StyledString#DECORATIONS_STYLER decoration style}.
-	 * Clients can override.
+	 * Sets the {@link Styler} to be used for string decorations. By default the
+	 * {@link StyledString#DECORATIONS_STYLER decoration style}. Clients can
+	 * override.
 	 * 
 	 * @param element
 	 *            the element that has been decorated
