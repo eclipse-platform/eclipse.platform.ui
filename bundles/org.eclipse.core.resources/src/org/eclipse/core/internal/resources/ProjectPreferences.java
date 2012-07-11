@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -513,8 +513,7 @@ public class ProjectPreferences extends EclipsePreferences {
 				Policy.debug("Not saving preferences since there is no file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IResourceRuleFactory factory = workspace.getRuleFactory();
+		final String finalQualifier = qualifier;
 		final BackingStoreException[] bse = new BackingStoreException[1];
 		try {
 			IWorkspaceRunnable operation = new IWorkspaceRunnable() {
@@ -543,8 +542,11 @@ public class ProjectPreferences extends EclipsePreferences {
 						table.put(VERSION_KEY, VERSION_VALUE);
 						// print the table to a string and remove the timestamp that Properties#store always adds
 						String s = removeTimestampFromTable(table);
-						final InputStream input = new BufferedInputStream(new ByteArrayInputStream(s.getBytes("UTF-8"))); //$NON-NLS-1$
-						final String finalQualifier = qualifier;
+						String systemLineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
+						String fileLineSeparator = FileUtil.getLineSeparator(fileInWorkspace);
+						if (!systemLineSeparator.equals(fileLineSeparator))
+							s = s.replaceAll(systemLineSeparator, fileLineSeparator);
+						InputStream input = new BufferedInputStream(new ByteArrayInputStream(s.getBytes("UTF-8"))); //$NON-NLS-1$
 						if (fileInWorkspace.exists()) {
 							if (Policy.DEBUG_PREFERENCES)
 								Policy.debug("Setting preference file contents for: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
@@ -582,10 +584,12 @@ public class ProjectPreferences extends EclipsePreferences {
 			};
 			//don't bother with scheduling rules if we are already inside an operation
 			try {
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				if (((Workspace) workspace).getWorkManager().isLockAlreadyAcquired()) {
 					operation.run(null);
 				} else {
-					// we might: create the .settings folder, create the file, modify the file, or set derived flag for the file.
+					IResourceRuleFactory factory = workspace.getRuleFactory();
+					// we might: delete the file, create the .settings folder, create the file, modify the file, or set derived flag for the file.
 					ISchedulingRule rule = MultiRule.combine(new ISchedulingRule[] {factory.deleteRule(fileInWorkspace), factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace), factory.derivedRule(fileInWorkspace)});
 					workspace.run(operation, rule, IResource.NONE, null);
 					if (bse[0] != null)

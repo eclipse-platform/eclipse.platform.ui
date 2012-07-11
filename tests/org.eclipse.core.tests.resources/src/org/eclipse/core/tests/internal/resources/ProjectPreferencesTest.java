@@ -898,6 +898,88 @@ public class ProjectPreferencesTest extends ResourceTest {
 		assertEquals("NEW_VALUE", node.get("NEW_KEY", null));
 	}
 
+	public void test_384151() throws BackingStoreException, CoreException {
+		// make sure each line separator is different
+		String systemValue = System.getProperty("line.separator");
+		String newInstanceValue;
+		String newProjectValue;
+		if (systemValue.equals("\n")) {
+			// for unix "\n"
+			newInstanceValue = "\r";
+			newProjectValue = "\r\n";
+		} else if (systemValue.equals("\r")) {
+			// for macos "\r"
+			newInstanceValue = "\n";
+			newProjectValue = "\r\n";
+		} else {
+			// for windows "\r\n"
+			newInstanceValue = "\r";
+			newProjectValue = "\n";
+		}
+
+		IProject project = getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+
+		Preferences rootNode = Platform.getPreferencesService().getRootNode();
+		Preferences instanceNode = rootNode.node(InstanceScope.SCOPE).node(Platform.PI_RUNTIME);
+		Preferences projectNode = rootNode.node(ProjectScope.SCOPE).node(project.getName()).node(Platform.PI_RUNTIME);
+		String oldInstanceValue = instanceNode.get(Platform.PREF_LINE_SEPARATOR, null);
+		String oldProjectValue = projectNode.get(Platform.PREF_LINE_SEPARATOR, null);
+
+		String qualifier = "qualifier";
+		IFile file = project.getFile(new Path(".settings/" + qualifier + ".prefs"));
+		Preferences node = rootNode.node(ProjectScope.SCOPE).node(project.getName()).node(qualifier);
+		String key = "key";
+		try {
+			node.put(key, getUniqueString());
+			node.flush();
+			// if there is no preference, OS default line separator should be used
+			assertEquals("1.0", systemValue, getLineSeparatorFromFile(file));
+			file.delete(true, getMonitor());
+
+			instanceNode.put(Platform.PREF_LINE_SEPARATOR, newInstanceValue);
+			instanceNode.flush();
+			node.put(key, getUniqueString());
+			node.flush();
+			// if there is instance preference then it should be used
+			assertEquals("2.0", newInstanceValue, getLineSeparatorFromFile(file));
+			file.delete(true, getMonitor());
+
+			projectNode.put(Platform.PREF_LINE_SEPARATOR, newProjectValue);
+			projectNode.flush();
+			node.put(key, getUniqueString());
+			node.flush();
+			// if there is project preference then it should be used
+			String recentlyUsedLineSeparator = getLineSeparatorFromFile(file);
+			assertEquals("3.0", newProjectValue, recentlyUsedLineSeparator);
+			// don't delete the prefs file, it will be used in the next step
+
+			// remove preferences for the next step
+			if (oldInstanceValue == null)
+				instanceNode.remove(Platform.PREF_LINE_SEPARATOR);
+			else
+				instanceNode.put(Platform.PREF_LINE_SEPARATOR, oldInstanceValue);
+			if (oldProjectValue == null)
+				projectNode.remove(Platform.PREF_LINE_SEPARATOR);
+			else
+				projectNode.put(Platform.PREF_LINE_SEPARATOR, oldProjectValue);
+			instanceNode.flush();
+			projectNode.flush();
+			node.put(key, getUniqueString());
+			node.flush();
+			// if the prefs file exists, line delimiter from the existing file should be used
+			assertEquals("4.0", recentlyUsedLineSeparator, getLineSeparatorFromFile(file));
+		} finally {
+			// revert instance preference to original value
+			if (oldInstanceValue == null)
+				instanceNode.remove(Platform.PREF_LINE_SEPARATOR);
+			else
+				instanceNode.put(Platform.PREF_LINE_SEPARATOR, oldInstanceValue);
+			instanceNode.flush();
+			project.delete(true, getMonitor());
+		}
+	}
+
 	public void testProjectOpenClose() {
 		IProject project = getProject(getUniqueString());
 		ensureExistsInWorkspace(project, true);
@@ -1019,6 +1101,36 @@ public class ProjectPreferencesTest extends ResourceTest {
 
 	private static File getFileInFilesystem(IProject project, String qualifier) {
 		return project.getLocation().append(DIR_NAME).append(qualifier).addFileExtension(FILE_EXTENSION).toFile();
+	}
+
+	private static String getLineSeparatorFromFile(IFile file) {
+		if (file.exists()) {
+			InputStream input = null;
+			try {
+				input = file.getContents();
+				int c = input.read();
+				while (c != -1 && c != '\r' && c != '\n')
+					c = input.read();
+				if (c == '\n')
+					return "\n"; //$NON-NLS-1$
+				if (c == '\r') {
+					if (input.read() == '\n')
+						return "\r\n"; //$NON-NLS-1$
+					return "\r"; //$NON-NLS-1$
+				}
+			} catch (CoreException e) {
+				// ignore
+			} catch (IOException e) {
+				// ignore
+			} finally {
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		return null;
 	}
 
 	/*
