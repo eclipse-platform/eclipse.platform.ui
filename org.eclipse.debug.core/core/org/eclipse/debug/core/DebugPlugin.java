@@ -284,7 +284,7 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 * @since 3.7
 	 */
-	public static final String PREF_DELETE_CONFIGS_ON_PROJECT_DELETE = DebugPlugin.getUniqueIdentifier() + ".PREF_DELETE_CONFIGS_ON_PROJECT_DELETE"; //$NON-NLS-1$
+	public static final String PREF_DELETE_CONFIGS_ON_PROJECT_DELETE = PI_DEBUG_CORE + ".PREF_DELETE_CONFIGS_ON_PROJECT_DELETE"; //$NON-NLS-1$
 
 	/**
 	 * Deleted breakpoint marker attribute (value
@@ -294,7 +294,30 @@ public class DebugPlugin extends Plugin {
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 * @since 3.7
 	 */
-	public static final String ATTR_BREAKPOINT_IS_DELETED= DebugPlugin.getUniqueIdentifier() + ".breakpointIsDeleted"; //$NON-NLS-1$
+	public static final String ATTR_BREAKPOINT_IS_DELETED= PI_DEBUG_CORE + ".breakpointIsDeleted"; //$NON-NLS-1$
+
+	/**
+	 * Attribute key for the environment used when an {@link IProcess} was run
+	 * @see IProcess
+	 * @since 3.8
+	 */
+	public static final String ATTR_ENVIRONMENT = PI_DEBUG_CORE + ".ATTR_ENVIRONMENT"; //$NON-NLS-1$
+
+	/**
+	 * Attribute key for the path of the working directory for an {@link IProcess}
+	 * 
+	 * @see IProcess
+	 * @since 3.8
+	 */
+	public static final String ATTR_WORKING_DIRECTORY = PI_DEBUG_CORE + ".ATTR_WORKING_DIRECTORY"; //$NON-NLS-1$
+
+	/**
+	 * Attribute key for path of the executable that launched an {@link IProcess}
+	 * 
+	 * @see IProcess
+	 * @since 3.8
+	 */
+	public static final String ATTR_PATH = PI_DEBUG_CORE + ".ATTR_PATH"; //$NON-NLS-1$
 
 	/**
 	 * The singleton debug plug-in instance.
@@ -370,7 +393,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.1
 	 */
 	private EventDispatchJob fEventDispatchJob = new EventDispatchJob();
-	
+
 	/**
 	 * Event dispatch job. Processes event queue of debug events and runnables.
 	 * 
