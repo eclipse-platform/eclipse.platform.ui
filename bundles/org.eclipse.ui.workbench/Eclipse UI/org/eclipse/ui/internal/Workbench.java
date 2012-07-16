@@ -32,8 +32,12 @@ import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.CommandManagerEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ICommandManagerListener;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.EventManager;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
@@ -139,6 +143,7 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -424,6 +429,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	boolean initializationDone = false;
 
 	private WorkbenchWindow windowBeingCreated = null;
+
+	private Listener backForwardListener;
 
 	/**
 	 * Creates a new workbench.
@@ -2114,6 +2121,48 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 		serviceLocator.registerService(ISelectionConversionService.class,
 				new SelectionConversionService());
+
+		backForwardListener = createBackForwardListener();
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+			public void runWithException() {
+				getDisplay().addFilter(SWT.MouseDown, backForwardListener);
+			}
+		});
+	}
+
+	private Listener createBackForwardListener() {
+		return new Listener() {
+			public void handleEvent(Event event) {
+				String commandId;
+				switch (event.button) {
+				case 4:
+				case 8:
+					commandId = IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY;
+					break;
+				case 5:
+				case 9:
+					commandId = IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY;
+					break;
+				default:
+					return;
+				}
+
+				final IHandlerService handlerService = (IHandlerService) getService(IHandlerService.class);
+
+				try {
+					handlerService.executeCommand(commandId, event);
+					event.doit = false;
+				} catch (NotDefinedException e) {
+					// regular condition; do nothing
+				} catch (NotEnabledException e) {
+					// regular condition; do nothing
+				} catch (NotHandledException e) {
+					// regular condition; do nothing
+				} catch (ExecutionException ex) {
+					StatusUtil.handleStatus(ex, StatusManager.SHOW | StatusManager.LOG);
+				}
+			}
+		};
 	}
 
 	/**
@@ -2653,6 +2702,8 @@ UIEvents.Context.TOPIC_CONTEXT,
 		serviceLocator.dispose();
 		application.getCommands().removeAll(commandsToRemove);
 		application.getCategories().removeAll(categoriesToRemove);
+		getDisplay().removeFilter(SWT.MouseDown, backForwardListener);
+		backForwardListener = null;
 
 		workbenchActivitySupport.dispose();
 		WorkbenchHelpSystem.disposeIfNecessary();
