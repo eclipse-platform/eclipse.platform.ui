@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt.cocoa;
 
+import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Provider;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
+import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -41,19 +48,29 @@ public class CocoaUIProcessor {
 	static final String HOST_ID = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
 	protected static final String CONTRIBUTION_URI_PREFIX = "bundleclass://" + HOST_ID; //$NON-NLS-1$
 
+	// constants for close dialog
+	private static final String COMMAND_ID_CLOSE_DIALOG = "org.eclipse.ui.cocoa.closeDialog"; //$NON-NLS-1$
+	private static final String CLOSE_DIALOG_KEYSEQUENCE = "M1+W"; //$NON-NLS-1$
+
 	@Inject
 	protected MApplication app;
+
+	@Inject
+	protected Provider<StatusReporter> statusReporter;
 
 	/**
 	 * Execute!
 	 */
 	@Execute
 	public void execute() {
+		// hook About, Preferences, etc.
 		installAddon();
 
-		// these handlers are installed directly on the app and are thus
-		// independent of the context.
-		installHandlers();
+		// Window > Zoom, etc.
+		installWindowHandlers();
+
+		// install close dialog handlers
+		installCloseDialogHandlers();
 	}
 
 	/**
@@ -78,7 +95,7 @@ public class CocoaUIProcessor {
 	 * than in a <tt>fragments.e4xmi</tt> as the project
 	 * <tt>Application.e4xmi</tt> may (and likely will) use different IDs.
 	 */
-	public void installHandlers() {
+	public void installWindowHandlers() {
 		installHandler(
 				defineCommand(
 						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.arrangeWindowsInFront", //$NON-NLS-1$ //$NON-NLS-2$
@@ -105,6 +122,18 @@ public class CocoaUIProcessor {
 						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.zoomWindow", //$NON-NLS-1$ //$NON-NLS-2$
 						"%command.zoom.name", "%command.zoom.desc", CONTRIBUTOR_URI), //$NON-NLS-1$//$NON-NLS-2$
 				ZoomWindowHandler.class, CONTRIBUTOR_URI);
+	}
+
+	/** Add the special Cmd-W dialog helper */
+	private void installCloseDialogHandlers() {
+		MCommand closeDialogCommand = defineCommand(
+				"org.eclipse.ui.category.window", COMMAND_ID_CLOSE_DIALOG, //$NON-NLS-1$
+				"%command.closeDialog.name", //$NON-NLS-1$
+				"%command.closeDialog.desc", CONTRIBUTOR_URI);//$NON-NLS-1$
+		installHandler(closeDialogCommand, CloseDialogHandler.class,
+				CONTRIBUTOR_URI);
+		installKeybinding(EBindingService.DIALOG_CONTEXT_ID,
+				CLOSE_DIALOG_KEYSEQUENCE, closeDialogCommand);
 	}
 
 	/**
@@ -139,16 +168,48 @@ public class CocoaUIProcessor {
 		}
 
 		if (bindingTable == null) {
-			// perhaps we should create it
-			System.err.println("Cannot find table for binding context: " //$NON-NLS-1$
-					+ bindingContextId);
-			return;
+			MBindingContext bindingContext = findBindingContext(
+					app.getBindingContexts(), bindingContextId);
+			if (bindingContext == null) {
+				statusReporter
+						.get()
+						.report(new Status(
+								IStatus.WARNING,
+								CocoaUIProcessor.FRAGMENT_ID,
+								"No binding context exists for " + bindingContextId), //$NON-NLS-1$
+						StatusReporter.LOG);
+				return;
+			}
+			bindingTable = MCommandsFactory.INSTANCE.createBindingTable();
+			bindingTable.setBindingContext(bindingContext);
+			bindingTable.setContributorURI(CONTRIBUTOR_URI);
+			app.getBindingTables().add(bindingTable);
 		}
 
 		MKeyBinding binding = MCommandsFactory.INSTANCE.createKeyBinding();
 		binding.setCommand(cmd);
 		binding.setKeySequence(keysequence);
 		bindingTable.getBindings().add(binding);
+	}
+
+	/**
+	 * @param bindingContexts
+	 * @param bindingContextId
+	 * @return
+	 */
+	private MBindingContext findBindingContext(
+			List<MBindingContext> bindingContexts, String bindingContextId) {
+		for (MBindingContext bc : bindingContexts) {
+			if (bindingContextId.equals(bc.getElementId())) {
+				return bc;
+			}
+			MBindingContext result = findBindingContext(bc.getChildren(),
+					bindingContextId);
+			if (result != null) {
+				return result;
+			}
+		}
+		return null;
 	}
 
 	/**

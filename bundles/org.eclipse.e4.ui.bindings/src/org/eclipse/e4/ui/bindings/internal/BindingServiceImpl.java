@@ -109,7 +109,7 @@ public class BindingServiceImpl implements EBindingService {
 		String contextId = binding.getContextId();
 		BindingTable table = manager.getTable(contextId);
 		if (table == null) {
-			System.err.println("No binding table for " + contextId); //$NON-NLS-1$
+			//System.err.println("No binding table for " + contextId); //$NON-NLS-1$
 			return;
 		}
 		table.removeBinding(binding);

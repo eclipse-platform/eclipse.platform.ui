@@ -36,8 +36,6 @@ import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
-import org.eclipse.e4.ui.model.application.commands.MHandler;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -54,8 +52,6 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.renderers.swt.HandledMenuItemRenderer;
-import org.eclipse.jface.bindings.Binding;
-import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -96,9 +92,6 @@ public class CocoaUIHandler {
 	private static final String COMMAND_ID_QUIT = "org.eclipse.ui.file.exit"; //$NON-NLS-1$
 	// toggle coolbar isn't actually defined anywhere
 	private static final String COMMAND_ID_TOGGLE_COOLBAR = "org.eclipse.ui.ToggleCoolbarAction"; //$NON-NLS-1$
-
-	private static final String COMMAND_ID_CLOSE_DIALOG = "org.eclipse.ui.cocoa.closeDialog"; //$NON-NLS-1$
-	private static final String CLOSE_DIALOG_KEYSEQUENCE = "M1+W"; //$NON-NLS-1$
 
 	static long sel_toolbarButtonClicked_;
 	private static final long NSWindowToolbarButton = 3;
@@ -220,11 +213,6 @@ public class CocoaUIHandler {
 				hookWorkbenchListeners();
 				processModelMenus();
 
-				// Now add the special Cmd-W dialog helper
-				addCloseDialogCommand();
-				addCloseDialogHandler();
-				addCloseDialogBinding();
-
 				// modify all shells opened on startup
 				for (MWindow window : app.getChildren()) {
 					modifyWindowShell(window);
@@ -334,42 +322,6 @@ public class CocoaUIHandler {
 				redirectHandledMenuItem((MMenuItem) elmt);
 			}
 		}
-	}
-
-	private void addCloseDialogCommand() {
-		closeDialogCommand = findCommand(COMMAND_ID_CLOSE_DIALOG);
-		if (closeDialogCommand != null) {
-			return;
-		}
-		closeDialogCommand = CommandsFactoryImpl.eINSTANCE.createCommand();
-		closeDialogCommand.setElementId(COMMAND_ID_CLOSE_DIALOG);
-		closeDialogCommand.setCommandName("%command.closeDialog.name"); //$NON-NLS-1$
-		closeDialogCommand.setDescription("%command.closeDialog.desc"); //$NON-NLS-1$
-		closeDialogCommand.setContributorURI(CocoaUIProcessor.CONTRIBUTOR_URI);
-		app.getCommands().add(closeDialogCommand);
-	}
-
-	private void addCloseDialogHandler() {
-		MHandler handler = findHandler(closeDialogCommand);
-		if (handler != null) {
-			return;
-		}
-		handler = CommandsFactoryImpl.eINSTANCE.createHandler();
-		handler.setCommand(closeDialogCommand);
-		handler.setContributionURI(CocoaUIProcessor.CONTRIBUTION_URI_PREFIX
-				+ "/" + CloseDialogHandler.class.getName());//$NON-NLS-1$
-		app.getHandlers().add(handler);
-	}
-
-	private void addCloseDialogBinding() {
-		TriggerSequence sequence = bindingService
-				.createSequence(CLOSE_DIALOG_KEYSEQUENCE);
-		ParameterizedCommand cmd = commandService.createCommand(
-				COMMAND_ID_CLOSE_DIALOG, null);
-		Binding binding = bindingService.createBinding(sequence, cmd,
-				EBindingService.DIALOG_CONTEXT_ID, null);
-		bindingService.deactivateBinding(binding);
-		bindingService.activateBinding(binding);
 	}
 
 	void log(Exception e) {
@@ -634,40 +586,6 @@ public class CocoaUIHandler {
 		for (MenuItem mi : menu.getItems()) {
 			if (mi.getID() == menuItemId) {
 				return mi;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Find the command definition
-	 * 
-	 * @param commandId
-	 * @return the command definition or null if not found
-	 */
-	private MCommand findCommand(String commandId) {
-		for (MCommand cmd : app.getCommands()) {
-			if (commandId.equals(cmd.getElementId())) {
-				return cmd;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Find a handler defined for the provided command. This command returns on
-	 * the first command found.
-	 * 
-	 * @param cmd
-	 * @return the first handler found, or <code>null</code> if none
-	 */
-	private MHandler findHandler(MCommand cmd) {
-		if (cmd == null) {
-			return null;
-		}
-		for (MHandler handler : app.getHandlers()) {
-			if (handler.getCommand() == cmd) {
-				return handler;
 			}
 		}
 		return null;
