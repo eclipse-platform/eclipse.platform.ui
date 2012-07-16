@@ -812,9 +812,6 @@ public class ProgressInfoItem extends Composite {
 			link = (Link) taskEntries.get(index);
 		}
 
-		link.setToolTipText(taskString);
-		link.setData(TEXT_KEY, taskString);
-
 		// check for action property
 		Object actionProperty = linkJob
 				.getProperty(IProgressConstants.ACTION_PROPERTY);
@@ -829,6 +826,14 @@ public class ProgressInfoItem extends Composite {
 					: commandProperty;
 			updateTrigger(property, link);
 		}
+
+		if (link.getData(TRIGGER_KEY) == null
+				&& (taskString == null || taskString.equals(getMainTitle()))) {
+			// workaround for https://bugs.eclipse.org/383570
+			taskString = ""; //$NON-NLS-1$
+		}
+		link.setToolTipText(taskString);
+		link.setData(TEXT_KEY, taskString);
 
 		updateText(taskString, link);
 
