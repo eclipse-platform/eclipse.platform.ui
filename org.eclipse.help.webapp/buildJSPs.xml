@@ -1,6 +1,6 @@
 
 <!--
-     Copyright (c) 2005, 2007 IBM Corporation and others.
+     Copyright (c) 2005, 2012 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -33,10 +33,11 @@
 				<patternset>
 					<include name="javax.servlet*.jar"/>
 					<include name="javax.servlet.jsp*.jar"/>
+					<include name="javax.el*.jar"/>
+					<include name="com.sun.el*.jar"/>
 					<include name="org.apache.ant*/lib/ant.jar"/>
-					<include name="org.apache.commons.el*.jar"/>
 					<include name="org.apache.commons.logging*.jar"/>
-					<include name="org.apache.jasper*.jar"/>
+					<include name="org.apache.jasper.glassfish*.jar"/>
 					<include name="org.eclipse.help*.jar"/>
 					<include name="org.eclipse.help.base*.jar"/>
 				</patternset>
@@ -61,6 +62,7 @@
 			classpathref="@dot.classpath"
 			fork="true"
 			failonerror="true">
+			<jvmarg value="-Dorg.apache.jasper.compiler.disablejsr199=true"/>
 			<arg value="-compile"/>
 			<arg value="-d"/>
 			<arg value="${target.folder}" />
