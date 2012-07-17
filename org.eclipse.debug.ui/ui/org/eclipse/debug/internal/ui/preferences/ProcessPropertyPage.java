@@ -96,7 +96,7 @@ public class ProcessPropertyPage extends PropertyPage {
 	//create environment section
 		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_7, fHeadingFont, 1);
 		text = SWTFactory.createText(parent, 
-				SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL, 
+				SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL, 
 				1, 
 				convertWidthInCharsToPixels(13),
 				convertHeightInCharsToPixels(8),
