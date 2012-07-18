@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,7 +93,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	protected void write(IResourceFilterDescription description, XMLWriter writer) {
 		writer.startTag(FILTER, null);
 		if (description != null) {
-			writer.printSimpleTag(ID, new Long(((FilterDescription)description).getId()));
+			writer.printSimpleTag(ID, new Long(((FilterDescription) description).getId()));
 			writer.printSimpleTag(NAME, description.getResource().getProjectRelativePath());
 			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
 			if (description.getFileInfoMatcherDescription() != null) {
@@ -102,7 +102,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		}
 		writer.endTag(FILTER);
 	}
-		
+
 	protected void write(FileInfoMatcherDescription description, XMLWriter writer) {
 		writer.startTag(MATCHER, null);
 		writer.printSimpleTag(ID, description.getId());
@@ -110,7 +110,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			if (description.getArguments() instanceof String) {
 				writer.printSimpleTag(ARGUMENTS, description.getArguments());
 			} else if (description.getArguments() instanceof FileInfoMatcherDescription[]) {
-				writer.startTag(ARGUMENTS , null);
+				writer.startTag(ARGUMENTS, null);
 				FileInfoMatcherDescription[] array = (FileInfoMatcherDescription[]) description.getArguments();
 				for (int i = 0; i < array.length; i++) {
 					write(array[i], writer);
@@ -150,12 +150,12 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	 * The parameter tempLocation is a location to place our temp file (copy of the target one)
 	 * to be used in case we could not successfully write the new file.
 	 */
-	public void write(Object object, IPath location, IPath tempLocation) throws IOException {
+	public void write(Object object, IPath location, IPath tempLocation, String lineSeparator) throws IOException {
 		SafeFileOutputStream file = null;
 		String tempPath = tempLocation == null ? null : tempLocation.toOSString();
 		try {
 			file = new SafeFileOutputStream(location.toOSString(), tempPath);
-			write(object, file);
+			write(object, file, lineSeparator);
 			file.close();
 		} finally {
 			FileUtil.safeClose(file);
@@ -165,9 +165,9 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	/**
 	 * The OutputStream is closed in this method.
 	 */
-	public void write(Object object, OutputStream output) throws IOException {
+	public void write(Object object, OutputStream output, String lineSeparator) throws IOException {
 		try {
-			XMLWriter writer = new XMLWriter(output);
+			XMLWriter writer = new XMLWriter(output, lineSeparator);
 			write(object, writer);
 			writer.flush();
 			writer.close();
@@ -213,7 +213,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			writer.printSimpleTag(NAME, description.getName());
 			String comment = description.getComment();
 			writer.printSimpleTag(COMMENT, comment == null ? "" : comment); //$NON-NLS-1$
-			URI snapshotLocation= description.getSnapshotLocationURI();
+			URI snapshotLocation = description.getSnapshotLocationURI();
 			if (snapshotLocation != null) {
 				writer.printSimpleTag(SNAPSHOT_LOCATION, snapshotLocation.toString());
 			}

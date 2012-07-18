@@ -414,7 +414,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		description.setLinkDescriptions(linkDescriptions);
 
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		new ModelObjectWriter().write(description, buffer);
+		new ModelObjectWriter().write(description, buffer, System.getProperty("line.separator"));
 		String result = buffer.toString();
 
 		// order of keys in serialized file should be exactly the same as expected
@@ -704,7 +704,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		description.setReferencedProjects(refProjects);
 
 		OutputStream output = tempStore.openOutputStream(EFS.NONE, getMonitor());
-		writer.write(description, output);
+		writer.write(description, output, System.getProperty("line.separator"));
 		output.close();
 
 		/* test read */
@@ -800,7 +800,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		desc.setMaxFileStateSize(123456789l);
 
 		SafeFileOutputStream output = new SafeFileOutputStream(location.toFile());
-		writer.write(desc, output);
+		writer.write(desc, output, System.getProperty("line.separator"));
 		output.close();
 
 		/* test read */
@@ -836,7 +836,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		OutputStream output = null;
 		try {
 			output = store.openOutputStream(EFS.NONE, getMonitor());
-			new ModelObjectWriter().write(description, output);
+			new ModelObjectWriter().write(description, output, System.getProperty("line.separator"));
 		} finally {
 			assertClose(output);
 		}

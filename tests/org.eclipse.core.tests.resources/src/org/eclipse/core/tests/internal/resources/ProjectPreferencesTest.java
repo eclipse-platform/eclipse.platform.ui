@@ -1103,36 +1103,6 @@ public class ProjectPreferencesTest extends ResourceTest {
 		return project.getLocation().append(DIR_NAME).append(qualifier).addFileExtension(FILE_EXTENSION).toFile();
 	}
 
-	private static String getLineSeparatorFromFile(IFile file) {
-		if (file.exists()) {
-			InputStream input = null;
-			try {
-				input = file.getContents();
-				int c = input.read();
-				while (c != -1 && c != '\r' && c != '\n')
-					c = input.read();
-				if (c == '\n')
-					return "\n"; //$NON-NLS-1$
-				if (c == '\r') {
-					if (input.read() == '\n')
-						return "\r\n"; //$NON-NLS-1$
-					return "\r"; //$NON-NLS-1$
-				}
-			} catch (CoreException e) {
-				// ignore
-			} catch (IOException e) {
-				// ignore
-			} finally {
-				try {
-					input.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-		return null;
-	}
-
 	/*
 	 * Test to ensure that discovering a new pref file (e.g. loading from a repo) 
 	 * is the same as doing an import. (ensure the modify listeners are called)

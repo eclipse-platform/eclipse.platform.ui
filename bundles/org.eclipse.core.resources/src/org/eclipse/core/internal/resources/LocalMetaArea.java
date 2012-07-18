@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eclipse.osgi.util.NLS;
 public class LocalMetaArea implements ICoreConstants {
 	/* package */static final String F_BACKUP_FILE_EXTENSION = ".bak"; //$NON-NLS-1$
 	/* package */static final String F_DESCRIPTION = ".workspace"; //$NON-NLS-1$
-	
+
 	/* package */static final String F_HISTORY_STORE = ".history"; //$NON-NLS-1$
 	/* package */static final String F_MARKERS = ".markers"; //$NON-NLS-1$
 	/* package */static final String F_OLD_PROJECT = ".prj"; //$NON-NLS-1$
@@ -43,7 +43,6 @@ public class LocalMetaArea implements ICoreConstants {
 	/* package */static final String F_TREE = ".tree"; //$NON-NLS-1$
 	/* package */static final String URI_PREFIX = "URI//"; //$NON-NLS-1$
 	/* package */static final String F_METADATA = ".metadata"; //$NON-NLS-1$
-	
 
 	protected final IPath metaAreaLocation;
 
@@ -411,7 +410,7 @@ public class LocalMetaArea implements ICoreConstants {
 		path.toFile().getParentFile().mkdirs();
 		IPath tempPath = getBackupLocationFor(path);
 		try {
-			new ModelObjectWriter().write(description, path, tempPath);
+			new ModelObjectWriter().write(description, path, tempPath, System.getProperty("line.separator")); //$NON-NLS-1$
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, path);
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
@@ -436,8 +435,7 @@ public class LocalMetaArea implements ICoreConstants {
 		final IProject[] prjRefs = desc.getDynamicReferences(false);
 		final String[] buildConfigs = desc.configNames;
 		final Map<String, IBuildConfiguration[]> configRefs = desc.getBuildConfigReferences(false);
-		if (projectLocation == null && prjRefs.length == 0 && 
-				buildConfigs.length == 0 && configRefs.isEmpty())
+		if (projectLocation == null && prjRefs.length == 0 && buildConfigs.length == 0 && configRefs.isEmpty())
 			return;
 		//write the private metadata file
 		try {

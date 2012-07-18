@@ -19,6 +19,9 @@ import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 public class IProjectTest extends ResourceTest {
 
@@ -616,6 +619,93 @@ public class IProjectTest extends ResourceTest {
 			assertTrue("2.0", target.isOpen());
 		} catch (CoreException e) {
 			fail("2.1", e);
+		}
+	}
+
+	public void testProjectCreationLineSeparator() throws BackingStoreException, CoreException {
+		// make sure each line separator is different
+		String systemValue = System.getProperty("line.separator");
+		String newInstanceValue;
+		String newProjectValue;
+		if (systemValue.equals("\n")) {
+			// for unix "\n"
+			newInstanceValue = "\r";
+			newProjectValue = "\r\n";
+		} else if (systemValue.equals("\r")) {
+			// for macos "\r"
+			newInstanceValue = "\n";
+			newProjectValue = "\r\n";
+		} else {
+			// for windows "\r\n"
+			newInstanceValue = "\r";
+			newProjectValue = "\n";
+		}
+
+		Preferences rootNode = Platform.getPreferencesService().getRootNode();
+		Preferences instanceNode = rootNode.node(InstanceScope.SCOPE).node(Platform.PI_RUNTIME);
+		String oldInstanceValue = instanceNode.get(Platform.PREF_LINE_SEPARATOR, null);
+
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		IFile file = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		IProjectDescription description;
+		try {
+			ensureExistsInWorkspace(project, true);
+			// new .project should have OS default line separator
+			assertEquals("1.0", systemValue, getLineSeparatorFromFile(file));
+
+			// set instance-specific line separator
+			instanceNode.put(Platform.PREF_LINE_SEPARATOR, newInstanceValue);
+			instanceNode.flush();
+			description = project.getDescription();
+			description.setComment("some comment");
+			project.setDescription(description, getMonitor());
+			// existing .project should use existing line separator
+			assertEquals("2.0", systemValue, getLineSeparatorFromFile(file));
+			project.delete(true, getMonitor());
+
+			ensureExistsInWorkspace(project, true);
+			// new .project should have instance-specific line separator
+			assertEquals("3.0", newInstanceValue, getLineSeparatorFromFile(file));
+
+			// remove preference for the next step
+			if (oldInstanceValue == null)
+				instanceNode.remove(Platform.PREF_LINE_SEPARATOR);
+			else
+				instanceNode.put(Platform.PREF_LINE_SEPARATOR, oldInstanceValue);
+			instanceNode.flush();
+			description = project.getDescription();
+			description.setComment("some comment");
+			project.setDescription(description, getMonitor());
+			// existing .project should use existing line separator
+			assertEquals("4.0", newInstanceValue, getLineSeparatorFromFile(file));
+			project.delete(true, getMonitor());
+
+			ensureExistsInWorkspace(project, true);
+			// new .project should have OS default line separator
+			assertEquals("5.0", systemValue, getLineSeparatorFromFile(file));
+
+			// set project-specific line separator
+			Preferences projectNode = rootNode.node(ProjectScope.SCOPE).node(project.getName()).node(Platform.PI_RUNTIME);
+			projectNode.put(Platform.PREF_LINE_SEPARATOR, newProjectValue);
+			projectNode.flush();
+			// remove .project file but leave the project
+			file.delete(true, getMonitor());
+			assertFalse("6.0", file.exists());
+			// workspace save should recreate .project file with project-specific line delimiter
+			getWorkspace().save(true, getMonitor());
+			// refresh project to update the resource tree
+			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			assertTrue("7.0", file.exists());
+			// new .project should have project-specific line separator
+			assertEquals("8.0", newProjectValue, getLineSeparatorFromFile(file));
+		} finally {
+			// revert instance preference to original value
+			if (oldInstanceValue == null)
+				instanceNode.remove(Platform.PREF_LINE_SEPARATOR);
+			else
+				instanceNode.put(Platform.PREF_LINE_SEPARATOR, oldInstanceValue);
+			instanceNode.flush();
+			project.delete(true, getMonitor());
 		}
 	}
 

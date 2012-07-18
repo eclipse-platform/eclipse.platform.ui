@@ -729,6 +729,36 @@ public abstract class ResourceTest extends CoreTest {
 		};
 	}
 
+	protected String getLineSeparatorFromFile(IFile file) {
+		if (file.exists()) {
+			InputStream input = null;
+			try {
+				input = file.getContents();
+				int c = input.read();
+				while (c != -1 && c != '\r' && c != '\n')
+					c = input.read();
+				if (c == '\n')
+					return "\n"; //$NON-NLS-1$
+				if (c == '\r') {
+					if (input.read() == '\n')
+						return "\r\n"; //$NON-NLS-1$
+					return "\r"; //$NON-NLS-1$
+				}
+			} catch (CoreException e) {
+				// ignore
+			} catch (IOException e) {
+				// ignore
+			} finally {
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Returns a FileStore instance backed by storage in a temporary location.
 	 * The returned store will not exist, but will belong to an existing parent.

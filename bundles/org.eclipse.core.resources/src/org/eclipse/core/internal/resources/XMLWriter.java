@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,19 +20,26 @@ import java.util.Map;
  */
 public class XMLWriter extends PrintWriter {
 	protected int tab;
+	protected String lineSeparator;
 
 	/* constants */
 	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 
-	public XMLWriter(OutputStream output) throws UnsupportedEncodingException {
+	public XMLWriter(OutputStream output, String separator) throws UnsupportedEncodingException {
 		super(new OutputStreamWriter(output, "UTF8")); //$NON-NLS-1$
 		tab = 0;
+		lineSeparator = separator;
 		println(XML_VERSION);
 	}
 
 	public void endTag(String name) {
 		tab--;
 		printTag('/' + name, null);
+	}
+
+	public void println(String x) {
+		super.print(x);
+		super.print(lineSeparator);
 	}
 
 	public void printSimpleTag(String name, Object value) {
