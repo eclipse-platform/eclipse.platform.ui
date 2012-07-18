@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.debug.core.commands.IDisconnectHandler;
+import org.eclipse.debug.core.commands.IDropToFrameHandler;
 import org.eclipse.debug.ui.actions.DebugCommandHandler;
 
 /**
@@ -22,7 +22,7 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
 public class DropToFrameCommandHandler extends DebugCommandHandler {
 
     protected Class getCommandType() {
-        return IDisconnectHandler.class;
+        return IDropToFrameHandler.class;
     }
     
 }
