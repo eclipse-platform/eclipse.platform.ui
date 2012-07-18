@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.preferences;
 
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +24,8 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SegmentEvent;
+import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -90,7 +93,33 @@ public class ProcessPropertyPage extends PropertyPage {
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		String commandLineText = getCommandLineText(proc);
 		if (commandLineText != null) {
-			text.setText(commandLineText);
+			final String[] arguments = DebugPlugin.parseArguments(commandLineText);
+			StringBuffer renderedCommandLine = new StringBuffer(commandLineText.length());
+			for (int i = 0; i < arguments.length; i++) {
+				if (i > 0)
+					renderedCommandLine.append(' ');
+				renderedCommandLine.append(arguments[i]);
+			}
+			text.addSegmentListener(new SegmentListener() {
+				public void getSegments(SegmentEvent event) {
+					int count = arguments.length;
+					if (count < 2)
+						return;
+
+					int[] segments = new int[count - 1];
+					int nextStart = arguments[0].length() + 1;
+					for (int i = 1; i < count; i++) {
+						segments[i - 1] = nextStart;
+						nextStart = nextStart + arguments[i].length() + 1;
+					}
+					event.segments = segments;
+
+					char[] chars = new char[count - 1];
+					Arrays.fill(chars, '\n');
+					event.segmentsChars = chars;
+				}
+			});
+			text.setText(renderedCommandLine.toString());
 		}
 		
 	//create environment section
