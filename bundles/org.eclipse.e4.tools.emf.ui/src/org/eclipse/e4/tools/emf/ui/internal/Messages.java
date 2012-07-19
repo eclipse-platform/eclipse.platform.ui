@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal;
 
 public class Messages {
 
+	public String ModelTooling_Empty_Warning;
 	public String ModelTooling_Common_Up;
 	public String ModelTooling_Common_Down;
 	public String ModelTooling_Common_AddEllipsis;
