@@ -15,12 +15,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
@@ -64,6 +69,9 @@ import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -318,6 +326,23 @@ public class ControlFactory {
 	}
 
 	public static void createTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp) {
+		createTextField(parent, label, master, context, textProp, modelProp, null);
+
+	}
+
+	/**
+	 * 
+	 * @param parent
+	 * @param label
+	 * @param master
+	 * @param context
+	 * @param textProp
+	 * @param modelProp
+	 * @param warningText
+	 *            Non null warningText means that a warning with this non-null
+	 *            text will be shown when the field is left empty
+	 */
+	public static void createTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp, final String warningText) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
 		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -326,7 +351,32 @@ public class ControlFactory {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		t.setLayoutData(gd);
+		if (warningText != null) {
+			final ControlDecoration controlDecoration = new ControlDecoration(t, SWT.LEFT | SWT.TOP);
+			controlDecoration.setDescriptionText(warningText);
+			FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
+			controlDecoration.setImage(fieldDecoration.getImage());
+			IValidator iv = new IValidator() {
 
+				public IStatus validate(Object value) {
+					if (value == null) {
+						controlDecoration.show();
+						return ValidationStatus.warning(warningText);
+					}
+					if (value instanceof String) {
+						String text = (String) value;
+						if (text.trim().length() == 0) {
+							controlDecoration.show();
+							return ValidationStatus.warning(warningText);
+						}
+					}
+					controlDecoration.hide();
+					return Status.OK_STATUS;
+				}
+			};
+			UpdateValueStrategy acv = new UpdateValueStrategy().setAfterConvertValidator(iv);
+			context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master), acv, acv);
+		}
 		TextPasteHandler.createFor(t);
 		context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master));
 	}
