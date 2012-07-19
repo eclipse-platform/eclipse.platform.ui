@@ -321,6 +321,7 @@ public class Messages {
 	public String BindingContextEditor_Description;
 	public String BindingContextEditor_Subcontexts;
 	public String BindingContextEditor_AddContext;
+	public String BindingContextEditor_NameWarning;
 
 	public String CommandParameterEditor_TreeLabel;
 	public String CommandParameterEditor_TreeLabelDescritpion;
@@ -611,4 +612,5 @@ public class Messages {
 	public String ObjectViewer_Script;
 
 	public String CommandWizard_ShellTitle;
+
 }
