@@ -461,6 +461,9 @@
             id="org.eclipse.ui.ide.editors"
             label="%PreferenceKeywords.Editors"/>
       <keyword
+            id="org.eclipse.ui.ide.reuse"
+            label="%PreferenceKeywords.Reuse"/>
+      <keyword
             id="org.eclipse.ui.ide.pin"
             label="%PreferenceKeywords.Pin"/>
       <keyword
@@ -534,16 +537,13 @@
          <keywordReference id="org.eclipse.ui.ide.editing"/>
          <keywordReference id="org.eclipse.ui.ide.tabs"/>
          <keywordReference id="org.eclipse.ui.ide.editors"/>
+         <keywordReference id="org.eclipse.ui.ide.reuse"/>
          <keywordReference id="org.eclipse.ui.ide.pin"/>
          <keywordReference id="org.eclipse.ui.ide.dirty"/>
          <keywordReference id="org.eclipse.ui.ide.close"/>
          <keywordReference id="org.eclipse.ui.ide.recentlyOpened"/>
-         <keywordReference
-               id="org.eclipse.ui.ide.restore">
-         </keywordReference>
-         <keywordReference
-               id="org.eclipse.ui.ide.state">
-         </keywordReference>
+         <keywordReference id="org.eclipse.ui.ide.restore"/>
+         <keywordReference id="org.eclipse.ui.ide.state"/>
       </page>
       <page
             name="%PreferencePages.Perspectives"
