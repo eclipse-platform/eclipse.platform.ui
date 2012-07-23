@@ -113,12 +113,9 @@ public class EmbeddedBreakpointsViewer {
 		if(view != null) {
 			//if we have handle to the view try get the current attributes, that way the 
 			//presentation of the embedded viewer matches the current view
-			IBaseLabelProvider current = ((StructuredViewer)view.getViewer()).getLabelProvider();
-			if (current instanceof BreakpointsLabelProvider) {
-				current = ((BreakpointsLabelProvider)current).getPresentation();
-			}
-			Map map = null;
-			if(current instanceof DelegatingModelPresentation) {
+            Map map = null;
+		    IDebugModelPresentation current = (IDebugModelPresentation)view.getAdapter(IDebugModelPresentation.class);
+		    if (current instanceof DelegatingModelPresentation) {
 				map = ((DelegatingModelPresentation) current).getAttributes();
 			}
 			if(map != null) {
