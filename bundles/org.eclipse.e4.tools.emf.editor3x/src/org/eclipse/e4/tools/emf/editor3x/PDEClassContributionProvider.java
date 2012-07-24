@@ -145,7 +145,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 					packageName, 
 					SearchPattern.R_PATTERN_MATCH, 
 					typeName, 
-					SearchPattern.R_PREFIX_MATCH, 
+					SearchPattern.R_PREFIX_MATCH | SearchPattern.R_CAMELCASE_MATCH, 
 					IJavaSearchConstants.CLASS, 
 					scope, 
 					req, 

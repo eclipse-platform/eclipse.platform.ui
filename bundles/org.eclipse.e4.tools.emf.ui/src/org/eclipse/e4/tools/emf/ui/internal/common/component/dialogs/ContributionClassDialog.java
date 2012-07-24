@@ -35,6 +35,8 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
@@ -151,6 +153,25 @@ public class ContributionClassDialog extends TitleAreaDialog {
 				currentResultHandler = new ContributionResultHandlerImpl(list);
 				Filter filter = new Filter(project, t.getText());
 				collector.findContributions(filter, currentResultHandler);
+				t.addKeyListener(new KeyAdapter() {
+					public void keyPressed(KeyEvent e) {
+						if (e.keyCode == SWT.ARROW_DOWN) {
+							if (viewer.getTable().getItemCount() > 0) {
+								viewer.getTable().setFocus();
+								viewer.getTable().select(0);
+							}
+						}
+					}
+				});
+				viewer.getTable().addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyPressed(KeyEvent e) {
+						super.keyPressed(e);
+						if ((e.keyCode == SWT.ARROW_UP) && (viewer.getTable().getSelectionIndex() == 0)) {
+							t.setFocus();
+						}
+					}
+				});
 			}
 		});
 
