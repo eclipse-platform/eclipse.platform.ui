@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,40 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.ActivityManagerEvent;
-import org.eclipse.ui.activities.IActivityManagerListener;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.model.WorkbenchViewerComparator;
-
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchDelegate;
@@ -66,9 +32,40 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchCategoryFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
-
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.ActivityManagerEvent;
+import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * The preference page for selecting and changing launch perspectives
@@ -171,15 +168,8 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			}
 			fgCurrentWorkingContext.clear();
 			if(!selection.isEmpty()) {
-				Point pt = getShell().getSize();
 				createCombos(fMainComposite, selection.toArray());
 				fMainComposite.layout();
-				if(!fInitializing) {
-					Point pt2  = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-					if(pt2.x > pt.x) {
-						getShell().setSize(pt2);
-					}
-				}
 			}
 			else {
 				SWTFactory.createWrapLabel(fMainComposite, DebugPreferencesMessages.LaunchPerspectivePreferencePage_0, 2, 275);
@@ -204,11 +194,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	private static Map fgPerspectiveIdMap = null;
 	private static HashSet fgChangeSet = null;
 	private static HashSet fgCurrentWorkingContext = null;
-	
-	/**
-	 * fields
-	 */
-	private boolean fInitializing = false;
 	
 	/**
 	 * A default selection listener to be reused by all combo boxes presenting perspective data
@@ -334,6 +319,15 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				fPerspectivesPanel.refreshPanel((IStructuredSelection) event.getSelection());
+			}
+		});
+		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+				if(!ss.isEmpty()) {
+					Object obj = ss.getFirstElement();
+					fTreeViewer.setExpandedState(obj, !fTreeViewer.getExpandedState(obj));
+				}
 			}
 		});
 		fTreeViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
@@ -527,7 +521,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 * a selection changed event from the tree viewer
 	 */
 	protected void initializeControls() {
-		fInitializing = true;
 		if(fTree.getItemCount() > 0) {
 			TreeItem item = fTree.getItem(0);
 			fTreeViewer.setSelection(new StructuredSelection(item.getData()));
@@ -536,7 +529,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	//load the group selections
 		fSwitchLaunch.load();
 		fSwitchSuspend.load();
-		fInitializing = false;
 	}
 	
 	/**
