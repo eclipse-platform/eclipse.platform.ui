@@ -214,8 +214,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (window.getWidget() == null)
 				return;
 
-			String eventType = (String) event
-					.getProperty(UIEvents.EventTags.TYPE);
 			if (UIEvents.isADD(event)) {
 				for (Object o : UIEvents.asIterable(event,
 						UIEvents.EventTags.NEW_VALUE)) {
