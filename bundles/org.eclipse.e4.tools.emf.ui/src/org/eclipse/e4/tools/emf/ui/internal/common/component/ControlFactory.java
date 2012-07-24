@@ -351,6 +351,7 @@ public class ControlFactory {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		t.setLayoutData(gd);
+		TextPasteHandler.createFor(t);
 		if (warningText != null) {
 			final ControlDecoration controlDecoration = new ControlDecoration(t, SWT.LEFT | SWT.TOP);
 			controlDecoration.setDescriptionText(warningText);
@@ -376,9 +377,8 @@ public class ControlFactory {
 			};
 			UpdateValueStrategy acv = new UpdateValueStrategy().setAfterConvertValidator(iv);
 			context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master), acv, acv);
-		}
-		TextPasteHandler.createFor(t);
-		context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master));
+		} else
+			context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master));
 	}
 
 	public static void createTranslatedTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp, IResourcePool resourcePool, IProject project) {
