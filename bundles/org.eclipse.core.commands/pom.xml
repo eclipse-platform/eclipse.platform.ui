@@ -23,4 +23,16 @@
   <artifactId>org.eclipse.core.commands</artifactId>
   <version>3.6.1-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <configuration>
+          <executionEnvironment>CDC-1.0/Foundation-1.0</executionEnvironment>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
