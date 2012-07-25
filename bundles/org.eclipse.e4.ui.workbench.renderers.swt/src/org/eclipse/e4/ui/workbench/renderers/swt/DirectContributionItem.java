@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Joseph Carroll <jdsalingerjr@gmail.com> - Bug 385414 Contributing wizards 
+ *     to toolbar always displays icon and text
+ ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import javax.inject.Inject;
@@ -54,6 +66,7 @@ public class DirectContributionItem extends ContributionItem {
 	/** Internal key for transient maps to provide a runnable on widget disposal */
 	public static final String DISPOSABLE = "IDisposable"; //$NON-NLS-1$
 
+	private static final String FORCE_TEXT = "FORCE_TEXT"; //$NON-NLS-1$
 	private static final String DCI_STATIC_CONTEXT = "DCI-staticContext"; //$NON-NLS-1$
 
 	private MItem model;
@@ -126,7 +139,6 @@ public class DirectContributionItem extends ContributionItem {
 		widget.setData(AbstractPartRenderer.OWNING_ME, model);
 
 		update(null);
-		updateIcons();
 	}
 
 	/*
@@ -173,7 +185,6 @@ public class DirectContributionItem extends ContributionItem {
 		widget.setData(AbstractPartRenderer.OWNING_ME, model);
 
 		update(null);
-		updateIcons();
 	}
 
 	private void updateVisible() {
@@ -201,6 +212,7 @@ public class DirectContributionItem extends ContributionItem {
 	 */
 	@Override
 	public void update(String id) {
+		updateIcons();
 		if (widget instanceof MenuItem) {
 			updateMenuItem();
 		} else if (widget instanceof ToolItem) {
@@ -223,7 +235,9 @@ public class DirectContributionItem extends ContributionItem {
 	private void updateToolItem() {
 		ToolItem item = (ToolItem) widget;
 		final String text = model.getLocalizedLabel();
-		if (text != null) {
+		Image icon = item.getImage();
+		boolean mode = model.getTags().contains(FORCE_TEXT);
+		if ((icon == null || mode) && text != null) {
 			item.setText(text);
 		} else {
 			item.setText(""); //$NON-NLS-1$

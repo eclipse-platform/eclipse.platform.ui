@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Joseph Carroll <jdsalingerjr@gmail.com> - Bug 385414 Contributing wizards 
+ *     to toolbar always displays icon and text
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -160,6 +162,7 @@ public class HandledContributionItem extends ContributionItem {
 	// HACK!! local 'static' timerExec...should move out of this class post 4.1
 	public static ToolItemUpdateTimer toolItemUpdater = new ToolItemUpdateTimer();
 
+	private static final String FORCE_TEXT = "FORCE_TEXT"; //$NON-NLS-1$
 	private static final String DISPOSABLE_CHECK = "IDisposable"; //$NON-NLS-1$
 	private static final String WW_SUPPORT = "org.eclipse.ui.IWorkbenchWindow"; //$NON-NLS-1$
 	private static final String HCI_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
@@ -488,12 +491,12 @@ public class HandledContributionItem extends ContributionItem {
 	 */
 	@Override
 	public void update(String id) {
+		updateIcons();
 		if (widget instanceof MenuItem) {
 			updateMenuItem();
 		} else if (widget instanceof ToolItem) {
 			updateToolItem();
 		}
-		updateIcons();
 	}
 
 	private void updateMenuItem() {
@@ -541,7 +544,9 @@ public class HandledContributionItem extends ContributionItem {
 	private void updateToolItem() {
 		ToolItem item = (ToolItem) widget;
 		final String text = model.getLocalizedLabel();
-		if (text != null) {
+		Image icon = item.getImage();
+		boolean mode = model.getTags().contains(FORCE_TEXT);
+		if ((icon == null || mode) && text != null) {
 			item.setText(text);
 		} else {
 			item.setText(""); //$NON-NLS-1$
