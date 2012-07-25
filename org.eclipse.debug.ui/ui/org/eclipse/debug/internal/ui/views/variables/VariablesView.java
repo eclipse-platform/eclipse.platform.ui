@@ -812,6 +812,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			if (orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_AUTO)) {
 				vertOrHoriz = computeOrientation();
 				if (fPaneBuilt && fSashForm.getOrientation() == vertOrHoriz) {
+					showDetailPane();
 					return;
 				}
 			} else {
