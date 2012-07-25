@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -51,7 +52,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private ComboViewer themeIdCombo;
 	private ITheme currentTheme;
 	private String defaultTheme;
-
 	private Button enableAnimations;
 	private Button useColoredLabels;
 	
@@ -139,6 +139,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 */
 	@Override
 	public boolean performOk() {
+		if (!getSelection().equals(currentTheme)) {
+			MessageDialog.openWarning(getShell(), WorkbenchMessages.ThemeChangeWarningTitle,
+					WorkbenchMessages.ThemeChangeWarningText);
+		}
 		engine.setTheme(getSelection(), true);
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,

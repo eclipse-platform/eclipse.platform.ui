@@ -23,6 +23,10 @@ public class WorkbenchMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.messages";//$NON-NLS-1$
 
 
+	public static String ThemeChangeWarningText;
+
+	public static String ThemeChangeWarningTitle;
+
 	public static String BundleSigningTray_Cant_Find_Service;
 
 
