@@ -15,16 +15,30 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import junit.framework.*;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.osgi.framework.Bundle;
+
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
-import org.eclipse.core.runtime.*;
+
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.search.AnalyzerDescriptor;
+import org.eclipse.help.internal.search.PluginIndex;
+import org.eclipse.help.internal.search.QueryBuilder;
+import org.eclipse.help.internal.search.SearchIndexWithIndexingProgress;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
-import org.osgi.framework.Bundle;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Verify that older versions of the index can be read by this
@@ -135,12 +149,24 @@ public class PrebuiltIndexCompatibility extends TestCase {
 		URL resolved = FileLocator.resolve(url);
 		if ("file".equals(resolved.getProtocol())) { //$NON-NLS-1$
 			String filePath = resolved.getFile();
-			Directory luceneDirectory = new NIOFSDirectory(new File(filePath));
-			IndexSearcher searcher = new IndexSearcher(luceneDirectory, true);
 			QueryBuilder queryBuilder = new QueryBuilder("eclipse", new AnalyzerDescriptor("en-us"));
 			Query luceneQuery = queryBuilder.getLuceneQuery(new ArrayList<String>() , false);
-			TopDocs hits = searcher.search(luceneQuery, 500);
-			assertEquals(hits.totalHits, 1);
+			Directory luceneDirectory = null;
+			IndexSearcher searcher = null;
+			try {
+				luceneDirectory = new NIOFSDirectory(new File(filePath));
+				searcher = new IndexSearcher(luceneDirectory, true);
+				TopDocs hits = searcher.search(luceneQuery, 500);
+				assertEquals(hits.totalHits, 1);
+			} finally {
+				if (luceneDirectory != null)
+					try {
+						luceneDirectory.close();
+					} catch (IOException x) {
+					}
+				if (searcher != null)
+					searcher.close();
+			}
 		} else {
 			fail("Cannot resolve to file protocol");
 		}
