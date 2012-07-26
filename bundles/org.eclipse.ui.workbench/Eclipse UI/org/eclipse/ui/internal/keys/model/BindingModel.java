@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -237,7 +236,10 @@ public class BindingModel extends CommonModel {
 			if (obj instanceof Binding) {
 				Binding b = (Binding) obj;
 				if (!activeManagerBindings.contains(b)) {
-					be.fill(b.getParameterizedCommand());
+					ParameterizedCommand cmd = b.getParameterizedCommand();
+					if (cmd != null) {
+						commandToElement.remove(cmd);
+					}
 					bindingToElement.remove(b);
 					i.remove();
 					controller.firePropertyChange(this, PROP_BINDING_REMOVE,
