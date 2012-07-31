@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,14 +27,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.jface.operation.IRunnableWithProgress;
+
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.XMLMemento;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IBreakpointImportParticipant;
@@ -42,15 +54,8 @@ import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.IImportExportConstants;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.ImportExportMessages;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.XMLMemento;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Imports breakpoints from a file or string buffer into the workspace.
@@ -99,15 +104,15 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	/**
 	 * Constructs an operation to import breakpoints.
 	 * 
-	 * @param fileName the file to read breakpoints from - the file should have been 
-	 *            created from an export operation
+	 * @param fileName the file to read breakpoints from - the file should have been created from an
+	 *            export operation
 	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
-	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints
-	 * 	are exported with information about the breakpoint working sets they belong to. Those
-	 * 	working sets can be optionally re-created on import if they do not already exist in the
-	 *            workspace.
-	 * @param importBreakpoints whether breakpoints should be imported and registered 
-	 * @since 3.8
+	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints are
+	 *            exported with information about the breakpoint working sets they belong to. Those
+	 *            working sets can be optionally re-created on import if they do not already exist
+	 *            in the workspace.
+	 * @param importBreakpoints whether breakpoints should be imported and registered
+	 * @since 3.9
 	 */
 	public ImportBreakpointsOperation(String fileName, boolean overwrite, boolean createWorkingSets, boolean importBreakpoints) {
 		fFileName = fileName;
@@ -134,18 +139,18 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	}
 	
 	/**
-	 * Constructs an operation to import breakpoints from a string buffer. The buffer
-	 * must contain a memento created an {@link ExportBreakpointsOperation}.
+	 * Constructs an operation to import breakpoints from a string buffer. The buffer must contain a
+	 * memento created an {@link ExportBreakpointsOperation}.
 	 * 
-	 * @param buffer the string buffer to read breakpoints from - the file should have been 
-	 *            created from an export operation
+	 * @param buffer the string buffer to read breakpoints from - the file should have been created
+	 *            from an export operation
 	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
-	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints
-	 * 	are exported with information about the breakpoint working sets they belong to. Those
-	 * 	working sets can be optionally re-created on import if they do not already exist in the
-	 *            workspace.
+	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints are
+	 *            exported with information about the breakpoint working sets they belong to. Those
+	 *            working sets can be optionally re-created on import if they do not already exist
+	 *            in the workspace.
 	 * @param importBreakpoints whether breakpoints should be imported and registered
-	 * @since 3.8
+	 * @since 3.9
 	 */
 	public ImportBreakpointsOperation(StringBuffer buffer, boolean overwrite, boolean createWorkingSets, boolean importBreakpoints) {
 		fBuffer = buffer;
