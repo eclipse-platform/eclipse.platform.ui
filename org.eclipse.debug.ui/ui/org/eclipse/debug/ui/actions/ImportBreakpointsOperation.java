@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Schmidt - bug 384460
  *******************************************************************************/
 
 package org.eclipse.debug.ui.actions;
@@ -78,6 +79,8 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 */
 	private StringBuffer fBuffer = null;
 
+	private boolean fImportBreakpoints = true;
+
 	/**
 	 * Constructs an operation to import breakpoints.
 	 * 
@@ -90,9 +93,27 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 *            workspace.
 	 */
 	public ImportBreakpointsOperation(String fileName, boolean overwrite, boolean createWorkingSets) {
+		this(fileName, overwrite, createWorkingSets, true);
+	}
+
+	/**
+	 * Constructs an operation to import breakpoints.
+	 * 
+	 * @param fileName the file to read breakpoints from - the file should have been 
+	 *            created from an export operation
+	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
+	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints
+	 * 	are exported with information about the breakpoint working sets they belong to. Those
+	 * 	working sets can be optionally re-created on import if they do not already exist in the
+	 *            workspace.
+	 * @param importBreakpoints whether breakpoints should be imported and registered 
+	 * @since 3.8
+	 */
+	public ImportBreakpointsOperation(String fileName, boolean overwrite, boolean createWorkingSets, boolean importBreakpoints) {
 		fFileName = fileName;
 		fOverwriteAll = overwrite;
 		fCreateWorkingSets = createWorkingSets;
+		fImportBreakpoints = importBreakpoints;
 	}
 	
 	/**
@@ -109,9 +130,28 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @since 3.5
 	 */
 	public ImportBreakpointsOperation(StringBuffer buffer, boolean overwrite, boolean createWorkingSets) {
+		this(buffer, overwrite, createWorkingSets, true);
+	}
+	
+	/**
+	 * Constructs an operation to import breakpoints from a string buffer. The buffer
+	 * must contain a memento created an {@link ExportBreakpointsOperation}.
+	 * 
+	 * @param buffer the string buffer to read breakpoints from - the file should have been 
+	 *            created from an export operation
+	 * @param overwrite whether imported breakpoints will overwrite existing equivalent breakpoints
+	 * @param createWorkingSets whether breakpoint working sets should be created. Breakpoints
+	 * 	are exported with information about the breakpoint working sets they belong to. Those
+	 * 	working sets can be optionally re-created on import if they do not already exist in the
+	 *            workspace.
+	 * @param importBreakpoints whether breakpoints should be imported and registered
+	 * @since 3.8
+	 */
+	public ImportBreakpointsOperation(StringBuffer buffer, boolean overwrite, boolean createWorkingSets, boolean importBreakpoints) {
 		fBuffer = buffer;
 		fOverwriteAll = overwrite;
 		fCreateWorkingSets = createWorkingSets;
+		fImportBreakpoints = importBreakpoints;
 	}	
 
 	/* (non-Javadoc)
@@ -137,7 +177,14 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 					return;
 				}
 				attributes = collectBreakpointProperties(nodes[i]);
-				IResource resource = workspace.findMember((String) attributes.get(IImportExportConstants.IE_NODE_PATH));
+
+				IResource resource;
+				if(fImportBreakpoints) {
+					resource = workspace.findMember((String) attributes.get(IImportExportConstants.IE_NODE_PATH));
+				} else {
+					resource = workspace;
+				}
+
 				// filter resource breakpoints that do not exist in this workspace
 				if(resource != null) {	
 					try {
@@ -151,7 +198,11 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 					}
 					else {
 						if(fOverwriteAll) {
-							marker.setAttributes(null);
+							if(!fImportBreakpoints) {
+								marker = resource.createMarker((String) attributes.get(IImportExportConstants.IE_NODE_TYPE));
+							} else {
+								marker.setAttributes(null);
+							}
 							restoreBreakpoint(marker, attributes, participants);
 						}
 					}
@@ -159,7 +210,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 				fCurrentWorkingSetProperty = null;
 				localmonitor.worked(1);
 			}
-			if(fAdded.size() > 0) {
+			if(fAdded.size() > 0 && fImportBreakpoints) {
 				fManager.addBreakpoints((IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]));
 			}
 		} 
@@ -229,12 +280,12 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		map.put(IImportExportConstants.IE_BP_ENABLED, memento.getBoolean(IImportExportConstants.IE_BP_ENABLED));
 		map.put(IImportExportConstants.IE_BP_PERSISTANT, memento.getBoolean(IImportExportConstants.IE_BP_PERSISTANT));
 		map.put(IImportExportConstants.IE_BP_REGISTERED, memento.getBoolean(IImportExportConstants.IE_BP_REGISTERED));
-		
+
 		//collect attributes from the 'marker' node
 		IMemento child = memento.getChild(IImportExportConstants.IE_NODE_MARKER);
 		map.put(IImportExportConstants.IE_NODE_TYPE, child.getString(IImportExportConstants.IE_NODE_TYPE));
 		map.put(IMarker.LINE_NUMBER, child.getInteger(IMarker.LINE_NUMBER));
-		
+
 		//copy all the marker attributes to the map
 		IMemento[] children = child.getChildren(IImportExportConstants.IE_NODE_ATTRIB);
 		for(int i = 0; i < children.length; i++) {
@@ -298,7 +349,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			breakpoint.setPersisted(((Boolean)attributes.get(IImportExportConstants.IE_BP_PERSISTANT)).booleanValue());
 			breakpoint.setRegistered(((Boolean)attributes.get(IImportExportConstants.IE_BP_REGISTERED)).booleanValue());
 			fAdded.add(breakpoint);
-			if (fCreateWorkingSets && fCurrentWorkingSetProperty != null) {
+			if (fImportBreakpoints && fCreateWorkingSets && fCurrentWorkingSetProperty != null) {
 				String[] names = fCurrentWorkingSetProperty.split("\\" + IImportExportConstants.DELIMITER); //$NON-NLS-1$
 				updateWorkingSets(names, breakpoint);
 			}

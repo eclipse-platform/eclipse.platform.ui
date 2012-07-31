@@ -13,8 +13,15 @@ package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -22,6 +29,7 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -197,14 +205,51 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 * @return if the import operation was successful or not
 	 */
 	public boolean finish() {	
+		return finish(null);
+	}
+
+	public boolean finish(final List selectedMarkers) {
 		try {
 			saveWidgetState();
-			getContainer().run(false, 
-					true, 
-					new ImportBreakpointsOperation(
-							fFileNameField.getText().trim(), 
-							fAutoRemoveDuplicates.getSelection(), 
-							fAutoCreateWorkingSets.getSelection()));
+			getContainer().run(false, true, 
+					new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							ImportBreakpointsOperation operation = new ImportBreakpointsOperation(
+									fFileNameField.getText().trim(), 
+									fAutoRemoveDuplicates.getSelection(), 
+									fAutoCreateWorkingSets.getSelection());
+							operation.run(monitor);
+							if(selectedMarkers != null) {
+								removeUncheckedBreakpoints(operation.getImportedBreakpoints());
+							}
+						}
+
+						private void removeUncheckedBreakpoints(IBreakpoint[] importedBreakpoints) {
+							IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+							for(int i = 0; i < importedBreakpoints.length; i++) {
+								boolean selected = false;
+								for(int j = 0; j < selectedMarkers.size(); j++) {
+									try {
+										Map importedMarkerAttributes = importedBreakpoints[i].getMarker().getAttributes();
+										Map selectedMarkerAttributes = ((IMarker) selectedMarkers.get(j)).getAttributes();
+										if(importedMarkerAttributes.equals(selectedMarkerAttributes)) {
+											selected = true;
+											break;
+										}
+									} catch (CoreException e) {
+										DebugPlugin.log(e);
+									}
+								}
+								if(!selected) {
+									try {
+										manager.removeBreakpoint(importedBreakpoints[i], true);
+									} catch (CoreException e) {
+										DebugPlugin.log(e);
+									}
+								}
+							}
+						}
+			});
 		}
 		catch (InterruptedException e) {
 			DebugPlugin.log(e);
@@ -216,5 +261,12 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		}
 		return true;
 	}
-	
+
+	public Text getFileNameField() {
+		return fFileNameField;
+	}
+
+	public boolean getAutoRemoveDuplicates() {
+		return fAutoRemoveDuplicates.getSelection();
+	}
 }

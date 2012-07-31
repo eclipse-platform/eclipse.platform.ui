@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Schmidt - bug 384460
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.importexport.breakpoints;
+
+import java.util.List;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -34,7 +37,8 @@ import org.eclipse.ui.IWorkbench;
  * wizdialog.open();
  * </pre>
  * 
- * This class uses <code>WizardImportBreakpointsPage</code>
+ * This class uses <code>WizardImportBreakpointsPage</code> and 
+ * <code>WizardImportBreakpointsSelectionPage</code>.
  * 
  * @since 3.2
  *
@@ -44,7 +48,9 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 	/*
 	 * The main page
 	 */
-	private WizardImportBreakpointsPage fMainPage = null;
+	private WizardImportBreakpointsPage fMainPage;
+
+	private WizardImportBreakpointsSelectionPage fSelectionPage;
 	
 	/**
 	 * Identifier for dialog settings section for the import wizard. 
@@ -71,8 +77,10 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 		super.addPages();
 		fMainPage = new WizardImportBreakpointsPage(ImportExportMessages.WizardImportBreakpoints_0);
 		addPage(fMainPage);
+		fSelectionPage = new WizardImportBreakpointsSelectionPage(ImportExportMessages.WizardImportBreakpointsSelectionPage_0);
+		addPage(fSelectionPage);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#dispose()
 	 */
@@ -85,7 +93,8 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		return fMainPage.finish();
+		List selectedBreakpoints = fSelectionPage.getSelectedMarkers();
+		return fMainPage.finish(selectedBreakpoints);
 	}
 
 	/* (non-Javadoc)
@@ -94,5 +103,9 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(ImportExportMessages.WizardImportBreakpoints_0);
         setNeedsProgressMonitor(true);
+	}
+
+	public boolean needsProgressMonitor() {
+		return true;
 	}
 }
