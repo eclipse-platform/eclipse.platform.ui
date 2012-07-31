@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -326,34 +326,37 @@ public class ShowViewDialog extends Dialog implements
      * held last time this dialog was used to completion.
      */
     protected void restoreWidgetValues() {
-        IDialogSettings settings = getDialogSettings();
+		Object selection = null;
 
+        IDialogSettings settings = getDialogSettings();
         String[] expandedCategoryIds = settings
                 .getArray(STORE_EXPANDED_CATEGORIES_ID);
-        if (expandedCategoryIds == null) {
-			return;
-		}
+		if (expandedCategoryIds != null) {
+			ViewRegistry reg = (ViewRegistry) viewReg;
+			ArrayList categoriesToExpand = new ArrayList(expandedCategoryIds.length);
+			for (int i = 0; i < expandedCategoryIds.length; i++) {
+				IViewCategory category = reg.findCategory(expandedCategoryIds[i]);
+				if (category != null) {
+					categoriesToExpand.add(category);
+				}
+			}
 
-        ViewRegistry reg = (ViewRegistry) viewReg;
-        ArrayList categoriesToExpand = new ArrayList(expandedCategoryIds.length);
-        for (int i = 0; i < expandedCategoryIds.length; i++) {
-            IViewCategory category = reg.findCategory(expandedCategoryIds[i]);
-            if (category != null) {
-				categoriesToExpand.add(category);
+			if (!categoriesToExpand.isEmpty()) {
+				filteredTree.getViewer().setExpandedElements(categoriesToExpand.toArray());
+			}
+
+			String selectedViewId = settings.get(STORE_SELECTED_VIEW_ID);
+			if (selectedViewId != null) {
+				selection = reg.find(selectedViewId);
 			}
         }
 
-        if (!categoriesToExpand.isEmpty()) {
-			filteredTree.getViewer().setExpandedElements(categoriesToExpand.toArray());
-		}
-        
-        String selectedViewId = settings.get(STORE_SELECTED_VIEW_ID);
-        if (selectedViewId != null) {
-            IViewDescriptor viewDesc = reg.find(selectedViewId);
-            if (viewDesc != null) {
-                filteredTree.getViewer().setSelection(new StructuredSelection(viewDesc), true);
-            }
-        }
+		// Make sure there's a selection in the tree
+		if (selection == null)
+			selection = filteredTree.getViewer().getTree().getItem(0).getData();
+
+		filteredTree.getViewer().setSelection(new StructuredSelection(selection), true);
+
     }
 
     /**
