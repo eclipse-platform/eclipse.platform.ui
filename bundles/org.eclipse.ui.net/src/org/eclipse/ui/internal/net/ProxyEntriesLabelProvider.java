@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.net;
 
-import org.eclipse.core.internal.net.ProxyData;
-import org.eclipse.core.internal.net.ProxySelector;
-import org.eclipse.jface.viewers.BaseLabelProvider;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TableColumn;
+
+import org.eclipse.core.internal.net.ProxyData;
+import org.eclipse.core.internal.net.ProxySelector;
+
+import org.eclipse.jface.viewers.BaseLabelProvider;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 
 public class ProxyEntriesLabelProvider extends BaseLabelProvider implements
 		ITableLabelProvider, IColorProvider {
@@ -60,7 +62,7 @@ public class ProxyEntriesLabelProvider extends BaseLabelProvider implements
 		case 4:
 			return ProxySelector.localizeProvider(data.getSource());
 		case 5:
-			return Boolean.toString(data.isRequiresAuthentication());
+			return data.isRequiresAuthentication() ? NetUIMessages.ProxyPreferencePage_19 : NetUIMessages.ProxyPreferencePage_20;
 		case 6:
 			return data.getUserId();
 		case 7:
