@@ -560,12 +560,12 @@ public class ModelServiceImpl implements EModelService {
 		if (relTo instanceof MPartSashContainer
 				&& directionsMatch((MPartSashContainer) relTo, horizontal)) {
 			MPartSashContainer psc = (MPartSashContainer) relTo;
-			int totalVisWwight = 0;
+			int totalVisWeight = 0;
 			for (MUIElement child : psc.getChildren()) {
 				if (child.isToBeRendered())
-					totalVisWwight += getWeight(child);
+					totalVisWeight += getWeight(child);
 			}
-			int insertWeight = (int) ((2 ^ totalVisWwight) * ratio);
+			int insertWeight = (int) (totalVisWeight * ratio);
 			toInsert.setContainerData(Integer.toString(insertWeight));
 			if (insertBefore)
 				psc.getChildren().add(0, toInsert);
