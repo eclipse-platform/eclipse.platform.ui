@@ -222,7 +222,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		checkLocal(flags, depth);
 		return info;
 	}
-	
+
 	/**
 	 * This method reports errors in two different ways. It can throw a
 	 * CoreException or return a status. CoreExceptions are used according to the
@@ -698,7 +698,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 						// a problem happened updating the description, so delete the resource from the workspace
 						workspace.deleteResource(this);
 						throw e; // rethrow
-					}	
+					}
 				monitor.worked(Policy.opWork * 5 / 100);
 
 				//refresh to discover any new resources below this linked location
@@ -722,7 +722,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			monitor.done();
 		}
 	}
-
 
 	/* (non-Javadoc)
 	 * @see IResource#createMarker(String)
@@ -787,7 +786,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					return;
 				workspace.beginOperation(true);
 				broadcastPreDeleteEvent();
-				
+
 				// when a project is being deleted, flush the build order in case there is a problem
 				if (this.getType() == IResource.PROJECT)
 					workspace.flushBuildOrder();
@@ -892,7 +891,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				}
 			}
 		}
-		
+
 		/* if we are synchronizing, do not delete the resource. Convert it
 		 into a phantom. Actual deletion will happen when we refresh or push. */
 		if (convertToPhantom && getType() != PROJECT && synchronizing(getResourceInfo(true, false)))
@@ -912,7 +911,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				project.writeDescription(IResource.FORCE);
 			}
 		}
-		
+
 		// Delete properties after the resource is deleted from the tree. See bug 84584.
 		CoreException err = null;
 		try {
@@ -934,7 +933,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	private List<Resource> findLinks() {
 		Project project = (Project) getProject();
 		ProjectDescription description = project.internalGetDescription();
-		HashMap<IPath,LinkDescription> linkMap = description.getLinks();
+		HashMap<IPath, LinkDescription> linkMap = description.getLinks();
 		if (linkMap == null)
 			return null;
 		List<Resource> links = null;
@@ -1063,7 +1062,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	private String findVariant(String target, String[] list) {
 		for (int i = 0; i < list.length; i++) {
-			if (target.equalsIgnoreCase(list[i]))
+			if (target.toUpperCase().equals(list[i].toUpperCase()))
 				return list[i];
 		}
 		return null;
@@ -1191,8 +1190,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public IContainer getParent() {
 		int segments = path.segmentCount();
 		//zero and one segments handled by subclasses
-		if (segments < 2) 
-            Assert.isLegal(false, path.toString());
+		if (segments < 2)
+			Assert.isLegal(false, path.toString());
 		if (segments == 2)
 			return workspace.getRoot().getProject(path.segment(0));
 		return (IFolder) workspace.newResource(path.removeLastSegments(1), IResource.FOLDER);
@@ -1279,7 +1278,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/* (non-Javadoc)
 	 * @see IResource#getSessionProperties()
 	 */
-	public Map<QualifiedName,Object> getSessionProperties() throws CoreException {
+	public Map<QualifiedName, Object> getSessionProperties() throws CoreException {
 		ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
 		return info.getSessionProperties();
 	}
@@ -1401,7 +1400,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		int flags = getFlags(info);
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_HIDDEN);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IResource#isHidden(int)
 	 */
@@ -1434,7 +1433,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			ProjectDescription desc = ((Project) project).internalGetDescription();
 			if (desc == null)
 				return false;
-			HashMap<IPath,LinkDescription> links = desc.getLinks();
+			HashMap<IPath, LinkDescription> links = desc.getLinks();
 			if (links == null)
 				return false;
 			IPath myPath = getProjectRelativePath();
@@ -1456,7 +1455,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		ResourceInfo info = getResourceInfo(false, false);
 		return info != null && info.isSet(M_VIRTUAL);
 	}
-	
+
 	/*
 	 * @return whether the current resource has a parent that is virtual.
 	 */
@@ -1546,7 +1545,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		int flags = getFlags(info);
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IResource#isTeamPrivateMember(int)
 	 */
@@ -1781,7 +1780,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				checkAccessible(getFlags(info));
 				// ignore attempts to set derived flag on anything except files and folders
 				if (info.getType() != FILE && info.getType() != FOLDER)
-					return;				
+					return;
 				workspace.beginOperation(true);
 				info = getResourceInfo(false, true);
 				if (isDerived)
@@ -2024,7 +2023,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 		return true;
 	}
-	
+
 	private void broadcastPreDeleteEvent() throws CoreException {
 		switch (getType()) {
 			case IResource.PROJECT :
@@ -2037,7 +2036,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, projects[i]));
 		}
 	}
-	
+
 	private void broadcastPreMoveEvent(final IResource destination, int updateFlags) throws CoreException {
 		switch (getType()) {
 			case IResource.FILE :
@@ -2086,11 +2085,11 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 		return false;
 	}
-	
+
 	public boolean isFilteredWithException(boolean throwExeception) throws CoreException {
 		if (isLinked() || isVirtual())
 			return false;
-		
+
 		Project project = (Project) getProject();
 		if (project == null)
 			return false;
@@ -2117,7 +2116,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 		return false;
 	}
-	
+
 	public IFileInfo[] filterChildren(IFileInfo[] list, boolean throwException) throws CoreException {
 		Project project = (Project) getProject();
 		if (project == null)
@@ -2127,13 +2126,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			return list;
 		return filterChildren(project, description, list, throwException);
 	}
-	
+
 	private IFileInfo[] filterChildren(Project project, ProjectDescription description, IFileInfo[] list, boolean throwException) throws CoreException {
 		IPath relativePath = getProjectRelativePath();
 		LinkedList<Filter> currentIncludeFilters = new LinkedList<Filter>();
 		LinkedList<Filter> currentExcludeFilters = new LinkedList<Filter>();
 		LinkedList<FilterDescription> filters = null;
-		
+
 		boolean firstSegment = true;
 		do {
 			if (!firstSegment)
@@ -2160,7 +2159,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			}
 			firstSegment = false;
 		} while (relativePath.segmentCount() > 0);
-		
+
 		if ((currentIncludeFilters.size() > 0) || (currentExcludeFilters.size() > 0)) {
 			try {
 				list = Filter.filter(project, currentIncludeFilters, currentExcludeFilters, (IContainer) this, list);
