@@ -565,7 +565,7 @@ public class ModelServiceImpl implements EModelService {
 				if (child.isToBeRendered())
 					totalVisWeight += getWeight(child);
 			}
-			int insertWeight = (int) (totalVisWeight * ratio);
+			int insertWeight = (int) ((totalVisWeight * ratio) / (1 - ratio));
 			toInsert.setContainerData(Integer.toString(insertWeight));
 			if (insertBefore)
 				psc.getChildren().add(0, toInsert);
