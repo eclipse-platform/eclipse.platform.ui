@@ -237,8 +237,6 @@ class DnDManager {
 	}
 
 	public void update() {
-		while (Display.getCurrent().readAndDispatch())
-			;
 		Display.getCurrent().update();
 	}
 
