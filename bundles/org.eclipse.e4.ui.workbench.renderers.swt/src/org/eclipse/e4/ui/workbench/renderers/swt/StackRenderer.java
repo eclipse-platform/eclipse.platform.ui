@@ -262,6 +262,9 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	synchronized private void activateStack(MElementContainer<MUIElement> stack) {
+		if (stack == null || !(stack.getWidget() instanceof CTabFolder))
+			return;
+
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
 		if (ctf == null || ctf.isDisposed())
 			return;
@@ -867,7 +870,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// Match the selected TabItem to its Part
 		final CTabFolder ctf = (CTabFolder) me.getWidget();
-		
+
 		// Handle traverse events for accessibility
 		ctf.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
