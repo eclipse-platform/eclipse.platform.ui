@@ -30,10 +30,10 @@ import org.eclipse.swt.widgets.ToolBar;
 
 public class ImageBasedFrame extends Canvas {
 	private Control framedControl;
-	
+
 	private boolean draggable = true;
 	private boolean vertical = true;
-	
+
 	private int w1;
 	private int w2;
 	private int w3;
@@ -47,33 +47,34 @@ public class ImageBasedFrame extends Canvas {
 	private int handleHeight;
 
 	protected String id;
-	
-	public ImageBasedFrame(Composite parent, Control toWrap, boolean vertical, boolean draggable) {
+
+	public ImageBasedFrame(Composite parent, Control toWrap, boolean vertical,
+			boolean draggable) {
 		super(parent, SWT.NONE);
-		
+
 		this.framedControl = toWrap;
 		this.vertical = vertical;
 		this.draggable = draggable;
-		
+
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				drawFrame(e);
 			}
 		});
-		
+
 		addListener(SWT.MouseExit, new Listener() {
 			public void handleEvent(Event event) {
 				ImageBasedFrame frame = (ImageBasedFrame) event.widget;
 				frame.setCursor(null);
 			}
 		});
-		
+
 		addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
 				// Compute the display location for the handle
 				// Note that this is an empty rect if !draggable
 				Rectangle handleRect = getHandleRect();
-				
+
 				ImageBasedFrame frame = (ImageBasedFrame) e.widget;
 				if (handleRect.contains(e.x, e.y)) {
 					frame.setCursor(frame.getDisplay().getSystemCursor(
@@ -83,7 +84,7 @@ public class ImageBasedFrame extends Canvas {
 				}
 			}
 		});
-		
+
 		toWrap.setParent(this);
 		toWrap.pack(true);
 
@@ -91,7 +92,9 @@ public class ImageBasedFrame extends Canvas {
 			public void controlResized(ControlEvent e) {
 				pack(true);
 			}
-			public void controlMoved(ControlEvent e) {}
+
+			public void controlMoved(ControlEvent e) {
+			}
 		});
 		if (vertical) {
 			toWrap.setLocation(w1, h1 + handleHeight);
@@ -101,25 +104,25 @@ public class ImageBasedFrame extends Canvas {
 		setSize(computeSize(-1, -1));
 
 		if (toWrap instanceof ToolBar) {
-			id = ((ToolBar)toWrap).getItem(0).getToolTipText();
+			id = "TB";// ((ToolBar) toWrap).getItem(0).getToolTipText();
 		}
 	}
 
 	public Rectangle getHandleRect() {
-		Rectangle handleRect = new Rectangle(0,0,0,0);
+		Rectangle handleRect = new Rectangle(0, 0, 0, 0);
 		if (!draggable)
 			return handleRect;
-		
+
 		if (vertical) {
-			handleRect.x = w1;
-			handleRect.y = h1;
-			handleRect.width = handle.getBounds().width;
-			handleRect.height = framedControl.getSize().y;
-		} else {
 			handleRect.x = w1;
 			handleRect.y = h1;
 			handleRect.width = framedControl.getSize().x;
 			handleRect.height = handle.getBounds().height;
+		} else {
+			handleRect.x = w1;
+			handleRect.y = h1;
+			handleRect.width = handle.getBounds().width;
+			handleRect.height = framedControl.getSize().y;
 		}
 		return handleRect;
 	}
@@ -139,105 +142,189 @@ public class ImageBasedFrame extends Canvas {
 
 	protected void drawFrame(PaintEvent e) {
 		Point inner = framedControl.getSize();
-		int handleWidth = (handle != null && !vertical) ? handle.getBounds().width : 0;
-		int handleHeight = (handle != null && vertical) ? handle.getBounds().height : 0;
-		
-		Rectangle srcRect = new Rectangle(0,0,0,0);
-		Rectangle dstRect = new Rectangle(0,0,0,0);
-		
+		int handleWidth = (handle != null && !vertical) ? handle.getBounds().width
+				: 0;
+		int handleHeight = (handle != null && vertical) ? handle.getBounds().height
+				: 0;
+
+		Rectangle srcRect = new Rectangle(0, 0, 0, 0);
+		Rectangle dstRect = new Rectangle(0, 0, 0, 0);
+
 		// Top Left
-		srcRect.x = 0; srcRect.y = 0; srcRect.width = w1; srcRect.height = h1;
-		dstRect.x = 0; dstRect.y = 0; dstRect.width = w1; dstRect.height = h1;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-		
+		srcRect.x = 0;
+		srcRect.y = 0;
+		srcRect.width = w1;
+		srcRect.height = h1;
+		dstRect.x = 0;
+		dstRect.y = 0;
+		dstRect.width = w1;
+		dstRect.height = h1;
+		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
+				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+				dstRect.height);
+
 		// Top Rail
-		srcRect.x = w1; srcRect.y = 0; srcRect.width = w2; srcRect.height = h1;
-		dstRect.x = w1; dstRect.y = 0; dstRect.width = inner.x + handleWidth; dstRect.height = h1;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-		
+		srcRect.x = w1;
+		srcRect.y = 0;
+		srcRect.width = w2;
+		srcRect.height = h1;
+		dstRect.x = w1;
+		dstRect.y = 0;
+		dstRect.width = inner.x + handleWidth;
+		dstRect.height = h1;
+		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
+				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+				dstRect.height);
+
 		// handle (if vertical)
-		srcRect.x = 0; srcRect.y = 0; srcRect.width = handle.getBounds().width; srcRect.height = handle.getBounds().height;
-		dstRect.x = w1; dstRect.y = h1; dstRect.width = inner.x + handleWidth; dstRect.height = handle.getBounds().height;
-		e.gc.drawImage(handle, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-		
+		srcRect.x = 0;
+		srcRect.y = 0;
+		srcRect.width = handle.getBounds().width;
+		srcRect.height = handle.getBounds().height;
+		dstRect.x = w1;
+		dstRect.y = h1;
+		dstRect.width = inner.x + handleWidth;
+		dstRect.height = handle.getBounds().height;
+		e.gc.drawImage(handle, srcRect.x, srcRect.y, srcRect.width,
+				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+				dstRect.height);
+
 		// Top Right
-		srcRect.x = w1 + w2; srcRect.y = 0; srcRect.width = w3; srcRect.height = h1;
-		dstRect.x = w1 + handleWidth + inner.x; dstRect.y = 0; dstRect.width = w3; dstRect.height = h3;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-		
+		srcRect.x = w1 + w2;
+		srcRect.y = 0;
+		srcRect.width = w3;
+		srcRect.height = h1;
+		dstRect.x = w1 + handleWidth + inner.x;
+		dstRect.y = 0;
+		dstRect.width = w3;
+		dstRect.height = h3;
+		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
+				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+				dstRect.height);
+
 		// Left Rail
-		srcRect.x = 0; srcRect.y = h1; srcRect.width = w1; srcRect.height = h2;
-		dstRect.x = 0; dstRect.y = h1; dstRect.width = w1; dstRect.height = inner.y + handleHeight;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-		
+		srcRect.x = 0;
+		srcRect.y = h1;
+		srcRect.width = w1;
+		srcRect.height = h2;
+		dstRect.x = 0;
+		dstRect.y = h1;
+		dstRect.width = w1;
+		dstRect.height = inner.y + handleHeight;
+		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
+				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+				dstRect.height);
+
 		// Handle (if horizontal)
 		if (handleWidth > 0) {
-			srcRect.x = 0; srcRect.y = 0; srcRect.width = handle.getBounds().width; srcRect.height = handle.getBounds().height;
-			dstRect.x = w1; dstRect.y = h1; dstRect.width = handleWidth; dstRect.height = inner.y;
-			e.gc.drawImage(handle, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-					dstRect.x, dstRect.y, dstRect.width, dstRect.height);
+			srcRect.x = 0;
+			srcRect.y = 0;
+			srcRect.width = handle.getBounds().width;
+			srcRect.height = handle.getBounds().height;
+			dstRect.x = w1;
+			dstRect.y = h1;
+			dstRect.width = handleWidth;
+			dstRect.height = inner.y;
+			e.gc.drawImage(handle, srcRect.x, srcRect.y, srcRect.width,
+					srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+					dstRect.height);
 		}
-		
+
 		// Right Rail
-		srcRect.x = w1 + w2; srcRect.y = h1; srcRect.width = w3; srcRect.height = h2;
-		dstRect.x = w1 + handleWidth + inner.x; dstRect.y = h1; dstRect.width = w3; dstRect.height = inner.y + handleHeight;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-		
+		srcRect.x = w1 + w2;
+		srcRect.y = h1;
+		srcRect.width = w3;
+		srcRect.height = h2;
+		dstRect.x = w1 + handleWidth + inner.x;
+		dstRect.y = h1;
+		dstRect.width = w3;
+		dstRect.height = inner.y + handleHeight;
+		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
+				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+				dstRect.height);
+
 		// Bottom Left
-		srcRect.x = 0; srcRect.y = h1 + h2; srcRect.width = w1; srcRect.height = h3;
-		dstRect.x = 0; dstRect.y = h1 + handleHeight + inner.y; dstRect.width = w1; dstRect.height = h3;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-		
+		srcRect.x = 0;
+		srcRect.y = h1 + h2;
+		srcRect.width = w1;
+		srcRect.height = h3;
+		dstRect.x = 0;
+		dstRect.y = h1 + handleHeight + inner.y;
+		dstRect.width = w1;
+		dstRect.height = h3;
+		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
+				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+				dstRect.height);
+
 		// Bottom Rail
-		srcRect.x = w1; srcRect.y = h1 + h2; srcRect.width = w2; srcRect.height = h3;
-		dstRect.x = w1; dstRect.y = h1 + handleHeight + inner.y; dstRect.width = handleWidth + inner.x; dstRect.height = h3;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-		
+		srcRect.x = w1;
+		srcRect.y = h1 + h2;
+		srcRect.width = w2;
+		srcRect.height = h3;
+		dstRect.x = w1;
+		dstRect.y = h1 + handleHeight + inner.y;
+		dstRect.width = handleWidth + inner.x;
+		dstRect.height = h3;
+		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
+				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+				dstRect.height);
+
 		// Bottom right
-		srcRect.x = w1 + w2; srcRect.y = h1 + h2; srcRect.width = w3; srcRect.height = h3;
-		dstRect.x = w1 + handleWidth + inner.x; dstRect.y = h1 + handleHeight + inner.y; dstRect.width = w3; dstRect.height = h3;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
-		
+		srcRect.x = w1 + w2;
+		srcRect.y = h1 + h2;
+		srcRect.width = w3;
+		srcRect.height = h3;
+		dstRect.x = w1 + handleWidth + inner.x;
+		dstRect.y = h1 + handleHeight + inner.y;
+		dstRect.width = w3;
+		dstRect.height = h3;
+		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
+				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+				dstRect.height);
+
 		// Imterior
-		srcRect.x = w1; srcRect.y = h1; srcRect.width = w2; srcRect.height = h2;
-		dstRect.x = w1 + handleWidth; dstRect.y = h1 + handleHeight; dstRect.width = inner.x; dstRect.height = inner.y;
-		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width, srcRect.height, 
-				dstRect.x, dstRect.y, dstRect.width, dstRect.height);
+		srcRect.x = w1;
+		srcRect.y = h1;
+		srcRect.width = w2;
+		srcRect.height = h2;
+		dstRect.x = w1 + handleWidth;
+		dstRect.y = h1 + handleHeight;
+		dstRect.width = inner.x;
+		dstRect.height = inner.y;
+		e.gc.drawImage(imageCache, srcRect.x, srcRect.y, srcRect.width,
+				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+				dstRect.height);
 	}
-	
+
 	public Image getImageCache() {
 		return imageCache;
 	}
-	
+
 	public Image getHandleImage() {
 		return handle;
 	}
 
-	public void setImages(Image frameImage, Integer[] frameInts, Image handleImage) {
+	public void setImages(Image frameImage, Integer[] frameInts,
+			Image handleImage) {
 		if (frameImage != null)
 			imageCache = frameImage;
 		if (handleImage != null)
 			handle = handleImage;
-		
-		w1 = frameInts[0];
-		w2 = frameInts[1];
-		h1 = frameInts[2];
-		h2 = frameInts[3];
-		w3 = imageCache.getBounds().width - (w1+w2);
-		h3 = imageCache.getBounds().height - (h1+h2);
-		
+
+		if (frameInts != null) {
+			w1 = frameInts[0];
+			w2 = frameInts[1];
+			h1 = frameInts[2];
+			h2 = frameInts[3];
+			w3 = imageCache.getBounds().width - (w1 + w2);
+			h3 = imageCache.getBounds().height - (h1 + h2);
+		}
+
 		// Compute the size of the handle in the 'offset' dimension
-		handleWidth = (handle != null && !vertical) ? handle.getBounds().width : 0;
-		handleHeight = (handle != null && vertical) ? handle.getBounds().height : 0;
+		handleWidth = (handle != null && !vertical) ? handle.getBounds().width
+				: 0;
+		handleHeight = (handle != null && vertical) ? handle.getBounds().height
+				: 0;
 
 		if (vertical) {
 			framedControl.setLocation(w1, h1 + handleHeight);

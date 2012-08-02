@@ -279,8 +279,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				canUpdateMenus = false;
 				menuUpdater = null;
 
-				removeTrimContributions();
-				removeTopTrimChildren();
 				MMenu menu = model.getMainMenu();
 				if (menu != null) {
 					engine.removeGui(menu);
@@ -637,86 +635,72 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private boolean manageChanges = true;
 	private boolean canUpdateMenus = true;
 
-	private void removeTrimContributions() {
-		MTrimBar trimBar = getTopTrim();
-		for (MTrimElement trimElement : workbenchTrimElements) {
-			trimElement.setToBeRendered(false);
-			trimBar.getChildren().remove(trimElement);
-		}
-		workbenchTrimElements.clear();
-	}
-
-	private void removeTopTrimChildren() {
-		MTrimBar trimBar = null;
-		List<MTrimBar> trimBars = model.getTrimBars();
-		for (MTrimBar bar : trimBars) {
-			if (MAIN_TOOLBAR_ID.equals(bar.getElementId())) {
-				trimBar = bar;
-				break;
-			}
-		}
-		if (trimBar == null) {
-			return;
-		}
-		engine.removeGui(trimBar);
-		trimBar.getChildren().clear();
-	}
-
 	void populateTopTrimContributions() {
 		getCoolBarManager2().update(true);
 
 		final MTrimBar trimBar = getTopTrim();
 		// TODO why aren't these added as trim contributions
 		// that would remove everything from this method except the fill(*)
-		MToolControl spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-		spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
-		spacerControl
-				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
-		spacerControl.getTags().add(TrimBarLayout.SPACER);
+		MToolControl spacerControl = (MToolControl) modelService.find("PerspectiveSpacer", model); //$NON-NLS-1$
+		if (spacerControl == null) {
+			spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+			spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
+			spacerControl
+					.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
+			spacerControl.getTags().add(TrimBarLayout.SPACER);
+			trimBar.getChildren().add(spacerControl);
+		}
 
-		MToolControl spacerGlueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-		spacerGlueControl.setElementId("Spacer Glue"); //$NON-NLS-1$
-		spacerGlueControl
-				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
-		spacerGlueControl.getTags().add(TrimBarLayout.GLUE);
+		MToolControl spacerGlueControl = (MToolControl) modelService.find("Spacer Glue", model); //$NON-NLS-1$
+		if (spacerGlueControl == null) {
+			spacerGlueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+			spacerGlueControl.setElementId("Spacer Glue"); //$NON-NLS-1$
+			spacerGlueControl
+					.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
+			spacerGlueControl.getTags().add(TrimBarLayout.GLUE);
+			trimBar.getChildren().add(spacerGlueControl);
+		}
 
-		MToolControl searchControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-		searchControl.setElementId("SearchField"); //$NON-NLS-1$
-		searchControl
-				.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.quickaccess.SearchField"); //$NON-NLS-1$
+		MToolControl searchControl = (MToolControl) modelService.find("SearchField", model); //$NON-NLS-1$
+		if (searchControl == null) {
+			searchControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+			searchControl.setElementId("SearchField"); //$NON-NLS-1$
+			searchControl
+					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.quickaccess.SearchField"); //$NON-NLS-1$
+			trimBar.getChildren().add(searchControl);
+		}
 
-		MToolControl glueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-		glueControl.setElementId("Search-PS Glue"); //$NON-NLS-1$
-		glueControl
-				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
-		glueControl.getTags().add(TrimBarLayout.GLUE);
+		MToolControl glueControl = (MToolControl) modelService.find("Search-PS Glue", model); //$NON-NLS-1$
+		if (glueControl == null) {
+			glueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+			glueControl.setElementId("Search-PS Glue"); //$NON-NLS-1$
+			glueControl
+					.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
+			glueControl.getTags().add(TrimBarLayout.GLUE);
+			trimBar.getChildren().add(glueControl);
+		}
 
-		MToolControl switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-		switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
-		switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
-		switcherControl
-				.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
+		MToolControl switcherControl = (MToolControl) modelService.find(
+				"PerspectiveSwitcher", model); //$NON-NLS-1$
+		if (switcherControl == null) {
+			switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+			switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
+			switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
+			switcherControl.getTags().add("Draggable"); //$NON-NLS-1$
+			switcherControl
+					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
+			trimBar.getChildren().add(switcherControl);
+		}
 
-		trimBar.getChildren().add(spacerControl);
-		trimBar.getChildren().add(spacerGlueControl);
-		trimBar.getChildren().add(searchControl);
-		trimBar.getChildren().add(glueControl);
-		trimBar.getChildren().add(switcherControl);
 		// render now after everything has been added so contributions can be
 		// inserted in the right place
 		trimBar.setToBeRendered(true);
-
-		workbenchTrimElements.add(spacerControl);
-		workbenchTrimElements.add(searchControl);
-		workbenchTrimElements.add(glueControl);
-		workbenchTrimElements.add(switcherControl);
-
 	}
 
 	private void populateStandardTrim(MTrimBar bottomTrim) {
 		// StatusLine
 		MToolControl slElement = (MToolControl) modelService.find(
-				"org.eclipse.ui.StatusLine", bottomTrim); //$NON-NLS-1$
+				"org.eclipse.ui.StatusLine", model); //$NON-NLS-1$
 		if (slElement == null) {
 			slElement = MenuFactoryImpl.eINSTANCE.createToolControl();
 			slElement.setElementId("org.eclipse.ui.StatusLine"); //$NON-NLS-1$
@@ -729,7 +713,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		// Heap Status
 		MToolControl hsElement = (MToolControl) modelService.find(
-				"org.eclipse.ui.HeapStatus", bottomTrim); //$NON-NLS-1$
+				"org.eclipse.ui.HeapStatus", model); //$NON-NLS-1$
 		if (hsElement == null) {
 			hsElement = MenuFactoryImpl.eINSTANCE.createToolControl();
 			hsElement.setElementId("org.eclipse.ui.HeapStatus"); //$NON-NLS-1$
@@ -741,10 +725,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		// Progress Bar
 		MToolControl pbElement = (MToolControl) modelService.find(
-				"org.eclipse.ui.ProgressBar", bottomTrim); //$NON-NLS-1$
+				"org.eclipse.ui.ProgressBar", model); //$NON-NLS-1$
 		if (pbElement == null) {
 			pbElement = MenuFactoryImpl.eINSTANCE.createToolControl();
 			pbElement.setElementId("org.eclipse.ui.ProgressBar"); //$NON-NLS-1$
+			pbElement.getTags().add("Draggable"); //$NON-NLS-1$
 			pbElement
 					.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
 			bottomTrim.getChildren().add(pbElement);
@@ -1962,8 +1947,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	public void showHeapStatus(boolean show) {
-		MUIElement hsElement = modelService.find(
-				"org.eclipse.ui.HeapStatus", modelService.getTrim(model, SideValue.BOTTOM)); //$NON-NLS-1$
+		MUIElement hsElement = modelService.find("org.eclipse.ui.HeapStatus", model); //$NON-NLS-1$
 		if (hsElement != null && hsElement.isToBeRendered() != show) {
 			hsElement.setToBeRendered(show);
 			getShell().layout(null, SWT.ALL | SWT.CHANGED | SWT.DEFER);

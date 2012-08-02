@@ -11,9 +11,9 @@
 
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
-import java.util.Arrays;
 import java.util.List;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -75,7 +75,6 @@ public class TrimDropAgent extends DropAgent {
 
 	private MUIElement getInsertionElement(MUIElement dragElement, DnDInfo info) {
 		Composite trimComp = (Composite) trimBar.getWidget();
-		Control[] trimKids = trimComp.getChildren();
 
 		// If we're over the trim bar itself drop at the end
 		// May need to take margins into account
@@ -94,15 +93,17 @@ public class TrimDropAgent extends DropAgent {
 
 		// Are we closer to the 'end' of the trim control ?
 		// If so insert before the next control (if any)
+		MUIElement trimElement = (MUIElement) trimCtrl.getData(AbstractPartRenderer.OWNING_ME);
 		if (isAfter(trimCtrl, info)) {
-			List<Control> kidsList = Arrays.asList(trimKids);
-			int nextIndex = kidsList.indexOf(trimCtrl) + 1;
-			if (nextIndex >= trimKids.length)
+			MElementContainer<MUIElement> trimParent = trimElement.getParent();
+			int trimIndex = trimParent.getChildren().indexOf(trimElement);
+			if (trimIndex == trimParent.getChildren().size() - 1)
 				return null;
-			trimCtrl = trimKids[nextIndex];
+
+			return trimParent.getChildren().get(trimIndex + 1);
 		}
 
-		return (MUIElement) trimCtrl.getData(AbstractPartRenderer.OWNING_ME);
+		return trimElement;
 	}
 
 	private boolean isAfter(Control trimCtrl, DnDInfo info) {
@@ -201,15 +202,14 @@ public class TrimDropAgent extends DropAgent {
 		}
 
 		dragElement.setToBeRendered(true);
-
-		// Control dragCtrl = (Control) dragElement.getWidget();
-		// Rectangle displayBounds = dragCtrl.getDisplay().map(dragCtrl.getParent(), null,
-		// dragCtrl.getBounds());
-		// dndManager.frameRect(displayBounds);
+		Control trimCtrl = (Control) dragElement.getWidget();
+		trimCtrl.setBackground(trimCtrl.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 	}
 
 	@Override
 	public boolean drop(MUIElement dragElement, DnDInfo info) {
+		Control trimCtrl = (Control) dragElement.getWidget();
+		trimCtrl.setBackground(null);
 		return true;
 	}
 }

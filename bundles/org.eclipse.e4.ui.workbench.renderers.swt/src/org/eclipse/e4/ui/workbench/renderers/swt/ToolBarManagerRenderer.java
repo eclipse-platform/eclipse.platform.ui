@@ -54,11 +54,9 @@ import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
@@ -75,7 +73,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public static final String POST_PROCESSING_FUNCTION = "ToolBarManagerRenderer.postProcess.func"; //$NON-NLS-1$
 	public static final String POST_PROCESSING_DISPOSE = "ToolBarManagerRenderer.postProcess.dispose"; //$NON-NLS-1$
 
-	private static final String TOOL_BAR_MANAGER_RENDERER_DRAG_HANDLE = "ToolBarManagerRenderer.dragHandle"; //$NON-NLS-1$
 	private Map<MToolBar, ToolBarManager> modelToManager = new HashMap<MToolBar, ToolBarManager>();
 	private Map<ToolBarManager, MToolBar> managerToModel = new HashMap<ToolBarManager, MToolBar>();
 
@@ -262,17 +259,16 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			return null;
 
 		final MToolBar toolbarModel = (MToolBar) element;
-		Composite intermediate = createIntermediate(toolbarModel,
-				(Composite) parent);
-		createToolbar(toolbarModel, intermediate);
-		bindWidget(element, intermediate);
+		ToolBar newTB = createToolbar(toolbarModel, (Composite) parent);
+		bindWidget(element, newTB);
 		processContribution(toolbarModel);
 
+		Control renderedCtrl = newTB;
 		MUIElement parentElement = element.getParent();
 		if (parentElement instanceof MTrimBar) {
 			element.getTags().add("Draggable"); //$NON-NLS-1$
 
-			setCSSInfo(element, intermediate);
+			setCSSInfo(element, newTB);
 
 			boolean vertical = false;
 			MTrimBar bar = (MTrimBar) parentElement;
@@ -282,42 +278,12 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			CSSRenderingUtils cssUtils = parentContext
 					.get(CSSRenderingUtils.class);
 			if (cssUtils != null) {
-				intermediate = (Composite) cssUtils.frameMeIfPossible(
-						intermediate, null, vertical, true);
+				renderedCtrl = (Composite) cssUtils.frameMeIfPossible(newTB,
+						null, vertical, true);
 			}
 		}
 
-		return intermediate;
-	}
-
-	/**
-	 * @param toolbarModel
-	 * @param parent
-	 * @return an intermediate composite or simply the parent.
-	 */
-	private Composite createIntermediate(MToolBar toolbarModel, Composite parent) {
-		Composite intermediate = new Composite((Composite) parent, SWT.NONE);
-		intermediate.setData(AbstractPartRenderer.OWNING_ME, toolbarModel);
-		int orientation = getOrientation(toolbarModel);
-		RowLayout layout = RowLayoutFactory.fillDefaults().wrap(false)
-				.spacing(0).type(orientation).create();
-		layout.marginLeft = 3;
-		layout.center = true;
-		intermediate.setLayout(layout);
-		if (needsDragHandle(toolbarModel)) {
-			ToolBar separatorToolBar = new ToolBar(intermediate, orientation
-					| SWT.WRAP | SWT.FLAT | SWT.RIGHT);
-			separatorToolBar.setData(TOOL_BAR_MANAGER_RENDERER_DRAG_HANDLE);
-			ToolItem ti = new ToolItem(separatorToolBar, SWT.SEPARATOR);
-			ti.setWidth(0);
-		}
-		return intermediate;
-	}
-
-	private boolean needsDragHandle(MToolBar toolbarModel) {
-		// Only if it's in the trim
-		return toolbarModel != null
-				&& ((EObject) toolbarModel).eContainer() instanceof MTrimBar;
+		return renderedCtrl;
 	}
 
 	/**
@@ -423,9 +389,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			linkModelToManager((MToolBar) element, manager);
 		}
 		ToolBar bar = manager.createControl(parent);
-		// if (bar.getParent() != parent) {
-		// Thread.dumpStack();
-		// }
 		bar.setData(manager);
 		bar.setData(AbstractPartRenderer.OWNING_ME, element);
 		bar.getShell().layout(new Control[] { bar }, SWT.DEFER);

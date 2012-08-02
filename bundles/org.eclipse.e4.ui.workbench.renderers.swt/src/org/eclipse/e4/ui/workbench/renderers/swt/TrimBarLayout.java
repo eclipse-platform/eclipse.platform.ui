@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -91,6 +93,13 @@ public class TrimBarLayout extends Layout {
 		// Clear the current cache
 		lines.clear();
 
+		// First, hide any empty toolbars
+		MTrimBar bar = (MTrimBar) composite
+				.getData(AbstractPartRenderer.OWNING_ME);
+		for (MTrimElement te : bar.getChildren()) {
+			hideManagedTB(te);
+		}
+
 		int totalMajor = horizontal ? wHint - (marginLeft + marginRight)
 				: hHint - (marginTop + marginBottom);
 		int totalMinor = 0;
@@ -149,14 +158,6 @@ public class TrimBarLayout extends Layout {
 		if (isStatusLine(ctrl))
 			ctrlSize.x = 375;
 
-		if (ctrl instanceof ToolBar) {
-			ToolBar tb = (ToolBar) ctrl;
-			if (tb.getItemCount() == 0)
-				return new Point(0, 0);
-		} else if (ctrl instanceof Composite && hideManagedTB((Composite) ctrl)) {
-			return new Point(0, 0);
-		}
-
 		return ctrlSize;
 	}
 
@@ -165,25 +166,32 @@ public class TrimBarLayout extends Layout {
 	 * we <b>must</b> leave 'empty' toolbars in the trim. This code detects this
 	 * particular scenario and hides any TB's of this type...
 	 * 
-	 * @param tbComp
-	 *            The proposed composite in the trim
-	 * @return <code>true</code> iff this composite represents an empty managed
+	 * @param te
+	 *            The proposed trim element
+	 * @return <code>true</code> iff this element represents an empty managed
 	 *         TB.
 	 */
-	private boolean hideManagedTB(Composite tbComp) {
-		if (!(tbComp.getData(AbstractPartRenderer.OWNING_ME) instanceof MToolBar))
-			return false;
-		MToolBar tbModel = (MToolBar) tbComp
-				.getData(AbstractPartRenderer.OWNING_ME);
-		if (!(tbModel.getRenderer() instanceof ToolBarManagerRenderer))
+	private boolean hideManagedTB(MTrimElement te) {
+		if (!(te instanceof MToolBar)
+				|| !(te.getRenderer() instanceof ToolBarManagerRenderer))
 			return false;
 
-		Control[] kids = tbComp.getChildren();
-		if (kids.length != 2 || !(kids[1] instanceof ToolBar))
+		if (!(te.getWidget() instanceof Composite))
 			return false;
 
-		boolean barVisible = ((ToolBar) kids[1]).getItemCount() > 0;
-		tbComp.setVisible(barVisible);
+		Composite teComp = (Composite) te.getWidget();
+		Control[] kids = teComp.getChildren();
+		if (kids.length != 1 || !(kids[0] instanceof ToolBar))
+			return false;
+
+		boolean barVisible = ((ToolBar) kids[0]).getItemCount() > 0;
+		
+		// HACK! The trim dragging code uses the visible attribute as well
+		// this is a local 'lock' to prevent the layout from messing with it
+		if (!te.getTags().contains("LockVisibility")) { //$NON-NLS-1$
+			te.setVisible(barVisible);
+		}
+
 		return !barVisible;
 	}
 
@@ -232,21 +240,27 @@ public class TrimBarLayout extends Layout {
 			// If its a 'spacer' then add any available 'extra' space to it
 			if (isSpacer(ctrl)) {
 				int extra = curLine.extraSpace / curLine.spacerCount--;
-				if (horizontal)
+				if (horizontal) {
 					ctrlSize.x += extra;
-				else
+					ctrl.setBounds(curX, curY, ctrlSize.x, bounds.height);
+				} else {
 					ctrlSize.y += extra;
-
+					ctrl.setBounds(curX, curY, bounds.width, extra);
+				}
+				zeroSize = false;
 				curLine.extraSpace -= extra;
 				curLine.spacerCount--;
 			}
 
 			if (horizontal) {
 				int offset = (curLine.minor - ctrlSize.y) / 2;
-				if (!zeroSize)
-					ctrl.setBounds(curX, curY + offset, ctrlSize.x, ctrlSize.y);
-				else
-					ctrl.setBounds(curX, curY, 0, 0);
+				if (!isSpacer(ctrl)) {
+					if (!zeroSize)
+						ctrl.setBounds(curX, curY + offset, ctrlSize.x,
+								ctrlSize.y);
+					else
+						ctrl.setBounds(curX, curY, 0, 0);
+				}
 				curX += ctrlSize.x;
 			} else {
 				int offset = (curLine.minor - ctrlSize.x) / 2;

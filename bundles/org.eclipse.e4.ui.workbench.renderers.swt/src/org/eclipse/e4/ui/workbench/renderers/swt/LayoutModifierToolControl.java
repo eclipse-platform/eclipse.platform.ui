@@ -18,12 +18,13 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This is a specialized tool control used by the TrimBarLayout to modify the layout mechanisms.
+ * This is a specialized tool control used by the TrimBarLayout to modify the
+ * layout mechanisms.
  */
 public class LayoutModifierToolControl {
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl tc) {
-		Composite comp = new Composite(parent, SWT.NO_BACKGROUND) {
+		Composite comp = new Composite(parent, SWT.NONE) {
 			/*
 			 * (non-Javadoc)
 			 * 

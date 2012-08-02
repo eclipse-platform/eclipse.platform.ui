@@ -27,8 +27,10 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -197,9 +199,8 @@ public class PerspectiveSwitcher {
 				}
 			}
 
-			// update the layout
-			psTB.pack();
-			psTB.getShell().layout(new Control[] { psTB }, SWT.DEFER);
+			// update the size
+			fixSize();
 		}
 
 		private void updateToolItem(ToolItem ti, String attName, Object newValue) {
@@ -284,13 +285,20 @@ public class PerspectiveSwitcher {
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl toolControl) {
 		psME = toolControl;
+		MUIElement meParent = psME.getParent();
+		int orientation = SWT.HORIZONTAL;
+		if (meParent instanceof MTrimBar) {
+			MTrimBar bar = (MTrimBar) meParent;
+			if (bar.getSide() == SideValue.RIGHT || bar.getSide() == SideValue.LEFT)
+				orientation = SWT.VERTICAL;
+		}
 		comp = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.marginLeft = layout.marginRight = 8;
 		layout.marginBottom = 4;
 		layout.marginTop = 6;
 		comp.setLayout(layout);
-		psTB = new ToolBar(comp, SWT.FLAT | SWT.WRAP | SWT.RIGHT);
+		psTB = new ToolBar(comp, SWT.FLAT | SWT.WRAP | SWT.RIGHT + orientation);
 		comp.addPaintListener(new PaintListener() {
 
 			public void paintControl(PaintEvent e) {
@@ -444,9 +452,8 @@ public class PerspectiveSwitcher {
 			}
 		});
 
-		// update the layout
-		psTB.pack();
-		psTB.getShell().layout(new Control[] { psTB }, SWT.DEFER);
+		// update the size
+		fixSize();
 
 		return psItem;
 	}
@@ -648,8 +655,13 @@ public class PerspectiveSwitcher {
 					}
 				}
 		}
-		// update fix the layout
-		psTB.pack();
+
+		// update the size
+		fixSize();
+	}
+
+	private void fixSize() {
+		psTB.getParent().pack();
 		psTB.getShell().layout(new Control[] { psTB }, SWT.DEFER);
 	}
 
@@ -659,9 +671,8 @@ public class PerspectiveSwitcher {
 			psItem.dispose();
 		}
 
-		// update the layout
-		psTB.pack();
-		psTB.getShell().layout(new Control[] { psTB }, SWT.DEFER);
+		// update the size
+		fixSize();
 	}
 
 	protected ToolItem getItemFor(MPerspective persp) {

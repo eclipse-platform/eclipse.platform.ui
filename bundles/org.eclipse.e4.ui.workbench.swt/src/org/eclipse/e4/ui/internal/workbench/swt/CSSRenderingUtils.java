@@ -55,6 +55,11 @@ public class CSSRenderingUtils {
 					toFrame, vertical, draggable);
 			frame.setImages(frameImage, frameInts, handleImage);
 			return frame;
+		} else if (handleImage != null) {
+			ImageBasedFrame frame = new ImageBasedFrame(toFrame.getParent(),
+					toFrame, vertical, draggable);
+			frame.setImages(null, null, handleImage);
+			return frame;
 		}
 
 		return toFrame;
