@@ -921,8 +921,7 @@ public class PopupDialog extends Window {
 	 * @return The Control representing the horizontal separator.
 	 */
 	private Control createHorizontalSeparator(Composite parent) {
-		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL
-				| SWT.LINE_DOT);
+		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true,
 				false).applyTo(separator);
 		return separator;

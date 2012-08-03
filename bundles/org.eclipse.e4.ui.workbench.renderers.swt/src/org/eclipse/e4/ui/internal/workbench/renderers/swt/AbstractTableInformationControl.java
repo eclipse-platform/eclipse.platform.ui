@@ -373,8 +373,7 @@ public abstract class AbstractTableInformationControl {
 		});
 
 		// Horizontal separator line
-		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL
-				| SWT.LINE_DOT);
+		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		return fFilterText;
