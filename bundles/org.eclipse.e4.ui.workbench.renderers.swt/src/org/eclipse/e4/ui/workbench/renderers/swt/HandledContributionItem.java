@@ -163,6 +163,8 @@ public class HandledContributionItem extends ContributionItem {
 	public static ToolItemUpdateTimer toolItemUpdater = new ToolItemUpdateTimer();
 
 	private static final String FORCE_TEXT = "FORCE_TEXT"; //$NON-NLS-1$
+	private static final String ICON_URI = "iconURI"; //$NON-NLS-1$
+	private static final String DISABLED_URI = "disabledURI"; //$NON-NLS-1$
 	private static final String DISPOSABLE_CHECK = "IDisposable"; //$NON-NLS-1$
 	private static final String WW_SUPPORT = "org.eclipse.ui.IWorkbenchWindow"; //$NON-NLS-1$
 	private static final String HCI_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
@@ -606,17 +608,23 @@ public class HandledContributionItem extends ContributionItem {
 	}
 
 	private void updateIcons() {
-		if (widget instanceof Item) {
-			Item item = (Item) widget;
+		if (!(widget instanceof Item)) {
+			return;
+		}
+		Item item = (Item) widget;
+		String iconURI = model.getIconURI() != null ? model.getIconURI() : ""; //$NON-NLS-1$
+		String disabledURI = getDisabledIconURI(model);
+		if (!iconURI.equals(item.getData(ICON_URI))
+				|| !disabledURI.equals(item.getData(DISABLED_URI))) {
 			LocalResourceManager resourceManager = new LocalResourceManager(
 					JFaceResources.getResources());
-			String iconURI = model.getIconURI();
 			Image iconImage = getImage(iconURI, resourceManager);
 			item.setImage(iconImage);
+			item.setData(ICON_URI, iconURI);
 			if (item instanceof ToolItem) {
-				iconURI = getDisabledIconURI(model);
-				iconImage = getImage(iconURI, resourceManager);
+				iconImage = getImage(disabledURI, resourceManager);
 				((ToolItem) item).setDisabledImage(iconImage);
+				item.setData(DISABLED_URI, disabledURI);
 			}
 			disposeOldImages();
 			localResourceManager = resourceManager;
@@ -626,7 +634,7 @@ public class HandledContributionItem extends ContributionItem {
 	private String getDisabledIconURI(MItem toolItem) {
 		Object obj = toolItem.getTransientData().get(
 				IPresentationEngine.DISABLED_ICON_IMAGE_KEY);
-		return obj instanceof String ? (String) obj : null;
+		return obj instanceof String ? (String) obj : ""; //$NON-NLS-1$
 	}
 
 	private Image getImage(String iconURI, LocalResourceManager resourceManager) {
