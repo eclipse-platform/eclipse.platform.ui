@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.css.swt.helpers;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -42,7 +41,9 @@ public class CSSSWTImageHelper {
 		try {
 			// URL url = new URL(path);
 			in = manager.getInputStream(path);
-			result = new Image(device, in);
+			if (in != null) {
+				result = new Image(device, in);
+			}
 			// } catch (IOException e) {
 			// e.printStackTrace();
 			// return null;
@@ -63,3 +64,4 @@ public class CSSSWTImageHelper {
 	}
 
 }
+
