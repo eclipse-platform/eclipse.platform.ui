@@ -1784,7 +1784,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * update the action bars.
 	 */
 	public void updateActionBars() {
-		if (updateDisabled || updatesDeferred()) {
+		if (getShell() == null || getShell().isDisposed() || updateDisabled || updatesDeferred()) {
 			return;
 		}
 		// updateAll required in order to enable accelerators on pull-down menus
