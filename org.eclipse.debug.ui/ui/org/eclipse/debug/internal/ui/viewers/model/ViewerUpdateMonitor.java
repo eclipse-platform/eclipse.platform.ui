@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.viewers.model;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.internal.core.commands.Request;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -81,6 +82,10 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
      */
     public ViewerUpdateMonitor(TreeModelContentProvider contentProvider, Object viewerInput, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
     	fContext = context;
+		// Bug 380288: Catch and log a race condition where the viewer input is null. 
+    	if (viewerInput == null) {
+    		DebugUIPlugin.log(new NullPointerException("Input to viewer update should not be null")); //$NON-NLS-1$
+    	}
     	fViewerInput = viewerInput;
     	fElementContentProvider = elementContentProvider;
         fContentProvider = contentProvider;

@@ -223,7 +223,9 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
             update instanceof ChildrenUpdate &&
             ((ChildrenUpdate)update).getOffset() == getOffset() &&
             ((ChildrenUpdate)update).getLength() == getLength() &&
-            getViewerInput().equals(update.getViewerInput()) && 
+            // Bug 380288 - workaround a race condition where update is initialized with null input.
+            ((getViewerInput() == null && update.getViewerInput() == null) || 
+             (getViewerInput() != null && getViewerInput().equals(update.getViewerInput()))) && 
             getElementPath().equals(getElementPath());
     }
 

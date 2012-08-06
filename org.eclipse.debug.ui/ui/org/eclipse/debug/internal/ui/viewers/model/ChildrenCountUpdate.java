@@ -232,7 +232,9 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
     protected boolean doEquals(ViewerUpdateMonitor update) {
         return 
             update instanceof ChildrenCountUpdate && 
-            getViewerInput().equals(update.getViewerInput()) && 
+            // Bug 380288 - workaround a race condition where update is initialized with null input.
+            ((getViewerInput() == null && update.getViewerInput() == null) || 
+             (getViewerInput() != null && getViewerInput().equals(update.getViewerInput()))) && 
             getElementPath().equals(getElementPath());
     }
     
