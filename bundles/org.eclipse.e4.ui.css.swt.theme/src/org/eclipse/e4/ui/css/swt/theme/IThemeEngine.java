@@ -170,7 +170,7 @@ public interface IThemeEngine {
 	public void restore(String alternate);
 
 	/**
-	 * @return the current active theme
+	 * @return the current active theme or <code>null</code> if no active theme
 	 */
 	public ITheme getActiveTheme();
 
