@@ -74,7 +74,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 		themeIdCombo.setInput(engine.getThemes());
 		themeIdCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.currentTheme = engine.getActiveTheme();
-		themeIdCombo.setSelection(new StructuredSelection(currentTheme));
+		if (this.currentTheme != null) {
+			themeIdCombo.setSelection(new StructuredSelection(currentTheme));
+		}
 		themeIdCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -121,6 +123,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 				apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
 	}
 
+	/** @return the currently selected theme or null if there are no themes */
 	private ITheme getSelection() {
 		return (ITheme) ((IStructuredSelection) themeIdCombo.getSelection()).getFirstElement();
 	}
@@ -139,11 +142,13 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 */
 	@Override
 	public boolean performOk() {
-		if (!getSelection().equals(currentTheme)) {
-			MessageDialog.openWarning(getShell(), WorkbenchMessages.ThemeChangeWarningTitle,
-					WorkbenchMessages.ThemeChangeWarningText);
+		if (getSelection() != null) {
+			if (!getSelection().equals(currentTheme)) {
+				MessageDialog.openWarning(getShell(), WorkbenchMessages.ThemeChangeWarningTitle,
+						WorkbenchMessages.ThemeChangeWarningText);
+			}
+			engine.setTheme(getSelection(), true);
 		}
-		engine.setTheme(getSelection(), true);
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
 				enableAnimations.getSelection());
@@ -157,7 +162,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 	protected void performDefaults() {
 		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).performDefaults();
 		engine.setTheme(defaultTheme, true);
-		themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
+		if (engine.getActiveTheme() != null) {
+			themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
+		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		enableAnimations.setSelection(apiStore
 				.getDefaultBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
@@ -173,7 +180,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 */
 	@Override
 	public boolean performCancel() {
-		engine.setTheme(currentTheme, false);
+		if (currentTheme != null) {
+			engine.setTheme(currentTheme, false);
+		}
 		return super.performCancel();
 	}
 }
