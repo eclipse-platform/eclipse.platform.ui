@@ -409,6 +409,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	@PostConstruct
 	public void setup() {
+		// Initialize a previous 'saved' state if applicable.
+		this.coolBarVisible = PrefUtil.getInternalPreferenceStore().getBoolean(
+				IPreferenceConstants.COOLBAR_VISIBLE);
+		this.perspectiveBarVisible = PrefUtil.getInternalPreferenceStore().getBoolean(
+				IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
+
 		final IEclipseContext windowContext = model.getContext();
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) workbench
 				.getService(IServiceLocatorCreator.class);
@@ -694,7 +700,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		// render now after everything has been added so contributions can be
 		// inserted in the right place
-		trimBar.setToBeRendered(true);
+		updateLayoutDataForContents();
 	}
 
 	private void populateStandardTrim(MTrimBar bottomTrim) {
@@ -751,7 +757,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		if (items.size() == 0)
 			return;
 
-		// Iterate over the items until they've all been placed or unril
+		// Iterate over the items until they've all been placed or until
 		// an iteration doesn't place anything
 		List<IConfigurationElement> handledElements = new ArrayList<IConfigurationElement>();
 		handledElements.add(items.get(0)); // Hack!! startup seeding
@@ -2092,7 +2098,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		boolean oldValue = coolBarVisible;
 		coolBarVisible = visible;
 		if (oldValue != coolBarVisible) {
-
+			updateLayoutDataForContents();
 			firePropertyChanged(PROP_COOLBAR_VISIBLE, oldValue ? Boolean.TRUE : Boolean.FALSE,
 					coolBarVisible ? Boolean.TRUE : Boolean.FALSE);
 		}
@@ -2126,7 +2132,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		boolean oldValue = perspectiveBarVisible;
 		perspectiveBarVisible = visible;
 		if (oldValue != perspectiveBarVisible) {
-
+			updateLayoutDataForContents();
 			firePropertyChanged(PROP_PERSPECTIVEBAR_VISIBLE, oldValue ? Boolean.TRUE
 					: Boolean.FALSE, perspectiveBarVisible ? Boolean.TRUE : Boolean.FALSE);
 		}
@@ -2357,18 +2363,39 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @since 3.3
 	 */
 	public void toggleToolbarVisibility() {
+		boolean coolbarVisible = getCoolBarVisible();
+		boolean perspectivebarVisible = getPerspectiveBarVisible();
+		IPreferenceStore prefs = PrefUtil.getInternalPreferenceStore();
+
+		// only toggle the visibility of the components that
+		// were on initially
+		if (getWindowConfigurer().getShowCoolBar()) {
+			setCoolBarVisible(!coolbarVisible);
+			prefs.setValue(IPreferenceConstants.COOLBAR_VISIBLE, !coolbarVisible);
+		}
+		if (getWindowConfigurer().getShowPerspectiveBar()) {
+			setPerspectiveBarVisible(!perspectivebarVisible);
+			prefs.setValue(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, !perspectivebarVisible);
+		}
+	}
+
+	private void updateLayoutDataForContents() {
 		MTrimBar topTrim = getTopTrim();
 		if (topTrim != null) {
-			if (topTrim.isToBeRendered()) {
+			if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
+					|| (getPerspectiveBarVisible() && getWindowConfigurer()
+							.getShowPerspectiveBar())) {
+				if (!topTrim.isToBeRendered()) {
+					IPresentationEngine presentationEngine = model.getContext().get(
+							IPresentationEngine.class);
+					topTrim.setToBeRendered(true);
+					presentationEngine.createGui(topTrim, model.getWidget(), model.getContext());
+				}
+			} else {
 				IPresentationEngine presentationEngine = model.getContext().get(
 						IPresentationEngine.class);
 				topTrim.setToBeRendered(false);
 				presentationEngine.removeGui(topTrim);
-			} else {
-				IPresentationEngine presentationEngine = model.getContext().get(
-						IPresentationEngine.class);
-				topTrim.setToBeRendered(true);
-				presentationEngine.createGui(topTrim, model.getWidget(), model.getContext());
 			}
 			getShell().layout();
 		}

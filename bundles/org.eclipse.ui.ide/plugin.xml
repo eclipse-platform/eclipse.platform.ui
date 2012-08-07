@@ -1636,23 +1636,6 @@
                commandId="org.eclipse.ui.ToggleCoolbarAction"
                tooltip="%menu.toggleCoolbar.tooltip"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-                  <or>
-               		<with
-                  	   variable="activeWorkbenchWindow.isCoolbarVisible">
-                  		<equals
-                        	value="false">
-                  		</equals>
-               		</with>
-               		<with
-                    	 variable="activeWorkbenchWindow.isPerspectiveBarVisible">
-                  		<equals
-                        	value="false">
-                  		</equals>
-               		</with>
-               </or>
-            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
