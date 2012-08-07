@@ -341,23 +341,24 @@ public class MenuHelper {
 	}
 
 	static String getIconUrl(IConfigurationElement element, String attr) {
-		String extendingPluginId = element.getDeclaringExtension().getContributor().getName();
-
 		String iconPath = element.getAttribute(attr);
 		if (iconPath == null) {
 			return null;
 		}
-		if (!iconPath.startsWith("platform:")) { //$NON-NLS-1$
+
+		// RFC 3986: scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+		// This allows using data:, http:, or other custom URL schemes
+		if (!iconPath.matches("\\p{Alpha}[\\p{Alnum}+.-]*:.*")) { //$NON-NLS-1$
+			String extendingPluginId = element.getDeclaringExtension().getContributor().getName();
 			iconPath = "platform:/plugin/" + extendingPluginId + "/" + iconPath; //$NON-NLS-1$//$NON-NLS-2$
 		}
 		URL url = null;
 		try {
 			url = FileLocator.find(new URL(iconPath));
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			/* IGNORE */
 		}
-		return url == null ? null : url.toString();
+		return url == null ? iconPath : rewriteDurableURL(url.toString());
 	}
 
 	static String getHelpContextId(IConfigurationElement element) {
