@@ -166,11 +166,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			if (!caseSensitive)
 				patternFlags |= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
 
+			if (!regExSearch)
+				findString= asRegPattern(findString);
+
 			if (wholeWord)
 				findString= "\\b" + findString + "\\b"; //$NON-NLS-1$ //$NON-NLS-2$
-
-			if (!regExSearch && !wholeWord)
-				findString= asRegPattern(findString);
 
 			fFindReplaceMatchOffset= startOffset;
 			if (fFindReplaceMatcher != null && fFindReplaceMatcher.pattern().pattern().equals(findString) && fFindReplaceMatcher.pattern().flags() == patternFlags) {

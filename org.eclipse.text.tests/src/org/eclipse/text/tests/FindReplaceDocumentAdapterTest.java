@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,6 +145,19 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			IRegion r= findReplaceDocumentAdapter.find(12, "\\w+", false, false, false, true); //$NON-NLS-1$
 			assertEquals(new Region(6, 1), r);
 
+		} catch (BadLocationException e) {
+			Assert.assertTrue(false);
+		}
+	}
+
+	/**
+	 * Test case for: https://bugs.eclipse.org/386751
+	 */
+	public void testBug386751() {
+		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
+		try {
+			IRegion result= adapter.find(0, ".", true, false, true, false);
+			assertNull(result);
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
