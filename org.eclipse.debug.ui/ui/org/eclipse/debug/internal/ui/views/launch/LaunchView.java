@@ -1412,10 +1412,6 @@ public class LaunchView extends AbstractDebugView
 	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partActivated(IWorkbenchPartReference partRef) {
-		// Ensure that the system property matches the debug toolbar state.
-		// Bug 385400
-		System.setProperty(IDebugUIConstants.DEBUG_VIEW_TOOBAR_VISIBLE, 
-				Boolean.toString(isDebugToolbarShownInPerspective(getSite().getPage().getPerspective())) );
 	}
 
 	/* (non-Javadoc)
