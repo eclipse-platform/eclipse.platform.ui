@@ -251,6 +251,9 @@ public class InputPatchPage extends WizardPage {
 	 * Reads in the patch contents
 	 */
 	public void readInPatch(){
+		if (fPatchRead)
+			return;
+
 		WorkspacePatcher patcher= ((PatchWizard) getWizard()).getPatcher();
 		// Create a reader for the input
 		Reader reader= null;
@@ -450,6 +453,7 @@ public class InputPatchPage extends WizardPage {
 			public void modifyText(ModifyEvent e) {
 				clearErrorMessage();
 				fShowError= true;
+				fPatchRead = false;
 				updateWidgetEnablements();
 			}
 		});
@@ -476,6 +480,7 @@ public class InputPatchPage extends WizardPage {
 			public void modifyText(ModifyEvent e) {
 				clearErrorMessage();
 				fShowError = true;
+				fPatchRead = false;
 				updateWidgetEnablements();
 			}
 		});

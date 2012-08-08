@@ -323,6 +323,12 @@ public class PatchReader {
 							continue;
 						}
 						break;
+					case '#':
+						break;
+					case 'I':
+						if (line.indexOf("Index:") == 0) //$NON-NLS-1$
+							break;
+						//$FALL-THROUGH$
 					default:
 						throw new IOException("Invalid patch"); //$NON-NLS-1$
 				}
