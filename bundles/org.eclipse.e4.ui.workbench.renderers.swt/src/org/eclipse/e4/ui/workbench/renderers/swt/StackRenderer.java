@@ -84,6 +84,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -1008,7 +1009,17 @@ public class StackRenderer extends LazyStackRenderer {
 		Point size = editorList.computeSizeHint();
 		editorList.setSize(size.x, size.y);
 
-		editorList.setLocation(ctf.toDisplay(getChevronLocation(ctf)));
+		Point location = ctf.toDisplay(getChevronLocation(ctf));
+		Monitor mon = ctf.getMonitor();
+		Rectangle bounds = mon.getClientArea();
+		if (location.x + size.x > bounds.x + bounds.width) {
+			location.x = bounds.x + bounds.width - size.x;
+		}
+		if (location.y + size.y > bounds.y + bounds.height) {
+			location.y = bounds.y + bounds.height - size.y;
+		}
+		editorList.setLocation(location);
+
 		editorList.setVisible(true);
 		editorList.setFocus();
 		editorList.getShell().addListener(SWT.Deactivate, new Listener() {
