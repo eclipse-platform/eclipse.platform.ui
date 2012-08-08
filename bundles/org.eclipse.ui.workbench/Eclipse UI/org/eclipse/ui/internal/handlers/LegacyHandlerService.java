@@ -109,6 +109,8 @@ public class LegacyHandlerService implements IHandlerService {
 
 			ExpressionContext legacyEvalContext = new ExpressionContext(context);
 
+			HandlerActivation conflictBest = null;
+			HandlerActivation conflictOther = null;
 			for (HandlerActivation handlerActivation : activationSet) {
 				if (!handlerActivation.participating)
 					continue;
@@ -119,12 +121,20 @@ public class LegacyHandlerService implements IHandlerService {
 						int comparison = bestActivation.compareTo(handlerActivation);
 						if (comparison < 0) {
 							bestActivation = handlerActivation;
+						} else if (comparison == 0) {
+							conflictBest = bestActivation;
+							conflictOther = handlerActivation;
 						}
 					}
 				}
 			}
 
 			if (bestActivation != null) {
+				if (bestActivation == conflictBest) {
+					WorkbenchPlugin.log("Conflicting handlers for " + commandId + ": {" //$NON-NLS-1$ //$NON-NLS-2$
+							+ conflictBest.getHandler() + "} vs {" //$NON-NLS-1$
+							+ conflictOther.getHandler() + "}"); //$NON-NLS-1$
+				}
 				return bestActivation.proxy;
 			}
 
