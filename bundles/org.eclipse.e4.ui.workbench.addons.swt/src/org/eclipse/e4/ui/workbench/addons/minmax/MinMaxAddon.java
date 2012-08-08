@@ -382,7 +382,8 @@ public class MinMaxAddon {
 	private EventHandler perspectiveRemovedListener = new EventHandler() {
 		public void handleEvent(Event event) {
 			final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
-			if (!(changedElement instanceof MPerspectiveStack))
+			if (!(changedElement instanceof MPerspectiveStack)
+					|| modelService.getTopLevelWindowFor(changedElement) == null)
 				return;
 
 			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
