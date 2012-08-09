@@ -2385,10 +2385,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
 					|| (getPerspectiveBarVisible() && getWindowConfigurer()
 							.getShowPerspectiveBar())) {
-				if (!topTrim.isToBeRendered()) {
+				topTrim.setToBeRendered(true);
+				if (topTrim.getWidget() == null) {
 					IPresentationEngine presentationEngine = model.getContext().get(
 							IPresentationEngine.class);
-					topTrim.setToBeRendered(true);
 					presentationEngine.createGui(topTrim, model.getWidget(), model.getContext());
 				}
 			} else {
