@@ -1104,6 +1104,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
     public void testSaveRestoreOrder() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
+        model.setDelayUpdates(true);
 
         // Expand all
         fViewer.setAutoExpandLevel(-1);
@@ -1123,7 +1124,9 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fListener.reset();
         fListener.expectRestoreAfterSaveComplete();
         fViewer.setInput(copyModel.getRootElement());
-        while (!fListener.isFinished(STATE_RESTORE_STARTED)) Thread.sleep(0);
+        while (!fListener.isFinished(STATE_RESTORE_STARTED)) {
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        }
         Assert.assertTrue("RESTORE started before SAVE to complete", fListener.isFinished(STATE_SAVE_COMPLETE));        
     }    
 

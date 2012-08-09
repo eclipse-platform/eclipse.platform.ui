@@ -219,6 +219,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         Object oldInput = fInput;
         getContentProvider().inputChanged(this, oldInput, input);
         fItemsMap.clear();
+        fTree.clearAll();
         fInput = input;
         mapElement(fInput, getTree());
         getContentProvider().postInputChanged(this, oldInput  , input);

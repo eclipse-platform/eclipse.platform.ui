@@ -42,6 +42,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Test model for the use in unit tests.  This test model contains a set of 
@@ -163,6 +164,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     private ModelProxy fModelProxy;
     private IModelSelectionPolicy fModelSelectionPolicy;
     private boolean fQueueingUpdates = false;
+    private boolean fDelayUpdates = false;
     private List fQueuedUpdates = new LinkedList();
     
     /**
@@ -218,7 +220,11 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             processQueuedUpdates();
         }
     }
-    
+
+    public void setDelayUpdates(boolean delayUpdates) {
+        fDelayUpdates = delayUpdates;
+    }
+
     public List getQueuedUpdates() {
         return fQueuedUpdates;
     }
@@ -233,59 +239,66 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     
     public void processUpdate(IViewerUpdate update) {
         if (update instanceof IHasChildrenUpdate) {
-            doUpdate((IHasChildrenUpdate)update);
+            doHasChildrenUpdate((IHasChildrenUpdate)update);
         } else if (update instanceof IChildrenCountUpdate) {
-            doUpdate((IChildrenCountUpdate)update);
+            doChildrenCountUpdate((IChildrenCountUpdate)update);
         } else if (update instanceof IChildrenUpdate) {
-            doUpdate((IChildrenUpdate)update);
+            doChildrenUpdate((IChildrenUpdate)update);
         } else if (update instanceof ILabelUpdate) {
-            doUpdate((ILabelUpdate)update);
-        } 
-    }
-    
-    public void update(IHasChildrenUpdate[] updates) {
-        if (fQueueingUpdates) {
-            fQueuedUpdates.addAll(Arrays.asList(updates));
-        } else {
-            for (int i = 0; i < updates.length; i++) {
-                doUpdate(updates[i]);
-            }
+            doLabelUpdate((ILabelUpdate)update);
+        } else if (update instanceof IElementCompareRequest) {
+        	doCompareElements((IElementCompareRequest)update);
+        } else if (update instanceof IElementMementoRequest) {
+        	doEncodeElements((IElementMementoRequest)update);
         }
     }
 
-    private void doUpdate(IHasChildrenUpdate update) {
+    private void processUpdates(IViewerUpdate[] updates) {
+        for (int i = 0; i < updates.length; i++) {
+            processUpdate(updates[i]);
+        }    
+    }
+    
+    private void doUpdate(final IViewerUpdate[] updates) {
+        if (fQueueingUpdates) {
+            fQueuedUpdates.addAll(Arrays.asList(updates));
+        } else if (fDelayUpdates) {
+        	Display.getDefault().asyncExec(new Runnable() {
+        		public void run() {
+        			processUpdates(updates);
+        		}
+        	});
+        } else {
+			processUpdates(updates);
+        }    	
+    }
+    
+    public void update(IHasChildrenUpdate[] updates) {
+    	doUpdate(updates);
+    }
+
+    private void doHasChildrenUpdate(IHasChildrenUpdate update) {
         TestElement element = (TestElement)update.getElement();
         update.setHasChilren(element.getChildren().length > 0);
         update.done();
     }
     
+    
     public void update(IChildrenCountUpdate[] updates) {
-        if (fQueueingUpdates) {
-            fQueuedUpdates.addAll(Arrays.asList(updates));
-        } else {
-            for (int i = 0; i < updates.length; i++) {
-                doUpdate(updates[i]);
-            }
-        }
+    	doUpdate(updates);
     }
 
-    private void doUpdate(IChildrenCountUpdate update) {
+    private void doChildrenCountUpdate(IChildrenCountUpdate update) {
         TestElement element = (TestElement)update.getElement();
         update.setChildCount(element.getChildren().length);
         update.done();
     }
     
     public void update(IChildrenUpdate[] updates) {
-        if (fQueueingUpdates) {
-            fQueuedUpdates.addAll(Arrays.asList(updates));
-        } else {
-            for (int i = 0; i < updates.length; i++) {
-                doUpdate(updates[i]);
-            }
-        }
+    	doUpdate(updates);
     }
 
-    private void doUpdate(IChildrenUpdate update) {
+    private void doChildrenUpdate(IChildrenUpdate update) {
         TestElement element = (TestElement)update.getElement();
         int endOffset = update.getOffset() + update.getLength();
         for (int j = update.getOffset(); j < endOffset; j++) {
@@ -297,16 +310,10 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     }
     
     public void update(ILabelUpdate[] updates) {
-        if (fQueueingUpdates) {
-            fQueuedUpdates.addAll(Arrays.asList(updates));
-        } else {
-            for (int i = 0; i < updates.length; i++) {
-                doUpdate(updates[i]);
-            }
-        }
+    	doUpdate(updates);
     }
 
-    private void doUpdate(ILabelUpdate update) {
+    private void doLabelUpdate(ILabelUpdate update) {
         TestElement element = (TestElement)update.getElement();
         update.setLabel(element.getLabel(), 0);
         if (update instanceof ICheckUpdate && 
@@ -319,24 +326,26 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     
     public final static String ELEMENT_MEMENTO_ID = "id";
     
-    public void compareElements(IElementCompareRequest[] updates) {
-        for (int i = 0; i < updates.length; i++) {
-            String elementID = ((TestElement)updates[i].getElement()).getID();
-            String mementoID = updates[i].getMemento().getString(ELEMENT_MEMENTO_ID);
-            updates[i].setEqual( elementID.equals(mementoID) );
-            updates[i].done();
-        }        
-        
+    public void compareElements(final IElementCompareRequest[] updates) {
+    	doUpdate(updates);
+    }
+
+    private void doCompareElements(IElementCompareRequest update) {
+        String elementID = ((TestElement)update.getElement()).getID();
+        String mementoID = update.getMemento().getString(ELEMENT_MEMENTO_ID);
+        update.setEqual( elementID.equals(mementoID) );
+        update.done();
     }
     
     public void encodeElements(IElementMementoRequest[] updates) {
-        for (int i = 0; i < updates.length; i++) {
-            String elementID = ((TestElement)updates[i].getElement()).getID();
-            updates[i].getMemento().putString(ELEMENT_MEMENTO_ID, elementID);
-            updates[i].done();
-        }        
+    	doUpdate(updates);
     }
     
+    private void doEncodeElements(IElementMementoRequest update) {
+        String elementID = ((TestElement)update.getElement()).getID();
+        update.getMemento().putString(ELEMENT_MEMENTO_ID, elementID);
+        update.done();    	
+    }
     
     /**
      * @param context the context

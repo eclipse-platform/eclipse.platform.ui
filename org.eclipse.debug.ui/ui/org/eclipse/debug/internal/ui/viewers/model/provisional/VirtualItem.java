@@ -160,6 +160,18 @@ public class VirtualItem {
     }
     
     /**
+     * Clears all child items.
+     * 
+     * @since 3.9
+     */
+    public void clearAll() {
+        fData.clear();
+        for (Iterator itr = fItems.values().iterator(); itr.hasNext();) {
+            ((VirtualItem)itr.next()).dispose();
+        }
+        fItems.clear();
+    }
+    /**
      * Returns the parent item.
      * @return parent item.
      */
@@ -265,11 +277,7 @@ public class VirtualItem {
      * Disposes the item.
      */
     public void dispose() {
-        fData.clear();
-        for (Iterator itr = fItems.values().iterator(); itr.hasNext();) {
-            ((VirtualItem)itr.next()).dispose();
-        }
-        fItems.clear();
+        clearAll();
         
         fDisposed = true;
         findTree().fireItemDisposed(this);
