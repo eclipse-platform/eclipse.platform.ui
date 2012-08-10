@@ -36,6 +36,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
@@ -753,17 +754,39 @@ public class PartServiceImpl implements EPartService {
 				if ("org.eclipse.e4.primaryDataStack".equals(category)) { //$NON-NLS-1$
 					MElementContainer<MUIElement> container = getContainer();
 					MUIElement area = modelService.find("org.eclipse.ui.editorss", container); //$NON-NLS-1$
-					List<MPartStack> sharedStacks = modelService.findElements(area, null,
-							MPartStack.class, null);
-					if (sharedStacks.size() > 0) {
-						for (MPartStack stack : sharedStacks) {
-							if (stack.isToBeRendered()) {
-								stack.getChildren().add(providedPart);
+
+					MPartStack activeStack = null;
+					if (area instanceof MPlaceholder
+							&& ((MPlaceholder) area).getRef() instanceof MArea) {
+						// Find the currently 'active' stack in the area
+						MArea a = (MArea) ((MPlaceholder) area).getRef();
+						MUIElement curActive = a.getSelectedElement();
+						while (curActive instanceof MElementContainer<?>) {
+							if (curActive instanceof MPartStack) {
+								activeStack = (MPartStack) curActive;
 								break;
 							}
+							MElementContainer<?> curContainer = (MElementContainer<?>) curActive;
+							curActive = curContainer.getSelectedElement();
 						}
+					}
+
+					if (activeStack != null) {
+						activeStack.getChildren().add(providedPart);
 					} else {
-						addToLastContainer(null, providedPart);
+						// Find the first visible stack in the area
+						List<MPartStack> sharedStacks = modelService.findElements(area, null,
+								MPartStack.class, null);
+						if (sharedStacks.size() > 0) {
+							for (MPartStack stack : sharedStacks) {
+								if (stack.isToBeRendered()) {
+									stack.getChildren().add(providedPart);
+									break;
+								}
+							}
+						} else {
+							addToLastContainer(null, providedPart);
+						}
 					}
 				} else {
 					List<MElementContainer> containers = modelService.findElements(getContainer(),
