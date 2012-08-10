@@ -24,7 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.SWT;
@@ -167,10 +167,15 @@ public class TrimBarRenderer extends SWTPartRenderer {
 			ArrayList<MTrimContribution> toContribute, IEclipseContext ctx,
 			final ExpressionContext eContext) {
 		HashSet<String> existingToolbarIds = new HashSet<String>();
-		for (MTrimElement item : trimModel.getChildren()) {
-			String id = item.getElementId();
-			if (item instanceof MToolBar && id != null) {
-				existingToolbarIds.add(id);
+
+		MTrimmedWindow topWin = (MTrimmedWindow) modelService
+				.getTopLevelWindowFor(trimModel);
+		for (MTrimBar bar : topWin.getTrimBars()) {
+			for (MTrimElement item : bar.getChildren()) {
+				String id = item.getElementId();
+				if (id != null) {
+					existingToolbarIds.add(id);
+				}
 			}
 		}
 

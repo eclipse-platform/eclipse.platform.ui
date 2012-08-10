@@ -553,6 +553,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		populateTopTrimContributions();
 		populateBottomTrimContributions();
 
+		// Trim gets populated during rendering (?) so make sure we have al/
+		// sides. See bug 383269 for details
+		modelService.getTrim(model, SideValue.LEFT);
+		modelService.getTrim(model, SideValue.RIGHT);
+
 		Shell shell = (Shell) model.getWidget();
 		if (model.getMainMenu() == null) {
 			final MMenu mainMenu = MenuFactoryImpl.eINSTANCE.createMenu();
