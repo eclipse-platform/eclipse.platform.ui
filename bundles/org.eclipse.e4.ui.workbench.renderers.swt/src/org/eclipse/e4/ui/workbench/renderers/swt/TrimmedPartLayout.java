@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 
 /**
@@ -242,7 +243,8 @@ public class TrimmedPartLayout extends Layout {
 
 	public Rectangle getTrimRect(int side) {
 		Rectangle caBounds = clientArea.getBounds();
-		caBounds = top.getDisplay().map(clientArea.getParent(), null, caBounds);
+		caBounds = Display.getCurrent().map(clientArea.getParent(), null,
+				caBounds);
 
 		if (side == SWT.TOP) {
 			if (top != null) {
