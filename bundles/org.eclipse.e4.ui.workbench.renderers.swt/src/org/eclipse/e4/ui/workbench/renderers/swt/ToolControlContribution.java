@@ -18,6 +18,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -34,7 +35,9 @@ public class ToolControlContribution extends ControlContribution {
 	private IContributionFactory contribFactory;
 
 	@Inject
-	private IEclipseContext parentContext;
+	EModelService modelService;
+
+	// private IEclipseContext parentContext;
 
 	public ToolControlContribution() {
 		super(null);
@@ -56,6 +59,8 @@ public class ToolControlContribution extends ControlContribution {
 		localContext.set(Composite.class.getName(), newComposite);
 		localContext.set(MToolControl.class.getName(), model);
 
+		final IEclipseContext parentContext = modelService
+				.getContainingContext(model);
 		if (model.getObject() == null) {
 			final Object tcImpl = contribFactory.create(
 					model.getContributionURI(), parentContext, localContext);
