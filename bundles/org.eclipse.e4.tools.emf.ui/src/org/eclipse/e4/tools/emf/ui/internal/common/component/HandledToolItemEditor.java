@@ -13,7 +13,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -114,9 +113,10 @@ public class HandledToolItemEditor extends ToolItemEditor {
 		return Messages.HandledToolItemEditor_Description;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public IObservableList getChildList(Object element) {
-		final WritableList list = new WritableList();
+		final IObservableList list = super.getChildList(element);
 
 		if (((MHandledToolItem) element).getVisibleWhen() != null) {
 			list.add(0, ((MHandledToolItem) element).getVisibleWhen());

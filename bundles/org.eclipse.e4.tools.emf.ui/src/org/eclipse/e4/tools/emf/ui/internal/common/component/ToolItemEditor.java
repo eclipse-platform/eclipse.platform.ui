@@ -16,8 +16,12 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
@@ -33,15 +37,20 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
@@ -68,9 +77,13 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 	private EStackLayout stackLayout;
 
+	private IValueProperty TOOL_ITEM__MENU = EMFProperties.value(MenuPackageImpl.Literals.TOOL_ITEM__MENU);
+
 	@Inject
 	@Optional
 	protected IProject project;
+
+	private Button createRemoveMenu;
 
 	public ToolItemEditor() {
 		super();
@@ -103,6 +116,10 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 				stackLayout.topControl = topControl;
 				composite.layout(true, true);
 			}
+		}
+
+		if (createRemoveMenu != null) {
+			createRemoveMenu.setSelection(((MToolItem) object).getMenu() != null);
 		}
 
 		getMaster().setValue(object);
@@ -218,6 +235,26 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.ToolItemEditor_Menu);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+			createRemoveMenu = new Button(parent, SWT.CHECK);
+			createRemoveMenu.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					MToolItem item = (MToolItem) getMaster().getValue();
+					if (item.getMenu() == null) {
+						addMenu();
+					} else {
+						removeMenu();
+					}
+				}
+			});
+			createRemoveMenu.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
+		}
+
+		{
+			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.ToolItemEditor_Enabled);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
@@ -300,9 +337,52 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 	}
 
+	void removeMenu() {
+		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), MenuPackageImpl.Literals.TOOL_ITEM__MENU, null);
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+		}
+	}
+
+	void addMenu() {
+		MMenu menu = MMenuFactory.INSTANCE.createMenu();
+		setElementId(menu);
+
+		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), MenuPackageImpl.Literals.TOOL_ITEM__MENU, menu);
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+		}
+	}
+
 	@Override
-	public IObservableList getChildList(Object element) {
-		return null;
+	public IObservableList getChildList(final Object element) {
+		final WritableList list = new WritableList();
+
+		MToolItem item = (MToolItem) element;
+		if (item.getMenu() != null) {
+			list.add(0, item.getMenu());
+		}
+
+		TOOL_ITEM__MENU.observe(element).addValueChangeListener(new IValueChangeListener() {
+
+			public void handleValueChange(ValueChangeEvent event) {
+				if (event.diff.getOldValue() != null) {
+					list.remove(event.diff.getOldValue());
+					if (getMaster().getValue() == element && !createRemoveMenu.isDisposed()) {
+						createRemoveMenu.setSelection(false);
+					}
+				}
+
+				if (event.diff.getNewValue() != null) {
+					list.add(0, event.diff.getNewValue());
+					if (getMaster().getValue() == element && !createRemoveMenu.isDisposed()) {
+						createRemoveMenu.setSelection(true);
+					}
+				}
+			}
+		});
+
+		return list;
 	}
 
 	@Override

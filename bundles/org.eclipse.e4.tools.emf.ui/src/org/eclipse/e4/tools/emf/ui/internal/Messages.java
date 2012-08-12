@@ -354,6 +354,7 @@ public class Messages {
 	public String ToolItemEditor_Enabled;
 	public String ToolItemEditor_Selected;
 	public String ToolItemEditor_NoExpression;
+	public String ToolItemEditor_Menu;
 
 	public String TrimBarEditor_TreeLabel;
 	public String TrimBarEditor_TreeLabelDescription;
@@ -612,5 +613,4 @@ public class Messages {
 	public String ObjectViewer_Script;
 
 	public String CommandWizard_ShellTitle;
-
 }

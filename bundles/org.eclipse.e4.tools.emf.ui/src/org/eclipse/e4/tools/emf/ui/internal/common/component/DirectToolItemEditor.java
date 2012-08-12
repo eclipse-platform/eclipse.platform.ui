@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -148,9 +147,10 @@ public class DirectToolItemEditor extends ToolItemEditor {
 		return Messages.DirectToolItemEditor_Description;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public IObservableList getChildList(Object element) {
-		final WritableList list = new WritableList();
+		final IObservableList list = super.getChildList(element);
 
 		if (((MDirectToolItem) element).getVisibleWhen() != null) {
 			list.add(0, ((MDirectToolItem) element).getVisibleWhen());
