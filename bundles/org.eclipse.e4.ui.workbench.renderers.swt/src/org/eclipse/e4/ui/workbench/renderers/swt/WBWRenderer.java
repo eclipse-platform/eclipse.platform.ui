@@ -647,6 +647,13 @@ public class WBWRenderer extends SWTPartRenderer {
 			MTrimmedWindow tWindow = (MTrimmedWindow) wbwModel;
 			for (MTrimBar trimBar : tWindow.getTrimBars()) {
 				renderer.createGui(trimBar, shell, wbwModel.getContext());
+				// bug 387161: hack around that createGui(e, parent, context)
+				// does not reparent the element widget to the
+				// limbo shell wheb visible=false
+				if (!trimBar.isVisible()) {
+					trimBar.setVisible(true);
+					trimBar.setVisible(false);
+				}
 			}
 		}
 	}

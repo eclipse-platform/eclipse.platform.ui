@@ -2093,6 +2093,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
+	 * Cause the coolbar to be shown or hidden; note that the coolbar may still
+	 * be visible depending on the visibility state of other elements. This
+	 * method is a lower-level method that affects the visibility but does not
+	 * update any associated preference values.
+	 * 
 	 * @param visible
 	 *            whether the cool bar should be shown. This is only applicable
 	 *            if the window configurer also wishes either the cool bar to be
@@ -2127,6 +2132,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
+	 * Cause the perspective bar to be shown or hidden; note that the
+	 * perspective bar may still be visible depending on the visibility state of
+	 * other elements. This method is a lower-level method that affects the
+	 * visibility but does not update any associated preference values.
+	 * 
 	 * @param visible
 	 *            whether the perspective bar should be shown. This is only
 	 *            applicable if the window configurer also wishes either the
@@ -2387,21 +2397,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private void updateLayoutDataForContents() {
 		MTrimBar topTrim = getTopTrim();
 		if (topTrim != null) {
-			if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
-					|| (getPerspectiveBarVisible() && getWindowConfigurer()
-							.getShowPerspectiveBar())) {
-				topTrim.setToBeRendered(true);
-				if (topTrim.getWidget() == null) {
-					IPresentationEngine presentationEngine = model.getContext().get(
-							IPresentationEngine.class);
-					presentationEngine.createGui(topTrim, model.getWidget(), model.getContext());
-				}
-			} else {
-				IPresentationEngine presentationEngine = model.getContext().get(
-						IPresentationEngine.class);
-				topTrim.setToBeRendered(false);
-				presentationEngine.removeGui(topTrim);
-			}
+			topTrim.setVisible((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
+					|| (getPerspectiveBarVisible() && getWindowConfigurer().getShowPerspectiveBar()));
 			getShell().layout();
 		}
 	}
