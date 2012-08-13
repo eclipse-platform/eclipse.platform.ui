@@ -23,4 +23,17 @@
   <artifactId>org.eclipse.ui.workbench</artifactId>
   <version>3.8.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <configuration>
+          <!-- th: workaround for issue with java.nio import error -->
+          <executionEnvironment>J2SE-1.4</executionEnvironment>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
