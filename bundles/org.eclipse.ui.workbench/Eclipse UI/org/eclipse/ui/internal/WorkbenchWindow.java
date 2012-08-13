@@ -181,6 +181,7 @@ import org.osgi.service.event.EventHandler;
 public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private static final String MAIN_TOOLBAR_ID = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
+	private static final String COMMAND_ID_TOGGLE_COOLBAR = "org.eclipse.ui.ToggleCoolbarAction"; //$NON-NLS-1$
 
 	public static final String ACTION_SET_CMD_PREFIX = "AS::"; //$NON-NLS-1$
 
@@ -2392,13 +2393,28 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			setPerspectiveBarVisible(!perspectivebarVisible);
 			prefs.setValue(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, !perspectivebarVisible);
 		}
+		ICommandService commandService = (ICommandService) getService(ICommandService.class);
+		Map filter = new HashMap();
+		filter.put(IServiceScopes.WINDOW_SCOPE, this);
+		commandService.refreshElements(COMMAND_ID_TOGGLE_COOLBAR, filter);
+	}
+
+	/**
+	 * Return true if the toolbar is visible. Note that it may not be possible
+	 * to make the toolbar visible (i.e., the window configurer).
+	 * 
+	 * @return true if the toolbar is visible
+	 * @since 4.2
+	 */
+	public boolean isToolbarVisible() {
+		return (getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
+				|| (getPerspectiveBarVisible() && getWindowConfigurer().getShowPerspectiveBar());
 	}
 
 	private void updateLayoutDataForContents() {
 		MTrimBar topTrim = getTopTrim();
 		if (topTrim != null) {
-			topTrim.setVisible((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
-					|| (getPerspectiveBarVisible() && getWindowConfigurer().getShowPerspectiveBar()));
+			topTrim.setVisible(isToolbarVisible());
 			getShell().layout();
 		}
 	}

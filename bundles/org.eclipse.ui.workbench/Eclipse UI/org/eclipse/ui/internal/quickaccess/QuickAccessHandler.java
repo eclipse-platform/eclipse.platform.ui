@@ -45,12 +45,17 @@ public class QuickAccessHandler extends AbstractHandler {
 		MWindow mWindow = ((WorkbenchWindow) window).getModel();
 		EModelService modelService = mWindow.getContext().get(EModelService.class);
 		MToolControl searchField = (MToolControl) modelService.find("SearchField", mWindow); //$NON-NLS-1$
+		if (searchField == null) {
+			return null;
+		}
 		Control control = (Control) searchField.getWidget();
-		if (control == null) {
+		if (!((WorkbenchWindow) window).isToolbarVisible()) {
 			((WorkbenchWindow) window).toggleToolbarVisibility();
 			control = (Control) searchField.getWidget();
 		}
-		if (control != null) {
+		// the workbench configurer may override visibility; if so, focus should
+		// not change
+		if (((WorkbenchWindow) window).isToolbarVisible() && control != null) {
 			Control previousFocusControl = control.getDisplay().getFocusControl();
 			control.setFocus();
 			SearchField field = (SearchField) searchField.getObject();

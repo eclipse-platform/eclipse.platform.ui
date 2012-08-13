@@ -11,21 +11,17 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.menus.UIElement;
-import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * Handler that toggles the visibility of the coolbar/perspective bar in a given
@@ -49,11 +45,6 @@ public class ToggleCoolbarHandler extends AbstractHandler implements
 		if (activeWorkbenchWindow instanceof WorkbenchWindow) {
 			WorkbenchWindow window = (WorkbenchWindow) activeWorkbenchWindow;
 			window.toggleToolbarVisibility();
-			ICommandService commandService = (ICommandService) activeWorkbenchWindow
-					.getService(ICommandService.class);
-			Map filter = new HashMap();
-			filter.put(IServiceScopes.WINDOW_SCOPE, window);
-			commandService.refreshElements(event.getCommand().getId(), filter);
 		}
 
 		return null;
