@@ -117,7 +117,7 @@ public class TrimmedPartLayout extends Layout {
 		Rectangle caRect = new Rectangle(ca.x, ca.y, ca.width, ca.height);
 
 		// 'Top' spans the entire area
-		if (top != null) {
+		if (top != null && top.isVisible()) {
 			Point topSize = top.computeSize(caRect.width, SWT.DEFAULT, true);
 			caRect.y += topSize.y;
 			caRect.height -= topSize.y;
@@ -134,7 +134,7 @@ public class TrimmedPartLayout extends Layout {
 		caRect.height -= gutterTop;
 
 		// 'Bottom' spans the entire area
-		if (bottom != null) {
+		if (bottom != null && bottom.isVisible()) {
 			Point bottomSize = bottom.computeSize(caRect.width, SWT.DEFAULT,
 					true);
 			caRect.height -= bottomSize.y;
@@ -149,7 +149,7 @@ public class TrimmedPartLayout extends Layout {
 		caRect.height -= gutterBottom;
 
 		// 'Left' spans between 'top' and 'bottom'
-		if (left != null) {
+		if (left != null && left.isVisible()) {
 			Point leftSize = left.computeSize(SWT.DEFAULT, caRect.height, true);
 			caRect.x += leftSize.x;
 			caRect.width -= leftSize.x;
@@ -165,7 +165,7 @@ public class TrimmedPartLayout extends Layout {
 		caRect.width -= gutterLeft;
 
 		// 'Right' spans between 'top' and 'bottom'
-		if (right != null) {
+		if (right != null && right.isVisible()) {
 			Point rightSize = right.computeSize(SWT.DEFAULT, caRect.height,
 					true);
 			caRect.width -= rightSize.x;
