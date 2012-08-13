@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,12 @@ import org.eclipse.ui.views.IViewDescriptor;
  * This is used to sort views in a ShowViewDialog.
  */
 public class ViewComparator extends ViewerComparator {
+
+	/**
+	 * General view category id
+	 */
+	private static String GENERAL_VIEW_ID = "org.eclipse.ui"; //$NON-NLS-1$
+
     private ViewRegistry viewReg;
 
     /**
@@ -46,7 +52,7 @@ public class ViewComparator extends ViewerComparator {
                     .getLabel());
             return getComparator().compare(str1, str2);
         } else if (e1 instanceof IViewCategory) {
-			IViewCategory generalCategory = viewReg.findCategory(""); //$NON-NLS-1$
+			IViewCategory generalCategory = viewReg.findCategory(GENERAL_VIEW_ID);
         	if (generalCategory != null){
         		if (((IViewCategory)e1).getId().equals(generalCategory.getId())) {
 					return -1;
