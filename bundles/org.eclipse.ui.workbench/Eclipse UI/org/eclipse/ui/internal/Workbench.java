@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
@@ -128,7 +127,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.ILocalWorkingSetManager;
@@ -136,7 +134,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISaveableFilter;
 import org.eclipse.ui.ISaveablesLifecycleListener;
-import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
@@ -147,7 +144,6 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
@@ -3280,63 +3276,12 @@ UIEvents.Context.TOPIC_CONTEXT,
 	 */
 	public boolean saveAll(final IShellProvider shellProvider,
 			final IRunnableContext runnableContext, final ISaveableFilter filter, boolean confirm) {
-		Map<Saveable, Set<IWorkbenchPart>> map = new HashMap<Saveable, Set<IWorkbenchPart>>();
-
-		for (IWorkbenchWindow window : getWorkbenchWindows()) {
-			IWorkbenchPage page = window.getActivePage();
-
-			IViewReference[] viewReferences = page.getViewReferences();
-			for (IWorkbenchPartReference reference : viewReferences) {
-				IWorkbenchPart part = reference.getPart(false);
-				if (part instanceof ISaveablesSource) {
-					Saveable[] saveables = ((ISaveablesSource) part).getSaveables();
-					for (Saveable saveable : saveables) {
-						if (saveable.isDirty()) {
-							Set<IWorkbenchPart> parts = map.get(saveable);
-							if (parts == null) {
-								parts = new HashSet<IWorkbenchPart>();
-								map.put(saveable, parts);
-							}
-							parts.add(part);
-						}
-					}
-				}
-			}
-
-			IEditorReference[] editorReferences = page.getEditorReferences();
-			for (IWorkbenchPartReference reference : editorReferences) {
-				IWorkbenchPart part = reference.getPart(false);
-				if (part instanceof ISaveablesSource) {
-					Saveable[] saveables = ((ISaveablesSource) part).getSaveables();
-					for (Saveable saveable : saveables) {
-						if (saveable.isDirty()) {
-							Set<IWorkbenchPart> parts = map.get(saveable);
-							if (parts == null) {
-								parts = new HashSet<IWorkbenchPart>();
-								map.put(saveable, parts);
-							}
-							parts.add(part);
-						}
-					}
-				}
-			}
-		}
-
-		final List<Saveable> toSave = new ArrayList<Saveable>();
-
-		for (Entry<Saveable, Set<IWorkbenchPart>> entrySet : map.entrySet()) {
-			Saveable saveable = entrySet.getKey();
-			Set<IWorkbenchPart> parts = entrySet.getValue();
-			if (filter.select(saveable, parts.toArray(new IWorkbenchPart[parts.size()]))) {
-				toSave.add(saveable);
-			}
-		}
-
+		SaveablesList saveablesList = (SaveablesList) getService(ISaveablesLifecycleListener.class);
+		Saveable[] saveables = saveablesList.getOpenModels();
+		List<Saveable> toSave = getFilteredSaveables(filter, saveables);
 		if (toSave.isEmpty()) {
 			return true;
 		}
-
-		SaveablesList saveablesList = (SaveablesList) getService(ISaveablesLifecycleListener.class);
 
 		if (!confirm) {
 			return !saveablesList.saveModels(toSave, shellProvider, runnableContext);
@@ -3344,6 +3289,40 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 		// We must negate the result since false is cancel saveAll
 		return !saveablesList.promptForSaving(toSave, shellProvider, runnableContext, true, false);
+	}
+
+	/*
+	 * Apply the given filter to the list of saveables
+	 */
+	private List<Saveable> getFilteredSaveables(ISaveableFilter filter, Saveable[] saveables) {
+		List<Saveable> toSave = new ArrayList<Saveable>();
+		if (filter == null) {
+			for (int i = 0; i < saveables.length; i++) {
+				Saveable saveable = saveables[i];
+				if (saveable.isDirty()) {
+					toSave.add(saveable);
+				}
+			}
+		} else {
+			SaveablesList saveablesList = (SaveablesList) getService(ISaveablesLifecycleListener.class);
+			for (int i = 0; i < saveables.length; i++) {
+				Saveable saveable = saveables[i];
+				if (saveable.isDirty()) {
+					IWorkbenchPart[] parts = saveablesList.getPartsForSaveable(saveable);
+					if (matchesFilter(filter, saveable, parts)) {
+						toSave.add(saveable);
+					}
+				}
+			}
+		}
+		return toSave;
+	}
+
+	/*
+	 * Test whether the given filter matches the saveable
+	 */
+	private boolean matchesFilter(ISaveableFilter filter, Saveable saveable, IWorkbenchPart[] parts) {
+		return filter == null || filter.select(saveable, parts);
 	}
 
 	public ServiceLocator getServiceLocator() {
