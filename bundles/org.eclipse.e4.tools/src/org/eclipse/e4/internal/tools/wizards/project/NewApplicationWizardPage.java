@@ -48,7 +48,6 @@ import org.eclipse.ui.branding.IProductConstants;
  */
 public class NewApplicationWizardPage extends WizardPage {
 	public static final String E4_APPLICATION = "org.eclipse.e4.ui.workbench.swt.E4Application";
-	public static final String APPLICATION_XMI_PROPERTY = "applicationXMI";
 	public static final String APPLICATION_CSS_PROPERTY = "applicationCSS";
 	public static final String PRODUCT_NAME = "productName";
 	public static final String APPLICATION = "application";
@@ -367,8 +366,6 @@ public class NewApplicationWizardPage extends WizardPage {
 					new PropertyData(IProductConstants.APP_NAME, "Application Name:",
 							projectProvider.getProjectName(), String.class,
 							true),
-					new PropertyData(APPLICATION_XMI_PROPERTY, "Application UI:",
-							"Application.e4xmi", String.class, true),
 					new PropertyData(APPLICATION_CSS_PROPERTY, "CSS Style:",
 							"css/default.css", String.class, true),
 					new PropertyData(IProductConstants.ABOUT_TEXT, "About Message:", "",

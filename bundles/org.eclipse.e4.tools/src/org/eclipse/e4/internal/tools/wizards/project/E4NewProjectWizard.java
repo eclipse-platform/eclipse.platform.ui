@@ -93,6 +93,7 @@ import org.osgi.framework.Version;
  */
 public class E4NewProjectWizard extends NewPluginProjectWizard {
 
+	private static final String APPLICATION_MODEL = "Application.e4xmi";
 	private PluginFieldData fPluginData;
 	private NewApplicationWizardPage fApplicationPage;
 	private IProjectProvider fProjectProvider;
@@ -238,12 +239,6 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 				e.addToken(cssEntry);	
 			}
 			
-			String xmiPath = map
-					.get(NewApplicationWizardPage.APPLICATION_XMI_PROPERTY);
-			if( xmiPath != null ) {
-				e.addToken(xmiPath);	
-			}
-			
 			model.save();
 		}
 	}
@@ -269,13 +264,6 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			String applicationName = map
 					.get(NewApplicationWizardPage.APPLICATION);
 
-			String xmiPath = map
-					.get(NewApplicationWizardPage.APPLICATION_XMI_PROPERTY);
-			if (xmiPath != null) {
-				xmiPath = productName + "/" + xmiPath;
-				map.put(NewApplicationWizardPage.APPLICATION_XMI_PROPERTY,
-						xmiPath);
-			}
 			String cssValue = map
 					.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
 			if (cssValue != null) {
@@ -348,8 +336,6 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 		// If the project has invalid characters, the plug-in name would replace them with underscores, product name does the same
 		String pluginName = map.get(NewApplicationWizardPage.PRODUCT_NAME);
-		String xmiPath = map
-				.get(NewApplicationWizardPage.APPLICATION_XMI_PROPERTY);
 
 		// If there's no Activator created we create default package
 		if (!fPluginData.doGenerateClass()) {
@@ -379,7 +365,73 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			e1.printStackTrace();
 		}
 
-		if (xmiPath != null && xmiPath.trim().length() > 0) {
+		createApplicationModel(project, pluginName, fragment);
+
+		String cssPath = map
+				.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
+		if (cssPath != null && cssPath.trim().length() > 0) {
+			IFile file = project.getFile(cssPath);
+
+			try {
+				prepareFolder(file.getParent(), monitor);
+
+				URL corePath = ResourceLocator
+						.getProjectTemplateFiles("css/default.css");
+				file.create(corePath.openStream(), true, monitor);
+			} catch (Exception e) {
+				PDEPlugin.logException(e);
+			}
+		}
+
+		// IFolder folder = project.getFolder("icons");
+		// try {
+		// folder.create(true, true, monitor);
+		// Bundle bundle = Platform
+		// .getBundle("org.eclipse.e4.tools.ui.designer");
+		//
+		// for (String fileName : new String[] { "sample.gif", "save_edit.gif"
+		// }) {
+		// URL sampleUrl = bundle.getEntry("resources/icons/" + fileName);
+		// sampleUrl = FileLocator.resolve(sampleUrl);
+		// InputStream inputStream = sampleUrl.openStream();
+		// IFile file = folder.getFile(fileName);
+		// file.create(inputStream, true, monitor);
+		// }
+		// } catch (Exception e) {
+		// PDEPlugin.logException(e);
+		// }
+
+		String template_id = "common";
+		Set<String> binaryExtentions = new HashSet<String>();
+		binaryExtentions.add(".gif");
+		binaryExtentions.add(".png");
+
+		Map<String, String> keys = new HashMap<String, String>();
+		keys.put("projectName", pluginName);
+		keys.put("packageName", fragment.getElementName() + ".handlers");
+
+		try {
+			URL corePath = ResourceLocator.getProjectTemplateFiles(template_id);
+			IRunnableWithProgress op = new TemplateOperation(corePath, project,
+					keys, binaryExtentions);
+			getContainer().run(false, true, op);
+		} catch (Exception e) {
+			PDEPlugin.logException(e);
+		}
+
+		try {
+			URL corePath = ResourceLocator.getProjectTemplateFiles("src");
+			IRunnableWithProgress op = new TemplateOperation(corePath,
+					(IContainer) fragment.getResource(), keys, binaryExtentions);
+			getContainer().run(false, true, op);
+		} catch (Exception e) {
+			PDEPlugin.logException(e);
+		}
+	}
+
+	private void createApplicationModel(IProject project, String pluginName,
+			IPackageFragment fragment) {
+		if (APPLICATION_MODEL != null && APPLICATION_MODEL.trim().length() > 0) {
 			// Create a resource set
 			//
 			ResourceSet resourceSet = new ResourceSetImpl();
@@ -387,7 +439,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			// Get the URI of the model file.
 			//
 			URI fileURI = URI.createPlatformResourceURI(project.getName() + "/"
-					+ xmiPath, true);
+					+ APPLICATION_MODEL, true);
 
 			// Create a resource for this file.
 			//
@@ -578,67 +630,6 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			} catch (IOException e) {
 				PDEPlugin.logException(e);
 			}
-		}
-
-		String cssPath = map
-				.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
-		if (cssPath != null && cssPath.trim().length() > 0) {
-			IFile file = project.getFile(cssPath);
-
-			try {
-				prepareFolder(file.getParent(), monitor);
-
-				URL corePath = ResourceLocator
-						.getProjectTemplateFiles("css/default.css");
-				file.create(corePath.openStream(), true, monitor);
-			} catch (Exception e) {
-				PDEPlugin.logException(e);
-			}
-		}
-
-		// IFolder folder = project.getFolder("icons");
-		// try {
-		// folder.create(true, true, monitor);
-		// Bundle bundle = Platform
-		// .getBundle("org.eclipse.e4.tools.ui.designer");
-		//
-		// for (String fileName : new String[] { "sample.gif", "save_edit.gif"
-		// }) {
-		// URL sampleUrl = bundle.getEntry("resources/icons/" + fileName);
-		// sampleUrl = FileLocator.resolve(sampleUrl);
-		// InputStream inputStream = sampleUrl.openStream();
-		// IFile file = folder.getFile(fileName);
-		// file.create(inputStream, true, monitor);
-		// }
-		// } catch (Exception e) {
-		// PDEPlugin.logException(e);
-		// }
-
-		String template_id = "common";
-		Set<String> binaryExtentions = new HashSet<String>();
-		binaryExtentions.add(".gif");
-		binaryExtentions.add(".png");
-
-		Map<String, String> keys = new HashMap<String, String>();
-		keys.put("projectName", pluginName);
-		keys.put("packageName", fragment.getElementName() + ".handlers");
-
-		try {
-			URL corePath = ResourceLocator.getProjectTemplateFiles(template_id);
-			IRunnableWithProgress op = new TemplateOperation(corePath, project,
-					keys, binaryExtentions);
-			getContainer().run(false, true, op);
-		} catch (Exception e) {
-			PDEPlugin.logException(e);
-		}
-
-		try {
-			URL corePath = ResourceLocator.getProjectTemplateFiles("src");
-			IRunnableWithProgress op = new TemplateOperation(corePath,
-					(IContainer) fragment.getResource(), keys, binaryExtentions);
-			getContainer().run(false, true, op);
-		} catch (Exception e) {
-			PDEPlugin.logException(e);
 		}
 	}
 
