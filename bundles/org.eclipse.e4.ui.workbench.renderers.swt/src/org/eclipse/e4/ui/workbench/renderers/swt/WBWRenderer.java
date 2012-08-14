@@ -59,6 +59,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -390,8 +392,17 @@ public class WBWRenderer extends SWTPartRenderer {
 			wbwShell = new Shell(parentShell, SWT.BORDER | rtlStyle);
 			wbwShell.setAlpha(110);
 		} else {
-			wbwShell = new Shell(parentShell, SWT.TOOL | SWT.TITLE | SWT.RESIZE
-					| rtlStyle);
+			wbwShell = new Shell(parentShell, SWT.TITLE | SWT.RESIZE | SWT.MAX
+					| SWT.CLOSE | rtlStyle);
+
+			// Prevent ESC from closing the DW
+			wbwShell.addTraverseListener(new TraverseListener() {
+				public void keyTraversed(TraverseEvent e) {
+					if (e.detail == SWT.TRAVERSE_ESCAPE) {
+						e.doit = false;
+					}
+				}
+			});
 		}
 
 		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
