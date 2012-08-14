@@ -138,7 +138,7 @@ public final class Context extends NamedHandleObject implements Comparable {
             final String parentId) {
         if (name == null) {
             throw new NullPointerException(
-                    "The name of a scheme cannot be null"); //$NON-NLS-1$
+                    "The name of a context cannot be null"); //$NON-NLS-1$
         }
 
         final boolean definedChanged = !this.defined;
