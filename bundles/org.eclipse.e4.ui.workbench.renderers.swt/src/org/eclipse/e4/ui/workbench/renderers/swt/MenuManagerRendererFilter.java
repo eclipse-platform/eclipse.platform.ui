@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import javax.inject.Inject;
@@ -29,7 +27,6 @@ import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
-import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
@@ -53,49 +50,11 @@ public class MenuManagerRendererFilter implements Listener {
 
 	public static final String NUL_MENU_ITEM = "(None Applicable)"; //$NON-NLS-1$
 
-	private static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context"; //$NON-NLS-1$
+	static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context"; //$NON-NLS-1$
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
 		WorkbenchSWTActivator.trace(Policy.MENUS, msg + ": " + menu + ": " //$NON-NLS-1$ //$NON-NLS-2$
 				+ menuModel, null);
-	}
-
-	private static Method aboutToShow;
-
-	private static Method aboutToHide;
-
-	public static Method getAboutToShow() {
-		if (aboutToShow == null) {
-			try {
-				aboutToShow = MenuManager.class
-						.getDeclaredMethod("handleAboutToShow"); //$NON-NLS-1$
-				aboutToShow.setAccessible(true);
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return aboutToShow;
-	}
-
-	public static Method getAboutToHide() {
-		if (aboutToHide == null) {
-			try {
-				aboutToHide = MenuManager.class
-						.getDeclaredMethod("handleAboutToHide"); //$NON-NLS-1$
-				aboutToHide.setAccessible(true);
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return aboutToHide;
 	}
 
 	@Inject
@@ -156,7 +115,6 @@ public class MenuManagerRendererFilter implements Listener {
 		}
 
 		// fill in all of the pieces
-		MMenu menuModel = null;
 		MenuManager menuManager = null;
 		Object obj = menu.getData(AbstractPartRenderer.OWNING_ME);
 		if (obj == null) {
@@ -180,103 +138,15 @@ public class MenuManagerRendererFilter implements Listener {
 				}
 			}
 		}
-		if (obj == null && menu.getParentItem() != null) {
-			obj = menu.getParentItem().getData(AbstractPartRenderer.OWNING_ME);
-			if (obj == null) {
-				// hack because MenuManager doesn't do a setData()
-				Object tmp = menu.getParentItem().getData();
-				if (tmp instanceof MenuManager) {
-					MenuManager tmpManager = (MenuManager) tmp;
-					if (menu == tmpManager.getMenu()) {
-						// Eureka! We found a match, by golly!
-						menuManager = tmpManager;
-						obj = renderer.getMenuModel(tmpManager);
-					}
-				}
-			}
-		}
-		if (obj instanceof MMenu) {
-			menuModel = (MMenu) obj;
-		}
-		if (menuManager == null && menuModel != null) {
-			menuManager = renderer.getManager(menuModel);
-		}
-
-		switch (event.type) {
-		case SWT.Show:
-			handleShow(event, menu, menuModel, menuManager);
-			break;
-		case SWT.Hide:
-			handleHide(event, menu, menuModel, menuManager);
-			break;
-		}
-
 	}
 
-	private void handleShow(final Event event, final Menu menu,
-			MMenu menuModel, MenuManager menuManager) {
-		if (menuModel != null && menuManager != null) {
-			cleanUp(menu, menuModel, menuManager);
-		}
-		if (menuModel instanceof MPopupMenu) {
-			showPopup(event, menu, (MPopupMenu) menuModel, menuManager);
-		}
-		if (menuModel != null) {
-			showMenu(event, menu, menuModel, menuManager);
-		} else {
-			trace("Incorrect menu model to work with " + menuManager, menu, menuModel); //$NON-NLS-1$
-		}
-	}
-
-	private void handleHide(final Event event, final Menu menu,
-			MMenu menuModel, MenuManager menuManager) {
-		if (menuModel instanceof MPopupMenu) {
-			hidePopup(event, menu, (MPopupMenu) menuModel, menuManager);
-		}
-	}
-
-	public void showMenu(final Event event, final Menu menu,
-			final MMenu menuModel, MenuManager menuManager) {
-		AbstractPartRenderer obj = rendererFactory.getRenderer(menuModel,
-				menu.getParent());
-		if (!(obj instanceof MenuManagerRenderer)) {
-			trace("Not the correct renderer: " + obj, menu, menuModel); //$NON-NLS-1$
-			return;
-		}
-		MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
-		if (menuModel.getWidget() == null) {
-			renderer.bindWidget(menuModel, menuManager.getMenu());
-		}
-
-		Method handleAboutToShow = getAboutToShow();
-		try {
-			handleAboutToShow.invoke(menuManager);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		final IEclipseContext evalContext;
-		if (menuModel instanceof MContext) {
-			evalContext = ((MContext) menuModel).getContext();
-		} else {
-			evalContext = modelService.getContainingContext(menuModel);
-		}
-		updateElementVisibility(menuModel, renderer, menuManager, evalContext,
-				2, true);
-
-		// last thing to do, kill the event and update the menu manager
-		event.type = SWT.None;
-		event.doit = false;
-		menuManager.update(false);
-	}
-
+	/**
+	 * @param info
+	 * @param menuModel
+	 * @param renderer
+	 * @param evalContext
+	 * @param recurse
+	 */
 	public static void collectInfo(ExpressionInfo info, final MMenu menuModel,
 			final MenuManagerRenderer renderer,
 			final IEclipseContext evalContext, boolean recurse) {
@@ -369,36 +239,6 @@ public class MenuManagerRendererFilter implements Listener {
 				}
 			}
 		}
-	}
-
-	public void hidePopup(Event event, Menu menu, MPopupMenu menuModel,
-			MenuManager menuManager) {
-		final IEclipseContext popupContext = menuModel.getContext();
-		final IEclipseContext originalChild = (IEclipseContext) popupContext
-				.get(TMP_ORIGINAL_CONTEXT);
-		popupContext.remove(TMP_ORIGINAL_CONTEXT);
-		if (!menu.isDisposed()) {
-			menu.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (originalChild == null) {
-						popupContext.deactivate();
-					} else {
-						originalChild.activate();
-					}
-				}
-			});
-		}
-	}
-
-	public void showPopup(final Event event, final Menu menu,
-			final MPopupMenu menuModel, MenuManager menuManager) {
-		// System.err.println("showPopup: " + menuModel + "\n\t" + menu);
-		// we need some context foolery here
-		final IEclipseContext popupContext = menuModel.getContext();
-		final IEclipseContext parentContext = popupContext.getParent();
-		final IEclipseContext originalChild = parentContext.getActiveChild();
-		popupContext.activate();
-		popupContext.set(TMP_ORIGINAL_CONTEXT, originalChild);
 	}
 
 	void setEnabled(MHandledMenuItem item) {

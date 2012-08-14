@@ -58,6 +58,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.internal.MenuManagerEventHelper;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -221,6 +222,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		display.addFilter(SWT.Hide, rendererFilter);
 		display.addFilter(SWT.Dispose, rendererFilter);
 		context.set(MenuManagerRendererFilter.class, rendererFilter);
+		MenuManagerEventHelper.showHelper = ContextInjectionFactory.make(
+				MenuManagerShowProcessor.class, context);
+		MenuManagerEventHelper.hideHelper = ContextInjectionFactory.make(
+				MenuManagerHideProcessor.class, context);
 
 	}
 
@@ -230,6 +235,13 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(selectionUpdater);
 		eventBroker.unsubscribe(enabledUpdater);
 		eventBroker.unsubscribe(toBeRenderedUpdater);
+
+		ContextInjectionFactory.uninject(MenuManagerEventHelper.showHelper,
+				context);
+		MenuManagerEventHelper.showHelper = null;
+		ContextInjectionFactory.uninject(MenuManagerEventHelper.hideHelper,
+				context);
+		MenuManagerEventHelper.hideHelper = null;
 
 		context.remove(MenuManagerRendererFilter.class);
 		Display display = context.get(Display.class);
