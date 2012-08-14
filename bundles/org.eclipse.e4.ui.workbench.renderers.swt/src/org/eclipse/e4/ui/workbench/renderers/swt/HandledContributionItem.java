@@ -270,51 +270,26 @@ public class HandledContributionItem extends ContributionItem {
 	 * 
 	 */
 	private void generateCommand() {
-		if (model.getCommand() == null) {
-			return;
-		}
-		if (model.getWbCommand() == null) {
+		if (model.getCommand() != null && model.getWbCommand() == null) {
 			String cmdId = model.getCommand().getElementId();
-			final List<MParameter> modelParms = model.getParameters();
-			if (modelParms.isEmpty()) {
-				final ParameterizedCommand parmCmd = commandService
-						.createCommand(cmdId, null);
-				Activator
-						.trace(Policy.DEBUG_MENUS, "command: " + parmCmd, null); //$NON-NLS-1$
-				model.setWbCommand(parmCmd);
-
-				styleState = parmCmd.getCommand().getState(IMenuStateIds.STYLE);
-
-				toggleState = parmCmd.getCommand().getState(
-						ORG_ECLIPSE_UI_COMMANDS_TOGGLE_STATE);
-				radioState = parmCmd.getCommand().getState(
-						ORG_ECLIPSE_UI_COMMANDS_RADIO_STATE);
-				updateState();
-				if (styleState != null) {
-					styleState.addListener(stateListener);
-				} else if (toggleState != null) {
-					toggleState.addListener(stateListener);
-				} else if (radioState != null) {
-					radioState.addListener(stateListener);
-				}
-				return;
+			List<MParameter> modelParms = model.getParameters();
+			Map<String, String> parameters = new HashMap<String, String>(4);
+			for (MParameter mParm : modelParms) {
+				parameters.put(mParm.getName(), mParm.getValue());
 			}
-			HashMap<String, String> parms = new HashMap<String, String>();
-			for (MParameter parm : modelParms) {
-				parms.put(parm.getName(), parm.getValue());
-			}
-			final ParameterizedCommand parmCmd = commandService.createCommand(
-					cmdId, parms);
+			ParameterizedCommand parmCmd = commandService.createCommand(cmdId,
+					parameters);
 			Activator.trace(Policy.DEBUG_MENUS, "command: " + parmCmd, null); //$NON-NLS-1$
+
 			model.setWbCommand(parmCmd);
 
 			styleState = parmCmd.getCommand().getState(IMenuStateIds.STYLE);
-
 			toggleState = parmCmd.getCommand().getState(
 					ORG_ECLIPSE_UI_COMMANDS_TOGGLE_STATE);
 			radioState = parmCmd.getCommand().getState(
 					ORG_ECLIPSE_UI_COMMANDS_RADIO_STATE);
 			updateState();
+
 			if (styleState != null) {
 				styleState.addListener(stateListener);
 			} else if (toggleState != null) {
@@ -553,58 +528,33 @@ public class HandledContributionItem extends ContributionItem {
 		} else {
 			item.setText(""); //$NON-NLS-1$
 		}
-		final String tooltip = getToolTipText(model);
+		final String tooltip = getToolTipText();
 		item.setToolTipText(tooltip);
 		item.setSelection(model.isSelected());
 		item.setEnabled(model.isEnabled());
 	}
 
-	private String getToolTipText(MItem item) {
-		String text = item.getLocalizedTooltip();
-		if (item instanceof MHandledItem) {
-			MHandledItem handledItem = (MHandledItem) item;
-			IEclipseContext context = getContext(item);
-			ParameterizedCommand cmd = handledItem.getWbCommand();
-			if (cmd == null) {
-				cmd = generateParameterizedCommand(handledItem, context);
+	private String getToolTipText() {
+		String text = model.getLocalizedTooltip();
+		ParameterizedCommand parmCmd = model.getWbCommand();
+		if (parmCmd == null) {
+			generateCommand();
+			parmCmd = model.getWbCommand();
+		}
+
+		if (text == null) {
+			try {
+				text = parmCmd.getName();
+			} catch (NotDefinedException e) {
+				return null;
 			}
-			if (text == null) {
-				try {
-					text = cmd.getName();
-				} catch (NotDefinedException e) {
-					return null;
-				}
-			}
-			EBindingService bs = (EBindingService) context
-					.get(EBindingService.class.getName());
-			if (bs != null) {
-				TriggerSequence sequence = bs.getBestSequenceFor(handledItem
-						.getWbCommand());
-				if (sequence != null) {
-					text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
-				}
-			}
-			return text;
+		}
+
+		TriggerSequence sequence = bindingService.getBestSequenceFor(parmCmd);
+		if (sequence != null) {
+			text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
 		}
 		return text;
-	}
-
-	private ParameterizedCommand generateParameterizedCommand(
-			final MHandledItem item, final IEclipseContext lclContext) {
-		ECommandService cmdService = (ECommandService) lclContext
-				.get(ECommandService.class.getName());
-		Map<String, Object> parameters = null;
-		List<MParameter> modelParms = item.getParameters();
-		if (modelParms != null && !modelParms.isEmpty()) {
-			parameters = new HashMap<String, Object>();
-			for (MParameter mParm : modelParms) {
-				parameters.put(mParm.getName(), mParm.getValue());
-			}
-		}
-		ParameterizedCommand cmd = cmdService.createCommand(item.getCommand()
-				.getElementId(), parameters);
-		item.setWbCommand(cmd);
-		return cmd;
 	}
 
 	private void updateIcons() {
