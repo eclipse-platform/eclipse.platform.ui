@@ -1676,7 +1676,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#closeAllPerspectives(boolean, boolean)
 	 */
 	public void closeAllPerspectives(boolean saveEditors, boolean closePage) {
-		close(saveEditors, closePage);
+		boolean okToProceed = closeAllEditors(true);
+		if (okToProceed) {
+			List<MPerspective> kids = new ArrayList<MPerspective>(_perspectiveStack.getChildren());
+			MPerspective curPersp = _perspectiveStack.getSelectedElement();
+			for (MPerspective persp : kids) {
+				if (persp != curPersp) {
+					closePerspective(getPerspectiveDesc(persp.getElementId()),
+							persp.getElementId(), false);
+				}
+			}
+			if (curPersp != null) {
+				closePerspective(getPerspectiveDesc(curPersp.getElementId()),
+						curPersp.getElementId(),
+						false);
+			}
+		}
 	}
 
 	private boolean close(boolean save, boolean unsetPage) {
@@ -3798,6 +3813,9 @@ UIEvents.UIElement.TOPIC_TOBERENDERED,
 		MUIElement element = null;
 
 		MPerspective curPersp = modelService.getActivePerspective(window);
+		if (curPersp == null)
+			return null;
+
 		MPlaceholder eaPH = (MPlaceholder) modelService.find(IPageLayout.ID_EDITOR_AREA, curPersp);
 		MPart model = ((WorkbenchPartReference) ref).getModel();
 		MPlaceholder placeholder = model.getCurSharedRef();
