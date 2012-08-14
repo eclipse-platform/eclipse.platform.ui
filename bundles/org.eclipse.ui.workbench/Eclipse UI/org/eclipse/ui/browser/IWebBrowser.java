@@ -11,7 +11,6 @@
 package org.eclipse.ui.browser;
 
 import java.net.URL;
-
 import org.eclipse.ui.PartInitException;
 
 /**
@@ -38,6 +37,9 @@ public interface IWebBrowser {
 
 	/**
 	 * Opens a URL on this Web browser instance.
+	 * <p>
+	 * <b>NOTE</b> This method must be called from the current UI thread
+	 * </p>
 	 * 
 	 * @param url
 	 *            the URL to display
@@ -49,9 +51,12 @@ public interface IWebBrowser {
 
 	/**
 	 * Closes this browser instance.
+	 * <p>
+	 * <b>NOTE</b> This method must be called from the current UI thread
+	 * </p>
 	 * 
-	 * @return <code>true</code> if the browser was closed or
-	 *         <code>false</code> if the operation failed or is not supported.
+	 * @return <code>true</code> if the browser was closed or <code>false</code>
+	 *         if the operation failed or is not supported.
 	 */
 	boolean close();
 
