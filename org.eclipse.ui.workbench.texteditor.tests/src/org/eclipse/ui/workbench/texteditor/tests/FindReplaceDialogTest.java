@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import junit.framework.Test;
@@ -189,7 +191,9 @@ public class FindReplaceDialogTest extends TestCase {
 		runEventQueue();
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk())
-			fail("this test does not work on GTK unless the runtime workbench has focus");
+			fail("this test does not work on GTK unless the runtime workbench has focus\n" +
+					"current dir: " + new File("").getAbsoluteFile() + "\n" +
+	                "current dir contents: " + Arrays.asList(new File("").getAbsoluteFile().listFiles()));
 		
 		assertTrue(findField.isFocusControl());
 
