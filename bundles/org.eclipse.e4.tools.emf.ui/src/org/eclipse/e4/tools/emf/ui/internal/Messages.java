@@ -271,6 +271,7 @@ public class Messages {
 	public String ContributionClassDialog_DialogMessage;
 	public String ContributionClassDialog_DialogTitle;
 	public String ContributionClassDialog_Label_Classname;
+	public String ContributionClassDialog_FilterText_Message;
 	public String ContributionClassDialog_ShellTitle;
 
 	public String MenuContributionEditor_MenuItems;

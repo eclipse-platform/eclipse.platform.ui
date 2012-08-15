@@ -100,6 +100,7 @@ public class ContributionClassDialog extends TitleAreaDialog {
 
 		final Text t = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		t.setMessage(Messages.ContributionClassDialog_FilterText_Message);
 
 		new Label(container, SWT.NONE);
 
