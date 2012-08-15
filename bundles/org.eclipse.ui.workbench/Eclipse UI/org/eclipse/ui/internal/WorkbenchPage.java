@@ -3072,6 +3072,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		MPart editor = partService.createPart(CompatibilityEditor.MODEL_ELEMENT_ID);
+		editor.getTags().add(editorId);
 		EditorReference ref = createEditorReferenceForPart(editor, input, editorId, editorState);
 		partService.showPart(editor, PartState.VISIBLE);
 
