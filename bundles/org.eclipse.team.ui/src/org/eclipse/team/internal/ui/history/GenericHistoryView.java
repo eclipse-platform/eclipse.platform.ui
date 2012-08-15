@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.team.internal.ui.history;
 
 import java.util.*;
@@ -35,6 +34,7 @@ import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.*;
 
 import com.ibm.icu.text.SimpleDateFormat;
+
 
 public class GenericHistoryView extends PageBookView implements IHistoryView, IPropertyChangeListener, IShowInTarget {
 
@@ -300,47 +300,12 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 			editorActivated((IEditorPart) part);
 	}
 
-	public void partBroughtToTop(IWorkbenchPart part) {
-		if (part == GenericHistoryView.this)
-			editorActivated(getViewSite().getPage().getActiveEditor());
-	}
-
-	public void partOpened(IWorkbenchPart part) {
-		if (part == GenericHistoryView.this)
-			editorActivated(getViewSite().getPage().getActiveEditor());
-	}
-
-	private IPartListener2 partListener2 = new IPartListener2() {
-		public void partActivated(IWorkbenchPartReference ref) {
-		}
-
-		public void partBroughtToTop(IWorkbenchPartReference ref) {
-		}
-
-		public void partClosed(IWorkbenchPartReference ref) {
-		}
-
-		public void partDeactivated(IWorkbenchPartReference ref) {
-		}
-
-		public void partOpened(IWorkbenchPartReference ref) {
-		}
-
-		public void partHidden(IWorkbenchPartReference ref) {
-		}
-
-		public void partVisible(IWorkbenchPartReference ref) {
-			if (ref.getPart(true) == GenericHistoryView.this)
-				editorActivated(getViewSite().getPage().getActiveEditor());
-		}
-
-		public void partInputChanged(IWorkbenchPartReference ref) {
-		}
-	};
-
 	private ISelectionListener selectionListener = new ISelectionListener() {
 
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+
+			if (GenericHistoryView.this == part)
+				return;
 
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection structSelection = (IStructuredSelection) selection;
@@ -352,21 +317,7 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 					return;
 				}
 
-				if (lastSelectedElement != null){
-					Object resource;
-					if (lastSelectedElement instanceof SyncInfoModelElement) {
-						SyncInfoModelElement syncInfoModelElement = (SyncInfoModelElement) lastSelectedElement;
-						resource = syncInfoModelElement.getSyncInfo().getLocal();
-					} else {
-						resource = Utils.getAdapter(lastSelectedElement, IResource.class);
-					}
-					if (resource != null)
-						showHistory(resource);
-					else
-						showHistory(lastSelectedElement);
-					//reset lastSelectedElement
-					lastSelectedElement = null;
-				}
+				showLastSelectedElement();
 			}
 		}
 
@@ -375,6 +326,26 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 	private boolean linkingEnabled;
 
 	private boolean viewPinned;
+
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.part.PageBookView#init(org.eclipse.ui.IViewSite)
+	 * @since 3.6.300
+	 */
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+
+		ISelection selection= getSite().getPage().getSelection();
+		if (selection instanceof IStructuredSelection) {
+			//Always take the first element - this is not intended to work with multiple selection
+			lastSelectedElement= ((IStructuredSelection)selection).getFirstElement();
+		}
+
+		// Use active editor as fallback
+		if (lastSelectedElement == null)
+			lastSelectedElement= getSite().getPage().getActiveEditor();
+	}
 
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -389,10 +360,6 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 
 		//initialize the drag and drop
 		initDragAndDrop();
-
-		// add listener for editor page activation - this is to support editor
-		// linking
-		getSite().getPage().addPartListener(partListener2);
 
 		// add listener for selections
 		getSite().getPage().addPostSelectionListener(selectionListener);
@@ -464,8 +431,9 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 
 		// if turning linking on, update the selection to correspond to the active editor
 		if (enabled) {
-			editorActivated(getSite().getPage().getActiveEditor());
+			showLastSelectedElement();
 		}
+
 	}
 
 	/**
@@ -490,22 +458,33 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 	}
 
 	public void setFocus() {
-		if (isLinkingEnabled()){
-			if (lastSelectedElement != null){
-				if (lastSelectedElement instanceof IEditorPart){
-					editorActivated((IEditorPart) lastSelectedElement);
-				} else {
-					Object resource = Utils.getAdapter(lastSelectedElement, IResource.class);
-					if (resource != null)
-						showHistoryPageFor(resource, false, false, null);
-					else
-						showHistoryPageFor(lastSelectedElement, false, false, null);
-				}
-				//reset lastSelectedElement to null to prevent updating history view if it just gets focus
-				lastSelectedElement  = null;
-			}
+		if (isLinkingEnabled()) {
+			showLastSelectedElement();
 		}
 		getCurrentPage().setFocus();
+	}
+
+	private void showLastSelectedElement() {
+		if (lastSelectedElement != null) {
+			if (lastSelectedElement instanceof IEditorPart)
+				editorActivated((IEditorPart)lastSelectedElement);
+			else { 
+				Object resource;
+				if (lastSelectedElement instanceof SyncInfoModelElement) {
+					SyncInfoModelElement syncInfoModelElement = (SyncInfoModelElement) lastSelectedElement;
+					resource = syncInfoModelElement.getSyncInfo().getLocal();
+				} else {
+					resource= Utils.getAdapter(lastSelectedElement, IResource.class);
+				}
+				if (resource != null)
+					showHistoryPageFor(resource, false, false, null);
+				else
+					showHistoryPageFor(lastSelectedElement, false, false, null);
+			}
+
+			//reset lastSelectedElement to null to prevent updating history view if it just gets focus
+			lastSelectedElement= null;
+		}
 	}
 
 	protected void showPageRec(PageRec pageRec) {
@@ -736,10 +715,7 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 	 * @param editor the active editor
 	 */
 	protected void editorActivated(IEditorPart editor) {
-		//If this history view is not visible, keep track of this editor
-		//for future use
-		if (editor != null && !checkIfPageIsVisible())
-			lastSelectedElement = editor;
+		lastSelectedElement= editor;
 
 		//Only fetch contents if the view is shown in the current page.
 		if (editor == null || !isLinkingEnabled() || !checkIfPageIsVisible() || isViewPinned()) {
@@ -767,8 +743,7 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 		//Remove the drop listener
 		if (dropTarget != null && !dropTarget.isDisposed())
 			dropTarget.removeDropListener(dropAdapter);
-		//Remove the part listener
-		getSite().getPage().removePartListener(partListener2);
+
 		//Remove the selection listener
 		getSite().getPage().removePostSelectionListener(selectionListener);
 		navigateAction.dispose();
