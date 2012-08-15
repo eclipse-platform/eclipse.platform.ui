@@ -1,12 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.team.ui" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter id="924844039">
-            <message_arguments>
-                <message_argument value="3.6.200"/>
-                <message_argument value="3.6.100"/>
-            </message_arguments>
-        </filter>
-    </resource>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.team.ui" version="2">
     <resource path="src/org/eclipse/team/ui/IScmUrlImportWizardPage.java" type="org.eclipse.team.ui.IScmUrlImportWizardPage">
         <filter id="403767336">
             <message_arguments>
