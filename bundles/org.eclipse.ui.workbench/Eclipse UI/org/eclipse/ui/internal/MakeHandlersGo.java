@@ -134,10 +134,10 @@ public class MakeHandlersGo extends AbstractHandler implements IElementUpdater {
 	public boolean isEnabled() {
 		EHandlerService hs = (EHandlerService) workbench.getService(EHandlerService.class);
 		ECommandService cs = (ECommandService) workbench.getService(ECommandService.class);
-		Command command = cs.getCommand(commandId);
-		if (hs == null) {
+		if (hs == null || cs == null) {
 			return false;
 		}
+		Command command = cs.getCommand(commandId);
 		setBaseEnabled(hs.canExecute(new ParameterizedCommand(command, null)));
 		return super.isEnabled();
 	}
