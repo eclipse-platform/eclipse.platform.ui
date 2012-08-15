@@ -15,7 +15,6 @@
             activate="true"
             categoryId="org.eclipse.e4.tools.jdt.templates.e4ProposalCategory"
             class="org.eclipse.e4.internal.tools.jdt.templates.E4TemplateCompletionProposalComputer">
-			<partition type="__dftl_partition_content_type"/>
       </javaCompletionProposalComputer>
     </extension>
    <extension
@@ -42,6 +41,73 @@
             file="templates/default-e4templates.xml"
             translations="$nl$/templates/default-e4templates.properties">
       </include>
+            <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.FieldResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.Field.description"
+            name="%templates.java.resolvers.Field.name"
+            type="field"/>
+      <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.LocalVarResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.LocalVar.description"
+            name="%templates.java.resolvers.LocalVar.name"
+            type="localVar"/>
+      <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.VarResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.Var.description"
+            name="%templates.java.resolvers.Var.name"
+            type="var"/>
+      <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.NameResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.Name.description"
+            name="%templates.java.resolvers.Name.name"
+            type="newName"/>
+      <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.TypeResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.Type.description"
+            name="%templates.java.resolvers.Type.name"
+            type="newType"/>
+      <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.ElementTypeResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.ElementType.description"
+            name="%templates.java.resolvers.ElementType.name"
+            type="elemType"/>
+      <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.TypeVariableResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.ArgumentType.description"
+            name="%templates.java.resolvers.ArgumentType.name"
+            type="argType"/>
+	  <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.LinkResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.Link.description"
+            name="%templates.java.resolvers.Link.name"
+            type="link"/>
+      <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.ImportsResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.Imports.description"
+            name="%templates.java.resolvers.Imports.name"
+            type="import"/>
+      <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.StaticImportResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.ImportStatic.description"
+            name="%templates.java.resolvers.ImportStatic.name"
+            type="importStatic"/>
+      <resolver
+            class="org.eclipse.jdt.internal.corext.template.java.ExceptionVariableNameResolver"
+            contextTypeId="e4-members"
+            description="%templates.java.resolvers.ExceptionVariableName.description"
+            name="%templates.java.resolvers.ExceptionVariableName.name"
+            type="exception_variable_name">
+      </resolver>
    </extension>
 
 </plugin>

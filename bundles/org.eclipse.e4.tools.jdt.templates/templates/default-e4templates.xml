@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Boris Bokowski, IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Reworked templates
  *******************************************************************************/
 -->
 
@@ -46,14 +47,22 @@ void handleSomeEvent(Payload payloadObject) {
 	${cursor}
 }</template>
 
-<template name="e4-init" description="Initialization Method" id="org.eclipse.e4.tools.jdt.templates.init" context="e4-members" enabled="true" autoinsert="false">@PostConstruct
-void init() {
-	${cursor}
-}</template>
+<template name="PostConstruct" description="Creates @PostConstruct method" id="org.eclipse.e4.tools.jdt.templates.init" context="e4-members" enabled="true" autoinsert="false">@PostConstruct
+public void postConstruct(${type:newType(org.eclipse.swt.widgets.Composite)} parent) { 
+}
+${imp:import(javax.annotation.PostConstruct)}
+</template>
 
-<template name="e4-dispose" description="Dispose Method" id="org.eclipse.e4.tools.jdt.templates.dispose" context="e4-members" enabled="true" autoinsert="false">@PreDestroy
-void dispose() {
-	${cursor}
-}</template>
+<template name="Focus" description="Creates @Focus method" id="org.eclipse.e4.tools.jdt.templates.focus" context="e4-members" enabled="true" autoinsert="false">@Focus
+public void onFocus() {
+}
+${imp:import(org.eclipse.e4.ui.di.Focus)}
+</template>
+
+<template name="PreDestroy" description="Creates @PreDestroy method" id="org.eclipse.e4.tools.jdt.templates.dispose" context="e4-members" enabled="true" autoinsert="false">@PreDestroy
+public void preDestroy() {
+}
+${imp:import(javax.annotation.PreDestroy)}
+</template>
 
 </templates>

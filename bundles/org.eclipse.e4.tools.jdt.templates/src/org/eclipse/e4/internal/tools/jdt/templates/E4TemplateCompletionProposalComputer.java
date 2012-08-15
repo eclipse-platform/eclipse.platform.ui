@@ -34,10 +34,10 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 public class E4TemplateCompletionProposalComputer extends AbstractTemplateCompletionProposalComputer {
 
 	/**
-	 * The name of <code>org.eclipse.e4.core.services.IDisposable</code> used to detect
+	 * The name of <code>javax.inject.Inject</code> used to detect
 	 * if a project uses e4.
 	 */
-	private static final String E4_TYPE_NAME= "org.eclipse.e4.core.services.IDisposable"; //$NON-NLS-1$
+	private static final String E4_TYPE_NAME= "org.eclipse.e4.ui.di.Focus"; //$NON-NLS-1$
 
 
 	/**
