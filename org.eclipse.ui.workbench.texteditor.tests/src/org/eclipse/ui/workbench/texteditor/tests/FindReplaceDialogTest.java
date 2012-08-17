@@ -11,7 +11,6 @@
 package org.eclipse.ui.workbench.texteditor.tests;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import junit.framework.Test;
@@ -19,11 +18,17 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.Path;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -191,9 +196,7 @@ public class FindReplaceDialogTest extends TestCase {
 		runEventQueue();
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk())
-			fail("this test does not work on GTK unless the runtime workbench has focus\n" +
-					"current dir: " + new File("").getAbsoluteFile() + "\n" +
-	                "current dir contents: " + Arrays.asList(new File("").getAbsoluteFile().listFiles()));
+			fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
 		
 		assertTrue(findField.isFocusControl());
 
@@ -210,6 +213,28 @@ public class FindReplaceDialogTest extends TestCase {
 		findField.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
 		assertTrue(allScopeBox.isFocusControl());
+	}
+	
+	private String takeScreenshot() {
+		File eclipseDir= new File("").getAbsoluteFile(); // eclipse-testing/test-eclipse/eclipse
+		File resultsHtmlDir= new File(eclipseDir, "../../results/html/").getAbsoluteFile();
+		
+		// Take a screenshot:
+		Display display= Display.getDefault();
+		GC gc = new GC(display);
+		final Image image = new Image(display, display.getBounds());
+		gc.copyArea(image, 0, 0);
+		gc.dispose();
+
+		resultsHtmlDir.mkdirs();
+		String filename = new Path(resultsHtmlDir.getAbsolutePath()).append(
+				"FindReplaceDialogTest." + getName() + ".png").toOSString();
+		ImageLoader loader = new ImageLoader();
+		loader.data = new ImageData[] { image.getImageData() };
+		loader.save(filename, SWT.IMAGE_PNG);
+		System.err.println("Screenshot saved to: " + filename);
+		image.dispose();
+		return filename;
 	}
 
 	public void testFocusNotChangedWhenButtonMnemonicPressed() {
