@@ -7,7 +7,6 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -285,7 +284,13 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		 * @see IPage#setFocus()
 		 */
 		public void setFocus() {
-			internalSetFocus();
+			Viewer viewer= getViewer();
+			if (viewer != null) {
+				Control c = viewer.getControl();
+				if (!c.isFocusControl()) {
+					c.setFocus();
+				}
+			}
 		}
 
 }
@@ -343,7 +348,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			showMessage(fEarlyMessage);
 			fEarlyMessage= null;
 		}
-		internalSetFocus();
 	}	
 	
 	/**
@@ -997,16 +1001,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			return ((LazyModelPresentation)presentation).getAttributeMap();
 		}
 		return new HashMap();
-	}
-
-	private void internalSetFocus() {
-		Viewer viewer= getViewer();
-		if (viewer != null) {
-			Control c = viewer.getControl();
-			if (!c.isFocusControl()) {
-				c.setFocus();
-			}
-		}
 	}
 }	
 
