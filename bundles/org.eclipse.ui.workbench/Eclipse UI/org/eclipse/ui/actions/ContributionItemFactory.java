@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.SwitchToWindowMenu;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.actions.HelpSearchContributionItem;
 import org.eclipse.ui.menus.CommandContributionItem;
@@ -118,7 +119,7 @@ public abstract class ContributionItemFactory {
 							.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR),
 					WorkbenchImages
 							.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED),
-					null, null, null, null,
+					null, null, null, WorkbenchMessages.PinEditorAction_toolTip, // Local workaround for http://bugs.eclipse.org/387583
 					CommandContributionItem.STYLE_CHECK, null, false);
 			final IPropertyChangeListener[] perfs = new IPropertyChangeListener[1];
 			final IPartListener partListener = new IPartListener() {
