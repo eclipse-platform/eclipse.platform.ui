@@ -21,6 +21,6 @@
   </parent>
   <groupId>org.eclipse.platform.runtime</groupId>
   <artifactId>org.eclipse.core.jobs</artifactId>
-  <version>3.5.200-SNAPSHOT</version>
+  <version>3.5.300-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
