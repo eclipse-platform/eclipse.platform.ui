@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3247,19 +3247,41 @@ public class TextViewer extends Viewer implements
 			int[] range= new int[] { widgetRange.getOffset(), widgetRange.getLength() };
 			validateSelectionRange(range);
 			if (range[0] >= 0)
-				internalRevealRange(range[0], range[0] + range[1]);
+				internalRevealRangeWithWorkaround(range[0], range[0] + range[1]);
 
 		} else {
 
 			IRegion coverage= getModelCoverage();
 			int cursor= (coverage == null || start < coverage.getOffset()) ? 0 : getVisibleDocument().getLength();
-			internalRevealRange(cursor, cursor);
+			internalRevealRangeWithWorkaround(cursor, cursor);
 		}
 	}
 
 	/**
+	 * First makes sure that the layout is not deferred (workaround for Platform UI bug 375576) and
+	 * then reveals the given range of the visible document and.
+	 * <p>
+	 * NOTE: Only {@link #revealRange(int, int)} needs to use this method. The other methods are
+	 * called at a time where the editor is already realized.
+	 * </p>
+	 * 
+	 * @param start the start offset of the range
+	 * @param end the end offset of the range
+	 * @since 3.8.1, but only used/effective in 4.x
+	 */
+	private void internalRevealRangeWithWorkaround(int start, int end) {
+
+		// XXX: Workaround for https://bugs.eclipse.org/375576
+		final Shell shell= fTextWidget.getShell(); // only the shell layout is deferred
+		while (shell.isLayoutDeferred())
+			shell.setLayoutDeferred(false);
+
+		internalRevealRange(start, end);
+	}
+
+	/**
 	 * Reveals the given range of the visible document.
-	 *
+	 * 
 	 * @param start the start offset of the range
 	 * @param end the end offset of the range
 	 */
