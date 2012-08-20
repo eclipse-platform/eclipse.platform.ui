@@ -21,7 +21,7 @@
   </parent>
   <groupId>eclipse.platform.ui</groupId>
   <artifactId>org.eclipse.ui.workbench</artifactId>
-  <version>3.8.0-SNAPSHOT</version>
+  <version>3.8.1-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
   <build>
