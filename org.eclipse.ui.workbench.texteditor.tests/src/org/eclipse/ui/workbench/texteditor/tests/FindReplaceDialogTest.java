@@ -196,7 +196,7 @@ public class FindReplaceDialogTest extends TestCase {
 		runEventQueue();
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk())
-			fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
+			takeScreenshot();
 		
 		assertTrue(findField.isFocusControl());
 
@@ -247,8 +247,8 @@ public class FindReplaceDialogTest extends TestCase {
 		runEventQueue();
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk())
-			fail("this test does not work on GTK unless the runtime workbench has focus");
-
+			takeScreenshot();
+		
 		Button wrapSearchBox= (Button)fFindReplaceDialog.get("fWrapCheckBox");
 		wrapSearchBox.setFocus();
 		event.detail= SWT.TRAVERSE_MNEMONIC;
@@ -284,7 +284,7 @@ public class FindReplaceDialogTest extends TestCase {
 		runEventQueue();
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk())
-			fail("this test does not work on GTK unless the runtime workbench has focus");
+			takeScreenshot();
 		
 		final Event event= new Event();
 
