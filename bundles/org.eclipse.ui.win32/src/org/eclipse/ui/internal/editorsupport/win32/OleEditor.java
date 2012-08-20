@@ -259,8 +259,6 @@ public class OleEditor extends EditorPart {
         //Check the client active flag. Set it to false when we have deactivated
         //to prevent multiple de-activations.
         if (part == this && clientActive) {
-            if (clientSite != null)
-                clientSite.deactivateInPlaceClient();
             this.clientActive = false;
             this.oleActivated = false;
         }
