@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.dom.CTabItemElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -645,6 +646,16 @@ public class CTabItemTest extends CSSSWTTestCase {
 		for (int i = 0; i < folder.getItemCount(); i++) {
 			assertEquals("#00ff00", engine.retrieveCSSProperty(
 					folder.getItem(i), "color", "selected"));
+		}
+	}
+
+	public void testParent() {
+		CTabFolder folder = createTestTabFolder(
+				"CTabItem:selected { color: #00ff00 }", false);
+		for (int i = 0; i < folder.getItemCount(); i++) {
+			CTabItemElement element = (CTabItemElement) engine
+					.getElement(folder.getItem(i));
+			assertNotNull(element.getParentNode());
 		}
 	}
 }
