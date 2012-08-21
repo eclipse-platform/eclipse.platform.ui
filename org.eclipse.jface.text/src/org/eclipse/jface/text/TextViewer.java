@@ -3273,10 +3273,16 @@ public class TextViewer extends Viewer implements
 
 		// XXX: Workaround for https://bugs.eclipse.org/375576
 		final Shell shell= fTextWidget.getShell(); // only the shell layout is deferred
-		while (shell.isLayoutDeferred())
+		int d= 0;
+		for (; shell.isLayoutDeferred(); d++)
 			shell.setLayoutDeferred(false);
+		try {
+			internalRevealRange(start, end);
+		} finally {
+			for (; d > 0; d--)
+				shell.setLayoutDeferred(true);
+		}
 
-		internalRevealRange(start, end);
 	}
 
 	/**
