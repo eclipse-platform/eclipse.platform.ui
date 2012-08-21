@@ -23,4 +23,25 @@
   <artifactId>org.eclipse.core.filesystem.hpux.ia64_32</artifactId>
   <version>1.0.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <build>
+    <plugins>
+      <!-- tycho is not able to automatically determine os/ws/arch of this bundle -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <resolver>p2</resolver>
+          <environments>
+            <environment>
+              <os>hpux</os>
+              <ws>gtk</ws>
+              <arch>ia64_32</arch>
+            </environment>
+          </environments>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
