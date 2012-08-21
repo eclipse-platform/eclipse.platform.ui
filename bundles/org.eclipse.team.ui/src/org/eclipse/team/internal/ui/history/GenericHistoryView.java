@@ -551,7 +551,15 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 			if (part instanceof HistoryPageSourceWorkbenchPart) {
 				HistoryPageSourceWorkbenchPart p = (HistoryPageSourceWorkbenchPart)part;
 				IHistoryPage historyPage = (IHistoryPage) rec.page;
-				historyPage.setInput(p.getObject());
+				Object newInput= p.getObject();
+				if (!historyPage.isValidInput(newInput)) {
+					if (historyPage instanceof EditionHistoryPage)
+						((EditionHistoryPage)historyPage).setInput(((ElementLocalHistoryPageSource)p.getSource()).internalGetFile(newInput), newInput);
+					else
+						return null; // Create a new page
+				} else
+					historyPage.setInput(newInput);
+
 				((HistoryPage)historyPage).setHistoryView(this);
 				setContentDescription(historyPage.getName());
 			}
@@ -672,6 +680,7 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 		if (page != null) {
 			initPage(page);
 			IHistoryPage historyPage = (IHistoryPage) page;
+			historyPage.addPropertyChangeListener(this);
 			historyPage.setSite(new WorkbenchHistoryPageSite(this, page.getSite()));
 			page.createControl(getPageBook());
 			historyPage.setInput(p.getObject());
@@ -684,6 +693,8 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
 		IPage page = pageRecord.page;
+		if (page instanceof IHistoryPage)
+			((IHistoryPage)page).removePropertyChangeListener(this);
 		page.dispose();
 		pageRecord.dispose();
 	}

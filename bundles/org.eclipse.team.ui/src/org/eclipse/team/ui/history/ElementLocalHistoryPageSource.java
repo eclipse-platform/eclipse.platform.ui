@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,5 +62,17 @@ public abstract class ElementLocalHistoryPageSource extends HistoryPageSource {
 	 * @return the file that contains the given element of <code>null</code>
 	 */
 	protected abstract IFile getFile(Object element);
+
+	/**
+	 * Return the file that contains the given element of <code>null</code> if this page source can
+	 * not show history for the given element.
+	 * 
+	 * @param element the element
+	 * @return the file that contains the given element of <code>null</code>
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	final public IFile internalGetFile(Object element) {
+		return getFile(element);
+	}
 	
 }

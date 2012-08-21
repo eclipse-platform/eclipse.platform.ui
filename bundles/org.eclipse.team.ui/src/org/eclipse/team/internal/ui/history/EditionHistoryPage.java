@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,11 @@ import org.eclipse.ui.IWorkbenchPage;
  */
 public class EditionHistoryPage extends LocalHistoryPage {
 	
-	private final IFile file;
-	private final Object element;
-	private final LocalResourceTypedElement localFileElement;
+	private IFile file;
+
+	private Object element;
+
+	private LocalResourceTypedElement localFileElement;
 	private IStructureCreator structureCreator;
 	private Map editions = new HashMap();
 	private ITypedElement localEdition;
@@ -160,6 +162,10 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	
 	public EditionHistoryPage(IFile file, Object element) {
 		super(ON | ALWAYS);
+		setInput(file, element);
+	}
+
+	void setInput(IFile file, Object element) {
 		Assert.isNotNull(file);
 		Assert.isNotNull(element);
 		this.file = file;
