@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
@@ -35,6 +35,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
@@ -43,10 +44,13 @@ import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
-import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
+import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -63,7 +67,6 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.dialogs.TrayDialog;
-import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.internal.provisional.action.ToolBarContributionItem2;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -111,6 +114,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -123,6 +128,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -134,12 +140,17 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.OpenPerspectiveAction;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.internal.ActionSetActionBars;
 import org.eclipse.ui.internal.ActionSetContributionItem;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.ShowViewMenu;
+import org.eclipse.ui.internal.Perspective;
+import org.eclipse.ui.internal.PluginActionCoolBarContributionItem;
+import org.eclipse.ui.internal.PluginActionSet;
+import org.eclipse.ui.internal.PluginActionSetBuilder;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -158,6 +169,8 @@ import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.services.IServiceLocator;
@@ -191,7 +204,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private WorkbenchWindow window;
 
-	private IPerspectiveDescriptor perspective;
+	private Perspective perspective;
 
 	private TabFolder tabFolder;
 
@@ -227,11 +240,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private DisplayItem views;
 
-	private Map<String, ActionSet> idToActionSet = new HashMap<String, ActionSet>();
+	private Map idToActionSet = new HashMap();
 
-	private final List<ActionSet> actionSets = new ArrayList<ActionSet>();
+	private final List actionSets = new ArrayList();
 
-	// private IWorkbenchWindowConfigurer configurer;
+	private IWorkbenchWindowConfigurer configurer;
 
 	private TabItem actionSetTab;
 
@@ -245,13 +258,17 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private CheckboxTreeViewer toolbarStructureViewer2;
 
-	private Set<Resource> toDispose;
+	private Set toDispose;
 
-	// private CustomizeActionBars customizeActionBars;
+	private CustomizeActionBars customizeActionBars;
 
 	private Font tooltipHeading;
+	MApplication application;
+	private MenuManagerRenderer menuMngrRenderer;
+	ToolBarManagerRenderer toolbarMngrRenderer;
 
-	private final IEclipseContext context;
+	private ISWTResourceUtilities resUtils;
+	private IEclipseContext context;
 
 	/**
 	 * A Listener for a list of command groups, that updates the viewer and
@@ -271,7 +288,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		}
 
 		public void selectionChanged(SelectionChangedEvent event) {
-			Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
+			Object element = ((IStructuredSelection) event.getSelection())
+					.getFirstElement();
 			filter.setActionSet((ActionSet) element);
 			filterViewer.refresh();
 			filterViewer.expandAll();
@@ -291,7 +309,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			this.rootItem = rootItem;
 		}
 
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
 			return (includeInSetStructure(rootItem, (ActionSet) element));
 		}
 	}
@@ -309,7 +328,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		private ActionSet actionSet;
 
 		public DisplayItem(String label, IContributionItem item) {
-			treeManager.super(label == null ? null : DialogUtil.removeAccel(removeShortcut(label)));
+			treeManager.super(label == null ? null : DialogUtil
+					.removeAccel(removeShortcut(label)));
 			this.item = item;
 		}
 
@@ -335,18 +355,18 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @since 3.5
 	 */
 	private class DynamicContributionItem extends DisplayItem {
-		private List<MenuItem> preview;
+		private List preview;
 
 		public DynamicContributionItem(IContributionItem item) {
 			super(WorkbenchMessages.HideItems_dynamicItemName, item);
-			preview = new ArrayList<MenuItem>();
+			preview = new ArrayList();
 		}
 
 		public void addCurrentItem(MenuItem item) {
 			preview.add(item);
 		}
 
-		public List<MenuItem> getCurrentItems() {
+		public List getCurrentItems() {
 			return preview;
 		}
 	}
@@ -356,8 +376,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @param window
 	 * @return the appropriate {@link IContributionItem} for the given wizard
 	 */
-	private static ActionContributionItem getIContributionItem(IWizardDescriptor descriptor,
-			IWorkbenchWindow window) {
+	private static ActionContributionItem getIContributionItem(
+			IWizardDescriptor descriptor, IWorkbenchWindow window) {
 		IAction action = new NewWizardShortcutAction(window, descriptor);
 		return new ActionContributionItem(action);
 	}
@@ -368,8 +388,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @return the appropriate {@link IContributionItem} for the given
 	 *         perspective
 	 */
-	private static ActionContributionItem getIContributionItem(IPerspectiveDescriptor descriptor,
-			IWorkbenchWindow window) {
+	private static ActionContributionItem getIContributionItem(
+			IPerspectiveDescriptor descriptor, IWorkbenchWindow window) {
 		IAction action = new OpenPerspectiveAction(window, descriptor, null);
 		return new ActionContributionItem(action);
 	}
@@ -378,7 +398,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @param window
 	 * @return the appropriate {@link IContributionItem} for showing views
 	 */
-	private static ActionContributionItem getIContributionItem(IWorkbenchWindow window) {
+	private static ActionContributionItem getIContributionItem(
+			IWorkbenchWindow window) {
 		IAction action = ActionFactory.SHOW_VIEW_MENU.create(window);
 		return new ActionContributionItem(action);
 	}
@@ -398,17 +419,20 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		private Object descriptor;
 
 		public ShortcutItem(String label, IWizardDescriptor descriptor) {
-			super(label, CustomizePerspectiveDialog.getIContributionItem(descriptor, window));
+			super(label, CustomizePerspectiveDialog.getIContributionItem(
+					descriptor, window));
 			this.descriptor = descriptor;
 		}
 
 		public ShortcutItem(String label, IPerspectiveDescriptor descriptor) {
-			super(label, CustomizePerspectiveDialog.getIContributionItem(descriptor, window));
+			super(label, CustomizePerspectiveDialog.getIContributionItem(
+					descriptor, window));
 			this.descriptor = descriptor;
 		}
 
 		public ShortcutItem(String label, IViewDescriptor descriptor) {
-			super(label, CustomizePerspectiveDialog.getIContributionItem(window));
+			super(label, CustomizePerspectiveDialog
+					.getIContributionItem(window));
 			this.descriptor = descriptor;
 		}
 
@@ -444,14 +468,15 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	private class Category extends TreeItem {
 
 		/** ShortcutItems which are contributed in this Category */
-		private List<DisplayItem> contributionItems;
+		private List contributionItems;
 
 		public Category(String label) {
-			treeManager.super(label == null ? null : DialogUtil.removeAccel(removeShortcut(label)));
-			this.contributionItems = new ArrayList<DisplayItem>();
+			treeManager.super(label == null ? null : DialogUtil
+					.removeAccel(removeShortcut(label)));
+			this.contributionItems = new ArrayList();
 		}
 
-		public List<DisplayItem> getContributionItems() {
+		public List getContributionItems() {
 			return contributionItems;
 		}
 
@@ -474,8 +499,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		 * states need to change as a result of their ShortcutItems.
 		 */
 		public void update() {
-			for (Iterator<DisplayItem> i = contributionItems.iterator(); i.hasNext();) {
-				DisplayItem item = i.next();
+			for (Iterator i = contributionItems.iterator(); i.hasNext();) {
+				DisplayItem item = (DisplayItem) i.next();
 				if (item.getState()) {
 					this.setCheckState(true);
 					return;
@@ -492,10 +517,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		 * @param state
 		 *            The state to set this branch to.
 		 */
-		@SuppressWarnings("rawtypes")
 		public void setItemsState(boolean state) {
-			for (Iterator<DisplayItem> i = contributionItems.iterator(); i.hasNext();) {
-				DisplayItem item = i.next();
+			for (Iterator i = contributionItems.iterator(); i.hasNext();) {
+				DisplayItem item = (DisplayItem) i.next();
 				item.setCheckState(state);
 			}
 			for (Iterator i = getChildren().iterator(); i.hasNext();) {
@@ -517,16 +541,16 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		private ActionSetDescriptor descriptor;
 
 		/** ContributionItems contributed by this action set */
-		private List<DisplayItem> contributionItems;
+		private List contributionItems;
 
 		private boolean active;
-
+		
 		private boolean wasChanged = false;
 
 		public ActionSet(ActionSetDescriptor descriptor, boolean active) {
 			this.descriptor = descriptor;
 			this.active = active;
-			this.contributionItems = new ArrayList<DisplayItem>();
+			this.contributionItems = new ArrayList();
 		}
 
 		public void addItem(DisplayItem item) {
@@ -544,20 +568,20 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		public boolean wasChanged() {
 			return wasChanged;
 		}
-
+		
 		public void setActive(boolean active) {
 			boolean wasActive = this.active;
 			this.active = active;
 			if (!active) {
-				for (Iterator<DisplayItem> i = contributionItems.iterator(); i.hasNext();) {
-					DisplayItem item = i.next();
+				for (Iterator i = contributionItems.iterator(); i.hasNext();) {
+					DisplayItem item = (DisplayItem) i.next();
 					item.setCheckState(false);
 				}
 			}
 			if (wasActive != active) {
 				actionSetAvailabilityChanged();
 			}
-
+			
 			wasChanged = true;
 		}
 	}
@@ -568,8 +592,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * 
 	 * @since 3.5
 	 */
-	private class ShortcutLabelProvider extends TreeManager.TreeItemLabelProvider implements
-			ITableLabelProvider {
+	private class ShortcutLabelProvider extends
+			TreeManager.TreeItemLabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0)
 				return this.getImage(element);
@@ -603,11 +627,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @since 3.5
 	 */
 	private static class CategoryCheckProvider implements ICheckStateProvider {
-		@SuppressWarnings("rawtypes")
 		public boolean isChecked(Object element) {
 			Category category = (Category) element;
 
-			if (category.getChildren().isEmpty() && category.getContributionItems().isEmpty())
+			if (category.getChildren().isEmpty()
+					&& category.getContributionItems().isEmpty())
 				return false;
 
 			// To be checked, any sub-Category can be checked.
@@ -618,8 +642,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 
 			// To be checked, any ShortcutItem can be checked.
-			for (Iterator<DisplayItem> i = category.getContributionItems().iterator(); i.hasNext();) {
-				DisplayItem item = i.next();
+			for (Iterator i = category.getContributionItems().iterator(); i
+					.hasNext();) {
+				DisplayItem item = (DisplayItem) i.next();
 				if (item.getState())
 					return true;
 			}
@@ -627,7 +652,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			return false;
 		}
 
-		@SuppressWarnings("rawtypes")
 		public boolean isGrayed(Object element) {
 			boolean hasChecked = false;
 			boolean hasUnchecked = false;
@@ -648,8 +672,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					return true;
 			}
 
-			for (Iterator<DisplayItem> i = category.getContributionItems().iterator(); i.hasNext();) {
-				DisplayItem item = i.next();
+			for (Iterator i = category.getContributionItems().iterator(); i
+					.hasNext();) {
+				DisplayItem item = (DisplayItem) i.next();
 				if (item.getState())
 					hasChecked = true;
 				else
@@ -680,10 +705,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		 * cursor.
 		 */
 		protected boolean shouldCreateToolTip(Event event) {
-			return super.shouldCreateToolTip(event) && getModelElement(event) != null;
+			return super.shouldCreateToolTip(event)
+					&& getModelElement(event) != null;
 		}
 
-		protected Composite createToolTipContentArea(Event event, Composite parent) {
+		protected Composite createToolTipContentArea(Event event,
+				Composite parent) {
 			Object modelElement = getModelElement(event);
 
 			Image iconImage = null;
@@ -698,14 +725,17 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 			// Create the content area
 			Composite composite = new Composite(parent, SWT.NONE);
-			composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			composite.setBackground(parent.getDisplay().getSystemColor(
+					SWT.COLOR_INFO_BACKGROUND));
 			composite.setLayout(new GridLayout(2, false));
 
 			// The title area with the icon (if there is one) and label.
 			Label title = createEntry(composite, iconImage, nameString);
 			title.setFont(tooltipHeading);
-			GridDataFactory.createFrom((GridData) title.getLayoutData())
-					.hint(SWT.DEFAULT, SWT.DEFAULT).minSize(MIN_TOOLTIP_WIDTH, 1).applyTo(title);
+			GridDataFactory.createFrom((GridData)title.getLayoutData())
+				.hint(SWT.DEFAULT, SWT.DEFAULT)
+				.minSize(MIN_TOOLTIP_WIDTH, 1)
+				.applyTo(title);
 
 			// The description (if there is one)
 			String descriptionString = getDescription(modelElement);
@@ -743,15 +773,16 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 
 			Label textLabel = new Label(parent, SWT.WRAP);
-
-			if (icon == null) {
+			
+			if(icon == null) {
 				GridDataFactory.generate(textLabel, 2, 1);
 			} else {
 				GridDataFactory.generate(textLabel, 1, 1);
 			}
-
+			
 			textLabel.setText(text);
-			textLabel.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			textLabel.setBackground(parent.getDisplay().getSystemColor(
+					SWT.COLOR_INFO_BACKGROUND));
 			return textLabel;
 		}
 
@@ -770,7 +801,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		 *            the text to display
 		 * @return the created link
 		 */
-		protected Link createEntryWithLink(Composite parent, Image icon, String text) {
+		protected Link createEntryWithLink(Composite parent, Image icon,
+				String text) {
 			if (icon != null) {
 				Label iconLabel = new Label(parent, SWT.NONE);
 				iconLabel.setImage(icon);
@@ -778,21 +810,20 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 						SWT.COLOR_INFO_BACKGROUND));
 				iconLabel.setData(new GridData());
 			}
-
+			
 			Link textLink = new Link(parent, SWT.WRAP);
 
-			if (icon == null) {
+			if(icon == null) {
 				GridDataFactory.generate(textLink, 2, 1);
 			}
-
+			
 			textLink.setText(text);
-			textLink.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			textLink.setBackground(parent.getDisplay().getSystemColor(
+					SWT.COLOR_INFO_BACKGROUND));
 			return textLink;
 		}
 
-		@SuppressWarnings("unused")
 		protected void addContent(Composite destination, Object modelElement) {
-			// Not called
 		}
 	}
 
@@ -832,14 +863,14 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		private boolean showKeyBindings;
 		private ViewerFilter filter;
 		private TreeViewer v;
-
+		
 		/**
 		 * @param tree
 		 *            The tree for the tooltip to hover over
 		 */
 		private ItemDetailToolTip(TreeViewer v, Tree tree, boolean showActionSet,
 				boolean showKeyBindings, ViewerFilter filter) {
-			super(tree, NO_RECREATE);
+			super(tree,NO_RECREATE);
 			this.tree = tree;
 			this.v = v;
 			this.showActionSet = showActionSet;
@@ -847,15 +878,15 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			this.filter = filter;
 			this.setHideOnMouseDown(false);
 		}
-
+		
 		public Point getLocation(Point tipSize, Event event) {
 			// try to position the tooltip at the bottom of the cell
 			ViewerCell cell = v.getCell(new Point(event.x, event.y));
-
-			if (cell != null) {
-				return tree.toDisplay(event.x, cell.getBounds().y + cell.getBounds().height);
+			
+			if( cell != null ) {
+				return tree.toDisplay(event.x,cell.getBounds().y+cell.getBounds().height);
 			}
-
+			
 			return super.getLocation(tipSize, event);
 		}
 
@@ -863,7 +894,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			// Ensure that the tooltip is hidden when the cell is left
 			return v.getCell(new Point(event.x, event.y));
 		}
-
+		
 		protected void addContent(Composite destination, Object modelElement) {
 			final DisplayItem item = (DisplayItem) modelElement;
 
@@ -871,62 +902,69 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			if (showActionSet) {
 				String text = null;
 				Image image = null;
-
-				if (isEffectivelyAvailable(item, filter)) {
-					if (item.actionSet != null) {
-						// give information on which command group the item is
-						// in
-
-						final String actionSetName = item.getActionSet().descriptor.getLabel();
-
-						text = NLS.bind(WorkbenchMessages.HideItems_itemInActionSet, actionSetName);
+				
+				if(isEffectivelyAvailable(item, filter)) {
+					if(item.actionSet != null) {
+						//give information on which command group the item is in
+						
+						final String actionSetName = item.getActionSet().descriptor
+								.getLabel();
+						
+						text = NLS.bind(
+								WorkbenchMessages.HideItems_itemInActionSet,
+								actionSetName);
 					}
 				} else {
-					// give feedback on why item is unavailable
-
+					//give feedback on why item is unavailable
+					
 					image = warningImageDescriptor.createImage();
-
-					if (item.getChildren().isEmpty()) {
-						// i.e. is a leaf
-
-						final String actionSetName = item.getActionSet().descriptor.getLabel();
-
-						text = NLS.bind(WorkbenchMessages.HideItems_itemInUnavailableActionSet,
+					
+					if (item.getChildren().isEmpty() && item.getActionSet() != null) {
+						//i.e. is a leaf
+						
+						final String actionSetName = item.getActionSet().
+								descriptor.getLabel();
+						
+						text = NLS.bind(
+								WorkbenchMessages.HideItems_itemInUnavailableActionSet,
 								actionSetName);
-
+						
 					} else {
-						// i.e. has children
+						//i.e. has children
 
-						Set<ActionSet> actionGroup = new LinkedHashSet<ActionSet>();
-						collectDescendantCommandGroups(actionGroup, item, filter);
-
+						Set actionGroup = new LinkedHashSet();
+						collectDescendantCommandGroups(actionGroup, item,
+								filter);
+						
 						if (actionGroup.size() == 1) {
-							// i.e. only one child
-							ActionSet actionSet = actionGroup.iterator().next();
+							//i.e. only one child
+							ActionSet actionSet = (ActionSet) actionGroup.
+									iterator().next();
 							text = NLS.bind(
 									WorkbenchMessages.HideItems_unavailableChildCommandGroup,
-									actionSet.descriptor.getId(), actionSet.descriptor.getLabel());
+									actionSet.descriptor.getId(),
+									actionSet.descriptor.getLabel());
 						} else {
-							// i.e. multiple children
+							//i.e. multiple children
 							String commandGroupList = null;
-
-							for (Iterator<ActionSet> i = actionGroup.iterator(); i.hasNext();) {
-								ActionSet actionSet = i.next();
-
+		
+							for (Iterator i = actionGroup.iterator(); i.hasNext();) {
+								ActionSet actionSet = (ActionSet) i.next();
+		
 								// For each action set, make a link for it, set
 								// the href to its id
 								String commandGroupLink = MessageFormat.format(
 										"<a href=\"{0}\">{1}</a>", //$NON-NLS-1$
 										new Object[] { actionSet.descriptor.getId(),
 												actionSet.descriptor.getLabel() });
-
+		
 								if (commandGroupList == null)
 									commandGroupList = commandGroupLink;
 								else
-									commandGroupList = Util.createList(commandGroupList,
-											commandGroupLink);
+									commandGroupList = Util.createList(
+											commandGroupList, commandGroupLink);
 							}
-
+							
 							commandGroupList = NLS.bind(
 									"{0}{1}", new Object[] { NEW_LINE, commandGroupList }); //$NON-NLS-1$
 							text = NLS.bind(
@@ -935,16 +973,17 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 						}
 					}
 				}
-
-				if (text != null) {
+				
+				if(text != null) {
 					Link link = createEntryWithLink(destination, image, text);
 					link.addSelectionListener(new SelectionListener() {
 						public void widgetDefaultSelected(SelectionEvent e) {
 							widgetSelected(e);
 						}
-
+	
 						public void widgetSelected(SelectionEvent e) {
-							ActionSet actionSet = idToActionSet.get(e.text);
+							ActionSet actionSet = (ActionSet) idToActionSet
+									.get(e.text);
 							if (actionSet == null) {
 								hide();
 								viewActionSet(item);
@@ -977,11 +1016,14 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 					if (bindings.length > 0) {
 						if (available)
-							text = NLS.bind(WorkbenchMessages.HideItems_keyBindings, keybindings);
-						else
 							text = NLS.bind(
-									WorkbenchMessages.HideItems_keyBindingsActionSetUnavailable,
+									WorkbenchMessages.HideItems_keyBindings,
 									keybindings);
+						else
+							text = NLS
+									.bind(
+											WorkbenchMessages.HideItems_keyBindingsActionSetUnavailable,
+											keybindings);
 					} else {
 						if (available)
 							text = WorkbenchMessages.HideItems_noKeyBindings;
@@ -993,32 +1035,37 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					// bindings
 					final Object highlight;
 					if (bindings.length == 0) {
-						Map<String, String> parameters = new HashMap<String, String>();
+						Map parameters = new HashMap();
 
 						// If item is a shortcut, need to add a parameter to go
 						// to
 						// the correct item
 						if (item instanceof ShortcutItem) {
 							if (isNewWizard(item)) {
-								parameters.put(IWorkbenchCommandConstants.FILE_NEW_PARM_WIZARDID,
+								parameters.put(
+												IWorkbenchCommandConstants.FILE_NEW_PARM_WIZARDID,
 										getParamID(item));
 							} else if (isShowPerspective(item)) {
 								parameters
-										.put(IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID,
+										.put(
+												IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID,
 												getParamID(item));
 							} else if (isShowView(item)) {
-								parameters.put(ShowViewMenu.VIEW_ID_PARM, getParamID(item));
+								parameters.put(
+										IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID,
+										getParamID(item));
 							}
 						}
 
-						ParameterizedCommand pc = ParameterizedCommand.generateCommand(command,
-								parameters);
+						ParameterizedCommand pc = ParameterizedCommand
+								.generateCommand(command, parameters);
 						highlight = pc;
 					} else {
 						highlight = bindings[0];
 					}
 
-					Link bindingLink = createEntryWithLink(destination, null, text);
+					Link bindingLink = createEntryWithLink(destination, null,
+							text);
 
 					bindingLink.addSelectionListener(new SelectionListener() {
 						public void widgetDefaultSelected(SelectionEvent e) {
@@ -1026,8 +1073,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 						}
 
 						public void widgetSelected(SelectionEvent e) {
-							PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(
-									getShell(), KEYS_PREFERENCE_PAGE_ID, new String[0], highlight);
+							PreferenceDialog dialog = PreferencesUtil
+									.createPreferenceDialogOn(getShell(),
+											KEYS_PREFERENCE_PAGE_ID,
+											new String[0], highlight);
 							hide();
 							dialog.open();
 						}
@@ -1039,25 +1088,27 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			if (item instanceof DynamicContributionItem) {
 				DynamicContributionItem dynamic = ((DynamicContributionItem) item);
 				StringBuffer text = new StringBuffer();
-				final List<MenuItem> currentItems = dynamic.getCurrentItems();
+				final List currentItems = dynamic.getCurrentItems();
 
 				if (currentItems.size() > 0) {
 					// Create a list of the currently displayed items
 					text.append(WorkbenchMessages.HideItems_dynamicItemList);
-					for (Iterator<MenuItem> i = currentItems.iterator(); i.hasNext();) {
-						MenuItem menuItem = i.next();
+					for (Iterator i = currentItems.iterator(); i.hasNext();) {
+						MenuItem menuItem = (MenuItem) i.next();
 						text.append(NEW_LINE).append("- ") //$NON-NLS-1$
 								.append(menuItem.getText());
 					}
 				} else {
-					text.append(WorkbenchMessages.HideItems_dynamicItemEmptyList);
+					text
+							.append(WorkbenchMessages.HideItems_dynamicItemEmptyList);
 				}
 				createEntry(destination, null, text.toString());
 			}
 		}
 
 		protected Object getModelElement(Event event) {
-			org.eclipse.swt.widgets.TreeItem treeItem = tree.getItem(new Point(event.x, event.y));
+			org.eclipse.swt.widgets.TreeItem treeItem = tree.getItem(new Point(
+					event.x, event.y));
 			if (treeItem == null)
 				return null;
 			return treeItem.getData();
@@ -1076,7 +1127,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			this.actionSet = actionSet;
 		}
 
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
 			if (!(element instanceof DisplayItem))
 				return false;
 			if (actionSet == null)
@@ -1091,11 +1143,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * 
 	 * @since 3.5
 	 */
-	private static class FilteredTreeCheckProvider implements ICheckStateProvider {
+	private static class FilteredTreeCheckProvider implements
+			ICheckStateProvider {
 		private ITreeContentProvider contentProvider;
 		private ViewerFilter filter;
 
-		public FilteredTreeCheckProvider(ITreeContentProvider contentProvider, ViewerFilter filter) {
+		public FilteredTreeCheckProvider(ITreeContentProvider contentProvider,
+				ViewerFilter filter) {
 			this.contentProvider = contentProvider;
 			this.filter = filter;
 		}
@@ -1120,18 +1174,20 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * 
 	 * @since 3.5
 	 */
-	private static class FilteredViewerCheckListener implements ICheckStateListener {
+	private static class FilteredViewerCheckListener implements
+			ICheckStateListener {
 		private ITreeContentProvider contentProvider;
 		private ViewerFilter filter;
 
-		public FilteredViewerCheckListener(ITreeContentProvider contentProvider, ViewerFilter filter) {
+		public FilteredViewerCheckListener(
+				ITreeContentProvider contentProvider, ViewerFilter filter) {
 			this.contentProvider = contentProvider;
 			this.filter = filter;
 		}
 
 		public void checkStateChanged(CheckStateChangedEvent event) {
-			setAllLeafs((DisplayItem) event.getElement(), event.getChecked(), contentProvider,
-					filter);
+			setAllLeafs((DisplayItem) event.getElement(), event
+					.getChecked(), contentProvider, filter);
 		}
 	}
 
@@ -1147,7 +1203,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		private final ActionSetFilter filter;
 		private final StructuredViewer viewer;
 
-		private FilteredModelCheckListener(ActionSetFilter filter, StructuredViewer viewer) {
+		private FilteredModelCheckListener(ActionSetFilter filter,
+				StructuredViewer viewer) {
 			this.filter = filter;
 			this.viewer = viewer;
 		}
@@ -1176,7 +1233,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * 
 	 * @since 3.5
 	 */
-	private class UnavailableContributionItemCheckListener implements ICheckStateListener {
+	private class UnavailableContributionItemCheckListener implements
+			ICheckStateListener {
 		private CheckboxTreeViewer viewer;
 		private ICheckStateListener originalListener;
 
@@ -1186,8 +1244,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		 * @param originalListener
 		 *            the listener to invoke upon a legal action
 		 */
-		public UnavailableContributionItemCheckListener(CheckboxTreeViewer viewer,
-				ICheckStateListener originalListener) {
+		public UnavailableContributionItemCheckListener(
+				CheckboxTreeViewer viewer, ICheckStateListener originalListener) {
 			this.viewer = viewer;
 			this.originalListener = originalListener;
 		}
@@ -1195,8 +1253,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			DisplayItem item = (DisplayItem) event.getElement();
 			ViewerFilter[] filters = viewer.getFilters();
-			boolean isEffectivelyAvailable = isEffectivelyAvailable(item,
-					filters.length > 0 ? filters[0] : null);
+			boolean isEffectivelyAvailable = isEffectivelyAvailable(item, filters.length > 0 ? filters[0] : null);
 
 			if (isEffectivelyAvailable) {
 				// legal action - invoke the listener which will do actual work
@@ -1211,33 +1268,42 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				// the case where this item is unavailable because of its
 				// children
 				if (viewer.getExpandedState(item)) {
-					MessageBox mb = new MessageBox(viewer.getControl().getShell(), SWT.OK
-							| SWT.ICON_WARNING | SWT.SHEET);
-					mb.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
-					mb.setMessage(NLS.bind(
-							WorkbenchMessages.HideItemsCannotMakeVisible_unavailableChildrenText,
-							item.getLabel()));
+					MessageBox mb = new MessageBox(viewer.getControl()
+							.getShell(), SWT.OK | SWT.ICON_WARNING | SWT.SHEET);
+					mb
+							.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
+					mb
+							.setMessage(NLS
+									.bind(
+											WorkbenchMessages.HideItemsCannotMakeVisible_unavailableChildrenText,
+											item.getLabel()));
 					mb.open();
 				} else {
-					MessageBox mb = new MessageBox(viewer.getControl().getShell(), SWT.OK
-							| SWT.ICON_WARNING | SWT.SHEET);
-					mb.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
-					mb.setMessage(NLS.bind(
-							WorkbenchMessages.HideItemsCannotMakeVisible_unavailableChildrenText,
-							item.getLabel()));
+					MessageBox mb = new MessageBox(viewer.getControl()
+							.getShell(), SWT.OK | SWT.ICON_WARNING | SWT.SHEET);
+					mb
+							.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
+					mb
+							.setMessage(NLS
+									.bind(
+											WorkbenchMessages.HideItemsCannotMakeVisible_unavailableChildrenText,
+											item.getLabel()));
 					mb.open();
 				}
 			} else {
 				// the case where this item is unavailable because it belongs to
 				// an unavailable action set
-				MessageBox mb = new MessageBox(viewer.getControl().getShell(), SWT.YES | SWT.NO
-						| SWT.ICON_WARNING | SWT.SHEET);
-				mb.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
-				final String errorExplanation = NLS.bind(
-						WorkbenchMessages.HideItemsCannotMakeVisible_unavailableCommandGroupText,
-						item.getLabel(), item.getActionSet());
+				MessageBox mb = new MessageBox(viewer.getControl().getShell(),
+						SWT.YES | SWT.NO | SWT.ICON_WARNING | SWT.SHEET);
+				mb
+						.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
+				final String errorExplanation = NLS
+						.bind(
+								WorkbenchMessages.HideItemsCannotMakeVisible_unavailableCommandGroupText,
+								item.getLabel(), item.getActionSet());
 				final String message = NLS
-						.bind("{0}{1}{1}{2}", new Object[] { errorExplanation, NEW_LINE, WorkbenchMessages.HideItemsCannotMakeVisible_switchToCommandGroupTab }); //$NON-NLS-1$
+						.bind(
+								"{0}{1}{1}{2}", new Object[] { errorExplanation, NEW_LINE, WorkbenchMessages.HideItemsCannotMakeVisible_switchToCommandGroupTab }); //$NON-NLS-1$
 				mb.setMessage(message);
 				if (mb.open() == SWT.YES) {
 					viewActionSet(item);
@@ -1254,8 +1320,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @since 3.5
 	 * 
 	 */
-	private class GrayOutUnavailableLabelProvider extends TreeManager.TreeItemLabelProvider
-			implements IColorProvider {
+	private class GrayOutUnavailableLabelProvider extends
+			TreeManager.TreeItemLabelProvider implements IColorProvider {
 		private Display display;
 		private ViewerFilter filter;
 
@@ -1281,9 +1347,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			if (element instanceof DisplayItem && actual != null) {
 				DisplayItem item = (DisplayItem) element;
 				if (!isEffectivelyAvailable(item, filter)) {
-					ImageDescriptor original = ImageDescriptor.createFromImage(actual);
-					ImageDescriptor disable = ImageDescriptor.createWithFlags(original,
-							SWT.IMAGE_DISABLE);
+					ImageDescriptor original = ImageDescriptor
+							.createFromImage(actual);
+					ImageDescriptor disable = ImageDescriptor.createWithFlags(
+							original, SWT.IMAGE_DISABLE);
 					Image newImage = disable.createImage();
 					toDispose.add(newImage);
 					return newImage;
@@ -1302,7 +1369,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * 
 	 * @since 3.5
 	 */
-	public class CustomizeActionBars implements IActionBarConfigurer2, IActionBars2 {
+	public class CustomizeActionBars implements IActionBarConfigurer2,
+			IActionBars2 {
 
 		IWorkbenchWindowConfigurer configurer;
 
@@ -1384,10 +1452,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		}
 	}
 
-	MApplication application;
-	MenuManagerRenderer menuMngrRenderer;
-	ToolBarManagerRenderer toolbarMngrRenderer;
-
 	/**
 	 * Create an instance of this Dialog.
 	 * 
@@ -1396,20 +1460,22 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @param persp
 	 *            the perspective
 	 * @param context
+	 *            The runtime context for this window
 	 */
-	public CustomizePerspectiveDialog(IWorkbenchWindowConfigurer configurer,
-			IPerspectiveDescriptor persp, IEclipseContext context) {
+	public CustomizePerspectiveDialog(IWorkbenchWindowConfigurer configurer, Perspective persp,
+			IEclipseContext context) {
 		super(configurer.getWindow().getShell());
-		this.context = context;
 		this.treeManager = new TreeManager();
-		// this.configurer = configurer;
+		this.configurer = configurer;
+		this.context = context;
 		perspective = persp;
 		window = (WorkbenchWindow) configurer.getWindow();
 		application = context.get(MApplication.class);
 		menuMngrRenderer = context.get(MenuManagerRenderer.class);
 		toolbarMngrRenderer = context.get(ToolBarManagerRenderer.class);
+		resUtils = (ISWTResourceUtilities) context.get(IResourceUtilities.class);
 
-		toDispose = new HashSet<Resource>();
+		toDispose = new HashSet();
 
 		initializeIcons();
 
@@ -1417,31 +1483,21 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		loadMenuAndToolbarStructure();
 	}
 
-	private ImageDescriptor getImageDescFromURI(String iconUri) {
-		ImageDescriptor imgDesc = null;
-		try {
-			imgDesc = ImageDescriptor.createFromURL(new URL(iconUri));
-		} catch (MalformedURLException e) {
-			e.printStackTrace();// TODO:
-		}
-		return imgDesc;
-	}
-
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		String title = perspective.getLabel();
+		String title = perspective.getDesc().getLabel();
 
 		title = NLS.bind(WorkbenchMessages.ActionSetSelection_customize, title);
 		shell.setText(title);
-		window.getWorkbench().getHelpSystem()
-				.setHelp(shell, IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
+		window.getWorkbench().getHelpSystem().setHelp(shell,
+				IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
 	}
 
 	protected Control createDialogArea(Composite parent) {
 		// Create a font for titles in the tooltips
 		FontData[] defaultFont = JFaceResources.getDefaultFont().getFontData();
-		FontData boldFontData = new FontData(defaultFont[0].getName(), defaultFont[0].getHeight(),
-				SWT.BOLD);
+		FontData boldFontData = new FontData(defaultFont[0].getName(),
+				defaultFont[0].getHeight(), SWT.BOLD);
 		tooltipHeading = new Font(parent.getDisplay(), boldFontData);
 
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -1466,7 +1522,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		// Action Set Availability Page
 		actionSetTab = new TabItem(tabFolder, SWT.NONE);
-		actionSetTab.setText(WorkbenchMessages.ActionSetSelection_actionSetsTab);
+		actionSetTab
+				.setText(WorkbenchMessages.ActionSetSelection_actionSetsTab);
 		actionSetTab.setControl(createActionSetAvailabilityPage(tabFolder));
 
 		// Shortcuts Page
@@ -1490,8 +1547,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		// Select... label
 		Label label = new Label(menusComposite, SWT.WRAP);
-		label.setText(NLS.bind(WorkbenchMessages.Shortcuts_selectShortcutsLabel,
-				perspective.getLabel()));
+		label.setText(NLS.bind(
+				WorkbenchMessages.Shortcuts_selectShortcutsLabel, perspective
+						.getDesc().getLabel()));
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		label.setLayoutData(data);
 
@@ -1515,7 +1573,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		Combo menusCombo = new Combo(menusGroup, SWT.READ_ONLY);
-		menusCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		menusCombo
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		ComboViewer menusViewer = new ComboViewer(menusCombo);
 		menusViewer.setContentProvider(TreeManager.getTreeContentProvider());
 		menusViewer.setLabelProvider(TreeManager.getLabelProvider());
@@ -1525,11 +1584,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		label.setText(WorkbenchMessages.Shortcuts_availableCategories);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		final CheckboxTreeViewer menuCategoriesViewer = new CheckboxTreeViewer(menusGroup);
+		final CheckboxTreeViewer menuCategoriesViewer = new CheckboxTreeViewer(
+				menusGroup);
 		menuCategoriesViewer.getControl().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
 		menuCategoriesViewer.setLabelProvider(TreeManager.getLabelProvider());
-		menuCategoriesViewer.setContentProvider(TreeManager.getTreeContentProvider());
+		menuCategoriesViewer.setContentProvider(TreeManager
+				.getTreeContentProvider());
 		menuCategoriesViewer.setComparator(new WorkbenchViewerComparator());
 		menuCategoriesViewer.setCheckStateProvider(new CategoryCheckProvider());
 		menuCategoriesViewer.addCheckStateListener(new ICheckStateListener() {
@@ -1548,7 +1609,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					ShortcutItem item = (ShortcutItem) changedItem;
 					if (item.getCategory() != null) {
 						item.getCategory().update();
-						updateCategoryAndParents(menuCategoriesViewer, item.getCategory());
+						updateCategoryAndParents(menuCategoriesViewer, item
+								.getCategory());
 					}
 				}
 			}
@@ -1560,52 +1622,61 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		menuItemsGroup.setLayout(layout);
-		menuItemsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		menuItemsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
 
 		label = new Label(menuItemsGroup, SWT.WRAP);
 		label.setText(WorkbenchMessages.Shortcuts_allShortcuts);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		final CheckboxTableViewer menuItemsViewer = CheckboxTableViewer.newCheckList(
-				menuItemsGroup, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		final CheckboxTableViewer menuItemsViewer = CheckboxTableViewer
+				.newCheckList(menuItemsGroup, SWT.BORDER | SWT.H_SCROLL
+						| SWT.V_SCROLL);
 		Table menuTable = menuItemsViewer.getTable();
 		menuTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		menuItemsViewer.setLabelProvider(new ShortcutLabelProvider());
-		menuItemsViewer.setCheckStateProvider(TreeManager.getCheckStateProvider());
-		menuItemsViewer.addCheckStateListener(treeManager.getViewerCheckStateListener());
+		menuItemsViewer.setCheckStateProvider(TreeManager
+				.getCheckStateProvider());
+		menuItemsViewer.addCheckStateListener(treeManager
+				.getViewerCheckStateListener());
 		treeManager.getCheckListener(menuItemsViewer);
 
-		menuItemsViewer.setContentProvider(new TreeManager.TreeItemContentProvider() {
-			public Object[] getChildren(Object parentElement) {
-				if (parentElement instanceof Category)
-					return ((Category) parentElement).getContributionItems().toArray();
-				return super.getChildren(parentElement);
-			}
-		});
+		menuItemsViewer
+				.setContentProvider(new TreeManager.TreeItemContentProvider() {
+					public Object[] getChildren(Object parentElement) {
+						if (parentElement instanceof Category)
+							return ((Category) parentElement)
+									.getContributionItems().toArray();
+						return super.getChildren(parentElement);
+					}
+				});
 		menuItemsViewer.setComparator(new WorkbenchViewerComparator());
 
 		// update menuCategoriesViewer, and menuItemsViewer on a change to
 		// menusViewer
-		menusViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				Category category = (Category) ((IStructuredSelection) event.getSelection())
-						.getFirstElement();
-				menuCategoriesViewer.setInput(category);
-				menuItemsViewer.setInput(category);
-				if (category.getChildren().size() != 0) {
-					setSelectionOn(menuCategoriesViewer, category.getChildren().get(0));
-				}
-			}
-		});
+		menusViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						Category category = (Category) ((IStructuredSelection) event
+								.getSelection()).getFirstElement();
+						menuCategoriesViewer.setInput(category);
+						menuItemsViewer.setInput(category);
+						if (category.getChildren().size() != 0) {
+							setSelectionOn(menuCategoriesViewer, category
+									.getChildren().get(0));
+						}
+					}
+				});
 
 		// update menuItemsViewer on a change to menuCategoriesViewer
-		menuCategoriesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				Category category = (Category) ((IStructuredSelection) event.getSelection())
-						.getFirstElement();
-				menuItemsViewer.setInput(category);
-			}
-		});
+		menuCategoriesViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						Category category = (Category) ((IStructuredSelection) event
+								.getSelection()).getFirstElement();
+						menuItemsViewer.setInput(category);
+					}
+				});
 
 		menuTable.setHeaderVisible(true);
 		int[] columnWidths = new int[shortcutMenuColumnWidths.length];
@@ -1638,15 +1709,18 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		// Select... label
 		Label label = new Label(actionSetsComposite, SWT.WRAP);
-		label.setText(NLS.bind(WorkbenchMessages.ActionSetSelection_selectActionSetsLabel,
-				perspective.getLabel()));
+		label.setText(NLS.bind(
+				WorkbenchMessages.ActionSetSelection_selectActionSetsLabel,
+				perspective.getDesc().getLabel()));
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		label.setLayoutData(data);
 
-		Label sep = new Label(actionSetsComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		Label sep = new Label(actionSetsComposite, SWT.HORIZONTAL
+				| SWT.SEPARATOR);
 		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		SashForm sashComposite = new SashForm(actionSetsComposite, SWT.HORIZONTAL);
+		SashForm sashComposite = new SashForm(actionSetsComposite,
+				SWT.HORIZONTAL);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		sashComposite.setLayoutData(data);
 
@@ -1656,16 +1730,19 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		actionSetGroup.setLayout(layout);
-		actionSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		actionSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
 
 		label = new Label(actionSetGroup, SWT.WRAP);
 		label.setText(WorkbenchMessages.ActionSetSelection_availableActionSets);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		final CheckboxTableViewer actionSetsViewer = CheckboxTableViewer.newCheckList(
-				actionSetGroup, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		final CheckboxTableViewer actionSetsViewer = CheckboxTableViewer
+				.newCheckList(actionSetGroup, SWT.BORDER | SWT.H_SCROLL
+						| SWT.V_SCROLL);
 		actionSetAvailabilityTable = actionSetsViewer;
-		actionSetsViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		actionSetsViewer.getTable().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
 		actionSetsViewer.setLabelProvider(new LabelProvider());
 		actionSetsViewer.setContentProvider(new ArrayContentProvider());
 		actionSetsViewer.setComparator(new WorkbenchViewerComparator());
@@ -1687,10 +1764,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		// Filter to show only branches necessary for the selected action set.
 		final ViewerFilter setFilter = new ViewerFilter() {
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
+			public boolean select(Viewer viewer, Object parentElement,
+					Object element) {
 				if (selectedActionSet[0] == null)
 					return false;
-				return includeInSetStructure((DisplayItem) element, selectedActionSet[0]);
+				return includeInSetStructure((DisplayItem) element,
+						selectedActionSet[0]);
 			}
 		};
 
@@ -1700,9 +1779,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				final ActionSet actionSet = (ActionSet) event.getElement();
 				if (event.getChecked()) {
 					actionSet.setActive(true);
-					for (Iterator<DisplayItem> i = actionSet.contributionItems.iterator(); i
+					for (Iterator i = actionSet.contributionItems.iterator(); i
 							.hasNext();) {
-						DisplayItem item = i.next();
+						DisplayItem item = (DisplayItem) i.next();
 						item.setCheckState(true);
 					}
 				} else {
@@ -1727,7 +1806,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		menubarGroup.setLayout(layout);
-		menubarGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		menubarGroup
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		label = new Label(menubarGroup, SWT.WRAP);
 		label.setText(WorkbenchMessages.ActionSetSelection_menubarActions);
@@ -1735,10 +1815,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		final TreeViewer actionSetMenuViewer = new TreeViewer(menubarGroup);
 		actionSetMenuViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-		actionSetMenuViewer.getControl()
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		actionSetMenuViewer.getControl().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
 		actionSetMenuViewer.setUseHashlookup(true);
-		actionSetMenuViewer.setContentProvider(TreeManager.getTreeContentProvider());
+		actionSetMenuViewer.setContentProvider(TreeManager
+				.getTreeContentProvider());
 		actionSetMenuViewer.setLabelProvider(TreeManager.getLabelProvider());
 		actionSetMenuViewer.addFilter(setFilter);
 		actionSetMenuViewer.setInput(menuItems);
@@ -1751,17 +1832,20 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		toolbarGroup.setLayout(layout);
-		toolbarGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		toolbarGroup
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		label = new Label(toolbarGroup, SWT.WRAP);
 		label.setText(WorkbenchMessages.ActionSetSelection_toolbarActions);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		final TreeViewer actionSetToolbarViewer = new TreeViewer(toolbarGroup);
-		actionSetToolbarViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		actionSetToolbarViewer
+				.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		actionSetToolbarViewer.getControl().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
-		actionSetToolbarViewer.setContentProvider(TreeManager.getTreeContentProvider());
+		actionSetToolbarViewer.setContentProvider(TreeManager
+				.getTreeContentProvider());
 		actionSetToolbarViewer.setLabelProvider(TreeManager.getLabelProvider());
 		actionSetToolbarViewer.addFilter(setFilter);
 		actionSetToolbarViewer.setInput(toolBarItems);
@@ -1771,14 +1855,15 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		// Updates the menu item and toolbar items tree viewers when the
 		// selection changes
-		actionSetsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				selectedActionSet[0] = (ActionSet) ((IStructuredSelection) event.getSelection())
-						.getFirstElement();
-				actionSetMenuViewer.setInput(menuItems);
-				actionSetToolbarViewer.setInput(toolBarItems);
-			}
-		});
+		actionSetsViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						selectedActionSet[0] = (ActionSet) ((IStructuredSelection) event
+								.getSelection()).getFirstElement();
+						actionSetMenuViewer.setInput(menuItems);
+						actionSetToolbarViewer.setInput(toolBarItems);
+					}
+				});
 
 		sashComposite.setWeights(new int[] { 30, 70 });
 
@@ -1801,7 +1886,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		label.setLayoutData(data);
 
-		Label sep = new Label(hideMenuItemsComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		Label sep = new Label(hideMenuItemsComposite, SWT.HORIZONTAL
+				| SWT.SEPARATOR);
 		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		// Main contents of tab
@@ -1817,10 +1903,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		// Update the viewer when the model changes
 		treeManager.getCheckListener(menuStructureViewer1); // To update ctv on
-		// model changes
+															// model changes
 
 		// Simply grab the checkstate out of the model
-		menuStructureViewer1.setCheckStateProvider(TreeManager.getCheckStateProvider());
+		menuStructureViewer1.setCheckStateProvider(TreeManager
+				.getCheckStateProvider());
 
 		// Init with input
 		menuStructureViewer1.setInput(menuItems);
@@ -1842,26 +1929,31 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		// Filter to only show items in the current action set
 		final ActionSetFilter menuStructureFilterByActionSet = new ActionSetFilter();
 
-		final Composite menuStructureComposite = createItemStructureGroup(advancedComposite,
+		final Composite menuStructureComposite = createItemStructureGroup(
+				advancedComposite,
 				WorkbenchMessages.HideMenuItems_menuStructure);
 		final ICheckStateListener menuStructureFilter = new FilteredViewerCheckListener(
-				TreeManager.getTreeContentProvider(), menuStructureFilterByActionSet);
-		menuStructureViewer2 = initStructureViewer(menuStructureComposite, menuStructureFilter,
+				TreeManager.getTreeContentProvider(),
 				menuStructureFilterByActionSet);
+		menuStructureViewer2 = initStructureViewer(menuStructureComposite,
+				menuStructureFilter, menuStructureFilterByActionSet);
 
-		treeManager.addListener(new FilteredModelCheckListener(menuStructureFilterByActionSet,
-				menuStructureViewer2));
+		treeManager.addListener(new FilteredModelCheckListener(
+				menuStructureFilterByActionSet, menuStructureViewer2));
 
 		menuStructureViewer2.addFilter(menuStructureFilterByActionSet);
 
 		// Update filter when a new action set is selected
-		actionSetViewer.addSelectionChangedListener(new ActionSetSelectionChangedListener(
-				menuStructureViewer2, menuStructureFilterByActionSet));
+		actionSetViewer
+				.addSelectionChangedListener(new ActionSetSelectionChangedListener(
+						menuStructureViewer2, menuStructureFilterByActionSet));
 
 		// Check state provider to emulate standard SWT
 		// behaviour on visual tree
-		menuStructureViewer2.setCheckStateProvider(new FilteredTreeCheckProvider(TreeManager
-				.getTreeContentProvider(), menuStructureFilterByActionSet));
+		menuStructureViewer2
+				.setCheckStateProvider(new FilteredTreeCheckProvider(
+						TreeManager.getTreeContentProvider(),
+						menuStructureFilterByActionSet));
 
 		// Init input
 		menuStructureViewer2.setInput(menuItems);
@@ -1880,37 +1972,42 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 		});
 
-		final Button showCommandGroupFilterButton = new Button(hideMenuItemsComposite, SWT.CHECK);
-		showCommandGroupFilterButton.setText(WorkbenchMessages.HideItems_turnOnActionSets);
-		showCommandGroupFilterButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
+		final Button showCommandGroupFilterButton = new Button(
+				hideMenuItemsComposite, SWT.CHECK);
+		showCommandGroupFilterButton
+				.setText(WorkbenchMessages.HideItems_turnOnActionSets);
+		showCommandGroupFilterButton
+				.addSelectionListener(new SelectionListener() {
+					public void widgetDefaultSelected(SelectionEvent e) {
+					}
 
-			public void widgetSelected(SelectionEvent e) {
-				if (showCommandGroupFilterButton.getSelection()) {
-					Object o = ((StructuredSelection) menuStructureViewer1.getSelection())
-							.getFirstElement();
-					ActionSet initSelectAS = null;
-					DisplayItem initSelectCI = null;
-					if (o instanceof DisplayItem) {
-						initSelectCI = ((DisplayItem) o);
-						initSelectAS = initSelectCI.getActionSet();
+					public void widgetSelected(SelectionEvent e) {
+						if (showCommandGroupFilterButton.getSelection()) {
+							Object o = ((StructuredSelection) menuStructureViewer1
+									.getSelection()).getFirstElement();
+							ActionSet initSelectAS = null;
+							DisplayItem initSelectCI = null;
+							if (o instanceof DisplayItem) {
+								initSelectCI = ((DisplayItem) o);
+								initSelectAS = initSelectCI.getActionSet();
+							}
+							if (initSelectAS == null) {
+								initSelectAS = (ActionSet) actionSetViewer
+										.getElementAt(0);
+							}
+							setSelectionOn(actionSetViewer, initSelectAS);
+							actionSetViewer.reveal(initSelectAS);
+							if (initSelectCI != null) {
+								setSelectionOn(menuStructureViewer2,
+										initSelectCI);
+								menuStructureViewer2.reveal(initSelectCI);
+							}
+							book.showPage(advancedComposite);
+						} else {
+							book.showPage(simpleComposite);
+						}
 					}
-					if (initSelectAS == null) {
-						initSelectAS = (ActionSet) actionSetViewer.getElementAt(0);
-					}
-					setSelectionOn(actionSetViewer, initSelectAS);
-					actionSetViewer.reveal(initSelectAS);
-					if (initSelectCI != null) {
-						setSelectionOn(menuStructureViewer2, initSelectCI);
-						menuStructureViewer2.reveal(initSelectCI);
-					}
-					book.showPage(advancedComposite);
-				} else {
-					book.showPage(simpleComposite);
-				}
-			}
-		});
+				});
 
 		book.showPage(simpleComposite);
 		advancedComposite.setWeights(new int[] { 30, 70 });
@@ -1930,11 +2027,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		// Label for entire tab
 		Label label = new Label(hideToolbarItemsComposite, SWT.WRAP);
-		label.setText(WorkbenchMessages.HideToolBarItems_chooseToolBarItemsLabel);
+		label
+				.setText(WorkbenchMessages.HideToolBarItems_chooseToolBarItemsLabel);
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		label.setLayoutData(data);
 
-		Label sep = new Label(hideToolbarItemsComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		Label sep = new Label(hideToolbarItemsComposite, SWT.HORIZONTAL
+				| SWT.SEPARATOR);
 		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		// Main contents of tab
@@ -1950,11 +2049,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		// Update the viewer when the model changes
 		treeManager.getCheckListener(toolbarStructureViewer1); // To update ctv
-		// on model
-		// changes
+																// on model
+																// changes
 
 		// Simply grab the check state out of the model
-		toolbarStructureViewer1.setCheckStateProvider(TreeManager.getCheckStateProvider());
+		toolbarStructureViewer1.setCheckStateProvider(TreeManager
+				.getCheckStateProvider());
 
 		// Init with input
 		toolbarStructureViewer1.setInput(toolBarItems);
@@ -1976,26 +2076,33 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		// Filter to only show items in the current action set
 		final ActionSetFilter toolbarStructureFilterByActionSet = new ActionSetFilter();
 
-		final Composite toolbarStructureComposite = createItemStructureGroup(advancedComposite,
+		final Composite toolbarStructureComposite = createItemStructureGroup(
+				advancedComposite,
 				WorkbenchMessages.HideToolBarItems_toolBarStructure);
 		final ICheckStateListener toolbarStructureFilter = new FilteredViewerCheckListener(
-				TreeManager.getTreeContentProvider(), toolbarStructureFilterByActionSet);
-		toolbarStructureViewer2 = initStructureViewer(toolbarStructureComposite,
-				toolbarStructureFilter, toolbarStructureFilterByActionSet);
+				TreeManager.getTreeContentProvider(),
+				toolbarStructureFilterByActionSet);
+		toolbarStructureViewer2 = initStructureViewer(
+				toolbarStructureComposite, toolbarStructureFilter,
+				toolbarStructureFilterByActionSet);
 
 		toolbarStructureViewer2.addFilter(toolbarStructureFilterByActionSet);
 
-		treeManager.addListener(new FilteredModelCheckListener(toolbarStructureFilterByActionSet,
-				toolbarStructureViewer2));
+		treeManager.addListener(new FilteredModelCheckListener(
+				toolbarStructureFilterByActionSet, toolbarStructureViewer2));
 
 		// Update filter when a new action set is selected
-		actionSetViewer.addSelectionChangedListener(new ActionSetSelectionChangedListener(
-				toolbarStructureViewer2, toolbarStructureFilterByActionSet));
+		actionSetViewer
+				.addSelectionChangedListener(new ActionSetSelectionChangedListener(
+						toolbarStructureViewer2,
+						toolbarStructureFilterByActionSet));
 
 		// Check state provider to emulate standard SWT
 		// behaviour on visual tree
-		toolbarStructureViewer2.setCheckStateProvider(new FilteredTreeCheckProvider(TreeManager
-				.getTreeContentProvider(), toolbarStructureFilterByActionSet));
+		toolbarStructureViewer2
+				.setCheckStateProvider(new FilteredTreeCheckProvider(
+						TreeManager.getTreeContentProvider(),
+						toolbarStructureFilterByActionSet));
 
 		// Init input
 		toolbarStructureViewer2.setInput(toolBarItems);
@@ -2014,37 +2121,42 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 		});
 
-		final Button showCommandGroupFilterButton = new Button(hideToolbarItemsComposite, SWT.CHECK);
-		showCommandGroupFilterButton.setText(WorkbenchMessages.HideItems_turnOnActionSets);
-		showCommandGroupFilterButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
+		final Button showCommandGroupFilterButton = new Button(
+				hideToolbarItemsComposite, SWT.CHECK);
+		showCommandGroupFilterButton
+				.setText(WorkbenchMessages.HideItems_turnOnActionSets);
+		showCommandGroupFilterButton
+				.addSelectionListener(new SelectionListener() {
+					public void widgetDefaultSelected(SelectionEvent e) {
+					}
 
-			public void widgetSelected(SelectionEvent e) {
-				if (showCommandGroupFilterButton.getSelection()) {
-					Object o = ((StructuredSelection) toolbarStructureViewer1.getSelection())
-							.getFirstElement();
-					ActionSet initSelectAS = null;
-					DisplayItem initSelectCI = null;
-					if (o instanceof DisplayItem) {
-						initSelectCI = ((DisplayItem) o);
-						initSelectAS = initSelectCI.getActionSet();
+					public void widgetSelected(SelectionEvent e) {
+						if (showCommandGroupFilterButton.getSelection()) {
+							Object o = ((StructuredSelection) toolbarStructureViewer1
+									.getSelection()).getFirstElement();
+							ActionSet initSelectAS = null;
+							DisplayItem initSelectCI = null;
+							if (o instanceof DisplayItem) {
+								initSelectCI = ((DisplayItem) o);
+								initSelectAS = initSelectCI.getActionSet();
+							}
+							if (initSelectAS == null) {
+								initSelectAS = (ActionSet) actionSetViewer
+										.getElementAt(0);
+							}
+							setSelectionOn(actionSetViewer, initSelectAS);
+							actionSetViewer.reveal(initSelectAS);
+							if (initSelectCI != null) {
+								setSelectionOn(toolbarStructureViewer2,
+										initSelectCI);
+								toolbarStructureViewer2.reveal(initSelectCI);
+							}
+							book.showPage(advancedComposite);
+						} else {
+							book.showPage(simpleComposite);
+						}
 					}
-					if (initSelectAS == null) {
-						initSelectAS = (ActionSet) actionSetViewer.getElementAt(0);
-					}
-					setSelectionOn(actionSetViewer, initSelectAS);
-					actionSetViewer.reveal(initSelectAS);
-					if (initSelectCI != null) {
-						setSelectionOn(toolbarStructureViewer2, initSelectCI);
-						toolbarStructureViewer2.reveal(initSelectCI);
-					}
-					book.showPage(advancedComposite);
-				} else {
-					book.showPage(simpleComposite);
-				}
-			}
-		});
+				});
 
 		book.showPage(simpleComposite);
 		advancedComposite.setWeights(new int[] { 30, 70 });
@@ -2060,9 +2172,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 */
 	private TableViewer initActionSetViewer(Composite parent) {
 		// List of categories
-		final TableViewer actionSetViewer = new TableViewer(parent, SWT.BORDER | SWT.H_SCROLL
-				| SWT.V_SCROLL);
-		actionSetViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		final TableViewer actionSetViewer = new TableViewer(parent, SWT.BORDER
+				| SWT.H_SCROLL | SWT.V_SCROLL);
+		actionSetViewer.getTable().setLayoutData(
+				new GridData(GridData.FILL_BOTH));
 		actionSetViewer.setLabelProvider(new LabelProvider());
 		actionSetViewer.setComparator(new WorkbenchViewerComparator());
 		actionSetViewer.setContentProvider(new ArrayContentProvider());
@@ -2079,25 +2192,25 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @param parent
 	 * @param checkStateListener
 	 *            the listener which listens to the viewer for check changes
-	 * @param filter
-	 *            the filter used in the viewer (null for none)
+	 * @param filter the filter used in the viewer (null for none)
 	 * @return A viewer within <code>parent</code> which will show menu or
 	 *         toolbar structure. It comes setup, only missing a
 	 *         CheckStateProvider and its input.
 	 */
 	private CheckboxTreeViewer initStructureViewer(Composite parent,
 			ICheckStateListener checkStateListener, ViewerFilter filter) {
-		CheckboxTreeViewer ctv = new CheckboxTreeViewer(parent, SWT.BORDER | SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		CheckboxTreeViewer ctv = new CheckboxTreeViewer(parent, SWT.BORDER
+				| SWT.H_SCROLL | SWT.V_SCROLL);
 		ctv.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		ctv.setUseHashlookup(true);
 		ctv.setContentProvider(TreeManager.getTreeContentProvider());
 		// use an UnavailableContributionItemCheckListener to filter check
 		// events: if it is legal, forward it to the actual checkStateListener,
 		// if not, inform the user
-		ctv.addCheckStateListener(new UnavailableContributionItemCheckListener(ctv,
-				checkStateListener));
-		ctv.setLabelProvider(new GrayOutUnavailableLabelProvider(parent.getDisplay(), filter));
+		ctv.addCheckStateListener(new UnavailableContributionItemCheckListener(
+				ctv, checkStateListener));
+		ctv.setLabelProvider(new GrayOutUnavailableLabelProvider(parent
+				.getDisplay(), filter));
 		new ItemDetailToolTip(ctv, ctv.getTree(), true, true, filter);
 		return ctv;
 	}
@@ -2106,7 +2219,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * Creates a composite to put a tree viewer in to display menu or toolbar
 	 * items.
 	 */
-	private static Composite createItemStructureGroup(final Composite composite, String labelText) {
+	private static Composite createItemStructureGroup(
+			final Composite composite, String labelText) {
 		GridLayout layout;
 		Label label;
 		layout = new GridLayout();
@@ -2114,7 +2228,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		menubarGroup.setLayout(layout);
-		menubarGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		menubarGroup
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		label = new Label(menubarGroup, SWT.WRAP);
 		label.setText(labelText);
@@ -2134,7 +2249,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		actionSetGroup.setLayout(layout);
-		actionSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		actionSetGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
 
 		label = new Label(actionSetGroup, SWT.WRAP);
 		label.setText(WorkbenchMessages.HideItems_commandGroupTitle);
@@ -2164,8 +2280,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @return true iff <code>item</code> is required in build a tree including
 	 *         elements in <code>set</code>
 	 */
-	@SuppressWarnings("rawtypes")
-	private static boolean includeInSetStructure(DisplayItem item, ActionSet set) {
+	private static boolean includeInSetStructure(DisplayItem item,
+			ActionSet set) {
 		if (item.actionSet != null && item.actionSet.equals(set))
 			return true;
 		for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
@@ -2181,18 +2297,15 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @return true iff the item is available - i.e. if it belongs to an action
 	 *         set, that that action set is available
 	 */
-	@SuppressWarnings("rawtypes")
 	private static boolean isAvailable(DisplayItem item) {
-		if (item.getActionSet() == null)
-			return true;
-		if (item.getActionSet().isActive())
+		if (item.getActionSet() != null && item.getActionSet().isActive())
 			return true;
 		for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
 			DisplayItem child = (DisplayItem) i.next();
 			if (isAvailable(child))
 				return true;
 		}
-		return false;
+		return item.getIContributionItem() != null && item.getIContributionItem().isVisible();
 	}
 
 	/**
@@ -2201,7 +2314,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 *         i.e. it is available, or has a child which is available thus must
 	 *         be displayed in order to display the child
 	 */
-	@SuppressWarnings("rawtypes")
 	private static boolean isEffectivelyAvailable(DisplayItem item, ViewerFilter filter) {
 		if (!isAvailable(item))
 			return false;
@@ -2210,7 +2322,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			return true;
 		for (Iterator i = children.iterator(); i.hasNext();) {
 			DisplayItem child = (DisplayItem) i.next();
-			if (filter != null && !filter.select(null, null, child))
+			if(filter != null && !filter.select(null, null, child))
 				continue;
 			if (isAvailable(child)) {
 				return true;
@@ -2218,7 +2330,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		}
 		for (Iterator i = children.iterator(); i.hasNext();) {
 			DisplayItem child = (DisplayItem) i.next();
-			if (filter != null && !filter.select(null, null, child))
+			if(filter != null && !filter.select(null, null, child))
 				continue;
 			if (isEffectivelyAvailable(child, filter)) {
 				return true;
@@ -2232,15 +2344,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 *            a collection, into which all command groups (action sets)
 	 *            which contribute <code>item</code> or its descendants will be
 	 *            placed
+	 * @param item	the item to collect descendants of
+	 * @param filter the filter currently being used
 	 * @param item
-	 *            the item to collect descendants of
-	 * @param filter
-	 *            the filter currently being used
 	 */
-	@SuppressWarnings("rawtypes")
-	private static void collectDescendantCommandGroups(Collection<ActionSet> collection,
-			DisplayItem item,
-			ViewerFilter filter) {
+	private static void collectDescendantCommandGroups(Collection collection,
+			DisplayItem item, ViewerFilter filter) {
 		List children = item.getChildren();
 		for (Iterator i = children.iterator(); i.hasNext();) {
 			DisplayItem child = (DisplayItem) i.next();
@@ -2255,9 +2364,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	/**
 	 * Gets the keybindings associated with a ContributionItem.
 	 */
-	@SuppressWarnings("rawtypes")
 	private Binding[] getKeyBindings(DisplayItem item) {
-		IBindingService bindingService = (IBindingService) window.getService(IBindingService.class);
+		IBindingService bindingService = (IBindingService) window
+				.getService(IBindingService.class);
 
 		if (!(bindingService instanceof BindingService))
 			return new Binding[0];
@@ -2265,11 +2374,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		String id = getCommandID(item);
 		String param = getParamID(item);
 
-		BindingManager bindingManager = ((BindingService) bindingService).getBindingManager();
+		BindingManager bindingManager = ((BindingService) bindingService)
+				.getBindingManager();
 
-		Collection allBindings = bindingManager.getActiveBindingsDisregardingContextFlat();
+		Collection allBindings = bindingManager
+				.getActiveBindingsDisregardingContextFlat();
 
-		List<Binding> foundBindings = new ArrayList<Binding>(2);
+		List foundBindings = new ArrayList(2);
 
 		for (Iterator i = allBindings.iterator(); i.hasNext();) {
 			Binding binding = (Binding) i.next();
@@ -2288,7 +2399,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					if (isNewWizard(item)) {
 						key = IWorkbenchCommandConstants.FILE_NEW_PARM_WIZARDID;
 					} else if (isShowView(item)) {
-						key = ShowViewMenu.VIEW_ID_PARM;
+						key = IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID;
 					} else if (isShowPerspective(item)) {
 						key = IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID;
 					}
@@ -2302,7 +2413,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 		}
 
-		Binding[] bindings = foundBindings.toArray(new Binding[foundBindings.size()]);
+		Binding[] bindings = (Binding[]) foundBindings
+				.toArray(new Binding[foundBindings.size()]);
 
 		return bindings;
 	}
@@ -2318,7 +2430,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			// check to see if this one has already been recorded.
 			boolean alreadyRecorded = false;
 			for (int j = 0; j < i && !alreadyRecorded; j++) {
-				if (bindings[i].getTriggerSequence().equals(bindings[j].getTriggerSequence())) {
+				if (bindings[i].getTriggerSequence().equals(
+						bindings[j].getTriggerSequence())) {
 					alreadyRecorded = true;
 				}
 			}
@@ -2347,19 +2460,20 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	private void initializeActionSetInput() {
 		// Just get the action sets at this point. Do not load the action set
 		// until it is actually selected in the dialog.
-		ActionSetRegistry reg = WorkbenchPlugin.getDefault().getActionSetRegistry();
+		ActionSetRegistry reg = WorkbenchPlugin.getDefault()
+				.getActionSetRegistry();
 		IActionSetDescriptor[] sets = reg.getActionSets();
-
-		EContextService contextService = context.get(EContextService.class);
-		Collection<String> activeContextIds = contextService.getActiveContextIds();
+		IActionSetDescriptor[] actionSetDescriptors = ((WorkbenchPage) window
+				.getActivePage()).getActionSets();
+		List initiallyAvailableActionSets = Arrays.asList(actionSetDescriptors);
 
 		for (int i = 0; i < sets.length; i++) {
 			ActionSetDescriptor actionSetDesc = (ActionSetDescriptor) sets[i];
-			// if (WorkbenchActivityHelper.filterItem(actionSetDesc)) {
-			// continue;
-			// }
+			if (WorkbenchActivityHelper.filterItem(actionSetDesc)) {
+				continue;
+			}
 			ActionSet actionSet = new ActionSet(actionSetDesc,
-					activeContextIds.contains(actionSetDesc.getId()));
+					initiallyAvailableActionSets.contains(actionSetDesc));
 			idToActionSet.put(actionSetDesc.getId(), actionSet);
 			actionSets.add(actionSet);
 		}
@@ -2403,8 +2517,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		warningImageDescriptor = ImageDescriptor.createFromURL(url);
 	}
 
-	private void initializeNewWizardsMenu(DisplayItem menu, Category parentCategory,
-			IWizardCategory element, List<String> activeIds) {
+	private void initializeNewWizardsMenu(DisplayItem menu,
+			Category parentCategory, IWizardCategory element, List activeIds) {
 		Category category = new Category(element.getLabel());
 		parentCategory.addChild(category);
 
@@ -2434,10 +2548,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				WorkbenchMessages.ActionSetDialogInput_wizardCategory);
 		shortcuts.addChild(rootForNewWizards);
 
-		IWizardCategory wizardCollection = WorkbenchPlugin.getDefault().getNewWizardRegistry()
-				.getRootCategory();
+		IWizardCategory wizardCollection = WorkbenchPlugin.getDefault()
+				.getNewWizardRegistry().getRootCategory();
 		IWizardCategory[] wizardCategories = wizardCollection.getCategories();
-		List<String> activeIDs = Arrays.asList(window.getActivePage().getNewWizardShortcuts());
+		List activeIDs = Arrays.asList(perspective.getNewWizardShortcuts());
 
 		for (int i = 0; i < wizardCategories.length; i++) {
 			IWizardCategory element = wizardCategories[i];
@@ -2445,7 +2559,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				continue;
 			}
 
-			initializeNewWizardsMenu(menu, rootForNewWizards, element, activeIDs);
+			initializeNewWizardsMenu(menu, rootForNewWizards, element,
+					activeIDs);
 		}
 	}
 
@@ -2454,10 +2569,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				WorkbenchMessages.ActionSetDialogInput_perspectiveCategory);
 		shortcuts.addChild(rootForPerspectives);
 
-		IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+		IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry();
 		IPerspectiveDescriptor[] persps = perspReg.getPerspectives();
 
-		List<String> activeIds = Arrays.asList(window.getActivePage().getPerspectiveShortcuts());
+		List activeIds = Arrays.asList(perspective.getPerspectiveShortcuts());
 
 		for (int i = 0; i < persps.length; i++) {
 			IPerspectiveDescriptor perspective = persps[i];
@@ -2465,7 +2581,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				continue;
 			}
 
-			ShortcutItem child = new ShortcutItem(perspective.getLabel(), perspective);
+			ShortcutItem child = new ShortcutItem(perspective.getLabel(),
+					perspective);
 			child.setImageDescriptor(perspective.getImageDescriptor());
 			child.setDescription(perspective.getDescription());
 			child.setCheckState(activeIds.contains(perspective.getId()));
@@ -2476,14 +2593,16 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private void initializeViewsMenu(DisplayItem menu) {
-		Category rootForViews = new Category(WorkbenchMessages.ActionSetDialogInput_viewCategory);
+		Category rootForViews = new Category(
+				WorkbenchMessages.ActionSetDialogInput_viewCategory);
 
 		shortcuts.addChild(rootForViews);
 
 		IViewRegistry viewReg = WorkbenchPlugin.getDefault().getViewRegistry();
 		IViewCategory[] categories = viewReg.getCategories();
 
-		List<String> activeIds = Arrays.asList(window.getActivePage().getShowViewShortcuts());
+		List activeIds = Arrays.asList(perspective.getShowViewShortcuts());
+
 		for (int i = 0; i < categories.length; i++) {
 			IViewCategory category = categories[i];
 			if (WorkbenchActivityHelper.filterItem(category)) {
@@ -2521,11 +2640,83 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * items are visible and not.
 	 */
 	private void loadMenuAndToolbarStructure() {
-		MTrimBar toolbar = window.getTopTrim();
+		WorkbenchWindow workbenchWindow = (WorkbenchWindow) PlatformUI
+				.getWorkbench().getActiveWorkbenchWindow();
+
+		customizeActionBars = new CustomizeActionBars(configurer);
+
+		// Fill fake action bars with static menu information.
+		window.fillActionBars(customizeActionBars, ActionBarAdvisor.FILL_PROXY
+				| ActionBarAdvisor.FILL_MENU_BAR
+				| ActionBarAdvisor.FILL_COOL_BAR);
+
+		// 3.3 start
+		final IMenuService menuService = (IMenuService) window
+				.getService(IMenuService.class);
+		menuService.populateContributionManager(
+				(ContributionManager) customizeActionBars.getMenuManager(),
+				MenuUtil.MAIN_MENU);
+		ICoolBarManager coolbar = customizeActionBars.getCoolBarManager();
+		if (coolbar != null) {
+			menuService.populateContributionManager(
+					(ContributionManager) coolbar, MenuUtil.MAIN_TOOLBAR);
+		}
+		// 3.3 end
+
+		// Populate the action bars with the action sets' data
+		for (Iterator i = actionSets.iterator(); i.hasNext();) {
+			ActionSet actionSet = (ActionSet) i.next();
+			ActionSetDescriptor descriptor = actionSet.descriptor;
+			PluginActionSet pluginActionSet = buildMenusAndToolbarsFor(
+					customizeActionBars, descriptor);
+
+			if (pluginActionSet != null) {
+				pluginActionSet.dispose();
+			}
+		}
+
+		// Make all menu items visible so they are included in the list.
+		customizeActionBars.menuManager.setVisible(true);
+
+		makeAllContributionsVisible(customizeActionBars.menuManager);
+
+		// Get the menu from the action bars
+		customizeActionBars.menuManager
+				.createMenuBar((Decorations) workbenchWindow.getShell());
+
+		CoolBar cb = customizeActionBars.coolBarManager
+				.createControl(workbenchWindow.getShell());
+		cb.equals(cb);
+
+		// Ensure the menu is completely built by updating the menu manager.
+		// (This method call requires a menu already be created)
+		customizeActionBars.menuManager.updateAll(true);
+		customizeActionBars.coolBarManager.update(true);
 
 		shortcuts = new Category(""); //$NON-NLS-1$
-		toolBarItems = createToolBarStructure(toolbar);// application.getMenuContributions();//
+		toolBarItems = createToolBarStructure(window.getTopTrim());
 		menuItems = createMenuStructure(window.getModel().getMainMenu());
+	}
+
+	private PluginActionSet buildMenusAndToolbarsFor(
+			CustomizeActionBars customizeActionBars,
+			ActionSetDescriptor actionSetDesc) {
+		String id = actionSetDesc.getId();
+		ActionSetActionBars bars = new ActionSetActionBars(customizeActionBars,
+				window, customizeActionBars, id);
+		bars.getMenuManager().setVisible(true);
+		PluginActionSetBuilder builder = new PluginActionSetBuilder();
+		PluginActionSet actionSet = null;
+		try {
+			actionSet = (PluginActionSet) actionSetDesc.createActionSet();
+			actionSet.init(null, bars);
+		} catch (CoreException ex) {
+			WorkbenchPlugin.log(
+					"Unable to create action set " + actionSetDesc.getId(), ex); //$NON-NLS-1$
+			return null;
+		}
+		builder.buildMenuAndToolBarStructure(actionSet, window);
+		return actionSet;
 	}
 
 	private static String getCommandID(DisplayItem item) {
@@ -2595,7 +2786,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				return id;
 			return object.getClass().getName();
 		}
-		return null; // couldn't determine the id
+		return null;	//couldn't determine the id
 	}
 
 	private static String getDescription(Object object) {
@@ -2604,7 +2795,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 			if (isNewWizard(item)) {
 				ShortcutItem shortcut = (ShortcutItem) item;
-				IWizardDescriptor descriptor = (IWizardDescriptor) shortcut.getDescriptor();
+				IWizardDescriptor descriptor = (IWizardDescriptor) shortcut
+						.getDescriptor();
 				return descriptor.getDescription();
 			}
 
@@ -2617,7 +2809,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 			if (isShowView(item)) {
 				ShortcutItem shortcut = (ShortcutItem) item;
-				IViewDescriptor descriptor = (IViewDescriptor) shortcut.getDescriptor();
+				IViewDescriptor descriptor = (IViewDescriptor) shortcut
+						.getDescriptor();
 				return descriptor.getDescription();
 			}
 
@@ -2660,19 +2853,22 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			if (isNewWizard(shortcutItem)) {
 				ActionContributionItem item = (ActionContributionItem) object
 						.getIContributionItem();
-				NewWizardShortcutAction nwsa = (NewWizardShortcutAction) item.getAction();
+				NewWizardShortcutAction nwsa = (NewWizardShortcutAction) item
+						.getAction();
 				return nwsa.getLocalId();
 			}
 
 			if (isShowPerspective(shortcutItem)) {
 				ActionContributionItem item = (ActionContributionItem) object
 						.getIContributionItem();
-				OpenPerspectiveAction opa = (OpenPerspectiveAction) item.getAction();
+				OpenPerspectiveAction opa = (OpenPerspectiveAction) item
+						.getAction();
 				return opa.getLocalId();
 			}
 
 			if (isShowView(shortcutItem)) {
-				IViewDescriptor descriptor = (IViewDescriptor) shortcutItem.getDescriptor();
+				IViewDescriptor descriptor = (IViewDescriptor) shortcutItem
+						.getDescriptor();
 				return descriptor.getId();
 			}
 		}
@@ -2696,6 +2892,18 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		if (!(item instanceof ShortcutItem))
 			return false;
 		return ((ShortcutItem) item).getDescriptor() instanceof IViewDescriptor;
+	}
+
+	private static String getActionSetID(IContributionItem item) {
+		if (item instanceof ActionSetContributionItem) {
+			ActionSetContributionItem asci = (ActionSetContributionItem) item;
+			return asci.getActionSetId();
+		}
+		if (item instanceof PluginActionCoolBarContributionItem) {
+			PluginActionCoolBarContributionItem pacbci = (PluginActionCoolBarContributionItem) item;
+			return pacbci.getActionSetId();
+		}
+		return null;
 	}
 
 	private static String getActionSetID(MUIElement item) {
@@ -2737,15 +2945,14 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		return root;
 	}
 
-	private void createMenuEntries(MMenu menu, DisplayItem parent, boolean trackDynamics) {
-		if (menu == null)
-			return;
+	private void createMenuEntries(MMenu menu, DisplayItem parent,
+			boolean trackDynamics) {
 		Map<IContributionItem, IContributionItem> findDynamics = new HashMap<IContributionItem, IContributionItem>();
 		DynamicContributionItem dynamicEntry = null;
 
 		if (trackDynamics && menu.getParent() != null) {
 			// Search for any dynamic menu entries which will be handled later
-			Object data = menuMngrRenderer.getContribution(menu);
+			Object data = menuMngrRenderer.getManager(menu);
 			if (data instanceof IContributionManager) {
 				IContributionManager manager = (IContributionManager) data;
 				IContributionItem[] items = manager.getItems();
@@ -2765,7 +2972,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		}
 
 		for (MMenuElement menuItem : menu.getChildren()) {
-			if (menuItem.getLabel() != null && menuItem.getLabel().length() != 0) {
+			if ((menuItem.getLabel() != null && menuItem.getLabel().length() != 0)
+					|| (menuItem.getLocalizedLabel() != null && menuItem.getLocalizedLabel()
+							.length() != 0) || (menuItem instanceof MHandledMenuItem)
+					|| menuItem.getWidget() != null) {
 				IContributionItem contributionItem;
 				if (menuItem instanceof MMenu) {
 					contributionItem = menuMngrRenderer.getManager((MMenu) menuItem);
@@ -2781,13 +2991,49 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					dynamicEntry.addCurrentItem((MenuItem) menuItem.getWidget());
 					// TODO: might not work
 				} else {
-					DisplayItem menuEntry = new DisplayItem(menuItem.getLabel(), contributionItem);
-
-					String image = menuItem.getIconURI();
-					if (image != null) {
-						menuEntry.setImageDescriptor(getImageDescFromURI(image));
+					String text = menuItem.getLocalizedLabel();
+					if (text == null || text.length() == 0) {
+						text = menuItem.getLabel();
 					}
-					menuEntry.setActionSet(idToActionSet.get(getActionSetID(menuItem)));
+					ImageDescriptor iconDescriptor = null;
+					String iconURI = menuItem.getIconURI();
+					if (iconURI != null && iconURI.length() > 0) {
+						iconDescriptor = resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
+					}
+
+					if (menuItem.getWidget() instanceof MenuItem) {
+						MenuItem item = (MenuItem) menuItem.getWidget();
+						if (text == null) {
+							if ("".equals(item.getText())) { //$NON-NLS-1$
+								continue;
+							}
+							text = item.getText();
+						}
+						if (iconDescriptor == null) {
+							Image image = item.getImage();
+							if (image != null) {
+								iconDescriptor = ImageDescriptor.createFromImage(image);
+							}
+						}
+					} else if (menuItem instanceof MHandledMenuItem) {
+						MHandledMenuItem hmi = (MHandledMenuItem) menuItem;
+						final String i18nLabel = hmi.getLocalizedLabel();
+						if (i18nLabel != null) {
+							text = i18nLabel;
+						} else if (hmi.getWbCommand() != null) {
+							try {
+								text = hmi.getWbCommand().getName();
+							} catch (NotDefinedException e) {
+								// we'll just ignore a failure
+							}
+						}
+					}
+					DisplayItem menuEntry = new DisplayItem(text, contributionItem);
+
+					if (iconDescriptor != null) {
+						menuEntry.setImageDescriptor(iconDescriptor);
+					}
+					menuEntry.setActionSet((ActionSet) idToActionSet.get(getActionSetID(menuItem)));
 					parent.addChild(menuEntry);
 
 					if (ActionFactory.NEW.getId().equals(contributionItem.getId())) {
@@ -2812,7 +3058,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 						menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
 					}
 
-					if (image == null) {
+					if (iconDescriptor == null) {
 						if (parent != null && parent.getParent() == null) {
 							menuEntry.setImageDescriptor(menuImageDescriptor);
 						} else if (menuEntry.getChildren().size() > 0) {
@@ -2825,6 +3071,19 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					dynamicEntry = new DynamicContributionItem(item);
 					dynamicEntry.setCheckState(getMenuItemIsVisible(dynamicEntry));
 					parent.addChild(dynamicEntry);
+				}
+			} else if (menuItem instanceof MOpaqueMenuItem) {
+				IContributionItem contributionItem = menuMngrRenderer.getContribution(menuItem);
+				if (contributionItem instanceof ActionContributionItem) {
+					final IAction action = ((ActionContributionItem) contributionItem).getAction();
+					DisplayItem menuEntry = new DisplayItem(action.getText(), contributionItem);
+					menuEntry.setImageDescriptor(action.getImageDescriptor());
+					menuEntry.setActionSet((ActionSet) idToActionSet
+							.get(getActionSetID(contributionItem)));
+					parent.addChild(menuEntry);
+					if (menuEntry.getChildren().isEmpty()) {
+						menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
+					}
 				}
 			}
 		}
@@ -2843,13 +3102,15 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				&& !(((WorkbenchPage) window.getActivePage()).getHiddenItems().contains(prefix
 						+ getCommandID(item)));
 	}
+
 	/**
 	 * Causes a viewer to update the state of a category and all its ancestors.
 	 * 
 	 * @param viewer
 	 * @param category
 	 */
-	private void updateCategoryAndParents(StructuredViewer viewer, Category category) {
+	private void updateCategoryAndParents(StructuredViewer viewer,
+			Category category) {
 		while (category.getParent() != shortcuts) {
 			viewer.update(category, null);
 			category = (Category) category.getParent();
@@ -2891,9 +3152,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					}
 					DisplayItem toolBarEntry = new DisplayItem(text, contributionItem);
 					toolBarEntry.setImageDescriptor(toolbarImageDescriptor);
-					toolBarEntry.setActionSet(idToActionSet
+					toolBarEntry.setActionSet((ActionSet) idToActionSet
 							.get(getActionSetID(trimElement)));
 					parent.addChild(toolBarEntry);
+					toolBarEntry.setCheckState(getToolbarItemIsVisible(toolBarEntry));
 					createToolbarEntries((MToolBar) trimElement, toolBarEntry);
 				}
 			}
@@ -2905,33 +3167,66 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			return;
 		for (MToolBarElement element : toolbar.getChildren()) {
 			IContributionItem contributionItem = toolbarMngrRenderer.getContribution(element);
-			if (element instanceof MToolBarSeparator || contributionItem == null)
+			if (element instanceof MToolBarSeparator
+					|| (contributionItem == null || contributionItem.isGroupMarker() || contributionItem
+							.isSeparator())) {
 				continue;
+			}
 
-			String text = null;
-			String iconURI = null;
-			if (element instanceof MItem) {
-				iconURI = ((MItem) element).getIconURI();
-			}
-			if (element instanceof MItem) {
-				text = getToolTipText((MItem) element);
-			}
-			if (text == null) {
-				Object name = element.getTransientData().get("Name"); //$NON-NLS-1$
-				if (name != null) { // && ((String) name).length() != 0
-					text = (String) name;
-				} else {
-					text = getToolbarLabel(element.getElementId());
+			if (element instanceof MOpaqueToolItem) {
+				if (contributionItem instanceof ActionContributionItem) {
+					final IAction action = ((ActionContributionItem) contributionItem).getAction();
+					DisplayItem toolbarEntry = new DisplayItem(action.getText(), contributionItem);
+					toolbarEntry.setImageDescriptor(action.getImageDescriptor());
+					toolbarEntry.setActionSet((ActionSet) idToActionSet
+							.get(getActionSetID(contributionItem)));
+					if (toolbarEntry.getChildren().isEmpty()) {
+						toolbarEntry.setCheckState(contributionItem.isVisible());
+					}
+					parent.addChild(toolbarEntry);
 				}
-			}
-			DisplayItem toolBarEntry = new DisplayItem(text, contributionItem);
+			} else {
+				String text = null;
+				if (element instanceof MItem) {
+					text = getToolTipText((MItem) element);
+				}
+				ImageDescriptor iconDescriptor = null;
+				String iconURI = element instanceof MItem ? ((MItem) element).getIconURI() : null;
+				if (iconURI != null && iconURI.length() > 0) {
+					iconDescriptor = resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
+				}
+				if (element.getWidget() instanceof ToolItem) {
+					ToolItem item = (ToolItem) element.getWidget();
+					if (text == null) {
+						text = item.getToolTipText();
+					}
+					if (iconDescriptor == null) {
+						Image image = item.getImage();
+						if (image != null) {
+							iconDescriptor = ImageDescriptor.createFromImage(image);
+						}
+					}
+				}
+				if (text == null) {
+					Object name = element.getTransientData().get("Name"); //$NON-NLS-1$
+					if (name != null) { // && ((String) name).length() != 0
+						text = (String) name;
+					} else {
+						text = getToolbarLabel(element.getElementId());
+					}
+				}
 
-			if (iconURI != null) {
-				toolBarEntry.setImageDescriptor(getImageDescFromURI(iconURI));
+				DisplayItem toolBarEntry = new DisplayItem(text, contributionItem);
+
+				if (iconDescriptor != null) {
+					toolBarEntry.setImageDescriptor(iconDescriptor);
+				}
+				toolBarEntry.setActionSet((ActionSet) idToActionSet.get(getActionSetID(element)));
+				if (toolBarEntry.getChildren().isEmpty()) {
+					toolBarEntry.setCheckState(getToolbarItemIsVisible(toolBarEntry));
+				}
+				parent.addChild(toolBarEntry);
 			}
-			toolBarEntry.setActionSet(idToActionSet.get(getActionSetID(element)));
-			toolBarEntry.setCheckState(getToolbarItemIsVisible(toolBarEntry));
-			parent.addChild(toolBarEntry);
 		}
 	}
 
@@ -2997,12 +3292,26 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 */
 	private boolean showShortcutTab() {
 		return window.containsSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU)
-				|| window.containsSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU)
+				|| window
+						.containsSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU)
 				|| window.containsSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
 	}
 
-	@SuppressWarnings("rawtypes")
-	private void getChangedIds(DisplayItem item, List<String> invisible, List<String> visible) {
+	private ArrayList getVisibleIDs(TreeItem root) {
+		if (root == null) {
+			return new ArrayList();
+		}
+		ArrayList ids = new ArrayList(root.getChildren().size());
+		for (Iterator i = root.getChildren().iterator(); i.hasNext();) {
+			DisplayItem object = (DisplayItem) i.next();
+			if (object instanceof ShortcutItem && object.getState()) {
+				ids.add(getParamID(object));
+			}
+		}
+		return ids;
+	}
+
+	private void getChangedIds(DisplayItem item, List invisible, List visible) {
 		if (item instanceof ShortcutItem)
 			return;
 
@@ -3030,8 +3339,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		}
 	}
 
-	private boolean updateHiddenElements(DisplayItem items, String currentHidden,
-			String prefix) {
+	private boolean updateHiddenElements(DisplayItem items, String currentHidden, String prefix) {
 		boolean hasChanges = false;
 
 		List<String> changedAndVisible = new ArrayList<String>();
@@ -3058,22 +3366,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		return hasChanges;
 	}
-
-	@SuppressWarnings("rawtypes")
-	private ArrayList<String> getVisibleIDs(TreeItem root) {
-		if (root == null) {
-			return new ArrayList<String>();
-		}
-		ArrayList<String> ids = new ArrayList<String>(root.getChildren().size());
-		for (Iterator i = root.getChildren().iterator(); i.hasNext();) {
-			DisplayItem object = (DisplayItem) i.next();
-			if (object instanceof ShortcutItem && object.getState()) {
-				ids.add(getParamID(object));
-			}
-		}
-		return ids;
-	}
-
+	
 	protected void okPressed() {
 		// Shortcuts
 		if (showShortcutTab()) {
@@ -3085,19 +3378,19 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		// Determine if anything has changed and, if so, update the menu & tb's
 		boolean requiresUpdate = false;
-
+		
 		// Action Sets
-		ArrayList<IActionSetDescriptor> toAdd = new ArrayList<IActionSetDescriptor>();
-		ArrayList<IActionSetDescriptor> toRemove = new ArrayList<IActionSetDescriptor>();
+		ArrayList toAdd = new ArrayList();
+		ArrayList toRemove = new ArrayList();
 
-		for (Iterator<ActionSet> i = actionSets.iterator(); i.hasNext();) {
-			ActionSet actionSet = i.next();
+		for (Iterator i = actionSets.iterator(); i.hasNext();) {
+			ActionSet actionSet = (ActionSet) i.next();
 			if (!actionSet.wasChanged())
 				continue;
-
+			
 			// Something has changed
 			requiresUpdate = true;
-
+			
 			if (actionSet.isActive()) {
 				toAdd.add(actionSet.descriptor);
 			} else {
@@ -3105,8 +3398,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 		}
 
-		turnOnActionSets(toAdd);
-		turnOffActionSets(toRemove);
+		perspective.turnOnActionSets((IActionSetDescriptor[]) toAdd
+				.toArray(new IActionSetDescriptor[toAdd.size()]));
+		perspective.turnOffActionSets((IActionSetDescriptor[]) toRemove
+				.toArray(new IActionSetDescriptor[toRemove.size()]));
 
 		// Menu and Toolbar Items
 		requiresUpdate |= updateHiddenElements(menuItems,
@@ -3115,25 +3410,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		requiresUpdate |= updateHiddenElements(toolBarItems,
 				((WorkbenchPage) window.getActivePage()).getHiddenItems(),
 				ModeledPageLayout.HIDDEN_TOOLBAR_PREFIX);
-
+		
 		if (requiresUpdate) {
-			MenuManager menuManager = menuMngrRenderer.getManager(window.getModel().getMainMenu());
-			menuManager.updateAll(true);
-			((ICoolBarManager2) window.getCoolBarManager2()).resetItemOrder();
+			perspective.updateActionBars();
 		}
+		
 		super.okPressed();
-	}
-
-	private void turnOnActionSets(List<IActionSetDescriptor> actionSets) {
-		for (IActionSetDescriptor actionSet : actionSets) {
-			window.getActivePage().showActionSet(actionSet.getId());
-		}
-	}
-
-	private void turnOffActionSets(List<IActionSetDescriptor> actionSets) {
-		for (IActionSetDescriptor actionSet : actionSets) {
-			window.getActivePage().hideActionSet(actionSet.getId());
-		}
 	}
 
 	/*
@@ -3144,13 +3426,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	public boolean close() {
 		tooltipHeading.dispose();
 
-		for (Iterator<Resource> i = toDispose.iterator(); i.hasNext();) {
-			Resource resource = i.next();
+		for (Iterator i = toDispose.iterator(); i.hasNext();) {
+			Resource resource = (Resource) i.next();
 			resource.dispose();
 		}
 
 		treeManager.dispose();
-		// customizeActionBars.dispose();
+		customizeActionBars.dispose();
 
 		return super.close();
 	}
@@ -3191,9 +3473,14 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private void viewActionSet(final DisplayItem item) {
-		viewActionSet(item.getActionSet());
+		if (item.getActionSet() != null) {
+			viewActionSet(item.getActionSet());
+		}
 	}
 
+	/**
+	 * @param item
+	 */
 	private void viewActionSet(final ActionSet actionSet) {
 		tabFolder.setSelection(actionSetTab);
 		actionSetAvailabilityTable.reveal(actionSet);
@@ -3218,8 +3505,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 *         {@link TreeManager#CHECKSTATE_GRAY} or
 	 *         {@link TreeManager#CHECKSTATE_UNCHECKED}
 	 */
-	private static int getLeafStates(TreeItem item, ITreeContentProvider provider,
-			ViewerFilter filter) {
+	private static int getLeafStates(TreeItem item,
+			ITreeContentProvider provider, ViewerFilter filter) {
 		Object[] children = provider.getChildren(item);
 
 		boolean checkedFound = false;
@@ -3251,7 +3538,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		if (!checkedFound && !uncheckedFound)
 			return item.getState() ? TreeManager.CHECKSTATE_CHECKED
 					: TreeManager.CHECKSTATE_UNCHECKED;
-		return checkedFound ? TreeManager.CHECKSTATE_CHECKED : TreeManager.CHECKSTATE_UNCHECKED;
+		return checkedFound ? TreeManager.CHECKSTATE_CHECKED
+				: TreeManager.CHECKSTATE_UNCHECKED;
 	}
 
 	/**
@@ -3272,8 +3560,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 *            the filter that will only select elements in the currently
 	 *            chosen action set
 	 */
-	private static void setAllLeafs(DisplayItem item, boolean value, ITreeContentProvider provider,
-			ViewerFilter filter) {
+	private static void setAllLeafs(DisplayItem item, boolean value,
+			ITreeContentProvider provider, ViewerFilter filter) {
 		Object[] children = provider.getChildren(item);
 		boolean isLeaf = true;
 

@@ -2564,8 +2564,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return getToolBarManager2();
 	}
 
-	public CustomizePerspectiveDialog createCustomizePerspectiveDialog(
-			IPerspectiveDescriptor persp, IEclipseContext context) {
+	public CustomizePerspectiveDialog createCustomizePerspectiveDialog(Perspective persp,
+			IEclipseContext context) {
 		return new CustomizePerspectiveDialog(getWindowConfigurer(), persp, context);
 	}
 }

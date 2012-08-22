@@ -1873,10 +1873,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     public boolean editActionSets() {
-		IPerspectiveDescriptor persp = getPerspective();
+		Perspective persp = getActivePerspective();
 		if (persp == null) {
 			return false;
 		}
+
 		// Create list dialog.
 		CustomizePerspectiveDialog dlg = legacyWindow.createCustomizePerspectiveDialog(persp,
 				window.getContext());
