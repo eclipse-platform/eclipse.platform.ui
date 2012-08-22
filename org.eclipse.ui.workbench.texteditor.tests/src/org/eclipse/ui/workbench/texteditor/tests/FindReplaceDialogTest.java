@@ -194,8 +194,9 @@ public class FindReplaceDialogTest extends TestCase {
 		event.doit= true;
 		findField.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
-		if (Util.isGtk())
-			takeScreenshot();
+		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
+		if (shell == null && Util.isGtk())
+			fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
 		
 		assertTrue(findField.isFocusControl());
 
