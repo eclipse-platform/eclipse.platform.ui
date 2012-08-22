@@ -2496,7 +2496,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				return null;
 
 			String hiddenToolItems = page.getHiddenItems();
-			if (hiddenToolItems.contains(ModeledPageLayout.HIDDEN_TOOLBAR_PREFIX + id)) {
+			if (hiddenToolItems.contains(ModeledPageLayout.HIDDEN_TOOLBAR_PREFIX + id + ",")) { //$NON-NLS-1$
 				return Boolean.FALSE;
 			}
 			return null;
@@ -2545,7 +2545,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				return null;
 
 			String hiddenToolItems = page.getHiddenItems();
-			if (hiddenToolItems.contains(ModeledPageLayout.HIDDEN_MENU_PREFIX + id)) {
+			if (hiddenToolItems.contains(ModeledPageLayout.HIDDEN_MENU_PREFIX + id + ",")) { //$NON-NLS-1$
 				return Boolean.FALSE;
 			}
 			return null;
