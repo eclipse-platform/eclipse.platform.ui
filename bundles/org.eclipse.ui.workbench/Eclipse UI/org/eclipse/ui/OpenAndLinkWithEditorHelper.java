@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -127,19 +126,24 @@ public abstract class OpenAndLinkWithEditorHelper {
 	protected abstract void open(ISelection selection, boolean activate);
 
 	/**
-	 * Tells to link the given selection to the editor that is open on the given selection but does
-	 * nothing if no matching editor can be found.
+	 * Tells to link the given selection to the editor that is open on the given
+	 * selection but does nothing if no matching editor can be found.
 	 * <p>
-	 * The common implementation brings that editor to front but more advanced implementations may
-	 * also select the given selection inside the editor.
+	 * The common implementation brings that editor to front but more advanced
+	 * implementations may also select the given selection inside the editor.
 	 * </p>
 	 * <p>
 	 * <strong>Note:</strong> The implementation must not open a new editor.
 	 * </p>
+	 * <p>
+	 * The default implementation does nothing i.e. does not implement linking.
+	 * </p>
 	 * 
-	 * @param selection the viewer's selection
-	 * @since 3.5
+	 * @param selection
+	 *            the viewer's selection
+	 * @since 3.5, non-abstract since 4.3
 	 */
-	protected abstract void linkToEditor(ISelection selection);
+	protected void linkToEditor(ISelection selection) {
+	}
 
 }
