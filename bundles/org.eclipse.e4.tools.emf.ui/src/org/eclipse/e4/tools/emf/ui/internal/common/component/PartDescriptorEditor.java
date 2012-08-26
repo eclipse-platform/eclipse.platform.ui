@@ -201,6 +201,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI).observeDetail(master));
+			TextPasteHandler.createFor(t);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
