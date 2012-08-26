@@ -345,7 +345,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	protected void handleAddKeyBinding() {
 		MKeyBinding handler = MCommandsFactory.INSTANCE.createKeyBinding();
 		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS, handler);
-
+		setElementId(handler);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 			getEditor().setSelection(handler);
