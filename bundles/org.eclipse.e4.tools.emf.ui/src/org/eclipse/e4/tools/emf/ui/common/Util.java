@@ -76,7 +76,7 @@ public class Util {
 			String className = o.eClass().getName();
 			String projectName = project.getName();
 
-			String prefix = projectName + "." + className; //$NON-NLS-1$
+			String prefix = (projectName + "." + className).toLowerCase(); //$NON-NLS-1$
 
 			TreeIterator<EObject> it = resource.getAllContents();
 			SortedSet<Integer> numbers = new TreeSet<Integer>();
