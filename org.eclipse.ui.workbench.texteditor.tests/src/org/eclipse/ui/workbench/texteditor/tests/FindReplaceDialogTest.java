@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -194,6 +194,9 @@ public class FindReplaceDialogTest extends TestCase {
 		event.doit= true;
 		findField.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
+		
+		takeScreenshot(); //XXX: shoot unconditionally
+		
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk())
 			fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
@@ -216,8 +219,16 @@ public class FindReplaceDialogTest extends TestCase {
 	}
 	
 	private String takeScreenshot() {
-		File eclipseDir= new File("").getAbsoluteFile(); // eclipse-testing/test-eclipse/eclipse
-		File resultsHtmlDir= new File(eclipseDir, "../../results/html/").getAbsoluteFile();
+		return takeScreenshot(FindReplaceDialogTest.class, getName());
+	}
+
+	private static String takeScreenshot(Class testClass, String testName) {
+		File resultsHtmlDir= getJunitReportOutput();
+		
+		if (resultsHtmlDir == null) { // fallback, NOT platform-dependent:
+			File eclipseDir= new File("").getAbsoluteFile(); // eclipse-testing/test-eclipse/eclipse
+			resultsHtmlDir= new File(eclipseDir, "../../results/html/").getAbsoluteFile();
+		}
 		
 		// Take a screenshot:
 		Display display= Display.getDefault();
@@ -227,14 +238,25 @@ public class FindReplaceDialogTest extends TestCase {
 		gc.dispose();
 
 		resultsHtmlDir.mkdirs();
-		String filename = new Path(resultsHtmlDir.getAbsolutePath()).append(
-				"FindReplaceDialogTest." + getName() + ".png").toOSString();
+		String filename = new File(
+				resultsHtmlDir.getAbsolutePath(), 
+				testClass.getName() + "." + testName + ".png").getAbsolutePath();
 		ImageLoader loader = new ImageLoader();
 		loader.data = new ImageData[] { image.getImageData() };
 		loader.save(filename, SWT.IMAGE_PNG);
 		System.err.println("Screenshot saved to: " + filename);
 		image.dispose();
 		return filename;
+	}
+
+	private static File getJunitReportOutput() {
+		String[] args= Platform.getCommandLineArgs();
+		for (int i= 0; i < args.length - 1; i++) {
+			if ("-junitReportOutput".equals(args[i])) { // see library.xml and org.eclipse.test.EclipseTestRunner
+				return new File(args[i + 1]).getAbsoluteFile();
+			}
+		}
+		return null;
 	}
 
 	public void testFocusNotChangedWhenButtonMnemonicPressed() {
