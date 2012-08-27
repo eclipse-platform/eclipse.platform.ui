@@ -110,11 +110,16 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		}
 
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.ModelFragmentsEditor_Imports);
-			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
+			GridLayout layout = (GridLayout) parent.getLayout();
+			layout.numColumns = 2;
 
-			final TableViewer viewer = new TableViewer(parent);
+			Composite impCompo = new Composite(parent, SWT.NONE);
+			impCompo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			impCompo.setLayout(new GridLayout());
+			Label l = new Label(impCompo, SWT.NONE);
+			l.setText(Messages.ModelFragmentsEditor_Imports);
+			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+			final TableViewer viewer = new TableViewer(impCompo);
 			viewer.setContentProvider(new ObservableListContentProvider());
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -252,11 +257,15 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		}
 
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.ModelFragmentsEditor_ModelFragments);
-			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
-			final TableViewer viewer = new TableViewer(parent);
+			Composite fragCompo = new Composite(parent, SWT.NONE);
+			fragCompo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			fragCompo.setLayout(new GridLayout());
+			Label l = new Label(fragCompo, SWT.NONE);
+			l.setText(Messages.ModelFragmentsEditor_ModelFragments);
+			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+
+			final TableViewer viewer = new TableViewer(fragCompo);
 			viewer.setContentProvider(new ObservableListContentProvider());
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
