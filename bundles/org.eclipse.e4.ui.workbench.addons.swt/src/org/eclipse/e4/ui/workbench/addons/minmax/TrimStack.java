@@ -126,6 +126,7 @@ public class TrimStack {
 	private Listener escapeListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (event.character == SWT.ESC) {
+				showStack(false);
 				partService.requestActivation();
 			}
 		}
@@ -235,7 +236,7 @@ public class TrimStack {
 			}
 
 			if (changedElement == getLeafPart(minimizedElement)) {
-				fixToolItemSelection(changedElement);
+				fixToolItemSelection();
 				return;
 			}
 
@@ -243,26 +244,36 @@ public class TrimStack {
 		}
 	};
 
-	private void fixToolItemSelection(MUIElement element) {
+	private void fixToolItemSelection() {
 		if (trimStackTB == null || trimStackTB.isDisposed())
 			return;
 
-		if (isEditorStack()) {
-			trimStackTB.getItem(1).setSelection(element != null);
-			if (element != null)
-				trimStackTB.getItem(1).setData(element);
-		} else if (isPerspectiveStack()) {
+		if (!isShowing) {
+			// Not open...no selection
 			for (ToolItem item : trimStackTB.getItems()) {
-				boolean result = item.getData() == null ? false : item.getData() == element;
-				item.setSelection(result);
+				item.setSelection(false);
 			}
 		} else {
-			for (ToolItem item : trimStackTB.getItems()) {
-				boolean result = item.getData() == null ? false : item.getData() == element;
-				item.setSelection(result);
+			if (isEditorStack()) {
+				trimStackTB.getItem(1).setSelection(true);
+			} else if (isPerspectiveStack()) {
+				MPerspectiveStack pStack = (MPerspectiveStack) minimizedElement;
+				MUIElement selElement = pStack.getSelectedElement();
+				for (ToolItem item : trimStackTB.getItems()) {
+					item.setSelection(item.getData() == selElement);
+				}
+			} else {
+				MPartStack partStack = (MPartStack) minimizedElement;
+				MUIElement selElement = partStack.getSelectedElement();
+				if (selElement instanceof MPlaceholder)
+					selElement = ((MPlaceholder) selElement).getRef();
+
+				for (ToolItem item : trimStackTB.getItems()) {
+					boolean isSel = item.getData() == selElement;
+					item.setSelection(isSel);
+				}
 			}
 		}
-
 	}
 
 	private boolean isEditorStack() {
@@ -410,15 +421,21 @@ public class TrimStack {
 		public void widgetSelected(SelectionEvent e) {
 			ToolItem toolItem = (ToolItem) e.widget;
 			MUIElement uiElement = (MUIElement) toolItem.getData();
-			if (toolItem.getSelection() && uiElement instanceof MPart) {
+
+			// Clicking on the already showing item ? NOTE: teh Selection will already have been
+			// turned off by the time the event arrives
+			if (!toolItem.getSelection()) {
+				partService.requestActivation();
+				showStack(false);
+				return;
+			}
+
+			if (uiElement instanceof MPart) {
 				partService.activate((MPart) uiElement);
 			} else if (uiElement instanceof MPerspective) {
 				uiElement.getParent().setSelectedElement(uiElement);
-				showStack(true);
-			} else {
-				// Get partService to activate a part visible in the presentation
-				partService.requestActivation();
 			}
+			showStack(true);
 		}
 
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -732,6 +749,7 @@ public class TrimStack {
 			hostPane.setVisible(true);
 
 			isShowing = true;
+			fixToolItemSelection();
 		} else if (!show && isShowing) {
 			// Check to ensure that the client area is non-null since the
 			// trimstack may be currently hosted in the limbo shell
@@ -742,8 +760,8 @@ public class TrimStack {
 				hostPane.setVisible(false);
 			}
 
-			fixToolItemSelection(null);
 			isShowing = false;
+			fixToolItemSelection();
 		}
 	}
 
