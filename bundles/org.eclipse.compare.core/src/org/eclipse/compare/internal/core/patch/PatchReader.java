@@ -65,7 +65,7 @@ public class PatchReader {
 
 	public static final String MULTIPROJECTPATCH_PROJECT= "#P"; //$NON-NLS-1$
 
-	private static final Pattern GIT_PATCH_PATTERN = Pattern.compile("^diff --git a/.+ b/.+[\r\n]+$");
+	private static final Pattern GIT_PATCH_PATTERN= Pattern.compile("^diff --git a/.+ b/.+[\r\n]+$"); //$NON-NLS-1$
 
 	/**
 	 * Create a patch reader for the default date formats.
@@ -327,6 +327,10 @@ public class PatchReader {
 						break;
 					case 'I':
 						if (line.indexOf("Index:") == 0) //$NON-NLS-1$
+							break;
+						//$FALL-THROUGH$
+					case 'd':
+						if (line.indexOf("diff ") == 0) //$NON-NLS-1$
 							break;
 						//$FALL-THROUGH$
 					default:
