@@ -74,6 +74,22 @@ public interface IPresentationEngine {
 	public static String MINIMIZED_BY_ZOOM = "MinimizedByZoom"; //$NON-NLS-1$
 
 	/**
+	 * This tag can be applied to an element as a hint to the renderers that the element would
+	 * prefer to be horizontal. For an MPart this could be used both as a hint to how to show the
+	 * view when it's in the trim but could also be used when picking a stack to add a newly opening
+	 * part to. It could also be used for example to control where the tabs appear on an MPartStack.
+	 */
+	public static String ORIENTATION_HORIZONTAL = "Horizontal"; //$NON-NLS-1$
+
+	/**
+	 * This tag can be applied to an element as a hint to the renderers that the element would
+	 * prefer to be vertical. For an MPart this could be used both as a hint to how to show the view
+	 * when it's in the trim but could also be used when picking a stack to add a newly opening part
+	 * to. It could also be used for example to control where the tabs appear on an MPartStack.
+	 */
+	public static String ORIENTATION_VERTICAL = "Vertical"; //$NON-NLS-1$
+
+	/**
 	 * This key should be used to add an optional String to an element that is a URI to the elements
 	 * disabled icon. This is used, for example, by Toolbar Items which, in Eclipse SDK, provide a
 	 * unique icon for disabled tool items that look better than the OS default graying on the

@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -42,8 +43,10 @@ public class TrimPaneLayout extends Layout {
 
 	int trackState = SWT.NONE;
 	protected Point curPos;
+	private MToolControl toolControl;
 
-	public TrimPaneLayout(int barSide) {
+	public TrimPaneLayout(MToolControl toolControl, int barSide) {
+		this.toolControl = toolControl;
 		this.fixedCorner = barSide;
 	}
 
@@ -140,6 +143,14 @@ public class TrimPaneLayout extends Layout {
 
 			public void mouseUp(MouseEvent e) {
 				composite.setCapture(false);
+
+				// Persist the current size
+				Point size = composite.getSize();
+				toolControl.getPersistedState()
+						.put(TrimStack.STATE_XSIZE, Integer.toString(size.x));
+				toolControl.getPersistedState()
+						.put(TrimStack.STATE_YSIZE, Integer.toString(size.y));
+
 				trackState = NOT_SIZING;
 			}
 

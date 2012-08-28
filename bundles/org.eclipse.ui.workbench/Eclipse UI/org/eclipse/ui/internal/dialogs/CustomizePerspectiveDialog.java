@@ -3100,7 +3100,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	private boolean getItemIsVisible(DisplayItem item, String prefix) {
 		return isAvailable(item)
 				&& !(((WorkbenchPage) window.getActivePage()).getHiddenItems().contains(prefix
-						+ getCommandID(item)));
+						+ getCommandID(item) + ",")); //$NON-NLS-1$
 	}
 
 	/**

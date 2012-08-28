@@ -264,7 +264,7 @@ public class Perspective {
         for (int i = 0; i < newArray.length; i++) {
             IActionSetDescriptor descriptor = newArray[i];
             
-            addAlwaysOn(descriptor);
+			addActionSet(descriptor);
         }
     }
     
@@ -277,7 +277,7 @@ public class Perspective {
     }
 
     public void turnOffActionSet(IActionSetDescriptor toDisable) {
-        addAlwaysOff(toDisable);
+		removeActionSet(toDisable);
     }
     
 
@@ -329,7 +329,8 @@ public class Perspective {
     }
 
     // for dynamic UI
-    /* package */void removeActionSet(String id) {
+	protected void removeActionSet(IActionSetDescriptor toRemove) {
+		String id = toRemove.getId();
     	IContextService service = (IContextService)page.getWorkbenchWindow().getService(IContextService.class);
     	try {
 			service.deferUpdates(true);
@@ -350,16 +351,17 @@ public class Perspective {
 					break;
 				}
 			}
+			addAlwaysOff(toRemove);
+			// remove tag
+			String tag = ModeledPageLayout.ACTION_SET_TAG + id;
+			if (layout.getTags().contains(tag)) {
+				layout.getTags().remove(tag);
+			}
 		} finally {
     		service.deferUpdates(false);
     	}
     }
     
-    void removeActionSet(IActionSetDescriptor toRemove) {
-        removeAlwaysOn(toRemove);
-        removeAlwaysOff(toRemove);
-    }
-
     public IActionSetDescriptor[] getAlwaysOnActionSets() {
         return (IActionSetDescriptor[]) alwaysOnActionSets.toArray(new IActionSetDescriptor[alwaysOnActionSets.size()]);
     }
