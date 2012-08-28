@@ -27,6 +27,12 @@
             label="%PreferenceKeywords.Team"
             id="org.eclipse.team.ui.team"/>
     <keyword
+            label="%PreferenceKeywords.IgnoredResources"
+            id="org.eclipse.team.ui.team.ignoredResources"/>
+    <keyword
+            label="%PreferenceKeywords.Models"
+            id="org.eclipse.team.ui.team.models"/>
+    <keyword
             label="%PreferenceKeywords.FileContent"
             id="org.eclipse.team.ui.team.fileContent"/>
     <keyword
@@ -54,13 +60,15 @@
             category="org.eclipse.team.ui.TeamPreferences"
             class="org.eclipse.team.internal.ui.preferences.IgnorePreferencePage"
             id="org.eclipse.team.ui.IgnorePreferences">
-            <keywordReference id="org.eclipse.team.ui.team"/>
+            <keywordReference id="org.eclipse.team.ui.team.ignoredResources"/>
       </page>
       <page
+            name="%EnabledModels"
             category="org.eclipse.team.ui.TeamPreferences"
             class="org.eclipse.team.internal.ui.mapping.ModelEnablementPreferencePage"
-            id="org.eclipse.team.ui.enabledModels"
-            name="%EnabledModels"/>
+            id="org.eclipse.team.ui.enabledModels">
+            <keywordReference id="org.eclipse.team.ui.team.models"/>
+      </page>
    </extension>
 <!-- ****************** POPUP ACTIONS *************** -->
    <extension
