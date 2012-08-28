@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -223,6 +223,12 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			int scrollBarWidth= fTable.getVerticalBar().getSize().x;
 			int scrollBarHeight= fTable.getHorizontalBar().getSize().y;
 
+			if (IS_MAC && fTable.getScrollbarsMode() == SWT.SCROLLBAR_OVERLAY) {
+				// workaround for https://bugs.eclipse.org/387732 : [10.8] Table scrollbar width is 16 (not 15) on Mountain Lion
+				scrollBarWidth--;
+				scrollBarHeight--;
+			}
+			
 			int width;
 			if (preferedSize.y - scrollBarHeight <= constraints.y) {
 				width= preferedSize.x - scrollBarWidth;
