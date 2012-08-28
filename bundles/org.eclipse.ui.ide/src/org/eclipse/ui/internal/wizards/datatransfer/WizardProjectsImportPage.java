@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@
  *     		- Bug 187318[Wizards] "Import Existing Project" loops forever with cyclic symbolic links
  *     Remy Chi Jian Suen  (remy.suen@gmail.com)
  *     		- Bug 210568 [Import/Export] [Import/Export] - Refresh button does not update list of projects
- *     Matt Hurne (matt@thehurnes.com)
- *     		- Bug 144610 [Import/Export] Import existing projects does not search subdirectories of found projects
  *******************************************************************************/
 
 package org.eclipse.ui.internal.wizards.datatransfer;
@@ -287,8 +285,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 	}
 
 	// dialog store id constants
-	private final static String STORE_NESTED_PROJECTS = "WizardProjectsImportPage.STORE_NESTED_PROJECTS"; //$NON-NLS-1$
-	
 	private final static String STORE_COPY_PROJECT_ID = "WizardProjectsImportPage.STORE_COPY_PROJECT_ID"; //$NON-NLS-1$
 
 	private final static String STORE_ARCHIVE_SELECTED = "WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"; //$NON-NLS-1$
@@ -297,12 +293,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 	private CheckboxTreeViewer projectsList;
 
-	private Button nestedProjectsCheckbox;
-	
-	private boolean nestedProjects = false;
-	
-	private boolean lastNestedProjects = false;
-	
 	private Button copyCheckbox;
 
 	private boolean copyFiles = false;
@@ -429,21 +419,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 		optionsGroup.setLayout(new GridLayout());
 		optionsGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		nestedProjectsCheckbox = new Button(optionsGroup, SWT.CHECK);
-		nestedProjectsCheckbox
-				.setText(DataTransferMessages.WizardProjectsImportPage_SearchForNestedProjects);
-		nestedProjectsCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		nestedProjectsCheckbox.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				nestedProjects = nestedProjectsCheckbox.getSelection();
-				if (projectFromDirectoryRadio.getSelection()) {
-					updateProjectsList(directoryPathField.getText().trim());
-				} else {
-					updateProjectsList(archivePathField.getText().trim());
-				}
-			}
-		});
-		
 		copyCheckbox = new Button(optionsGroup, SWT.CHECK);
 		copyCheckbox
 				.setText(DataTransferMessages.WizardProjectsImportPage_CopyProjectsIntoWorkspace);
@@ -825,8 +800,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 			browseArchivesButton.setEnabled(true);
 			updateProjectsList(archivePathField.getText());
 			archivePathField.setFocus();
-			nestedProjectsCheckbox.setSelection(true);
-			nestedProjectsCheckbox.setEnabled(false);
 			copyCheckbox.setSelection(true);
 			copyCheckbox.setEnabled(false);
 		}
@@ -840,8 +813,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 			browseArchivesButton.setEnabled(false);
 			updateProjectsList(directoryPathField.getText());
 			directoryPathField.setFocus();
-			nestedProjectsCheckbox.setEnabled(true);
-			nestedProjectsCheckbox.setSelection(nestedProjects);
 			copyCheckbox.setEnabled(true);
 			copyCheckbox.setSelection(copyFiles);
 		}
@@ -881,11 +852,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		final File directory = new File(path);
 		long modified = directory.lastModified();
-		if (path.equals(lastPath)
-				&& lastModified == modified
-				&& lastNestedProjects == nestedProjects
-				&& lastCopyFiles == copyFiles)
-		{
+		if (path.equals(lastPath) && lastModified == modified && lastCopyFiles == copyFiles) {
 			// since the file/folder was not modified and the path did not
 			// change, no refreshing is required
 			return;
@@ -893,7 +860,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		lastPath = path;
 		lastModified = modified;
-		lastNestedProjects = nestedProjects;
 		lastCopyFiles = copyFiles;
 
 		// We can't access the radio button from the inner class so get the
@@ -1129,15 +1095,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 			File file = contents[i];
 			if (file.isFile() && file.getName().equals(dotProject)) {
 				files.add(file);
-				if (!nestedProjects) {
-					// don't search sub-directories since we can't have nested
-					// projects
-					return true;
-				}
+				// don't search sub-directories since we can't have nested
+				// projects
+				return true;
 			}
 		}
-		// no project description found or search for nested projects enabled,
-		// so recurse into sub-directories
+		// no project description found, so recurse into sub-directories
 		for (int i = 0; i < contents.length; i++) {
 			if (contents[i].isDirectory()) {
 				if (!contents[i].getName().equals(METADATA_FOLDER)) {
@@ -1601,11 +1564,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
 			// checkbox
-			nestedProjects = settings.getBoolean(STORE_NESTED_PROJECTS);
-			nestedProjectsCheckbox.setSelection(nestedProjects);
-			lastNestedProjects = nestedProjects;
-			
-			// checkbox
 			copyFiles = settings.getBoolean(STORE_COPY_PROJECT_ID);
 			copyCheckbox.setSelection(copyFiles);
 			lastCopyFiles = copyFiles;
@@ -1659,8 +1617,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 	public void saveWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
-			settings.put(STORE_NESTED_PROJECTS, nestedProjectsCheckbox.getSelection());
-			
 			settings.put(STORE_COPY_PROJECT_ID, copyCheckbox.getSelection());
 
 			settings.put(STORE_ARCHIVE_SELECTED, projectFromArchiveRadio
