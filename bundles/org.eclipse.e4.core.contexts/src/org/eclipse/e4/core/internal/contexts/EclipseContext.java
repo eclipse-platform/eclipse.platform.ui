@@ -737,9 +737,9 @@ public class EclipseContext implements IEclipseContext {
 
 	public Object getActive(final String name) {
 		final String internalName = ACTIVE_VARIABLE + name;
-		if (containsKey(internalName, false)) {
+		if (containsKey(internalName, true)) {
 			trackAccess(internalName);
-			return internalGet(this, internalName, false);
+			return internalGet(this, internalName, true);
 		}
 
 		final EclipseContext originatingContext = this;

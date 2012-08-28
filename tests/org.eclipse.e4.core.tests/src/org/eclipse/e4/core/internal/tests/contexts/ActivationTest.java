@@ -17,7 +17,6 @@ import javax.inject.Named;
 import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -140,6 +139,27 @@ public class ActivationTest extends TestCase {
 		assertEquals("5", child2.getActive("var"));
 	}
 	
+	public void testGetActiveBug384425() {
+		IEclipseContext root = EclipseContextFactory.create("root");
+
+		IEclipseContext child1 = root.createChild("child1");
+		IEclipseContext child11 = child1.createChild("child11");
+
+		IEclipseContext child2 = root.createChild("child2");
+
+		// nothing is active - we get value from the node
+		assertNull(root.getActive("var"));
+		assertNull(child1.getActive("var"));
+		assertNull(child2.getActive("var"));
+
+		child11.activateBranch();
+		child11.set("var", "1");
+
+		assertEquals("1", root.getActive("var"));
+		assertEquals("1", child1.getActive("var"));
+		assertNull(child2.getActive("var"));
+	}
+
 	public void testGetActiveRAT() {
 		IEclipseContext root = EclipseContextFactory.create("root");
 		
