@@ -197,8 +197,6 @@ public class FindReplaceDialogTest extends TestCase {
 		findField.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
 		
-		takeScreenshot(); //XXX: shoot unconditionally
-		
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
 		if (shell == null && Util.isGtk())
 			fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
@@ -218,6 +216,48 @@ public class FindReplaceDialogTest extends TestCase {
 		findField.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
 		assertTrue(allScopeBox.isFocusControl());
+	}
+	
+	public void testWindowsTaskManagerScreenshots() throws Exception {
+		takeScreenshot(FindReplaceDialogTest.class, getName() + 1);
+		
+		if (! Util.isWindows())
+			return;
+		
+		Display display= Display.getDefault();
+		
+        Event event= new Event();
+        event.type= SWT.KeyDown;
+        event.keyCode= SWT.CTRL;
+        System.out.println("* CTRL " + display.post(event));
+        event.keyCode= SWT.SHIFT;
+        System.out.println("* SHIFT " + display.post(event));
+        event.character= SWT.ESC;
+        event.keyCode= SWT.ESC;
+        System.out.println("* ESC " + display.post(event));
+        
+        event.type= SWT.KeyUp;
+        System.out.println("* ESC up " + display.post(event));
+        event.character= 0;
+        event.keyCode= SWT.SHIFT;
+        System.out.println("* SHIFT up " + display.post(event));
+        event.keyCode= SWT.CTRL;
+        System.out.println("* CTRL up " + display.post(event));
+        
+        runEventQueue();
+        display.beep();
+        takeScreenshot(FindReplaceDialogTest.class, getName() + 2);
+        
+        event.type= SWT.KeyDown;
+        event.character= SWT.ESC;
+        event.keyCode= SWT.ESC;
+        System.out.println("* ESC " + display.post(event));
+        event.type= SWT.KeyUp;
+        System.out.println("* ESC up " + display.post(event));
+        
+        runEventQueue();
+        display.beep();
+        takeScreenshot(FindReplaceDialogTest.class, getName() + 3);
 	}
 	
 	private String takeScreenshot() {
