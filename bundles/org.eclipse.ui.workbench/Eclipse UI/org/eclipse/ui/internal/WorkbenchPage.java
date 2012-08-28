@@ -2527,17 +2527,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (mpersp == null)
 			return;
 
-		// Remove Tags
-		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
-		if (mpersp.getTags().contains(tag)) {
-			mpersp.getTags().remove(tag);
-		}
 		Perspective persp = getActivePerspective();
 		if (persp != null) {
-			persp.removeActionSet(actionSetID);
+			ActionSetRegistry reg = WorkbenchPlugin.getDefault().getActionSetRegistry();
+
+			IActionSetDescriptor desc = reg.findActionSet(actionSetID);
+			if (desc != null) {
+				persp.removeActionSet(desc);
+			}
 			legacyWindow.updateActionSets();
 			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_HIDE);
 		}
+		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
 		addHiddenItems(tag);
     }
 
