@@ -8,15 +8,20 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import com.ibm.icu.text.BreakIterator;
 import java.io.Reader;
 import java.util.Locale;
 import java.util.StringTokenizer;
-import org.apache.lucene.analysis.*;
-import org.apache.lucene.analysis.standard.StandardTokenizer;
-import org.apache.lucene.util.Version;
-import org.eclipse.core.runtime.Platform;
+
+import com.ibm.icu.text.BreakIterator;
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.LowerCaseFilter;
+import org.apache.lucene.analysis.TokenStream;
+
 import org.eclipse.help.internal.base.HelpBasePlugin;
+
+import org.eclipse.core.runtime.Platform;
+
 
 /**
  * Lucene Analyzer. LowerCaseTokenizer->WordTokenStream (uses word breaking in
