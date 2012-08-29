@@ -10,27 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import java.io.File;
-import java.io.PrintStream;
 import java.util.ResourceBundle;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -57,16 +47,7 @@ public class FindReplaceDialogTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(FindReplaceDialogTest.class.getName());
-		suite.addTest(new FindReplaceDialogTest("testInitialButtonState"));
-		suite.addTest(new FindReplaceDialogTest("testDisableWholeWordIfRegEx"));
-		suite.addTest(new FindReplaceDialogTest("testDisableWholeWordIfNotWord"));
-		suite.addTest(new FindReplaceDialogTest("testFocusNotChangedWhenEnterPressed"));
-		if (org.eclipse.jface.util.Util.isWindows() || org.eclipse.jface.util.Util.isLinux())
-			suite.addTest(new FindReplaceDialogTest("testFocusNotChangedWhenButtonMnemonicPressed"));
-		suite.addTest(new FindReplaceDialogTest("testShiftEnterReversesSearchDirection"));
-
-		return suite;
+		return new BytecodeOrderedTestSuite(FindReplaceDialogTest.class);
 	}
 
 	private void runEventQueue() {
@@ -218,124 +199,14 @@ public class FindReplaceDialogTest extends TestCase {
 		assertTrue(allScopeBox.isFocusControl());
 	}
 	
-	public void testWindowsTaskManagerScreenshots() throws Exception {
-		takeScreenshot(FindReplaceDialogTest.class, getName() + 1);
-		
-		if (! Util.isWindows())
-			return;
-		
-		Display display= Display.getDefault();
-		
-        Event event= new Event();
-        event.type= SWT.KeyDown;
-        event.keyCode= SWT.CTRL;
-        System.out.println("* CTRL " + display.post(event));
-        event.keyCode= SWT.SHIFT;
-        System.out.println("* SHIFT " + display.post(event));
-        event.character= SWT.ESC;
-        event.keyCode= SWT.ESC;
-        System.out.println("* ESC " + display.post(event));
-        
-        event.type= SWT.KeyUp;
-        System.out.println("* ESC up " + display.post(event));
-        event.character= 0;
-        event.keyCode= SWT.SHIFT;
-        System.out.println("* SHIFT up " + display.post(event));
-        event.keyCode= SWT.CTRL;
-        System.out.println("* CTRL up " + display.post(event));
-        
-        runEventQueue();
-        display.beep();
-        takeScreenshot(FindReplaceDialogTest.class, getName() + 2);
-        
-        event.type= SWT.KeyDown;
-        event.character= SWT.ESC;
-        event.keyCode= SWT.ESC;
-        System.out.println("* ESC " + display.post(event));
-        event.type= SWT.KeyUp;
-        System.out.println("* ESC up " + display.post(event));
-        
-        runEventQueue();
-        display.beep();
-        takeScreenshot(FindReplaceDialogTest.class, getName() + 3);
-	}
-	
 	private String takeScreenshot() {
-		return takeScreenshot(FindReplaceDialogTest.class, getName());
-	}
-
-	private String takeScreenshot(Class testClass, String testName) {
-		File resultsHtmlDir= getJunitReportOutput(); // ends up in testresults/linux.gtk.x86_6.0/<class>.<test>.png
-		
-		if (resultsHtmlDir == null) { // fallback, NOT platform-dependent:
-			File eclipseDir= new File("").getAbsoluteFile(); // eclipse-testing/test-eclipse/eclipse
-			resultsHtmlDir= new File(eclipseDir, "../../results/html/").getAbsoluteFile(); // ends up in testresults/html/<class>.<test>.png
-		}
-		
-		PrintStream out= System.out;
-		
-		Display display= Display.getDefault();
-		
-		// Wiggle the mouse:
-		Event mouseMove= new Event();
-		mouseMove.x= 10;
-		mouseMove.y= 10;
-		display.post(mouseMove);
-		runEventQueue();
-		mouseMove.x= 20;
-		mouseMove.y= 20;
-		display.post(mouseMove);
-		runEventQueue();
-		
-		// Dump focus control, parents, and shells:
-		Control focusControl = display.getFocusControl();
-		if (focusControl != null) {
-			out.println("FocusControl: ");
-			StringBuffer indent = new StringBuffer("  ");
-			do {
-				out.println(indent.toString() + focusControl);
-				focusControl = focusControl.getParent();
-				indent.append("  ");
-			} while (focusControl != null);
-		}
-		Shell[] shells = display.getShells();
-		if (shells.length > 0) {
-			out.println("Shells: ");
-			for (int i = 0; i < shells.length; i++) {
-				Shell shell = shells[i];
-				out.println((shell.isVisible() ? "  visible: " : "  invisible: ") + shell);
-			}
-		}
-		
-		// Take a screenshot:
-		GC gc = new GC(display);
-		final Image image = new Image(display, display.getBounds());
-		gc.copyArea(image, 0, 0);
-		gc.dispose();
-
-		resultsHtmlDir.mkdirs();
-		String filename = new File(
-				resultsHtmlDir.getAbsolutePath(), 
-				testClass.getName() + "." + testName + ".png").getAbsolutePath();
-		ImageLoader loader = new ImageLoader();
-		loader.data = new ImageData[] { image.getImageData() };
-		loader.save(filename, SWT.IMAGE_PNG);
-		out.println("Screenshot saved to: " + filename);
-		image.dispose();
-		return filename;
-	}
-
-	private static File getJunitReportOutput() {
-		String[] args= Platform.getCommandLineArgs();
-		for (int i= 0; i < args.length - 1; i++) {
-			if ("-junitReportOutput".equals(args[i])) { // see library.xml and org.eclipse.test.EclipseTestRunner
-				return new File(args[i + 1]).getAbsoluteFile();
-			}
-		}
-		return null;
+		return ScreenshotTest.takeScreenshot(FindReplaceDialogTest.class, getName(), System.out);
 	}
 
 	public void testFocusNotChangedWhenButtonMnemonicPressed() {
+		if (Util.isMac())
+			return;
+		
 		openTextViewerAndFindReplaceDialog();
 
 		Combo findField= (Combo)fFindReplaceDialog.get("fFindField");
