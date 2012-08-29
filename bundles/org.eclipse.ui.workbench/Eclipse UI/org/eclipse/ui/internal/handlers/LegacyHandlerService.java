@@ -60,6 +60,7 @@ import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.expressions.AndExpression;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.EvaluationService;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
 
@@ -138,12 +139,7 @@ public class LegacyHandlerService implements IHandlerService {
 				return bestActivation.proxy;
 			}
 
-			// "super call"
-			IEclipseContext parent = context.getParent();
-			if (parent == null) {
-				return null;
-			}
-			return parent.get(HandlerServiceImpl.H_ID + commandId);
+			return null;
 		}
 	}
 
@@ -537,6 +533,7 @@ public class LegacyHandlerService implements IHandlerService {
 			NotEnabledException, NotHandledException {
 		IEclipseContext staticContext = null;
 		boolean disposeContext = false;
+		Object defaultVar = null;
 		if (context instanceof ExpressionContext) {
 			// create a child context so that the primary context doesn't get
 			// populated by parameters by the EHS
@@ -548,8 +545,21 @@ public class LegacyHandlerService implements IHandlerService {
 				staticContext.set(Event.class, event);
 			}
 			staticContext.set(IEvaluationContext.class, context);
+			defaultVar = context.getDefaultVariable();
 		}
-		EHandlerService hs = eclipseContext.get(EHandlerService.class);
+		IEclipseContext lookupContext = eclipseContext;
+		IEvaluationContext contextPtr = context;
+		while (contextPtr != null) {
+			if (contextPtr instanceof ExpressionContext) {
+				lookupContext = ((ExpressionContext) contextPtr).eclipseContext;
+				if (defaultVar != null && defaultVar != IEvaluationContext.UNDEFINED_VARIABLE) {
+					lookupContext.set(EvaluationService.DEFAULT_VAR, defaultVar);
+				}
+				break;
+			}
+			contextPtr = contextPtr.getParent();
+		}
+		EHandlerService hs = lookupContext.get(EHandlerService.class);
 		try {
 			final Object rc = hs.executeHandler(command, staticContext);
 			if (staticContext.get(HandlerServiceImpl.NOT_HANDLED) == Boolean.TRUE) {
@@ -604,8 +614,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
 		IEvaluationContext tmpContext = getCurrentState();
-		IEvaluationContext context = new EvaluationContext(null,
-				IEvaluationContext.UNDEFINED_VARIABLE);
+		IEclipseContext snapshotContext = eclipseContext.createChild("snapshotContext"); //$NON-NLS-1$
+		IEvaluationContext context = new ExpressionContext(snapshotContext);
 
 		if (includeSelection) {
 			for (String variable : SELECTION_VARIABLES) {
