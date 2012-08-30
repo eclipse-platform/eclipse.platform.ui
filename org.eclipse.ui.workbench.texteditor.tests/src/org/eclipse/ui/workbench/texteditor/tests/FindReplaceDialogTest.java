@@ -182,6 +182,7 @@ public class FindReplaceDialogTest extends TestCase {
 		if (shell == null && Util.isGtk())
 			fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
 		
+		takeScreenshot();
 		assertTrue(findField.isFocusControl());
 
 		Button wrapSearchBox= (Button)fFindReplaceDialog.get("fWrapCheckBox");
