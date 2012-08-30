@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 
 /**
  * Test suite that contains the same tests as a regular {@link TestSuite},
- * but the order of tests is the bytecode order from the classfile.
+ * but the order of tests is the order as declared in the classfile's bytecode.
  * 
  * <p>
  * <b>Background:</b> {@link java.lang.Class#getDeclaredMethods()} does not
@@ -38,7 +38,7 @@ import junit.framework.TestSuite;
 public class BytecodeOrderedTestSuite extends TestSuite {
 	
 	/**
-	 * Creates a new test suite that runs tests in bytecode order.
+	 * Creates a new test suite that runs tests in bytecode declaration order.
 	 * 
 	 * @param testClass the JUnit-3-style test class 
 	 */
@@ -47,7 +47,7 @@ public class BytecodeOrderedTestSuite extends TestSuite {
 	}
 	
 	/**
-	 * Creates a new test suite that runs tests in bytecode order.
+	 * Creates a new test suite that runs tests in bytecode declaration order.
 	 * 
 	 * @param testClass the JUnit-3-style test class 
 	 * @param name the name of the suite
@@ -105,7 +105,11 @@ public class BytecodeOrderedTestSuite extends TestSuite {
 		};
 	}
 	
-    private ArrayList addDeclaredTestMethodNames(Class c, ArrayList methodNames) throws IOException {
+    private void addDeclaredTestMethodNames(Class c, ArrayList methodNames) throws IOException {
+    	/*
+    	 * XXX: This method needs to be updated if a new major class file version
+    	 * or new constant pool tags are specified.
+    	 */
         String className= c.getName();
         int lastDot= className.lastIndexOf(".");
 		if (lastDot != -1)
@@ -116,7 +120,7 @@ public class BytecodeOrderedTestSuite extends TestSuite {
             throw new IOException("bad magic bytes: 0x" + Integer.toHexString(magic));
         skip(is, 2); // minor_version
         int major= is.readUnsignedShort();
-        if (major > 51) { // > Java 7
+        if (major > 51) { // major > Java 7
         	addTest(error(c, "suite can't handle class file version", new RuntimeException(c.getName() + " (major = " + major + ")")));
         }
         int cpCount= is.readUnsignedShort();
@@ -143,7 +147,7 @@ public class BytecodeOrderedTestSuite extends TestSuite {
                 case 5: // CONSTANT_Long
                 case 6: // CONSTANT_Double
                     skip(is, 8);
-                    i++; // weird spec
+                    i++; // weird spec wants this
                     break;
                 case 12: // CONSTANT_NameAndType
                     skip(is, 4);
@@ -195,7 +199,6 @@ public class BytecodeOrderedTestSuite extends TestSuite {
                 skip(is, attInfoCount);
             }
         }
-        return methodNames;
     }
     
 	private static void skip(DataInputStream is, long bytes) throws IOException {
