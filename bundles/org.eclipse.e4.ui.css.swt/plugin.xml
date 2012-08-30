@@ -30,6 +30,9 @@
          <widget
                class="org.eclipse.swt.custom.CTabItem">
          </widget>
+         <widget
+               class="org.eclipse.swt.widgets.ToolBar">
+         </widget>
          
          <!-- these should be obviated by 4.2M6 --> 
       </provider>
