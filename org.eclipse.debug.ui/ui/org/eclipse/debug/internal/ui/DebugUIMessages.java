@@ -28,6 +28,7 @@ public class DebugUIMessages extends NLS {
 	public static String DebugUIPlugin_0;
 
 	public static String DebugUIPlugin_25;
+	public static String DebugUIPlugin_showProgressJob_label;
 	public static String DebugUIPlugin_Build_error__Check_log_for_details__2;
 	public static String DebugUIPlugin_Run_Debug_1;
 

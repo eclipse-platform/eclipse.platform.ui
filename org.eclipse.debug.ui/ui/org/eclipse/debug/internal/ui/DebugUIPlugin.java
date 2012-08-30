@@ -108,6 +108,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.framework.Bundle;
@@ -1179,7 +1180,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			}
 		}
 		final boolean waitInJob = wait;
-		Job job = new Job(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()})) {
+		final Job job = new Job(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()})) {
 			public IStatus run(final IProgressMonitor monitor) {
 				/* Setup progress monitor
 				 * - Waiting for jobs to finish (2)
@@ -1246,15 +1247,21 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			}
 		};
 
-		IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
-		IProgressService progressService = workbench.getProgressService();
-
 		job.setPriority(Job.INTERACTIVE);
 		job.setProperty(IProgressConstants2.SHOW_IN_TASKBAR_ICON_PROPERTY, Boolean.TRUE);
 		job.setName(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()}));
 		
 		if (wait) {
-			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job);
+			new WorkbenchJob(DebugUIMessages.DebugUIPlugin_showProgressJob_label) { 
+				{ setPriority(INTERACTIVE); }
+				
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
+					IProgressService progressService = workbench.getProgressService();
+					progressService.showInDialog(null, job);
+					return Status.OK_STATUS;
+				}
+			}.schedule();
 		}
 		job.schedule();
 	}
