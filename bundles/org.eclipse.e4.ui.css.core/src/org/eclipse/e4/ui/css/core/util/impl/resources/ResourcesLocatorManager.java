@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.util.impl.resources;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
