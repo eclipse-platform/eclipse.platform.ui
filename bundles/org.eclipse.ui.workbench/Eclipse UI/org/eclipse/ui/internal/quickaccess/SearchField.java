@@ -157,6 +157,7 @@ public class SearchField {
 		quickAccessContents.hookFilterText(text);
 		shell = new Shell(parent.getShell(), SWT.RESIZE | SWT.ON_TOP);
 		shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		shell.setText(QuickAccessMessages.QuickAccess_EnterSearch); // just for debugging, not shown anywhere
 		shell.addShellListener(new ShellAdapter() {
 			@Override
 			public void shellClosed(ShellEvent e) {

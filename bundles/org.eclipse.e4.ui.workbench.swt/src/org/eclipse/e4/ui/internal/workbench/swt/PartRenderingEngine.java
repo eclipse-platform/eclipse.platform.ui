@@ -735,6 +735,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private Shell getLimboShell() {
 		if (limbo == null) {
 			limbo = new Shell(Display.getCurrent(), SWT.NONE);
+			limbo.setText("PartRenderingEngine's limbo"); //$NON-NLS-1$ // just for debugging, not shown anywhere
 
 			// Place the limbo shell 'off screen'
 			limbo.setLocation(0, 10000);
