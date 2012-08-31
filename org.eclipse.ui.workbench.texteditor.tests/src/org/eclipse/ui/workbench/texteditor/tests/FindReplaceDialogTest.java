@@ -182,8 +182,12 @@ public class FindReplaceDialogTest extends TestCase {
 		if (shell == null && Util.isGtk())
 			fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
 		
-		takeScreenshot();
 		assertTrue(findField.isFocusControl());
+		
+		if (Util.isMac())
+			/* On the Mac, checkboxes only take focus if "Full Keyboard Access" is enabled in the System Preferences.
+			 * Let's not assume that someone pressed Ctrl+F7 on every test machine... */
+			return;
 
 		Button wrapSearchBox= (Button)fFindReplaceDialog.get("fWrapCheckBox");
 		wrapSearchBox.setFocus();
@@ -206,7 +210,7 @@ public class FindReplaceDialogTest extends TestCase {
 
 	public void testFocusNotChangedWhenButtonMnemonicPressed() {
 		if (Util.isMac())
-			return;
+			return; // Mac doesn't support mnemonics.
 		
 		openTextViewerAndFindReplaceDialog();
 
