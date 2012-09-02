@@ -300,7 +300,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					EClass eClass = ((FeatureClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement()).eClass;
 					EObject eObject = EcoreUtil.create(eClass);
-
+					setElementId(eObject);
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, eObject);
 
 					if (cmd.canExecute()) {
