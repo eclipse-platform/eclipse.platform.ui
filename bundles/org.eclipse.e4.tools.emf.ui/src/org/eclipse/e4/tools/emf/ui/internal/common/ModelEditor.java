@@ -181,6 +181,8 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.VerticalRuler;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -830,6 +832,15 @@ public class ModelEditor {
 
 		viewer.setInput(modelProvider.getRoot());
 		viewer.expandToLevel(2);
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+
+			public void doubleClick(DoubleClickEvent event) {
+				TreeViewer viewer = (TreeViewer) event.getViewer();
+				IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
+				Object selectedNode = thisSelection.getFirstElement();
+				viewer.setExpandedState(selectedNode, !viewer.getExpandedState(selectedNode));
+			}
+		});
 		// ViewerDropAdapter adapter = new ViewerDropAdapter(viewer) {
 		//
 		// @Override
