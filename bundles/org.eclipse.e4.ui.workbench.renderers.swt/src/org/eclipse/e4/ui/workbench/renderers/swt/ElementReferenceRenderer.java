@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -31,23 +31,9 @@ import org.eclipse.swt.widgets.Control;
  * Create an element from a reference
  */
 public class ElementReferenceRenderer extends SWTPartRenderer {
-
-	private static Map<MUIElement, Set<MPlaceholder>> renderedMap = new HashMap<MUIElement, Set<MPlaceholder>>();
-
-	/**
-	 * Get the list of all place holders that reference the given element
-	 * 
-	 * @param element
-	 *            The element to get place holders for
-	 * @return The list of rendered place holders (may be null)
-	 */
-	public static Set<MPlaceholder> getRenderedPlaceholders(MUIElement element) {
-		Set<MPlaceholder> mapVal = renderedMap.get(element);
-		if (mapVal == null)
-			return new HashSet<MPlaceholder>();
-
-		return mapVal;
-	}
+	@Inject
+	@Named(WorkbenchRendererFactory.SHARED_ELEMENTS_STORE)
+	Map<MUIElement, Set<MPlaceholder>> renderedMap;
 
 	@Inject
 	IPresentationEngine renderingEngine;

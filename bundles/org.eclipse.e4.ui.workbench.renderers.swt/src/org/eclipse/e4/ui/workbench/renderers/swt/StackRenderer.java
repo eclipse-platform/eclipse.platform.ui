@@ -12,10 +12,12 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -95,6 +97,9 @@ import org.osgi.service.event.EventHandler;
 import org.w3c.dom.css.CSSValue;
 
 public class StackRenderer extends LazyStackRenderer {
+	@Inject
+	@Named(WorkbenchRendererFactory.SHARED_ELEMENTS_STORE)
+	Map<MUIElement, Set<MPlaceholder>> renderedMap;
 
 	public static final String TAG_VIEW_MENU = "ViewMenu"; //$NON-NLS-1$
 	private static final String SHELL_CLOSE_EDITORS_MENU = "shell_close_editors_menu"; //$NON-NLS-1$
@@ -370,14 +375,16 @@ public class StackRenderer extends LazyStackRenderer {
 
 				// Do we have any stacks with place holders for the element
 				// that's changed?
-				Set<MPlaceholder> refs = ElementReferenceRenderer
-						.getRenderedPlaceholders(part);
-				for (MPlaceholder ref : refs) {
-					MElementContainer<MUIElement> refParent = ref.getParent();
-					if (refParent.getRenderer() instanceof StackRenderer) {
-						CTabItem cti = findItemForPart(ref, refParent);
-						if (cti != null) {
-							updateTab(cti, part, attName, newValue);
+				Set<MPlaceholder> refs = renderedMap.get(part);
+				if (refs != null) {
+					for (MPlaceholder ref : refs) {
+						MElementContainer<MUIElement> refParent = ref
+								.getParent();
+						if (refParent.getRenderer() instanceof StackRenderer) {
+							CTabItem cti = findItemForPart(ref, refParent);
+							if (cti != null) {
+								updateTab(cti, part, attName, newValue);
+							}
 						}
 					}
 				}
