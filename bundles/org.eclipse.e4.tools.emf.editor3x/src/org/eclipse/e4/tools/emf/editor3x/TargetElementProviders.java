@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.pde.internal.core.PDEExtensionRegistry;
 
 public class TargetElementProviders implements IModelElementProvider {
+	private static final String APP_E4XMI_DEFAULT = "Application.e4xmi";
 	private ResourceSet resourceSet;
 	
 	public void getModelElements(Filter filter, ModelResultHandler handler) {
@@ -53,28 +54,18 @@ public class TargetElementProviders implements IModelElementProvider {
 			for( IExtension ext : extensions ) {
 				for( IConfigurationElement el : ext.getConfigurationElements() ) {
 					if( el.getName().equals("product") ) {
+						boolean xmiPropertyPresent = false;
 						for( IConfigurationElement prop: el.getChildren("property") ) {
 							if( prop.getAttribute("name").equals("applicationXMI") ) {
 								String v = prop.getAttribute("value");
-								String[] s = v.split("/");
-								URI uri;
-//								System.err.println("Product-Ext: Checking: " + v + " => P:" +  s[0] + "");
-								IProject p = root.getProject(s[0]);
-								if( p.exists() && p.isOpen() ) {
-									uri = URI.createPlatformResourceURI(v, true );	
-								} else {
-									uri = URI.createURI("platform:/plugin/" + v );
-								}
-								
-//								System.err.println(uri);
-								try {
-									resourceSet.getResource(uri, true);							
-								} catch (Exception e) {
-									e.printStackTrace();
-//									System.err.println("=============> Failing");
-								}
+								setUpResourceSet(root, v);
+								xmiPropertyPresent = true;
 								break;
 							}
+						}
+						if (!xmiPropertyPresent){
+							setUpResourceSet(root, ext.getNamespaceIdentifier()+"/"+APP_E4XMI_DEFAULT);
+							break;
 						}
 					}
 				}
@@ -82,6 +73,29 @@ public class TargetElementProviders implements IModelElementProvider {
 		}
 		
 		applyFilter(filter, handler);
+	}
+
+	private void setUpResourceSet(IWorkspaceRoot root, String v) {
+		String[] s = v.split("/");
+		URI uri;
+//								System.err.println("Product-Ext: Checking: " + v + " => P:" +  s[0] + "");
+		IProject p = root.getProject(s[0]);
+		if( p.exists() && p.isOpen() ) {
+			uri = URI.createPlatformResourceURI(v, true );	
+		} else {
+			uri = URI.createURI("platform:/plugin/" + v );
+		}
+		
+//		System.err.println(uri);
+		try {
+			//prevent some unnecessary calls by checking the uri 
+			if (resourceSet.getURIConverter().exists(uri, null)
+					)
+			resourceSet.getResource(uri, true);							
+		} catch (Exception e) {
+			e.printStackTrace();
+//									System.err.println("=============> Failing");
+		}
 	}
 	
 	private void applyFilter(Filter filter, ModelResultHandler handler) {
@@ -95,7 +109,7 @@ public class TargetElementProviders implements IModelElementProvider {
 //								.println("Skipped because it is an import");
 					} else {
 						if (o.eClass().equals(filter.eClass)) {
-							System.err.println("Found: " + o);
+//							System.err.println("Found: " + o);
 							handler.result(o);
 						}
 					}
