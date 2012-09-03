@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -369,7 +370,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 				// Do we have any stacks with place holders for the element
 				// that's changed?
-				List<MPlaceholder> refs = ElementReferenceRenderer
+				Set<MPlaceholder> refs = ElementReferenceRenderer
 						.getRenderedPlaceholders(part);
 				for (MPlaceholder ref : refs) {
 					MElementContainer<MUIElement> refParent = ref.getParent();
