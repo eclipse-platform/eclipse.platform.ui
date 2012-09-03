@@ -408,7 +408,8 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 		Map<String, String> keys = new HashMap<String, String>();
 		keys.put("projectName", pluginName);
-		keys.put("packageName", fragment.getElementName() + ".handlers");
+		String elementName = fragment.getElementName();
+		keys.put("packageName", (elementName.equals("")?"": elementName + ".")+"handlers");
 
 		try {
 			URL corePath = ResourceLocator.getProjectTemplateFiles(template_id);
@@ -645,8 +646,9 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			// Create Quit handler for command
 			MHandler quitHandler = MCommandsFactory.INSTANCE.createHandler();
 			quitHandler.setCommand(command);
+			String elementName = fragment.getElementName();
 			quitHandler.setContributionURI("bundleclass://" + projectName
-					+ "/" + fragment.getElementName() + ".handlers."
+					+ "/" + (elementName.equals("")?"": elementName + ".")+"handlers."
 					+ className);
 			application.getHandlers().add(quitHandler);
 
