@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.Element;
 
@@ -72,6 +74,11 @@ public class SWTElementProvider implements IElementProvider {
 		if (element instanceof CTabFolder) {
 			return new CTabFolderElement((CTabFolder) element, engine);
 		}
+		if (element instanceof ToolBar) {
+			return new ToolBarElement((ToolBar) element, engine);
+		}
+
+		
 		if (element instanceof Composite) {
 			return new CompositeElement((Composite) element, engine);
 		}
@@ -83,6 +90,9 @@ public class SWTElementProvider implements IElementProvider {
 		}
 		if (element instanceof TableItem) {
 			return new TableItemElement((TableItem) element, engine);
+		}
+		if (element instanceof ToolItem) {
+			return new ToolItemElement((ToolItem) element, engine);
 		}
 		if (element instanceof Item) {
 			return new ItemElement((Item) element, engine);
