@@ -91,6 +91,10 @@ import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
  * Images retrieved from this facility should not be disposed.
  * The images will be disposed when this plug-in is shutdown.
  * </p>
+ * <p>
+ * Note: all methods in this class are expected to be called 
+ * on the Display thread unless otherwise noted.
+ * </p>
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
