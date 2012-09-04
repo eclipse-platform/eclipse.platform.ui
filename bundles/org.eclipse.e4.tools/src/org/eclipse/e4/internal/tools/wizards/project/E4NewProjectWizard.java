@@ -45,6 +45,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -171,6 +172,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 									"org.eclipse.e4.ui.workbench",
 									"org.eclipse.e4.core.services",
 									"org.eclipse.e4.core.di",
+									"org.eclipse.e4.ui.di",
 									"org.eclipse.e4.core.contexts",
 									"org.eclipse.e4.ui.workbench.swt",
 									"org.eclipse.core.databinding.property",
@@ -410,7 +412,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		keys.put("projectName", pluginName);
 		String elementName = fragment.getElementName();
 		keys.put("packageName", (elementName.equals("")?"": elementName + ".")+"handlers");
-
+		keys.put("packageName2", (elementName.equals("")?"": elementName + ".")+"parts");
 		try {
 			URL corePath = ResourceLocator.getProjectTemplateFiles(template_id);
 			IRunnableWithProgress op = new TemplateOperation(corePath, project,
@@ -419,7 +421,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		} catch (Exception e) {
 			PDEPlugin.logException(e);
 		}
-
+		
 		try {
 			URL corePath = ResourceLocator.getProjectTemplateFiles("src");
 			IRunnableWithProgress op = new TemplateOperation(corePath,
@@ -590,11 +592,12 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						MPartStack partStack = MBasicFactory.INSTANCE
 								.createPartStack();
 						partSashContainer.getChildren().add(partStack);
-						//
-						// MPart part =
-						// MApplicationFactory.eINSTANCE.createPart();
-						// partStack.getChildren().add(part);
-						// part.setLabel("Main");
+						
+						 MPart part = MBasicFactory.INSTANCE.createPart();
+						 partStack.getChildren().add(part);
+						 part.setLabel("Sample Part");
+						 part.setContributionURI("bundleclass://"+pluginName+"/"+fragment.getElementName()+".parts"+".SamplePart");
+						 
 					}
 
 					// WindowTrim
