@@ -182,7 +182,7 @@ public class BreakpointsComparator extends ViewerComparator {
 					}
 					int cmp;
 					if (num1 instanceof Long && num2 instanceof Long) {
-						cmp = ((Long)num1).compareTo(num2);
+						cmp = ((Long)num1).compareTo((Long)num2);
 					} else {
 						cmp = Double.compare(num1.doubleValue(), num2.doubleValue());
 					}
