@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christian Georgi - Bug 388321 Perspectives are not sorted in debug's view management preference page
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
@@ -27,6 +28,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -155,6 +157,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		fPerspectiveViewer.setContentProvider(provider);
 		fLabelProvider= new PerspectiveLabelProvider();
 		fPerspectiveViewer.setLabelProvider(fLabelProvider);
+		fPerspectiveViewer.setComparator(new PerspectiveComparator());
 		fPerspectiveViewer.setInput(this);
 		
 		Set perspectives;
@@ -260,6 +263,17 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
         }
 		
 	}
+	
+	private static class PerspectiveComparator extends ViewerComparator {
+
+	    public int compare(Viewer viewer, Object e1, Object e2) {
+	    	if (e1 instanceof IPerspectiveDescriptor && e2 instanceof IPerspectiveDescriptor) {
+	    		return ((IPerspectiveDescriptor) e1).getLabel().compareToIgnoreCase(((IPerspectiveDescriptor) e2).getLabel());
+	    	}
+	    	return super.compare(viewer, e1, e2);
+	    }
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
