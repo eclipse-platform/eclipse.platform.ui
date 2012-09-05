@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipe.debug.tests.launching.AcceleratorSubstitutionTests;
+import org.eclipe.debug.tests.launching.ArgumentParsingTests;
 import org.eclipe.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipe.debug.tests.launching.LaunchFavoriteTests;
 import org.eclipe.debug.tests.launching.LaunchHistoryTests;
@@ -83,6 +84,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(LaunchFavoriteTests.class));
 		addTest(new TestSuite(LaunchManagerTests.class));
 		addTest(new TestSuite(RefreshTabTests.class));
+		addTest(new TestSuite(ArgumentParsingTests.class));
 		
 		// Status handlers
 		addTest(new TestSuite(StatusHandlerTests.class));

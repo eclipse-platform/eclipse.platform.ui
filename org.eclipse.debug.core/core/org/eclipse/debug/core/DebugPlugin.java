@@ -853,6 +853,13 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
+		if (Platform.getOS().equals(Constants.OS_WIN32)) {
+			String[] winCmdLine= new String[cmdLine.length];
+			for (int i= 0; i < cmdLine.length; i++) {
+				winCmdLine[i]= winQuote(cmdLine[i]);
+			}
+			cmdLine= winCmdLine;
+		}
 		Process p= null;
 		try {
 			if (workingDirectory == null) {
@@ -876,7 +883,28 @@ public class DebugPlugin extends Plugin {
 			}
 		}
 		return p;
-	}	
+	}
+	
+	private static boolean needsQuoting(String s) {
+		int len = s.length();
+		if (len == 0) // empty string has to be quoted
+			return true;
+		for (int i = 0; i < len; i++) {
+			switch (s.charAt(i)) {
+				case ' ': case '\t': case '\\': case '"':
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private static String winQuote(String s) {
+		if (! needsQuoting(s))
+			return s;
+		s = s.replaceAll("([\\\\]*)\"", "$1$1\\\\\""); //$NON-NLS-1$ //$NON-NLS-2$
+		s = s.replaceAll("([\\\\]*)\\z", "$1$1"); //$NON-NLS-1$ //$NON-NLS-2$
+		return "\"" + s + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+	}
 	
 	/**
 	 * Returns whether this plug-in is in the process of 
@@ -1256,115 +1284,168 @@ public class DebugPlugin extends Plugin {
 		throw new CoreException(status);
 	}
 	
-	/**
-	 * Utility class to parse command line arguments.
-	 * 
-	 * @since 3.1
-	 */
-	private static class ArgumentParser {
-		private String fArgs;
-		private int fIndex= 0;
-		private int ch= -1;
-		
-		public ArgumentParser(String args) {
-			fArgs= args;
-		}
-		
-		public String[] parseArguments() {
-			List v= new ArrayList();
-			
-			ch= getNext();
-			while (ch > 0) {
-				if (Character.isWhitespace((char)ch)) {
-					ch= getNext();	
+	private static String[] parseArgumentsWindows(String args) {
+		// see http://msdn.microsoft.com/en-us/library/a1y7w461.aspx
+		List result= new ArrayList();
+
+		final int DEFAULT= 0;
+		final int ARG= 1;
+		final int IN_DOUBLE_QUOTE= 2;
+
+		int state= DEFAULT;
+		int backslashes= 0;
+		StringBuffer buf= new StringBuffer();
+		int len= args.length();
+		for (int i= 0; i < len; i++) {
+			char ch= args.charAt(i);
+			if (ch == '\\') {
+				backslashes++;
+				continue;
+			} else if (backslashes != 0) {
+				if (ch == '"') {
+					for (; backslashes >= 2; backslashes-= 2) {
+						buf.append('\\');
+					}
+					if (backslashes == 1) {
+						if (state == DEFAULT)
+							state= ARG;
+						buf.append('"');
+						backslashes= 0;
+						continue;
+					} // else fall through to switch
 				} else {
+					// false alarm, treat passed backslashes literally...
+					if (state == DEFAULT)
+						state= ARG;
+					for (; backslashes > 0; backslashes--) {
+						buf.append('\\');
+					}
+					// fall through to switch
+				}
+			}
+			if (Character.isWhitespace(ch)) {
+				if (state == DEFAULT) {
+					// skip
+					continue;
+				} else if (state == ARG) {
+					state= DEFAULT;
+					result.add(buf.toString());
+					buf.setLength(0);
+					continue;
+				}
+			}
+			switch (state) {
+				case DEFAULT:
+				case ARG:
 					if (ch == '"') {
-					    StringBuffer buf = new StringBuffer();
-						buf.append(parseString());
-						if (buf.length() == 0 && Platform.getOS().equals(Constants.OS_WIN32)) {
-							// empty string on windows platform
-							buf.append("\"\""); //$NON-NLS-1$
-						}
-						v.add(buf.toString());
+						state= IN_DOUBLE_QUOTE;
 					} else {
-						v.add(parseToken());
+						state= ARG;
+						buf.append(ch);
 					}
-				}
-			}
-	
-			String[] result= new String[v.size()];
-			v.toArray(result);
-			return result;
-		}
-		
-		private int getNext() {
-			if (fIndex < fArgs.length())
-				return fArgs.charAt(fIndex++);
-			return -1;
-		}
-		
-		private String parseString() {
-			ch= getNext();
-			if (ch == '"') {
-				ch= getNext();
-				return ""; //$NON-NLS-1$
-			}
-			StringBuffer buf= new StringBuffer();
-			while (ch > 0 && ch != '"') {
-				if (ch == '\\') {
-					ch= getNext();
-					if (ch != '"') {           // Only escape double quotes
-						buf.append('\\');
-					} else {
-						if (Platform.getOS().equals(Constants.OS_WIN32)) {
-							// @see Bug 26870. Windows requires an extra escape for embedded strings
-							buf.append('\\');
-						}
-					}
-				}
-				if (ch > 0) {
-					buf.append((char)ch);
-					ch= getNext();
-				}
-			}
-			ch= getNext();
-			return buf.toString();
-		}
-		
-		private String parseToken() {
-			StringBuffer buf= new StringBuffer();
-			
-			while (ch > 0 && !Character.isWhitespace((char)ch)) {
-				if (ch == '\\') {
-					ch= getNext();
-					if (Character.isWhitespace((char)ch)) {
-						// end of token, don't lose trailing backslash
-						buf.append('\\');
-						return buf.toString();
-					}
-					if (ch > 0) {
-						if (ch != '"') {           // Only escape double quotes
-							buf.append('\\');
+					break;
+				
+				case IN_DOUBLE_QUOTE:
+					if (ch == '"') {
+						if (i + 1 < len && args.charAt(i + 1) == '"') {
+							/* Undocumented feature in Windows:
+							 * Two consecutive double quotes inside a double-quoted argument are interpreted as
+							 * a single double quote.
+							 */
+							buf.append('"');
+							i++;
+						} else if (buf.length() == 0) {
+							// empty string on Windows platform. Account for bug in constructor of JDK's java.lang.ProcessImpl.
+							result.add("\"\""); //$NON-NLS-1$
+							state= DEFAULT;
 						} else {
-							if (Platform.getOS().equals(Constants.OS_WIN32)) {
-								// @see Bug 26870. Windows requires an extra escape for embedded strings
-								buf.append('\\');
-							}
+							state= ARG;
 						}
-						buf.append((char)ch);
-						ch= getNext();
-					} else if (ch == -1) {     // Don't lose a trailing backslash
-						buf.append('\\');
+					} else {
+						buf.append(ch);
 					}
-				} else if (ch == '"') {
-					buf.append(parseString());
-				} else {
-					buf.append((char)ch);
-					ch= getNext();
+					break;
+
+				default:
+					throw new IllegalStateException();
+			}
+		}
+		if (buf.length() > 0)
+			result.add(buf.toString());
+
+		return (String[]) result.toArray(new String[result.size()]);
+	}
+	
+	private static String[] parseArgumentsImpl(String args) {
+		// man sh, see topic QUOTING
+		List result= new ArrayList();
+	
+		final int DEFAULT= 0;
+		final int ARG= 1;
+		final int IN_DOUBLE_QUOTE= 2;
+		final int IN_SINGLE_QUOTE= 3;
+	
+		int state= DEFAULT;
+		StringBuffer buf= new StringBuffer();
+		int len= args.length();
+		for (int i= 0; i < len; i++) {
+			char ch= args.charAt(i);
+			if (Character.isWhitespace(ch)) {
+				if (state == DEFAULT) {
+					// skip
+					continue;
+				} else if (state == ARG) {
+					state= DEFAULT;
+					result.add(buf.toString());
+					buf.setLength(0);
+					continue;
 				}
 			}
-			return buf.toString();
+			switch (state) {
+				case DEFAULT:
+				case ARG:
+					if (ch == '"') {
+						state= IN_DOUBLE_QUOTE;
+					} else if (ch == '\'') {
+						state= IN_SINGLE_QUOTE;
+					} else if (ch == '\\' && i + 1 < len) {
+						state= ARG;
+						ch= args.charAt(++i);
+						buf.append(ch);
+					} else {
+						state= ARG;
+						buf.append(ch);
+					}
+					break;
+				
+				case IN_DOUBLE_QUOTE:
+					if (ch == '"') {
+						state= ARG;
+					} else if (ch == '\\' && i + 1 < len &&
+							(args.charAt(i + 1) == '\\' || args.charAt(i + 1) == '"')) {
+						ch= args.charAt(++i);
+						buf.append(ch);
+					} else {
+						buf.append(ch);
+					}
+					break;
+	
+				case IN_SINGLE_QUOTE:
+					if (ch == '\'') {
+						state= ARG;
+					} else {
+						buf.append(ch);
+					}
+					break;
+					
+				default:
+					throw new IllegalStateException();
+			}
 		}
+		if (buf.length() > 0)
+			result.add(buf.toString());
+	
+		return (String[]) result.toArray(new String[result.size()]);
 	}
 	
 	/**
@@ -1379,12 +1460,88 @@ public class DebugPlugin extends Plugin {
 	public static String[] parseArguments(String args) {
 		if (args == null)
 			return new String[0];
-		ArgumentParser parser= new ArgumentParser(args);
-		String[] res= parser.parseArguments();
 		
-		return res;
+		if (Constants.OS_WIN32.equals(Platform.getOS()))
+			return parseArgumentsWindows(args);
+		
+		return parseArgumentsImpl(args);
 	}	
 	
+	/**
+	 * Renders the given array of strings into a single command line.
+	 * <p>
+	 * If <code>segments</code> is not <code>null</code>, the array is filled
+	 * with the offsets of the start positions of arguments 1 to
+	 * <code>arguments.length - 1</code>, as rendered in the resulting string.
+	 * </p>
+	 * 
+	 * @param arguments
+	 *            the command line arguments
+	 * @param segments
+	 *            an array of size <code>arguments.length - 1</code> or
+	 *            <code>null</code>
+	 * @return the command line
+	 * @since 3.8
+	 */
+	public static String renderArguments(String[] arguments, int[] segments) {
+		boolean isWin32= Platform.getOS().equals(Constants.OS_WIN32);
+		StringBuffer buf = new StringBuffer();
+		int count = arguments.length;
+		for (int i = 0; i < count; i++) {
+			if (i > 0)
+				buf.append(' ');
+			
+			boolean containsSpace = false;
+			char[] characters = arguments[i].toCharArray();
+			for (int j = 0; j < characters.length; j++) {
+				char ch = characters[j];
+				if (ch == ' ' || ch == '\t') {
+					containsSpace = true;
+					buf.append('"');
+					break;
+				}
+			}
+			
+			int backslashes = 0;
+			for (int j = 0; j < characters.length; j++) {
+				char ch = characters[j];
+				if (ch == '"') {
+					if (isWin32) {
+						if (j == 0 && characters.length == 2 && characters[1] == '"') {
+							// empty string on windows platform, see bug 130767. Bug in constructor of JDK's java.lang.ProcessImpl.
+							buf.append("\"\""); //$NON-NLS-1$
+							break;
+						}
+						if (backslashes > 0) {
+							// Feature in Windows: need to double-escape backslashes in front of double quote.
+							for (; backslashes > 0; backslashes--) {
+								buf.append('\\');
+							}
+						}
+					}
+					buf.append('\\');
+				} else if (ch == '\\') {
+					if (isWin32) {
+						backslashes++;
+					} else {
+						buf.append('\\');
+					}
+				}
+				buf.append(ch);
+			}
+			if (containsSpace) {
+				buf.append('"');
+			} else if (characters.length == 0) {
+				buf.append("\"\""); //$NON-NLS-1$
+			}
+			
+			if (segments != null && i < count - 1) {
+				segments[i] = buf.length() + 1;
+			}
+		}
+		return buf.toString();
+	}
+
 	/**
 	 * Sets whether step filters should be applied to step commands. This
 	 * setting is a global option applied to all registered debug targets. 

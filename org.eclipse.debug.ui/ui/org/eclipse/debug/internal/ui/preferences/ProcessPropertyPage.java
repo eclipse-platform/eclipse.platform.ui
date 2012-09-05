@@ -93,33 +93,24 @@ public class ProcessPropertyPage extends PropertyPage {
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		String commandLineText = getCommandLineText(proc);
 		if (commandLineText != null) {
-			final String[] arguments = DebugPlugin.parseArguments(commandLineText);
-			StringBuffer renderedCommandLine = new StringBuffer(commandLineText.length());
-			for (int i = 0; i < arguments.length; i++) {
-				if (i > 0)
-					renderedCommandLine.append(' ');
-				renderedCommandLine.append(arguments[i]);
-			}
-			text.addSegmentListener(new SegmentListener() {
-				public void getSegments(SegmentEvent event) {
-					int count = arguments.length;
-					if (count < 2)
-						return;
-
-					int[] segments = new int[count - 1];
-					int nextStart = arguments[0].length() + 1;
-					for (int i = 1; i < count; i++) {
-						segments[i - 1] = nextStart;
-						nextStart = nextStart + arguments[i].length() + 1;
+			String[] arguments = DebugPlugin.parseArguments(commandLineText);
+			int count = arguments.length;
+			if (count > 1) {
+				// render as one argument per line, but don't copy line delimiters to clipboard:
+				final int[] segments = new int[count - 1];
+				final char[] chars = new char[count - 1];
+				Arrays.fill(chars, '\n');
+				
+				commandLineText = DebugPlugin.renderArguments(arguments, segments);
+				
+				text.addSegmentListener(new SegmentListener() {
+					public void getSegments(SegmentEvent event) {
+						event.segments = segments;
+						event.segmentsChars = chars;
 					}
-					event.segments = segments;
-
-					char[] chars = new char[count - 1];
-					Arrays.fill(chars, '\n');
-					event.segmentsChars = chars;
-				}
-			});
-			text.setText(renderedCommandLine.toString());
+				});
+			}
+			text.setText(commandLineText);
 		}
 		
 	//create environment section
