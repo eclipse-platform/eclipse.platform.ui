@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,12 +27,13 @@ import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 
 /**
- * A vertical ruler column displaying line numbers and serving as a UI for quick diff.
- * Clients usually instantiate and configure object of this class.
- *
+ * A vertical ruler column displaying line numbers and serving as a UI for quick diff. Clients
+ * usually instantiate and configure object of this class.
+ * 
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
-public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn implements IChangeRulerColumn, IRevisionRulerColumn, IRevisionRulerColumnExtension {
+public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implements IChangeRulerColumn, IRevisionRulerColumn, IRevisionRulerColumnExtension {
 	/** The ruler's annotation model. */
 	private IAnnotationModel fAnnotationModel;
 	/** <code>true</code> if changes should be displayed using character indications instead of background colors. */
