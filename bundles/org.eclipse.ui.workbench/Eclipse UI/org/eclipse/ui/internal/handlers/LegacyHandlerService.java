@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Named;
@@ -60,6 +62,7 @@ import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.expressions.AndExpression;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.EvaluationService;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
 
@@ -138,12 +141,7 @@ public class LegacyHandlerService implements IHandlerService {
 				return bestActivation.proxy;
 			}
 
-			// "super call"
-			IEclipseContext parent = context.getParent();
-			if (parent == null) {
-				return null;
-			}
-			return parent.get(HandlerServiceImpl.H_ID + commandId);
+			return null;
 		}
 	}
 
@@ -535,21 +533,30 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommandInContext(ParameterizedCommand command, Event event,
 			IEvaluationContext context) throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
+
 		IEclipseContext staticContext = null;
-		boolean disposeContext = false;
+		Object defaultVar = null;
 		if (context instanceof ExpressionContext) {
 			// create a child context so that the primary context doesn't get
 			// populated by parameters by the EHS
 			staticContext = ((ExpressionContext) context).eclipseContext.createChild();
 		} else {
-			staticContext = EclipseContextFactory.create();
-			disposeContext = true;
+			staticContext = eclipseContext.createChild("snapshotContext"); //$NON-NLS-1$
 			if (event != null) {
 				staticContext.set(Event.class, event);
 			}
 			staticContext.set(IEvaluationContext.class, context);
+			defaultVar = context.getDefaultVariable();
+			if (defaultVar != null && defaultVar != IEvaluationContext.UNDEFINED_VARIABLE) {
+				staticContext.set(EvaluationService.DEFAULT_VAR, defaultVar);
+			}
 		}
-		EHandlerService hs = eclipseContext.get(EHandlerService.class);
+		IEclipseContext lookupContext = staticContext;
+		// the IEvaluationContext snapshot is not part of our runtime
+		// IEclipseContext hierarchy. In order to work. we need the variables
+		// from the snapshot available in the static context.
+		populateSnapshot(context, staticContext);
+		EHandlerService hs = lookupContext.get(EHandlerService.class);
 		try {
 			final Object rc = hs.executeHandler(command, staticContext);
 			if (staticContext.get(HandlerServiceImpl.NOT_HANDLED) == Boolean.TRUE) {
@@ -572,10 +579,58 @@ public class LegacyHandlerService implements IHandlerService {
 			rethrow(e);
 			throw e;
 		} finally {
-			if (disposeContext) {
-				staticContext.dispose();
+			staticContext.dispose();
+		}
+	}
+
+	/**
+	 * @param context
+	 * @param staticContext
+	 */
+	private void populateSnapshot(IEvaluationContext context, IEclipseContext staticContext) {
+		IEvaluationContext ctxPtr = context;
+		while (ctxPtr != null && !(ctxPtr instanceof ExpressionContext)) {
+			Map vars = getVariables(ctxPtr);
+			if (vars != null) {
+				Iterator i = vars.entrySet().iterator();
+				while (i.hasNext()) {
+					Map.Entry entry = (Map.Entry) i.next();
+					if (staticContext.getLocal(entry.getKey().toString()) == null) {
+						staticContext.set(entry.getKey().toString(), entry.getValue());
+					}
+				}
+			}
+			ctxPtr = ctxPtr.getParent();
+		}
+	}
+
+	private Map getVariables(IEvaluationContext ctx) {
+		Field vars = getContextVariablesField();
+		if (vars != null) {
+			try {
+				return (Map) vars.get(ctx);
+			} catch (IllegalArgumentException e) {
+
+			} catch (IllegalAccessException e) {
+
 			}
 		}
+		return null;
+	}
+
+	private static Field contextFVariables = null;
+
+	private static Field getContextVariablesField() {
+		if (contextFVariables == null) {
+			try {
+				contextFVariables = EvaluationContext.class.getField("fVariables"); //$NON-NLS-1$
+			} catch (SecurityException e) {
+
+			} catch (NoSuchFieldException e) {
+
+			}
+		}
+		return contextFVariables;
 	}
 
 	/**

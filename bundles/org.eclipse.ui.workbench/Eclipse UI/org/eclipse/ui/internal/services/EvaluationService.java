@@ -46,6 +46,7 @@ import org.eclipse.ui.services.IEvaluationService;
  * 
  */
 public final class EvaluationService implements IEvaluationService {
+	public static final String DEFAULT_VAR = "org.eclipse.ui.internal.services.EvaluationService.default_var"; //$NON-NLS-1$
 	private static final String RE_EVAL = "org.eclipse.ui.internal.services.EvaluationService.evaluate"; //$NON-NLS-1$
 	private boolean evaluate = false;
 	private ExpressionContext legacyContext;
@@ -85,7 +86,12 @@ public final class EvaluationService implements IEvaluationService {
 		ExpressionContext.defaultVariableConverter = new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context) {
-				Object defaultVariable = context.getActive(IServiceConstants.ACTIVE_SELECTION);
+				Object defaultVariable = context.getLocal(DEFAULT_VAR);
+				if (defaultVariable != null
+						&& defaultVariable != IEvaluationContext.UNDEFINED_VARIABLE) {
+					return defaultVariable;
+				}
+				defaultVariable = context.getActive(IServiceConstants.ACTIVE_SELECTION);
 				if (defaultVariable instanceof IStructuredSelection) {
 					final IStructuredSelection selection = (IStructuredSelection) defaultVariable;
 					return selection.toList();
