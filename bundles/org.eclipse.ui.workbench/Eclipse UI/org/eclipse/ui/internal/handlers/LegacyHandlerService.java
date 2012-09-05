@@ -624,6 +624,7 @@ public class LegacyHandlerService implements IHandlerService {
 		if (contextFVariables == null) {
 			try {
 				contextFVariables = EvaluationContext.class.getField("fVariables"); //$NON-NLS-1$
+				contextFVariables.setAccessible(true);
 			} catch (SecurityException e) {
 
 			} catch (NoSuchFieldException e) {
