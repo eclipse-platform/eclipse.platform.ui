@@ -177,18 +177,20 @@ public class ImageBasedFrame extends Canvas {
 				dstRect.height);
 
 		// handle (if vertical)
-		srcRect.x = 0;
-		srcRect.y = 0;
-		srcRect.width = handle.getBounds().width;
-		srcRect.height = handle.getBounds().height;
-		dstRect.x = w1;
-		dstRect.y = h1;
-		dstRect.width = inner.x + handleWidth;
-		dstRect.height = handle.getBounds().height;
-		e.gc.drawImage(handle, srcRect.x, srcRect.y, srcRect.width,
-				srcRect.height, dstRect.x, dstRect.y, dstRect.width,
-				dstRect.height);
-
+		if (handleHeight > 0) {
+			srcRect.x = 0;
+			srcRect.y = 0;
+			srcRect.width = handle.getBounds().width;
+			srcRect.height = handle.getBounds().height;
+			dstRect.x = w1;
+			dstRect.y = h1;
+			dstRect.width = inner.x;
+			dstRect.height = handleHeight;
+			e.gc.drawImage(handle, srcRect.x, srcRect.y, srcRect.width,
+					srcRect.height, dstRect.x, dstRect.y, dstRect.width,
+					dstRect.height);
+		}
+		
 		// Top Right
 		srcRect.x = w1 + w2;
 		srcRect.y = 0;
