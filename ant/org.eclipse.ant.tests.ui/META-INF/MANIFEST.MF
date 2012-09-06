@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ant.tests.ui; singleton:=true
-Bundle-Version: 3.8.0.qualifier
+Bundle-Version: 3.8.100.qualifier
 Bundle-ClassPath: anttestsui.jar
 Bundle-Activator: org.eclipse.ant.tests.ui.testplugin.AntUITestPlugin
 Bundle-Vendor: %providerName
@@ -22,7 +22,7 @@ Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.jface.text;resolution:=optional,
  org.eclipse.ui.workbench.texteditor;resolution:=optional,
  org.eclipse.ui.editors;resolution:=optional,
- org.apache.ant;bundle-version="1.8.2",
+ org.apache.ant;bundle-version="1.8.4",
  org.junit,
  org.eclipse.core.resources,
  org.eclipse.jdt.core,
