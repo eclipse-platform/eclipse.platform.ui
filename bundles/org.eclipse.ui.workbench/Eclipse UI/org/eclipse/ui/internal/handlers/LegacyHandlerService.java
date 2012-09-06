@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Named;
@@ -531,34 +533,29 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommandInContext(ParameterizedCommand command, Event event,
 			IEvaluationContext context) throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
+
 		IEclipseContext staticContext = null;
-		boolean disposeContext = false;
 		Object defaultVar = null;
 		if (context instanceof ExpressionContext) {
 			// create a child context so that the primary context doesn't get
 			// populated by parameters by the EHS
 			staticContext = ((ExpressionContext) context).eclipseContext.createChild();
 		} else {
-			staticContext = EclipseContextFactory.create();
-			disposeContext = true;
+			staticContext = eclipseContext.createChild("snapshotContext"); //$NON-NLS-1$
 			if (event != null) {
 				staticContext.set(Event.class, event);
 			}
 			staticContext.set(IEvaluationContext.class, context);
 			defaultVar = context.getDefaultVariable();
-		}
-		IEclipseContext lookupContext = eclipseContext;
-		IEvaluationContext contextPtr = context;
-		while (contextPtr != null) {
-			if (contextPtr instanceof ExpressionContext) {
-				lookupContext = ((ExpressionContext) contextPtr).eclipseContext;
-				if (defaultVar != null && defaultVar != IEvaluationContext.UNDEFINED_VARIABLE) {
-					lookupContext.set(EvaluationService.DEFAULT_VAR, defaultVar);
-				}
-				break;
+			if (defaultVar != null && defaultVar != IEvaluationContext.UNDEFINED_VARIABLE) {
+				staticContext.set(EvaluationService.DEFAULT_VAR, defaultVar);
 			}
-			contextPtr = contextPtr.getParent();
 		}
+		IEclipseContext lookupContext = staticContext;
+		// the IEvaluationContext snapshot is not part of our runtime
+		// IEclipseContext hierarchy. In order to work. we need the variables
+		// from the snapshot available in the static context.
+		populateSnapshot(context, staticContext);
 		EHandlerService hs = lookupContext.get(EHandlerService.class);
 		try {
 			final Object rc = hs.executeHandler(command, staticContext);
@@ -582,10 +579,59 @@ public class LegacyHandlerService implements IHandlerService {
 			rethrow(e);
 			throw e;
 		} finally {
-			if (disposeContext) {
-				staticContext.dispose();
+			staticContext.dispose();
+		}
+	}
+
+	/**
+	 * @param context
+	 * @param staticContext
+	 */
+	private void populateSnapshot(IEvaluationContext context, IEclipseContext staticContext) {
+		IEvaluationContext ctxPtr = context;
+		while (ctxPtr != null && !(ctxPtr instanceof ExpressionContext)) {
+			Map vars = getVariables(ctxPtr);
+			if (vars != null) {
+				Iterator i = vars.entrySet().iterator();
+				while (i.hasNext()) {
+					Map.Entry entry = (Map.Entry) i.next();
+					if (staticContext.getLocal(entry.getKey().toString()) == null) {
+						staticContext.set(entry.getKey().toString(), entry.getValue());
+					}
+				}
+			}
+			ctxPtr = ctxPtr.getParent();
+		}
+	}
+
+	private Map getVariables(IEvaluationContext ctx) {
+		Field vars = getContextVariablesField();
+		if (vars != null) {
+			try {
+				return (Map) vars.get(ctx);
+			} catch (IllegalArgumentException e) {
+
+			} catch (IllegalAccessException e) {
+
 			}
 		}
+		return null;
+	}
+
+	private static Field contextFVariables = null;
+
+	private static Field getContextVariablesField() {
+		if (contextFVariables == null) {
+			try {
+				contextFVariables = EvaluationContext.class.getField("fVariables"); //$NON-NLS-1$
+				contextFVariables.setAccessible(true);
+			} catch (SecurityException e) {
+
+			} catch (NoSuchFieldException e) {
+
+			}
+		}
+		return contextFVariables;
 	}
 
 	/**
@@ -614,8 +660,8 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
 		IEvaluationContext tmpContext = getCurrentState();
-		IEclipseContext snapshotContext = eclipseContext.createChild("snapshotContext"); //$NON-NLS-1$
-		IEvaluationContext context = new ExpressionContext(snapshotContext);
+		IEvaluationContext context = new EvaluationContext(null,
+				IEvaluationContext.UNDEFINED_VARIABLE);
 
 		if (includeSelection) {
 			for (String variable : SELECTION_VARIABLES) {
