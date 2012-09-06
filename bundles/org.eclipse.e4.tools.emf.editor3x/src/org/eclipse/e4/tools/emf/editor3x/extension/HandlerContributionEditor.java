@@ -43,7 +43,7 @@ public class HandlerContributionEditor implements IContributionClassCreator {
 	}
 	
 	private void createOpen(MContribution contribution, EditingDomain domain, IProject project, Shell shell, boolean forceNew) {
-		if( contribution.getContributionURI() == null || contribution.getContributionURI().trim().length() == 0 || !contribution.getContributionURI().startsWith("bundleclass:") ) {
+		if( forceNew || contribution.getContributionURI() == null || contribution.getContributionURI().trim().length() == 0 || !contribution.getContributionURI().startsWith("bundleclass:") ) {
 			NewHandlerClassWizard wizard = new NewHandlerClassWizard();
 			wizard.init( null, new StructuredSelection(project));
 			WizardDialog dialog = new WizardDialog(shell, wizard);
