@@ -8,8 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mariot Chauvin <mariot.chauvin@obeo.fr> - bug 259553
+ *     Amit Joglekar <joglekar@us.ibm.com> - Support for dynamic images (bug 385795)
  *******************************************************************************/
 package org.eclipse.ui.internal.views.properties.tabbed.view;
+
+import java.util.Map;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -34,6 +37,7 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -68,6 +72,17 @@ public class TabbedPropertyList
 	private boolean focus = false;
 
 	private ListElement[] elements;
+
+	/**
+	 * This map specifies the number of dynamic images for a tab. It has a
+	 * ITabItem as key and number of dynamic images for the tab as value. It is
+	 * set using the setDynamicImageCount() method. It is used to calculate the
+	 * width of the widest tab by setting aside enough space for displaying the
+	 * dynamic images. Individual dynamic images are displayed/removed from a
+	 * tab by using the showDynamicImage() and hideDynamicImage() methods on the
+	 * tab's ListElement object.
+	 */
+	private Map tabToDynamicImageCountMap;
 
 	private int selectedElementIndex = NONE;
 
@@ -125,6 +140,10 @@ public class TabbedPropertyList
 		private boolean selected;
 
 		private boolean hover;
+
+		private Image[] dynamicImages;
+
+		private Color textColor = widgetForeground;
 
 		/**
 		 * Constructor for ListElement.
@@ -187,6 +206,32 @@ public class TabbedPropertyList
 		}
 
 		/**
+		 * Constructor for ListElement.
+		 * 
+		 * @param parent
+		 *            the parent Composite.
+		 * @param tab
+		 *            the tab item for the element.
+		 * @param dynamicImageCount
+		 *            number of dynamic images for this element
+		 * @param index
+		 *            the index in the list.
+		 */
+		public ListElement(Composite parent, final ITabItem tab,
+				int dynamicImageCount, int index) {
+			this(parent, tab, index);
+			/*
+			 * Dynamic images are not displayed initially, set all of them to
+			 * null. Clients should call showDynamicImage() method to display a
+			 * dynamic image.
+			 */
+			this.dynamicImages = new Image[dynamicImageCount];
+			for (int i = 0; i < dynamicImageCount; i++) {
+				this.dynamicImages[i] = null;
+			}
+		}
+
+		/**
 		 * Set selected value for this element.
 		 * 
 		 * @param selected
@@ -195,6 +240,64 @@ public class TabbedPropertyList
 		public void setSelected(boolean selected) {
 			this.selected = selected;
 			redraw();
+		}
+
+		/**
+		 * Show the dynamic image at specified index in dynamicImages array. The
+		 * image width should not be more than 16 pixels. The caller is
+		 * responsible for loading the image appropriately and managing it's
+		 * resources.
+		 * 
+		 * @param index
+		 * @param image
+		 */
+		public void showDynamicImage(int index, Image image) {
+			if (index >= 0 && index < dynamicImages.length) {
+				if (dynamicImages[index] != image) {
+					dynamicImages[index] = image;
+					redraw();
+				}
+			}
+		}
+
+		/**
+		 * Hide the dynamic image at specified index in dynamicImages array. The
+		 * caller is responsible for managing image resources and disposing it
+		 * appropriately.
+		 * 
+		 * @param index
+		 */
+		public void hideDynamicImage(int index) {
+			if (index >= 0 && index < dynamicImages.length) {
+				if (dynamicImages[index] != null) {
+					dynamicImages[index] = null;
+					redraw();
+				}
+			}
+		}
+
+		/**
+		 * Sets color to be used for drawing tab label text. The caller is
+		 * responsible for managing the color's resources and disposing it
+		 * appropriately after setDefaultTextColor() is later invoked.
+		 * 
+		 * @param textColor
+		 */
+		public void setTextColor(Color textColor) {
+			if (textColor != null && !this.textColor.equals(textColor)) {
+				this.textColor = textColor;
+				redraw();
+			}
+		}
+
+		/**
+		 * Sets default color for tab label text
+		 */
+		public void setDefaultTextColor() {
+			if (!this.textColor.equals(widgetForeground)) {
+				this.textColor = widgetForeground;
+				redraw();
+			}
 		}
 
 		/**
@@ -242,6 +345,9 @@ public class TabbedPropertyList
 						bounds.height + 1);
 			}
 
+			/*
+			 * Add INDENT pixels to the left as a margin.
+			 */
 			int textIndent = INDENT;
 			FontMetrics fm = e.gc.getFontMetrics();
 			int height = fm.getHeight();
@@ -256,7 +362,7 @@ public class TabbedPropertyList
 					textIndent = textIndent - 3;
 				}
 				e.gc.drawImage(tab.getImage(), textIndent, textMiddle - 1);
-				textIndent = textIndent + 16 + 5;
+				textIndent = textIndent + 16 + 4;
 			} else if (tab.isIndented()) {
 				textIndent = textIndent + INDENT;
 			}
@@ -274,6 +380,33 @@ public class TabbedPropertyList
 				Point point = e.gc.textExtent(tab.getText());
 				e.gc.drawLine(textIndent, bounds.height - 4, textIndent
 					+ point.x, bounds.height - 4);
+			}
+
+			/* Draw dynamic images, if any */
+			boolean hasDynamicImage = false;
+			for (int i = 0; i < dynamicImages.length; i++) {
+				Image dynamicImage = dynamicImages[i];
+				if (dynamicImage != null && !dynamicImage.isDisposed()) {
+					hasDynamicImage = true;
+					break;
+				}
+			}
+			if (hasDynamicImage) {
+				int drawPosition = textIndent
+						+ e.gc.textExtent(tab.getText()).x + 4;
+				boolean addSpace = false;
+				for (int i = 0; i < dynamicImages.length; i++) {
+					Image dynamicImage = dynamicImages[i];
+					if (dynamicImage != null && !dynamicImage.isDisposed()) {
+						if (addSpace) {
+							drawPosition = drawPosition + 3;
+						}
+						e.gc.drawImage(dynamicImage, drawPosition,
+								textMiddle - 1);
+						drawPosition = drawPosition + 16;
+						addSpace = true;
+					}
+				}
 			}
 
 			/* draw the bottom line on the tab for selected and default */
@@ -549,6 +682,15 @@ public class TabbedPropertyList
 	}
 
 	/**
+	 * Returns the number of elements in this list viewer.
+	 * 
+	 * @return number of elements
+	 */
+	public int getNumberOfElements() {
+		return elements.length;
+	}
+
+	/**
 	 * Returns the element with the given index from this list viewer. Returns
 	 * <code>null</code> if the index is out of range.
 	 * 
@@ -575,6 +717,14 @@ public class TabbedPropertyList
 	}
 
 	/**
+	 * @return zero-relative index of the widest item, or -1 if this list is
+	 *         empty.
+	 */
+	public int getWidestLabelIndex() {
+		return widestLabelIndex;
+	}
+
+	/**
 	 * Removes all elements from this list.
 	 */
 	public void removeAll() {
@@ -588,6 +738,20 @@ public class TabbedPropertyList
 		widestLabelIndex = NONE;
 		topVisibleIndex = NONE;
 		bottomVisibleIndex = NONE;
+	}
+
+	/**
+	 * Sets a map containing an ITabItem as key and number of dynamic images as
+	 * value. It is used to calculate the width of the widest tab by setting
+	 * aside enough space (16 pixels per image) for displaying the dynamic
+	 * images. Individual dynamic images are displayed/removed from a tab by
+	 * using the showDynamicImage() and hideDynamicImage() methods on the tab's
+	 * ListElement object.
+	 * 
+	 * @param tabToDynamicImageCountMap
+	 */
+	public void setDynamicImageCount(Map tabToDynamicImageCountMap) {
+		this.tabToDynamicImageCountMap = tabToDynamicImageCountMap;
 	}
 
 	/**
@@ -605,18 +769,20 @@ public class TabbedPropertyList
 		} else {
 			widestLabelIndex = 0;
 			for (int i = 0; i < children.length; i++) {
-				elements[i] = new ListElement(this, (ITabItem) children[i], i);
+				int dynamicImageCount = 0;
+				if (tabToDynamicImageCountMap != null
+						&& tabToDynamicImageCountMap.containsKey(children[i])) {
+					dynamicImageCount = ((Integer) tabToDynamicImageCountMap
+							.get(children[i])).intValue();
+				}
+				elements[i] = new ListElement(this, (ITabItem) children[i],
+						dynamicImageCount, i);
 				elements[i].setVisible(false);
 				elements[i].setLayoutData(null);
 
 				if (i != widestLabelIndex) {
-					String label = ((ITabItem) children[i]).getText();
-					int width = getTextDimension(label).x;
-					if (((ITabItem) children[i]).isIndented()) {
-						width = width + INDENT;
-					}
-					if (width > getTextDimension(((ITabItem) children[widestLabelIndex])
-							.getText()).x) {
+					int width = getTabWidth((ITabItem) children[i]);
+					if (width > getTabWidth((ITabItem) children[widestLabelIndex])) {
 						widestLabelIndex = i;
 					}
 				}
@@ -624,6 +790,40 @@ public class TabbedPropertyList
 		}
 
 		computeTopAndBottomTab();
+	}
+
+	private int getTabWidth(ITabItem tabItem) {
+		int width = getTextDimension(tabItem.getText()).x;
+		/*
+		 * To anticipate for the icon placement we should always keep the
+		 * space available after the label. So when the active tab includes
+		 * an icon the width of the tab doesn't change.
+		 */
+		if (tabItem.getImage() != null) {
+			width = width + 16 + 4;
+		}
+		if (tabItem.isIndented()) {
+			width = width + INDENT;
+		}
+		if (tabToDynamicImageCountMap != null) {
+			int dynamicImageCount = 0;
+			if (tabToDynamicImageCountMap.containsKey(tabItem)) {
+				dynamicImageCount = ((Integer) tabToDynamicImageCountMap
+						.get(tabItem)).intValue();
+			}
+			if (dynamicImageCount > 0) {
+				/*
+				 * Keep some space between tab's text and first dynamic image
+				 */
+				width = width + 4;
+				width = width + (dynamicImageCount * 16);
+				/*
+				 * Keep some space between consecutive dynamic images
+				 */
+				width = width + ((dynamicImageCount - 1) * 3);
+			}
+		}
+		return width;
 	}
 
 	/**
@@ -684,21 +884,12 @@ public class TabbedPropertyList
 			String properties_not_available = TabbedPropertyMessages.TabbedPropertyList_properties_not_available;
 			result.x = getTextDimension(properties_not_available).x + INDENT;
 		} else {
-			ITabItem widestTab = elements[widestLabelIndex].getTabItem();
-			int width = getTextDimension(widestTab.getText()).x + INDENT;
 			/*
-			 * To anticipate for the icon placement we should always keep the
-			 * space available after the label. So when the active tab includes
-			 * an icon the width of the tab doesn't change.
+			 * Add INDENT pixels to the left of the longest tab as a margin.
 			 */
-			if (widestTab.getImage() != null) {
-				width = width + 16 + 4;
-			}
-			if (widestTab.isIndented()) {
-				width = width + 10;
-			}
+			int width = getTabWidth(elements[widestLabelIndex].getTabItem()) + INDENT;
 			/*
-			 * Add 10 pixels to the right of the longest string as a margin.
+			 * Add 10 pixels to the right of the longest tab as a margin.
 			 */
 			result.x = width + 10;
 		}

@@ -35,6 +35,13 @@
             class="org.eclipse.ui.tests.views.properties.tabbed.override.OverrideTestsView"
             id="org.eclipse.ui.tests.views.properties.tabbed.override.OverrideTestsView">
       </view>
+      <view
+            category="org.eclipse.ui.views.properties.tabbed"
+            class="org.eclipse.ui.tests.views.properties.tabbed.decorations.views.DecorationTestsView"
+            icon="icons/sample.gif"
+            id="org.eclipse.ui.tests.views.properties.tabbed.decorations.views.DecorationTestsView"
+            name="%Views.decoration.name">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
@@ -74,16 +81,19 @@
                afterTab="propertyTab4"
                category="first"
                id="propertyTab5"
+               image="icons/info_tsk.gif"
                label="Information"/>
          <propertyTab
                afterTab="propertyTab5"
                category="first"
                id="propertyTab6"
+               image="icons/warn_tsk.gif"
                label="Warning"/>
          <propertyTab
                afterTab="propertyTab6"
                category="first"
                id="propertyTab7"
+               image="icons/error_tsk.gif"
                label="Error"/>
          <propertyTab
                category="second"

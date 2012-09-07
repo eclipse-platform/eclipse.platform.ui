@@ -443,8 +443,9 @@ public class TabbedPropertySheetPage
 	 * Dispose the contributor with the provided contributor id. This happens on
 	 * part close as well as when contributors switch between the workbench
 	 * part and contributor from a selection.
+	 * @since 3.6
 	 */
-	private void disposeContributor() {
+	protected void disposeContributor() {
 		/**
 		 * If the current tab is about to be disposed we have to call
 		 * aboutToBeHidden
@@ -606,7 +607,18 @@ public class TabbedPropertySheetPage
 		}
 	}
 
-	private void disposeTabs(Collection tabs) {
+	/**
+	 * Disposes the TabContents objects passed to this method. If the
+	 * 'currentTab' is going to be disposed, then the caller should call
+	 * aboutToBeHidden() on the currentTab and set it to null before calling
+	 * this method. Also, the caller needs to ensure that descriptorToTab map
+	 * entries corresponding to the disposed TabContents objects are also
+	 * removed.
+	 * 
+	 * @param tabs
+	 * @since 3.6
+	 */
+	protected void disposeTabs(Collection tabs) {
 		for (Iterator iter = tabs.iterator(); iter.hasNext();) {
 			TabContents tab = (TabContents) iter.next();
 			Composite composite = (Composite) tabToComposite.remove(tab);
@@ -1052,4 +1064,57 @@ public class TabbedPropertySheetPage
     	}
 		return registry.getLabelProvider().getImage(selection);
     }
+
+	/**
+	 * Returns the TabContents object corresponding to the given tab-descriptor.
+	 * 
+	 * @param tabDescriptor
+	 *            tab-descriptor whose TabContents object is to be returned
+	 * @return TabContents object corresponding to the given tab-descriptor key
+	 *         in descriptorToTab map, or null if the key does not exist in the
+	 *         map
+	 * @since 3.6
+	 */
+	protected TabContents getTabContents(ITabDescriptor tabDescriptor) {
+		TabContents tabContents = null;
+		if (this.descriptorToTab.containsKey(tabDescriptor)) {
+			tabContents = (TabContents) this.descriptorToTab.get(tabDescriptor);
+		}
+		return tabContents;
+	}
+
+	/**
+	 * Get the current selection-contributor if any
+	 * 
+	 * @return The selection-contributor, or null.
+	 * @since 3.6
+	 */
+	protected ITabbedPropertySheetPageContributor getSelectionContributor() {
+		return this.selectionContributor;
+	}
+
+	/**
+	 * Get the currently active contributor id. It may not match the contributor
+	 * id from the workbench part that created this instance because if all the
+	 * elements in a structured selection implement
+	 * ITabbedPropertySheetPageContributor and they all return the same unique
+	 * contributor ID, then tabs and sections associated with that contributor
+	 * ID are used by the tabbed property view for that selection.
+	 * 
+	 * @return contributor id
+	 * @since 3.6
+	 */
+	protected String getCurrentContributorId() {
+		return this.currentContributorId;
+	}
+
+	/**
+	 * Get the current selection
+	 * 
+	 * @return selection
+	 * @since 3.6
+	 */
+	protected ISelection getCurrentSelection() {
+		return this.currentSelection;
+	}
 }
