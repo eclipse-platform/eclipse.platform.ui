@@ -458,7 +458,7 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 	}
 
 	public void setFocus() {
-		if (isLinkingEnabled()) {
+		if (isLinkingEnabled() && lastSelectedElement != null) {
 			showLastSelectedElement();
 		}
 		getCurrentPage().setFocus();
@@ -505,6 +505,7 @@ public class GenericHistoryView extends PageBookView implements IHistoryView, IP
 	}
 
 	public IHistoryPage showHistoryPageFor(Object object, boolean refresh, boolean force, IHistoryPageSource pageSource) {
+		lastSelectedElement= null;
 		if (Policy.DEBUG_HISTORY) {
 			String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
 			System.out.println(time + ": GenericHistoryView#showHistoryPageFor, the object to show is: " + object); //$NON-NLS-1$
