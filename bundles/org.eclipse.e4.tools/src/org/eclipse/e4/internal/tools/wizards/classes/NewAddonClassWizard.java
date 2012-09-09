@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Sopot Cela <sopotcela@gmail.com>
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -18,11 +19,17 @@ import org.eclipse.e4.internal.tools.wizards.classes.templates.AddonTemplate;
 import org.eclipse.swt.widgets.Composite;
 
 public class NewAddonClassWizard extends AbstractNewClassWizard {
+	private String initialString;
+
+	public NewAddonClassWizard(String contributionURI) {
+		this.initialString = contributionURI;
+	}
+
 	@Override
 	public void addPages() {
 		addPage(new AbstractNewClassPage("Classinformation",
 				"New Addon",
-				"Create a new addon class", root, ResourcesPlugin.getWorkspace().getRoot()) {
+				"Create a new addon class", root, ResourcesPlugin.getWorkspace().getRoot(), initialString) {
 
 					@Override
 					protected void createFields(Composite parent,

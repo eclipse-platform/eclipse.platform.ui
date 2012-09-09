@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Sopot Cela <sopotcela@gmail.com>
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x.extension;
 
@@ -54,7 +55,7 @@ public class AddonContributionEditor implements IContributionClassCreator {
 	private void createOpen(MContribution contribution, EditingDomain domain,
 			IProject project, Shell shell, boolean forceNew) {
 		if( forceNew || contribution.getContributionURI() == null || contribution.getContributionURI().trim().length() == 0 || !contribution.getContributionURI().startsWith("bundleclass:") ) {
-			NewAddonClassWizard wizard = new NewAddonClassWizard();
+			NewAddonClassWizard wizard = new NewAddonClassWizard(contribution.getContributionURI());
 			wizard.init( null, new StructuredSelection(project));
 			WizardDialog dialog = new WizardDialog(shell, wizard);
 			if( dialog.open() == WizardDialog.OK ) {
@@ -109,14 +110,10 @@ public class AddonContributionEditor implements IContributionClassCreator {
                         if( t != null ) {
                             JavaUI.openInEditor(t);
                         } else {
-                            if( MessageDialog.openQuestion(shell, "Class not found", "The class '"+fullyQualified+"' was not found. Would you like to start the class creation wizard?") ) {
                                 createOpen(contribution, domain, project, shell, true);
-                            }
                         }
                     } catch (JavaModelException e) {
-                        if( MessageDialog.openQuestion(shell, "Class not found", "The class '"+fullyQualified+"' was not found. Would you like to start the class creation wizard?") ) {
                             createOpen(contribution, domain, project, shell, true);
-                        }
                     } catch (PartInitException e) {
                         MessageDialog.openError(shell, "Failed to open editor", e.getMessage());
                         // TODO Auto-generated catch block

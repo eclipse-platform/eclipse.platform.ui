@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Sopot Cela <sopotcela@gmail.com>
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -31,11 +32,17 @@ import org.eclipse.swt.widgets.Text;
 
 public class NewPartClassWizard extends AbstractNewClassWizard {
 
+	private String initialString;
+
+	public NewPartClassWizard(String contributionURI) {
+		this.initialString = contributionURI;
+	}
+
 	@Override
 	public void addPages() {
 		addPage(new AbstractNewClassPage("Classinformation", "New Part",
 				"Create a new part class", root, ResourcesPlugin.getWorkspace()
-						.getRoot()) {
+						.getRoot(), initialString) {
 
 			@Override
 			protected void createFields(Composite parent, DataBindingContext dbc) {

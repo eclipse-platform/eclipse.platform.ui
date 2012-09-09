@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Sopot Cela <sopotcela@gmail.com>
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -49,7 +50,9 @@ import org.osgi.framework.ServiceReference;
 public abstract class AbstractNewClassWizard extends Wizard implements INewWizard {
 	protected IPackageFragmentRoot root;
 	protected IFile file;
-	
+	public AbstractNewClassWizard() {
+		this.setWindowTitle("New contribution class");
+	}
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		root = getFragmentRoot(getInitialJavaElement(selection));
 	}
@@ -174,7 +177,27 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 		checkRequiredBundles();
 		
 		IPackageFragment fragment = clazz.getPackageFragment();
+		boolean exists = false;
 		if (fragment != null) {
+			IJavaElement[] children;
+			try {
+				children = clazz.getFragmentRoot().getChildren();
+			
+					for (IJavaElement iJavaElement : children) {
+						IPackageFragment pf = (IPackageFragment) iJavaElement;
+						if (pf.getElementName().equals(fragment.getElementName())){
+						exists = true;
+						break;
+						}
+					}
+			;
+			
+			if (!exists)
+				fragment = clazz.getFragmentRoot().createPackageFragment(fragment.getElementName(), true, null);
+			} catch (JavaModelException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			String cuName = clazz.getName() + ".java";
 			ICompilationUnit unit = fragment.getCompilationUnit(cuName); 
 			IResource resource = unit.getResource();

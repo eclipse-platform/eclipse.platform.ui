@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Sopot Cela <sopotcela@gmail.com>
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -28,6 +29,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class NewHandlerClassWizard extends AbstractNewClassWizard {
+	private String initialString;
+
+	public NewHandlerClassWizard(String contributionURI) {
+		this.initialString = contributionURI;
+		
+	}
+
 	@Override
 	protected String getContent() {
 		HandlerTemplate template = new HandlerTemplate();
@@ -38,7 +46,7 @@ public class NewHandlerClassWizard extends AbstractNewClassWizard {
 	public void addPages() {
 		addPage(new AbstractNewClassPage("Classinformation",
 				"New Handler",
-				"Create a new handler class", root, ResourcesPlugin.getWorkspace().getRoot()) {
+				"Create a new handler class", root, ResourcesPlugin.getWorkspace().getRoot(),initialString) {
 
 			@Override
 			protected JavaClass createInstance() {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Sopot Cela <sopotcela@gmail.com>
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -111,6 +112,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	private JavaClass clazz;
 	private IPackageFragmentRoot froot;
 	private IWorkspaceRoot fWorkspaceRoot;
+	private String initialString;
 	
 	protected AbstractNewClassPage(String pageName, String title, String description, IPackageFragmentRoot froot, IWorkspaceRoot fWorkspaceRoot) {
 		super(pageName);
@@ -119,6 +121,11 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		
 		setTitle(title);
 		setDescription(description);
+	}
+	
+	protected AbstractNewClassPage(String pageName, String title, String description, IPackageFragmentRoot froot, IWorkspaceRoot fWorkspaceRoot, String initialString){
+		this(pageName,title,description,froot,fWorkspaceRoot);
+		this.initialString=initialString;
 	}
 	
 	public void createControl(Composite parent) {
@@ -138,7 +145,9 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		parent.setLayout(new GridLayout(3, false));
 		
 		clazz = createInstance();
-
+		
+		clazz.setPackageFragment(froot.getPackageFragment(parseInitialStringForPackage(initialString)==null?"":parseInitialStringForPackage(initialString)));
+		clazz.setName(parseInitialStringForClassName(initialString));
 		DataBindingContext dbc = new DataBindingContext();
 		WizardPageSupport.create(this, dbc);
 		
@@ -149,6 +158,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEditable(false);
+			
 			final Binding bd = dbc.bindValue(
 					WidgetProperties.text().observe(t), 
 					BeanProperties.value("fragmentRoot").observe(clazz), 
@@ -166,7 +176,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 						froot = root;
 						clazz.setFragmentRoot(root);	
 					}
-					bd.updateModelToTarget(); //TODO Find out why this is needed
+					bd.updateModelToTarget(); 
 				}
 			});
 		}
@@ -174,14 +184,13 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Package");
-
 			Text t = new Text(parent, SWT.BORDER);
-			t.setEditable(false);
+			t.setEditable(true);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			final Binding bd = dbc.bindValue(
-					WidgetProperties.text().observe(t), 
+					WidgetProperties.text(SWT.Modify).observe(t), 
 					BeanProperties.value("packageFragment").observe(clazz),
-					new UpdateValueStrategy(), 
+					new UpdateValueStrategy().setConverter(new StringToPackageFragmentConverter(froot)), 
 					new UpdateValueStrategy().setConverter(new PackageFragmentToStringConverter())
 			);
 
@@ -222,6 +231,49 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		setControl(parent);
 	}
 	
+	private String parseInitialStringForPackage(String initialString2) {
+		if (initialString2==null) return null;
+		int ioBC = initialString2.indexOf("bundleclass://");
+		int iSecondSlash = initialString2.lastIndexOf('/');
+		if (
+		
+			(initialString2.length()==0)||//empty
+			(ioBC==-1)||//no bundle class
+			(iSecondSlash==-1)||//no package &| class name
+			(initialString2.indexOf('.')==-1)//no package
+			){
+			System.err.println("unparsable");
+			return null;
+		}
+		System.err.println("First: "+initialString2);;
+		int bi = ioBC+"bundleclass://".length()-1;
+		int ei = iSecondSlash;
+
+		int lastDot = initialString2.lastIndexOf('.');
+		String packageString = initialString2.substring(iSecondSlash+1, lastDot);
+		return packageString;
+	}
+	
+	private String parseInitialStringForClassName(String initialString){
+		if (initialString==null) return null;
+		int ioBC = initialString.indexOf("bundleclass://");
+		int iSecondSlash = initialString.lastIndexOf('/');
+		if (
+		
+			(initialString.length()==0)||//empty
+			(ioBC==-1)||//no bundle class
+			(iSecondSlash==-1)||//no package &| class name
+			(initialString.indexOf('.')==-1)//no package
+			){
+			System.err.println("unparsable");
+			return null;
+		}
+		int lastDot = initialString.lastIndexOf('.');
+		if (lastDot!=-1)
+			return initialString.substring(lastDot+1);
+		return null;
+	}
+
 	private IPackageFragmentRoot choosePackageRoot() {
 		IJavaElement initElement= clazz.getFragmentRoot();
 		Class[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class };
@@ -303,7 +355,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		dialog.setEmptyListMessage("You need to select a package");
 		dialog.setElements(packages);
 		dialog.setHelpAvailable(false);
-
 		IPackageFragment pack= clazz.getPackageFragment();
 		if (pack != null) {
 			dialog.setInitialSelections(new Object[] { pack });
@@ -363,6 +414,30 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			}
 			IPackageFragment f = (IPackageFragment) fromObject;
 			return f.getElementName();
+		}
+	}
+	
+	static class StringToPackageFragmentConverter extends Converter {
+
+		private IPackageFragmentRoot proot;
+
+		public StringToPackageFragmentConverter(IPackageFragmentRoot froot) {
+			super(String.class, IPackageFragment.class);
+			this.proot = froot;
+		}
+		
+		public Object convert(Object fromObject) {
+			try {
+			if( fromObject == null ) {
+				return proot.createPackageFragment("", true, null);
+			}
+			
+				return proot.getPackageFragment((String) fromObject);
+			} catch (JavaModelException e) {
+				e.printStackTrace();
+				return null;
+			}
+			
 		}
 	}
 }
