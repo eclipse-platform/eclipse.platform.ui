@@ -242,10 +242,8 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			(iSecondSlash==-1)||//no package &| class name
 			(initialString2.indexOf('.')==-1)//no package
 			){
-			System.err.println("unparsable");
 			return null;
 		}
-		System.err.println("First: "+initialString2);;
 		int bi = ioBC+"bundleclass://".length()-1;
 		int ei = iSecondSlash;
 
@@ -265,7 +263,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			(iSecondSlash==-1)||//no package &| class name
 			(initialString.indexOf('.')==-1)//no package
 			){
-			System.err.println("unparsable");
 			return null;
 		}
 		int lastDot = initialString.lastIndexOf('.');

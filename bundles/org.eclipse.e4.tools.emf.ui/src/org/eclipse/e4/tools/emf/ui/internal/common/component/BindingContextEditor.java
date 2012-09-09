@@ -222,7 +222,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Down);
-		b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
+		b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
