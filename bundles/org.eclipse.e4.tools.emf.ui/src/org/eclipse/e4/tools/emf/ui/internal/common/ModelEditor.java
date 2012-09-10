@@ -200,6 +200,8 @@ import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.RGB;
@@ -506,6 +508,24 @@ public class ModelEditor {
 		//
 		// scrolling.setLayoutData(new GridData(GridData.FILL_BOTH));
 		contentContainer.setLayout(layout);
+
+		viewer.getTree().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(final KeyEvent e) {
+				if (e.keyCode == SWT.DEL) {
+					final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+					if (selection.getFirstElement() instanceof EObject) {
+						EObject o = (EObject) selection.getFirstElement();
+
+						Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o);
+						if (cmd.canExecute()) {
+							ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+
+				}
+			}
+		});
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
