@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,17 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.progress.UIJob;
  
 /**
  * Tests for Ant core
@@ -45,6 +55,7 @@ public abstract class AbstractAntTest extends TestCase {
 	protected static final String BUILD_SUCCESSFUL= "BUILD SUCCESSFUL";
 	public static final String ANT_TEST_BUILD_LOGGER = "org.eclipse.ant.tests.core.support.testloggers.TestBuildLogger"; //$NON-NLS-1$
 	public static final String ANT_TEST_BUILD_LISTENER= "org.eclipse.ant.tests.core.support.testloggers.TestBuildListener";
+	private static boolean welcomeClosed = false;
 	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
@@ -52,6 +63,37 @@ public abstract class AbstractAntTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		assertProject();
+		assertWelcomeScreenClosed();
+	}
+	
+	/**
+	 * Ensure the welcome screen is closed because in 4.x the debug perspective opens a giant fast-view causing issues
+	 *  
+	 * @throws Exception
+	 * @since 3.8
+	 */
+	void assertWelcomeScreenClosed() throws Exception {
+		if(!welcomeClosed && PlatformUI.isWorkbenchRunning()) {
+			final IWorkbench wb = PlatformUI.getWorkbench();
+			if(wb != null) {
+				UIJob job = new UIJob("close welcome screen for Ant test suite") {
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
+						if(window != null) {
+							IIntroManager im = wb.getIntroManager();
+							IIntroPart intro = im.getIntro();
+							if(intro != null) {
+								welcomeClosed = im.closeIntro(intro);
+							}
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.setPriority(Job.INTERACTIVE);
+				job.setSystem(true);
+				job.schedule();
+			}
+		}
 	}
 	
 	/**
