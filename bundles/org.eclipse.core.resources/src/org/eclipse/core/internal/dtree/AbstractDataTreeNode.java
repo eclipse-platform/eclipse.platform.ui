@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thomas Wolf (Paranor AG) -- optimize assembleWith
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
@@ -91,18 +92,60 @@ public abstract class AbstractDataTreeNode {
 		int newIndex = 0;
 		int resultIndex = 0;
 		while (oldIndex < oldNodes.length && newIndex < newNodes.length) {
-			int compare = oldNodes[oldIndex].name.compareTo(newNodes[newIndex].name);
-			if (compare == 0) {
-				AbstractDataTreeNode node = oldNodes[oldIndex++].assembleWith(newNodes[newIndex++]);
-				if (node != null && (!node.isDeleted() || keepDeleted)) {
-					resultNodes[resultIndex++] = node;
+			int log2 = 31 - Integer.numberOfLeadingZeros(oldNodes.length - oldIndex);
+			if (log2 > 1 && newNodes.length < (oldNodes.length - oldIndex) / log2) {
+				// We can expect to fare better using binary search. In particular, this will optimize the case of a folder refresh (new linked
+				// folder with many files in a flat hierarchy), where this is called repeatedly, with oldNodes containing the files added so far,
+				// and newNodes containing exactly one new node for the next file to be added. The old algorithm has quadratic performance
+				// (O((n+1)*n/2); number of string comparisons is the dominating component here), this new algorithm is O(n*log(n)).
+				String key = newNodes[newIndex].name;
+				// Figure out where to insert the next new node.
+				int left = oldIndex;
+				int right = oldNodes.length - 1;
+				boolean found = false;
+				while (left <= right) {
+					int mid = (left + right) / 2;
+					int compare = key.compareTo(oldNodes[mid].name);
+					if (compare < 0) {
+						right = mid - 1;
+					} else if (compare > 0) {
+						left = mid + 1;
+					} else {
+						left = mid;
+						found = true;
+						break;
+					}
 				}
-			} else if (compare < 0) {
-				resultNodes[resultIndex++] = oldNodes[oldIndex++];
-			} else if (compare > 0) {
-				AbstractDataTreeNode node = newNodes[newIndex++];
-				if (!node.isDeleted() || keepDeleted) {
-					resultNodes[resultIndex++] = node;
+				// Now copy oldNodes from oldIndex to left-1, insert the new node, increment newIndex
+				int toCopy = left - oldIndex;
+				System.arraycopy(oldNodes, oldIndex, resultNodes, resultIndex, toCopy);
+				resultIndex += toCopy;
+				if (found) {
+					AbstractDataTreeNode node = oldNodes[left++].assembleWith(newNodes[newIndex++]);
+					if (node != null && (!node.isDeleted() || keepDeleted)) {
+						resultNodes[resultIndex++] = node;
+					}
+				} else {
+					AbstractDataTreeNode node = newNodes[newIndex++];
+					if (!node.isDeleted() || keepDeleted) {
+						resultNodes[resultIndex++] = node;
+					}
+				}
+				oldIndex = left;
+			} else {
+				int compare = oldNodes[oldIndex].name.compareTo(newNodes[newIndex].name);
+				if (compare == 0) {
+					AbstractDataTreeNode node = oldNodes[oldIndex++].assembleWith(newNodes[newIndex++]);
+					if (node != null && (!node.isDeleted() || keepDeleted)) {
+						resultNodes[resultIndex++] = node;
+					}
+				} else if (compare < 0) {
+					resultNodes[resultIndex++] = oldNodes[oldIndex++];
+				} else if (compare > 0) {
+					AbstractDataTreeNode node = newNodes[newIndex++];
+					if (!node.isDeleted() || keepDeleted) {
+						resultNodes[resultIndex++] = node;
+					}
 				}
 			}
 		}
