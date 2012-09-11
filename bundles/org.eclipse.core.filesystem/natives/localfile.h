@@ -40,6 +40,10 @@ extern "C" {
 #undef SET_LAST_MODIFIED
 #define SET_LAST_MODIFIED 0x02l
 
+// From FileInfo.java
+#undef ATTRIBUTE_IO_ERROR
+#define ATTRIBUTE_IO_ERROR 0x20000
+
 /*
  * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
  * Method:    nativeAttributes

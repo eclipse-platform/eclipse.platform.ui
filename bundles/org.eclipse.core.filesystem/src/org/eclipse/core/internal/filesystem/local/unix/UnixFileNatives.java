@@ -25,6 +25,7 @@ public abstract class UnixFileNatives {
 	private static final String LIBRARY_NAME = "unixfile_1_0_0"; //$NON-NLS-1$
 	private static final int UNICODE_SUPPORTED = 1 << 0;
 	private static final int CHFLAGS_SUPPORTED = 1 << 1;
+	private static final int ENOENT = 2; // errno value for "No such file or directory"
 
 	private static final boolean usingNatives;
 	private static final int libattr;
@@ -72,10 +73,13 @@ public abstract class UnixFileNatives {
 		StructStat stat = new StructStat();
 		if (lstat(name, stat) == 0) {
 			if ((stat.st_mode & UnixFileFlags.S_IFMT) == UnixFileFlags.S_IFLNK) {
-				if (stat(name, stat) == 0)
+				if (stat(name, stat) == 0) {
 					info = stat.toFileInfo();
-				else
+				} else {
 					info = new FileInfo();
+					if (getErrno() != ENOENT)
+						info.setError(true);
+				}
 				info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
 				byte target[] = new byte[UnixFileFlags.PATH_MAX];
 				int length = readlink(name, target, target.length);
@@ -83,8 +87,11 @@ public abstract class UnixFileNatives {
 					info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, bytesToFileName(target, length));
 			} else
 				info = stat.toFileInfo();
-		} else
+		} else {
 			info = new FileInfo();
+			if (getErrno() != ENOENT)
+				info.setError(true);
+		}
 		return info;
 	}
 

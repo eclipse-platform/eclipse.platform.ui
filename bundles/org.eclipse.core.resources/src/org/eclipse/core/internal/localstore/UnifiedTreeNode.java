@@ -41,6 +41,14 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 		return fileInfo != null && fileInfo.exists();
 	}
 
+	/**
+	 * Returns <code>true</code> if an I/O error was encountered while accessing
+	 * the file or the directory in the file system.
+	 */
+	public boolean isErrorInFileSystem() {
+		return fileInfo != null && fileInfo.getError() != IFileInfo.NONE;
+	}
+
 	public boolean existsInWorkspace() {
 		return existsWorkspace;
 	}
@@ -89,7 +97,7 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 	public boolean isFolder() {
 		return fileInfo == null ? false : fileInfo.isDirectory();
 	}
-	
+
 	public boolean isSymbolicLink() {
 		return fileInfo == null ? false : fileInfo.getAttribute(EFS.ATTRIBUTE_SYMLINK);
 	}
@@ -109,7 +117,7 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 		this.fileInfo = info;
 		this.existsWorkspace = existsInWorkspace;
 	}
-	
+
 	/**
 	 * Releases elements that won't be needed any more for garbage collection.
 	 * Should be called before adding a node to the free list.
@@ -133,6 +141,7 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 		this.resource = resource;
 	}
 
+	@Override
 	public String toString() {
 		String s = resource == null ? "null" : resource.getFullPath().toString(); //$NON-NLS-1$
 		return "Node: " + s; //$NON-NLS-1$
