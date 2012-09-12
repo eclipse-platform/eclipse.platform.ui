@@ -462,7 +462,9 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not terminate.", suspendee);
+		if (suspendee == null) {
+			throw new TestAgainException("Retest - The program did not terminate");
+		}
 		AntDebugTarget target = (AntDebugTarget)suspendee;
 		assertTrue("program should have exited", target.isTerminated() || target.isDisconnected());
 		return target;
@@ -514,7 +516,6 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * the target is terminated. This avoids defunct processes on linux.
 	 */
 	protected void terminateAndRemove(AntDebugTarget debugTarget) {
-	  
 		if (debugTarget != null && !(debugTarget.isTerminated() || debugTarget.isDisconnected())) {
 			DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.TERMINATE, debugTarget);
 			try {
@@ -531,9 +532,10 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 				}
 				debugTarget.terminate();
 				Object event = waiter.waitForEvent();
-				assertNotNull("No terminate event was recieved", event);
+				if (event == null) {
+					throw new TestAgainException("Retest - Program did not terminate");
+				}
                 getLaunchManager().removeLaunch(debugTarget.getLaunch());
-                debugTarget = null;
 			} catch (CoreException e) {
 			}
 		}
@@ -542,7 +544,9 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
         DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.MODEL_SPECIFIC, this);
         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(this, DebugEvent.MODEL_SPECIFIC)});
         Object event = waiter.waitForEvent();
-        assertNotNull("The model specific event was never recieved", event);
+        if (event == null) {
+			throw new TestAgainException("Retest - The model specific event was never recieved");
+		}
 	}
 	
 	/**

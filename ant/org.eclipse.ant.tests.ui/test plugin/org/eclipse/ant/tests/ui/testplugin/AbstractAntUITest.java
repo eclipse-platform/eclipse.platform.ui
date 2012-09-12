@@ -39,6 +39,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -56,9 +60,15 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePartition;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.progress.UIJob;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -69,7 +79,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public abstract class AbstractAntUITest extends TestCase {
     
     public static String ANT_EDITOR_ID= "org.eclipse.ant.ui.internal.editor.AntEditor";
-    
+    private boolean welcomeClosed = false;
     private IDocument currentDocument;
 
     /**
@@ -106,7 +116,38 @@ public abstract class AbstractAntUITest extends TestCase {
     protected void setUp() throws Exception {
     	super.setUp();
     	assertProject();
+    	assertWelcomeScreenClosed();
     }
+    
+    /**
+	 * Ensure the welcome screen is closed because in 4.x the debug perspective opens a giant fast-view causing issues
+	 *  
+	 * @throws Exception
+	 * @since 3.8
+	 */
+	void assertWelcomeScreenClosed() throws Exception {
+		if(!welcomeClosed && PlatformUI.isWorkbenchRunning()) {
+			final IWorkbench wb = PlatformUI.getWorkbench();
+			if(wb != null) {
+				UIJob job = new UIJob("close welcome screen for Ant test suite") {
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
+						if(window != null) {
+							IIntroManager im = wb.getIntroManager();
+							IIntroPart intro = im.getIntro();
+							if(intro != null) {
+								welcomeClosed = im.closeIntro(intro);
+							}
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.setPriority(Job.INTERACTIVE);
+				job.setSystem(true);
+				job.schedule();
+			}
+		}
+	}
     
     /**
      * Asserts that the testing project has been setup in the test workspace
