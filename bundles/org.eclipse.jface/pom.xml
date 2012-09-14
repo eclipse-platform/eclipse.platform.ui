@@ -21,7 +21,7 @@
   </parent>
   <groupId>eclipse.platform.ui</groupId>
   <artifactId>org.eclipse.jface</artifactId>
-  <version>3.8.100-SNAPSHOT</version>
+  <version>3.8.101-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <build>
     <plugins>
