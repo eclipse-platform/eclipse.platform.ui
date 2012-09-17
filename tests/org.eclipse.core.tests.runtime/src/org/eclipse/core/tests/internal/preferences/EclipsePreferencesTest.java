@@ -18,6 +18,7 @@ import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.preferences.TestHelper;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
@@ -454,6 +455,45 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			fail("3.0");
 		} catch (IllegalStateException e) {
 			// expected
+		}
+	}
+
+	public void testFlushDeadlock() {
+
+		final IEclipsePreferences parent = InstanceScope.INSTANCE.getNode(PI_RUNTIME_TESTS);
+		final Preferences child = parent.node("testFlushDeadlock");
+		class FlushJob extends Job {
+			private Preferences node;
+
+			FlushJob(Preferences node) {
+				super("testFlushDeadlock");
+				this.node = node;
+			}
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					node.flush();
+				} catch (BackingStoreException e) {
+					return new Status(IStatus.ERROR, PI_RUNTIME_TESTS, "unexpected flush failure", e);
+				}
+				return Status.OK_STATUS;
+			}
+
+		}
+		//make sure node is dirty
+		child.putBoolean("testFlushDeadlock", true);
+		//flush the parent of the load level, and the child
+		Job flushParent = new FlushJob(parent);
+		Job flushChild = new FlushJob(child);
+		flushParent.schedule();
+		flushChild.schedule();
+
+		try {
+			flushParent.join();
+			flushChild.join();
+		} catch (InterruptedException e) {
+			fail("4.99", e);
 		}
 	}
 
