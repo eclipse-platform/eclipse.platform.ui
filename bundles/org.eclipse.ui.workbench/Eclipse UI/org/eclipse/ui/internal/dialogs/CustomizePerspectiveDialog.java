@@ -764,11 +764,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		 * @return the created label
 		 */
 		protected Label createEntry(Composite parent, Image icon, String text) {
+			Color fg = parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+			Color bg = parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 			if (icon != null) {
 				Label iconLabel = new Label(parent, SWT.NONE);
 				iconLabel.setImage(icon);
-				iconLabel.setBackground(parent.getDisplay().getSystemColor(
-						SWT.COLOR_INFO_BACKGROUND));
+				iconLabel.setForeground(fg);
+				iconLabel.setBackground(bg);
 				iconLabel.setData(new GridData());
 			}
 
@@ -781,8 +783,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 			
 			textLabel.setText(text);
-			textLabel.setBackground(parent.getDisplay().getSystemColor(
-					SWT.COLOR_INFO_BACKGROUND));
+			textLabel.setForeground(fg);
+			textLabel.setBackground(bg);
 			return textLabel;
 		}
 
@@ -803,11 +805,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		 */
 		protected Link createEntryWithLink(Composite parent, Image icon,
 				String text) {
+			Color fg = parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+			Color bg = parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 			if (icon != null) {
 				Label iconLabel = new Label(parent, SWT.NONE);
 				iconLabel.setImage(icon);
-				iconLabel.setBackground(parent.getDisplay().getSystemColor(
-						SWT.COLOR_INFO_BACKGROUND));
+				iconLabel.setForeground(fg);
+				iconLabel.setBackground(bg);
 				iconLabel.setData(new GridData());
 			}
 			
@@ -818,8 +822,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 			
 			textLink.setText(text);
-			textLink.setBackground(parent.getDisplay().getSystemColor(
-					SWT.COLOR_INFO_BACKGROUND));
+			textLink.setForeground(fg);
+			textLink.setBackground(bg);
 			return textLink;
 		}
 
