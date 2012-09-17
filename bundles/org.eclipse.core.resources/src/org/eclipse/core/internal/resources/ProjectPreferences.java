@@ -347,7 +347,10 @@ public class ProjectPreferences extends EclipsePreferences {
 		isWriting = true;
 		try {
 			// call the internal method because we don't want to be synchronized, we will do that ourselves later.
-			super.internalFlush();
+			IEclipsePreferences toFlush = super.internalFlush();
+			//if we aren't at the right level, then flush the appropriate node
+			if (toFlush != null)
+				toFlush.flush();
 		} finally {
 			isWriting = false;
 		}
