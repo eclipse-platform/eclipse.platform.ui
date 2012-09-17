@@ -541,7 +541,7 @@ public class LegacyHandlerService implements IHandlerService {
 			// populated by parameters by the EHS
 			staticContext = ((ExpressionContext) context).eclipseContext.createChild();
 		} else {
-			staticContext = eclipseContext.createChild("snapshotContext"); //$NON-NLS-1$
+			staticContext = eclipseContext.getActiveLeaf().createChild("snapshotContext"); //$NON-NLS-1$
 			if (event != null) {
 				staticContext.set(Event.class, event);
 			}

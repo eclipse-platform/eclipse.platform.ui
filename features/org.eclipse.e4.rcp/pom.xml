@@ -41,6 +41,11 @@
             <configuration>
               <excludes>
                 <plugin id="javax.xml" />
+                <plugin id="javax.annotation" />
+                <plugin id="javax.inject" />
+                <plugin id="org.apache.batik.css" />
+                <plugin id="org.apache.batik.util" />
+                <plugin id="org.apache.batik.util.gui" />
                 <plugin id="org.eclipse.equinox.launcher" />
                 <plugin id="org.eclipse.equinox.launcher.gtk.solaris.sparc" />
                 <plugin id="org.eclipse.equinox.launcher.gtk.solaris.x86" />
@@ -67,6 +72,9 @@
                 <plugin id="org.eclipse.swt.gtk.aix.ppc" />
                 <plugin id="org.eclipse.swt.gtk.aix.ppc64" />
                 <plugin id="org.eclipse.swt.gtk.hpux.ia64_32" />
+                <plugin id="org.w3c.css.sac" />
+                <plugin id="org.w3c.dom.smil" />
+                <plugin id="org.w3c.dom.svg" />
               </excludes>
             </configuration>
           </execution>
