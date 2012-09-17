@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -689,6 +689,12 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			return null;
 		}
 		public Color getForeground(Object element) {
+			if (element instanceof VariableWrapper) {
+				if (((VariableWrapper) element).isReadOnly()) {
+					Display display= Display.getCurrent();
+					return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);		
+				}
+			}
 			return null;
 		}
 		public Color getBackground(Object element) {
