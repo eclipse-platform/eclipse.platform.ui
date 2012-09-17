@@ -105,8 +105,16 @@ public class AddonContributionEditor implements IContributionClassCreator {
                 // TODO If this is not a WS-Resource we need to open differently
                 if (p != null) {
                     IJavaProject jp = JavaCore.create(p);
+                    IType t = null;
                     try {
-                        IType t = jp.findType(fullyQualified);
+                    	if (p.exists()){
+                    		t = jp.findType(fullyQualified);
+                    	}
+                    	else
+                    	{
+                    		IJavaProject pprim = JavaCore.create(project);
+                    		t = pprim.findType(fullyQualified);
+                    	}
                         if( t != null ) {
                             JavaUI.openInEditor(t);
                         } else {
