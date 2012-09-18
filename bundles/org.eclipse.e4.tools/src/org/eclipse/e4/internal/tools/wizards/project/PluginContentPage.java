@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Soyatec - port to e4
+ *     Lars Vogel, vogella GmbH - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -207,7 +208,7 @@ public class PluginContentPage extends ContentPage {
 
 		IDialogSettings settings = getDialogSettings();
 
-		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null, (settings != null) ? !settings.getBoolean(S_GENERATE_ACTIVATOR) : true, 2);
+		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null, false, 2);
 		fGenerateActivator.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fClassLabel.setEnabled(fGenerateActivator.getSelection());
@@ -266,7 +267,6 @@ public class PluginContentPage extends ContentPage {
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fMainPage.updateData();
-			fGenerateActivator.setSelection(!fData.isSimple());
 			fGenerateActivator.setEnabled(!fData.isSimple());
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateActivator.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateActivator.getSelection());
