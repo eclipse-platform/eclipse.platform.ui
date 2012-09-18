@@ -50,9 +50,13 @@ import org.eclipse.swt.widgets.Shell;
  * confusing for the user.
  * </p>
  * <p>
- * If there is more than one modal dialog is open the second one should be
- * parented off of the shell of the first one otherwise it is possible that the
- * OS will give focus to the first dialog potentially blocking the UI.
+ * If more than one modal dialog is open, the second one should be
+ * parented off of the shell of the first one. Otherwise, it is possible that the
+ * OS will give focus to the first dialog, potentially blocking the UI.
+ * </p>
+ * <p>
+ * This class also moves the default button to the right if required, see
+ * {@link #initializeBounds()}.
  * </p>
  */
 public abstract class Dialog extends Window {
@@ -682,6 +686,10 @@ public abstract class Dialog extends Window {
 	 * <code>getCancelButton</code>, and <code>getOKButton</code>.
 	 * Subclasses may override.
 	 * </p>
+	 * <p>
+	 * Note: The common button order is: <b>{other buttons}</b>, <b>OK</b>, <b>Cancel</b>.
+	 * On some platforms, {@link #initializeBounds()} will move the default button to the right.
+	 * </p>
 	 * 
 	 * @param parent
 	 *            the button bar composite
@@ -694,8 +702,15 @@ public abstract class Dialog extends Window {
 				IDialogConstants.CANCEL_LABEL, false);
 	}
 
-	/*
-	 * @see Window.initializeBounds()
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * The implementation in {@link #Dialog} also moves the
+	 * {@link Shell#getDefaultButton() default button} in the
+	 * {@link #createButtonBar(Composite) button bar} to the right
+	 * if that's required by the
+	 * {@link Display#getDismissalAlignment() platform convention}.
+	 * </p>
 	 */
 	protected void initializeBounds() {
 		Shell shell = getShell();
