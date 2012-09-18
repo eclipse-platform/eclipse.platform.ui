@@ -93,11 +93,12 @@ public abstract class AbstractDataTreeNode {
 		int resultIndex = 0;
 		while (oldIndex < oldNodes.length && newIndex < newNodes.length) {
 			int log2 = 31 - Integer.numberOfLeadingZeros(oldNodes.length - oldIndex);
-			if (log2 > 1 && newNodes.length < (oldNodes.length - oldIndex) / log2) {
+			if (log2 > 1 && (newNodes.length - newIndex) <= (oldNodes.length - oldIndex) / log2) {
 				// We can expect to fare better using binary search. In particular, this will optimize the case of a folder refresh (new linked
 				// folder with many files in a flat hierarchy), where this is called repeatedly, with oldNodes containing the files added so far,
 				// and newNodes containing exactly one new node for the next file to be added. The old algorithm has quadratic performance
-				// (O((n+1)*n/2); number of string comparisons is the dominating component here), this new algorithm is O(n*log(n)).
+				// (O((n+1)*n/2); number of string comparisons is the dominating component here) in this case; this new algorithm does O(n*log(n))
+				// string comparisons.
 				String key = newNodes[newIndex].name;
 				// Figure out where to insert the next new node.
 				int left = oldIndex;
