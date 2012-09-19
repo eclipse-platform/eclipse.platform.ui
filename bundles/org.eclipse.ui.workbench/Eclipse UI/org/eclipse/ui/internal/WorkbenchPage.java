@@ -28,6 +28,7 @@ import javax.annotation.PostConstruct;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -4192,6 +4193,32 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	}
 	
+	private String getEditorImageURI(EditorReference reference) {
+		String iconURI = null;
+
+		EditorDescriptor descriptor = reference.getDescriptor();
+		if (descriptor != null) {
+			IConfigurationElement element = descriptor.getConfigurationElement();
+			if (element != null) {
+				iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+				if (iconURI != null && !iconURI.startsWith("platform:/plugin/")) { //$NON-NLS-1$
+					StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
+					builder.append(element.getContributor().getName()).append('/');
+
+					// FIXME: need to get rid of $nl$ properly
+					// this can be done with FileLocator
+					if (iconURI.startsWith("$nl$")) { //$NON-NLS-1$
+						iconURI = iconURI.substring(4);
+					}
+
+					builder.append(iconURI);
+					iconURI = builder.toString();
+				}
+			}
+		}
+		return iconURI;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -4235,6 +4262,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			} else {
 				MPart editor = partService.createPart(CompatibilityEditor.MODEL_ELEMENT_ID);
 				references[i] = createEditorReferenceForPart(editor, inputs[i], editorIDs[i], null);
+				editor.setLabel(references[i].getTitle());
+				editor.setTooltip(references[i].getTitleToolTip());
+				editor.setIconURI(getEditorImageURI((EditorReference) references[i]));
 				((PartServiceImpl) partService).addPart(editor);
 			}
 		}
