@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import com.ibm.icu.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
@@ -19,7 +18,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
@@ -27,6 +27,8 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.DateFormat;
 
 public class CVSFilePropertiesPage extends CVSPropertiesPage {
 	IFile file;
@@ -63,55 +65,36 @@ public class CVSFilePropertiesPage extends CVSPropertiesPage {
 			} else {
 				// Base
 				createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_baseRevision); 
-				createLabel(composite, syncInfo.getRevision());
+				createReadOnlyText(composite, syncInfo.getRevision());
 				Date baseTime = syncInfo.getTimeStamp();
 				if (baseTime != null) {
 					createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_baseTimestamp); 
-					createLabel(composite, DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(syncInfo.getTimeStamp()));
+					createReadOnlyText(composite, DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(syncInfo.getTimeStamp()));
 				}
 				
 				// Modified
 				createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_modified); 
-				createLabel(composite, cvsResource.isModified(null) ? CVSUIMessages.yes : CVSUIMessages.no); // 
+				createReadOnlyText(composite, cvsResource.isModified(null) ? CVSUIMessages.yes : CVSUIMessages.no); // 
 			}
 			
 			// Keyword Mode
 			createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_keywordMode); 
-			createLabel(composite, syncInfo.getKeywordMode().getLongDisplayText());
+			createReadOnlyText(composite, syncInfo.getKeywordMode().getLongDisplayText());
 			
 			// Tag
 			createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_tag); 
 			CVSTag tag = Util.getAccurateFileTag(cvsResource);
-			createLabel(composite, getTagLabel(tag));
+			createReadOnlyText(composite, getTagLabel(tag));
 		} catch (TeamException e) {
 			// Display error text
 			createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_error); 
-			createLabel(composite, ""); //$NON-NLS-1$
+			createReadOnlyText(composite, ""); //$NON-NLS-1$
 		}
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.FILE_PROPERTY_PAGE);
-        Dialog.applyDialogFont(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.FILE_PROPERTY_PAGE);
+		Dialog.applyDialogFont(parent);
 		return composite;
 	}
-	/**
-	 * Utility method that creates a label instance
-	 * and sets the default layout data.
-	 *
-	 * @param parent  the parent for the new label
-	 * @param text  the text for the new label
-	 * @return the new label
-	 */
-	protected Label createLabel(Composite parent, String text, int span) {
-		Label label = new Label(parent, SWT.LEFT);
-		label.setText(text);
-		GridData data = new GridData();
-		data.horizontalSpan = span;
-		data.horizontalAlignment = GridData.FILL;
-		label.setLayoutData(data);
-		return label;
-	}
-	protected Label createLabel(Composite parent, String text) {
-		return createLabel(parent, text, 1);
-	}
+
 	/**
 	 * Initializes the page
 	 */

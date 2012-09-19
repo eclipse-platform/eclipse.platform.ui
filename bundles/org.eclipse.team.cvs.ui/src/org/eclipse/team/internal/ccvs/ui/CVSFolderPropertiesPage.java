@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,10 @@ import org.eclipse.ui.PlatformUI;
 public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 
 	IFolder folder;
-	private Label root;
-	private Label repository;
+
+	private Text root;
+
+	private Text repository;
 	
 	/**
 	 * @see PreferencePage#createContents(Composite)
@@ -63,9 +65,9 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 			} else {
 				FolderSyncInfo syncInfo = cvsResource.getFolderSyncInfo();
 				createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_root); 
-				root = createLabel(composite, syncInfo.getRoot());
+				root= createReadOnlyText(composite, syncInfo.getRoot());
 				createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_repository); 
-				repository = createLabel(composite, syncInfo.getRepository());
+				repository= createReadOnlyText(composite, syncInfo.getRepository());
 			
 				// Tag
 				createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_tag); 
@@ -75,12 +77,12 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 					tag = Util.getAccurateFolderTag(folder, tag);				
 				}
 			
-				createLabel(composite, getTagLabel(tag));
+				createReadOnlyText(composite, getTagLabel(tag));
 				
 				// Static-ness
 				if (syncInfo.getIsStatic()) {
 					createLabel(composite, CVSUIMessages.CVSFolderPropertiesPage_static); 
-					createLabel(composite, syncInfo.getIsStatic() ? CVSUIMessages.yes : CVSUIMessages.no); // 
+					createReadOnlyText(composite, syncInfo.getIsStatic() ? CVSUIMessages.yes : CVSUIMessages.no); // 
 				}
 				
 				createLabel(composite, "", 2); // spacer //$NON-NLS-1$
@@ -112,27 +114,6 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 		return composite;
 	}
 
-	/**
-	 * Utility method that creates a label instance
-	 * and sets the default layout data.
-	 *
-	 * @param parent  the parent for the new label
-	 * @param text  the text for the new label
-	 * @return the new label
-	 */
-	protected Label createLabel(Composite parent, String text, int span) {
-		Label label = new Label(parent, SWT.LEFT);
-		label.setText(text);
-		GridData data = new GridData();
-		data.horizontalSpan = span;
-		data.horizontalAlignment = GridData.FILL;
-		label.setLayoutData(data);
-		return label;
-	}
-	
-	protected Label createLabel(Composite parent, String text) {
-		return createLabel(parent, text, 1);
-	}
 	/**
 	 * Initializes the page
 	 */
