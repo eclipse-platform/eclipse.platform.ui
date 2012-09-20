@@ -95,13 +95,21 @@ public class HandlerContributionEditor implements IContributionClassCreator {
 				// TODO If this is not a WS-Resource we need to open differently
 				if (p != null) {
 					IJavaProject jp = JavaCore.create(p);
-					try {
-						IType t = jp.findType(fullyQualified);
-						if( t != null ) {
-							JavaUI.openInEditor(t);
-						} else {
-								createOpen(contribution, domain, project, shell, true);
-						}
+					IType t = null;
+                    try {
+                    	if (p.exists()){
+                    		t = jp.findType(fullyQualified);
+                    	}
+                    	else
+                    	{
+                    		IJavaProject pprim = JavaCore.create(project);
+                    		t = pprim.findType(fullyQualified);
+                    	}
+                        if( t != null ) {
+                            JavaUI.openInEditor(t);
+                        } else {
+                                createOpen(contribution, domain, project, shell, true);
+                        }
 					} catch (JavaModelException e) {
 							createOpen(contribution, domain, project, shell, true);
 					} catch (PartInitException e) {
