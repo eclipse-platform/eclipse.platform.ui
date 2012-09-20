@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.Map;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -25,6 +24,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.services.WorkbenchSourceProvider;
@@ -49,6 +49,12 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IWorkbenchPage p = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		WorkbenchPartReference r = (WorkbenchPartReference) p.getActivePartReference();
+		if (p != null && r != null && r.getModel() != null) {
+			((WorkbenchPage) p).updateShowInSources(r.getModel());
+		}
+
 		String targetId = event
 				.getParameter(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET);
 		if (targetId == null) {
