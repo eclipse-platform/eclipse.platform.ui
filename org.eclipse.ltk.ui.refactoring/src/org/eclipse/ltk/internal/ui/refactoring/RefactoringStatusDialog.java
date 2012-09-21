@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ public class RefactoringStatusDialog extends Dialog {
 		gd.heightHint= 400;
 
 		if (!fLightWeight) {
+			Color foreground= parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 			Color background= parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 			ViewForm messagePane= new ViewForm(result, SWT.BORDER | SWT.FLAT);
 			messagePane.marginWidth= 3;
@@ -77,12 +78,14 @@ public class RefactoringStatusDialog extends Dialog {
 			Rectangle rect= messagePane.computeTrim(0, 0, 0, convertHeightInCharsToPixels(2) + messagePane.marginHeight * 2);
 			gd.heightHint= rect.height;
 			messagePane.setLayoutData(gd);
+			messagePane.setForeground(foreground);
 			messagePane.setBackground(background);
 			Label label= new Label(messagePane, SWT.LEFT | SWT.WRAP);
 			if (fStatus.hasFatalError())
 				label.setText(RefactoringUIMessages.RefactoringStatusDialog_Cannot_proceed);
 			else
 				label.setText(RefactoringUIMessages.RefactoringStatusDialog_Please_look);
+			label.setForeground(foreground);
 			label.setBackground(background);
 			messagePane.setContent(label);
 		}
