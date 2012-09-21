@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal;
 
+import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IParameter;
@@ -52,8 +52,6 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * A <code>ShowViewMenu</code> is used to populate a menu manager with Show
@@ -92,6 +90,8 @@ public class ShowViewMenu extends ContributionItem {
 
 	// Maps pages to a list of opened views
 	private Map openedViews = new HashMap();
+
+	private MenuManager menuManager;
 
 	private IMenuListener menuListener = new IMenuListener() {
 		public void menuAboutToShow(IMenuManager manager) {
@@ -316,9 +316,14 @@ public class ShowViewMenu extends ContributionItem {
 			((MenuManager) getParent()).addMenuListener(menuListener);
 		}
 
-		MenuManager manager = new MenuManager();
-		fillMenu(manager);
-		IContributionItem items[] = manager.getItems();
+		if (menuManager != null) {
+			menuManager.dispose();
+			menuManager = null;
+		}
+
+		menuManager = new MenuManager();
+		fillMenu(menuManager);
+		IContributionItem items[] = menuManager.getItems();
 		if (items.length == 0) {
 			MenuItem item = new MenuItem(menu, SWT.NONE, index++);
 			item.setText(NO_TARGETS_MSG);
