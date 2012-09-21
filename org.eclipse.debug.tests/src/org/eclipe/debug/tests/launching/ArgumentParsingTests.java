@@ -74,34 +74,38 @@ public class ArgumentParsingTests extends TestCase {
 
 	private static void runCommandLine(String commandLine, String[] arguments) throws IOException,
 			URISyntaxException, CoreException {
-		URL classFolderUrl = FileLocator.find(TestsPlugin.getDefault().getBundle(), new Path("bin/"), null);
-		classFolderUrl= FileLocator.toFileURL(classFolderUrl);
-		File classFolderFile = URIUtil.toFile(URIUtil.toURI(classFolderUrl));
+		URL classPathUrl = FileLocator.find(TestsPlugin.getDefault().getBundle(), new Path("bin/"), null);
+		if (classPathUrl == null) { // not running from the workspace, but from the built bundle
+			classPathUrl = FileLocator.find(TestsPlugin.getDefault().getBundle(), Path.ROOT, null);
+		}
+		classPathUrl = FileLocator.toFileURL(classPathUrl);
+		File classPathFile = URIUtil.toFile(URIUtil.toURI(classPathUrl));
 		
-		String[] execArgs= new String[arguments.length + 2];
+		String[] execArgs= new String[arguments.length + 4];
 		execArgs[0]= new Path(System.getProperty("java.home")).append("bin/java").toOSString();
-		execArgs[1]= ArgumentsPrinter.class.getName();
-		System.arraycopy(arguments, 0, execArgs, 2, arguments.length);
+		execArgs[1]= "-cp";
+		execArgs[2]= classPathFile.getAbsolutePath();
+		execArgs[3]= ArgumentsPrinter.class.getName();
+		System.arraycopy(arguments, 0, execArgs, 4, arguments.length);
 		
-		ArrayList resultArgs = runCommandLine(execArgs, classFolderFile);
+		ArrayList resultArgs = runCommandLine(execArgs);
 		
 		assertEquals("unexpected exec result;",
 				Arrays.asList(arguments).toString(),
 				resultArgs.toString());
 		
 		if (! Platform.getOS().equals(Constants.OS_WIN32)) {
-			execArgs= new String[] { "sh", "-c", execArgs[0] + " " + execArgs[1] + " " + commandLine};
-			resultArgs = runCommandLine(execArgs, classFolderFile);
+			execArgs = new String[] { "sh", "-c", execArgs[0] + " " + execArgs[1] + " " + execArgs[2] + " " + execArgs[3] + " " + commandLine };
+			resultArgs = runCommandLine(execArgs);
 			assertEquals("unexpected sh exec result;",
 					Arrays.asList(arguments).toString(),
 					resultArgs.toString());
-			
 		}
 	}
 
-	private static ArrayList runCommandLine(String[] execArgs, File workingDir)
+	private static ArrayList runCommandLine(String[] execArgs)
 			throws CoreException, IOException {
-		Process process = DebugPlugin.exec(execArgs, workingDir);
+		Process process = DebugPlugin.exec(execArgs, null);
 		BufferedReader procOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
 		ArrayList procArgs= new ArrayList();
