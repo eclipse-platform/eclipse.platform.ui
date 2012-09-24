@@ -8,7 +8,6 @@
  * Contributors:
  *     Soyatec - initial API and implementation
  *     IBM Corporation - ongoing enhancements
- *     Lars Vogel, vogella GmbH - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -58,6 +57,7 @@ public class NewApplicationWizardPage extends WizardPage {
 	private IProject project;
 	private IProjectProvider projectProvider;
 	private Text proNameText;
+	private Text proApplicationText;
 	private Group propertyGroup;
 	private AbstractFieldData pluginData;
 
@@ -346,14 +346,37 @@ public class NewApplicationWizardPage extends WizardPage {
 			}
 		});
 
+		Label proApplicationLabel = new Label(proGroup, SWT.NONE);
+		proApplicationLabel.setText("Application:");
+
+		proApplicationText = new Text(proGroup, SWT.BORDER);
+		proApplicationText
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		proApplicationText.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event event) {
+				handleTextEvent(APPLICATION, proApplicationText);
+			}
+		});
 		return proGroup;
 	}
 
 	protected PropertyData[] getPropertyData() {
 		if (PROPERTIES == null) {
 			PROPERTIES = new PropertyData[] {
+					new PropertyData(IProductConstants.APP_NAME, "Application Name:",
+							projectProvider.getProjectName(), String.class,
+							true),
 					new PropertyData(APPLICATION_CSS_PROPERTY, "CSS Style:",
 							"css/default.css", String.class, true),
+					new PropertyData(IProductConstants.ABOUT_TEXT, "About Message:", "",
+							String.class, true),
+					new PropertyData(
+							IProductConstants.STARTUP_FOREGROUND_COLOR, "Startup Foreground:", "",
+							Color.class, false),
+					new PropertyData(IProductConstants.STARTUP_MESSAGE_RECT, "Startup Message Region:",
+							"", Rectangle.class, false),
+					new PropertyData(IProductConstants.STARTUP_PROGRESS_RECT, "Startup Progress Region:",
+							"", Rectangle.class, false),
 					new PropertyData(
 							IProductConstants.PREFERENCE_CUSTOMIZATION, "Preference Customization:", "",
 							String.class, true) }; // plugin_customization.ini
@@ -367,6 +390,8 @@ public class NewApplicationWizardPage extends WizardPage {
 			
 			// Use the plug-in name for the product name (not project name which can contain illegal characters)
 			proNameText.setText(pluginData.getId());
+
+			proApplicationText.setText(E4_APPLICATION);
 
 			for (PropertyData property : getPropertyData()) {
 				createPropertyItem(propertyGroup, property);
