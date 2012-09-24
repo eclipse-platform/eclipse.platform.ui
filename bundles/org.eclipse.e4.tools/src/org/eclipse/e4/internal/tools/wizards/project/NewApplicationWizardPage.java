@@ -52,6 +52,8 @@ public class NewApplicationWizardPage extends WizardPage {
 	public static final String APPLICATION_CSS_PROPERTY = "applicationCSS";
 	public static final String PRODUCT_NAME = "productName";
 	public static final String APPLICATION = "application";
+	public static final String CLEAR_PERSISTED_STATE = "clearPersistedState";
+	public static final String EOL = System.getProperty("line.separator");
 
 	private final Map<String, String> data;
 
@@ -106,6 +108,7 @@ public class NewApplicationWizardPage extends WizardPage {
 	static class PropertyData {
 		private String name;
 		private String label;
+		private String extraTooltipInfo;
 
 		private String value;
 		private Class<?> type;
@@ -118,6 +121,16 @@ public class NewApplicationWizardPage extends WizardPage {
 			this.label = label;
 			this.type = type;
 			this.editable = editable;
+		}
+
+		public PropertyData(String name, String label, String value, Class<?> type,
+				boolean editable, String extraTooltipInfo) {
+			this.name = name;
+			this.value = value;
+			this.label = label;
+			this.type = type;
+			this.editable = editable;
+			this.extraTooltipInfo = extraTooltipInfo;
 		}
 
 		public String getName() {
@@ -139,6 +152,11 @@ public class NewApplicationWizardPage extends WizardPage {
 		public String getLabel() {
 			return label;
 		}
+
+		public String getExtraTooltipInfo() {
+			return extraTooltipInfo;
+		}
+
 	}
 
 	private Group createPropertyGroup(Composite control) {
@@ -156,35 +174,51 @@ public class NewApplicationWizardPage extends WizardPage {
 		label.setText(property.getLabel());
 		label.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		label.setToolTipText("Property \"" + property.getName() + "\"");
-		
-		final Text valueText = new Text(parent, SWT.BORDER);
-		valueText.setText(property.getValue());
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		valueText.setLayoutData(gridData);
-		if (!property.isEditable()) {
-			valueText.setEditable(false);
+		if (property.getExtraTooltipInfo()!=null) {
+			label.setToolTipText(label.getToolTipText() + EOL + property.getExtraTooltipInfo());
 		}
-		valueText.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				handleTextEvent(property.getName(), valueText);
-			}
-		});
 
-		if (property.getType() == Color.class
-				|| property.getType() == Rectangle.class) {
-			Button button = new Button(parent, SWT.PUSH);
-			button.setText("...");
+		if (property.getType() == Boolean.class) {
+			final Button button = new Button(parent, SWT.CHECK);
+			button.setSelection("true".equalsIgnoreCase(property.getValue()));
 			button.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
-					handleLinkEvent(property, valueText, parent.getShell());
+					handleCheckBoxEvent(property.getName(), button.getSelection());
 				}
-
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
-		}
-		else {
 			new Label(parent, SWT.NONE);
+		} else {
+			final Text valueText = new Text(parent, SWT.BORDER);
+			valueText.setText(property.getValue());
+			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+			valueText.setLayoutData(gridData);
+			if (!property.isEditable()) {
+				valueText.setEditable(false);
+			}
+			valueText.addListener(SWT.Modify, new Listener() {
+				public void handleEvent(Event event) {
+					handleTextEvent(property.getName(), valueText);
+				}
+			});
+
+			if (property.getType() == Color.class
+					|| property.getType() == Rectangle.class) {
+				Button button = new Button(parent, SWT.PUSH);
+				button.setText("...");
+				button.addSelectionListener(new SelectionListener() {
+					public void widgetSelected(SelectionEvent e) {
+						handleLinkEvent(property, valueText, parent.getShell());
+					}
+
+					public void widgetDefaultSelected(SelectionEvent e) {
+					}
+				});
+			}
+			else {
+				new Label(parent, SWT.NONE);
+			}
 		}
 		data.put(property.getName(), property.getValue());
 	}
@@ -328,6 +362,13 @@ public class NewApplicationWizardPage extends WizardPage {
 		data.put(property, value);
 	}
 
+	protected void handleCheckBoxEvent(String property, boolean selection) {
+		if (property == null) {
+			return;
+		}
+		data.put(property, Boolean.toString(selection));
+	}
+	
 	private Group createProductGroup(Composite control) {
 		Group proGroup = new Group(control, SWT.NONE);
 		proGroup.setText("Product");
@@ -356,7 +397,10 @@ public class NewApplicationWizardPage extends WizardPage {
 							"css/default.css", String.class, true),
 					new PropertyData(
 							IProductConstants.PREFERENCE_CUSTOMIZATION, "Preference Customization:", "",
-							String.class, true) }; // plugin_customization.ini
+							String.class, true),
+					new PropertyData(CLEAR_PERSISTED_STATE, "Enable development mode for application model:", "true", Boolean.class, true, 
+							"Add option -clearPersistedState to the Product's Program Arguments")
+			}; // plugin_customization.ini
 		}
 		return PROPERTIES;
 	}
