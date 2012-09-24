@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -338,6 +340,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	public void cleanUp(MMenu menuModel) {
 		Collection<ContributionRecord> vals = modelContributionToRecord
 				.values();
+		List<ContributionRecord> disposedRecords = new ArrayList<ContributionRecord>();
 		for (ContributionRecord record : vals
 				.toArray(new ContributionRecord[vals.size()])) {
 			if (record.menuModel == menuModel) {
@@ -350,7 +353,19 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				}
 				record.generatedElements.clear();
 				record.sharedElements.clear();
+				disposedRecords.add(record);
 			}
+		}
+
+		// The cleanup() is called recursively via cleanUpCopy(), hence
+		// the need to do a separate pass to remove disposed records:
+		Iterator<Entry<MMenuElement, ContributionRecord>> iterator = modelContributionToRecord
+				.entrySet().iterator();
+		for (; iterator.hasNext();) {
+			Entry<MMenuElement, ContributionRecord> entry = iterator.next();
+			ContributionRecord record = entry.getValue();
+			if (disposedRecords.contains(record))
+				iterator.remove();
 		}
 	}
 
