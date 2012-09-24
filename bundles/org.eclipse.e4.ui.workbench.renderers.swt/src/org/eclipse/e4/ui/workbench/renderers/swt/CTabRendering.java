@@ -70,8 +70,6 @@ public class CTabRendering extends CTabFolderRenderer {
 
 	protected Rectangle computeTrim(int part, int state, int x, int y,
 			int width, int height) {
-		GC gc = new GC(parent);
-		gc.dispose();
 		int borderTop = TOP_KEYLINE + OUTER_KEYLINE;
 		int borderBottom = INNER_KEYLINE + OUTER_KEYLINE;
 		int marginWidth = parent.marginWidth;
@@ -147,7 +145,6 @@ public class CTabRendering extends CTabFolderRenderer {
 		if (0 <= part && part < parent.getItemCount()) {
 			gc.setAdvanced(true);
 			Point result = super.computeSize(part, state, gc, wHint, hHint);
-			gc.setAdvanced(false);
 			return result;
 		}
 		return super.computeSize(part, state, gc, wHint, hHint);
@@ -158,6 +155,7 @@ public class CTabRendering extends CTabFolderRenderer {
 	}
 
 	protected void draw(int part, int state, Rectangle bounds, GC gc) {
+
 		switch (part) {
 		case PART_BODY:
 			this.drawTabBody(gc, bounds, state);
@@ -167,9 +165,9 @@ public class CTabRendering extends CTabFolderRenderer {
 			return;
 		default:
 			if (0 <= part && part < parent.getItemCount()) {
+				gc.setAdvanced(true);
 				if (bounds.width == 0 || bounds.height == 0)
 					return;
-				gc.setAdvanced(true);
 				if ((state & SWT.SELECTED) != 0) {
 					drawSelectedTab(part, gc, bounds, state);
 					state &= ~SWT.BACKGROUND;
@@ -180,12 +178,12 @@ public class CTabRendering extends CTabFolderRenderer {
 						gc.setAlpha(0x7f);
 						state &= ~SWT.BACKGROUND;
 						super.draw(part, state, bounds, gc);
+						gc.setAlpha(0xff);
 					} else {
 						state &= ~SWT.BACKGROUND;
 						super.draw(part, state, bounds, gc);
 					}
 				}
-				gc.setAdvanced(false);
 				return;
 			}
 		}
