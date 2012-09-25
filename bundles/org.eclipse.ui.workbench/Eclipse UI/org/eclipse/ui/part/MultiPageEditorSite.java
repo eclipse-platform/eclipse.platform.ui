@@ -131,15 +131,14 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) site
 				.getService(IServiceLocatorCreator.class);
-		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
+		context = site.getModel().getContext().createChild("MultiPageEditorSite"); //$NON-NLS-1$
+		serviceLocator = (ServiceLocator) slc.createServiceLocator(
 				multiPageEditor.getSite(), null, new IDisposable(){
 					public void dispose() {
 						getMultiPageEditor().close();
-					}});
-
-		context = site.getModel().getContext().createChild("MultiPageEditorSite"); //$NON-NLS-1$
+					}
+				}, context);
 		site.getModel().getContext().set("MultiPageEditorSite", context); //$NON-NLS-1$
-		serviceLocator.setContext(context);
 
 		initializeDefaultServices();
 	}

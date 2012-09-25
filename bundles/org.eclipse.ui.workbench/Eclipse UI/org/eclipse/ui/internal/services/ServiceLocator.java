@@ -243,6 +243,8 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	public void setContext(IEclipseContext context) {
+//		if (e4Context != null) // XXX
+//			e4Context.dispose();
 		e4Context = context;
 	}
 

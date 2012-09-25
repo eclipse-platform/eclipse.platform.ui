@@ -35,4 +35,11 @@ public class ServiceLocatorCreator implements IServiceLocatorCreator {
 		}
 		return serviceLocator;
 	}
+
+	public IServiceLocator createServiceLocator(IServiceLocator parent,
+			AbstractServiceFactory factory, IDisposable owner, IEclipseContext context) {
+		ServiceLocator serviceLocator = new ServiceLocator(parent, factory, owner);
+		serviceLocator.setContext(context);
+		return serviceLocator;
+	}
 }

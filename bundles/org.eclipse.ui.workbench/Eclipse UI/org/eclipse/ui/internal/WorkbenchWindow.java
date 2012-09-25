@@ -427,8 +427,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							close();
 						}
 					}
-				});
-		serviceLocator.setContext(windowContext);
+				}, windowContext);
 
 		windowContext.set(IExtensionTracker.class.getName(), new ContextFunction() {
 

@@ -95,6 +95,7 @@ public class PageSite implements IPageSite, INestable {
 		// Initialize the service locator.
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentSite
 				.getService(IServiceLocatorCreator.class);
+		e4Context = ((PartSite) parentViewSite).getContext().createChild("PageSite"); //$NON-NLS-1$
 		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(parentViewSite, null,
 				new IDisposable() {
 					public void dispose() {
@@ -105,9 +106,7 @@ public class PageSite implements IPageSite, INestable {
 						// }
 						// TODO compat: not tsure what this should do
 					}
-				});
-		e4Context = ((PartSite) parentViewSite).getContext().createChild("PageSite"); //$NON-NLS-1$
-		serviceLocator.setContext(e4Context);
+				}, e4Context);
 		initializeDefaultServices();
 	}
 

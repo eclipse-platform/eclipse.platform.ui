@@ -494,8 +494,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					close(PlatformUI.RETURN_RESTART, true);
 				}
 			}
-		});
-		serviceLocator.setContext(appContext);
+		}, appContext);
 		serviceLocator.registerService(IServiceLocatorCreator.class, slc);
 		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.WORKBENCH_SCOPE, this, null, null,
