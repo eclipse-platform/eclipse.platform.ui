@@ -81,6 +81,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -247,19 +248,9 @@ public class MenuEditor extends AbstractComponentEditor {
 			l.setText(Messages.MenuEditor_Children);
 			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
-			final TableViewer viewer = new TableViewer(parent);
-			ObservableListContentProvider cp = new ObservableListContentProvider();
-			viewer.setContentProvider(cp);
-
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			viewer.getControl().setLayoutData(gd);
-			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
-
-			IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-			viewer.setInput(prop.observeDetail(master));
-
 			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			GridData span2 = new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1);
+			buttonComp.setLayoutData(span2);
 			GridLayout gl = new GridLayout(2, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
@@ -267,10 +258,58 @@ public class MenuEditor extends AbstractComponentEditor {
 			gl.marginHeight = 0;
 			buttonComp.setLayout(gl);
 
+			final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
+			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			childrenDropDown.setContentProvider(new ArrayContentProvider());
+			childrenDropDown.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					Struct struct = (Struct) element;
+					return struct.label;
+				}
+			});
+
+			Struct defaultStruct = new Struct(Messages.MenuEditor_HandledMenuItem, MenuPackageImpl.Literals.HANDLED_MENU_ITEM, false);
+			childrenDropDown.setInput(new Struct[] { new Struct(Messages.MenuEditor_Separator, MenuPackageImpl.Literals.MENU_SEPARATOR, true), new Struct(Messages.MenuEditor_Menu, MenuPackageImpl.Literals.MENU, false), defaultStruct, new Struct(Messages.MenuEditor_DirectMenuItem, MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false) });
+			childrenDropDown.setSelection(new StructuredSelection(defaultStruct));
+
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.ModelTooling_Common_AddEllipsis);
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!childrenDropDown.getSelection().isEmpty()) {
+						Struct struct = (Struct) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
+						EClass eClass = struct.eClass;
+						handleAdd(eClass, struct.separator);
+					}
+				}
+			});
+
+			new Label(parent, SWT.None);
+
+			final TableViewer viewer = new TableViewer(parent);
+			ObservableListContentProvider cp = new ObservableListContentProvider();
+			viewer.setContentProvider(cp);
+
+			GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1);
+			viewer.getControl().setLayoutData(gd);
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
+
+			IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			viewer.setInput(prop.observeDetail(master));
+
+			new Label(parent, SWT.None);
+
+			Composite buttonComp2 = new Composite(parent, SWT.NONE);
+			buttonComp2.setLayoutData(span2);
+			buttonComp2.setLayout(new FillLayout());
+
+			b = new Button(buttonComp2, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -291,10 +330,9 @@ public class MenuEditor extends AbstractComponentEditor {
 				}
 			});
 
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b = new Button(buttonComp2, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -315,40 +353,9 @@ public class MenuEditor extends AbstractComponentEditor {
 				}
 			});
 
-			final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
-			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			childrenDropDown.setContentProvider(new ArrayContentProvider());
-			childrenDropDown.setLabelProvider(new LabelProvider() {
-				@Override
-				public String getText(Object element) {
-					Struct struct = (Struct) element;
-					return struct.label;
-				}
-			});
-
-			Struct defaultStruct = new Struct(Messages.MenuEditor_HandledMenuItem, MenuPackageImpl.Literals.HANDLED_MENU_ITEM, false);
-			childrenDropDown.setInput(new Struct[] { new Struct(Messages.MenuEditor_Separator, MenuPackageImpl.Literals.MENU_SEPARATOR, true), new Struct(Messages.MenuEditor_Menu, MenuPackageImpl.Literals.MENU, false), defaultStruct, new Struct(Messages.MenuEditor_DirectMenuItem, MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false) });
-			childrenDropDown.setSelection(new StructuredSelection(defaultStruct));
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_AddEllipsis);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!childrenDropDown.getSelection().isEmpty()) {
-						Struct struct = (Struct) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
-						EClass eClass = struct.eClass;
-						handleAdd(eClass, struct.separator);
-					}
-				}
-			});
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b = new Button(buttonComp2, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
