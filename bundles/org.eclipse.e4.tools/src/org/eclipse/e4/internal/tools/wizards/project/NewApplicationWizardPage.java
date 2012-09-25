@@ -9,6 +9,7 @@
  *     Soyatec - initial API and implementation
  *     IBM Corporation - ongoing enhancements
  *     Lars Vogel, vogella GmbH - ongoing enhancements
+ *     Sopot Cela - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -54,7 +55,7 @@ public class NewApplicationWizardPage extends WizardPage {
 	public static final String APPLICATION = "application";
 	public static final String CLEAR_PERSISTED_STATE = "clearPersistedState";
 	public static final String EOL = System.getProperty("line.separator");
-
+	public static final String richSample = "RICH_SAMPLE";
 	private final Map<String, String> data;
 
 	private IProject project;
@@ -64,12 +65,14 @@ public class NewApplicationWizardPage extends WizardPage {
 	private AbstractFieldData pluginData;
 
 	private PropertyData[] PROPERTIES;
-
+	private Button richSampleCheckbox;
+	
 	protected NewApplicationWizardPage(IProjectProvider projectProvider, AbstractFieldData pluginData) {
 		super("New Eclipse 4 Application Wizard Page");
 		this.projectProvider = projectProvider;
 		this.pluginData = pluginData;
 		data = new HashMap<String, String>();
+		data.put(richSample, "FALSE");//minimalist by default
 		setTitle("Eclipse 4 Application");
 		setMessage("Configure application with special values.");
 	}
@@ -386,7 +389,23 @@ public class NewApplicationWizardPage extends WizardPage {
 				handleTextEvent(PRODUCT_NAME, proNameText);
 			}
 		});
-
+		Label label = new Label(proGroup,SWT.NONE);
+		label.setText("Rich sample (with parts, menu etc.)");
+		richSampleCheckbox = new Button(proGroup, SWT.CHECK);
+		richSampleCheckbox.setSelection(false);
+		richSampleCheckbox.addSelectionListener(new SelectionListener() {
+			
+			public void widgetSelected(SelectionEvent e) {
+				data.put(richSample, richSampleCheckbox.getSelection()?"TRUE":"FALSE");
+				
+			}
+			
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e)
+				;
+				
+			}
+		});
 		return proGroup;
 	}
 

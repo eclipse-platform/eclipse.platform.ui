@@ -8,6 +8,7 @@
  * Contributors:
  *     Soyatec - initial API and implementation
  *     IBM Corporation - ongoing enhancements
+ *     Sopot Cela - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -332,6 +333,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 	public void createApplicationResources(IProject project,
 			IProgressMonitor monitor) {
 		Map<String, String> map = fApplicationPage.getData();
+		boolean isMinimalist = !map.get(NewApplicationWizardPage.richSample).equalsIgnoreCase("TRUE");
 		if (map == null
 				|| map.get(NewApplicationWizardPage.PRODUCT_NAME) == null)
 			return;
@@ -417,24 +419,28 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		try {
 			URL corePath = ResourceLocator.getProjectTemplateFiles(template_id);
 			IRunnableWithProgress op = new TemplateOperation(corePath, project,
-					keys, binaryExtentions);
+					keys, binaryExtentions,isMinimalist);
 			getContainer().run(false, true, op);
 		} catch (Exception e) {
 			PDEPlugin.logException(e);
 		}
-		
+		if (!isMinimalist)
+		{
 		try {
 			URL corePath = ResourceLocator.getProjectTemplateFiles("src");
 			IRunnableWithProgress op = new TemplateOperation(corePath,
-					(IContainer) fragment.getResource(), keys, binaryExtentions);
+					(IContainer) fragment.getResource(), keys, binaryExtentions, isMinimalist);
 			getContainer().run(false, true, op);
 		} catch (Exception e) {
 			PDEPlugin.logException(e);
+		}
 		}
 	}
 
 	private void createApplicationModel(IProject project, String pluginName,
 			IPackageFragment fragment) {
+		Map<String, String> map = fApplicationPage.getData();
+		boolean isMinimalist = !map.get(NewApplicationWizardPage.richSample).equalsIgnoreCase("TRUE");
 		if (APPLICATION_MODEL != null && APPLICATION_MODEL.trim().length() > 0) {
 			// Create a resource set
 			//
@@ -483,56 +489,53 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			addon.setElementId("org.eclipse.e4.ui.workbench.bindings.model");
 			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon");
 			application.getAddons().add(addon);
-
-			MBindingContext rootContext = MCommandsFactory.INSTANCE
-					.createBindingContext();
-			rootContext.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
-			rootContext.setName("In Dialog and Windows");
-
-			MBindingContext childContext = MCommandsFactory.INSTANCE
-					.createBindingContext();
-			childContext.setElementId("org.eclipse.ui.contexts.window");
-			childContext.setName("In Windows");
-			rootContext.getChildren().add(childContext);
-
-			childContext = MCommandsFactory.INSTANCE.createBindingContext();
-			childContext.setElementId("org.eclipse.ui.contexts.dialog");
-			childContext.setName("In Dialogs");
-			rootContext.getChildren().add(childContext);
-
-			application.getRootContext().add(rootContext);
-			application.getBindingContexts().add(rootContext);
-
-			resource.getContents().add((EObject) application);
-
-			// Create Quit command
-			MCommand quitCommand = createCommand("org.eclipse.ui.file.exit",
-					"quitCommand", "QuitHandler",
-					"M1+Q", pluginName, fragment, application);
-
-			MCommand openCommand = createCommand(pluginName + ".open",
-					"openCommand", "OpenHandler",
-					"M1+O", pluginName, fragment, application);
-
-			MCommand saveCommand = createCommand("org.eclipse.ui.file.save",
-					"saveCommand", "SaveHandler",
-					"M1+S", pluginName, fragment, application);
-
-			MCommand aboutCommand = createCommand(
-					"org.eclipse.ui.help.aboutAction", "aboutCommand",
-					"AboutHandler", "M1+A", pluginName, fragment,
-					application);
-
 			MTrimmedWindow mainWindow = MBasicFactory.INSTANCE
 					.createTrimmedWindow();
 			application.getChildren().add(mainWindow);
-			{
 				mainWindow.setLabel(pluginName);
 				mainWindow.setWidth(500);
 				mainWindow.setHeight(400);
+				resource.getContents().add((EObject) application);
+				if (!isMinimalist){
+					MBindingContext rootContext = MCommandsFactory.INSTANCE
+							.createBindingContext();
+					rootContext.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
+					rootContext.setName("In Dialog and Windows");
 
-				// Menu
-				{
+					MBindingContext childContext = MCommandsFactory.INSTANCE
+							.createBindingContext();
+					childContext.setElementId("org.eclipse.ui.contexts.window");
+					childContext.setName("In Windows");
+					rootContext.getChildren().add(childContext);
+
+					childContext = MCommandsFactory.INSTANCE.createBindingContext();
+					childContext.setElementId("org.eclipse.ui.contexts.dialog");
+					childContext.setName("In Dialogs");
+					rootContext.getChildren().add(childContext);
+
+					application.getRootContext().add(rootContext);
+					application.getBindingContexts().add(rootContext);
+
+
+
+					// Create Quit command
+					MCommand quitCommand = createCommand("org.eclipse.ui.file.exit",
+							"quitCommand", "QuitHandler",
+							"M1+Q", pluginName, fragment, application);
+
+					MCommand openCommand = createCommand(pluginName + ".open",
+							"openCommand", "OpenHandler",
+							"M1+O", pluginName, fragment, application);
+
+					MCommand saveCommand = createCommand("org.eclipse.ui.file.save",
+							"saveCommand", "SaveHandler",
+							"M1+S", pluginName, fragment, application);
+
+					MCommand aboutCommand = createCommand(
+							"org.eclipse.ui.help.aboutAction", "aboutCommand",
+							"AboutHandler", "M1+A", pluginName, fragment,
+							application);
+
 					MMenu menu = MMenuFactory.INSTANCE.createMenu();
 					mainWindow.setMainMenu(menu);
 					menu.setElementId("menu:org.eclipse.ui.main.menu");
@@ -573,10 +576,8 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						menuItemAbout.setLabel("About");
 						menuItemAbout.setCommand(aboutCommand);
 					}
-				}
 
-				// PerspectiveStack
-				{
+					// PerspectiveStack
 					MPerspectiveStack perspectiveStack = MAdvancedFactory.INSTANCE
 							.createPerspectiveStack();
 					mainWindow.getChildren().add(perspectiveStack);
@@ -593,47 +594,45 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						MPartStack partStack = MBasicFactory.INSTANCE
 								.createPartStack();
 						partSashContainer.getChildren().add(partStack);
-						
-						 MPart part = MBasicFactory.INSTANCE.createPart();
-						 partStack.getChildren().add(part);
-						 part.setLabel("Sample Part");
-						 part.setContributionURI("bundleclass://"+pluginName+"/"+fragment.getElementName()+".parts"+".SamplePart");
-						 
+
+						MPart part = MBasicFactory.INSTANCE.createPart();
+						partStack.getChildren().add(part);
+						part.setLabel("Sample Part");
+						part.setContributionURI("bundleclass://"+pluginName+"/"+fragment.getElementName()+".parts"+".SamplePart");
+
 					}
 
 					// WindowTrim
-					{
-						MTrimBar trimBar = MBasicFactory.INSTANCE
-								.createTrimBar();
-						mainWindow.getTrimBars().add(trimBar);
+					MTrimBar trimBar = MBasicFactory.INSTANCE
+							.createTrimBar();
+					mainWindow.getTrimBars().add(trimBar);
 
-						MToolBar toolBar = MMenuFactory.INSTANCE
-								.createToolBar();
-						toolBar.setElementId("toolbar:org.eclipse.ui.main.toolbar");
-						trimBar.getChildren().add(toolBar);
+					MToolBar toolBar = MMenuFactory.INSTANCE
+							.createToolBar();
+					toolBar.setElementId("toolbar:org.eclipse.ui.main.toolbar");
+					trimBar.getChildren().add(toolBar);
 
-						MHandledToolItem toolItemOpen = MMenuFactory.INSTANCE
-								.createHandledToolItem();
-						toolBar.getChildren().add(toolItemOpen);
-						toolItemOpen.setIconURI("platform:/plugin/"
-								+ pluginName + "/icons/sample.gif");
-						toolItemOpen.setCommand(openCommand);
+					MHandledToolItem toolItemOpen = MMenuFactory.INSTANCE
+							.createHandledToolItem();
+					toolBar.getChildren().add(toolItemOpen);
+					toolItemOpen.setIconURI("platform:/plugin/"
+							+ pluginName + "/icons/sample.gif");
+					toolItemOpen.setCommand(openCommand);
 
-						MHandledToolItem toolItemSave = MMenuFactory.INSTANCE
-								.createHandledToolItem();
-						toolBar.getChildren().add(toolItemSave);
-						toolItemSave.setIconURI("platform:/plugin/"
-								+ pluginName + "/icons/save_edit.gif");
-						toolItemSave.setCommand(saveCommand);
-					}
+					MHandledToolItem toolItemSave = MMenuFactory.INSTANCE
+							.createHandledToolItem();
+					toolBar.getChildren().add(toolItemSave);
+					toolItemSave.setIconURI("platform:/plugin/"
+							+ pluginName + "/icons/save_edit.gif");
+					toolItemSave.setCommand(saveCommand);
 				}
-			}
 			Map<Object, Object> options = new HashMap<Object, Object>();
 			options.put(XMLResource.OPTION_ENCODING, "UTF-8");
 			try {
 				resource.save(options);
 			} catch (IOException e) {
 				PDEPlugin.logException(e);
+		
 			}
 		}
 	}

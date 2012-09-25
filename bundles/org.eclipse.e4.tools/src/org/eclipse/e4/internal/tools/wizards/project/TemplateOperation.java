@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Soyatec - initial API and implementation
+ *     Sopot Cela - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -47,13 +48,15 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 	private final IContainer target;
 	private final Map<String, String> keys;
 	private final Set<String> binaryExtentions;
+	private boolean isMinimalist;
 
 	public TemplateOperation(URL source, IContainer target,
-			Map<String, String> keys, Set<String> binaryExtentions) {
+			Map<String, String> keys, Set<String> binaryExtentions, boolean justProduct) {
 		templateDirectory = source;
 		this.binaryExtentions = binaryExtentions;
 		this.target = target;
 		this.keys = keys;
+		this.isMinimalist = justProduct;
 	}
 
 	@Override
@@ -102,6 +105,8 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 
 	private void generateFiles(File src, IContainer dst, boolean firstLevel,
 			IProgressMonitor monitor) throws CoreException {
+		if ((!firstLevel)&&(isMinimalist))
+		return;
 		File[] members = src.listFiles();
 
 		for (int i = 0; i < members.length; i++) {
@@ -118,6 +123,7 @@ public class TemplateOperation extends WorkspaceModifyOperation implements
 				}
 				if (dstContainer != null && !dstContainer.exists())
 					((IFolder) dstContainer).create(true, true, monitor);
+			
 				generateFiles(member, dstContainer, false, monitor);
 			} else {
 				InputStream in = null;
