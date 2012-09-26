@@ -634,6 +634,10 @@ public class StackRenderer extends LazyStackRenderer {
 		ToolBar vmTB = getViewMenuTB(ctf);
 		if (vmTB != null && !vmTB.isDisposed())
 			vmTB.dispose();
+		if (viewMenuImage != null && !viewMenuImage.isDisposed()) {
+			viewMenuImage.dispose();
+			viewMenuImage = null;
+		}
 	}
 
 	public void clearTR(CTabFolder ctf) {
