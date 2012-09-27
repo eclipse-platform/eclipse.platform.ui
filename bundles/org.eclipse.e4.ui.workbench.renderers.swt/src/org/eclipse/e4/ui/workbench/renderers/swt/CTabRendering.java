@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import javax.inject.Inject;
@@ -40,7 +50,6 @@ public class CTabRendering extends CTabFolderRenderer {
 	static final int ITEM_RIGHT_MARGIN = 4;
 	static final int INTERNAL_SPACING = 4;
 
-	static final String E4_SHADOW_IMAGE = "org.eclipse.e4.renderer.shadow_image"; //$NON-NLS-1$
 	static final String E4_TOOLBAR_ACTIVE_IMAGE = "org.eclipse.e4.renderer.toolbar_background_active_image"; //$NON-NLS-1$
 	static final String E4_TOOLBAR_INACTIVE_IMAGE = "org.eclipse.e4.renderer.toolbar_background_inactive_image"; //$NON-NLS-1$
 
@@ -151,6 +160,10 @@ public class CTabRendering extends CTabFolderRenderer {
 	}
 
 	protected void dispose() {
+		if (shadowImage != null && !shadowImage.isDisposed()) {
+			shadowImage.dispose();
+			shadowImage = null;
+		}
 		super.dispose();
 	}
 
@@ -645,7 +658,7 @@ public class CTabRendering extends CTabFolderRenderer {
 
 	void drawShadow(final Display display, Rectangle bounds, GC gc) {
 		if (shadowImage == null) {
-			createShadow(display, true);
+			createShadow(display);
 		}
 		int x = bounds.x;
 		int y = bounds.y;
@@ -701,34 +714,18 @@ public class CTabRendering extends CTabFolderRenderer {
 				+ width - SIZE - 1, xFill + SIZE, SIZE, fillHeight - xFill);
 	}
 
-	void createShadow(final Display display, boolean recreate) {
-		Object obj = display.getData(E4_SHADOW_IMAGE);
-		if (obj != null && !recreate) {
-			shadowImage = (Image) obj;
-		} else {
-			ImageData data = new ImageData(60, 60, 32, new PaletteData(
-					0xFF0000, 0xFF00, 0xFF));
-			Image tmpImage = shadowImage = new Image(display, data);
-			GC gc = new GC(tmpImage);
-			if (shadowColor == null)
-				shadowColor = gc.getDevice().getSystemColor(SWT.COLOR_GRAY);
-			gc.setBackground(shadowColor);
-			drawTabBody(gc, new Rectangle(0, 0, 60, 60), SWT.None);
-			ImageData blured = blur(tmpImage, 5, 25);
-			shadowImage = new Image(display, blured);
-			display.setData(E4_SHADOW_IMAGE, shadowImage);
-			tmpImage.dispose();
-			display.disposeExec(new Runnable() {
-				public void run() {
-					Object obj = display.getData(E4_SHADOW_IMAGE);
-					if (obj != null) {
-						Image tmp = (Image) obj;
-						tmp.dispose();
-						display.setData(E4_SHADOW_IMAGE, null);
-					}
-				}
-			});
-		}
+	void createShadow(final Display display) {
+		ImageData data = new ImageData(60, 60, 32, new PaletteData(0xFF0000,
+				0xFF00, 0xFF));
+		Image tmpImage = shadowImage = new Image(display, data);
+		GC gc = new GC(tmpImage);
+		if (shadowColor == null)
+			shadowColor = gc.getDevice().getSystemColor(SWT.COLOR_GRAY);
+		gc.setBackground(shadowColor);
+		drawTabBody(gc, new Rectangle(0, 0, 60, 60), SWT.None);
+		ImageData blured = blur(tmpImage, 5, 25);
+		shadowImage = new Image(display, blured);
+		tmpImage.dispose();
 	}
 
 	public ImageData blur(Image src, int radius, int sigma) {
@@ -875,7 +872,7 @@ public class CTabRendering extends CTabFolderRenderer {
 
 	public void setShadowColor(Color color) {
 		this.shadowColor = color;
-		createShadow(parent.getDisplay(), true);
+		createShadow(parent.getDisplay());
 		parent.redraw();
 	}
 
