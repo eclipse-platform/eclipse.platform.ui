@@ -1370,7 +1370,7 @@ public class DebugPlugin extends Plugin {
 					throw new IllegalStateException();
 			}
 		}
-		if (buf.length() > 0)
+		if (buf.length() > 0 || state != DEFAULT)
 			result.add(buf.toString());
 
 		return (String[]) result.toArray(new String[result.size()]);
