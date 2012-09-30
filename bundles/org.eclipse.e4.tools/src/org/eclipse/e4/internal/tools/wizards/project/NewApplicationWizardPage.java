@@ -24,8 +24,8 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.plugin.AbstractFieldData;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
@@ -66,13 +66,14 @@ public class NewApplicationWizardPage extends WizardPage {
 
 	private PropertyData[] PROPERTIES;
 	private Button richSampleCheckbox;
-	
-	protected NewApplicationWizardPage(IProjectProvider projectProvider, AbstractFieldData pluginData) {
+
+	protected NewApplicationWizardPage(IProjectProvider projectProvider,
+			AbstractFieldData pluginData) {
 		super("New Eclipse 4 Application Wizard Page");
 		this.projectProvider = projectProvider;
 		this.pluginData = pluginData;
 		data = new HashMap<String, String>();
-		data.put(richSample, "FALSE");//minimalist by default
+		data.put(richSample, "FALSE");// minimalist by default
 		setTitle("Eclipse 4 Application");
 		setMessage("Configure application with special values.");
 	}
@@ -105,9 +106,29 @@ public class NewApplicationWizardPage extends WizardPage {
 		propertyGroup = createPropertyGroup(control);
 		propertyGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		Group templateGroup = createTemplateGroup(control);
+		templateGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setControl(control);
 	}
 
+	private Group createTemplateGroup(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setLayout(new GridLayout(1, false));
+		group.setText("Template option");
+		
+		richSampleCheckbox = new Button(group, SWT.CHECK);
+		
+		richSampleCheckbox.setSelection(false);
+		richSampleCheckbox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				data.put(richSample, richSampleCheckbox.getSelection() ? "TRUE"
+						: "FALSE");
+			}
+		});
+		richSampleCheckbox.setText("Create example content (parts, menu etc.)");
+		return group;
+	}
+	
 	static class PropertyData {
 		private String name;
 		private String label;
@@ -117,8 +138,8 @@ public class NewApplicationWizardPage extends WizardPage {
 		private Class<?> type;
 		private boolean editable;
 
-		public PropertyData(String name, String label, String value, Class<?> type,
-				boolean editable) {
+		public PropertyData(String name, String label, String value,
+				Class<?> type, boolean editable) {
 			this.name = name;
 			this.value = value;
 			this.label = label;
@@ -126,8 +147,8 @@ public class NewApplicationWizardPage extends WizardPage {
 			this.editable = editable;
 		}
 
-		public PropertyData(String name, String label, String value, Class<?> type,
-				boolean editable, String extraTooltipInfo) {
+		public PropertyData(String name, String label, String value,
+				Class<?> type, boolean editable, String extraTooltipInfo) {
 			this.name = name;
 			this.value = value;
 			this.label = label;
@@ -151,7 +172,7 @@ public class NewApplicationWizardPage extends WizardPage {
 		public boolean isEditable() {
 			return editable;
 		}
-		
+
 		public String getLabel() {
 			return label;
 		}
@@ -173,26 +194,21 @@ public class NewApplicationWizardPage extends WizardPage {
 
 	private void createPropertyItem(final Composite parent,
 			final PropertyData property) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(property.getLabel());
-		label.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_BLUE));
-		label.setToolTipText("Property \"" + property.getName() + "\"");
-		if (property.getExtraTooltipInfo()!=null) {
-			label.setToolTipText(label.getToolTipText() + EOL + property.getExtraTooltipInfo());
-		}
+		
 
 		if (property.getType() == Boolean.class) {
 			final Button button = new Button(parent, SWT.CHECK);
 			button.setSelection("true".equalsIgnoreCase(property.getValue()));
-			button.addSelectionListener(new SelectionListener() {
+			button.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					handleCheckBoxEvent(property.getName(), button.getSelection());
-				}
-				public void widgetDefaultSelected(SelectionEvent e) {
+					handleCheckBoxEvent(property.getName(),
+							button.getSelection());
 				}
 			});
+			button.setText(property.getLabel());
 			new Label(parent, SWT.NONE);
 		} else {
+			createLabelForField(parent, property);
 			final Text valueText = new Text(parent, SWT.BORDER);
 			valueText.setText(property.getValue());
 			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -210,20 +226,28 @@ public class NewApplicationWizardPage extends WizardPage {
 					|| property.getType() == Rectangle.class) {
 				Button button = new Button(parent, SWT.PUSH);
 				button.setText("...");
-				button.addSelectionListener(new SelectionListener() {
+				button.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						handleLinkEvent(property, valueText, parent.getShell());
 					}
-
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
 				});
-			}
-			else {
+			} else {
 				new Label(parent, SWT.NONE);
 			}
 		}
 		data.put(property.getName(), property.getValue());
+	}
+
+	private void createLabelForField(final Composite parent,
+			final PropertyData property) {
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(property.getLabel());
+		label.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		label.setToolTipText("Property \"" + property.getName() + "\"");
+		if (property.getExtraTooltipInfo() != null) {
+			label.setToolTipText(label.getToolTipText() + EOL
+					+ property.getExtraTooltipInfo());
+		}
 	}
 
 	private void handleLinkEvent(PropertyData property, Text valueText,
@@ -371,7 +395,7 @@ public class NewApplicationWizardPage extends WizardPage {
 		}
 		data.put(property, Boolean.toString(selection));
 	}
-	
+
 	private Group createProductGroup(Composite control) {
 		Group proGroup = new Group(control, SWT.NONE);
 		proGroup.setText("Product");
@@ -389,23 +413,6 @@ public class NewApplicationWizardPage extends WizardPage {
 				handleTextEvent(PRODUCT_NAME, proNameText);
 			}
 		});
-		Label label = new Label(proGroup,SWT.NONE);
-		label.setText("Rich sample (with parts, menu etc.)");
-		richSampleCheckbox = new Button(proGroup, SWT.CHECK);
-		richSampleCheckbox.setSelection(false);
-		richSampleCheckbox.addSelectionListener(new SelectionListener() {
-			
-			public void widgetSelected(SelectionEvent e) {
-				data.put(richSample, richSampleCheckbox.getSelection()?"TRUE":"FALSE");
-				
-			}
-			
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e)
-				;
-				
-			}
-		});
 		return proGroup;
 	}
 
@@ -415,11 +422,12 @@ public class NewApplicationWizardPage extends WizardPage {
 					new PropertyData(APPLICATION_CSS_PROPERTY, "CSS Style:",
 							"css/default.css", String.class, true),
 					new PropertyData(
-							IProductConstants.PREFERENCE_CUSTOMIZATION, "Preference Customization:", "",
-							String.class, true),
-					new PropertyData(CLEAR_PERSISTED_STATE, "Enable development mode for application model:", "true", Boolean.class, true, 
-							"Add option -clearPersistedState to the Product's Program Arguments")
-			}; // plugin_customization.ini
+							IProductConstants.PREFERENCE_CUSTOMIZATION,
+							"Preference Customization:", "", String.class, true),
+					new PropertyData(CLEAR_PERSISTED_STATE,
+							"Enable development mode for application model",
+							"true", Boolean.class, true,
+							"Add option -clearPersistedState to the Product's Program Arguments") }; // plugin_customization.ini
 		}
 		return PROPERTIES;
 	}
@@ -427,8 +435,9 @@ public class NewApplicationWizardPage extends WizardPage {
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible && PROPERTIES == null) {
-			
-			// Use the plug-in name for the product name (not project name which can contain illegal characters)
+
+			// Use the plug-in name for the product name (not project name which
+			// can contain illegal characters)
 			proNameText.setText(pluginData.getId());
 
 			for (PropertyData property : getPropertyData()) {
@@ -447,10 +456,11 @@ public class NewApplicationWizardPage extends WizardPage {
 			for (PropertyData property : getPropertyData()) {
 				data.put(property.getName(), property.getValue());
 			}
-			
-			// Use the plug-in name for the product name (not project name which can contain illegal characters)
+
+			// Use the plug-in name for the product name (not project name which
+			// can contain illegal characters)
 			String productName = pluginData.getId();
-			
+
 			data.put(PRODUCT_NAME, productName);
 			data.put(APPLICATION, E4_APPLICATION);
 		}
