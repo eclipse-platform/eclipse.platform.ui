@@ -125,7 +125,7 @@ public class NewApplicationWizardPage extends WizardPage {
 						: "FALSE");
 			}
 		});
-		richSampleCheckbox.setText("Create example content (parts, menu etc.)");
+		richSampleCheckbox.setText("Create sample content (parts, menu etc.)");
 		return group;
 	}
 	
