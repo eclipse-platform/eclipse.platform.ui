@@ -16,33 +16,40 @@
 
 <templates>
 
-<template name="inject-parent" description="Injected Parent Composite" id="org.eclipse.e4.tools.jdt.templates.parent" context="e4-members" enabled="true" autoinsert="false">@Inject
-Composite parent;</template>
+<template name="Inject - Composite" description="Injected Parent Composite" id="org.eclipse.e4.tools.jdt.templates.parent" context="e4-members" enabled="true" autoinsert="false">@Inject
+Composite parent;
+${imp:import(javax.inject.Inject)}
+</template>
 
-<template name="inject-preference" description="Injected Preference Value" id="org.eclipse.e4.tools.jdt.templates.preference" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject -  Preference Value" description="Injected Preference Value" id="org.eclipse.e4.tools.jdt.templates.preference" context="e4-members" enabled="true" autoinsert="false">@Inject
 void setPreferenceValue(@Named("preference-PREFERENCE_KEY") String preferenceValue) {
 	${cursor}
 }</template>
 
-<template name="inject-preferences" description="Injected Preferences Service" id="org.eclipse.e4.tools.jdt.templates.preferences" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - Preferences" description="Injected Preferences Service" id="org.eclipse.e4.tools.jdt.templates.preferences" context="e4-members" enabled="true" autoinsert="false">@Inject
 IEclipsePreferences preferences;</template>
 
-<template name="inject-logger" description="Injected Logger" id="org.eclipse.e4.tools.jdt.templates.logger" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - Logger" description="Injected Logger" id="org.eclipse.e4.tools.jdt.templates.logger" context="e4-members" enabled="true" autoinsert="false">@Inject
 Logger logger;</template>
 
-<template name="inject-eventbroker" description="Injected Event Broker" id="org.eclipse.e4.tools.jdt.templates.eventbroker" context="e4-members" enabled="true" autoinsert="false">@Inject
-IEventBroker eventBroker;</template>
+<template name="Inject - Eventbroker" description="Injected Event Broker" id="org.eclipse.e4.tools.jdt.templates.eventbroker" context="e4-members" enabled="true" autoinsert="false">@Inject
+IEventBroker eventBroker;
+${imp:import(org.eclipse.e4.core.services.events.IEventBroker)}
+</template>
 
-<template name="inject-stylingengine" description="Injected Styling Engine" id="org.eclipse.e4.tools.jdt.templates.stylingengine" context="e4-members" enabled="true" autoinsert="false">@Inject
-IStylingEngine stylingEngine;</template>
 
-<template name="ininjectject-event" description="Event Handler Method" id="org.eclipse.e4.tools.jdt.templates.eventhandler" context="e4-members" enabled="true" autoinsert="false">@EventHandler("some/event/topic")
+<template name="Injectject -  Event" description="Event Handler Method" id="org.eclipse.e4.tools.jdt.templates.eventhandler" context="e4-members" enabled="true" autoinsert="false">@EventHandler("some/event/topic")
 void handleSomeEvent(Payload payloadObject) {
 	${cursor}
 }</template>
 
+<template name="Inject - Styling Engine" description="Injected Styling Engine" id="org.eclipse.e4.tools.jdt.templates.stylingengine" context="e4-members" enabled="true" autoinsert="false">@Inject
+IStylingEngine stylingEngine;</template>
+
+
 <template name="PostConstruct" description="Creates @PostConstruct method" id="org.eclipse.e4.tools.jdt.templates.init" context="e4-members" enabled="true" autoinsert="false">@PostConstruct
 public void postConstruct(${type:newType(org.eclipse.swt.widgets.Composite)} parent) { 
+	${cursor}
 }
 ${imp:import(javax.annotation.PostConstruct)}
 </template>
