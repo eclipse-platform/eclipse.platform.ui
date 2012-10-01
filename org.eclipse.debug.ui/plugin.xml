@@ -2201,16 +2201,18 @@ M4 = Platform-specific fourth key
             colorPreferenceValue="198,219,174"
             highlightPreferenceKey="currentIPHighlight"
             highlightPreferenceValue="true"
+            icon="$nl$/icons/full/obj16/inst_ptr_top.gif"
+            includeOnPreferencePage="true"
             label="%debugCurrentInstructionPointer"
             overviewRulerPreferenceKey="currentIPOverviewRuler"
             overviewRulerPreferenceValue="true"
             presentationLayer="6"
             textPreferenceKey="currentIPIndication"
             textPreferenceValue="false"
-            verticalRulerPreferenceKey="currentIPVerticalRuler"
-            verticalRulerPreferenceValue="true"
             textStylePreferenceKey="currentIPTextStyle"
-			textStylePreferenceValue="NONE">
+            textStylePreferenceValue="NONE"
+            verticalRulerPreferenceKey="currentIPVerticalRuler"
+            verticalRulerPreferenceValue="true">
       </specification>
       <specification
             annotationImageProvider="org.eclipse.debug.internal.ui.InstructionPointerImageProvider"
@@ -2219,16 +2221,18 @@ M4 = Platform-specific fourth key
             colorPreferenceValue="219,235,204"
             highlightPreferenceKey="secondaryIPHighlight"
             highlightPreferenceValue="true"
+            icon="$nl$/icons/full/obj16/inst_ptr.gif"
+            includeOnPreferencePage="true"
             label="%debugCallStack"
             overviewRulerPreferenceKey="secondaryIPOverviewRuler"
             overviewRulerPreferenceValue="true"
             presentationLayer="6"
             textPreferenceKey="secondaryIPIndication"
             textPreferenceValue="false"
-            verticalRulerPreferenceKey="secondaryIPVerticalRuler"
-            verticalRulerPreferenceValue="true"
             textStylePreferenceKey="secondaryIPTextStyle"
-			textStylePreferenceValue="NONE">
+            textStylePreferenceValue="NONE"
+            verticalRulerPreferenceKey="secondaryIPVerticalRuler"
+            verticalRulerPreferenceValue="true">
       </specification>
    </extension>
 <!-- Dynamic (String Substitution) Variables -->
