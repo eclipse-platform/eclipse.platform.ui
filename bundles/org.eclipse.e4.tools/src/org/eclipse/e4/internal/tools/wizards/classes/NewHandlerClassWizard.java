@@ -33,7 +33,10 @@ public class NewHandlerClassWizard extends AbstractNewClassWizard {
 
 	public NewHandlerClassWizard(String contributionURI) {
 		this.initialString = contributionURI;
-		
+	}
+	
+	public NewHandlerClassWizard() {
+		// Intentially left empty 
 	}
 
 	@Override

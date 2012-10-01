@@ -145,9 +145,10 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		parent.setLayout(new GridLayout(3, false));
 		
 		clazz = createInstance();
-		
+		if ((froot!=null)&&(initialString!=null)){
 		clazz.setPackageFragment(froot.getPackageFragment(parseInitialStringForPackage(initialString)==null?"":parseInitialStringForPackage(initialString)));
 		clazz.setName(parseInitialStringForClassName(initialString));
+		}
 		DataBindingContext dbc = new DataBindingContext();
 		WizardPageSupport.create(this, dbc);
 		
@@ -162,7 +163,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			final Binding bd = dbc.bindValue(
 					WidgetProperties.text().observe(t), 
 					BeanProperties.value("fragmentRoot").observe(clazz), 
-					new UpdateValueStrategy(), 
+					new UpdateValueStrategy().setBeforeSetValidator(new PFRootValidator()), 
 					new UpdateValueStrategy().setConverter(new PackageFragmentRootToStringConverter())
 			);
 
@@ -190,10 +191,10 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			final Binding bd = dbc.bindValue(
 					WidgetProperties.text(SWT.Modify).observe(t), 
 					BeanProperties.value("packageFragment").observe(clazz),
-					new UpdateValueStrategy().setConverter(new StringToPackageFragmentConverter(froot)), 
+					new UpdateValueStrategy().setConverter(new StringToPackageFragmentConverter(clazz)), 
 					new UpdateValueStrategy().setConverter(new PackageFragmentToStringConverter())
 			);
-
+			
 			Button b = new Button(parent, SWT.PUSH);
 			b.setText("Browse ...");
 			b.addSelectionListener(new SelectionAdapter() {
@@ -244,8 +245,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			){
 			return null;
 		}
-		int bi = ioBC+"bundleclass://".length()-1;
-		int ei = iSecondSlash;
 
 		int lastDot = initialString2.lastIndexOf('.');
 		String packageString = initialString2.substring(iSecondSlash+1, lastDot);
@@ -383,6 +382,18 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			return JavaConventions.validateJavaTypeName(name,JavaCore.VERSION_1_3,JavaCore.VERSION_1_3);
 		}
 	}
+	
+	static class PFRootValidator implements IValidator {
+
+		public IStatus validate(Object value) {
+			String name = value.toString();
+			if (name.length()==0)
+				return new Status(IStatus.ERROR,ToolsPlugin.PLUGIN_ID,"Source folder must not be empty");
+			
+
+			return new Status(IStatus.OK,ToolsPlugin.PLUGIN_ID,"");
+		}
+	}
 
 	static class PackageFragmentRootToStringConverter extends Converter {
 
@@ -416,24 +427,20 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	
 	static class StringToPackageFragmentConverter extends Converter {
 
-		private IPackageFragmentRoot proot;
+		private JavaClass clazz;
 
-		public StringToPackageFragmentConverter(IPackageFragmentRoot froot) {
+		public StringToPackageFragmentConverter(JavaClass clazz) {
 			super(String.class, IPackageFragment.class);
-			this.proot = froot;
+			this.clazz = clazz;
 		}
 		
 		public Object convert(Object fromObject) {
-			try {
+			if (clazz.getFragmentRoot()==null) return null;
 			if( fromObject == null ) {
-				return proot.createPackageFragment("", true, null);
+				return clazz.getFragmentRoot().getPackageFragment("");
 			}
 			
-				return proot.getPackageFragment((String) fromObject);
-			} catch (JavaModelException e) {
-				e.printStackTrace();
-				return null;
-			}
+				return clazz.getFragmentRoot().getPackageFragment((String) fromObject);
 			
 		}
 	}

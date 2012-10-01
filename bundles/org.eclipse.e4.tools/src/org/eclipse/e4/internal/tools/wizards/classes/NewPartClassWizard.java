@@ -37,6 +37,10 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 	public NewPartClassWizard(String contributionURI) {
 		this.initialString = contributionURI;
 	}
+	
+	public NewPartClassWizard() {
+		// Intentially left empty 
+	}
 
 	@Override
 	public void addPages() {

@@ -24,6 +24,10 @@ public class NewAddonClassWizard extends AbstractNewClassWizard {
 	public NewAddonClassWizard(String contributionURI) {
 		this.initialString = contributionURI;
 	}
+	
+	public NewAddonClassWizard() {
+		// Intentially left empty 
+	}
 
 	@Override
 	public void addPages() {
