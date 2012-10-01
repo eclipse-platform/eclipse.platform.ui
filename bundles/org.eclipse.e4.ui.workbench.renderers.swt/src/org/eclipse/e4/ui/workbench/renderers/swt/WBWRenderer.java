@@ -493,9 +493,14 @@ public class WBWRenderer extends SWTPartRenderer {
 		if (wbwModel.getLabel() != null)
 			wbwShell.setText(wbwModel.getLocalizedLabel());
 
-		wbwShell.setImage(getImage(wbwModel));
-		// TODO: This should be added to the model, see bug 308494
-		wbwShell.setImages(Window.getDefaultImages());
+		if (wbwModel.getIconURI() != null && wbwModel.getIconURI().length() > 0) {
+			wbwShell.setImage(getImage(wbwModel));
+		} else {
+			// TODO: This should be added to the model, see bug 308494
+			// it allows for a range of icon sizes that the platform gets to
+			// choose from
+			wbwShell.setImages(Window.getDefaultImages());
+		}
 
 		return newWidget;
 	}
