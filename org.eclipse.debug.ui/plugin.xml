@@ -1166,14 +1166,6 @@
                 helpContextId="console_show_preferences_action_context"/>                
        </viewerContribution>
    </extension>
-<!-- Watch expression actions -->
-
-   <extension point="org.eclipse.ui.commands">
-       <command
-            name="%Watch.label"
-            id="org.eclipse.debug.ui.actions.WatchCommand"
-            defaultHandler="org.eclipse.debug.internal.ui.actions.expressions.WatchHandler"/>
-   </extension>
 
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
@@ -1709,6 +1701,12 @@ M4 = Platform-specific fourth key
             id="org.eclipse.debug.ui.category.run">
       </category>
       <command
+            defaultHandler="org.eclipse.debug.internal.ui.actions.expressions.WatchHandler"
+            description="%Watch.description"
+            id="org.eclipse.debug.ui.actions.WatchCommand"
+            name="%Watch.label">
+      </command>
+      <command
             name="%ActionDefinition.toggleStepFilters.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.toggleStepFilters.description"
@@ -1915,6 +1913,12 @@ M4 = Platform-specific fourth key
        id="org.eclipse.debug.ui.command.prevpage"
        name="%command.name.2"
        description = "%command.description.2">
+ </command>
+ <command
+       categoryId="org.eclipse.debug.ui.category.run"
+       description="%ActionDefinition.toggleLineBreakpoint.description"
+       id="org.eclipse.debug.ui.commands.ToggleLineBreakpoint"
+       name="%ActionDefinition.toggleLineBreakpoint.name">
  </command> 
    </extension>
    <extension point="org.eclipse.ui.bindings">
