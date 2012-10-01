@@ -415,7 +415,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		String elementName = fragment.getElementName();
 		keys.put("packageName", (elementName.equals("")?"": elementName + ".")+"handlers");
 		keys.put("packageName2", (elementName.equals("")?"": elementName + ".")+"parts");
-		keys.put("programArgs", "true".equalsIgnoreCase(map.get(NewApplicationWizardPage.CLEAR_PERSISTED_STATE))?"-clearPersitedState":"" );
+		keys.put("programArgs", "true".equalsIgnoreCase(map.get(NewApplicationWizardPage.CLEAR_PERSISTED_STATE))?"-clearPersistedState":"" );
 		try {
 			URL corePath = ResourceLocator.getProjectTemplateFiles(template_id);
 			IRunnableWithProgress op = new TemplateOperation(corePath, project,
