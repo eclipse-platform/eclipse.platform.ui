@@ -62,6 +62,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -244,12 +245,52 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		ControlFactory.createTextField(parent, Messages.PartSashContainerEditor_ContainerData, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
 
 		{
+
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartSashContainerEditor_Controls);
 			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
+			Composite buttonCompTop = new Composite(parent, SWT.NONE);
+			GridData span2 = new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1);
+			buttonCompTop.setLayoutData(span2);
+			GridLayout gl = new GridLayout(2, false);
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
+			buttonCompTop.setLayout(gl);
+
+			final ComboViewer childrenDropDown = new ComboViewer(buttonCompTop);
+			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			childrenDropDown.setContentProvider(new ArrayContentProvider());
+			childrenDropDown.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					EClass eclass = (EClass) element;
+					return eclass.getName();
+				}
+			});
+			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, AdvancedPackageImpl.Literals.AREA, AdvancedPackageImpl.Literals.PLACEHOLDER });
+			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART_SASH_CONTAINER));
+
+			Button b = new Button(buttonCompTop, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.ModelTooling_Common_AddEllipsis);
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!childrenDropDown.getSelection().isEmpty()) {
+						EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
+						handleAddChild(eClass);
+					}
+				}
+			});
+
+			new Label(parent, SWT.NONE);
+
 			final TableViewer viewer = new TableViewer(parent);
-			GridData gd = new GridData(GridData.FILL_BOTH);
+			GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1);
 			viewer.getControl().setLayoutData(gd);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
@@ -258,19 +299,15 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
 
-			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout(2, false);
-			gl.marginLeft = 0;
-			gl.marginRight = 0;
-			gl.marginWidth = 0;
-			gl.marginHeight = 0;
-			buttonComp.setLayout(gl);
+			new Label(parent, SWT.NONE);
 
-			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			Composite buttonCompBot = new Composite(parent, SWT.NONE);
+			buttonCompBot.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false, 2, 1));
+			buttonCompBot.setLayout(new FillLayout());
+
+			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -291,10 +328,9 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 				}
 			});
 
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -315,37 +351,9 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 				}
 			});
 
-			final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
-			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			childrenDropDown.setContentProvider(new ArrayContentProvider());
-			childrenDropDown.setLabelProvider(new LabelProvider() {
-				@Override
-				public String getText(Object element) {
-					EClass eclass = (EClass) element;
-					return eclass.getName();
-				}
-			});
-			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, AdvancedPackageImpl.Literals.AREA, AdvancedPackageImpl.Literals.PLACEHOLDER });
-			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART_SASH_CONTAINER));
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_AddEllipsis);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (!childrenDropDown.getSelection().isEmpty()) {
-						EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
-						handleAddChild(eClass);
-					}
-				}
-			});
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
