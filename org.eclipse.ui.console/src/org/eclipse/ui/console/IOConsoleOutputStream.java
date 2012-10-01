@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -217,15 +217,15 @@ public class IOConsoleOutputStream extends OutputStream {
      * @param str the string to write to the attached console.
      * @throws IOException if the stream is closed.
      */
-    public synchronized void write(String str) throws IOException {
+    public void write(String str) throws IOException {
         if (fNeedsEncoding) {
-	        byte[] defaultBytes = str.getBytes();
+	        byte[] defaultBytes = str.getBytes(fEncoding);
 	        str = new String(defaultBytes, fEncoding);
         }
         encodedWrite(str);
     }
     
-    private void encodedWrite(String encodedString) throws IOException {
+    private synchronized void encodedWrite(String encodedString) throws IOException {
         if(closed) {
             throw new IOException("Output Stream is closed"); //$NON-NLS-1$
         }
