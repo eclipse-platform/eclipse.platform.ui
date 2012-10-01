@@ -30,7 +30,6 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.menus.MenuHelper;
@@ -56,6 +55,8 @@ public class ViewRegistry implements IViewRegistry {
 
 	private HashMap<String, ViewCategory> categories = new HashMap<String, ViewCategory>();
 
+	private Category miscCategory = new Category();
+
 	@PostConstruct
 	void postConstruct() {
 		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.views"); //$NON-NLS-1$
@@ -77,6 +78,10 @@ public class ViewRegistry implements IViewRegistry {
 					}
 				}
 			}
+		}
+		if (!categories.containsKey(miscCategory.getId())) {
+			categories.put(miscCategory.getId(), new ViewCategory(miscCategory.getId(),
+					miscCategory.getLabel()));
 		}
 
 		for (IExtension extension : point.getExtensions()) {
@@ -138,11 +143,7 @@ public class ViewRegistry implements IViewRegistry {
 					String categoryId = element
 							.getAttribute(IWorkbenchRegistryConstants.ATT_CATEGORY);
 					ViewCategory category = findCategory(categoryId);
-					if (category == null) {
-						tags.add("categoryTag:" + WorkbenchMessages.ICategory_other); //$NON-NLS-1$	
-					} else {
-						tags.add("categoryTag:" + category.getLabel()); //$NON-NLS-1$
-					}
+					tags.add("categoryTag:" + category.getLabel()); //$NON-NLS-1$
 					// ==> End of update descriptor
 
 					ViewDescriptor viewDescriptor = new ViewDescriptor(application, descriptor,
@@ -212,14 +213,13 @@ public class ViewRegistry implements IViewRegistry {
 	 */
 	public ViewCategory findCategory(String id) {
 		if (id == null) {
-			return null;
+			return categories.get(miscCategory.getId());
 		}
 		return categories.get(id);
 	}
 
 	public Category getMiscCategory() {
-		// TODO Auto-generated method stub
-		return null;
+		return miscCategory;
 	}
 
 }

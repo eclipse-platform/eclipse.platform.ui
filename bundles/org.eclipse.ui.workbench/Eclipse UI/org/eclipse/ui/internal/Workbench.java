@@ -494,8 +494,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					close(PlatformUI.RETURN_RESTART, true);
 				}
 			}
-		});
-		serviceLocator.setContext(appContext);
+		}, appContext);
 		serviceLocator.registerService(IServiceLocatorCreator.class, slc);
 		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.WORKBENCH_SCOPE, this, null, null,
@@ -724,10 +723,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 				StartupMonitor startupMonitor = new StartupMonitor() {
 
 					public void applicationRunning() {
-						// splash.dispose();
 						if (background != null)
 							background.dispose();
 						registration[0].unregister(); // unregister ourself
+						if (splash != null)
+							splash.dispose();
 						WorkbenchPlugin.unsetSplashShell(display);
 
 						// fire part visibility events now that we're up

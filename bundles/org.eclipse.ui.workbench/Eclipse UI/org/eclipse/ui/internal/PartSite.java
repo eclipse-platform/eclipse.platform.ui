@@ -198,8 +198,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 					public void dispose() {
 						// not sure what to do here
 					}
-				});
-		serviceLocator.setContext(e4Context);
+				}, e4Context);
 		initializeDefaultServices();
 	}
 

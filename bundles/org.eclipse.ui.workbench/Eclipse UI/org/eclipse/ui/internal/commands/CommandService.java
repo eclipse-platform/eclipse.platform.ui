@@ -328,6 +328,8 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 * @see org.eclipse.ui.commands.ICommandService#unregisterElement(org.eclipse.ui.commands.IElementReference)
 	 */
 	public void unregisterElement(IElementReference elementReference) {
+		if (commandCallbacks == null)
+			return;
 		List parameterizedCommands = (List) commandCallbacks
 				.get(elementReference.getCommandId());
 		if (parameterizedCommands != null) {

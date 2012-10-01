@@ -177,8 +177,9 @@ public final class WorkbenchActivityHelper {
 	 * @return the unified id
 	 */
 	public static final String createUnifiedId(IPluginContribution contribution) {
-		if (contribution.getPluginId() != null) {
-			return contribution.getPluginId() + '/' + contribution.getLocalId();
+		final String pluginId = contribution.getPluginId();
+		if (pluginId != null) {
+			return pluginId + '/' + contribution.getLocalId();
 		}
 		return contribution.getLocalId();
 	}

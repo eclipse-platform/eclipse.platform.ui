@@ -186,9 +186,9 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 * @see org.eclipse.ui.splash.AbstractSplashHandler#dispose()
 	 */
 	public void dispose() {
-		super.dispose();
 		if (foreground != null)
 			foreground.dispose();
+		super.dispose();
 	}
 
 	/**
