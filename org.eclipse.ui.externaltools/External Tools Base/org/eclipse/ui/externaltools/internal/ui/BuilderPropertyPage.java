@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,6 +104,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	private CheckboxTableViewer viewer= null;
 	
 	private boolean fWarned = false;
+	/**
+	 * Flag to know if we can perform an edit of the selected element(s)
+	 */
+	private boolean fCanEdit = false;
 	
 	private ILabelProvider labelProvider= new BuilderLabelProvider();
 	
@@ -331,7 +335,11 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		
 		builderTable.addListener(SWT.MouseDoubleClick, new Listener() {
 			public void handleEvent(Event event) {
-				handleEditButtonPressed();
+				//we must not allow editing of elements that cannot be edited via the selection changed logic
+				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=386820
+				if(fCanEdit) {
+					handleEditButtonPressed();
+				}
 			}
 		});
 		
@@ -790,18 +798,18 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		newButton.setEnabled(true);
 		Table builderTable= viewer.getTable();
 		TableItem[] items = builderTable.getSelection();
-		boolean enableEdit = false;
+		fCanEdit = false;
 		boolean enableRemove = false;
 		boolean enableUp = false;
 		boolean enableDown = false;
 		if(items != null) {
 			boolean validSelection =  items.length > 0;
-			enableEdit = validSelection;
+			fCanEdit = validSelection;
 			enableRemove = validSelection;
 			enableUp = validSelection;
 			enableDown = validSelection;
 			if (items.length > 1) {
-				enableEdit= false;
+				fCanEdit= false;
 			}
 			int indices[]= builderTable.getSelectionIndices();
 			int max = builderTable.getItemCount();
@@ -822,23 +830,23 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 					if (builderName != null) {
 						//do not allow "wrapped" builders to be removed or edited if they are valid
 						IExtension ext= Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
-						enableEdit= false;
+						fCanEdit= false;
 						enableRemove= ext == null;
 					}
 				} else {
 					if (data instanceof ErrorConfig) {
-						enableEdit= false;
+						fCanEdit= false;
 						continue;
 					}
 					ICommand command= (ICommand) data;
-					enableEdit= command.isConfigurable();
+					fCanEdit= command.isConfigurable();
 					IExtension ext= Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, command.getBuilderName());
 					enableRemove= ext == null;
 					break;
 				}
 			}
 		}
-		editButton.setEnabled(enableEdit);
+		editButton.setEnabled(fCanEdit);
 		removeButton.setEnabled(enableRemove);
 		upButton.setEnabled(enableUp);
 		downButton.setEnabled(enableDown);
@@ -1119,7 +1127,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		}
 		return null;
 	}
-
+	
 	private void deleteConfigurations() {
 		boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 		try {
