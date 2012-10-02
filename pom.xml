@@ -19,6 +19,7 @@
     <groupId>org.eclipse</groupId>
     <artifactId>eclipse-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../eclipse-parent</relativePath>
   </parent>
 
   <groupId>org.eclipse.platform.runtime</groupId>
@@ -27,28 +28,55 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>bundles/org.eclipse.core.boot</module>
     <module>bundles/org.eclipse.core.contenttype</module>
     <module>bundles/org.eclipse.core.expressions</module>
     <module>bundles/org.eclipse.core.jobs</module>
     <module>bundles/org.eclipse.core.runtime</module>
     <module>bundles/org.eclipse.core.runtime.compatibility</module>
-    <module>bundles/org.eclipse.core.runtime.compatibility.auth</module>
     <module>bundles/org.eclipse.core.runtime.compatibility.registry</module>
     <module>bundles/org.eclipse.core.tools</module>
-    <module>bundles/org.eclipse.e4.core.contexts</module>
-    <module>bundles/org.eclipse.e4.core.di</module>
-    <module>bundles/org.eclipse.e4.core.di.extensions</module>
-    <module>bundles/org.eclipse.e4.core.services</module>
 
     <module>features/org.eclipse.core.runtime.feature</module>
     <module>features/org.eclipse.core.tools-feature</module>
 
-    <module>tests/com.google.code.atinject.tck</module>
     <module>tests/org.eclipse.core.expressions.tests</module>
     <module>tests/org.eclipse.core.tests.harness</module>
     <module>tests/org.eclipse.core.tests.runtime</module>
-    <module>tests/org.eclipse.e4.core.tests</module>
-    <module>tests/org.eclipse.e4.core.tests.services</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>platform-3.8</id>
+      <activation>
+        <file>
+          <exists>../platform-3.8</exists>
+        </file>
+      </activation>
+
+      <modules>
+        <module>bundles/org.eclipse.core.boot</module>
+        <module>bundles/org.eclipse.core.runtime.compatibility.auth</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>platform-4.2</id>
+      <activation>
+        <file>
+          <exists>../platform-4.2</exists>
+        </file>
+      </activation>
+
+      <modules>
+        <module>bundles/org.eclipse.e4.core.contexts</module>
+        <module>bundles/org.eclipse.e4.core.di</module>
+        <module>bundles/org.eclipse.e4.core.di.extensions</module>
+        <module>bundles/org.eclipse.e4.core.services</module>
+
+        <module>tests/com.google.code.atinject.tck</module>
+        <module>tests/org.eclipse.e4.core.tests</module>
+        <module>tests/org.eclipse.e4.core.tests.services</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>
