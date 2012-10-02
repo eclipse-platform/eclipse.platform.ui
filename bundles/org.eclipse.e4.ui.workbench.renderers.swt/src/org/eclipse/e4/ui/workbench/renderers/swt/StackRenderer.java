@@ -887,10 +887,11 @@ public class StackRenderer extends LazyStackRenderer {
 						if (stackElement instanceof MPlaceholder)
 							stackElement = ((MPlaceholder) stackElement)
 									.getRef();
-						if (stackElement instanceof MPart) {
+						if ((stackElement instanceof MPart)
+								&& (ctf.isFocusControl())) {
 							MPart thePart = (MPart) stackElement;
 							ContextInjectionFactory.invoke(thePart.getObject(),
-									Focus.class, thePart.getContext());
+									Focus.class, thePart.getContext(), null);
 						}
 					}
 				}
