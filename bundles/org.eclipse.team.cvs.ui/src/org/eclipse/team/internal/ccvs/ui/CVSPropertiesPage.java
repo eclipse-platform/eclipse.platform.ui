@@ -77,6 +77,7 @@ public abstract class CVSPropertiesPage extends PropertyPage {
 	 */
 	protected Text createReadOnlyText(Composite parent, String text) {
 		Text textField = new Text(parent, SWT.LEFT | SWT.READ_ONLY);
+		textField.setBackground(textField.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		textField.setText(text);
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;

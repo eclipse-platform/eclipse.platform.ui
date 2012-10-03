@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -173,25 +173,25 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		composite.setLayout(layout);
 		
 		Label label = createLabel(composite, CVSUIMessages.CVSProjectPropertiesPage_connectionType, 1); 
-		methodText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
+		methodText= createReadOnlyText(composite, ""); //$NON-NLS-1$
 		
 		label = createLabel(composite, CVSUIMessages.CVSProjectPropertiesPage_user, 1); 
-		userText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
+		userText= createReadOnlyText(composite, ""); //$NON-NLS-1$
 		
 		label = createLabel(composite, CVSUIMessages.CVSRepositoryLocationPropertySource_host, 1); 
-		hostText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
+		hostText= createReadOnlyText(composite, ""); //$NON-NLS-1$
 		
 		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_port, 1); 
-		portText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
+		portText= createReadOnlyText(composite, ""); //$NON-NLS-1$
 		
 		label = createLabel(composite, CVSUIMessages.CVSRepositoryLocationPropertySource_root, 1); 
-		pathText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
+		pathText= createReadOnlyText(composite, ""); //$NON-NLS-1$
 		
 		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_module, 1); 
-		moduleText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
+		moduleText= createReadOnlyText(composite, ""); //$NON-NLS-1$
 		
 		label = createLabel(composite, CVSUIMessages.CVSPropertiesPage_tag, 1); 
-		tagText = createReadOnlyText(composite, "", 1); //$NON-NLS-1$
+		tagText= createReadOnlyText(composite, ""); //$NON-NLS-1$
 		
 		createLabel(composite, "", 1); //$NON-NLS-1$
 		
@@ -258,24 +258,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		label.setLayoutData(data);
 		return label;
 	}
-	/**
-	 * Utility method that creates a text instance
-	 * and sets the default layout data.
-	 *
-	 * @param parent  the parent for the new label
-	 * @param text  the text for the new text
-	 * @return the new text
-	 */
-	protected Text createReadOnlyText(Composite parent, String text, int span) {
-		Text txt = new Text(parent, SWT.LEFT | SWT.READ_ONLY);
-		txt.setText(text);
-		txt.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		GridData data = new GridData();
-		data.horizontalSpan = span;
-		data.horizontalAlignment = GridData.FILL;
-		txt.setLayoutData(data);
-		return txt;
-	}
+
 	/**
 	 * Creates a new checkbox instance and sets the default layout data.
 	 *
