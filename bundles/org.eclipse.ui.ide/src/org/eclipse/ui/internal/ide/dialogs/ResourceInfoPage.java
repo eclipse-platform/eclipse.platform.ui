@@ -852,30 +852,6 @@ public class ResourceInfoPage extends PropertyPage {
 		return cachedContentDescription;
 	}
 
-	/**
-	 * Returns whether the given resource is a linked resource bound to a path
-	 * variable.
-	 * 
-	 * @param resource
-	 *            resource to test
-	 * @return boolean <code>true</code> the given resource is a linked
-	 *         resource bound to a path variable. <code>false</code> the given
-	 *         resource is either not a linked resource or it is not using a
-	 *         path variable.
-	 */
-	/*
-	 * Now shows the same widgets for all linked files. private boolean
-	 * isPathVariable(IResource resource) { if (!resource.isLinked()) { return
-	 * false; }
-	 * 
-	 * IPath resolvedLocation = resource.getLocation(); if (resolvedLocation ==
-	 * null) { // missing path variable return true; } IPath rawLocation =
-	 * resource.getRawLocation(); if (resolvedLocation.equals(rawLocation)) {
-	 * return false; }
-	 * 
-	 * return true; }
-	 */
-	
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
