@@ -95,7 +95,6 @@ final class TextEditorMessages extends NLS {
 	public static String SelectResourcesDialog_nFilesSelected;
 	public static String ConvertLineDelimitersAction_default_label;
 	public static String ConvertLineDelimitersAction_dialog_title;
-	public static String ConvertLineDelimitersToMacOS9_label;
 	public static String ConvertLineDelimitersToWindows_label;
 	public static String ConvertLineDelimitersToUnix_label;
 	public static String ConvertLineDelimitersAction_dialog_description;

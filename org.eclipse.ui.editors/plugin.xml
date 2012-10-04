@@ -40,12 +40,6 @@
             id="org.eclipse.ui.edit.text.delimiter.unix">
       </command>
       <command
-            name="%convertDelimiters.MacOS9.name"
-            description="%convertDelimiters.MacOS9.description"
-            categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.edit.text.delimiter.macOS9">
-      </command>
-      <command
             name="%removeTrailingWhitespace.name"
             description="%removeTrailingWhitespace.description"
             categoryId="org.eclipse.ui.category.file"
@@ -469,14 +463,6 @@
             <separator name="lineDelimitersConversion"/>
             <separator name="encoding"/>
          </menu>
-         <action
-	       definitionId="org.eclipse.ui.edit.text.delimiter.macOS9"
-	       label="%convertDelimiters.MacOS9.label"
-	       class="org.eclipse.ui.internal.editors.text.ConvertLineDelimitersToMacOS9"
-	       tooltip="%convertDelimiters.MacOS9.description"
-	       menubarPath="file/converstLineDelimitersTo/lineDelimitersConversion"
-	       id="org.eclipse.ui.edit.text.delimiter.macOS9">
-	 	 </action>
          <action
 	       definitionId="org.eclipse.ui.edit.text.delimiter.unix"
 	       label="%convertDelimiters.Unix.label"
