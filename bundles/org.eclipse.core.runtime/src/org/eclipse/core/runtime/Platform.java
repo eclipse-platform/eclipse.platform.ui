@@ -430,14 +430,11 @@ public final class Platform {
 	public static final String WS_UNKNOWN = "unknown";//$NON-NLS-1$
 
 	// private constants for platform line separators and their associated platform names
-	private static final String LINE_SEPARATOR_KEY_MAC_OS_9 = Messages.line_separator_platform_mac_os_9;
 	private static final String LINE_SEPARATOR_KEY_UNIX = Messages.line_separator_platform_unix;
 	private static final String LINE_SEPARATOR_KEY_WINDOWS = Messages.line_separator_platform_windows;
 
-	private static final String LINE_SEPARATOR_VALUE_CR = "\r"; //$NON-NLS-1$
 	private static final String LINE_SEPARATOR_VALUE_LF = "\n"; //$NON-NLS-1$
 	private static final String LINE_SEPARATOR_VALUE_CRLF = "\r\n"; //$NON-NLS-1$
-	
 
 	/**
 	 * Private constructor to block instance creation.
@@ -952,7 +949,7 @@ public final class Platform {
 	 * @since 3.0
 	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)} instead
 	 */
-	public static URL find(Bundle bundle, IPath path, Map override) {
+	public static URL find(Bundle bundle, IPath path, Map<String,String> override) {
 		return FileLocator.find(bundle, path, override);
 	}
 
@@ -1478,11 +1475,10 @@ public final class Platform {
 	 * @return a map of platform to their line separator string
 	 * @since 3.1
 	 */
-	public static Map knownPlatformLineSeparators() {
-		Map result = new HashMap();
-		result.put(LINE_SEPARATOR_KEY_MAC_OS_9, LINE_SEPARATOR_VALUE_CR);
-		result.put(LINE_SEPARATOR_KEY_UNIX, LINE_SEPARATOR_VALUE_LF);
+	public static Map<String,String> knownPlatformLineSeparators() {
+		Map<String,String> result = new LinkedHashMap<String,String>(5);
 		result.put(LINE_SEPARATOR_KEY_WINDOWS, LINE_SEPARATOR_VALUE_CRLF);
+		result.put(LINE_SEPARATOR_KEY_UNIX, LINE_SEPARATOR_VALUE_LF);
 		return result;
 	}
 
