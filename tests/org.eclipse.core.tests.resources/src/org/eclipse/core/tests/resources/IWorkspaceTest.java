@@ -548,22 +548,6 @@ public class IWorkspaceTest extends ResourceTest {
 
 	/**
 	 * Performs black box testing of the following method:
-	 *     IPath getPluginStateLocation(IPluginDescriptor)
-	 */
-	public void testGetPluginStateLocation() throws CoreException {
-		IPluginDescriptor coreDescriptor = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.resources");
-		IPluginDescriptor builderDescriptor = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.resources");
-		assertTrue("0.9", builderDescriptor != null);
-
-		IPath coreLocation = coreDescriptor.getPlugin().getStateLocation();
-		assertTrue("1.0", coreLocation.toFile().exists());
-
-		IPath builderLocation = builderDescriptor.getPlugin().getStateLocation();
-		assertTrue("1.1", builderLocation.toFile().exists());
-	}
-
-	/**
-	 * Performs black box testing of the following method:
 	 *     IStatus move([IResource, IPath, boolean, IProgressMonitor)
 	 */
 	public void testMove() throws CoreException {
