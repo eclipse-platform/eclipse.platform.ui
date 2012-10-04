@@ -124,6 +124,18 @@ public class HTML2TextReaderTest extends TestCase {
 		verify(string, expected, 0);
 	}
 
+	public void testEntity1() throws IOException {
+		String string= "&amp;";
+		String expected= "&";
+		verify(string, expected, 0);
+	}
+
+	public void testEntity2() throws IOException {
+		String string= "&unknown;";
+		String expected= "&unknown;";
+		verify(string, expected, 0);
+	}
+
 	public void testBug367378() throws IOException {
 		verify("<head>", "", 0);
 		verify("<head>some styles</html>", "", 0);
