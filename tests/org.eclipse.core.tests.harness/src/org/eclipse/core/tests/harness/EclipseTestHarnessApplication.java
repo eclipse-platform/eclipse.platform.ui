@@ -47,7 +47,7 @@ public class EclipseTestHarnessApplication implements IPlatformRunnable {
 	 * In either failure case a message is output on the System console.
 	 */
 	protected Object findTestFor(String testName) {
-		IExtensionPoint point = Platform.getPluginRegistry().getExtensionPoint(PI_TESTHARNESS, PT_TESTS);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(PI_TESTHARNESS, PT_TESTS);
 		IConfigurationElement[] elements = point.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
