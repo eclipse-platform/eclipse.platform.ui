@@ -637,7 +637,6 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         
     }
     
-    
     private void completeQueuedUpdatesOfType(TestModel model, Class updateClass) {
         List updatesToComplete = new LinkedList();
         

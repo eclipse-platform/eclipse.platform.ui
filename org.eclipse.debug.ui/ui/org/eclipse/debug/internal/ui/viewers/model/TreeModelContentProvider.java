@@ -426,6 +426,10 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     }
 
     public void updateModel(IModelDelta delta, int mask) {
+    	// Processing deltas with null input leads to NPEs
+    	// (Bug 380288 - NPE switching to the Breakpoints View)
+    	if (getViewer() == null || getViewer().getInput() == null) return;
+    	
         IModelDelta[] deltaArray = new IModelDelta[] { delta };
         updateNodes(deltaArray, mask & (IModelDelta.REMOVED | IModelDelta.UNINSTALL));
         updateNodes(deltaArray, mask & ITreeModelContentProvider.UPDATE_MODEL_DELTA_FLAGS

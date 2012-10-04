@@ -1130,4 +1130,38 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         Assert.assertTrue("RESTORE started before SAVE to complete", fListener.isFinished(STATE_SAVE_COMPLETE));        
     }    
 
+    /**
+     * This test tries to restore a viewer state while input == null.
+     * See: Bug 380288 - NPE switching to the Breakpoints View
+     */
+    public void testUpdateWithNullInput() throws InterruptedException {
+        TestModel model = TestModel.simpleMultiLevel();
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY);
+
+        ModelDelta expandedState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, expandedState, IModelDelta.EXPAND);
+        
+        // Refresh the viewer so that updates are generated.
+        fListener.reset();
+        fListener.addChildreCountUpdate(TreePath.EMPTY);
+        model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
+        
+        // Wait for the delta to be processed.
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES)) 
+        	if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        
+        fViewer.setInput(null);
+        fViewer.updateViewer(expandedState);
+
+        while (!fListener.isFinished(CONTENT_COMPLETE | VIEWER_UPDATES_RUNNING)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        
+    }
 }
