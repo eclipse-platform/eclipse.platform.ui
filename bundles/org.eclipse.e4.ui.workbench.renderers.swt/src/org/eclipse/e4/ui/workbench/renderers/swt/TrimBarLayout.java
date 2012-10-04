@@ -185,7 +185,7 @@ public class TrimBarLayout extends Layout {
 			return false;
 
 		boolean barVisible = ((ToolBar) kids[0]).getItemCount() > 0;
-		
+
 		// HACK! The trim dragging code uses the visible attribute as well
 		// this is a local 'lock' to prevent the layout from messing with it
 		if (!te.getTags().contains("LockVisibility")) { //$NON-NLS-1$
@@ -242,7 +242,7 @@ public class TrimBarLayout extends Layout {
 				int extra = curLine.extraSpace / curLine.spacerCount--;
 				if (horizontal) {
 					ctrlSize.x += extra;
-					ctrl.setBounds(curX, curY, ctrlSize.x, bounds.height);
+					ctrl.setBounds(curX, curY, ctrlSize.x, bounds.height - 4);
 				} else {
 					ctrlSize.y += extra;
 					ctrl.setBounds(curX, curY, bounds.width, extra);
