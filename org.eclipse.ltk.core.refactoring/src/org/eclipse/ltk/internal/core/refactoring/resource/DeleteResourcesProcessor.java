@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring.resource;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -125,11 +126,34 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			for (int i= 0; i < fResources.length; i++) {
 				IResource resource= fResources[i];
 				if (!resource.isSynchronized(IResource.DEPTH_INFINITE)) {
-					if (resource instanceof IFile) {
-						result.addInfo(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_file, BasicElementLabels.getPathLabel(resource.getFullPath(), false)));
+					String pathLabel= BasicElementLabels.getPathLabel(resource.getFullPath(), false);
+					
+					String locationLabel= null;
+					IPath location= resource.getLocation();
+					if (location != null) {
+						locationLabel= BasicElementLabels.getPathLabel(location, true);
 					} else {
-						result.addInfo(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_container, BasicElementLabels.getPathLabel(resource.getFullPath(), false)));
+						URI uri= resource.getLocationURI();
+						if (uri != null) {
+							locationLabel= BasicElementLabels.getURLPart(uri.toString());
+						}
 					}
+
+					String warning;
+					if (resource instanceof IFile) {
+						if (locationLabel != null) {
+							warning= Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_file_loc, new Object[] { pathLabel, locationLabel });
+						} else {
+							warning= Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_file, pathLabel);
+						}
+					} else {
+						if (locationLabel != null) {
+							warning= Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_container_loc, new Object[] { pathLabel, locationLabel });
+						} else {
+							warning= Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_container, pathLabel);
+						}
+					}
+					result.addWarning(warning);
 				}
 			}
 

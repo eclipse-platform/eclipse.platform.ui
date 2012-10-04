@@ -21,7 +21,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
@@ -60,11 +62,20 @@ public class RefactoringStatusDialog extends Dialog {
 		super.configureShell(newShell);
 		newShell.setText(fWindowTitle);
 	}
+	
+	protected int getDialogBoundsStrategy() {
+		return DIALOG_PERSISTSIZE;
+	}
 
+	protected IDialogSettings getDialogBoundsSettings() {
+		IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
+		return DialogSettings.getOrCreateSection(settings, "RefactoringStatusDialog"); //$NON-NLS-1$
+	}
+	
 	protected Control createDialogArea(Composite parent) {
 		Composite result= (Composite) super.createDialogArea(parent);
 		GridData gd= (GridData) result.getLayoutData();
-		gd.widthHint= 600;
+		gd.widthHint= 800;
 		gd.heightHint= 400;
 
 		if (!fLightWeight) {
