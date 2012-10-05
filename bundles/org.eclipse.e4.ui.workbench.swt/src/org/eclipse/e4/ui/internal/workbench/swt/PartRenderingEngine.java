@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -345,8 +344,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	private Shell limbo;
 
-	private List<MUIElement> renderedElements = new ArrayList<MUIElement>();
-
 	private MUIElement removeRoot = null;
 
 	@Inject
@@ -525,9 +522,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 			IEclipseContext parentContext) {
 		if (!element.isToBeRendered())
 			return null;
-
-		if (!renderedElements.contains(element))
-			renderedElements.add(element);
 
 		// no creates while processing a remove
 		if (removeRoot != null) {
@@ -775,7 +769,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private void safeRemoveGui(MUIElement element) {
 		if (removeRoot == null)
 			removeRoot = element;
-		renderedElements.remove(element);
 
 		// We call 'hideChild' *before* checking if the actual element
 		// has been rendered in order to pick up cases of 'lazy loading'
