@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,14 +21,17 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -208,6 +211,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		GridData data= new GridData(GridData.FILL_BOTH);
 		if (useHeightHint)
 			data.heightHint= PREFERRED_HEIGHT;
+		data.widthHint= getViewerWidthHint(parent);
 		listViewer.getTable().setLayoutData(data);
 		listViewer.getTable().setFont(parent.getFont());
 		listViewer.setContentProvider(listContentProvider);
@@ -226,6 +230,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		GridData data= new GridData(GridData.FILL_BOTH);
 		if (useHeightHint)
 			data.heightHint= PREFERRED_HEIGHT;
+		data.widthHint= getViewerWidthHint(parent);
 		tree.setLayoutData(data);
 		tree.setFont(parent.getFont());
 
@@ -238,6 +243,13 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		treeViewer.addSelectionChangedListener(this);
 	}
 
+	private int getViewerWidthHint(Control control) {
+		GC gc= new GC(control);
+		int width= Dialog.convertWidthInCharsToPixels(gc.getFontMetrics(), 50);
+		gc.dispose();
+		return width;
+	}
+	
 	/**
 	 * Returns a boolean indicating whether the passed tree element should be at
 	 * LEAST gray-checked. Note that this method does not consider whether it
@@ -493,7 +505,9 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		treeViewer.setInput(root);
 		this.expandedTreeNodes= new ArrayList();
 		this.expandedTreeNodes.add(root);
-
+		Object[] topElements= treeContentProvider.getElements(root);
+		if (topElements.length == 1)
+			treeViewer.setExpandedState(topElements[0], true);
 	}
 
 	/**
@@ -631,7 +645,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		Object selectedElement= selection.getFirstElement();
 		if (selectedElement == null) {
 			currentTreeSelection= null;
-			listViewer.setInput(currentTreeSelection);
+			listViewer.setInput(null);
 			return;
 		}
 
@@ -661,6 +675,16 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 			public void run() {
 				setTreeChecked(root, selection);
 				listViewer.setAllChecked(selection);
+			}
+		});
+	}
+	
+	public void refresh() {
+		//Potentially long operation - show a busy cursor
+		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				treeViewer.refresh();
+				populateListViewer(currentTreeSelection);
 			}
 		});
 	}

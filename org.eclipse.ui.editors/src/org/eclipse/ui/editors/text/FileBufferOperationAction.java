@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -154,6 +154,13 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 			doRun(null, fLocation, fFileBufferOperation);
 	}
 
+	/**
+	 * Collect the files to process. This method may show a dialog to ask the user.
+	 * Subclasses may extend or reimplement.
+	 * 
+	 * @param resources selected resources
+	 * @return the files to process, can be <code>null</code>
+	 */
 	protected IFile[] collectFiles(IResource[] resources) {
 		Set files= new HashSet();
 		for (int i= 0; i < resources.length; i++) {

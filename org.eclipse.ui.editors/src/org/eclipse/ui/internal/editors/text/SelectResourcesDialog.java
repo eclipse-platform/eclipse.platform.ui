@@ -25,7 +25,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -41,6 +40,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -89,6 +89,11 @@ class SelectResourcesDialog extends Dialog {
 		fInput= input;
 	}
 
+	public void refresh() {
+		fResourceGroup.refresh();
+		setSelection(fInput, fAcceptableLocationsFilter);
+	}
+	
 	public IResource[] getSelectedResources() {
 		List items= fResourceGroup.getAllCheckedListItems();
 		return (IResource[]) items.toArray(new IResource[items.size()]);
@@ -177,7 +182,7 @@ class SelectResourcesDialog extends Dialog {
         };
     }
 
-    protected final void createSelectionButtonGroup(Composite parent) {
+    protected Composite createSelectionButtonGroup(Composite parent) {
 
 		Font font= parent.getFont();
 
@@ -185,11 +190,7 @@ class SelectResourcesDialog extends Dialog {
 		Composite buttonComposite= new Composite(parent, SWT.NONE);
 		buttonComposite.setFont(parent.getFont());
 
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 3;
-		layout.makeColumnsEqualWidth= true;
-		buttonComposite.setLayout(layout);
-		buttonComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		buttonComposite.setLayout(GridLayoutFactory.fillDefaults().numColumns(0).equalWidth(true).create());
 
 		Button selectButton= createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, TextEditorMessages.SelectResourcesDialog_selectAll, false);
 
@@ -226,6 +227,8 @@ class SelectResourcesDialog extends Dialog {
 		selectTypesButton.addSelectionListener(listener);
 		selectTypesButton.setFont(font);
 		setButtonLayoutData(selectTypesButton);
+		
+		return buttonComposite;
 	}
 
     protected void handleSelectFileTypes() {
