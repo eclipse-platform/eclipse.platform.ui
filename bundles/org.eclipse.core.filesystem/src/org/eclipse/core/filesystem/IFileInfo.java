@@ -27,32 +27,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * implementations should use the concrete class {@link org.eclipse.core.filesystem.provider.FileStore}
  */
 public interface IFileInfo extends Comparable, Cloneable {
-	/**
-	 * The constant indicating that file information was retrieved successfully.
-	 * @since 1.4
-	 */
-	public static final int NONE = 0;
-	/**
-	 * The constant indicating that an I/O error was encountered while retrieving file information.
-	 * @since 1.4
-	 */
-	public static final int IO_ERROR = 5; // The value is chosen to match EIO Linux errno value.
 
 	/**
 	 * Returns whether this file or directory exists.
 	 * 
 	 * @return <code>true</code> if this file exists, and <code>false</code>
-	 * if the file does not exist or an I/O error was encountered.
+	 * otherwise.
 	 */
 	public abstract boolean exists();
-
-	/**
-	 * Checks whether an I/O error was encountered while accessing this file or directory.
-	 * 
-	 * @return {@link #IO_ERROR} if an I/O error was encountered, or {@link #NONE} otherwise.
-	 * @since 1.4
-	 */
-	public abstract int getError();
 
 	/**
 	 * Returns the value of the specified attribute for this file.  The attribute

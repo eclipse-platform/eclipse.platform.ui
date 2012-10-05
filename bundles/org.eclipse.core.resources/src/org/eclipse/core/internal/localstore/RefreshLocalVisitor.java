@@ -262,8 +262,6 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	public boolean visit(UnifiedTreeNode node) throws CoreException {
 		Policy.checkCanceled(monitor);
 		try {
-			if (node.isErrorInFileSystem())
-				return false; // Don't visit children if we encountered an I/O error
 			Resource target = (Resource) node.getResource();
 			int targetType = target.getType();
 			if (targetType == IResource.PROJECT)

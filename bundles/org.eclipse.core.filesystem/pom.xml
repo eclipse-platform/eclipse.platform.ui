@@ -21,6 +21,6 @@
   </parent>
   <groupId>eclipse.platform.resources</groupId>
   <artifactId>org.eclipse.core.filesystem</artifactId>
-  <version>1.4.0-SNAPSHOT</version>
+  <version>1.3.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

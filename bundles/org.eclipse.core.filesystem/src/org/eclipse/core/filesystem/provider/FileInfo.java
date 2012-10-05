@@ -34,12 +34,6 @@ public class FileInfo implements IFileInfo {
 	private static final int ATTRIBUTE_EXISTS = 1 << 16;
 
 	/**
-	 * Internal attribute indicating that an I/O error was encountered while retrieving
-	 * the file information.
-	 */
-	private static final int ATTRIBUTE_IO_ERROR = 1 << 17;
-
-	/**
 	 * Bit field of file attributes. Initialized to specify a writable resource.
 	 */
 	private int attributes = EFS.ATTRIBUTE_OWNER_WRITE | EFS.ATTRIBUTE_OWNER_READ;
@@ -117,14 +111,6 @@ public class FileInfo implements IFileInfo {
 	 */
 	public boolean exists() {
 		return getAttribute(ATTRIBUTE_EXISTS);
-	}
-
-	/**
-	 * @since 1.4
-	 * @see IFileInfo#getError()
-	 */
-	public int getError() {
-		return getAttribute(ATTRIBUTE_IO_ERROR) ? IO_ERROR : NONE;
 	}
 
 	public boolean getAttribute(int attribute) {
@@ -234,20 +220,6 @@ public class FileInfo implements IFileInfo {
 			set(ATTRIBUTE_EXISTS);
 		else
 			clear(ATTRIBUTE_EXISTS);
-	}
-
-	/**
-	 * Sets a flag indicating that an I/O error was encountered when accessing the file.
-	 * 
-	 * @param value <code>true</code> if this file has an I/O error, and <code>false</code>
-	 * otherwise.
-	 * @since 1.4
-	 */
-	public void setError(boolean value) {
-		if (value)
-			set(ATTRIBUTE_IO_ERROR);
-		else
-			clear(ATTRIBUTE_IO_ERROR);
 	}
 
 	/* (non-Javadoc)

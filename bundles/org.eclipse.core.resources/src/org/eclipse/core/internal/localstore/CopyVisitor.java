@@ -149,8 +149,6 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 		/* virtual resources are always deemed as being synchronized */
 		if (node.getResource().isVirtual())
 			return true;
-		if (node.isErrorInFileSystem())
-			return true; // Assume synchronized unless proven otherwise
 		/* does the resource exist in workspace and file system? */
 		if (!node.existsInWorkspace() || !node.existsInFileSystem())
 			return false;
