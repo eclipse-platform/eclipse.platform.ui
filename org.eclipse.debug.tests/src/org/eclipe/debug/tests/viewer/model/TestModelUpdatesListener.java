@@ -457,7 +457,8 @@ public class TestModelUpdatesListener
         }
 
         if ( (flags & LABEL_SEQUENCE_COMPLETE) != 0) {
-            if (fLabelUpdatesComplete == fLabelUpdatesCompleteAtReset) return false;
+            if (fLabelUpdatesComplete == fLabelUpdatesCompleteAtReset ||
+            	fLabelUpdatesComplete != fLabelUpdatesStarted) return false;
         }
         if ( (flags & LABEL_SEQUENCE_STARTED) != 0) {
             if (fLabelUpdatesStarted == fLabelUpdatesStartedAtReset) return false;
@@ -469,7 +470,8 @@ public class TestModelUpdatesListener
             if (fViewerUpdatesStarted == fViewerUpdatesStartedAtReset) return false;
         }
         if ( (flags & CONTENT_SEQUENCE_COMPLETE) != 0) {
-            if (fViewerUpdatesComplete == fViewerUpdatesCompleteAtReset) return false;
+            if (fViewerUpdatesComplete == fViewerUpdatesCompleteAtReset || 
+            	fViewerUpdatesStarted != fViewerUpdatesComplete) return false;
         }
         if ( (flags & HAS_CHILDREN_UPDATES_STARTED) != 0) {
             if (fHasChildrenUpdatesRunning.isEmpty() && fHasChildrenUpdatesCompleted.isEmpty()) return false;
@@ -731,6 +733,9 @@ public class TestModelUpdatesListener
         if ( (flags & LABEL_SEQUENCE_COMPLETE) != 0) {
             buf.append("\n\t");
             buf.append("fLabelUpdatesComplete = " + fLabelUpdatesComplete);
+            buf.append("\n\t");
+            buf.append("fLabelUpdatesCompleteAtReset = ");
+            buf.append( fLabelUpdatesCompleteAtReset );
         }
         if ( (flags & LABEL_UPDATES_RUNNING) != 0) {
             buf.append("\n\t");
@@ -758,6 +763,8 @@ public class TestModelUpdatesListener
         if ( (flags & CONTENT_SEQUENCE_COMPLETE) != 0) {
             buf.append("\n\t");
             buf.append("fViewerUpdatesComplete = " + fViewerUpdatesComplete);
+            buf.append("\n\t");
+            buf.append("fViewerUpdatesCompleteAtReset = " + fViewerUpdatesCompleteAtReset);
         }
         if ( (flags & HAS_CHILDREN_UPDATES_STARTED) != 0) {
             buf.append("\n\t");
