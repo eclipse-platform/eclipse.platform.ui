@@ -34,7 +34,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem.Index;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -150,33 +151,19 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	}
 
     private IPresentationContext makeVirtualPresentationContext(final IPresentationContext clientViewerContext) {
-        return new PresentationContext(clientViewerContext.getId()) {
-            {
-                String[] clientProperties = clientViewerContext.getProperties();
-                for (int i = 0; i < clientProperties.length; i++) {
-                    setProperty(clientProperties[i], clientViewerContext.getProperty(clientProperties[i]));
-                }
-                    
-            }
-            
-            public String[] getColumns() {
-                String[] clientColumns = super.getColumns();
-                
-                if (clientColumns == null || clientColumns.length == 0) {
-                    // No columns are used.
-                    return null;
-                }
-                
-                // Try to find the name column.
-                for (int i = 0; i < clientColumns.length; i++) {
-                    if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(clientColumns[i])) {
-                        return new String[] { IDebugUIConstants.COLUMN_ID_VARIABLE_NAME }; 
-                    }
-                }
-                
-                return new String[] { clientColumns[0] };
-            }
-        };
+        PresentationContext context = null;
+        if (clientViewerContext instanceof DebugModelPresentationContext) {
+        	IDebugModelPresentation presentation = 
+        			((DebugModelPresentationContext)clientViewerContext).getModelPresentation();
+        	context = new DebugModelPresentationContext(clientViewerContext.getId(), null, presentation);
+        } else {
+        	context = new PresentationContext(clientViewerContext.getId());
+        }
+        String[] clientProperties = clientViewerContext.getProperties();
+        for (int i = 0; i < clientProperties.length; i++) {
+            context.setProperty(clientProperties[i], clientViewerContext.getProperty(clientProperties[i]));
+        }
+        return context;
     }
 	
 	private class ItemsToCopyVirtualItemValidator implements IVirtualItemValidator {
@@ -217,6 +204,10 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
         virtualViewer.addLabelUpdateListener(listener);
         virtualViewer.getTree().addItemListener(listener);
         virtualViewer.setInput(input);
+        if (virtualViewer.canToggleColumns()) {
+            virtualViewer.setShowColumns(clientViewer.isShowColumns());
+            virtualViewer.setVisibleColumns(clientViewer.getPresentationContext().getColumns());
+        }
         virtualViewer.updateViewer(stateDelta);
         
         // Parse selected items from client viewer and add them to the virtual viewer selection.

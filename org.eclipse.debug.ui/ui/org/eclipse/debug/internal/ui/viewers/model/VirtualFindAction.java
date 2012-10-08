@@ -37,6 +37,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationConte
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
+import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -165,40 +167,41 @@ public class VirtualFindAction extends Action implements IUpdate {
         fVirtualViewer.setInput(input);
         if (fVirtualViewer.canToggleColumns()) {
             fVirtualViewer.setShowColumns(clientViewer.isShowColumns());
+            fVirtualViewer.setVisibleColumns(getColumnIds(clientViewer.getPresentationContext()));
         }
         fVirtualViewer.updateViewer(stateDelta);
         return fVirtualViewer;
 	}
 	
-	private IPresentationContext makeVirtualPresentationContext(final IPresentationContext clientViewerContext) {
-	    return new PresentationContext(clientViewerContext.getId()) {
+	private IPresentationContext makeVirtualPresentationContext(IPresentationContext clientViewerContext) {
+        PresentationContext context = null;
+        if (clientViewerContext instanceof DebugModelPresentationContext) {
+        	IDebugModelPresentation presentation = 
+        			((DebugModelPresentationContext)clientViewerContext).getModelPresentation();
+        	context = new DebugModelPresentationContext(clientViewerContext.getId(), null, presentation);
+        } else {
+        	context = new PresentationContext(clientViewerContext.getId());
+        }
+        String[] clientProperties = clientViewerContext.getProperties();
+        for (int i = 0; i < clientProperties.length; i++) {
+            context.setProperty(clientProperties[i], clientViewerContext.getProperty(clientProperties[i]));
+        }
+        return context;
+	}
+
+	private String[] getColumnIds(IPresentationContext clientViewerContext) {
+        String[] clientColumns = clientViewerContext.getColumns();
+        if (clientColumns != null && clientColumns.length != 0) {
 	        
-	        {
-	            String[] clientProperties = clientViewerContext.getProperties();
-	            for (int i = 0; i < clientProperties.length; i++) {
-	                setProperty(clientProperties[i], clientViewerContext.getProperty(clientProperties[i]));
+	        // Try to find the name column.
+	        for (int i = 0; i < clientColumns.length; i++) {
+	            if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(clientColumns[i])) {
+	                return new String[] { IDebugUIConstants.COLUMN_ID_VARIABLE_NAME }; 
 	            }
-	                
 	        }
-	        
-	        public String[] getColumns() {
-	            String[] clientColumns = super.getColumns();
-	            
-	            if (clientColumns == null || clientColumns.length == 0) {
-	                // No columns are used.
-	                return null;
-	            }
-	            
-	            // Try to find the name column.
-	            for (int i = 0; i < clientColumns.length; i++) {
-	                if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(clientColumns[i])) {
-	                    return new String[] { IDebugUIConstants.COLUMN_ID_VARIABLE_NAME }; 
-	                }
-	            }
-	            
-	            return new String[] { clientColumns[0] };
-	        }
-	    };
+	        return new String[] { clientColumns[0] };
+        }
+        return null;
 	}
 	
 	public void run() {
