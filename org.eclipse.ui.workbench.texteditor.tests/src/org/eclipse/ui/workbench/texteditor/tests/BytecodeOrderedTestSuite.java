@@ -96,19 +96,20 @@ public class BytecodeOrderedTestSuite extends TestSuite {
 		}
 	}
 
-	private static Test error(Class testClass, String testMethod, Exception exception) {
-		final Throwable e2= exception.fillInStackTrace();
+	private static Test error(Class testClass, String testMethod, final Exception exception) {
 		return new TestCase(testMethod + "(" + testClass.getName() + ")") { //$NON-NLS-1$ //$NON-NLS-2$
 			protected void runTest() throws Throwable {
-				throw e2;
+				throw exception;
 			}
 		};
 	}
 	
     private void addDeclaredTestMethodNames(Class c, ArrayList methodNames) throws IOException {
     	/*
-    	 * XXX: This method needs to be updated if a new major class file version
-    	 * or new constant pool tags are specified.
+    	 * XXX: This method needs to be updated if new constant pool tags are specified.
+    	 * Current supported major class file version: 51 (Java 1.7).
+    	 * 
+    	 * See JVMS 7, 4.4 The Constant Pool.
     	 */
         String className= c.getName();
         int lastDot= className.lastIndexOf(".");
@@ -118,11 +119,8 @@ public class BytecodeOrderedTestSuite extends TestSuite {
         int magic= is.readInt();
         if (magic != 0xcafebabe)
             throw new IOException("bad magic bytes: 0x" + Integer.toHexString(magic));
-        skip(is, 2); // minor_version
+        int minor= is.readUnsignedShort();
         int major= is.readUnsignedShort();
-        if (major > 51) { // major > Java 7
-        	addTest(error(c, "suite can't handle class file version", new RuntimeException(c.getName() + " (major = " + major + ")")));
-        }
         int cpCount= is.readUnsignedShort();
         String[] constantPoolStrings= new String[cpCount];
         for (int i= 1; i < cpCount; i++) {
@@ -165,7 +163,8 @@ public class BytecodeOrderedTestSuite extends TestSuite {
                     skip(is, 4);
                     break;
                 default:
-                	throw new IOException("unknown constant pool tag (" + i + "): " + tag);
+                	throw new IOException("unknown constant pool tag " + tag + " at index " + i 
+                			+ ". Class file version: " + major + "." + minor);
             }
         }
         skip(is, 2 * 3); // access_flags, this_class, super_class
