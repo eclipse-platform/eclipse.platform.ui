@@ -63,6 +63,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -210,28 +211,58 @@ public class TrimBarEditor extends AbstractComponentEditor {
 			l.setText(Messages.TrimBarEditor_Controls);
 			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
-			final TableViewer viewer = new TableViewer(parent);
-			viewer.setLabelProvider(new ComponentLabelProvider(editor, Messages));
-			viewer.setContentProvider(new ObservableListContentProvider());
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			viewer.getControl().setLayoutData(gd);
-
-			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-			viewer.setInput(prop.observeDetail(getMaster()));
-
-			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			Composite buttonCompTop = new Composite(parent, SWT.NONE);
+			buttonCompTop.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false, 2, 1));
 			GridLayout gl = new GridLayout(2, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;
 			gl.marginHeight = 0;
-			buttonComp.setLayout(gl);
+			buttonCompTop.setLayout(gl);
 
-			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			final ComboViewer typeViewer = new ComboViewer(buttonCompTop, SWT.READ_ONLY);
+			typeViewer.setContentProvider(new ArrayContentProvider());
+			typeViewer.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((EClass) element).getName();
+				}
+			});
+			typeViewer.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
+			typeViewer.setSelection(new StructuredSelection(MenuPackageImpl.Literals.TOOL_BAR));
+			typeViewer.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+			Button b = new Button(buttonCompTop, SWT.PUSH | SWT.FLAT);
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					EClass eClass = (EClass) ((IStructuredSelection) typeViewer.getSelection()).getFirstElement();
+					handleAddChild(eClass);
+				}
+			});
+
+			new Label(parent, SWT.NONE);
+
+			final TableViewer viewer = new TableViewer(parent);
+			viewer.setLabelProvider(new ComponentLabelProvider(editor, Messages));
+			viewer.setContentProvider(new ObservableListContentProvider());
+			GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1);
+			viewer.getControl().setLayoutData(gd);
+
+			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			viewer.setInput(prop.observeDetail(getMaster()));
+
+			new Label(parent, SWT.NONE);
+
+			Composite buttonCompBot = new Composite(parent, SWT.NONE);
+			buttonCompBot.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false, 2, 1));
+			buttonCompBot.setLayout(new FillLayout());
+
+			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -252,10 +283,9 @@ public class TrimBarEditor extends AbstractComponentEditor {
 				}
 			});
 
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -276,32 +306,9 @@ public class TrimBarEditor extends AbstractComponentEditor {
 				}
 			});
 
-			final ComboViewer typeViewer = new ComboViewer(buttonComp, SWT.READ_ONLY);
-			typeViewer.setContentProvider(new ArrayContentProvider());
-			typeViewer.setLabelProvider(new LabelProvider() {
-				@Override
-				public String getText(Object element) {
-					return ((EClass) element).getName();
-				}
-			});
-			typeViewer.setInput(new Object[] { MenuPackageImpl.Literals.TOOL_BAR, MenuPackageImpl.Literals.TOOL_CONTROL });
-			typeViewer.setSelection(new StructuredSelection(MenuPackageImpl.Literals.TOOL_BAR));
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					EClass eClass = (EClass) ((IStructuredSelection) typeViewer.getSelection()).getFirstElement();
-					handleAddChild(eClass);
-				}
-			});
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
