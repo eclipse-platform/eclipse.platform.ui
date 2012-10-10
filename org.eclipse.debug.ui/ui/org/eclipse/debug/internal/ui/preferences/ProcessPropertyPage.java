@@ -24,8 +24,9 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SegmentEvent;
-import org.eclipse.swt.events.SegmentListener;
+import org.eclipse.swt.custom.BidiSegmentEvent;
+import org.eclipse.swt.custom.BidiSegmentListener;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -83,14 +84,14 @@ public class ProcessPropertyPage extends PropertyPage {
 		
 	//create command line section
 		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_Command_Line__1, fHeadingFont, 1);
-		text = SWTFactory.createText(parent, 
+		StyledText styledText = SWTFactory.createStyledText(parent, 
 				SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL, 
 				1, 
 				convertWidthInCharsToPixels(13),
 				convertHeightInCharsToPixels(10),
 				GridData.FILL_BOTH);
-		text.setBackground(parent.getBackground());
-		((GridData)text.getLayoutData()).horizontalIndent = 10;
+		styledText.setBackground(parent.getBackground());
+		((GridData)styledText.getLayoutData()).horizontalIndent = 10;
 		String commandLineText = getCommandLineText(proc);
 		if (commandLineText != null) {
 			String[] arguments = DebugPlugin.parseArguments(commandLineText);
@@ -103,14 +104,14 @@ public class ProcessPropertyPage extends PropertyPage {
 				
 				commandLineText = DebugPlugin.renderArguments(arguments, segments);
 				
-				text.addSegmentListener(new SegmentListener() {
-					public void getSegments(SegmentEvent event) {
+				styledText.addBidiSegmentListener(new BidiSegmentListener() {
+					public void lineGetSegments(BidiSegmentEvent event) {
 						event.segments = segments;
 						event.segmentsChars = chars;
 					}
 				});
 			}
-			text.setText(commandLineText);
+			styledText.setText(commandLineText);
 		}
 		
 	//create environment section

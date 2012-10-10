@@ -17,6 +17,7 @@ import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -381,6 +382,28 @@ public class SWTFactory {
     	t.setLayoutData(gd);
     	return t;
     }
+	
+	/**
+	 * Creates a new styled text widget 
+	 * @param parent the parent composite to add this styled text widget to
+	 * @param style the style bits for the styled text widget
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @param width the desired width of the styled text widget
+	 * @param height the desired height of the styled text widget
+	 * @param fill the fill style for the widget
+	 * @return the new styled text widget
+	 * @since 3.9
+	 */
+	public static StyledText createStyledText(Composite parent, int style, int hspan, int width, int height, int fill) {
+		StyledText t = new StyledText(parent, style);
+		t.setFont(parent.getFont());
+		GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+		gd.widthHint = width;
+		gd.heightHint = height;
+		t.setLayoutData(gd);
+		return t;
+	}
 	
 	/**
 	 * Creates a new text widget 
