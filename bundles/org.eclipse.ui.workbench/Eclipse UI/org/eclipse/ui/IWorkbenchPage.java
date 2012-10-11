@@ -1206,4 +1206,61 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 */
 	public IEditorReference[] openEditors(final IEditorInput[] inputs, final String[] editorIDs, 
 			final int matchFlags) throws MultiPartInitException;
+
+	/**
+	 * Opens editors for the given inputs. Only the editor constructed for the
+	 * first input gets activated.
+	 * <p>
+	 * The editor type is determined by mapping <code>editorIDs</code> to an
+	 * editor extension registered with the workbench. An editor id is passed
+	 * rather than an editor object to prevent the accidental creation of more
+	 * than one editor for the same input. It also guarantees a consistent
+	 * lifecycle for editors, regardless of whether they are created by the user
+	 * or restored from saved data.
+	 * </p>
+	 * <p>
+	 * The length of the input array and editor ID arrays must be the same. The
+	 * editors are opened using pairs of { input[i], editorIDs[i] }.
+	 * </p>
+	 * <p>
+	 * The mementos array mat be null but if not must match the input array in
+	 * length. Entries in the mementos array may also be null if no state is
+	 * desired for that particular editor.
+	 * </p>
+	 * 
+	 * @param inputs
+	 *            the editor inputs
+	 * @param editorIDs
+	 *            the IDs of the editor extensions to use, in the order of
+	 *            inputs
+	 * @param mementos
+	 *            the mementos representing the state to open the editor with
+	 * 
+	 * @param matchFlags
+	 *            a bit mask consisting of zero or more of the MATCH_* constants
+	 *            OR-ed together
+	 * @return references to the editors constructed for the inputs. The editors
+	 *         corresponding to those reference might not be materialized.
+	 * @exception MultiPartInitException
+	 *                if at least one editor could not be created or initialized
+	 * @see #MATCH_NONE
+	 * @see #MATCH_INPUT
+	 * @see #MATCH_ID
+	 * @since 4.2
+	 */
+	public IEditorReference[] openEditors(final IEditorInput[] inputs, final String[] editorIDs,
+			IMemento[] mementos, final int matchFlags) throws MultiPartInitException;
+
+	/**
+	 * Return an IMemento containing the current state of the editor for each of
+	 * the given references. These mementos may be used to determine the initial
+	 * state of an editor on a subsequent open.
+	 * 
+	 * @param editorRefs
+	 *            The array of editor references to get the state for
+	 * @return The array of mementos. The length of the array will match that of
+	 *         the refs array.
+	 * @since 4.2
+	 */
+	public IMemento[] getEditorState(IEditorReference[] editorRefs);
 }
