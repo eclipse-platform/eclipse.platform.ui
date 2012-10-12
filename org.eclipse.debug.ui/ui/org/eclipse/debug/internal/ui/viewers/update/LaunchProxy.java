@@ -129,24 +129,26 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] allLaunches = manager.getLaunches();
 		ModelDelta root = new ModelDelta(manager, 0, IModelDelta.NO_CHANGE, allLaunches.length);
-		Object[] children = fLaunch.getChildren();
-		ModelDelta launchDelta = root.addNode(fLaunch, indexOf(fLaunch, allLaunches), IModelDelta.EXPAND, children.length);
-		for (int j = 0; j < children.length; j++) {
-			Object child = children[j];
-			if (fPrevChildren.add(child)) {
-				changes = true;
-				launchDelta.addNode(child, indexOf(child, children), IModelDelta.INSTALL, -1);
+		synchronized(this) {
+			Object[] children = fLaunch.getChildren();
+			ModelDelta launchDelta = root.addNode(fLaunch, indexOf(fLaunch, allLaunches), IModelDelta.EXPAND, children.length);
+			for (int j = 0; j < children.length; j++) {
+				Object child = children[j];
+				if (fPrevChildren.add(child)) {
+					changes = true;
+					launchDelta.addNode(child, indexOf(child, children), IModelDelta.INSTALL, -1);
+				}
 			}
+			List childrenList = Arrays.asList(children);
+	        for (Iterator itr = fPrevChildren.iterator(); itr.hasNext();) {
+	            Object child = itr.next();
+	            if (!childrenList.contains(child)) {
+	                itr.remove();
+	                changes = true;
+	                launchDelta.addNode(child, IModelDelta.UNINSTALL);
+	            }
+	        }
 		}
-		List childrenList = Arrays.asList(children);
-        for (Iterator itr = fPrevChildren.iterator(); itr.hasNext();) {
-            Object child = itr.next();
-            if (!childrenList.contains(child)) {
-                itr.remove();
-                changes = true;
-                launchDelta.addNode(child, IModelDelta.UNINSTALL);
-            }
-        }
 		if (changes) {
 			fireModelChanged(root);
 		}
