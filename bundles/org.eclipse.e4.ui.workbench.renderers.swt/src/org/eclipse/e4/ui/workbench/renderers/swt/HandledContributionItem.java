@@ -564,8 +564,11 @@ public class HandledContributionItem extends ContributionItem {
 		Item item = (Item) widget;
 		String iconURI = model.getIconURI() != null ? model.getIconURI() : ""; //$NON-NLS-1$
 		String disabledURI = getDisabledIconURI(model);
+		Object disabledData = item.getData(DISABLED_URI);
+		if (disabledData == null)
+			disabledData = ""; //$NON-NLS-1$
 		if (!iconURI.equals(item.getData(ICON_URI))
-				|| !disabledURI.equals(item.getData(DISABLED_URI))) {
+				|| !disabledURI.equals(disabledData)) {
 			LocalResourceManager resourceManager = new LocalResourceManager(
 					JFaceResources.getResources());
 			Image iconImage = getImage(iconURI, resourceManager);
