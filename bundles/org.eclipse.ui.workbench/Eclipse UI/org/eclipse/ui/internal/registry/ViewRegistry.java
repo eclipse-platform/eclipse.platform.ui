@@ -143,7 +143,12 @@ public class ViewRegistry implements IViewRegistry {
 					String categoryId = element
 							.getAttribute(IWorkbenchRegistryConstants.ATT_CATEGORY);
 					ViewCategory category = findCategory(categoryId);
-					tags.add("categoryTag:" + category.getLabel()); //$NON-NLS-1$
+					if (category == null) {
+						category = findCategory(miscCategory.getId());
+					}
+					if (category != null) {
+						tags.add("categoryTag:" + category.getLabel()); //$NON-NLS-1$
+					}
 					// ==> End of update descriptor
 
 					ViewDescriptor viewDescriptor = new ViewDescriptor(application, descriptor,
