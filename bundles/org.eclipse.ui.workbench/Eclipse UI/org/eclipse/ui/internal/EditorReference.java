@@ -94,15 +94,50 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	}
 
 	boolean persist() {
-		IEditorPart editor = getEditor(false);
-		IEditorInput input = editor == null ? this.input : editor.getEditorInput();
-		if (input == null) {
+		XMLMemento persistedState = (XMLMemento) getEditorState();
+		if (persistedState == null)
 			return false;
+
+		StringWriter writer = new StringWriter();
+		try {
+			persistedState.save(writer);
+			getModel().getPersistedState().put(MEMENTO_KEY, writer.toString());
+		} catch (IOException e) {
+			WorkbenchPlugin.log(e);
+			return false;
+		}
+
+		return true;
+	}
+
+	IMemento getEditorState() {
+		IEditorPart editor = getEditor(false);
+
+		// If the editor hasn't been rendered yet then see if we can grab the
+		// info from the model
+		if (editor == null && getModel() != null) {
+			String savedState = getModel().getPersistedState().get(MEMENTO_KEY);
+			if (savedState != null) {
+				StringReader sr = new StringReader(savedState);
+				try {
+					XMLMemento memento = XMLMemento.createReadRoot(sr);
+					return memento;
+				} catch (WorkbenchException e) {
+					WorkbenchPlugin.log(e);
+					return null;
+				}
+			}
+			return null;
+		}
+
+		IEditorInput input = editor.getEditorInput();
+		if (input == null) {
+			return null;
 		}
 
 		IPersistableElement persistable = input.getPersistable();
 		if (persistable == null) {
-			return false;
+			return null;
 		}
 
 		XMLMemento root = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITOR);
@@ -117,16 +152,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			((IPersistableEditor) editor).saveState(editorStateMem);
 		}
 
-		StringWriter writer = new StringWriter();
-		try {
-			root.save(writer);
-			getModel().getPersistedState().put(MEMENTO_KEY, writer.toString());
-		} catch (IOException e) {
-			WorkbenchPlugin.log(e);
-			return false;
-		}
-
-		return true;
+		return root;
 	}
 
 	public EditorDescriptor getDescriptor() {
