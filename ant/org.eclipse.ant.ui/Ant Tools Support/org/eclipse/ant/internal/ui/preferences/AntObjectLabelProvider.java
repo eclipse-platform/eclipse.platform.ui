@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,6 +118,10 @@ public class AntObjectLabelProvider extends LabelProvider implements ITableLabel
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	public Color getForeground(Object element) {
+		if (isUnmodifiable(element)) {
+			Display display= Display.getCurrent();
+			return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		}
 		return null;
 	}
 
@@ -125,17 +129,23 @@ public class AntObjectLabelProvider extends LabelProvider implements ITableLabel
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
 	public Color getBackground(Object element) {
+		if (isUnmodifiable(element)) {
+			Display display= Display.getCurrent();
+			return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		}
+		return null;
+	}
+	
+	private boolean isUnmodifiable(Object element) {
 		if (element instanceof AntObject) {
 			if (((AntObject) element).isDefault()) {
-				Display display= Display.getCurrent();
-				return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
+				return true;
 			}
 		} else if (element instanceof Property) {
 			if (((Property) element).isDefault()) {
-				Display display= Display.getCurrent();
-				return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
+				return true;
 			}
 		}
-		return null;
+		return false;
 	}
 }
