@@ -159,10 +159,6 @@ public class PartServiceImpl implements EPartService {
 				if (lastActivePart != null && lastActivePart != activePart) {
 					firePartDeactivated(lastActivePart);
 				}
-
-				if (activePart != null) {
-					firePartActivated(activePart);
-				}
 			}
 		}
 	}
@@ -564,6 +560,8 @@ public class PartServiceImpl implements EPartService {
 		if (object != null && requiresFocus) {
 			try {
 				ContextInjectionFactory.invoke(object, Focus.class, part.getContext(), null);
+
+				firePartActivated(part);
 				UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
 			} catch (InjectionException e) {
 				log("Failed to grant focus to part", "Failed to grant focus to part ({0})", //$NON-NLS-1$ //$NON-NLS-2$
