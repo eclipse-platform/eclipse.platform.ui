@@ -26,6 +26,10 @@
   <version>3.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <properties>
+    <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/platform/eclipse.platform.debug.git</tycho.scmUrl>
+  </properties>
+
   <modules>
     <module>org.eclipse.core.externaltools</module>
     <module>org.eclipse.core.variables</module>
