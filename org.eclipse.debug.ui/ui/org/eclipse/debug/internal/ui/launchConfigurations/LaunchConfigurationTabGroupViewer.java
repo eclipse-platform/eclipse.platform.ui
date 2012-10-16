@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mohamed Hussein (Mentor Graphics) - Added getWarningMessage (Bug 386673)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -38,6 +39,7 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTab2;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -1230,6 +1232,30 @@ public class LaunchConfigurationTabGroupViewer {
 		ILaunchConfigurationTab tab = getActiveTab();
 		if (tab != null) {
 			String tabMessage = tab.getMessage();
+			if (tabMessage != null) {
+				message = tabMessage;
+			}
+		}
+		
+		return message;
+	}	
+		
+	/**
+	 * Returns the current warning message or <code>null</code> if none.
+	 * @return Returns an appropriate warning message for display to user. The message returned will be:
+	 * The warning message defined by the visible tab
+	 * or <code>null</code> if no message is defined 
+	 */
+	public String getWarningMessage() {
+		if (fInitializingTabs) {
+			return null;
+		}
+		
+		String message = null;
+		
+		ILaunchConfigurationTab tab = getActiveTab();
+		if (tab instanceof ILaunchConfigurationTab2) {
+			String tabMessage = ((ILaunchConfigurationTab2)tab).getWarningMessage();
 			if (tabMessage != null) {
 				message = tabMessage;
 			}

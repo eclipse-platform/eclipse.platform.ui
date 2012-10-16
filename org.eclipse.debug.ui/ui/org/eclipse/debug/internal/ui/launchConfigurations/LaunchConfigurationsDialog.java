@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids - Bug 137923
+ *     Mohamed Hussein (Mentor Graphics) - Added s/getWarningMessage (Bug 386673)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -47,6 +48,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -1526,7 +1528,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public void updateMessage() {
 		if (!fSettingInput) {
 			setErrorMessage(fTabViewer.getErrorMesssage());
-			setMessage(fTabViewer.getMessage());
+			if (fTabViewer.getWarningMessage() != null) {
+				setMessage(fTabViewer.getWarningMessage(), IMessageProvider.WARNING);
+			} else {
+				setMessage(fTabViewer.getMessage());
+			}
 		}
 	}
 	

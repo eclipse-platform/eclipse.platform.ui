@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mohamed Hussein (Mentor Graphics) - Added s/getWarningMessage (Bug 386673)
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -39,7 +40,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * @see ILaunchConfigurationTab
  * @since 2.0
  */
-public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigurationTab {
+public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigurationTab2 {
 	
 	/**
 	 * The control for this page, or <code>null</code>
@@ -56,6 +57,11 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * Current error message, or <code>null</code>
 	 */
 	private String fErrorMessage;
+	
+	/**
+	 * Current warning message, or <code>null</code>
+	 */
+	private String fWarningMessage;
 	
 	/**
 	 * Current message, or <code>null</code>
@@ -133,6 +139,14 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	}
 
 	/**
+	 * @see ILaunchConfigurationTab2#getWarningMessage()
+	 * @since 3.9
+	 */
+	public String getWarningMessage() {
+		return fWarningMessage;
+	}
+
+	/**
 	 * @see ILaunchConfigurationTab#getMessage()
 	 */
 	public String getMessage() {
@@ -165,6 +179,16 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 */
 	protected void setErrorMessage(String errorMessage) {
 		fErrorMessage = errorMessage;
+	}
+
+	/**
+	 * Sets this page's warning message, possibly <code>null</code>.
+	 * 
+	 * @param warningMessage the warning message or <code>null</code>
+	 * @since 3.9
+	 */
+	protected void setWarningMessage(String warningMessage) {
+		fWarningMessage = warningMessage;
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
+ *     Mohamed Hussein (Mentor Graphics) - Added s/getWarningMessage (Bug 386673)
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.pda.launcher;
 
@@ -168,6 +169,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
+		setWarningMessage(null);
 		setMessage(null);
 		String text = fProgramText.getText();
 		//#ifdef ex1
@@ -176,9 +178,14 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		//#else
 		if (text.length() > 0) {
 			IPath path = new Path(text);
-			if (ResourcesPlugin.getWorkspace().getRoot().findMember(path) == null) {
+			IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			if (member == null) {
 				setErrorMessage("Specified program does not exist");
 				return false;
+			} else {
+				if (member.getType() != IResource.FILE) {
+					setWarningMessage("Specified program is not a file.");
+				}
 			}
 		} else {
 			setMessage("Specify a program");
