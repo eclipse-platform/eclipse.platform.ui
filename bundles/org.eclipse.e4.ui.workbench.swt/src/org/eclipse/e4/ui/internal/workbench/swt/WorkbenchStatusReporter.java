@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sopot Cela (sopotcela@gmail.com) Bug 386022 - Title of ErrorDialog in WorkbenchStatusReporter should be externalized
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench.swt;
@@ -18,6 +19,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
+import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
@@ -104,7 +106,7 @@ public class WorkbenchStatusReporter extends StatusReporter {
 			myShell = new Shell();
 		}
 
-		dialog = new ErrorDialog(myShell, "Internal Error",
+		dialog = new ErrorDialog(myShell, WorkbenchSWTMessages.InternalError,
 				status.getMessage(),
 				status.getException() != null ? exceptionStatus : status, ERROR
 						| WARNING | INFO) {
