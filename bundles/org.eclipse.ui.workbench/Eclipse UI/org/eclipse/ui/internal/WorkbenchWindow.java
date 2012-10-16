@@ -1172,6 +1172,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				closing = false;
 				updateDisabled = false;
 			}
+ else {
+				firePageClosed();
+				fireWindowClosed();
+			}
+
 		}
 
 		if (windowClosed && tracker != null) {
@@ -1491,9 +1496,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			final IContextService contextService = (IContextService) workbench
 					.getService(IContextService.class);
 			contextService.unregisterShell(getShell());
-
-			firePageClosed();
-			fireWindowClosed();
 
 			// time to wipe our our populate
 			IMenuService menuService = (IMenuService) workbench.getService(IMenuService.class);
