@@ -20,6 +20,7 @@ import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
@@ -181,6 +182,7 @@ public class FileUtil {
 	 *   <li> Line separator currently used in that file.
 	 *   <li> Line separator defined in project preferences.
 	 *   <li> Line separator defined in instance preferences.
+	 *   <li> Line separator defined in default preferences.
 	 *   <li> Operating system default line separator.
 	 * </ol>
 	 * @param file the file for which line separator should be returned
@@ -217,6 +219,10 @@ public class FileUtil {
 			return value;
 		// try with instance preferences
 		value = getLineSeparatorFromPreferences(rootNode.node(InstanceScope.SCOPE));
+		if (value != null)
+			return value;
+		// try with default preferences
+		value = getLineSeparatorFromPreferences(rootNode.node(DefaultScope.SCOPE));
 		if (value != null)
 			return value;
 		// if there is no preference set, fall back to OS default value
