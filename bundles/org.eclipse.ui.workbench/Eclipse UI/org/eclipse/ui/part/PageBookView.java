@@ -506,6 +506,15 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			// check for null since the default page may not have
 			// been created (ex. perspective never visible)
 			defaultPageRec.page.dispose();
+			Object site = mapPageToSite.remove(defaultPageRec.page);
+			mapPageToNumRecs.remove(defaultPageRec.page);
+			if (defaultPageRec.subActionBars != null) {
+				defaultPageRec.subActionBars.dispose();
+			}
+
+			if (site instanceof PageSite) {
+				((PageSite) site).dispose();
+			}
 			defaultPageRec = null;
 		}
 		Map clone = (Map) ((HashMap) mapPartToRec).clone();
