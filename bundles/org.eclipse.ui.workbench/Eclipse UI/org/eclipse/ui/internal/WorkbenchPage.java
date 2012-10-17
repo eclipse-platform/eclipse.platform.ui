@@ -89,6 +89,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
@@ -117,6 +118,14 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * A collection of views and editors in a workbench.
+ */
+/**
+ * @since 3.7
+ *
+ */
+/**
+ * @since 3.7
+ * 
  */
 public class WorkbenchPage extends CompatibleWorkbenchPage implements
         IWorkbenchPage {
@@ -5171,8 +5180,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 //	    partList.removePart((WorkbenchPartReference)ref);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#openEditors(org.eclipse.ui.IEditorInput[],
+	 * java.lang.String[], int)
+	 */
 	public IEditorReference[] openEditors(final IEditorInput[] inputs, final String[] editorIDs, 
 			final int matchFlags) throws MultiPartInitException {
+		return openEditors(inputs, editorIDs, null, matchFlags);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#openEditors(org.eclipse.ui.IEditorInput[],
+	 * java.lang.String[], org.eclipse.ui.IMemento[], int)
+	 */
+	public IEditorReference[] openEditors(final IEditorInput[] inputs, final String[] editorIDs,
+			final IMemento[] mementos, final int matchFlags) throws MultiPartInitException {
 		if (inputs == null)
 			 throw new IllegalArgumentException();
 		if (editorIDs == null)
@@ -5199,7 +5227,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 							        IEditorReference ref = batchReuseEditor(inputs[i], editorIDs[i], 
 							        		activate, matchFlags);
 							        if (ref == null) // otherwise, create a new one
-								        ref = batchOpenEditor(inputs[i], editorIDs[i], activate);
+								ref = batchOpenEditor(inputs[i], editorIDs[i],
+										mementos == null ? null : mementos[i],
+										activate);
 							        results[i] = ref;
 								} catch (PartInitException e) {
 									exceptions[i] = e;
@@ -5261,6 +5291,36 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return results;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPage#getEditorState(org.eclipse.ui.IEditorReference
+	 * [])
+	 */
+	public IMemento[] getEditorState(IEditorReference[] editorRefs) {
+		IMemento[] mementos = new IMemento[editorRefs.length];
+		for (int i = 0; i < editorRefs.length; i++) {
+			if (editorRefs[i] instanceof EditorReference) {
+				EditorReference ref = (EditorReference) editorRefs[i];
+				IWorkbenchPart renderedPart = ref.getPart(false);
+				if (renderedPart == null) {
+					mementos[i] = ref.getMemento();
+				} else {
+					XMLMemento parentMem = XMLMemento.createWriteRoot("editors"); //$NON-NLS-1$
+					editorMgr.saveEditorState(parentMem, ref, null);
+					IMemento[] children = parentMem.getChildren();
+					if (children.length == 1) {
+						mementos[i] = children[0];
+					} else {
+						mementos[i] = null;
+					}
+				}
+			}
+		}
+		return mementos;
+	}
+
     private IEditorReference batchReuseEditor(IEditorInput input, String editorID, boolean activate, int matchFlags) {
         if (IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID.equals( editorID))
         	return null; // don't reuse external editors
@@ -5277,12 +5337,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return refs[0];
     }
     
-    private IEditorReference batchOpenEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {
+	private IEditorReference batchOpenEditor(IEditorInput input, String editorID, IMemento memento,
+			boolean activate) throws PartInitException {
         IEditorPart editor = null;
         IEditorReference ref;
         try {
         	partBeingOpened = true;
-			ref = getEditorManager().openEditor(editorID, input, true, null);
+			ref = getEditorManager().openEditor(editorID, input, true, memento);
 			if (ref != null)
 				editor = ref.getEditor(activate);
 		} finally {
