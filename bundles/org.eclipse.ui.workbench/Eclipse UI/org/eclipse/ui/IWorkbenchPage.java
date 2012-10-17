@@ -1223,7 +1223,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * editors are opened using pairs of { input[i], editorIDs[i] }.
 	 * </p>
 	 * <p>
-	 * The mementos array mat be null but if not must match the input array in
+	 * The mementos array may be null but if not must match the input array in
 	 * length. Entries in the mementos array may also be null if no state is
 	 * desired for that particular editor.
 	 * </p>
