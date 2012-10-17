@@ -303,7 +303,9 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						if (entry.getKey().equals(
 								NewApplicationWizardPage.PRODUCT_NAME)
 								|| entry.getKey().equals(
-										NewApplicationWizardPage.APPLICATION)) {
+										NewApplicationWizardPage.APPLICATION)
+											||entry.getKey().equals(
+													NewApplicationWizardPage.richSample)) {
 							continue;
 						}
 						IPluginElement element = fmodel.getFactory()
