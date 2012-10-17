@@ -27,6 +27,10 @@
   <version>3.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <properties>
+    <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/platform/eclipse.platform.resources.git</tycho.scmUrl>
+  </properties>
+
   <modules>
     <module>bundles/org.eclipse.core.filesystem</module>
     <module>bundles/org.eclipse.core.filesystem.hpux.ia64_32</module>
