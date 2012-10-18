@@ -1223,7 +1223,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * editors are opened using pairs of { input[i], editorIDs[i] }.
 	 * </p>
 	 * <p>
-	 * The mementos array may be null but if not must match the input array in
+	 * The mementos array mat be null but if not must match the input array in
 	 * length. Entries in the mementos array may also be null if no state is
 	 * desired for that particular editor.
 	 * </p>
@@ -1246,7 +1246,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @see #MATCH_NONE
 	 * @see #MATCH_INPUT
 	 * @see #MATCH_ID
-	 * @since 3.104
+	 * @since 3.8.2
 	 */
 	public IEditorReference[] openEditors(final IEditorInput[] inputs, final String[] editorIDs,
 			IMemento[] mementos, final int matchFlags) throws MultiPartInitException;
@@ -1260,7 +1260,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 *            The array of editor references to get the state for
 	 * @return The array of mementos. The length of the array will match that of
 	 *         the refs array.
-	 * @since 3.104
+	 * @since 3.8.2
 	 */
 	public IMemento[] getEditorState(IEditorReference[] editorRefs);
 }
