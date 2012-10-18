@@ -129,6 +129,7 @@ public class EditorSite extends PartSite implements IEditorSite {
         
         if (ab != null) {
             ab.dispose();
+			ab = null;
         }
     }
     

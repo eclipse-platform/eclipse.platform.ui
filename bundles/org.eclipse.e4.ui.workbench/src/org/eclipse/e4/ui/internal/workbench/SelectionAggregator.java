@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.internal.contexts.EclipseContext;
+import org.eclipse.e4.core.internal.contexts.IContextDisposalListener;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -144,6 +146,14 @@ public class SelectionAggregator {
 		final IEclipseContext myContext = this.context;
 		IEclipseContext context = part.getContext();
 		if (context != null && tracked.add(context)) {
+			if (context instanceof EclipseContext) {
+				((EclipseContext) context).notifyOnDisposal(new IContextDisposalListener() {
+					public void disposed(IEclipseContext context) {
+						tracked.remove(context);
+					}
+				});
+			}
+
 			context.runAndTrack(new RunAndTrack() {
 				private boolean initial = true;
 

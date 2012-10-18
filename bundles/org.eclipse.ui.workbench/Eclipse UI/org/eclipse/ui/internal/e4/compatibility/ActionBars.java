@@ -168,4 +168,18 @@ public class ActionBars extends SubActionBars {
 				: parent != null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.SubActionBars#dispose()
+	 */
+	@Override
+	public void dispose() {
+		menuManager.dispose();
+		if (toolbarManager instanceof ToolBarManager) {
+			((ToolBarManager) toolbarManager).dispose();
+		}
+		super.dispose();
+	}
+
 }

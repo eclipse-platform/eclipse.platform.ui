@@ -27,6 +27,10 @@
   <version>3.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+   <properties>
+     <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/platform/eclipse.platform.ui.git</tycho.scmUrl>
+   </properties>
+ 
   <modules>
     <!--
     requires org.eclipse.ui.presentations.PresentationUtil which is not available from anywhere

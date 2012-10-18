@@ -4250,12 +4250,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * org.eclipse.ui.IWorkbenchPage#openEditors(org.eclipse.ui.IEditorInput[],
 	 * java.lang.String[], org.eclipse.ui.IMemento[], int)
 	 */
-	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs, IMemento[] momentos, int matchFlags)
+	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs, IMemento[] mementos, int matchFlags)
 			throws MultiPartInitException {
 		Assert.isTrue(inputs.length == editorIDs.length);
 		Assert.isTrue(inputs.length > 0);
-		Assert.isTrue(momentos == null || momentos.length == inputs.length);
+		Assert.isTrue(mementos == null || mementos.length == inputs.length);
 
+		for (IEditorInput ei : inputs) {
+			System.out.println(ei.getName());
+		}
 		PartInitException[] exceptions = new PartInitException[inputs.length];
 		IEditorReference[] references = new IEditorReference[inputs.length];
 		boolean hasFailures = false;
@@ -4280,13 +4283,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					if (firstEditor == null)
 						firstEditor = editor;
 
-					// Set the information in the supplied Momento into the
+					// Set the information in the supplied IMemento into the
 					// editor's model
-					if (momentos != null && momentos[i] instanceof XMLMemento) {
-						XMLMemento momento = (XMLMemento) momentos[i];
+					if (mementos != null && mementos[i] instanceof XMLMemento) {
+						XMLMemento memento = (XMLMemento) mementos[i];
 						StringWriter writer = new StringWriter();
 						try {
-							momento.save(writer);
+							memento.save(writer);
 							editor.getPersistedState().put(WorkbenchPartReference.MEMENTO_KEY,
 									writer.toString());
 						} catch (IOException e) {
@@ -4303,10 +4306,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					// been rendered
 					EditorReference ee = (EditorReference) existingEditors[0];
 					if (ee.getModel().getWidget() == null) {
-						// Set the information in the supplied Momento into the
+						// Set the information in the supplied IMemento into the
 						// editor's model
-						if (momentos != null && momentos[i] instanceof XMLMemento) {
-							XMLMemento momento = (XMLMemento) momentos[i];
+						if (mementos != null && mementos[i] instanceof XMLMemento) {
+							XMLMemento momento = (XMLMemento) mementos[i];
 							StringWriter writer = new StringWriter();
 							try {
 								momento.save(writer);
