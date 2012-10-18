@@ -50,6 +50,7 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -516,18 +517,25 @@ public class TrimStack {
 				if (menuPart == null)
 					return;
 
-				MenuItem closeItem = new MenuItem(trimStackMenu, SWT.NONE);
-				closeItem.setText(Messages.TrimStack_CloseText);
-				closeItem.addListener(SWT.Selection, new Listener() {
+				MenuItem orientationItem = new MenuItem(trimStackMenu, SWT.CASCADE);
+				orientationItem.setText(Messages.TrimStack_OrientationMenu);
+				Menu orientationMenu = new Menu(orientationItem);
+				orientationItem.setMenu(orientationMenu);
+
+				MenuItem defaultItem = new MenuItem(orientationMenu, SWT.RADIO);
+				defaultItem.setText(Messages.TrimStack_DefaultOrientationItem);
+				defaultItem.addListener(SWT.Selection, new Listener() {
 					public void handleEvent(Event event) {
-						partService.hidePart(menuPart);
+						menuPart.getTags().remove(IPresentationEngine.ORIENTATION_HORIZONTAL);
+						menuPart.getTags().remove(IPresentationEngine.ORIENTATION_VERTICAL);
+						if (isShowing) {
+							setPaneLocation(hostPane);
+						}
 					}
 				});
 
-				MenuItem horizontalItem = new MenuItem(trimStackMenu, SWT.CHECK);
+				MenuItem horizontalItem = new MenuItem(orientationMenu, SWT.RADIO);
 				horizontalItem.setText(Messages.TrimStack_Horizontal);
-				horizontalItem.setSelection(menuPart.getTags().contains(
-						IPresentationEngine.ORIENTATION_HORIZONTAL));
 				horizontalItem.addListener(SWT.Selection, new Listener() {
 					public void handleEvent(Event event) {
 						if (menuPart.getTags().contains(IPresentationEngine.ORIENTATION_HORIZONTAL)) {
@@ -542,10 +550,9 @@ public class TrimStack {
 					}
 				});
 
-				MenuItem verticalItem = new MenuItem(trimStackMenu, SWT.CHECK);
+				MenuItem verticalItem = new MenuItem(orientationMenu, SWT.RADIO);
 				verticalItem.setText(Messages.TrimStack_Vertical);
-				verticalItem.setSelection(menuPart.getTags().contains(
-						IPresentationEngine.ORIENTATION_VERTICAL));
+
 				verticalItem.addListener(SWT.Selection, new Listener() {
 					public void handleEvent(Event event) {
 						if (menuPart.getTags().contains(IPresentationEngine.ORIENTATION_VERTICAL)) {
@@ -559,6 +566,32 @@ public class TrimStack {
 						}
 					}
 				});
+
+				// Set initial orientation selection
+				if (menuPart.getTags().contains(IPresentationEngine.ORIENTATION_HORIZONTAL)) {
+					horizontalItem.setSelection(true);
+				} else if (menuPart.getTags().contains(IPresentationEngine.ORIENTATION_VERTICAL)) {
+					verticalItem.setSelection(true);
+				} else {
+					defaultItem.setSelection(true);
+				}
+
+				MenuItem restoreItem = new MenuItem(trimStackMenu, SWT.NONE);
+				restoreItem.setText(Messages.TrimStack_RestoreText);
+				restoreItem.addListener(SWT.Selection, new Listener() {
+					public void handleEvent(Event event) {
+						minimizedElement.getTags().remove(IPresentationEngine.MINIMIZED);
+					}
+				});
+
+				MenuItem closeItem = new MenuItem(trimStackMenu, SWT.NONE);
+				closeItem.setText(Messages.TrimStack_CloseText);
+				closeItem.addListener(SWT.Selection, new Listener() {
+					public void handleEvent(Event event) {
+						partService.hidePart(menuPart);
+					}
+				});
+
 			}
 		});
 
@@ -570,12 +603,8 @@ public class TrimStack {
 		ToolItem restoreBtn = new ToolItem(trimStackTB, SWT.PUSH);
 		restoreBtn.setToolTipText(Messages.TrimStack_RestoreText);
 		restoreBtn.setImage(getRestoreImage());
-		restoreBtn.addSelectionListener(new SelectionListener() {
+		restoreBtn.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				minimizedElement.getTags().remove(IPresentationEngine.MINIMIZED);
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
 				minimizedElement.getTags().remove(IPresentationEngine.MINIMIZED);
 			}
 		});
@@ -729,6 +758,12 @@ public class TrimStack {
 		hostPane = null;
 	}
 
+	/**
+	 * Sets whether this stack should be visible or hidden
+	 * 
+	 * @param show
+	 *            whether the stack should be visible
+	 */
 	public void showStack(boolean show) {
 		Control ctf = (Control) minimizedElement.getWidget();
 		Composite clientArea = getShellClientComposite();
