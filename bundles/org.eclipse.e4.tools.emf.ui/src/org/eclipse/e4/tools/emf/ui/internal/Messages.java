@@ -234,6 +234,7 @@ public class Messages {
 	public String PlaceholderEditor_Descriptor;
 	public String PlaceholderEditor_Reference;
 	public String PlaceholderEditor_Closeable;
+	public String PlaceholderEditor_ContainerData;
 
 	public String ToolBarEditor_Label;
 	public String ToolBarEditor_Description;
