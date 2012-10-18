@@ -165,7 +165,14 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 
 				if (selectionProvider instanceof IPostSelectionProvider) {
 					((IPostSelectionProvider) selectionProvider)
-							.addPostSelectionChangedListener(this);
+							.addPostSelectionChangedListener(new ISelectionChangedListener() {
+
+								public void selectionChanged(SelectionChangedEvent e) {
+									ESelectionService selectionService = (ESelectionService) part
+											.getContext().get(ESelectionService.class.getName());
+									selectionService.setPostSelection(e.getSelection());
+								}
+							});
 				}
 			}
 		}

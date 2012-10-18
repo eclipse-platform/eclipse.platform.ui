@@ -39,9 +39,12 @@ import org.osgi.service.event.EventHandler;
 public class SelectionAggregator {
 
 	static final String OUT_SELECTION = "org.eclipse.ui.output.selection"; //$NON-NLS-1$
+	static final String OUT_POST_SELECTION = "org.eclipse.ui.output.postSelection"; //$NON-NLS-1$
 
 	private ListenerList genericListeners = new ListenerList();
+	private ListenerList genericPostListeners = new ListenerList();
 	private Map<String, ListenerList> targetedListeners = new HashMap<String, ListenerList>();
+	private Map<String, ListenerList> targetedPostListeners = new HashMap<String, ListenerList>();
 	private Set<IEclipseContext> tracked = new HashSet<IEclipseContext>();
 
 	private EventHandler eventHandler = new EventHandler() {
@@ -80,7 +83,9 @@ public class SelectionAggregator {
 	@PreDestroy
 	void preDestroy() {
 		genericListeners.clear();
+		genericPostListeners.clear();
 		targetedListeners.clear();
+		targetedPostListeners.clear();
 
 		eventBroker.unsubscribe(eventHandler);
 	}
@@ -96,7 +101,11 @@ public class SelectionAggregator {
 			activePart = part;
 			IEclipseContext partContext = part.getContext();
 			// only notify listeners if the part actually posts selections
-			if (partContext.containsKey(OUT_SELECTION)) {
+			if (partContext.containsKey(OUT_POST_SELECTION)) {
+				Object selection = partContext.get(OUT_POST_SELECTION);
+				context.set(IServiceConstants.ACTIVE_SELECTION, selection);
+				notifyPostListeners(part, selection);
+			} else if (partContext.containsKey(OUT_SELECTION)) {
 				Object selection = partContext.get(OUT_SELECTION);
 				context.set(IServiceConstants.ACTIVE_SELECTION, selection);
 				notifyListeners(part, selection);
@@ -142,6 +151,43 @@ public class SelectionAggregator {
 		}
 	}
 
+	private void notifyPostListeners(final MPart part, final Object selection) {
+		for (Object listener : genericPostListeners.getListeners()) {
+			final ISelectionListener myListener = (ISelectionListener) listener;
+			SafeRunner.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					myListener.selectionChanged(part, selection);
+				}
+
+				public void handleException(Throwable exception) {
+					logger.error(exception);
+				}
+			});
+		}
+		notifyTargetedPostListeners(part, selection);
+	}
+
+	private void notifyTargetedPostListeners(final MPart part, final Object selection) {
+		String id = part.getElementId();
+		if (id != null) {
+			ListenerList listenerList = targetedPostListeners.get(id);
+			if (listenerList != null) {
+				for (Object listener : listenerList.getListeners()) {
+					final ISelectionListener myListener = (ISelectionListener) listener;
+					SafeRunner.run(new ISafeRunnable() {
+						public void run() throws Exception {
+							myListener.selectionChanged(part, selection);
+						}
+
+						public void handleException(Throwable exception) {
+							logger.error(exception);
+						}
+					});
+				}
+			}
+		}
+	}
+
 	private void track(final MPart part) {
 		final IEclipseContext myContext = this.context;
 		IEclipseContext context = part.getContext();
@@ -159,6 +205,8 @@ public class SelectionAggregator {
 
 				public boolean changed(IEclipseContext context) {
 					final Object selection = context.get(OUT_SELECTION);
+					final Object postSelection = context.get(OUT_POST_SELECTION);
+					context.set(OUT_POST_SELECTION, null); // make sure it's gone until set again
 					if (initial) {
 						initial = false;
 						if (selection == null) {
@@ -170,19 +218,26 @@ public class SelectionAggregator {
 						myContext.set(IServiceConstants.ACTIVE_SELECTION, selection);
 						runExternalCode(new Runnable() {
 							public void run() {
-								notifyListeners(part, selection);
+								if (postSelection != null)
+									notifyPostListeners(part, selection);
+								else
+									notifyListeners(part, selection);
 							}
 						});
 					} else {
 						runExternalCode(new Runnable() {
 							public void run() {
-								notifyTargetedListeners(part, selection);
+								if (postSelection != null)
+									notifyTargetedPostListeners(part, selection);
+								else
+									notifyTargetedListeners(part, selection);
 							}
 						});
 						// we don't need to keep tracking non-active parts unless
 						// they have targeted listeners
 						String partId = part.getElementId();
-						boolean continueTracking = targetedListeners.containsKey(partId);
+						boolean continueTracking = targetedListeners.containsKey(partId)
+								|| targetedPostListeners.containsKey(partId);
 						if (!continueTracking) {
 							tracked.remove(part.getContext());
 						}
@@ -202,10 +257,21 @@ public class SelectionAggregator {
 		genericListeners.add(listener);
 	}
 
+	public void addPostSelectionListener(ISelectionListener listener) {
+		genericPostListeners.add(listener);
+	}
+
 	public void removeSelectionListener(ISelectionListener listener) {
 		// we may have been destroyed already, see bug 310113
 		if (context != null) {
 			genericListeners.remove(listener);
+		}
+	}
+
+	public void removePostSelectionListener(ISelectionListener listener) {
+		// we may have been destroyed already, see bug 310113
+		if (context != null) {
+			genericPostListeners.remove(listener);
 		}
 	}
 
@@ -222,10 +288,33 @@ public class SelectionAggregator {
 			track(part);
 	}
 
+	public void addPostSelectionListener(String partId, ISelectionListener listener) {
+		ListenerList listeners = targetedPostListeners.get(partId);
+		if (listeners == null) {
+			listeners = new ListenerList();
+			targetedPostListeners.put(partId, listeners);
+		}
+		listeners.add(listener);
+
+		MPart part = partService.findPart(partId);
+		if (part != null)
+			track(part);
+	}
+
 	public void removeSelectionListener(String partId, ISelectionListener listener) {
 		// we may have been destroyed already, see bug 310113
 		if (context != null) {
 			ListenerList listeners = targetedListeners.get(partId);
+			if (listeners != null) {
+				listeners.remove(listener);
+			}
+		}
+	}
+
+	public void removePostSelectionListener(String partId, ISelectionListener listener) {
+		// we may have been destroyed already, see bug 310113
+		if (context != null) {
+			ListenerList listeners = targetedPostListeners.get(partId);
 			if (listeners != null) {
 				listeners.remove(listener);
 			}
