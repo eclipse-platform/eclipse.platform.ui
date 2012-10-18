@@ -9,6 +9,20 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/IWorkbenchPage.java" type="org.eclipse.ui.IWorkbenchPage">
+        <filter id="1210056707">
+            <message_arguments>
+                <message_argument value="3.8.2"/>
+                <message_argument value="getEditorState(IEditorReference[])"/>
+            </message_arguments>
+        </filter>
+        <filter id="1210056707">
+            <message_arguments>
+                <message_argument value="3.8.2"/>
+                <message_argument value="openEditors(IEditorInput[], String[], IMemento[], int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="Eclipse UI/org/eclipse/ui/IWorkingSetManager.java" type="org.eclipse.ui.IWorkingSetManager">
         <filter id="1209008130">
             <message_arguments>
