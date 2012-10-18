@@ -556,6 +556,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		if (intermediate == null || intermediate.isDisposed()) {
 			return null;
 		}
+		if (intermediate instanceof ToolBar) {
+			return intermediate;
+		}
 		ToolBar toolbar = findToolbar(intermediate);
 		if (toolbar == null) {
 			toolbar = createToolbar(childElement.getParent(), intermediate);
