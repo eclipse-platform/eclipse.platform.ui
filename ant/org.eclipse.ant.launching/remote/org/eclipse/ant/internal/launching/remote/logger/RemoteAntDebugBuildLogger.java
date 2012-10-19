@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,16 +97,26 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
 						} else if (message.startsWith(DebugMessageIds.TERMINATE)) {
-						    sendRequestResponse(DebugMessageIds.TERMINATED);
-							shutDown();
+							synchronized(RemoteAntDebugBuildLogger.this) {
+							    sendRequestResponse(DebugMessageIds.TERMINATED);
+								shutDown();
+							}
 						} else if (message.startsWith(DebugMessageIds.STACK)) {
-							marshallStack();
+							synchronized(RemoteAntDebugBuildLogger.this) {
+								marshallStack();
+							}
 						} else if (message.startsWith(DebugMessageIds.ADD_BREAKPOINT)) {
-							addBreakpoint(message);
+							synchronized(RemoteAntDebugBuildLogger.this) {
+								addBreakpoint(message);
+							}
 						} else if (message.startsWith(DebugMessageIds.REMOVE_BREAKPOINT)) {
-							removeBreakpoint(message);
+							synchronized(RemoteAntDebugBuildLogger.this) {
+								removeBreakpoint(message);
+							}
 						}  else if (message.startsWith(DebugMessageIds.PROPERTIES)) {
-							marshallProperties();
+							synchronized(RemoteAntDebugBuildLogger.this) {
+								marshallProperties();
+							}
 						}
 					}
 				} 
@@ -140,7 +150,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#shutDown()
 	 */
-	protected void shutDown() {
+	protected synchronized void shutDown() {
 		if (fRequestWriter != null) {
 			fRequestWriter.close();
 			fRequestWriter= null;
@@ -190,7 +200,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.launching.remote.logger.RemoteAntBuildLogger#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	public void buildFinished(BuildEvent event) {
+	public synchronized void buildFinished(BuildEvent event) {
 		super.buildFinished(event);
 		fDebugState.buildFinished();
 		fDebugState = null;
@@ -212,7 +222,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	public void taskStarted(BuildEvent event) {
+	public synchronized void taskStarted(BuildEvent event) {
         super.taskStarted(event);
 		fDebugState.taskStarted(event);
 	}
@@ -298,7 +308,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		return null;
 	}
 
-	private void sendRequestResponse(String message) {
+	private synchronized void sendRequestResponse(String message) {
 		if (fRequestWriter == null) {
 			return;
 		}
@@ -345,7 +355,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	public void targetStarted(BuildEvent event) {
+	public synchronized void targetStarted(BuildEvent event) {
 		fDebugState.targetStarted(event);
 		if (!fSentProcessId) {
 			establishConnection();
@@ -357,7 +367,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
     /* (non-Javadoc)
      * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
      */
-    public void targetFinished(BuildEvent event) {
+    public synchronized void targetFinished(BuildEvent event) {
         super.targetFinished(event);
 		fDebugState.setTargetExecuting(null);
     }   
@@ -365,7 +375,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#configure(java.util.Map)
      */
-    public void configure(Map userProperties) {
+    public synchronized void configure(Map userProperties) {
        super.configure(userProperties);
        String requestPortProperty= (String) userProperties.remove("eclipse.connect.request_port"); //$NON-NLS-1$
         if (requestPortProperty != null) {
