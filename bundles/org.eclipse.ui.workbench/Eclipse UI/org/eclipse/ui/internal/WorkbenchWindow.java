@@ -1146,10 +1146,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		try {
 			// Tag the currently active part so we can restore focus on startup
-			WorkbenchPartReference ref = (WorkbenchPartReference) getActivePage()
-					.getActivePartReference();
-			if (ref != null) {
-				ref.getModel().getTags().add(EPartService.ACTIVE_ON_CLOSE_TAG);
+			IWorkbenchPage activePage = getActivePage();
+			if (activePage != null) {
+				WorkbenchPartReference ref = (WorkbenchPartReference) activePage
+						.getActivePartReference();
+				if (ref != null) {
+					ref.getModel().getTags().add(EPartService.ACTIVE_ON_CLOSE_TAG);
+				}
 			}
 
 			// Only do the check if it is OK to close if we are not closing
@@ -1171,8 +1174,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				// Reset the internal flags if window was not closed.
 				closing = false;
 				updateDisabled = false;
-			}
- else {
+			} else {
 				firePageClosed();
 				fireWindowClosed();
 			}
