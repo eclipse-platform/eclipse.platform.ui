@@ -26,6 +26,7 @@ public class ValueComputation extends Computation {
 
 	private Object cachedValue = NotAValue;
 	private boolean computing; // cycle detection
+	private boolean valid = true;
 
 	public ValueComputation(String name, IEclipseContext originatingContext, IContextFunction computedValue) {
 		this.originatingContext = (EclipseContext) originatingContext;
@@ -107,4 +108,11 @@ public class ValueComputation extends Computation {
 		return true;
 	}
 
+	public boolean isValid() {
+		return valid;
+	}
+
+	public void dipose() {
+		valid = false;
+	}
 }

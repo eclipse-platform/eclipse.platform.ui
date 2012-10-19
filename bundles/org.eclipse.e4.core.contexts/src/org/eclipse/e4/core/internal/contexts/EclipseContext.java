@@ -14,7 +14,6 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,7 +74,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
-	private Map<String, HashSet<Computation>> listeners = Collections.synchronizedMap(new HashMap<String, HashSet<Computation>>(10, 0.8f));
+	private WeakGroupedListenerList weakListeners = new WeakGroupedListenerList();
 	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
 
 	final protected Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
@@ -165,7 +164,7 @@ public class EclipseContext implements IEclipseContext {
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
 		Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
 		Set<Computation> allComputations = getListeners();
-		listeners.clear();
+		weakListeners.clear();
 		for (Computation computation : allComputations) {
 			computation.handleInvalid(event, scheduled);
 		}
@@ -177,19 +176,27 @@ public class EclipseContext implements IEclipseContext {
 			}
 		}
 
+		for (ValueComputation computation : localValueComputations.values()) {
+			computation.dipose();
+		}
 		localValueComputations.clear();
 
 		// if this was the parent's active child, deactivate it
 		EclipseContext parent = getParent();
+		EclipseContext rootContext = null;
 		if (parent != null) {
+			rootContext = getRoot();
 			if (this == parent.getActiveChild())
 				parent.set(ACTIVE_CHILD, null);
 		}
 
 		localValues.clear();
 
-		if (parent != null)
+		if (parent != null) {
 			parent.removeChild(this);
+			if (rootContext != null)
+				rootContext.cleanup();
+		}
 
 		if (debugAddOn != null)
 			debugAddOn.notify(this, IEclipseContextDebugger.EventType.DISPOSED, null);
@@ -251,14 +258,11 @@ public class EclipseContext implements IEclipseContext {
 		if (computation != null) {
 			if (computation.shouldRemove(event)) {
 				localValueComputations.remove(name);
-				Collection<HashSet<Computation>> allListeners = listeners.values();
-				for (HashSet<Computation> group : allListeners) {
-					group.remove(computation);
-				}
+				weakListeners.remove(computation);
 			}
 			computation.handleInvalid(event, scheduled);
 		}
-		HashSet<Computation> namedComputations = listeners.get(name);
+		Set<Computation> namedComputations = weakListeners.getListeners(name);
 		if (namedComputations != null) {
 			for (Computation listener : namedComputations) {
 				listener.handleInvalid(event, scheduled);
@@ -306,10 +310,7 @@ public class EclipseContext implements IEclipseContext {
 
 	public void removeRAT(Computation computation) {
 		// remove from listeners
-		Collection<HashSet<Computation>> allListeners = listeners.values();
-		for (HashSet<Computation> group : allListeners) {
-			group.remove(computation);
-		}
+		weakListeners.remove(computation);
 	}
 
 	protected void processScheduled(Set<Scheduled> scheduledList) {
@@ -409,12 +410,7 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public void addDependency(String name, Computation computation) {
-		HashSet<Computation> nameListeners = listeners.get(name);
-		if (nameListeners == null) {
-			nameListeners = new HashSet<Computation>(30, 0.75f);
-			listeners.put(name, nameListeners);
-		}
-		nameListeners.add(computation);
+		weakListeners.add(name, computation);
 	}
 
 	public void declareModifiable(String name) {
@@ -451,13 +447,7 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public Set<Computation> getListeners() {
-		Collection<HashSet<Computation>> collection = listeners.values();
-		Set<Computation> comps = new HashSet<Computation>();
-
-		for (HashSet<Computation> tmp : collection) {
-			comps.addAll(tmp);
-		}
-		return comps;
+		return weakListeners.getListeners();
 	}
 
 	private void handleReparent(EclipseContext newParent, Set<Scheduled> scheduled) {
@@ -481,19 +471,15 @@ public class EclipseContext implements IEclipseContext {
 
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.ADDED, null, null, null);
 		for (Computation computation : localValueComputations.values()) {
-			Collection<HashSet<Computation>> allListeners = listeners.values();
-			for (HashSet<Computation> group : allListeners) {
-				group.remove(computation);
-			}
+			weakListeners.remove(computation);
 			computation.handleInvalid(event, scheduled);
 		}
 		localValueComputations.clear();
 	}
 
 	private void collectDependentNames(Set<String> usedNames) {
-		Set<String> tmp = listeners.keySet(); // clone internal name list
-		usedNames.addAll(tmp);
-
+		Set<String> names = weakListeners.getNames();
+		usedNames.addAll(names);
 		for (EclipseContext childContext : getChildren()) {
 			childContext.collectDependentNames(usedNames);
 		}
@@ -681,20 +667,12 @@ public class EclipseContext implements IEclipseContext {
 
 	// This method is for debug only, do not use externally
 	public Set<String> getRawListenerNames() {
-		Set<String> tmp = listeners.keySet(); // clone internal name list
-		Set<String> usedNames = new HashSet<String>(tmp.size());
-		usedNames.addAll(tmp);
-		return usedNames;
+		return weakListeners.getNames();
 	}
 
 	// This method is for debug only, do not use externally
 	public Set<Computation> getListeners(String name) {
-		HashSet<Computation> tmp = listeners.get(name);
-		if (tmp == null)
-			return null;
-		Set<Computation> result = new HashSet<Computation>(tmp.size());
-		result.addAll(tmp);
-		return result;
+		return weakListeners.getListeners(name);
 	}
 
 	static public Stack<Computation> getCalculatedComputations() {
@@ -758,5 +736,12 @@ public class EclipseContext implements IEclipseContext {
 
 	public WeakReference<Object> trackedWeakReference(Object object) {
 		return new WeakReference<Object>(object, referenceQueue);
+	}
+
+	public void cleanup() {
+		for (EclipseContext childContext : getChildren()) {
+			childContext.cleanup();
+		}
+		weakListeners.cleanup();
 	}
 }
