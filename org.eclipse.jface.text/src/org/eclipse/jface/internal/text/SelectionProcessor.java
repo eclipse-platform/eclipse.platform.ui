@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Avaloq Evolution AG and others.
+ * Copyright (c) 2009, 2012 Avaloq Evolution AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
 package org.eclipse.jface.internal.text;
 
 import java.util.Arrays;
+
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.GC;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -216,7 +219,7 @@ public final class SelectionProcessor {
 	};
 
 	private final Implementation COLUMN_IMPLEMENTATION= new Implementation() {
-		TextEdit replace(ISelection selection, String replacement) throws BadLocationException {
+		private TextEdit replace(ISelection selection, String replacement, boolean delete) throws BadLocationException {
 			try {
 				MultiTextEdit root;
 				IBlockTextSelection cts= (IBlockTextSelection)selection;
@@ -244,7 +247,7 @@ public final class SelectionProcessor {
 							lastDelim= index[0] + delimiters[index[1]].length();
 						}
 					}
-					TextEdit replace= createReplaceEdit(line, visualStartColumn, visualEndColumn, string);
+					TextEdit replace= createReplaceEdit(line, visualStartColumn, visualEndColumn, string, delete);
 					root.addChild(replace);
 				}
 				while (lastDelim != -1) {
@@ -261,7 +264,7 @@ public final class SelectionProcessor {
 					endLine++;
 					TextEdit edit;
 					if (endLine < fDocument.getNumberOfLines()) {
-						edit= createReplaceEdit(endLine, visualStartColumn, visualEndColumn, string);
+						edit= createReplaceEdit(endLine, visualStartColumn, visualEndColumn, string, delete);
 					} else {
 						// insertion reaches beyond the last line
 						int insertLocation= root.getExclusiveEnd();
@@ -279,6 +282,10 @@ public final class SelectionProcessor {
 				Assert.isTrue(false);
 				return null;
 			}
+		}
+
+		TextEdit replace(ISelection selection, String replacement) throws BadLocationException {
+			return replace(selection, replacement, false);
 		}
 
 		String getText(ISelection selection) throws BadLocationException {
@@ -321,7 +328,7 @@ public final class SelectionProcessor {
 				IBlockTextSelection cts= (IBlockTextSelection)selection;
 				selection= new BlockTextSelection(fDocument, cts.getStartLine(), cts.getStartColumn(), cts.getEndLine(), cts.getEndColumn() + 1, fTabWidth);
 			}
-			return replace(selection, ""); //$NON-NLS-1$
+			return replace(selection, "", true); //$NON-NLS-1$
 		}
 
 		TextEdit backspace(ISelection selection) throws BadLocationException {
@@ -392,7 +399,7 @@ public final class SelectionProcessor {
 			return ts.getEndLine() - ts.getStartLine() + 1;
 		}
 
-		private TextEdit createReplaceEdit(int line, int visualStartColumn, int visualEndColumn, String replacement) throws BadLocationException {
+		private TextEdit createReplaceEdit(int line, int visualStartColumn, int visualEndColumn, String replacement, boolean delete) throws BadLocationException {
 			IRegion info= fDocument.getLineInformation(line);
 			int lineLength= info.getLength();
 			String content= fDocument.get(info.getOffset(), lineLength);
@@ -400,11 +407,30 @@ public final class SelectionProcessor {
 			int endColumn= -1;
 			int visual= 0;
 			for (int offset= 0; offset < lineLength; offset++) {
-				if (startColumn == -1 && visual >= visualStartColumn)
-					startColumn= offset;
-				if (visual >= visualEndColumn) {
-					endColumn= offset;
-					break;
+				if (startColumn == -1) {
+					if (visual == visualStartColumn)
+						if (!delete && isWider(content.charAt(offset), visual) && replacement.length() == 0)
+							startColumn= offset - 1;
+						else
+							startColumn= offset;
+					else if (visual > visualStartColumn) {
+						if (isWider(content.charAt(offset - 1), visual))
+							startColumn= offset - 1;
+						else
+							startColumn= offset;
+					}
+				}
+				if (startColumn != -1) {
+					if (visual == visualEndColumn) {
+						endColumn= offset;
+						break;
+					} else if (visual > visualEndColumn) {
+						if (!delete && isWider(content.charAt(offset - 1), visual))
+							endColumn= offset - 1;
+						else
+							endColumn= offset;
+						break;
+					}
 				}
 				visual+= visualSizeIncrement(content.charAt(offset), visual);
 			}
@@ -476,6 +502,10 @@ public final class SelectionProcessor {
 			return lineLength + Math.max(0, visualColumn - visual);
 		}
 
+		private boolean isWider(char character, int visual) {
+			return visualSizeIncrement(character, visual) > 1;
+		}
+
 		/**
 		 * Returns the increment in visual length represented by <code>character</code> given the
 		 * current visual length. The visual length is <code>1</code> unless <code>character</code>
@@ -487,6 +517,18 @@ public final class SelectionProcessor {
 		 *         <code>[0,fTabWidth]</code>
 		 */
 		private int visualSizeIncrement(char character, int visual) {
+			if (character > 255 && fStyledText != null) {
+				GC gc= null;
+				try {
+					gc= new GC(fStyledText);
+					int charWidth= gc.stringExtent(new String(Character.toString(character))).x;
+					int singleCharWidth= gc.stringExtent(" ").x; //$NON-NLS-1$
+					return (int)Math.ceil(charWidth / singleCharWidth);
+				} finally {
+					if (gc != null)
+						gc.dispose();
+				}
+			}
 			if (character != '\t')
 				return 1;
 			if (fTabWidth <= 0)
@@ -503,6 +545,8 @@ public final class SelectionProcessor {
 
 	private ISelectionProvider fSelectionProvider;
 
+	private StyledText fStyledText;
+
 	/**
 	 * Creates a new processor on the given viewer.
 	 * 
@@ -515,6 +559,7 @@ public final class SelectionProcessor {
 			fRewriteTarget= ext.getRewriteTarget();
 		}
 		fSelectionProvider= viewer.getSelectionProvider();
+		fStyledText= viewer.getTextWidget();
 	}
 
 	/**
