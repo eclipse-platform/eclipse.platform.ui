@@ -1363,20 +1363,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return actionBars;
 	}
 
-	/**
-	 * Returns the active page.
-	 * 
-	 * @return the active page
-	 */
 	public IWorkbenchPage getActivePage() {
 		return page;
 	}
 
-	/**
-	 * Returns an array of the pages in the workbench window.
-	 * 
-	 * @return an array of pages
-	 */
 	public IWorkbenchPage[] getPages() {
 		return page == null ? new IWorkbenchPage[0] : new IWorkbenchPage[] { page };
 	}
@@ -1696,13 +1686,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 	}
 
-	/**
-	 * Sets the active page within the window.
-	 * 
-	 * @param in
-	 *            identifies the new active page, or <code>null</code> for no
-	 *            active page
-	 */
 	public void setActivePage(final IWorkbenchPage in) {
 		if (getActivePage() != in) {
 			if (in == null) {
