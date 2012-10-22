@@ -183,6 +183,23 @@ public class MinMaxAddon {
 		}
 
 		public void mouseDown(MouseEvent e) {
+			// HACK! If this is an empty stack treat it as though it was the editor area
+			// and tear down any open trim stacks (see bug 384814)
+			CTabFolder ctf = (CTabFolder) e.widget;
+			MUIElement element = (MUIElement) ctf.getData(AbstractPartRenderer.OWNING_ME);
+			if (element instanceof MPartStack && ctf.getItemCount() == 0) {
+				MWindow window = modelService.getTopLevelWindowFor(element);
+				if (window != null) {
+					List<MToolControl> tcList = modelService.findElements(window, null,
+							MToolControl.class, null);
+					for (MToolControl tc : tcList) {
+						if (tc.getObject() instanceof TrimStack) {
+							TrimStack ts = (TrimStack) tc.getObject();
+							ts.showStack(false);
+						}
+					}
+				}
+			}
 		}
 
 		private MUIElement getElementToChange(MouseEvent event) {
@@ -205,6 +222,10 @@ public class MinMaxAddon {
 			if (e.button == 1) {
 				CTabFolder ctf = (CTabFolder) e.widget;
 				if (!ctf.getMaximizeVisible())
+					return;
+
+				// Only fire if we're in the 'tab' area
+				if (e.y > ctf.getTabHeight())
 					return;
 
 				MUIElement elementToChange = getElementToChange(e);
