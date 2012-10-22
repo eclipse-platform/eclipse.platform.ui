@@ -1620,7 +1620,16 @@ public final class Workbench extends EventManager implements IWorkbench {
 		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS.equals(event.getProperty())) {
-					e4Context.set(IPresentationEngine.ANIMATIONS_ENABLED, event.getNewValue());
+					Object o = event.getNewValue();
+					if (o instanceof Boolean) {
+						// Boolean if notified after the preference page has
+						// been closed
+						e4Context.set(IPresentationEngine.ANIMATIONS_ENABLED, o);
+					} else if (o instanceof String) {
+						// String if notified via an import of the preference
+						e4Context.set(IPresentationEngine.ANIMATIONS_ENABLED,
+								Boolean.parseBoolean((String) event.getNewValue()));
+					}
 				}
 			}
 		});
