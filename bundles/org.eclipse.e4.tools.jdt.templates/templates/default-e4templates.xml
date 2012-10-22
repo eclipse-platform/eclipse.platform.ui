@@ -66,4 +66,11 @@ public void preDestroy() {
 ${imp:import(javax.annotation.PreDestroy)}
 </template>
 
+<template name="Execute" description="Creates Execute method" id="org.eclipse.e4.tools.jdt.templates.execute" context="e4-members" enabled="true" autoinsert="false">@Execute
+public void execute() {
+}
+${imp:import(org.eclipse.e4.core.di.annotations.Execute)}
+</template>
+
+
 </templates>
