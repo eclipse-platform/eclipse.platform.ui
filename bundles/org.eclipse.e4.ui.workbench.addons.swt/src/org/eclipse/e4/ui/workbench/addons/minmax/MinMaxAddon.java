@@ -224,6 +224,10 @@ public class MinMaxAddon {
 				if (!ctf.getMaximizeVisible())
 					return;
 
+				// Only fire if we're in the 'tab' area
+				if (e.y > ctf.getTabHeight())
+					return;
+
 				MUIElement elementToChange = getElementToChange(e);
 				if (!elementToChange.getTags().contains(MAXIMIZED)) {
 					setState(elementToChange, MAXIMIZED);
