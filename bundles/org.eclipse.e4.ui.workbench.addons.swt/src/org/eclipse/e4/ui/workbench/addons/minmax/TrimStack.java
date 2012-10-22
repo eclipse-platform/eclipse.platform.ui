@@ -581,6 +581,7 @@ public class TrimStack {
 				restoreItem.addListener(SWT.Selection, new Listener() {
 					public void handleEvent(Event event) {
 						minimizedElement.getTags().remove(IPresentationEngine.MINIMIZED);
+						partService.activate(menuPart);
 					}
 				});
 
