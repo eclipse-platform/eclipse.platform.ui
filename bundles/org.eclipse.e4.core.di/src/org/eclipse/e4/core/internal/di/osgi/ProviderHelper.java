@@ -60,8 +60,10 @@ public class ProviderHelper {
 				ServiceReference[] refs = bundleContext.getServiceReferences(ExtendedObjectSupplier.SERVICE_NAME, filter);
 				if (refs != null && refs.length > 0) {
 					ExtendedObjectSupplier supplier = (ExtendedObjectSupplier) bundleContext.getService(refs[0]);
-					IInjector injector = InjectorFactory.getDefault();
-					injector.inject(supplier, objectSupplier);
+					if (objectSupplier != null) {
+						IInjector injector = InjectorFactory.getDefault();
+						injector.inject(supplier, objectSupplier);
+					}
 					extendedSuppliers.put(qualifier, supplier);
 					return supplier;
 				}

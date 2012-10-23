@@ -160,4 +160,12 @@ public interface IInjector {
 	 */
 	public IBinding addBinding(IBinding binding);
 
+	/**
+	 * Specifies object supplier to inject internally created objects,
+	 * such as extended object suppliers.
+	 * @param objectSupplier the object supplier used to inject objects
+	 * implicitly created by this injector
+	 * @since 1.2
+	 */
+	public void setDefaultSupplier(PrimaryObjectSupplier objectSupplier);
 }
