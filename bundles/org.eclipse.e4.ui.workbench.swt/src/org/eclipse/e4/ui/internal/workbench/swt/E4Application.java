@@ -236,6 +236,10 @@ public class E4Application implements IApplication {
 		// Set the app's context after adding itself
 		appContext.set(MApplication.class.getName(), appModel);
 
+		// This context will be used by the injector for its
+		// extended data suppliers
+		ContextInjectionFactory.setDefault(appContext);
+
 		// adds basic services to the contexts
 		initializeServices(appModel);
 

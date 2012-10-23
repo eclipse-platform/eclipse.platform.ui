@@ -145,6 +145,7 @@ public class InjectionEventTest extends TestCase {
 				d.asyncExec(runnable);
 			}
 		});
+		ContextInjectionFactory.setDefault(context);
 		InjectTarget target = ContextInjectionFactory.make(InjectTarget.class,
 				context);
 
