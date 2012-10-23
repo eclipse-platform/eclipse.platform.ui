@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,12 @@ import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.internal.net.ProxyType;
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
+
 import org.eclipse.core.runtime.CoreException;
 
 public class NetTest extends TestCase {
+
+	private static final boolean BUG_338097= true;
 
 	private boolean isSetEnabled;
 	private boolean isProxiesDefault;
@@ -395,6 +398,9 @@ public class NetTest extends TestCase {
 	}
 
 	public void testBug257503() throws CoreException {
+		if (BUG_338097)
+			return;
+
 		setDataTest(IProxyData.HTTP_PROXY_TYPE);
 		setDataTest(IProxyData.HTTPS_PROXY_TYPE);
 		setDataTest(IProxyData.SOCKS_PROXY_TYPE);
