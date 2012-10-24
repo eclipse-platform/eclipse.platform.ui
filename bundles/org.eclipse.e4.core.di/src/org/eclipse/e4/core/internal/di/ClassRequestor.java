@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,29 @@ public class ClassRequestor extends Requestor {
 		tmp.append('.');
 		tmp.append(pseudoVariable);
 		return tmp.toString();
+	}
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((clazzName == null) ? 0 : clazzName.hashCode());
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ClassRequestor other = (ClassRequestor) obj;
+		if (clazzName == null) {
+			if (other.clazzName != null)
+				return false;
+		} else if (!clazzName.equals(other.clazzName))
+			return false;
+		return true;
 	}
 
 }

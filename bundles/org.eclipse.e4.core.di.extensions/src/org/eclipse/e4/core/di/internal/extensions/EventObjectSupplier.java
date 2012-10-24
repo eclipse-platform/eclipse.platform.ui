@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,6 +157,8 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 
 		if (track)
 			subscribe(topic, eventAdmin, requestor);
+		else
+			unsubscribe(requestor);
 
 		if (!currentEvents.containsKey(topic))
 			return IInjector.NOT_A_VALUE;
@@ -205,12 +207,14 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 	}
 
 	protected void unsubscribe(IRequestor requestor) {
+		if (requestor == null)
+			return;
 		synchronized (registrations) {
 			Iterator<Entry<Subscriber, ServiceRegistration>> i = registrations.entrySet().iterator();
 			while (i.hasNext()) {
 				Entry<Subscriber, ServiceRegistration> entry = i.next();
 				Subscriber key = entry.getKey();
-				if (key.getRequestor() != requestor)
+				if (!requestor.equals(key.getRequestor()))
 					continue;
 				ServiceRegistration registration = entry.getValue();
 				registration.unregister();

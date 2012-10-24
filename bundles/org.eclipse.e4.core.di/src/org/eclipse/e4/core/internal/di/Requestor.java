@@ -157,4 +157,38 @@ abstract public class Requestor implements IRequestor {
 		actualArgs = null;
 		return;
 	}
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (groupUpdates ? 1231 : 1237);
+		result = prime * result + ((injector == null) ? 0 : injector.hashCode());
+		result = prime * result + (isOptional ? 1231 : 1237);
+		result = prime * result + ((primarySupplier == null) ? 0 : primarySupplier.hashCode());
+		Object refObject = getRequestingObject();
+		result = prime * result + ((refObject == null) ? 0 : refObject.hashCode());
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Requestor other = (Requestor) obj;
+		if (groupUpdates != other.groupUpdates)
+			return false;
+		if (injector != other.injector)
+			return false;
+		if (isOptional != other.isOptional)
+			return false;
+		if (primarySupplier != other.primarySupplier)
+			return false;
+		if (getRequestingObject() != other.getRequestingObject())
+			return false;
+		return true;
+	}
+
 }

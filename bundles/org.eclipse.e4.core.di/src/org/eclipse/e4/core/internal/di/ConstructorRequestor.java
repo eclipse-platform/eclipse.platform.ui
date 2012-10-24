@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,29 @@ public class ConstructorRequestor extends Requestor {
 		tmp.append('(');
 		tmp.append(')');
 		return tmp.toString();
+	}
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((constructor == null) ? 0 : constructor.hashCode());
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConstructorRequestor other = (ConstructorRequestor) obj;
+		if (constructor == null) {
+			if (other.constructor != null)
+				return false;
+		} else if (!constructor.equals(other.constructor))
+			return false;
+		return true;
 	}
 
 }
