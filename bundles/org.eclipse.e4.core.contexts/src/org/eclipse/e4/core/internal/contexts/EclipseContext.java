@@ -93,6 +93,7 @@ public class EclipseContext implements IEclipseContext {
 	private ReferenceQueue<Object> referenceQueue = new ReferenceQueue<Object>();
 
 	private Map<Reference<?>, TrackableComputationExt> activeComputations = Collections.synchronizedMap(new HashMap<Reference<?>, TrackableComputationExt>());
+	private Set<TrackableComputationExt> activeRATs = Collections.synchronizedSet(new HashSet<TrackableComputationExt>());
 
 	private final static Object[] nullArgs = new Object[] {null};
 
@@ -160,6 +161,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 
 		activeComputations.clear();
+		activeRATs.clear();
 
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
 		Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
@@ -305,12 +307,15 @@ public class EclipseContext implements IEclipseContext {
 			Reference<Object> ref = computation.getReference();
 			if (ref != null)
 				activeComputations.put(ref, computation);
+			else
+				activeRATs.add(computation);
 		}
 	}
 
 	public void removeRAT(Computation computation) {
 		// remove from listeners
 		weakListeners.remove(computation);
+		activeRATs.remove(computation);
 	}
 
 	protected void processScheduled(Set<Scheduled> scheduledList) {

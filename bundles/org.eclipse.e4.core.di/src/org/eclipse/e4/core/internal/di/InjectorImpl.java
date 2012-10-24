@@ -77,6 +77,8 @@ public class InjectorImpl implements IInjector {
 
 	private Set<Class<?>> classesBeingCreated = new HashSet<Class<?>>(5);
 
+	private PrimaryObjectSupplier defaultSupplier;
+
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) {
 		inject(object, objectSupplier, null);
 	}
@@ -534,7 +536,7 @@ public class InjectorImpl implements IInjector {
 			ExtendedObjectSupplier supplier;
 			try {
 				// use qualified name to refer to a class that might be missing
-				supplier = org.eclipse.e4.core.internal.di.osgi.ProviderHelper.findProvider(key, objectSupplier);
+				supplier = org.eclipse.e4.core.internal.di.osgi.ProviderHelper.findProvider(key, defaultSupplier);
 			} catch (NoClassDefFoundError e) {
 				return null; // OSGi framework not present 
 			}
@@ -858,6 +860,10 @@ public class InjectorImpl implements IInjector {
 			requestor.setResolvedArgs(actualArgs);
 			requestor.execute();
 		}
+	}
+
+	public void setDefaultSupplier(PrimaryObjectSupplier objectSupplier) {
+		defaultSupplier = objectSupplier;
 	}
 
 }

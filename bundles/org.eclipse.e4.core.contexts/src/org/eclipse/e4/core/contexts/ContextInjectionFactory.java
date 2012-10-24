@@ -184,4 +184,16 @@ final public class ContextInjectionFactory {
 		PrimaryObjectSupplier tempSupplier = ContextObjectSupplier.getObjectSupplier(staticContext, injector);
 		return injector.make(clazz, supplier, tempSupplier);
 	}
+
+	/**
+	 * Specifies context used by the injector to create its internal objects.
+	 * Providing this context allows injector to become aware of higher-level
+	 * constructs, such as application logging and synchronization. 
+	 * @param context the context to be used as a data source by the injector
+	 * @since 1.2
+	 */
+	static public void setDefault(IEclipseContext context) {
+		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
+		injector.setDefaultSupplier(supplier);
+	}
 }
