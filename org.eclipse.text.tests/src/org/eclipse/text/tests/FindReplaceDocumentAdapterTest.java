@@ -20,8 +20,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
@@ -29,7 +27,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
 /**
- * Tests the FindReplaceDocumentAdapter.
+ * Tests the FindRepla ceDocumentAdapter.
  *
  * @since 3.1
  */
@@ -448,7 +446,7 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 	public void testRegexFindStackOverflow_fail() throws Exception {
 		// test for https://bugs.eclipse.org/bugs/show_bug.cgi?id=102699
 		
-		if (BUG_392594 && Platform.OS_MACOSX.equals(Platform.getOS()))
+		if (BUG_392594 && System.getProperty("os.name").indexOf("Mac") != -1)
 			return; // VM crash on the Mac, see https://bugs.eclipse.org/392594
 		
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
