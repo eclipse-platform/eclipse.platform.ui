@@ -32,7 +32,7 @@ import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Tests {@link org.eclipse.debug.core.DebugPlugin#parseArguments(String)} and
- * {@link org.eclipse.debug.core.DebugPlugin#renderCommandLine(String[], int[])}.
+ * {@link org.eclipse.debug.core.DebugPlugin#renderArguments(String[], int[])}.
  */
 public class ArgumentParsingTests extends TestCase {
 	
@@ -105,6 +105,7 @@ public class ArgumentParsingTests extends TestCase {
 
 	private static ArrayList runCommandLine(String[] execArgs)
 			throws CoreException, IOException {
+		execArgs = quoteWindowsArgs(execArgs);
 		Process process = DebugPlugin.exec(execArgs, null);
 		BufferedReader procOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
@@ -114,6 +115,40 @@ public class ArgumentParsingTests extends TestCase {
 			procArgs.add(procArg);
 		}
 		return procArgs;
+	}
+	
+	private static String[] quoteWindowsArgs(String[] cmdLine) {
+		// see https://bugs.eclipse.org/387504#c13 , workaround for http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6511002
+		if (Platform.getOS().equals(Constants.OS_WIN32)) {
+			String[] winCmdLine = new String[cmdLine.length];
+			for (int i = 0; i < cmdLine.length; i++) {
+				winCmdLine[i] = winQuote(cmdLine[i]);
+			}
+			cmdLine = winCmdLine;
+		}
+		return cmdLine;
+	}
+	
+	
+	private static boolean needsQuoting(String s) {
+		int len = s.length();
+		if (len == 0) // empty string has to be quoted
+			return true;
+		for (int i = 0; i < len; i++) {
+			switch (s.charAt(i)) {
+				case ' ': case '\t': case '\\': case '"':
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private static String winQuote(String s) {
+		if (! needsQuoting(s))
+			return s;
+		s = s.replaceAll("([\\\\]*)\"", "$1$1\\\\\""); //$NON-NLS-1$ //$NON-NLS-2$
+		s = s.replaceAll("([\\\\]*)\\z", "$1$1"); //$NON-NLS-1$ //$NON-NLS-2$
+		return "\"" + s + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	// -- tests:
