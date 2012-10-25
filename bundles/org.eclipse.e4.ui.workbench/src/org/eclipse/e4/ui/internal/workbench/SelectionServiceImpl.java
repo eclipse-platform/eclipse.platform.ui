@@ -30,6 +30,10 @@ public class SelectionServiceImpl implements ESelectionService {
 		context.set(SelectionAggregator.OUT_SELECTION, selection);
 	}
 
+	public void setPostSelection(Object selection) {
+		context.set(SelectionAggregator.OUT_POST_SELECTION, selection);
+	}
+
 	public Object getSelection() {
 		return getServiceAggregator().getSelection();
 	}
@@ -52,6 +56,22 @@ public class SelectionServiceImpl implements ESelectionService {
 
 	public void removeSelectionListener(String partId, ISelectionListener listener) {
 		getServiceAggregator().removeSelectionListener(partId, listener);
+	}
+
+	public void addPostSelectionListener(ISelectionListener listener) {
+		getServiceAggregator().addPostSelectionListener(listener);
+	}
+
+	public void removePostSelectionListener(ISelectionListener listener) {
+		getServiceAggregator().removePostSelectionListener(listener);
+	}
+
+	public void addPostSelectionListener(String partId, ISelectionListener listener) {
+		getServiceAggregator().addPostSelectionListener(partId, listener);
+	}
+
+	public void removePostSelectionListener(String partId, ISelectionListener listener) {
+		getServiceAggregator().removePostSelectionListener(partId, listener);
 	}
 
 	private SelectionAggregator getServiceAggregator() {

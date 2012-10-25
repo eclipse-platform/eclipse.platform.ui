@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,8 @@ public interface ESelectionService {
 
 	public void setSelection(Object selection);
 
+	public void setPostSelection(Object selection);
+
 	public Object getSelection();
 
 	public Object getSelection(String partId);
@@ -39,4 +41,12 @@ public interface ESelectionService {
 	public void addSelectionListener(String partId, ISelectionListener listener);
 
 	public void removeSelectionListener(String partId, ISelectionListener listener);
+
+	public void addPostSelectionListener(ISelectionListener listener);
+
+	public void removePostSelectionListener(ISelectionListener listener);
+
+	public void addPostSelectionListener(String partId, ISelectionListener listener);
+
+	public void removePostSelectionListener(String partId, ISelectionListener listener);
 }
