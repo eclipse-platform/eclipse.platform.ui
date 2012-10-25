@@ -349,11 +349,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 */
 	private void interpretRetainCase(StringBuffer buf, char ch) {
 		if (fRetainCaseMode == RC_UPPER)
-			buf.append(Character.toUpperCase(ch));
+			buf.append(String.valueOf(ch).toUpperCase());
 		else if (fRetainCaseMode == RC_LOWER)
-			buf.append(Character.toLowerCase(ch));
+			buf.append(String.valueOf(ch).toLowerCase());
 		else if (fRetainCaseMode == RC_FIRSTUPPER) {
-			buf.append(Character.toUpperCase(ch));
+			buf.append(String.valueOf(ch).toUpperCase());
 			fRetainCaseMode= RC_MIXED;
 		} else
 			buf.append(ch);

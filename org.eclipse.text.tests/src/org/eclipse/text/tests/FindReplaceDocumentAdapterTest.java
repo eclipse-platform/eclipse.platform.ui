@@ -13,6 +13,7 @@
 package org.eclipse.text.tests;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.regex.PatternSyntaxException;
 
 import junit.framework.Assert;
@@ -311,6 +312,24 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		fDocument.set("FOO");
 		regexReplace("FOO", "xyz\\Cna\\u00EFve\\xFF", findReplaceDocumentAdapter);
 		assertEquals("xyzNA\u00CFVE\u0178", fDocument.get());
+
+		fDocument.set("A");
+		regexReplace("A", "\\Ci", findReplaceDocumentAdapter);
+		assertEquals("I", fDocument.get());
+
+		Locale currentLocale= Locale.getDefault();
+		try {
+			Locale.setDefault(new Locale("tr"));
+			fDocument.set("A");
+			regexReplace("A", "\\Ci", findReplaceDocumentAdapter);
+			assertEquals("\u0130", fDocument.get());
+
+			fDocument.set("a");
+			regexReplace("a", "\\CI", findReplaceDocumentAdapter);
+			assertEquals("\u0131", fDocument.get());
+		} finally {
+			Locale.setDefault(currentLocale);
+		}
 	}
 
 	private void regexReplace(String find, String replace, FindReplaceDocumentAdapter findReplaceDocumentAdapter) throws BadLocationException {
