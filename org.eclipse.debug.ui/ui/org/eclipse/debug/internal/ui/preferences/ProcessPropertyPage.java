@@ -99,15 +99,35 @@ public class ProcessPropertyPage extends PropertyPage {
 			if (count > 1) {
 				// render as one argument per line, but don't copy line delimiters to clipboard:
 				final int[] segments = new int[count - 1];
-				final char[] chars = new char[count - 1];
-				Arrays.fill(chars, '\n');
-				
 				commandLineText = DebugPlugin.renderArguments(arguments, segments);
 				
 				styledText.addBidiSegmentListener(new BidiSegmentListener() {
 					public void lineGetSegments(BidiSegmentEvent event) {
-						event.segments = segments;
-						event.segmentsChars = chars;
+						int offset = event.lineOffset;
+						int end = offset + event.lineText.length();
+						
+						// extract segments for the current line:
+						int iStart = Arrays.binarySearch(segments, offset);
+						if (iStart < 0) {
+							iStart = -iStart - 1;
+						}
+						int i = iStart;
+						while (i < segments.length && segments[i] < end) {
+							i++;
+						}
+						int n = i - iStart;
+						if (n > 0) {
+							if (n == segments.length) {
+								event.segments = segments;
+							} else {
+								int[] lineSegments = new int[n];
+								System.arraycopy(segments, iStart, lineSegments, 0, n);
+								event.segments = lineSegments;
+							}
+							final char[] chars = new char[n];
+							Arrays.fill(chars, '\n');
+							event.segmentsChars = chars;
+						}
 					}
 				});
 			}
