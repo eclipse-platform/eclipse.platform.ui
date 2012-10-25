@@ -205,8 +205,6 @@ public class SelectionAggregator {
 
 				public boolean changed(IEclipseContext context) {
 					final Object selection = context.get(OUT_SELECTION);
-					final Object postSelection = context.get(OUT_POST_SELECTION);
-					context.set(OUT_POST_SELECTION, null); // make sure it's gone until set again
 					if (initial) {
 						initial = false;
 						if (selection == null) {
@@ -218,19 +216,13 @@ public class SelectionAggregator {
 						myContext.set(IServiceConstants.ACTIVE_SELECTION, selection);
 						runExternalCode(new Runnable() {
 							public void run() {
-								if (postSelection != null)
-									notifyPostListeners(part, selection);
-								else
-									notifyListeners(part, selection);
+								notifyListeners(part, selection);
 							}
 						});
 					} else {
 						runExternalCode(new Runnable() {
 							public void run() {
-								if (postSelection != null)
-									notifyTargetedPostListeners(part, selection);
-								else
-									notifyTargetedListeners(part, selection);
+								notifyTargetedListeners(part, selection);
 							}
 						});
 						// we don't need to keep tracking non-active parts unless
@@ -241,6 +233,40 @@ public class SelectionAggregator {
 						if (!continueTracking) {
 							tracked.remove(part.getContext());
 						}
+						return continueTracking;
+					}
+					return true;
+				}
+			});
+			context.runAndTrack(new RunAndTrack() {
+				private boolean initial = true;
+
+				public boolean changed(IEclipseContext context) {
+					final Object postSelection = context.get(OUT_POST_SELECTION);
+					if (initial) {
+						initial = false;
+						if (postSelection == null) {
+							return true;
+						}
+					}
+
+					if (activePart == part) {
+						runExternalCode(new Runnable() {
+							public void run() {
+								notifyPostListeners(part, postSelection);
+							}
+						});
+					} else {
+						runExternalCode(new Runnable() {
+							public void run() {
+								notifyTargetedPostListeners(part, postSelection);
+							}
+						});
+						// we don't need to keep tracking non-active parts unless
+						// they have targeted listeners
+						String partId = part.getElementId();
+						boolean continueTracking = targetedListeners.containsKey(partId)
+								|| targetedPostListeners.containsKey(partId);
 						return continueTracking;
 					}
 					return true;

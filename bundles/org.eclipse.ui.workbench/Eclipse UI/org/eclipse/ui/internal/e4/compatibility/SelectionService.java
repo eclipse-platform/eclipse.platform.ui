@@ -79,12 +79,6 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener postListener = new org.eclipse.e4.ui.workbench.modeling.ISelectionListener() {
 		public void selectionChanged(MPart part, Object selection) {
 			selection = createCompatibilitySelection(selection);
-			context.set(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
-
-			IEclipseContext applicationContext = application.getContext();
-			if (applicationContext.getActiveChild() == context) {
-				application.getContext().set(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
-			}
 
 			Object client = part.getObject();
 			if (client instanceof CompatibilityPart) {
@@ -123,6 +117,7 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 				}
 
 				notifyListeners(activePart.getSite().getId(), activePart, selection);
+				notifyPostSelectionListeners(activePart.getSite().getId(), activePart, selection);
 			}
 		}
 	}
