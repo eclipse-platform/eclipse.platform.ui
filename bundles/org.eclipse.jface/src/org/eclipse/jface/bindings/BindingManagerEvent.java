@@ -29,6 +29,8 @@ import org.eclipse.jface.util.Util;
  * @see IBindingManagerListener#bindingManagerChanged(BindingManagerEvent)
  */
 public final class BindingManagerEvent extends AbstractBitSetEvent {
+	
+	private final static TriggerSequence[] EMTPY_SEQUENCE = new TriggerSequence[0];
 
 	/**
 	 * The bit used to represent whether the map of active bindings has changed.
@@ -186,14 +188,14 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 			final Collection previousBindingCollection = (Collection) previousTriggersByParameterizedCommand
 					.get(parameterizedCommand);
 			if (previousBindingCollection == null) {
-				previousBindings = null;
+				previousBindings = EMTPY_SEQUENCE;
 			} else {
 				previousBindings = (TriggerSequence[]) previousBindingCollection
 						.toArray(new TriggerSequence[previousBindingCollection
 								.size()]);
 			}
 		} else {
-			previousBindings = null;
+			previousBindings = EMTPY_SEQUENCE;
 		}
 
 		return !Util.equals(currentBindings, previousBindings);
