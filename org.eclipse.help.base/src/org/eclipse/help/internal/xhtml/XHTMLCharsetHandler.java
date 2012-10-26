@@ -60,6 +60,8 @@ public class XHTMLCharsetHandler extends ProcessorHandler {
 		if ("div".equalsIgnoreCase(elementName)) return true; //$NON-NLS-1$
 		if ("script".equalsIgnoreCase(elementName)) return true; //$NON-NLS-1$
 		if ("textarea".equalsIgnoreCase(elementName)) return true; //$NON-NLS-1$
+		if ("iframe".equalsIgnoreCase(elementName)) return true; //$NON-NLS-1$
+		if ("title".equalsIgnoreCase(elementName)) return true; //$NON-NLS-1$
 		return false;
 	}
 }
