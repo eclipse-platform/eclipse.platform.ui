@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -49,15 +50,21 @@ public class BuildUtilities {
 	public static IProject[] extractProjects(Object[] selection) {
 		HashSet projects = new HashSet();
 		for (int i = 0; i < selection.length; i++) {
-			IResource resource = ResourceUtil.getResource(selection[i]);
+			Object element = selection[i];
+			IResource resource = ResourceUtil.getResource(element);
 			if (resource != null) {
 				projects.add(resource.getProject());
 			} else {
-				ResourceMapping mapping = ResourceUtil.getResourceMapping(selection[i]);
+				ResourceMapping mapping = ResourceUtil.getResourceMapping(element);
 				if (mapping != null) {
 					IProject[] theProjects = mapping.getProjects();					
-					for(int j=0; j < theProjects.length; j++) {
-						   projects.add(theProjects[j]);						
+					for (int j = 0; j < theProjects.length; j++) {
+						projects.add(theProjects[j]);
+					}
+				} else {
+					Object marker = ResourceUtil.getAdapter(element, IMarker.class, false);
+					if (marker instanceof IMarker) {
+						projects.add(((IMarker) marker).getResource().getProject());
 					}
 				}
 			}
