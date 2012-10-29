@@ -9,6 +9,7 @@
  *     Soyatec - initial API and implementation
  *     IBM Corporation - ongoing enhancements
  *     Sopot Cela - ongoing enhancements
+ *     Lars Vogel - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.project;
 
@@ -86,7 +87,12 @@ import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewProjectCreationOperation;
 import org.eclipse.pde.internal.ui.wizards.plugin.PluginFieldData;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
@@ -95,6 +101,7 @@ import org.osgi.framework.Version;
  */
 public class E4NewProjectWizard extends NewPluginProjectWizard {
 
+	private static final String MODEL_EDITOR_ID = "org.eclipse.e4.tools.emf.editor3x.e4wbm";
 	private static final String APPLICATION_MODEL = "Application.e4xmi";
 	private PluginFieldData fPluginData;
 	private NewApplicationWizardPage fApplicationPage;
@@ -218,6 +225,10 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 					new NullProgressMonitor());
 			// Add the product sources
 			adjustBuildPropertiesFile(fProjectProvider.getProject());
+			
+			// Open the model editor
+			openEditorForApplicationModel();
+			
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
@@ -226,6 +237,18 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			PDEPlugin.logException(e);
 		}
 		return false;
+	}
+
+	private void openEditorForApplicationModel() throws PartInitException {
+		IFile file = fProjectProvider.getProject().getFile(
+				APPLICATION_MODEL);
+		if (file != null) {
+			FileEditorInput input = new FileEditorInput(file);
+			IWorkbenchWindow window = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow();
+			IWorkbenchPage page = window.getActivePage();
+			page.openEditor(input, MODEL_EDITOR_ID);
+		}
 	}
 	
 	private void adjustBuildPropertiesFile(IProject project) throws CoreException {
