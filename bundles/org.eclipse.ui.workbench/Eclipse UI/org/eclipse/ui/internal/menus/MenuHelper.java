@@ -328,27 +328,23 @@ public class MenuHelper {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_TOOLTIP);
 	}
 
-	static String getIconPath(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-	}
-
-	static String getDisabledIconPath(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_DISABLEDICON);
-	}
-
-	static String getHoverIconPath(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_HOVERICON);
-	}
-
-	static String getIconUrl(IConfigurationElement element, String attr) {
+	public static String getIconURI(IConfigurationElement element, String attr) {
 		String iconPath = element.getAttribute(attr);
 		if (iconPath == null) {
 			return null;
 		}
 
+		// If iconPath doesn't specify a scheme, then try to transform to a URL
 		// RFC 3986: scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
 		// This allows using data:, http:, or other custom URL schemes
 		if (!iconPath.matches("\\p{Alpha}[\\p{Alnum}+.-]*:.*")) { //$NON-NLS-1$
+			// First attempt to resolve in ISharedImages (e.g. "IMG_OBJ_FOLDER")
+			// as per bug 291232 & AbstractUIPlugin.imageDescriptorFromPlugin().
+			ImageDescriptor d = WorkbenchPlugin.getDefault().getSharedImages()
+					.getImageDescriptor(iconPath);
+			if (d != null) {
+				return getImageUrl(d);
+			}
 			String extendingPluginId = element.getDeclaringExtension().getContributor().getName();
 			iconPath = "platform:/plugin/" + extendingPluginId + "/" + iconPath; //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -438,7 +434,7 @@ public class MenuHelper {
 		}
 		element.setVisibleWhen(getVisibleWhen(menuAddition));
 		element.setIconURI(MenuHelper
-				.getIconUrl(menuAddition, IWorkbenchRegistryConstants.ATT_ICON));
+				.getIconURI(menuAddition, IWorkbenchRegistryConstants.ATT_ICON));
 		element.setLabel(Util.safeString(text));
 
 		return element;
@@ -455,7 +451,7 @@ public class MenuHelper {
 				text = text.substring(0, idx) + '&' + text.substring(idx);
 			}
 		}
-		String iconUri = MenuHelper.getIconUrl(element, IWorkbenchRegistryConstants.ATT_ICON);
+		String iconUri = MenuHelper.getIconURI(element, IWorkbenchRegistryConstants.ATT_ICON);
 		final String cmdId = MenuHelper.getActionSetCommandId(element);
 
 		MCommand cmd = ContributionsAnalyzer.getCommandById(app, cmdId);
@@ -538,8 +534,8 @@ public class MenuHelper {
 				text = text.substring(0, idx) + '&' + text.substring(idx);
 			}
 		}
-		String iconUri = MenuHelper.getIconUrl(element, IWorkbenchRegistryConstants.ATT_ICON);
-		String disabledIconUri = MenuHelper.getIconUrl(element,
+		String iconUri = MenuHelper.getIconURI(element, IWorkbenchRegistryConstants.ATT_ICON);
+		String disabledIconUri = MenuHelper.getIconURI(element,
 				IWorkbenchRegistryConstants.ATT_DISABLEDICON);
 		MCommand cmd = ContributionsAnalyzer.getCommandById(app, cmdId);
 		if (cmd == null) {
