@@ -267,7 +267,17 @@ public class PluginContentPage extends ContentPage {
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fMainPage.updateData();
+			
+			boolean wasGenActivatorEnabled = fGenerateActivator.isEnabled();
 			fGenerateActivator.setEnabled(!fData.isSimple());
+			// if fGenerateActivator is disabled, set selection to false
+			if (!fGenerateActivator.isEnabled()) {
+				fGenerateActivator.setSelection(false);
+			}
+			// if the fGenerateActivator was disabled and is now enabled, then set the selection to true
+			else if (!wasGenActivatorEnabled) {
+				fGenerateActivator.setSelection(true);
+			}
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateActivator.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateActivator.getSelection());
 			boolean wasUIPluginEnabled = fUIPlugin.isEnabled();
@@ -341,7 +351,9 @@ public class PluginContentPage extends ContentPage {
 	 * @param settings
 	 */
 	public void saveSettings(IDialogSettings settings) {
-		settings.put(S_GENERATE_ACTIVATOR, !fGenerateActivator.getSelection());
+		if (fGenerateActivator.isEnabled()) {
+			settings.put(S_GENERATE_ACTIVATOR, !fGenerateActivator.getSelection());
+		}
 		if (fUIPlugin.isEnabled()) {
 			settings.put(S_UI_PLUGIN, !fUIPlugin.getSelection());
 		}
