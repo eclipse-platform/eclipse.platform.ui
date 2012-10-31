@@ -99,17 +99,6 @@ public class SelectionAggregator {
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) final MPart part) {
 		if ((part != null) && (activePart != part)) {
 			activePart = part;
-			IEclipseContext partContext = part.getContext();
-			// only notify listeners if the part actually posts selections
-			if (partContext.containsKey(OUT_POST_SELECTION)) {
-				Object selection = partContext.get(OUT_POST_SELECTION);
-				context.set(IServiceConstants.ACTIVE_SELECTION, selection);
-				notifyPostListeners(part, selection);
-			} else if (partContext.containsKey(OUT_SELECTION)) {
-				Object selection = partContext.get(OUT_SELECTION);
-				context.set(IServiceConstants.ACTIVE_SELECTION, selection);
-				notifyListeners(part, selection);
-			}
 			track(part);
 		}
 	}
