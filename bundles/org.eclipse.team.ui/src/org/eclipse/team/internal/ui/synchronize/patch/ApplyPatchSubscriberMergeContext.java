@@ -13,9 +13,8 @@ package org.eclipse.team.internal.ui.synchronize.patch;
 import org.eclipse.compare.internal.core.patch.FilePatch2;
 import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.internal.patch.WorkspacePatcher;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
@@ -98,22 +97,5 @@ public class ApplyPatchSubscriberMergeContext extends SubscriberMergeContext {
 	public void reject(IDiff diff, IProgressMonitor monitor)
 			throws CoreException {
 		// do nothing
-	}
-
-	public ISchedulingRule getMergeRule(IDiff diff) {
-		IResource resource = getDiffTree().getResource(diff);
-		IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace()
-				.getRuleFactory();
-		if (!resource.exists()) {
-			// for additions return rule for all parents that need to be created
-			IContainer parent = resource.getParent();
-			while (!parent.exists()) {
-				resource = parent;
-				parent = parent.getParent();
-			}
-			return ruleFactory.createRule(resource);
-		} else {
-			return super.getMergeRule(diff);
-		}
 	}
 }

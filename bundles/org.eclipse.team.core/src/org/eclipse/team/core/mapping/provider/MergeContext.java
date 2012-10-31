@@ -409,7 +409,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	}
 	
 	/**
-	 * Default implementation that returns the resource itself.
+	 * Default implementation that returns the resource itself if it exists
+	 * and the first existing parent if the resource does not exist.
 	 * Subclass should override to provide the appropriate rule.
 	 * @see org.eclipse.team.core.mapping.IMergeContext#getMergeRule(IDiff)
 	 */
@@ -418,6 +419,12 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
 		ISchedulingRule rule;
 		if (!resource.exists()) {
+			// for additions return rule for all parents that need to be created
+			IContainer parent = resource.getParent();
+			while (!parent.exists()) {
+				resource = parent;
+				parent = parent.getParent();
+			}
 			rule = ruleFactory.createRule(resource);
 		} else if (SyncInfoToDiffConverter.getRemote(diff) == null){
 			rule = ruleFactory.deleteRule(resource);
