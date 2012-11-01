@@ -233,7 +233,7 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
         return 
             update instanceof ChildrenCountUpdate && 
             getViewerInput().equals(update.getViewerInput()) && 
-            getElementPath().equals(getElementPath());
+            getElementPath().equals(update.getElementPath());
     }
     
     protected int doHashCode() {

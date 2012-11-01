@@ -224,7 +224,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
             ((ChildrenUpdate)update).getOffset() == getOffset() &&
             ((ChildrenUpdate)update).getLength() == getLength() &&
             getViewerInput().equals(update.getViewerInput()) && 
-            getElementPath().equals(getElementPath());
+            getElementPath().equals(update.getElementPath());
     }
 
     protected int doHashCode() {

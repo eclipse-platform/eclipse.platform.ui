@@ -151,7 +151,7 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
         return 
             update instanceof HasChildrenUpdate && 
             getViewerInput().equals(update.getViewerInput()) && 
-            getElementPath().equals(getElementPath());
+            getElementPath().equals(update.getElementPath());
     }
 
     protected int doHashCode() {
