@@ -615,4 +615,5 @@ public class Messages {
 	public String ObjectViewer_Script;
 
 	public String CommandWizard_ShellTitle;
+	public String VWindowSharedElementsEditor_AddPartStack;
 }

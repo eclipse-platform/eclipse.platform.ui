@@ -85,6 +85,13 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 				handleAdd(BasicPackageImpl.Literals.INPUT_PART);
 			}
 		});
+
+		actions.add(new Action(Messages.VWindowSharedElementsEditor_AddPartStack, createImageDescriptor(ResourceProvider.IMG_PartStack)) {
+			@Override
+			public void run() {
+				handleAdd(BasicPackageImpl.Literals.PART_STACK);
+			}
+		});
 	}
 
 	@Override
@@ -213,7 +220,7 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 					return eclass.getName();
 				}
 			});
-			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART });
+			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.PART_STACK });
 			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
