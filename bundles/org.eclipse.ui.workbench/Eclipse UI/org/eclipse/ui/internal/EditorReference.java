@@ -218,21 +218,31 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	}
 
 	private IEditorInput restoreInput(IMemento editorMem) throws PartInitException {
+		return createInput(editorMem);
+	}
+
+	public static IEditorInput createInput(IMemento editorMem)
+			throws PartInitException {
+		String editorId = editorMem.getString(IWorkbenchConstants.TAG_ID);
+
 		IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
+
+		String editorName = null;
 		String factoryID = null;
 		if (inputMem != null) {
+			editorName = inputMem.getString(IWorkbenchConstants.TAG_PATH);
 			factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 		}
 		if (factoryID == null) {
 			throw new PartInitException(NLS.bind(
-					WorkbenchMessages.EditorManager_no_input_factory_ID, getId(), getName()));
+					WorkbenchMessages.EditorManager_no_input_factory_ID, editorId, editorName));
 		}
 		IAdaptable input = null;
 		IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
 		if (factory == null) {
 			throw new PartInitException(NLS.bind(
 					WorkbenchMessages.EditorManager_bad_element_factory, new Object[] { factoryID,
-							getId(), getName() }));
+							editorId, editorName }));
 		}
 
 		// Get the input element.
@@ -240,12 +250,12 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		if (input == null) {
 			throw new PartInitException(NLS.bind(
 					WorkbenchMessages.EditorManager_create_element_returned_null, new Object[] {
-							factoryID, getId(), getName() }));
+							factoryID, editorId, editorName }));
 		}
 		if (!(input instanceof IEditorInput)) {
 			throw new PartInitException(NLS.bind(
 					WorkbenchMessages.EditorManager_wrong_createElement_result, new Object[] {
-							factoryID, getId(), getName() }));
+							factoryID, editorId, editorName }));
 		}
 		return (IEditorInput) input;
 	}
