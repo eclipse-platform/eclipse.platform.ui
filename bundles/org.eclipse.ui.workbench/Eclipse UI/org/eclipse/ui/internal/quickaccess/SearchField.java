@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -23,9 +24,13 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -90,6 +95,9 @@ public class SearchField {
 	private int dialogWidth = -1;
 	private Control previousFocusControl;
 
+	@Inject
+	private EPartService partService;
+
 	@PostConstruct
 	void createWidget(final Composite parent, MApplication application, MWindow window) {
 		this.window = window;
@@ -151,6 +159,22 @@ public class SearchField {
 					addPreviousPick(string, element);
 					text.setText(""); //$NON-NLS-1$
 					element.execute();
+
+					/*
+					 * By design, attempting to activate a part that is already
+					 * active does not change the focus. However in the case of
+					 * using Quick Access, focus is not in the active part, so
+					 * re-activating the active part results in focus being left
+					 * behind in the text field. If this happens then assign
+					 * focus to the active part explicitly.
+					 */
+					if (text.isFocusControl()) {
+						MPart activePart = partService.getActivePart();
+						if (activePart != null) {
+							ContextInjectionFactory.invoke(activePart.getObject(), Focus.class,
+									activePart.getContext(), null);
+						}
+					}
 				}
 			}
 		};
