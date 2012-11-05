@@ -109,6 +109,8 @@ public final class ContextService implements IContextService {
 		private String contextId;
 		private Expression expression;
 
+		private EvaluationResult cached = null;
+
 		public UpdateExpression(String contextId, Expression expression) {
 			this.contextId = contextId;
 			this.expression = expression;
@@ -122,7 +124,13 @@ public final class ContextService implements IContextService {
 			ExpressionContext ctx = new ExpressionContext(eclipseContext.getActiveLeaf());
 			try {
 				if (updating) {
-					if (expression.evaluate(ctx) != EvaluationResult.FALSE) {
+					EvaluationResult result = expression.evaluate(ctx);
+					if (cached != null
+							&& (cached == result || (cached != EvaluationResult.FALSE && result != EvaluationResult.FALSE))) {
+						return updating;
+					}
+					cached = result;
+					if (result != EvaluationResult.FALSE) {
 						runExternalCode(new Runnable() {
 							public void run() {
 								contextService.activateContext(contextId);
