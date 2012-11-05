@@ -11,14 +11,12 @@
 
 package org.eclipse.e4.ui.internal.services;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
-
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 
@@ -42,15 +40,18 @@ public class ContextContextService implements EContextService {
 	 * String)
 	 */
 	public void activateContext(String id) {
-		Set<String> locals = (Set<String>) eclipseContext
+		LinkedList<String> locals = (LinkedList<String>) eclipseContext
 				.getLocal(LOCAL_CONTEXTS);
 		if (locals == null) {
-			locals = new HashSet<String>();
+			locals = new LinkedList<String>();
 			locals.add(id);
 			eclipseContext.set(LOCAL_CONTEXTS, locals);
-		} else if (locals.add(id)) {
-			// copy the set so the change is propagated
-			eclipseContext.set(LOCAL_CONTEXTS, new HashSet<String>(locals));
+		} else {
+			boolean contained = locals.contains(id);
+			if (locals.add(id) && !contained) {
+				// copy the set so the change is propagated
+				eclipseContext.set(LOCAL_CONTEXTS, locals.clone());
+			}
 		}
 	}
 
@@ -62,12 +63,14 @@ public class ContextContextService implements EContextService {
 	 * .String)
 	 */
 	public void deactivateContext(String id) {
-		Set<String> locals = (Set<String>) eclipseContext
+		LinkedList<String> locals = (LinkedList<String>) eclipseContext
 				.getLocal(LOCAL_CONTEXTS);
 		if (locals != null && locals.remove(id)) {
-			// copy the set so the change is propagated
-			locals = new HashSet<String>(locals);
-			eclipseContext.set(LOCAL_CONTEXTS, locals);
+			boolean contained = locals.contains(id);
+			if (!contained) {
+				// copy the set so the change is propagated
+				eclipseContext.set(LOCAL_CONTEXTS, locals.clone());
+			}
 		}
 	}
 
