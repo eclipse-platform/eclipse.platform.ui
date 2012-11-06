@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.ui.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.ui.workbench" version="2">
     <resource path="Eclipse UI/org/eclipse/ui/IMemento.java" type="org.eclipse.ui.IMemento">
         <filter id="1209008130">
             <message_arguments>
@@ -16,10 +15,22 @@
                 <message_argument value="getEditorState(IEditorReference[])"/>
             </message_arguments>
         </filter>
+        <filter comment="Packported API to 3.8.2 from 4.2.2" id="1210056707">
+            <message_arguments>
+                <message_argument value="3.8.2"/>
+                <message_argument value="getEditorState(IEditorReference[], boolean)"/>
+            </message_arguments>
+        </filter>
         <filter id="1210056707">
             <message_arguments>
                 <message_argument value="3.8.2"/>
                 <message_argument value="openEditors(IEditorInput[], String[], IMemento[], int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Packported API to 3.8.2 from 4.2.2" id="1210056707">
+            <message_arguments>
+                <message_argument value="3.8.2"/>
+                <message_argument value="openEditors(IEditorInput[], String[], IMemento[], int, int)"/>
             </message_arguments>
         </filter>
     </resource>
