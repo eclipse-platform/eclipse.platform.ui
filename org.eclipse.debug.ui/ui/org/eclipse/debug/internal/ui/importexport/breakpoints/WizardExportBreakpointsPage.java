@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Valentin Ciocoi - Bug 393700 - [Export breakpoints] Wrong file appears in overwrite dialog and wrong file can be overwritten
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.importexport.breakpoints;
@@ -73,7 +74,6 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	private Button fOverwriteExistingFilesCheckbox = null;
 	private Text fDestinationNameField = null;
 	private Button fDestinationBrowseButton = null;
-	private IPath fPath = null;
 	private EmbeddedBreakpointsViewer fTView = null;
 	private IStructuredSelection fSelection = null;
 	private Button fSelectAll = null;
@@ -153,16 +153,16 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		dialog.setText(ImportExportMessages.WizardExportBreakpoints_0);
 		String file = dialog.open();
 		if(file != null) {
-			fPath = new Path(file);
-			if (fPath != null) {
+			IPath path = new Path(file);
+			if (path != null) {
 				setErrorMessage(null);
-				if(fPath.getFileExtension() == null) {
-					fPath = fPath.addFileExtension(IImportExportConstants.EXTENSION);  
+				if(path.getFileExtension() == null) {
+					path = path.addFileExtension(IImportExportConstants.EXTENSION);  
 				}
-				else if(!fPath.getFileExtension().equals(IImportExportConstants.EXTENSION)) { 
-					fPath = fPath.addFileExtension(IImportExportConstants.EXTENSION); 
+				else if(!path.getFileExtension().equals(IImportExportConstants.EXTENSION)) { 
+					path = path.addFileExtension(IImportExportConstants.EXTENSION); 
 				}
-				fDestinationNameField.setText(fPath.toString());
+				fDestinationNameField.setText(path.toString());
 			}
 		}
 	}
@@ -296,19 +296,16 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	 */
 	public boolean finish() {
 		try {
-			//name typed in without using selection box
-			if(fPath == null) {
-				fPath = new Path(fDestinationNameField.getText().trim());
-				if(fPath.getFileExtension() == null) {
-					fPath = fPath.addFileExtension(IImportExportConstants.EXTENSION);  
-				}
-				else if(!fPath.getFileExtension().equals(IImportExportConstants.EXTENSION)) { 
-					fPath = fPath.addFileExtension(IImportExportConstants.EXTENSION); 
-				}
+			IPath path = new Path(fDestinationNameField.getText().trim());
+			if(path.getFileExtension() == null) {
+				path = path.addFileExtension(IImportExportConstants.EXTENSION);  
+			}
+			else if(!path.getFileExtension().equals(IImportExportConstants.EXTENSION)) { 
+				path = path.addFileExtension(IImportExportConstants.EXTENSION); 
 			}
 			saveWidgetState();
-			if(fPath.toFile().exists() && !fOverwriteExistingFilesCheckbox.getSelection()) {
-				if (!MessageDialog.openQuestion(null, ImportExportMessages.WizardBreakpointsPage_12, MessageFormat.format(ImportExportMessages.ImportExportOperations_0, new String[] {fPath.toPortableString()}))) {
+			if(path.toFile().exists() && !fOverwriteExistingFilesCheckbox.getSelection()) {
+				if (!MessageDialog.openQuestion(null, ImportExportMessages.WizardBreakpointsPage_12, MessageFormat.format(ImportExportMessages.ImportExportOperations_0, new String[] {path.toPortableString()}))) {
 					return false;
 				}
 			}
@@ -325,7 +322,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 					true, 
 					new ExportBreakpointsOperation(
 							(IBreakpoint[]) breakpoints.toArray(new IBreakpoint[breakpoints.size()]), 
-							fPath.toOSString()));
+							path.toOSString()));
 		}
 		catch (InterruptedException e) {
 			DebugPlugin.log(e);
