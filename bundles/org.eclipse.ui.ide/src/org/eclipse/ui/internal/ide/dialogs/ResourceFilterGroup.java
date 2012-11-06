@@ -2657,8 +2657,6 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		Class selectedKeyOperatorType = FileInfoAttributesMatcher.getTypeForKey(selectedKey, selectedOperator);
 		
 		if (intiantiatedKeyOperatorType != null) {
-			if (intiantiatedKeyOperatorType.equals(selectedKeyOperatorType))
-				return;
 			if (arguments != null) {
 				arguments.dispose();
 				arguments = null;
