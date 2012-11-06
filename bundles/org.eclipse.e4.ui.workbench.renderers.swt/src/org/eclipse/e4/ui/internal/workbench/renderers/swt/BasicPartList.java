@@ -46,9 +46,9 @@ public class BasicPartList extends AbstractTableInformationControl {
 		public String getText(Object element) {
 			if (element instanceof MDirtyable
 					&& ((MDirtyable) element).isDirty()) {
-				return "*" + ((MUILabel) element).getLabel(); //$NON-NLS-1$
+				return "*" + ((MUILabel) element).getLocalizedLabel(); //$NON-NLS-1$
 			}
-			return ((MUILabel) element).getLabel();
+			return ((MUILabel) element).getLocalizedLabel();
 		}
 
 		public Image getImage(Object element) {
@@ -60,7 +60,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 		}
 
 		public String getToolTipText(Object element) {
-			return ((MUILabel) element).getTooltip();
+			return ((MUILabel) element).getLocalizedTooltip();
 		}
 
 		public boolean useNativeToolTip(Object object) {
