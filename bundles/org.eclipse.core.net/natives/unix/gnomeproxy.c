@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Oakland Software Incorporated and others
+ * Copyright 2008, 2012 Oakland Software Incorporated and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,12 @@
  * Contributors:
  *     Oakland Software Incorporated - initial API and implementation
  *     IBM Corporation - enabling JNI calls for gconfInit method (bug 232495)	
+ *     IBM Corporation - gnomeproxy cannot be built with latest versions of glib (bug 385047)
  */
 
 #include <jni.h>
 
 #include <glib.h>
-#include <glib/gslist.h>
 #include <gconf/gconf-value.h>
 #include <gconf/gconf-client.h>
 
