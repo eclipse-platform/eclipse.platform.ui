@@ -1,5 +1,5 @@
 #**********************************************************************
-# Copyright (c) 2008, 2010 Oakland Software Incorporated and others.
+# Copyright (c) 2008, 2012 Oakland Software Incorporated and others.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -20,11 +20,11 @@ LIB_NAME_FULL = libgnomeproxy-1.0.0.so
 
 OS_TYPE = linux
 JDK_INCLUDE = -I${JAVA_HOME}/include -I${JAVA_HOME}/include/${OS_TYPE}
-INCLUDE = -I/usr/include/gconf/2/ -I/usr/include/orbit-2.0/ -I/usr/include/glib-2.0/ -I/usr/lib/glib-2.0/include/
-COMPILER_FLAGS = -O0 -fPIC -g3 -Wall -c -fmessage-length=0 -m32
+INCLUDE = `pkg-config --cflags gconf-2.0`
+COMPILER_FLAGS = -O0 -fPIC -g3 -Wall -c -fmessage-length=0 ${TARGET_ENVIRONMENT}
 
-LIBS := -lgconf-2 -lORBit-2 -lgthread-2.0 -lrt -lgobject-2.0 -lglib-2.0
-LINKER_FLAGS= -m32
+LIBS := `pkg-config --libs gconf-2.0`
+LINKER_FLAGS= ${TARGET_ENVIRONMENT}
 
 all: link
 
