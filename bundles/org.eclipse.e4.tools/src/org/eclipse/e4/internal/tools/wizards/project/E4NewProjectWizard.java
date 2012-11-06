@@ -101,12 +101,14 @@ import org.osgi.framework.Version;
  */
 public class E4NewProjectWizard extends NewPluginProjectWizard {
 
+	private static final String PLUGIN_XML = "plugin.xml";
 	private static final String MODEL_EDITOR_ID = "org.eclipse.e4.tools.emf.editor3x.e4wbm";
 	private static final String APPLICATION_MODEL = "Application.e4xmi";
 	private PluginFieldData fPluginData;
 	private NewApplicationWizardPage fApplicationPage;
 	private IProjectProvider fProjectProvider;
 	private PluginContentPage fContentPage;
+	private boolean isMinimalist;
 
 	public E4NewProjectWizard() {
 		fPluginData = new PluginFieldData();
@@ -257,8 +259,16 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			IBuildEntry e = model.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);
 			
-			e.addToken("plugin.xml");
-			
+			e.addToken(PLUGIN_XML);
+			e.addToken(APPLICATION_MODEL);
+
+			// Event though an icons directory is always created
+			// it seems appropriate to only add it if it contains
+			// some content
+			if (!isMinimalist) {
+				e.addToken("icons/");
+			}
+
 			Map<String, String> map = fApplicationPage.getData();
 			String cssEntry = map.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
 			if( cssEntry != null ) {
@@ -358,7 +368,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 	public void createApplicationResources(IProject project,
 			IProgressMonitor monitor) {
 		Map<String, String> map = fApplicationPage.getData();
-		boolean isMinimalist = !map.get(NewApplicationWizardPage.richSample).equalsIgnoreCase("TRUE");
+		isMinimalist = !map.get(NewApplicationWizardPage.richSample).equalsIgnoreCase("TRUE");
 		if (map == null
 				|| map.get(NewApplicationWizardPage.PRODUCT_NAME) == null)
 			return;
