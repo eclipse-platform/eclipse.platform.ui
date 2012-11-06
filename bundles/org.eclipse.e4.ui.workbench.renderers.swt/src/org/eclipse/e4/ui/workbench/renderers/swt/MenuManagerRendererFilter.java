@@ -22,6 +22,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -220,22 +221,30 @@ public class MenuManagerRendererFilter implements Listener {
 				}
 			} else if (updateEnablement && element instanceof MDirectMenuItem) {
 				MDirectMenuItem contrib = (MDirectMenuItem) element;
-				if (contrib.getObject() != null) {
-					MDirectMenuItem item = (MDirectMenuItem) element;
-					IEclipseContext staticContext = EclipseContextFactory
-							.create(MMRF_STATIC_CONTEXT);
-					ContributionsAnalyzer.populateModelInterfaces(item,
-							staticContext, item.getClass().getInterfaces());
-					try {
-						Object rc = ContextInjectionFactory.invoke(
-								contrib.getObject(), CanExecute.class,
-								evalContext, staticContext, Boolean.TRUE);
-						if (rc instanceof Boolean) {
-							contrib.setEnabled((Boolean) rc);
-						}
-					} finally {
-						staticContext.dispose();
+				if (contrib.getObject() == null) {
+					IContributionFactory icf = evalContext
+							.get(IContributionFactory.class);
+
+					contrib.setObject(icf.create(contrib.getContributionURI(),
+							evalContext, EclipseContextFactory.create()));
+				}
+				if (contrib.getObject() == null) {
+					continue;
+				}
+				MDirectMenuItem item = (MDirectMenuItem) element;
+				IEclipseContext staticContext = EclipseContextFactory
+						.create(MMRF_STATIC_CONTEXT);
+				ContributionsAnalyzer.populateModelInterfaces(item,
+						staticContext, item.getClass().getInterfaces());
+				try {
+					Object rc = ContextInjectionFactory.invoke(
+							contrib.getObject(), CanExecute.class, evalContext,
+							staticContext, Boolean.TRUE);
+					if (rc instanceof Boolean) {
+						contrib.setEnabled((Boolean) rc);
 					}
+				} finally {
+					staticContext.dispose();
 				}
 			}
 		}

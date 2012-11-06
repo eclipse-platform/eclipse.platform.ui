@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
@@ -94,12 +93,6 @@ public class DirectMenuItemRenderer extends MenuItemRenderer {
 			MenuItem mi = (MenuItem) me.getWidget();
 			mi.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
-					if (contrib.getObject() == null) {
-						IContributionFactory cf = (IContributionFactory) lclContext
-								.get(IContributionFactory.class.getName());
-						contrib.setObject(cf.create(
-								contrib.getContributionURI(), lclContext));
-					}
 					lclContext.set(MItem.class.getName(), item);
 					ContextInjectionFactory.invoke(contrib.getObject(),
 							Execute.class, lclContext);
