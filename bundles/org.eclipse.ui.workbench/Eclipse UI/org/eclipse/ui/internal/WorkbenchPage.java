@@ -99,6 +99,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -978,41 +979,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	private List<EditorReference> getCurrentEditorReferences() {
-		List<EditorReference> sortedReferences = new ArrayList<EditorReference>();
-		for (MPart part : activationList) {
-			for (EditorReference ref : editorReferences) {
-				if (ref.getModel() == part) {
-					sortedReferences.add(ref);
-					break;
+		List<EditorReference> editorRefs = new ArrayList<EditorReference>();
+		List<MPart> visibleEditors = modelService.findElements(window,
+				CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null);
+		for (MPart editor : visibleEditors) {
+			if (editor.isToBeRendered()) {
+				EditorReference ref = getEditorReference(editor);
+				if (ref != null && !editorRefs.contains(ref)) {
+					editorRefs.add(ref);
 				}
 			}
 		}
 
-		for (EditorReference ref : editorReferences) {
-			if (!sortedReferences.contains(ref)) {
-				sortedReferences.add(ref);
-			}
-		}
-
-		MPerspective currentPerspective = getCurrentPerspective();
-		if (currentPerspective != null) {
-			List<MPart> placeholders = modelService.findElements(window,
-					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null,
-					EModelService.PRESENTATION);
-			List<EditorReference> visibleReferences = new ArrayList<EditorReference>();
-			for (EditorReference reference : sortedReferences) {
-				for (MPart placeholder : placeholders) {
-					if (reference.getModel() == placeholder && placeholder.isToBeRendered()) {
-						// only rendered placeholders are valid references
-						visibleReferences.add(reference);
-					}
-				}
-			}
-
-			return visibleReferences;
-		}
-
-		return sortedReferences;
+		return editorRefs;
 	}
 
 	public List<EditorReference> getInternalEditorReferences() {
@@ -4211,10 +4190,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * org.eclipse.ui.IWorkbenchPage#getEditorState(org.eclipse.ui.IEditorReference
 	 * [])
 	 */
-	public IMemento[] getEditorState(IEditorReference[] editorRefs) {
+	public IMemento[] getEditorState(IEditorReference[] editorRefs, boolean includeInputState) {
 		IMemento[] m = new IMemento[editorRefs.length];
 		for (int i = 0; i < editorRefs.length; i++) {
 			m[i] = ((EditorReference) editorRefs[i]).getEditorState();
+			if (!includeInputState && m[i] != null) {
+				m[i] = m[i].getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+			}
 		}
 		return m;
 	}
@@ -4227,7 +4209,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * java.lang.String[], int)
 	 */
 	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs, int matchFlags) throws MultiPartInitException {
-		return openEditors(inputs, editorIDs, null, matchFlags);
+		return openEditors(inputs, editorIDs, null, matchFlags, 0);
 	}
 
 	/*
@@ -4237,43 +4219,97 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * org.eclipse.ui.IWorkbenchPage#openEditors(org.eclipse.ui.IEditorInput[],
 	 * java.lang.String[], org.eclipse.ui.IMemento[], int)
 	 */
-	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs, IMemento[] mementos, int matchFlags)
+	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs,
+			IMemento[] mementos, int matchFlags, int activationIndex)
 			throws MultiPartInitException {
+		// If we are only working with mementos create a placeholder array of
+		// nulls
+		if (inputs == null) {
+			Assert.isTrue(mementos != null);
+			inputs = new IEditorInput[mementos.length];
+		}
+
+		// If we are only working with mementos create a placeholder array of
+		// nulls
+		if (editorIDs == null) {
+			Assert.isTrue(mementos != null);
+			editorIDs = new String[mementos.length];
+		}
+
 		Assert.isTrue(inputs.length == editorIDs.length);
 		Assert.isTrue(inputs.length > 0);
 		Assert.isTrue(mementos == null || mementos.length == inputs.length);
 
-		for (IEditorInput ei : inputs) {
-			System.out.println(ei.getName());
-		}
 		PartInitException[] exceptions = new PartInitException[inputs.length];
 		IEditorReference[] references = new IEditorReference[inputs.length];
 		boolean hasFailures = false;
 
 		IEditorRegistry reg = getWorkbenchWindow().getWorkbench().getEditorRegistry();
-		MPart firstEditor = null;
+		MPart editorToActivate = null;
 		for (int i = 0; i < inputs.length; i++) {
-			if (reg.findEditor(editorIDs[i]) == null) {
+			String curEditorID = editorIDs == null ? null : editorIDs[i];
+			IEditorInput curInput = inputs == null ? null : inputs[i];
+			IMemento curMemento = mementos == null ? null : mementos[i];
+
+			// If we don't have an editorID get it from the memento
+			if (curEditorID == null && curMemento != null) {
+				curEditorID = curMemento.getString(IWorkbenchConstants.TAG_ID);
+			}
+
+			// If we don't have an input create on from the memento
+			if (curInput == null && curMemento != null) {
+				try {
+					curInput = EditorReference.createInput(curMemento);
+				} catch (PartInitException e) {
+					curInput = null;
+					exceptions[i] = e;
+					hasFailures = true;
+					continue;
+				}
+			}
+
+			// Adjust the memento so that it's always 'comlpete (i.e. including
+			// both input and editor state)
+			if (curMemento != null && !curMemento.getID().equals(IWorkbenchConstants.TAG_EDITOR)) {
+				XMLMemento outerMem = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITOR);
+				outerMem.putString(IWorkbenchConstants.TAG_ID, curEditorID);
+				outerMem.copyChild(curMemento);
+
+				XMLMemento inputMem = (XMLMemento) outerMem
+						.createChild(IWorkbenchConstants.TAG_INPUT);
+				inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, curInput.getPersistable()
+						.getFactoryId());
+				inputMem.putString(IWorkbenchConstants.TAG_PATH, curInput.getName());
+			}
+
+			// OK, by this point we should have the EditorInput, the editor ID
+			// and the memento (if any)
+			if (reg.findEditor(curEditorID) == null) {
 				references[i] = null;
 				exceptions[i] = new PartInitException(NLS.bind(
-						WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorIDs[i]));
+						WorkbenchMessages.EditorManager_unknownEditorIDMessage, curEditorID));
+				hasFailures = true;
+			} else if (curInput == null) {
+				references[i] = null;
+				exceptions[i] = new PartInitException(NLS.bind(
+						WorkbenchMessages.EditorManager_no_persisted_state, curEditorID));
 				hasFailures = true;
 			} else {
 				// Is there an existing editor ?
-				IEditorReference[] existingEditors = findEditors(inputs[i], editorIDs[i],
+				IEditorReference[] existingEditors = findEditors(curInput, curEditorID,
 						matchFlags);
 				if (existingEditors.length == 0) {
 					MPart editor = partService.createPart(CompatibilityEditor.MODEL_ELEMENT_ID);
-					references[i] = createEditorReferenceForPart(editor, inputs[i], editorIDs[i],
+					references[i] = createEditorReferenceForPart(editor, curInput, curEditorID,
 							null);
 
-					if (firstEditor == null)
-						firstEditor = editor;
+					if (i == activationIndex)
+						editorToActivate = editor;
 
 					// Set the information in the supplied IMemento into the
 					// editor's model
-					if (mementos != null && mementos[i] instanceof XMLMemento) {
-						XMLMemento memento = (XMLMemento) mementos[i];
+					if (curMemento instanceof XMLMemento) {
+						XMLMemento memento = (XMLMemento) curMemento;
 						StringWriter writer = new StringWriter();
 						try {
 							memento.save(writer);
@@ -4284,6 +4320,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 						}
 					}
 
+					System.out.println("OE: " + references[i].getTitle()); //$NON-NLS-1$
 					editor.setLabel(references[i].getTitle());
 					editor.setTooltip(references[i].getTitleToolTip());
 					editor.setIconURI(getEditorImageURI((EditorReference) references[i]));
@@ -4292,11 +4329,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					// Use the existing editor, update the state if it has *not*
 					// been rendered
 					EditorReference ee = (EditorReference) existingEditors[0];
+					if (i == activationIndex)
+						editorToActivate = ee.getModel();
+
 					if (ee.getModel().getWidget() == null) {
 						// Set the information in the supplied IMemento into the
 						// editor's model
-						if (mementos != null && mementos[i] instanceof XMLMemento) {
-							XMLMemento momento = (XMLMemento) mementos[i];
+						if (curMemento instanceof XMLMemento) {
+							XMLMemento momento = (XMLMemento) curMemento;
 							StringWriter writer = new StringWriter();
 							try {
 								momento.save(writer);
@@ -4306,15 +4346,37 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 								WorkbenchPlugin.log(e);
 							}
 						}
-					}
+					} else {
+						// editor already rendered, try to update its state
+						if (curMemento != null
+								&& ee.getModel().getObject() instanceof CompatibilityEditor) {
+							CompatibilityEditor ce = (CompatibilityEditor) ee.getModel()
+									.getObject();
+							if (ce.getEditor() instanceof IPersistableEditor) {
+								IPersistableEditor pe = (IPersistableEditor) ce.getEditor();
 
-					if (firstEditor == null)
-						firstEditor = ee.getModel();
+								// Extract the 'editorState' from the memento
+								IMemento editorMem = curMemento
+										.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+								if (editorMem == null) {
+									// Must be an externally defined memento,
+									// take the second child
+									IMemento[] kids = curMemento.getChildren();
+									if (kids.length == 2)
+										editorMem = kids[1];
+								}
+								if (editorMem != null)
+									pe.restoreState(editorMem);
+							}
+						}
+					}
 				}
 			}
 		}
 
-		partService.activate(firstEditor);
+		if (editorToActivate != null) {
+			partService.activate(editorToActivate);
+		}
 
 		boolean hasSuccesses = false;
 		for (IEditorReference reference : references) {

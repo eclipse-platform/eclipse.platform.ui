@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.internal.services;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -25,7 +26,7 @@ public class ActiveContextsFunction extends ContextFunction {
 		boolean inDialog = false;
 		Set<String> rc = new HashSet<String>();
 		while (current != null) {
-			Set<String> locals = (Set<String>) current.getLocal(ContextContextService.LOCAL_CONTEXTS);
+			LinkedList<String> locals = (LinkedList<String>) current.getLocal(ContextContextService.LOCAL_CONTEXTS);
 			if (locals != null) {
 				if (!inDialog || !locals.contains("org.eclipse.ui.contexts.window")) {
 					rc.addAll(locals);

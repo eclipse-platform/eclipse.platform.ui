@@ -34,7 +34,7 @@ public class MultiPartInitException extends WorkbenchException {
 	 */
 	public MultiPartInitException(IWorkbenchPartReference[] references,
 			PartInitException[] exceptions) {
-		super(exceptions[findSingleException(exceptions)].getStatus());
+		super(exceptions[findFirstException(exceptions)].getStatus());
 		this.references = references;
 		this.exceptions = exceptions;
 	}
@@ -61,20 +61,12 @@ public class MultiPartInitException extends WorkbenchException {
 		return exceptions;
 	}
 
-	private static int findSingleException(PartInitException[] exceptions) {
-		int index = -1;
+	private static int findFirstException(PartInitException[] exceptions) {
 		for (int i = 0; i < exceptions.length; i++) {
-			if (exceptions[i] != null) {
-				if (index == -1) {
-					index = i;
-				} else
-					throw new IllegalArgumentException();
-			}
+			if (exceptions[i] != null)
+				return i;
 		}
-		if (index == -1) {
-			throw new IllegalArgumentException();
-		}
-		return index;
+		throw new IllegalArgumentException();
 	}
 
 	private static final long serialVersionUID = -9138185942975165490L;

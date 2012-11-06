@@ -1209,7 +1209,23 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 
 	/**
 	 * Opens editors for the given inputs. Only the editor constructed for the
-	 * first input gets activated.
+	 * given index will be activated.
+	 * <p>
+	 * There are effectively two different ways to use this method based on what
+	 * information the supplied mementos contain @see
+	 * org.eclipse.ui.IWorkbenchPage
+	 * #getEditorState(org.eclipse.ui.IEditorReference []):
+	 * <ol>
+	 * <li>
+	 * If the mementos contain the 'input' information then only the memento
+	 * itself is required since it can be used to re-create the editor input and
+	 * its editorID. If all the mementos are of this type then the inputs and
+	 * editorIDs arrays may be null.</li>
+	 * <li>
+	 * If the supplied memento only contains the editor state then both the
+	 * input and editorID must be non-null.</li>
+	 * </ol>
+	 * </p>
 	 * <p>
 	 * The editor type is determined by mapping <code>editorIDs</code> to an
 	 * editor extension registered with the workbench. An editor id is passed
@@ -1234,11 +1250,18 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 *            the IDs of the editor extensions to use, in the order of
 	 *            inputs
 	 * @param mementos
-	 *            the mementos representing the state to open the editor with
+	 *            the mementos representing the state to open the editor with.
+	 *            If the supplied memento contains the input's state as well as
+	 *            the editor's state then the corresponding entries in the
+	 *            'inputs' and 'ids' arrays may be <code>null</code> (they will
+	 *            be created from the supplied memento).
 	 * 
 	 * @param matchFlags
 	 *            a bit mask consisting of zero or more of the MATCH_* constants
 	 *            OR-ed together
+	 * @param activateIndex
+	 *            the index of the editor to make active or -1 if no activation
+	 *            is desired.
 	 * @return references to the editors constructed for the inputs. The editors
 	 *         corresponding to those reference might not be materialized.
 	 * @exception MultiPartInitException
@@ -1249,7 +1272,8 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * @since 3.8.2
 	 */
 	public IEditorReference[] openEditors(final IEditorInput[] inputs, final String[] editorIDs,
-			IMemento[] mementos, final int matchFlags) throws MultiPartInitException;
+			final IMemento[] mementos, final int matchFlags, final int activateIndex)
+			throws MultiPartInitException;
 
 	/**
 	 * Return an IMemento containing the current state of the editor for each of
@@ -1258,9 +1282,13 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * 
 	 * @param editorRefs
 	 *            The array of editor references to get the state for
+	 * @param includeInputState
+	 *            If <code>true</code> then the resulting memento will be
+	 *            contain the editor input's state as well as the editor's
+	 *            state.
 	 * @return The array of mementos. The length of the array will match that of
 	 *         the refs array.
 	 * @since 3.8.2
 	 */
-	public IMemento[] getEditorState(IEditorReference[] editorRefs);
+	public IMemento[] getEditorState(IEditorReference[] editorRefs, boolean includeInputState);
 }
