@@ -8,12 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     oliver.schaefer@mbtech-services.com - Fix for Bug 225051 [Snippets] Snippet010OwnerDraw - Wrong german flag
+ * 	   Lars Vogel <lars.vogel@gmail.com >- Fix for Bug 387367 - JFace Snippet Snippet010OwnerDraw rework 
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
@@ -319,47 +320,15 @@ public class Snippet010OwnerDraw {
 	 */
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.FULL_SELECTION);
-
-		viewer.setContentProvider(new IStructuredContentProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
-			public void dispose() {
-			};
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-			 */
-			public Object[] getElements(Object inputElement) {
-				return entries;
-			};
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public void inputChanged(org.eclipse.jface.viewers.Viewer viewer,
-					Object oldInput, Object newInput) {
-			}
-
-		});
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
+		
 		createColumns();
 
 		viewer.setLabelProvider(new OwnerDrawLabelProvider() {
-	
-
 			protected void measure(Event event, Object element) {
 				CountryEntry country = (CountryEntry) element;
-
 				event.setBounds(new Rectangle(event.x, event.y, country.getWidth(event),
 						country.getHeight(event)));
-
 			}
 
 			/*
@@ -375,12 +344,11 @@ public class Snippet010OwnerDraw {
 			}
 		});
 		
-		OwnerDrawLabelProvider.setUpOwnerDraw(viewer);
-		viewer.setInput(this);
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
 
 		viewer.getControl().setLayoutData(data);
+		viewer.setInput(entries);
 
 		viewer.setSelection(new StructuredSelection(entries[1]));
 	}
@@ -399,7 +367,6 @@ public class Snippet010OwnerDraw {
 			layout.addColumnData(new ColumnPixelData(100));
 			tc.setText(getTitleFor(i));
 		}
-		;
 	}
 
 	/**
@@ -417,9 +384,4 @@ public class Snippet010OwnerDraw {
 		}
 		return "Unknown";
 	}
-
-	public void setFocus() {
-
-	}
-
 }
