@@ -19,6 +19,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.bindings.BindingServiceAddon;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
@@ -736,6 +737,9 @@ public class MMenuItemTest extends TestCase {
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class.getName(), application);
+		// The handler processing addon cannot run until the context
+		// contains the MApplication
+		ContextInjectionFactory.make(HandlerProcessingAddon.class, appContext);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);

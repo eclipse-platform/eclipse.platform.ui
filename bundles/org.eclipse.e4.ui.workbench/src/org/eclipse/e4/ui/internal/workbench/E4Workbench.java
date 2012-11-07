@@ -11,21 +11,14 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
-import java.util.Iterator;
 import java.util.List;
-import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.commands.MCommand;
-import org.eclipse.e4.ui.model.application.commands.MHandler;
-import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
@@ -114,8 +107,6 @@ public class E4Workbench implements IWorkbench {
 		if (context != null) {
 			context.set(ExpressionContext.ALLOW_ACTIVATION, Boolean.TRUE);
 		}
-		// Do a top level processHierarchy for the application?
-		processHierarchy(appElement);
 	}
 
 	/**
@@ -149,38 +140,6 @@ public class E4Workbench implements IWorkbench {
 
 	public MApplication getApplication() {
 		return appModel;
-	}
-
-	public static void processHierarchy(Object me) {
-		if (me instanceof MHandlerContainer) {
-			MContext contextModel = (MContext) me;
-			MHandlerContainer container = (MHandlerContainer) contextModel;
-			IEclipseContext context = contextModel.getContext();
-			if (context != null) {
-				IContributionFactory cf = (IContributionFactory) context
-						.get(IContributionFactory.class.getName());
-				EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
-				List<MHandler> handlers = container.getHandlers();
-				for (MHandler handler : handlers) {
-					MCommand command = handler.getCommand();
-					if (command == null)
-						continue;
-					String commandId = command.getElementId();
-					if (handler.getObject() == null) {
-						handler.setObject(cf.create(handler.getContributionURI(), context));
-					}
-					hs.activateHandler(commandId, handler.getObject());
-				}
-			}
-		}
-		if (me instanceof MElementContainer<?>) {
-			List<MUIElement> children = ((MElementContainer) me).getChildren();
-			Iterator<MUIElement> i = children.iterator();
-			while (i.hasNext()) {
-				MUIElement e = i.next();
-				processHierarchy(e);
-			}
-		}
 	}
 
 	/**

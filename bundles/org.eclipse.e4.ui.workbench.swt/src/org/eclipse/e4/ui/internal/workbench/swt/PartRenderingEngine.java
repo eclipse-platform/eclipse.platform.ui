@@ -615,8 +615,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 				for (String key : props.keySet()) {
 					lclContext.set(key, props.get(key));
 				}
-
-				E4Workbench.processHierarchy(element);
 			}
 		}
 

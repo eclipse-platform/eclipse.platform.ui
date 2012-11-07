@@ -18,7 +18,7 @@
             </children>
           </children>
           <children xsi:type="basic:PartSashContainer" xmi:id="_hKibQEleEd-TVO58rzJVgA" elementId="_hKibQEleEd-TVO58rzJVgA" containerData="70">
-            <children xsi:type="basic:Part" xmi:id="_krbvIEleEd-TVO58rzJVgA" elementId="_krbvIEleEd-TVO58rzJVgA" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" containerData="70" label="Preview"/>
+            <children xsi:type="basic:Part" xmi:id="_krbvIEleEd-TVO58rzJVgA" elementId="_krbvIEleEd-TVO58rzJVgA" containerData="70" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" label="Preview"/>
             <children xsi:type="basic:PartStack" xmi:id="_sRLYgEleEd-TVO58rzJVgA" elementId="_sRLYgEleEd-TVO58rzJVgA" containerData="30">
               <children xsi:type="basic:Part" xmi:id="_tuj8gEleEd-TVO58rzJVgA" elementId="ThumbnailsView" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" label="Thumbnails"/>
               <children xsi:type="basic:Part" xmi:id="_xPeegEleEd-TVO58rzJVgA" elementId="ExifView" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
@@ -51,8 +51,8 @@
   <handlers xmi:id="_RrwmEEjPEd-XR9_8rlW1bQ" elementId="_RrwmEEjPEd-XR9_8rlW1bQ" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="_6B0q4EjPEd-XR9_8rlW1bQ"/>
   <handlers xmi:id="_bH-CkUljEd-YPslvXqnLdg" elementId="_bH-CkUljEd-YPslvXqnLdg" contributionURI="bundleclass://org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.AddNoteHandler" command="_9w2hYEjPEd-XR9_8rlW1bQ"/>
   <bindingTables xmi:id="_ofif4EjPEd-XR9_8rlW1bQ" elementId="_ofif4EjPEd-XR9_8rlW1bQ" bindingContext="_Y_0CgEjPEd-XR9_8rlW1bQ">
-    <bindings xmi:id="_rCRiYEjPEd-XR9_8rlW1bQ" keySequence="CTRL+Q" elementId="_rCRiYEjPEd-XR9_8rlW1bQ" command="_vBr-QEjPEd-XR9_8rlW1bQ"/>
-    <bindings xmi:id="_tDFjkEjPEd-XR9_8rlW1bQ" keySequence="CTRL+N" elementId="_tDFjkEjPEd-XR9_8rlW1bQ" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>
+    <bindings xmi:id="_rCRiYEjPEd-XR9_8rlW1bQ" elementId="_rCRiYEjPEd-XR9_8rlW1bQ" keySequence="CTRL+Q" command="_vBr-QEjPEd-XR9_8rlW1bQ"/>
+    <bindings xmi:id="_tDFjkEjPEd-XR9_8rlW1bQ" elementId="_tDFjkEjPEd-XR9_8rlW1bQ" keySequence="CTRL+N" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>
   </bindingTables>
   <rootContext xmi:id="_Y_0CgEjPEd-XR9_8rlW1bQ" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows" description="">
     <children xmi:id="_gCmv0EjPEd-XR9_8rlW1bQ" elementId="org.eclipse.ui.contexts.window" name="In Windows" description=""/>
@@ -71,4 +71,5 @@
   <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXj" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
   <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXk" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
   <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXl" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="__YcNoOXqEeGugqEu_OWUGQ" elementId="org.eclipse.e4.demo.e4photo.addon.0" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
 </application:Application>

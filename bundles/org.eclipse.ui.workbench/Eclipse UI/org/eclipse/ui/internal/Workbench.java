@@ -1232,7 +1232,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (windowContext == null) {
 			windowContext = E4Workbench.initializeContext(
 					e4Context, window);
-			E4Workbench.processHierarchy(window);
 		}
 		WorkbenchWindow result = (WorkbenchWindow) windowContext.get(IWorkbenchWindow.class
 				.getName());
