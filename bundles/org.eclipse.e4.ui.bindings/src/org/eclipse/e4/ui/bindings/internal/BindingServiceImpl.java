@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
@@ -224,9 +223,6 @@ public class BindingServiceImpl implements EBindingService {
 	public void setContextIds(@Named(ACTIVE_CONTEXTS) @Optional Set<String> set) {
 		if (set == null || set.isEmpty() || contextManager == null) {
 			contextSet = ContextSet.EMPTY;
-			if (contextManager != null) {
-				contextManager.setActiveContextIds(Collections.EMPTY_SET);
-			}
 			return;
 		}
 		ArrayList<Context> contexts = new ArrayList<Context>();
@@ -234,7 +230,6 @@ public class BindingServiceImpl implements EBindingService {
 			contexts.add(contextManager.getContext(id));
 		}
 		contextSet = manager.createContextSet(contexts);
-		contextManager.setActiveContextIds(set);
 	}
 
 	public Collection<Binding> getActiveBindings() {
