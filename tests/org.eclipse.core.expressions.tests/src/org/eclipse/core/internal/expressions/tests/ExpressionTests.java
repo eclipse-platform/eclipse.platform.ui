@@ -170,6 +170,14 @@ public class ExpressionTests extends TestCase {
 		assertTrue(result == EvaluationResult.TRUE);
 	}
 
+    public void testAdaptExpressionAdaptable() throws Exception {
+        AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.Adapter"); //$NON-NLS-1$
+        expression.add(new InstanceofExpression("org.eclipse.core.internal.expressions.tests.Adapter")); //$NON-NLS-1$
+        EvaluationResult result= expression.evaluate(new EvaluationContext(null, new AdaptableAdaptee()));
+        assertTrue(result == EvaluationResult.TRUE);
+    }
+
+	
 	public void testAdaptExpressionNotEqual() throws Exception {
 		AdaptExpression expression1 = new AdaptExpression(
 				"org.eclipse.core.internal.expressions.tests.Adapter"); //$NON-NLS-1$

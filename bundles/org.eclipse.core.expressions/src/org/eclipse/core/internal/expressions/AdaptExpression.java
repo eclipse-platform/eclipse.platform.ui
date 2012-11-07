@@ -18,6 +18,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -74,10 +75,23 @@ public class AdaptExpression extends CompositeExpression {
 		if (Expressions.isInstanceOf(var, fTypeName)) {
 			adapted= var;
 		} else {
-			if (!manager.hasAdapter(var, fTypeName))
-				return EvaluationResult.FALSE;
-
-			adapted= manager.getAdapter(var, fTypeName);
+			if (manager.hasAdapter(var, fTypeName)) {
+				adapted= manager.getAdapter(var, fTypeName);
+			} else {
+				// if the adapter manager doesn't have an adapter contributed, 
+				// try to see if the variable itself implements IAdaptable
+				if (var instanceof IAdaptable) {
+					try {
+						Class typeClazz= Class.forName(fTypeName, false, var.getClass().getClassLoader());
+						adapted= ((IAdaptable)var).getAdapter(typeClazz);
+					} catch (ClassNotFoundException e) {
+					}
+				}
+				if (adapted == null) {
+					// all attempts failed, return false
+					return EvaluationResult.FALSE;
+				}
+			}
 		}
 		// the adapted result is null but hasAdapter returned true check
 		// if the adapter is loaded.

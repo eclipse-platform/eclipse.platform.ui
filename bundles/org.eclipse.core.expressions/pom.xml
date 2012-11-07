@@ -22,7 +22,7 @@
   </parent>
   <groupId>org.eclipse.platform.runtime</groupId>
   <artifactId>org.eclipse.core.expressions</artifactId>
-  <version>3.4.401-SNAPSHOT</version>
+  <version>3.4.500-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <build>
     <plugins>
