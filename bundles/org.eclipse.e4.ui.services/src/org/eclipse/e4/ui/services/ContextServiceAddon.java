@@ -1,8 +1,12 @@
 package org.eclipse.e4.ui.services;
 
+import java.util.Collections;
+
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.internal.services.ContextContextFunction;
 
@@ -18,5 +22,20 @@ public class ContextServiceAddon {
 		
 		context.set(EContextService.class.getName(), new ContextContextFunction());
 		context.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
+		context.runAndTrack(new RunAndTrack() {
+			@Override
+			public boolean changed(IEclipseContext context) {
+				ContextManager manager = context.get(ContextManager.class);
+				if (manager != null) {
+					Object s = context.get(IServiceConstants.ACTIVE_CONTEXTS);
+					if (s instanceof Set) {
+						manager.setActiveContextIds((Set) s);
+					} else {
+						manager.setActiveContextIds(Collections.EMPTY_SET);
+					}
+				}
+				return true;
+			}
+		});
 	}
 }
