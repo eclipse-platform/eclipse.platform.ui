@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1321,6 +1321,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		final Menu menu = cachedMenu;
 
+		int closeableElements = 0;
 		if (isClosable(part)) {
 			MenuItem menuItemClose = new MenuItem(menu, SWT.NONE);
 			menuItemClose.setText(SWTRenderersMessages.menuClose);
@@ -1333,40 +1334,31 @@ public class StackRenderer extends LazyStackRenderer {
 						partService.hidePart(part);
 				}
 			});
+			closeableElements++;
 		}
 
 		MElementContainer<MUIElement> parent = getParent(part);
 		if (parent != null) {
-			int count = 0;
-			for (MUIElement element : parent.getChildren()) {
-				if (element.isToBeRendered()) {
-					count++;
-					if (count == 2) {
-						MenuItem menuItemOthers = new MenuItem(menu, SWT.NONE);
-						menuItemOthers
-								.setText(SWTRenderersMessages.menuCloseOthers);
-						menuItemOthers
-								.addSelectionListener(new SelectionAdapter() {
-									public void widgetSelected(SelectionEvent e) {
-										MPart part = (MPart) menu
-												.getData(STACK_SELECTED_PART);
-										closeSiblingParts(part, true);
-									}
-								});
+			closeableElements += getCloseableSiblingParts(part).size();
 
-						MenuItem menuItemAll = new MenuItem(menu, SWT.NONE);
-						menuItemAll.setText(SWTRenderersMessages.menuCloseAll);
-						menuItemAll
-								.addSelectionListener(new SelectionAdapter() {
-									public void widgetSelected(SelectionEvent e) {
-										MPart part = (MPart) menu
-												.getData(STACK_SELECTED_PART);
-										closeSiblingParts(part, false);
-									}
-								});
-						break;
+			if (closeableElements >= 2) {
+				MenuItem menuItemOthers = new MenuItem(menu, SWT.NONE);
+				menuItemOthers.setText(SWTRenderersMessages.menuCloseOthers);
+				menuItemOthers.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
+						closeSiblingParts(part, true);
 					}
-				}
+				});
+
+				MenuItem menuItemAll = new MenuItem(menu, SWT.NONE);
+				menuItemAll.setText(SWTRenderersMessages.menuCloseAll);
+				menuItemAll.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
+						closeSiblingParts(part, false);
+					}
+				});
 			}
 		}
 
@@ -1382,14 +1374,20 @@ public class StackRenderer extends LazyStackRenderer {
 		return parent;
 	}
 
-	private void closeSiblingParts(MPart part, boolean skipThisPart) {
+	private List<MPart> getCloseableSiblingParts(MPart part) {
+		// broken out from closeSiblingParts so it can be used to determine how
+		// many closeable siblings are available
 		MElementContainer<MUIElement> container = getParent(part);
+		List<MPart> closeableSiblings = new ArrayList<MPart>();
 		if (container == null)
-			return;
+			return closeableSiblings;
 
 		List<MUIElement> children = container.getChildren();
-		List<MPart> others = new LinkedList<MPart>();
 		for (MUIElement child : children) {
+			// If the element isn't showing skip it
+			if (!child.isToBeRendered())
+				continue;
+
 			MPart otherPart = null;
 			if (child instanceof MPart)
 				otherPart = (MPart) child;
@@ -1404,8 +1402,17 @@ public class StackRenderer extends LazyStackRenderer {
 			if (part.equals(otherPart))
 				continue; // skip selected item
 			if (otherPart.isToBeRendered() && isClosable(otherPart))
-				others.add(otherPart);
+				closeableSiblings.add(otherPart);
 		}
+		return closeableSiblings;
+	}
+
+	private void closeSiblingParts(MPart part, boolean skipThisPart) {
+		MElementContainer<MUIElement> container = getParent(part);
+		if (container == null)
+			return;
+
+		List<MPart> others = getCloseableSiblingParts(part);
 
 		// add the current part last so that we unrender obscured items first
 		if (!skipThisPart && part.isToBeRendered() && isClosable(part)) {
