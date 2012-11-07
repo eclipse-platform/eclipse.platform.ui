@@ -972,8 +972,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 					// torn down
 					IApplicationContext ac = appContext
 							.get(IApplicationContext.class);
-					if (ac != null)
+					if (ac != null) {
 						ac.applicationRunning();
+						if (eventBroker != null)
+							eventBroker.post(
+									UIEvents.UILifeCycle.APP_STARTUP_COMPLETE,
+									theApp);
+					}
 				} else if (uiRoot instanceof MUIElement) {
 					if (uiRoot instanceof MWindow) {
 						testShell = (Shell) createGui((MUIElement) uiRoot);

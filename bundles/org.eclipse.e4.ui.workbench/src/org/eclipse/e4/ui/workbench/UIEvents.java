@@ -239,6 +239,10 @@ public class UIEvents {
 		 * Sent when a perspective is opened
 		 */
 		public static final String PERSPECTIVE_OPENED = TOPIC + TOPIC_SEP + "perspOpened"; //$NON-NLS-1$
+		/**
+		 * Sent when application startup is complete
+		 */
+		public static final String APP_STARTUP_COMPLETE = TOPIC + TOPIC_SEP + "appStartupComplete"; //$NON-NLS-1$
 	}
 
 	/**
