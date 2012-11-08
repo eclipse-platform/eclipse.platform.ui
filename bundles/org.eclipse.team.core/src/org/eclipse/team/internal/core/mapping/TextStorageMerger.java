@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,17 +8,17 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.internal.core.mapping;
 
 import java.io.*;
 
-import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.mapping.IStorageMerger;
-import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.core.Messages;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 public class TextStorageMerger implements IStorageMerger {
 
@@ -33,9 +33,9 @@ public class TextStorageMerger implements IStorageMerger {
 			t= LineComparator.create(target, outputEncoding);
 			o= LineComparator.create(other,outputEncoding);
 		} catch (UnsupportedEncodingException e) {
-			throw new CoreException (new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, UNSUPPORTED_ENCODING, TeamUIMessages.TextAutoMerge_inputEncodingError, e));
+			throw new CoreException (new Status(IStatus.ERROR, TeamPlugin.ID, UNSUPPORTED_ENCODING, Messages.TextAutoMerge_inputEncodingError, e));
 		} catch (IOException e) {
-			throw new CoreException (new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, INTERNAL_ERROR, e.getMessage(), e));
+			throw new CoreException (new Status(IStatus.ERROR, TeamPlugin.ID, INTERNAL_ERROR, e.getMessage(), e));
 		}
 
 		try {
@@ -72,7 +72,7 @@ public class TextStorageMerger implements IStorageMerger {
 					break;
 
 				case RangeDifference.CONFLICT:
-					return new Status(IStatus.WARNING, CompareUI.PLUGIN_ID, CONFLICT, TeamUIMessages.TextAutoMerge_conflict, null);
+					return new Status(IStatus.WARNING, TeamPlugin.ID, CONFLICT, Messages.TextAutoMerge_conflict, null);
 
 				default:
 					break;
@@ -80,9 +80,9 @@ public class TextStorageMerger implements IStorageMerger {
 			}
 
 		} catch (UnsupportedEncodingException e) {
-			throw new CoreException (new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, UNSUPPORTED_ENCODING, TeamUIMessages.TextAutoMerge_outputEncodingError, e));
+			throw new CoreException (new Status(IStatus.ERROR, TeamPlugin.ID, UNSUPPORTED_ENCODING, Messages.TextAutoMerge_outputEncodingError, e));
 		} catch (IOException e) {
-			return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, INTERNAL_ERROR, TeamUIMessages.TextAutoMerge_outputIOError, e);
+			return new Status(IStatus.ERROR, TeamPlugin.ID, INTERNAL_ERROR, Messages.TextAutoMerge_outputIOError, e);
 		}
 
 		return Status.OK_STATUS;
