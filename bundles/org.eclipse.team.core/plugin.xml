@@ -175,9 +175,9 @@
       <storageMerger
             class="org.eclipse.team.internal.core.mapping.TextStorageMerger"
             extensions="txt"
-            id="org.eclipse.team.core.textStorageMerger"/>
+            id="org.eclipse.team.ui.textStorageMergerr"/>
       <contentTypeBinding
             contentTypeId="org.eclipse.core.runtime.text"
-            storageMergerId="org.eclipse.team.core.textStorageMerger"/>
+            storageMergerId="org.eclipse.team.ui.textStorageMerger"/>
    </extension>
 </plugin>
