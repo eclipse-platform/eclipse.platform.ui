@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -53,6 +54,7 @@ import org.eclipse.ui.editors.text.TextEditor;
  */
 public class EncodingChangeTests extends TestCase {
 
+	private static final String NON_DEFAULT_ENCODING= "US-ASCII".equals(ResourcesPlugin.getEncoding()) ? "ISO-8859-1" : "US-ASCII";
 	private static final String ORIGINAL_CONTENT= "line1\nline2\nline3";
 
 	public static Test suite() {
@@ -99,7 +101,7 @@ public class EncodingChangeTests extends TestCase {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
 		try {
-			fFile.setCharset("US-ASCII", null);
+			fFile.setCharset(NON_DEFAULT_ENCODING, null);
 		} catch (CoreException ex) {
 			fail();
 		}
@@ -113,7 +115,7 @@ public class EncodingChangeTests extends TestCase {
 				ScrolledComposite composite= (ScrolledComposite)accessor.get("fStatusControl");
 				assertNull(composite);
 				DefaultEncodingSupport encodingSupport= (DefaultEncodingSupport)editor.getAdapter(IEncodingSupport.class);
-				assertEquals("US-ASCII", encodingSupport.getEncoding());
+				assertEquals(NON_DEFAULT_ENCODING, encodingSupport.getEncoding());
 
 			} else
 				fail();
@@ -132,7 +134,7 @@ public class EncodingChangeTests extends TestCase {
 				while (editor.getSite().getShell().getDisplay().readAndDispatch()) {
 				}
 				DefaultEncodingSupport encodingSupport= (DefaultEncodingSupport)editor.getAdapter(IEncodingSupport.class);
-				encodingSupport.setEncoding("US-ASCII");
+				encodingSupport.setEncoding(NON_DEFAULT_ENCODING);
 				Accessor accessor= new Accessor(editor, StatusTextEditor.class);
 				while (editor.getSite().getShell().getDisplay().readAndDispatch()) {
 				}
@@ -144,7 +146,7 @@ public class EncodingChangeTests extends TestCase {
 				} catch (CoreException e1) {
 					fail();
 				}
-				assertEquals("US-ASCII", actual);
+				assertEquals(NON_DEFAULT_ENCODING, actual);
 			} else
 				fail();
 		} catch (PartInitException e) {
