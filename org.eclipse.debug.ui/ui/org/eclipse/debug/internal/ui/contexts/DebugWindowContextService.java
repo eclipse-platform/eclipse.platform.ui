@@ -55,11 +55,10 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	
 	private DebugContextSourceProvider fSourceProvider;
 
-	public DebugWindowContextService(IWorkbenchWindow window) {
+	public DebugWindowContextService(IWorkbenchWindow window, IEvaluationService evaluationService) {
 		fWindow = window;
 		fWindow.getPartService().addPartListener(this);
 		
-		IEvaluationService evaluationService = (IEvaluationService)window.getService(IEvaluationService.class);
 		fSourceProvider = new DebugContextSourceProvider(this, evaluationService);
 	}
 	

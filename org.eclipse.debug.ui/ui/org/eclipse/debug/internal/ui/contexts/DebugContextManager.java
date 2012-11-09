@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * @since 3.2
@@ -133,11 +134,12 @@ public class DebugContextManager implements IDebugContextManager {
 	protected IDebugContextService createService(IWorkbenchWindow window) {
 		DebugWindowContextService service = (DebugWindowContextService) fServices.get(window);
 		if (service == null) {
-			if (window.getShell() == null) {
+			IEvaluationService evaluationService = (IEvaluationService)window.getService(IEvaluationService.class);
+			if (window.getShell() == null || evaluationService == null) {
 				// the window has been closed - return a dummy service
 				return NULL_SERVICE;
 			} else {
-				service = new DebugWindowContextService(window);
+				service = new DebugWindowContextService(window, evaluationService);
 				fServices.put(window, service);
 				// register global listeners
 				Object[] listeners = fGlobalListeners.getListeners();
