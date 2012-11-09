@@ -89,7 +89,7 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 	
 	@Override
 	public void createPartControl(Composite parent) {
-		component = PartHelper.creatComponent(parent, context, clazz, this);
+		component = PartHelper.createComponent(parent, context, clazz, this);
 		makeActions();
 	}
 	

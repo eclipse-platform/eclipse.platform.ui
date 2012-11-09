@@ -42,7 +42,7 @@ public abstract class DIViewPart<C> extends ViewPart {
 	
 	@Override
 	public void createPartControl(Composite parent) {
-		component = PartHelper.creatComponent(parent, context, clazz, this);
+		component = PartHelper.createComponent(parent, context, clazz, this);
 	}
 
 	protected IEclipseContext getContext() {

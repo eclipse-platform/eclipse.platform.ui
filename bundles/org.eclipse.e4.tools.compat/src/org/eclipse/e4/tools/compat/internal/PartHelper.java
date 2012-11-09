@@ -57,7 +57,7 @@ public class PartHelper {
 
 	}
 	
-	public static <C> C creatComponent(Composite parent, IEclipseContext context, Class<C> clazz, WorkbenchPart part) {
+	public static <C> C createComponent(Composite parent, IEclipseContext context, Class<C> clazz, WorkbenchPart part) {
 		ISelectionProvider s = new SelectionProviderImpl();
 		context.set(ISelectionProvider.class, s);
 		part.getSite().setSelectionProvider(s);
