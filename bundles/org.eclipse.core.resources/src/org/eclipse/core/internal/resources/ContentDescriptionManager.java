@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -184,7 +184,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	public static final byte USED_CACHE = 2;
 	public static final byte INVALID_CACHE = 3;
 	public static final byte FLUSHING_CACHE = 4;
-	
+
 	// This state indicates that FlushJob is scheduled and full flush is going to be performed.
 	// In the meantime the cache was discarded. It is used as a temporary cache till the FlushJob start.
 	public static final byte ABOUT_TO_FLUSH = 5;
@@ -349,18 +349,18 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 					return (IContentDescription) entry.getCached();
 			}
 		}
-			
-			// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
+
+		// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
 		// reading description can call 3rd party code, so don't synchronize it
-			IContentDescription newDescription = readDescription(file);
-		
+		IContentDescription newDescription = readDescription(file);
+
 		synchronized (this) {
 			// tries to get a description from the cache
 			Cache.Entry entry = cache.getEntry(file.getFullPath());
 			if (entry != null && inSync && entry.getTimestamp() == getTimestamp(info))
 				// there was a description in the cache, and it was up to date
 				return (IContentDescription) entry.getCached();
-			
+
 			if (getCacheState() != ABOUT_TO_FLUSH) {
 				// we are going to add an entry to the cache or update the resource info - remember that
 				setCacheState(USED_CACHE);
@@ -468,9 +468,9 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		//TODO are these the only events we care about?
 		switch (event.kind) {
 			case LifecycleEvent.POST_PROJECT_CHANGE :
-			// if the project changes, its natures may have changed as well (content types may be associated to natures)
+				// if the project changes, its natures may have changed as well (content types may be associated to natures)
 			case LifecycleEvent.PRE_PROJECT_DELETE :
-			// if the project gets deleted, we may get confused if it is recreated again (content ids might match)
+				// if the project gets deleted, we may get confused if it is recreated again (content ids might match)
 			case LifecycleEvent.PRE_PROJECT_MOVE :
 				// if the project moves, resource paths (used as keys in the in-memory cache) will have changed 
 				invalidateCache(true, (IProject) event.resource);
@@ -492,8 +492,13 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		if (getCacheState() != INVALID_CACHE)
 			// remember the platform timestamp for which we have a valid cache 
 			setCacheTimeStamp(Platform.getStateStamp());
-		Platform.getContentTypeManager().removeContentTypeChangeListener(this);
-		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		//tolerate missing services during shutdown because they might be already gone
+		if (contentTypeManager != null)
+			contentTypeManager.removeContentTypeChangeListener(this);
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		if (registry != null)
+			registry.removeRegistryChangeListener(this);
 		cache.dispose();
 		cache = null;
 		flushJob.cancel();

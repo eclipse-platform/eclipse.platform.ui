@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		// avoid reacting to changes made by ourselves  
 		if (isDisabled())
 			return;
-		ResourceInfo projectInfo = ((Project)project).getResourceInfo(false, false);
+		ResourceInfo projectInfo = ((Project) project).getResourceInfo(false, false);
 		//nothing to do if project has already been deleted
 		if (projectInfo == null)
 			return;
@@ -83,7 +83,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		ICharsetListenerFilter filter = new ICharsetListenerFilter() {
 			public IPath getRoot() {
 				//make sure it is still the same project - it could have been deleted and recreated
-				ResourceInfo currentInfo = ((Project)project).getResourceInfo(false, false);
+				ResourceInfo currentInfo = ((Project) project).getResourceInfo(false, false);
 				if (currentInfo == null)
 					return null;
 				long currentId = currentInfo.getNodeId();
@@ -194,7 +194,10 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 	}
 
 	public void shutdown() {
-		Platform.getContentTypeManager().removeContentTypeChangeListener(this);
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		//if the service is already gone there is nothing to do
+		if (contentTypeManager != null)
+			contentTypeManager.removeContentTypeChangeListener(this);
 	}
 
 	public void startup() {
