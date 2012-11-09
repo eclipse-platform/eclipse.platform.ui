@@ -1,5 +1,5 @@
 #**********************************************************************
-# Copyright (c) 2000, 2007 Hewlett-Packard Development Company and others.
+# Copyright (c) 2000, 2012 Hewlett-Packard Development Company and others.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -7,18 +7,18 @@
 #********************************************************************** 
 # Contributors:
 #      Hewlett-Packard Development Company - added "-Iinclude" and "*.so" 
+#		IBM - Ongoing development
 #**********************************************************************
 
-# makefile for ia64_32 liblocalfile.so
+# makefile for ia64 libunixfile.so
 
-CORE.C = ../localfile.c
-CORE.O = localfile.o
-LIB_NAME = liblocalfile.so
-LIB_NAME_FULL = liblocalfile_1_0_0.so
+CORE.C = ../unixfile.c
+CORE.O = unixfile.o
+LIB_NAME_FULL = libunixfile_1_0_0.so
 
 core :
-	cc +z -c +O3 +DD32 +DSblended -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -Iinclude -I$(JDK_INCLUDE)/hp-ux -I$(JDK_INCLUDE) $(CORE.C) -o $(CORE.O)
-	ld -b -o $(LIB_NAME_FULL) $(CORE.O) -lc
+	cc +DD64 -mt +z -c -D_LARGEFILE64_SOURCE -I$(JAVA_HOME)/include/hp-ux -I$(JAVA_HOME)/include $(CORE.C) -o $(CORE.O)
+	ld -b -o $(LIB_NAME_FULL) $(CORE.O)
 
 clean :
 	rm *.o *.so
