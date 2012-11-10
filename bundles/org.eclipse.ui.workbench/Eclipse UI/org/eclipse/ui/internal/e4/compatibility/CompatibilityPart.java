@@ -118,6 +118,15 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 		}
 	};
 
+	private ISelectionChangedListener postListener = new ISelectionChangedListener() {
+
+		public void selectionChanged(SelectionChangedEvent e) {
+			ESelectionService selectionService = (ESelectionService) part.getContext().get(
+					ESelectionService.class.getName());
+			selectionService.setPostSelection(e.getSelection());
+		}
+	};
+
 	CompatibilityPart(MPart part) {
 		this.part = part;
 	}
@@ -165,14 +174,9 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 
 				if (selectionProvider instanceof IPostSelectionProvider) {
 					((IPostSelectionProvider) selectionProvider)
-							.addPostSelectionChangedListener(new ISelectionChangedListener() {
-
-								public void selectionChanged(SelectionChangedEvent e) {
-									ESelectionService selectionService = (ESelectionService) part
-											.getContext().get(ESelectionService.class.getName());
-									selectionService.setPostSelection(e.getSelection());
-								}
-							});
+							.addPostSelectionChangedListener(postListener);
+				} else {
+					selectionProvider.addSelectionChangedListener(postListener);
 				}
 			}
 		}
@@ -202,7 +206,9 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 
 					if (selectionProvider instanceof IPostSelectionProvider) {
 						((IPostSelectionProvider) selectionProvider)
-								.removePostSelectionChangedListener(this);
+								.removePostSelectionChangedListener(postListener);
+					} else {
+						selectionProvider.removeSelectionChangedListener(postListener);
 					}
 				}
 			}
