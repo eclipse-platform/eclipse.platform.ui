@@ -92,6 +92,7 @@ public final class ContextService implements IContextService {
 	 */
 	public void deferUpdates(boolean defer) {
 		contextManager.deferUpdates(defer);
+		contextService.deferUpdates(defer);
 	}
 
 	/*

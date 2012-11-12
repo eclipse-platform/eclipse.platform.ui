@@ -25,6 +25,10 @@ public class ContextContextService implements EContextService {
 
 	private IEclipseContext eclipseContext;
 	private ContextManager contextManager;
+	
+	private boolean deferUpdates = false;
+
+	private int cachingRef = 0;
 
 	public ContextContextService(IEclipseContext context) {
 		eclipseContext = context;
@@ -40,6 +44,10 @@ public class ContextContextService implements EContextService {
 	 * String)
 	 */
 	public void activateContext(String id) {
+		if (deferUpdates) {
+			deferActivateContext(id);
+			return;
+		}
 		LinkedList<String> locals = (LinkedList<String>) eclipseContext
 				.getLocal(LOCAL_CONTEXTS);
 		if (locals == null) {
@@ -54,7 +62,76 @@ public class ContextContextService implements EContextService {
 			}
 		}
 	}
+	
+	/**
+	 * Informs the manager that a batch operation has started.
+	 * <p>
+	 * <b>Note:</b> You must insure that if you call
+	 * <code>deferUpdates(true)</code> that nothing in your batched operation
+	 * will prevent the matching call to <code>deferUpdates(false)</code>.
+	 * </p>
+	 * 
+	 * @param defer
+	 *            true when starting a batch operation false when ending the
+	 *            operation
+	 * 
+	 * @since 4.3
+	 */
+	public void deferUpdates(boolean defer) {
+		if(defer) {
+			cachingRef ++;
+			if (cachingRef==1) {
+				setEventCaching(true);
+			}
+		}else {
+			cachingRef--;
+			if (cachingRef==0) {
+				setEventCaching(false);
+			}
+		}
+	}
 
+	private void deferActivateContext(String id) {
+		LinkedList<String> locals = (LinkedList<String>) eclipseContext
+				.getLocal(LOCAL_CONTEXTS+".a");
+		if (locals == null) {
+			locals = new LinkedList<String>();
+			eclipseContext.set(LOCAL_CONTEXTS+ ".a", locals);
+		}
+		locals.add(id);
+	}
+
+	private void setEventCaching(boolean cache) {
+		if (cache) {
+			deferUpdates = true;
+			return;
+		}
+
+		deferUpdates = false;
+		LinkedList<String> locals = (LinkedList<String>) eclipseContext
+				.getLocal(LOCAL_CONTEXTS);
+		if (locals == null) {
+			locals = new LinkedList<String>();
+		}
+		LinkedList<String> activates = (LinkedList<String>) eclipseContext
+				.getLocal(LOCAL_CONTEXTS + ".a");
+		if (activates != null) {
+			eclipseContext.remove(LOCAL_CONTEXTS + ".a");
+			for (String id : activates) {
+				locals.add(id);
+			}
+		}
+		LinkedList<String> deactivates = (LinkedList<String>) eclipseContext
+				.getLocal(LOCAL_CONTEXTS + ".d");
+		if (deactivates != null) {
+			eclipseContext.remove(LOCAL_CONTEXTS + ".d");
+			for (String id : deactivates) {
+				locals.remove(id);
+			}
+		}
+		eclipseContext.set(LOCAL_CONTEXTS, locals.clone());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -63,6 +140,10 @@ public class ContextContextService implements EContextService {
 	 * .String)
 	 */
 	public void deactivateContext(String id) {
+		if (deferUpdates) {
+			deferDeactivateContext(id);
+			return;
+		}
 		LinkedList<String> locals = (LinkedList<String>) eclipseContext
 				.getLocal(LOCAL_CONTEXTS);
 		if (locals != null && locals.remove(id)) {
@@ -72,6 +153,16 @@ public class ContextContextService implements EContextService {
 				eclipseContext.set(LOCAL_CONTEXTS, locals.clone());
 			}
 		}
+	}
+
+	private void deferDeactivateContext(String id) {
+		LinkedList<String> locals = (LinkedList<String>) eclipseContext
+				.getLocal(LOCAL_CONTEXTS+".d");
+		if (locals == null) {
+			locals = new LinkedList<String>();
+			eclipseContext.set(LOCAL_CONTEXTS+ ".d", locals);
+		}
+		locals.add(id);
 	}
 
 	/*

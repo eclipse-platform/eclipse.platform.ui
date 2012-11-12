@@ -46,6 +46,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -124,6 +125,9 @@ public class PartServiceImpl implements EPartService {
 
 	@Inject
 	private IEventBroker eventBroker;
+
+	@Inject
+	private EContextService contextService;
 
 	private PartActivationHistory partActivationHistory;
 
@@ -544,32 +548,37 @@ public class PartServiceImpl implements EPartService {
 			UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
 			return;
 		}
+		contextService.deferUpdates(true);
+		try {
+			// record any sibling into the activation history if necessary, this will allow it to be
+			// reselected again in the future as it will be an activation candidate in the future,
+			// this
+			// prevents other unrendered elements from being selected arbitrarily which would cause
+			// unwanted bundle activation
+			recordStackActivation(part);
 
-		// record any sibling into the activation history if necessary, this will allow it to be
-		// reselected again in the future as it will be an activation candidate in the future, this
-		// prevents other unrendered elements from being selected arbitrarily which would cause
-		// unwanted bundle activation
-		recordStackActivation(part);
+			delegateBringToTop(part);
+			window.getParent().setSelectedElement(window);
 
-		delegateBringToTop(part);
-		window.getParent().setSelectedElement(window);
+			partActivationHistory.activate(part, activateBranch);
 
-		partActivationHistory.activate(part, activateBranch);
+			Object object = part.getObject();
+			if (object != null && requiresFocus) {
+				try {
+					ContextInjectionFactory.invoke(object, Focus.class, part.getContext(), null);
 
-		Object object = part.getObject();
-		if (object != null && requiresFocus) {
-			try {
-				ContextInjectionFactory.invoke(object, Focus.class, part.getContext(), null);
-
-				firePartActivated(part);
-				UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
-			} catch (InjectionException e) {
-				log("Failed to grant focus to part", "Failed to grant focus to part ({0})", //$NON-NLS-1$ //$NON-NLS-2$
-						part.getElementId(), e);
-			} catch (RuntimeException e) {
-				log("Failed to grant focus to part via DI", //$NON-NLS-1$
-						"Failed to grant focus via DI to part ({0})", part.getElementId(), e); //$NON-NLS-1$
+					firePartActivated(part);
+					UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
+				} catch (InjectionException e) {
+					log("Failed to grant focus to part", "Failed to grant focus to part ({0})", //$NON-NLS-1$ //$NON-NLS-2$
+							part.getElementId(), e);
+				} catch (RuntimeException e) {
+					log("Failed to grant focus to part via DI", //$NON-NLS-1$
+							"Failed to grant focus via DI to part ({0})", part.getElementId(), e); //$NON-NLS-1$
+				}
 			}
+		} finally {
+			contextService.deferUpdates(false);
 		}
 	}
 
