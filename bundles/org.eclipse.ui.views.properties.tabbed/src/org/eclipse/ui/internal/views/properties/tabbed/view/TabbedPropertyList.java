@@ -368,7 +368,7 @@ public class TabbedPropertyList
 			}
 
 			/* draw the text */
-			e.gc.setForeground(widgetForeground);
+			e.gc.setForeground(textColor);
 			if (selected) {
 				/* selected tab is bold font */
 				e.gc.setFont(JFaceResources.getFontRegistry().getBold(
