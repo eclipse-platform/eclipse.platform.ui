@@ -38,6 +38,8 @@ public class FileInfo implements IFileInfo {
 	 */
 	private int attributes = EFS.ATTRIBUTE_OWNER_WRITE | EFS.ATTRIBUTE_OWNER_READ;
 
+	private int errorCode = NONE;
+
 	/**
 	 * The last modified time.
 	 */
@@ -111,6 +113,14 @@ public class FileInfo implements IFileInfo {
 	 */
 	public boolean exists() {
 		return getAttribute(ATTRIBUTE_EXISTS);
+	}
+
+	/**
+	 * @since 1.4
+	 * @see IFileInfo#getError()
+	 */
+	public int getError() {
+		return errorCode;
 	}
 
 	public boolean getAttribute(int attribute) {
@@ -220,6 +230,17 @@ public class FileInfo implements IFileInfo {
 			set(ATTRIBUTE_EXISTS);
 		else
 			clear(ATTRIBUTE_EXISTS);
+	}
+
+	/**
+	 * Sets the error code indicating whether an I/O error was encountered when accessing the file.
+	 * 
+	 * @param errorCode {@link IFileInfo#IO_ERROR} if this file has an I/O error,
+	 * and {@link IFileInfo#NONE} otherwise.
+	 * @since 1.4
+	 */
+	public void setError(int errorCode) {
+		this.errorCode = errorCode;
 	}
 
 	/* (non-Javadoc)

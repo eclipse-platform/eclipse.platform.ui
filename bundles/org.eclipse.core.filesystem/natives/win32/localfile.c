@@ -21,6 +21,10 @@
 #define IO_REPARSE_TAG_SYMLINK 0xA000000C
 #endif
 
+// From IFileInfo.java
+#undef IO_ERROR
+#define IO_ERROR 5
+
 typedef struct _REPARSE_DATA_BUFFER {
   ULONG  ReparseTag;
   USHORT ReparseDataLength;
@@ -46,8 +50,6 @@ typedef struct _REPARSE_DATA_BUFFER {
     } GenericReparseBuffer;
   };
 } REPARSE_DATA_BUFFER, *PREPARSE_DATA_BUFFER;
-
-
 
 /*
  * Converts a FILETIME in a java long (milliseconds).
@@ -380,6 +382,20 @@ jboolean fillEmptyDirectory(JNIEnv *env, jobject fileInfo) {
 }
 
 /*
+ * Calls FileInfo.setError(IFileInfo.IO_ERROR).
+ */
+jboolean setIOError(JNIEnv *env, jobject fileInfo) {
+	jclass cls;
+	jmethodID mid;
+	cls = (*env)->GetObjectClass(env, fileInfo);
+	if (cls != 0) return JNI_FALSE;
+	mid = (*env)->GetMethodID(env, cls, "setAttribute", "(I)V");
+	if (mid == 0) return JNI_FALSE;
+	(*env)->CallVoidMethod(env, fileInfo, mid, IO_ERROR);
+	return JNI_TRUE;
+}
+
+/*
  * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
  * Method:    internalGetFileInfo
  * Signature: ([CLorg/eclipse/core/filesystem/IFileInfo;)Z
@@ -402,8 +418,11 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	}
 	handle = FindFirstFile(name, &info);
 	free(name);
-	if (handle == INVALID_HANDLE_VALUE)
+	if (handle == INVALID_HANDLE_VALUE) {
+		if (GetLastError() != ERROR_FILE_NOT_FOUND)
+			setIOError(env, fileInfo);
 		return JNI_FALSE;
+	}
 	FindClose(handle);
 	return convertFindDataToFileInfo(env, info, fileInfo);
 }
@@ -433,6 +452,8 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	handle = FindFirstFileW(name, &info);
 	if (handle == INVALID_HANDLE_VALUE) {
 		free(name);
+		if (GetLastError() != ERROR_FILE_NOT_FOUND)
+			setIOError(env, fileInfo);
 		return JNI_FALSE;
 	}
 
