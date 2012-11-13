@@ -222,7 +222,7 @@ public class MenuAdditionCacheEntry {
 			parm.setValue(e.getValue().toString());
 			item.getParameters().add(parm);
 		}
-		String iconUrl = MenuHelper.getIconUrl(commandAddition,
+		String iconUrl = MenuHelper.getIconURI(commandAddition,
 				IWorkbenchRegistryConstants.ATT_ICON);
 
 		if (iconUrl == null) {
@@ -394,7 +394,7 @@ public class MenuAdditionCacheEntry {
 			parm.setValue(e.getValue().toString());
 			item.getParameters().add(parm);
 		}
-		String iconUrl = MenuHelper.getIconUrl(commandAddition,
+		String iconUrl = MenuHelper.getIconURI(commandAddition,
 				IWorkbenchRegistryConstants.ATT_ICON);
 
 		if (iconUrl == null) {

@@ -121,21 +121,11 @@ public class ViewRegistry implements IViewRegistry {
 							.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
 					descriptor.setContributionURI(CompatibilityPart.COMPATIBILITY_VIEW_URI);
 
-					String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+					String iconURI = MenuHelper.getIconURI(element,
+							IWorkbenchRegistryConstants.ATT_ICON);
 					if (iconURI == null) {
 						descriptor.setIconURI(MenuHelper.getImageUrl(workbench.getSharedImages()
 								.getImageDescriptor(ISharedImages.IMG_DEF_VIEW)));
-					} else if (!iconURI.startsWith("platform:/plugin/")) { //$NON-NLS-1$
-						StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
-						builder.append(element.getContributor().getName()).append('/');
-
-						// FIXME: need to get rid of $nl$ properly
-						if (iconURI.startsWith("$nl$")) { //$NON-NLS-1$
-							iconURI = iconURI.substring(4);
-						}
-
-						builder.append(iconURI);
-						descriptor.setIconURI(builder.toString());
 					} else {
 						descriptor.setIconURI(iconURI);
 					}
