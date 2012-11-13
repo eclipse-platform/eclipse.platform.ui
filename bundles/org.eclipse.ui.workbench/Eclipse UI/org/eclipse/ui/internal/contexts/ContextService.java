@@ -130,20 +130,20 @@ public final class ContextService implements IContextService {
 							&& (cached == result || (cached != EvaluationResult.FALSE && result != EvaluationResult.FALSE))) {
 						return updating;
 					}
-					cached = result;
 					if (result != EvaluationResult.FALSE) {
 						runExternalCode(new Runnable() {
 							public void run() {
 								contextService.activateContext(contextId);
 							}
 						});
-					} else {
+					} else if (cached != null) {
 						runExternalCode(new Runnable() {
 							public void run() {
 								contextService.deactivateContext(contextId);
 							}
 						});
 					}
+					cached = result;
 				}
 			} catch (CoreException e) {
 				// contextService.deactivateContext(contextId);
