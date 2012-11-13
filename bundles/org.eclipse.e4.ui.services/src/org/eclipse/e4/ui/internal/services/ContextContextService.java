@@ -22,6 +22,8 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 
 public class ContextContextService implements EContextService {
 	static final String LOCAL_CONTEXTS = "localContexts";
+	static final String DEFERED_ACTIVATES = "localContexts.activates";
+	static final String DEFERED_DEACTIVATES = "localContexts.deactivates";
 
 	private IEclipseContext eclipseContext;
 	private ContextManager contextManager;
@@ -75,7 +77,7 @@ public class ContextContextService implements EContextService {
 	 *            true when starting a batch operation false when ending the
 	 *            operation
 	 * 
-	 * @since 4.3
+	 * @since 4.2.2
 	 */
 	public void deferUpdates(boolean defer) {
 		if(defer) {
@@ -93,10 +95,10 @@ public class ContextContextService implements EContextService {
 
 	private void deferActivateContext(String id) {
 		LinkedList<String> locals = (LinkedList<String>) eclipseContext
-				.getLocal(LOCAL_CONTEXTS+".a");
+				.getLocal(DEFERED_ACTIVATES);
 		if (locals == null) {
 			locals = new LinkedList<String>();
-			eclipseContext.set(LOCAL_CONTEXTS+ ".a", locals);
+			eclipseContext.set(DEFERED_ACTIVATES, locals);
 		}
 		locals.add(id);
 	}
@@ -114,17 +116,17 @@ public class ContextContextService implements EContextService {
 			locals = new LinkedList<String>();
 		}
 		LinkedList<String> activates = (LinkedList<String>) eclipseContext
-				.getLocal(LOCAL_CONTEXTS + ".a");
+				.getLocal(DEFERED_ACTIVATES);
 		if (activates != null) {
-			eclipseContext.remove(LOCAL_CONTEXTS + ".a");
+			eclipseContext.remove(DEFERED_ACTIVATES);
 			for (String id : activates) {
 				locals.add(id);
 			}
 		}
 		LinkedList<String> deactivates = (LinkedList<String>) eclipseContext
-				.getLocal(LOCAL_CONTEXTS + ".d");
+				.getLocal(DEFERED_DEACTIVATES);
 		if (deactivates != null) {
-			eclipseContext.remove(LOCAL_CONTEXTS + ".d");
+			eclipseContext.remove(DEFERED_DEACTIVATES);
 			for (String id : deactivates) {
 				locals.remove(id);
 			}
@@ -157,10 +159,10 @@ public class ContextContextService implements EContextService {
 
 	private void deferDeactivateContext(String id) {
 		LinkedList<String> locals = (LinkedList<String>) eclipseContext
-				.getLocal(LOCAL_CONTEXTS+".d");
+				.getLocal(DEFERED_DEACTIVATES);
 		if (locals == null) {
 			locals = new LinkedList<String>();
-			eclipseContext.set(LOCAL_CONTEXTS+ ".d", locals);
+			eclipseContext.set(DEFERED_DEACTIVATES, locals);
 		}
 		locals.add(id);
 	}
