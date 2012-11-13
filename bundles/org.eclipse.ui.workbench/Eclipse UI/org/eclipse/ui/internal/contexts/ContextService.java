@@ -120,6 +120,13 @@ public final class ContextService implements IContextService {
 		@Override
 		public boolean changed(IEclipseContext context) {
 			if (!updating) {
+				if (cached != null && cached != EvaluationResult.FALSE) {
+					runExternalCode(new Runnable() {
+						public void run() {
+							contextService.deactivateContext(contextId);
+						}
+					});
+				}
 				return false;
 			}
 			ExpressionContext ctx = new ExpressionContext(eclipseContext.getActiveLeaf());
@@ -226,8 +233,9 @@ public final class ContextService implements IContextService {
 			final UpdateExpression rat = activationToRat.remove(activation);
 			if (rat != null) {
 				rat.updating = false;
+			} else {
+				contextService.deactivateContext(activation.getContextId());
 			}
-			contextService.deactivateContext(activation.getContextId());
 			contextAuthority.deactivateContext(activation);
 		}
 	}
