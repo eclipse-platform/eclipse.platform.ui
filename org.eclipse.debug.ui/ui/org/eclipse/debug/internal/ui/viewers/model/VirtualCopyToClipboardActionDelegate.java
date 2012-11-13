@@ -25,17 +25,13 @@ import org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IVirtualItemListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IVirtualItemValidator;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem.Index;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
-import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
-import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -150,22 +146,6 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		}
 	}
 
-    private IPresentationContext makeVirtualPresentationContext(final IPresentationContext clientViewerContext) {
-        PresentationContext context = null;
-        if (clientViewerContext instanceof DebugModelPresentationContext) {
-        	IDebugModelPresentation presentation = 
-        			((DebugModelPresentationContext)clientViewerContext).getModelPresentation();
-        	context = new DebugModelPresentationContext(clientViewerContext.getId(), null, presentation);
-        } else {
-        	context = new PresentationContext(clientViewerContext.getId());
-        }
-        String[] clientProperties = clientViewerContext.getProperties();
-        for (int i = 0; i < clientProperties.length; i++) {
-            context.setProperty(clientProperties[i], clientViewerContext.getProperty(clientProperties[i]));
-        }
-        return context;
-    }
-	
 	private class ItemsToCopyVirtualItemValidator implements IVirtualItemValidator {
 	    
 	    Set fItemsToCopy = Collections.EMPTY_SET;
@@ -198,15 +178,16 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
         VirtualTreeModelViewer virtualViewer = new VirtualTreeModelViewer(
             clientViewer.getDisplay(), 
             SWT.VIRTUAL, 
-            makeVirtualPresentationContext(clientViewer.getPresentationContext()), 
+            clientViewer.getPresentationContext(), 
             validator); 
         virtualViewer.setFilters(clientViewer.getFilters());
         virtualViewer.addLabelUpdateListener(listener);
         virtualViewer.getTree().addItemListener(listener);
+        String[] columns = clientViewer.getPresentationContext().getColumns();
         virtualViewer.setInput(input);
         if (virtualViewer.canToggleColumns()) {
             virtualViewer.setShowColumns(clientViewer.isShowColumns());
-            virtualViewer.setVisibleColumns(clientViewer.getPresentationContext().getColumns());
+            virtualViewer.setVisibleColumns(columns);
         }
         virtualViewer.updateViewer(stateDelta);
         
