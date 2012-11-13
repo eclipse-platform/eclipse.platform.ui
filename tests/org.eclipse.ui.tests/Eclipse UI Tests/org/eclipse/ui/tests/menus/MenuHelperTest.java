@@ -20,8 +20,7 @@ import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
- * @since 4.2.1
- * 
+ * @since 4.2.2
  */
 public class MenuHelperTest extends TestCase {
 	private IExtensionRegistry registry = RegistryFactory.getRegistry();

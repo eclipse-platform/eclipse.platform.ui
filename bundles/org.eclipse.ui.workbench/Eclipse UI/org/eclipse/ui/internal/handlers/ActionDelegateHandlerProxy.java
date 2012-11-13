@@ -309,7 +309,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 			return;
 		}
 		if (delegate == null) {
-			if (!BundleUtility.isActive(element.getContributor().getName()) || !loadDelegate()) {
+			if (!BundleUtility.isActive(element.getContributor().getName())) {
 				return;
 			}
 		}

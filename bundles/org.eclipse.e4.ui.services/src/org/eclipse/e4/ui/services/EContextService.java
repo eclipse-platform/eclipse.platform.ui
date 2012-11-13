@@ -22,4 +22,6 @@ public interface EContextService {
 	public void deactivateContext(String id);
 	
 	public Collection<String> getActiveContextIds();
+	
+	public void deferUpdates(boolean defer);
 }

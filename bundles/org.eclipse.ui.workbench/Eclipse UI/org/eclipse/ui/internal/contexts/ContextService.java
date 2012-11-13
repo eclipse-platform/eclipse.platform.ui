@@ -92,6 +92,7 @@ public final class ContextService implements IContextService {
 	 */
 	public void deferUpdates(boolean defer) {
 		contextManager.deferUpdates(defer);
+		contextService.deferUpdates(defer);
 	}
 
 	/*
@@ -119,6 +120,13 @@ public final class ContextService implements IContextService {
 		@Override
 		public boolean changed(IEclipseContext context) {
 			if (!updating) {
+				if (cached != null && cached != EvaluationResult.FALSE) {
+					runExternalCode(new Runnable() {
+						public void run() {
+							contextService.deactivateContext(contextId);
+						}
+					});
+				}
 				return false;
 			}
 			ExpressionContext ctx = new ExpressionContext(eclipseContext.getActiveLeaf());
@@ -129,20 +137,20 @@ public final class ContextService implements IContextService {
 							&& (cached == result || (cached != EvaluationResult.FALSE && result != EvaluationResult.FALSE))) {
 						return updating;
 					}
-					cached = result;
 					if (result != EvaluationResult.FALSE) {
 						runExternalCode(new Runnable() {
 							public void run() {
 								contextService.activateContext(contextId);
 							}
 						});
-					} else {
+					} else if (cached != null) {
 						runExternalCode(new Runnable() {
 							public void run() {
 								contextService.deactivateContext(contextId);
 							}
 						});
 					}
+					cached = result;
 				}
 			} catch (CoreException e) {
 				// contextService.deactivateContext(contextId);
@@ -225,8 +233,9 @@ public final class ContextService implements IContextService {
 			final UpdateExpression rat = activationToRat.remove(activation);
 			if (rat != null) {
 				rat.updating = false;
+			} else {
+				contextService.deactivateContext(activation.getContextId());
 			}
-			contextService.deactivateContext(activation.getContextId());
 			contextAuthority.deactivateContext(activation);
 		}
 	}
