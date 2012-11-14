@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,37 +67,36 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Map of (IPath -> LinkDescription) pairs for each linked resource
 	 * in this project, where IPath is the project relative path of the resource.
 	 */
-	protected HashMap<IPath,LinkDescription> linkDescriptions = null;
-	
+	protected HashMap<IPath, LinkDescription> linkDescriptions = null;
+
 	/**
 	 * Map of (IPath -> LinkedList<FilterDescription>) pairs for each filtered resource
 	 * in this project, where IPath is the project relative path of the resource.
 	 */
-	protected HashMap<IPath,LinkedList<FilterDescription>> filterDescriptions = null;
+	protected HashMap<IPath, LinkedList<FilterDescription>> filterDescriptions = null;
 
 	/**
 	 * Map of (String -> VariableDescription) pairs for each variable in this
 	 * project, where String is the name of the variable.
 	 */
-	protected HashMap<String,VariableDescription> variableDescriptions = null;
+	protected HashMap<String, VariableDescription> variableDescriptions = null;
 
 	// fields
 	protected URI location = null;
 	protected String[] natures = EMPTY_STRING_ARRAY;
-	protected URI snapshotLocation= null;
+	protected URI snapshotLocation = null;
 
 	public ProjectDescription() {
 		super();
 	}
 
-	@SuppressWarnings("unchecked")
 	public Object clone() {
 		ProjectDescription clone = (ProjectDescription) super.clone();
 		//don't want the clone to have access to our internal link locations table or builders
 		clone.linkDescriptions = null;
 		clone.filterDescriptions = null;
 		if (variableDescriptions != null)
-			clone.variableDescriptions =  (HashMap<String, VariableDescription>) variableDescriptions.clone();
+			clone.variableDescriptions = (HashMap<String, VariableDescription>) variableDescriptions.clone();
 		clone.buildSpec = getBuildSpec(true);
 		clone.dynamicConfigRefs = (HashMap<String, IBuildConfiguration[]>) dynamicConfigRefs.clone();
 		clone.cachedConfigRefs = Collections.synchronizedMap(new HashMap<String, IBuildConfiguration[]>(1));
@@ -109,7 +108,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Clear cached references for the specified build config name
 	 * or all if configName is null.
 	 */
-	private void clearCachedReferences(String configName)	{
+	private void clearCachedReferences(String configName) {
 		if (configName == null)
 			cachedConfigRefs.clear();
 		else
@@ -128,26 +127,26 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/**
 	 * Returns a copy of the given array with all duplicates removed
 	 */
-    private IProject[] copyAndRemoveDuplicates(IProject[] projects) {
-        IProject[] result = new IProject[projects.length];
-        int count = 0;
-        next: for (int i = 0; i < projects.length; i++) {
-                IProject project = projects[i];
-                // scan to see if there are any other projects by the same name
-                for (int j = 0; j < count; j++)
-                        if (project.equals(result[j]))
-                                continue next;
-                // not found
-                result[count++] = project;
-        }
-        if (count < projects.length) {
-                //shrink array
-                IProject[] reduced = new IProject[count];
-                System.arraycopy(result, 0, reduced, 0, count);
-                return reduced;
-        }
-        return result;
-    }
+	private IProject[] copyAndRemoveDuplicates(IProject[] projects) {
+		IProject[] result = new IProject[projects.length];
+		int count = 0;
+		next: for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			// scan to see if there are any other projects by the same name
+			for (int j = 0; j < count; j++)
+				if (project.equals(result[j]))
+					continue next;
+			// not found
+			result[count++] = project;
+		}
+		if (count < projects.length) {
+			//shrink array
+			IProject[] reduced = new IProject[count];
+			System.arraycopy(result, 0, reduced, 0, count);
+			return reduced;
+		}
+		return result;
+	}
 
 	/**
 	 * Helper to turn an array of projects into an array of {@link IBuildConfiguration} to the
@@ -194,7 +193,8 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 				refs = getAllBuildConfigReferences(activeConfiguration, false);
 			else if (configNames.length > 0)
 				refs = getAllBuildConfigReferences(configNames[0], false);
-			else // No build configuration => fall-back to default
+			else
+				// No build configuration => fall-back to default
 				refs = getAllBuildConfigReferences(IBuildConfiguration.DEFAULT_CONFIG_NAME, false);
 			Collection<IProject> l = getProjectsFromBuildConfigRefs(refs);
 			projRefs = cachedRefs = l.toArray(new IProject[l.size()]);
@@ -220,8 +220,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		IBuildConfiguration[] refs = cachedConfigRefs.get(configName);
 		if (refs == null) {
 			Set<IBuildConfiguration> references = new LinkedHashSet<IBuildConfiguration>();
-			IBuildConfiguration[] dynamicBuildConfigs = dynamicConfigRefs.containsKey(configName) ?
-														dynamicConfigRefs.get(configName) : EMPTY_BUILD_CONFIG_REFERENCE_ARRAY;
+			IBuildConfiguration[] dynamicBuildConfigs = dynamicConfigRefs.containsKey(configName) ? dynamicConfigRefs.get(configName) : EMPTY_BUILD_CONFIG_REFERENCE_ARRAY;
 			Collection<BuildConfiguration> dynamic = getBuildConfigReferencesFromProjects(dynamicRefs);
 			Collection<BuildConfiguration> statik = getBuildConfigReferencesFromProjects(staticRefs);
 
@@ -248,7 +247,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			configs = null;
 		if (configs == null) {
 			if (configNames.length == 0)
-				configs = new IBuildConfiguration[] { new BuildConfiguration(project) };
+				configs = new IBuildConfiguration[] {new BuildConfiguration(project)};
 			else {
 				configs = new IBuildConfiguration[configNames.length];
 				for (int i = 0; i < configs.length; i++)
@@ -256,7 +255,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			}
 			cachedBuildConfigs = configs;
 		}
-		return makeCopy ? (IBuildConfiguration[])configs.clone() : configs;
+		return makeCopy ? (IBuildConfiguration[]) configs.clone() : configs;
 	}
 
 	/* (non-Javadoc)
@@ -270,17 +269,15 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		if (!hasBuildConfig(configName) || !dynamicConfigRefs.containsKey(configName))
 			return EMPTY_BUILD_CONFIG_REFERENCE_ARRAY;
 
-		return makeCopy ? (IBuildConfiguration[])dynamicConfigRefs.get(configName).clone()
-						 						: dynamicConfigRefs.get(configName);
+		return makeCopy ? (IBuildConfiguration[]) dynamicConfigRefs.get(configName).clone() : dynamicConfigRefs.get(configName);
 	}
 
 	/**
 	 * Returns the build configuration references map
 	 * @param makeCopy
 	 */
-	@SuppressWarnings("unchecked")
 	public Map<String, IBuildConfiguration[]> getBuildConfigReferences(boolean makeCopy) {
-		return makeCopy ? (Map<String, IBuildConfiguration[]>)dynamicConfigRefs.clone() : dynamicConfigRefs;
+		return makeCopy ? (Map<String, IBuildConfiguration[]>) dynamicConfigRefs.clone() : dynamicConfigRefs;
 	}
 
 	/* (non-Javadoc)
@@ -318,7 +315,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	public IProject[] getDynamicReferences(boolean makeCopy) {
-		return makeCopy ? (IProject[])dynamicRefs.clone() : dynamicRefs;
+		return makeCopy ? (IProject[]) dynamicRefs.clone() : dynamicRefs;
 	}
 
 	/**
@@ -347,7 +344,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Since this method is only used internally, it never creates a copy.
 	 * Returns null if the project does not have any linked resources.
 	 */
-	public HashMap<IPath,LinkDescription> getLinks() {
+	public HashMap<IPath, LinkDescription> getLinks() {
 		return linkDescriptions;
 	}
 
@@ -365,7 +362,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * VariableDescription). Since this method is only used internally, it never
 	 * creates a copy. Returns null if the project does not have any variables.
 	 */
-	public HashMap<String,VariableDescription> getVariables() {
+	public HashMap<String, VariableDescription> getVariables() {
 		return variableDescriptions;
 	}
 
@@ -449,12 +446,11 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	private static boolean configRefsHaveChanges(Map<String, IBuildConfiguration[]> m1, Map<String, IBuildConfiguration[]> m2) {
 		if (m1.size() != m2.size())
 			return true;
-		for (Iterator<Entry<String,IBuildConfiguration[]>> it = m1.entrySet().iterator(); it.hasNext();) {
-			Entry<String,IBuildConfiguration[]> e = it.next();
+		for (Iterator<Entry<String, IBuildConfiguration[]>> it = m1.entrySet().iterator(); it.hasNext();) {
+			Entry<String, IBuildConfiguration[]> e = it.next();
 			if (!m2.containsKey(e.getKey()))
 				return true;
-			if (!Arrays.equals(e.getValue(), 
-					m2.get(e.getKey())))
+			if (!Arrays.equals(e.getValue(), m2.get(e.getKey())))
 				return true;
 		}
 		return false;
@@ -517,26 +513,26 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			return true;
 		if (!Arrays.equals(natures, description.getNatureIds(false)))
 			return true;
-		
+
 		HashMap<IPath, LinkedList<FilterDescription>> otherFilters = description.getFilters();
 		if ((filterDescriptions == null) && (otherFilters != null))
 			return otherFilters != null;
 		if ((filterDescriptions != null) && !filterDescriptions.equals(otherFilters))
 			return true;
 
-		HashMap<String,VariableDescription> otherVariables = description.getVariables();
+		HashMap<String, VariableDescription> otherVariables = description.getVariables();
 		if ((variableDescriptions == null) && (otherVariables != null))
 			return true;
 		if ((variableDescriptions != null) && !variableDescriptions.equals(otherVariables))
 			return true;
 
-		final HashMap<IPath,LinkDescription> otherLinks = description.getLinks();
-		if (linkDescriptions != otherLinks) { 
+		final HashMap<IPath, LinkDescription> otherLinks = description.getLinks();
+		if (linkDescriptions != otherLinks) {
 			if (linkDescriptions == null || !linkDescriptions.equals(otherLinks))
 				return true;
 		}
-		
-		final URI otherSnapshotLoc= description.getSnapshotLocationURI();
+
+		final URI otherSnapshotLoc = description.getSnapshotLocationURI();
 		if (snapshotLocation != otherSnapshotLoc) {
 			if (snapshotLocation == null || !snapshotLocation.equals(otherSnapshotLoc))
 				return true;
@@ -649,7 +645,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Since this method is only used internally, it never creates a copy. May
 	 * pass null if this project does not have any linked resources
 	 */
-	public void setLinkDescriptions(HashMap<IPath,LinkDescription> linkDescriptions) {
+	public void setLinkDescriptions(HashMap<IPath, LinkDescription> linkDescriptions) {
 		this.linkDescriptions = linkDescriptions;
 	}
 
@@ -658,7 +654,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Since this method is only used internally, it never creates a copy. May
 	 * pass null if this project does not have any filtered resources
 	 */
-	public void setFilterDescriptions(HashMap<IPath,LinkedList<FilterDescription>> filterDescriptions) {
+	public void setFilterDescriptions(HashMap<IPath, LinkedList<FilterDescription>> filterDescriptions) {
 		this.filterDescriptions = filterDescriptions;
 	}
 
@@ -667,7 +663,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * VariableDescription). Since this method is only used internally, it never
 	 * creates a copy. May pass null if this project does not have any variables
 	 */
-	public void setVariableDescriptions(HashMap<String,VariableDescription> variableDescriptions) {
+	public void setVariableDescriptions(HashMap<String, VariableDescription> variableDescriptions) {
 		this.variableDescriptions = variableDescriptions;
 	}
 
@@ -678,18 +674,17 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 *     <code>false</code> otherwise.
 	 * @since 3.5 returns boolean (was void before)
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean setLinkLocation(IPath path, LinkDescription description) {
-		HashMap<IPath,LinkDescription> tempMap = linkDescriptions;
+		HashMap<IPath, LinkDescription> tempMap = linkDescriptions;
 		if (description != null) {
 			//addition or modification
 			if (tempMap == null)
-				tempMap = new HashMap<IPath,LinkDescription>(10);
-			else 
+				tempMap = new HashMap<IPath, LinkDescription>(10);
+			else
 				//copy on write to protect against concurrent read
 				tempMap = (HashMap<IPath, LinkDescription>) tempMap.clone();
 			Object oldValue = tempMap.put(path, description);
-			if (oldValue!=null && description.equals(oldValue)) {
+			if (oldValue != null && description.equals(oldValue)) {
 				//not actually changed anything
 				return false;
 			}
@@ -699,7 +694,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			if (tempMap == null)
 				return false;
 			//copy on write to protect against concurrent access
-			HashMap<IPath,LinkDescription> newMap = (HashMap<IPath,LinkDescription>) tempMap.clone();
+			HashMap<IPath, LinkDescription> newMap = (HashMap<IPath, LinkDescription>) tempMap.clone();
 			Object oldValue = newMap.remove(path);
 			if (oldValue == null) {
 				//not actually changed anything
@@ -717,7 +712,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	synchronized public void addFilter(IPath path, FilterDescription description) {
 		Assert.isNotNull(description);
 		if (filterDescriptions == null)
-			filterDescriptions = new HashMap<IPath,LinkedList<FilterDescription>>(10);
+			filterDescriptions = new HashMap<IPath, LinkedList<FilterDescription>>(10);
 		LinkedList<FilterDescription> descList = filterDescriptions.get(path);
 		if (descList == null) {
 			descList = new LinkedList<FilterDescription>();
@@ -725,7 +720,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		}
 		descList.add(description);
 	}
-	
+
 	/**
 	 * Add the description of a filter. Setting to a description of null will
 	 * remove the filter from the project description.
@@ -751,19 +746,17 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 *     <code>false</code> otherwise.
 	 * @since 3.5
 	 */
-	@SuppressWarnings("unchecked")
-	public boolean setVariableDescription(String name,
-			VariableDescription description) {
-		HashMap<String,VariableDescription> tempMap = variableDescriptions;
+	public boolean setVariableDescription(String name, VariableDescription description) {
+		HashMap<String, VariableDescription> tempMap = variableDescriptions;
 		if (description != null) {
 			// addition or modification
 			if (tempMap == null)
-				tempMap = new HashMap<String,VariableDescription>(10);
+				tempMap = new HashMap<String, VariableDescription>(10);
 			else
 				// copy on write to protect against concurrent read
-				tempMap = (HashMap<String,VariableDescription>) tempMap.clone();
+				tempMap = (HashMap<String, VariableDescription>) tempMap.clone();
 			Object oldValue = tempMap.put(name, description);
-			if (oldValue!=null && description.equals(oldValue)) {
+			if (oldValue != null && description.equals(oldValue)) {
 				//not actually changed anything
 				return false;
 			}
@@ -773,7 +766,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			if (tempMap == null)
 				return false;
 			// copy on write to protect against concurrent access
-			HashMap<String,VariableDescription> newMap = (HashMap<String,VariableDescription>) tempMap.clone();
+			HashMap<String, VariableDescription> newMap = (HashMap<String, VariableDescription>) tempMap.clone();
 			Object oldValue = newMap.remove(name);
 			if (oldValue == null) {
 				//not actually changed anything
@@ -794,18 +787,17 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		if (descriptions != null) {
 			// addition
 			if (filterDescriptions == null)
-				filterDescriptions = new HashMap<IPath,LinkedList<FilterDescription>>(10);
+				filterDescriptions = new HashMap<IPath, LinkedList<FilterDescription>>(10);
 			Object oldValue = filterDescriptions.put(path, descriptions);
-			if (oldValue!=null && descriptions.equals(oldValue)) {
+			if (oldValue != null && descriptions.equals(oldValue)) {
 				//not actually changed anything
 				return false;
 			}
-		}
-		else { 
+		} else {
 			// removal
 			if (filterDescriptions == null)
 				return false;
-			
+
 			Object oldValue = filterDescriptions.remove(path);
 			if (oldValue == null) {
 				//not actually changed anything

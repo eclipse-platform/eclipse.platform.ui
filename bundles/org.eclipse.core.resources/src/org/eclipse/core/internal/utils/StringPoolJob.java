@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,6 @@ public class StringPoolJob extends Job {
 			return Status.OK_STATUS;
 
 		//copy current participants to handle concurrent additions and removals to map
-		@SuppressWarnings("unchecked")
 		Map.Entry<IStringPoolParticipant, ISchedulingRule>[] entries = participants.entrySet().toArray(new Map.Entry[participants.size()]);
 		ISchedulingRule[] rules = new ISchedulingRule[entries.length];
 		IStringPoolParticipant[] toRun = new IStringPoolParticipant[entries.length];
@@ -110,7 +109,7 @@ public class StringPoolJob extends Job {
 				Policy.debug("String sharing saved " + savings + " bytes in: " + lastDuration); //$NON-NLS-1$ //$NON-NLS-2$ 
 		}
 		//throttle frequency if it takes too long
-		long scheduleDelay = Math.max(RESCHEDULE_DELAY, lastDuration*100);
+		long scheduleDelay = Math.max(RESCHEDULE_DELAY, lastDuration * 100);
 		if (Policy.DEBUG_STRINGS)
 			Policy.debug("Rescheduling string sharing job in: " + scheduleDelay); //$NON-NLS-1$
 		schedule(scheduleDelay);

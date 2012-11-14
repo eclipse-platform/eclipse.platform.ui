@@ -713,7 +713,6 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		if (aliases.size() == 0)
 			return;
 		FileSystemResourceManager localManager = workspace.getFileSystemManager();
-		@SuppressWarnings("unchecked")
 		HashSet<IResource> aliasesCopy = (HashSet<IResource>) aliases.clone();
 		for (Iterator<IResource> it = aliasesCopy.iterator(); it.hasNext();) {
 			IResource alias = it.next();

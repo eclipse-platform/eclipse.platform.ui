@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,6 @@ public class UnifiedTree {
 	/** special node to mark the separation of a node's children */
 	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, null, null, false);
 
-	@SuppressWarnings("unchecked")
 	private static final Iterator<UnifiedTreeNode> EMPTY_ITERATOR = Collections.EMPTY_LIST.iterator();
 
 	/** special node to mark the beginning of a level in the tree */
@@ -341,11 +340,11 @@ public class UnifiedTree {
 		try {
 			final IFileStore store = node.getStore();
 			IFileInfo[] list;
-			if (fileTree != null && (fileTree.getTreeRoot().equals(store) || fileTree.getTreeRoot().isParentOf(store) ))
+			if (fileTree != null && (fileTree.getTreeRoot().equals(store) || fileTree.getTreeRoot().isParentOf(store)))
 				list = fileTree.getChildInfos(store);
 			else
 				list = store.childInfos(EFS.NONE, null);
-			
+
 			if (list == null || list.length == 0)
 				return NO_CHILDREN;
 			list = ((Resource) node.getResource()).filterChildren(list, false);

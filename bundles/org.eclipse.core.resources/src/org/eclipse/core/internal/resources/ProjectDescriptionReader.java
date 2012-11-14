@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.osgi.util.NLS;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
-@SuppressWarnings("unchecked")
 public class ProjectDescriptionReader extends DefaultHandler implements IModelObjectConstants {
 
 	//states
@@ -54,24 +53,24 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_PROJECT_NAME = 19;
 	protected static final int S_PROJECTS = 20;
 	protected static final int S_REFERENCED_PROJECT_NAME = 21;
-	
+
 	protected static final int S_FILTERED_RESOURCES = 23;
 	protected static final int S_FILTER = 24;
 	protected static final int S_FILTER_ID = 25;
 	protected static final int S_FILTER_PATH = 26;
 	protected static final int S_FILTER_TYPE = 27;
-	
+
 	protected static final int S_MATCHER = 28;
 	protected static final int S_MATCHER_ID = 29;
 	protected static final int S_MATCHER_ARGUMENTS = 30;
-	
+
 	protected static final int S_VARIABLE_LIST = 31;
 	protected static final int S_VARIABLE = 32;
 	protected static final int S_VARIABLE_NAME = 33;
 	protected static final int S_VARIABLE_VALUE = 34;
 
 	protected static final int S_SNAPSHOT_LOCATION = 35;
-	
+
 	/**
 	 * Singleton sax parser factory
 	 */
@@ -96,29 +95,28 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	protected int state = S_INITIAL;
 
-
 	/**
 	 * Returns the SAXParser to use when parsing project description files.
 	 * @throws ParserConfigurationException 
 	 * @throws SAXException 
 	 */
-	private static synchronized SAXParser createParser() throws ParserConfigurationException, SAXException{
+	private static synchronized SAXParser createParser() throws ParserConfigurationException, SAXException {
 		//the parser can't be used concurrently, so only use singleton when workspace is locked
 		if (!isWorkspaceLocked())
 			return createParserFactory().newSAXParser();
 		if (singletonParser == null) {
-			singletonParser =  createParserFactory().newSAXParser();
+			singletonParser = createParserFactory().newSAXParser();
 		}
 		return singletonParser;
 	}
-	
+
 	/**
 	 * Returns the SAXParserFactory to use when parsing project description files.
 	 * @throws ParserConfigurationException 
 	 */
-	private static synchronized SAXParserFactory createParserFactory() throws ParserConfigurationException{
+	private static synchronized SAXParserFactory createParserFactory() throws ParserConfigurationException {
 		if (singletonParserFactory == null) {
-			singletonParserFactory =  SAXParserFactory.newInstance();
+			singletonParserFactory = SAXParserFactory.newInstance();
 			singletonParserFactory.setNamespaceAware(true);
 			try {
 				singletonParserFactory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
@@ -128,7 +126,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 		return singletonParserFactory;
 	}
-	
+
 	private static boolean isWorkspaceLocked() {
 		try {
 			return ((Workspace) ResourcesPlugin.getWorkspace()).getWorkManager().isLockAlreadyAcquired();
@@ -136,7 +134,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			return false;
 		}
 	}
-
 
 	public ProjectDescriptionReader() {
 		this.project = null;
@@ -325,7 +322,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_VARIABLE :
 				endVariableElement(elementName);
 				break;
-			case S_FILTER:
+			case S_FILTER :
 				endFilterElement(elementName);
 				break;
 			case S_FILTERED_RESOURCES :
@@ -401,7 +398,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_MATCHER_ID :
 				endMatcherID(elementName);
 				break;
-			case S_MATCHER_ARGUMENTS:
+			case S_MATCHER_ARGUMENTS :
 				endMatcherArguments(elementName);
 				break;
 			case S_VARIABLE_NAME :
@@ -486,7 +483,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			((HashMap<IPath, LinkDescription>) objectStack.peek()).put(link.getProjectRelativePath(), link);
 		}
 	}
-	
+
 	private void endMatcherElement(String elementName) {
 		if (elementName.equals(MATCHER)) {
 			// Pop off an array (Object[2]) containing the matcher id and arguments.
@@ -537,19 +534,18 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 				// The HashMap of filtered resources is the next thing on the stack
 				HashMap<IPath, LinkedList<FilterDescription>> map = ((HashMap<IPath, LinkedList<FilterDescription>>) objectStack.peek());
-				LinkedList<FilterDescription>list = map.get(filter.getResource().getProjectRelativePath());
+				LinkedList<FilterDescription> list = map.get(filter.getResource().getProjectRelativePath());
 				if (list == null) {
 					list = new LinkedList<FilterDescription>();
 					map.put(filter.getResource().getProjectRelativePath(), list);
 				}
 				list.add(filter);
-			}
-			else {
+			} else {
 				// if the project is null, that means that we're loading a project description to retrieve 
 				// some meta data only.
 				String key = new String(); // an empty key;
 				HashMap<String, LinkedList<FilterDescription>> map = ((HashMap<String, LinkedList<FilterDescription>>) objectStack.peek());
-				LinkedList<FilterDescription>list = map.get(key);
+				LinkedList<FilterDescription> list = map.get(key);
 				if (list == null) {
 					list = new LinkedList<FilterDescription>();
 					map.put(key, list);
@@ -570,8 +566,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			VariableDescription desc = (VariableDescription) objectStack.pop();
 			// Make sure that you have something reasonable
 			if (desc.getName().length() == 0) {
-				parseProblem(NLS.bind(Messages.projRead_emptyVariableName,
-						project.getName()));
+				parseProblem(NLS.bind(Messages.projRead_emptyVariableName, project.getName()));
 				return;
 			}
 
@@ -645,7 +640,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// The matcher id is String.
 			String newID = charBuffer.toString().trim();
 			// objectStack has an array (Object[2]) on it for the matcher id and arguments.
-			String oldID = (String)((Object[])objectStack.peek())[0];
+			String oldID = (String) ((Object[]) objectStack.peek())[0];
 			if (oldID != null) {
 				parseProblem(NLS.bind(Messages.projRead_badID, oldID, newID));
 			} else {
@@ -659,12 +654,12 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		if (elementName.equals(ARGUMENTS)) {
 			ArrayList<FileInfoMatcherDescription> matchers = (ArrayList<FileInfoMatcherDescription>) objectStack.pop();
 			Object newArguments = charBuffer.toString();
-			
+
 			if (matchers.size() > 0)
 				newArguments = matchers.toArray(new FileInfoMatcherDescription[matchers.size()]);
 
 			// objectStack has an array (Object[2]) on it for the matcher id and arguments.
-			String oldArguments = (String)((Object[])objectStack.peek())[1];
+			String oldArguments = (String) ((Object[]) objectStack.peek())[1];
 			if (oldArguments != null) {
 				parseProblem(NLS.bind(Messages.projRead_badArguments, oldArguments, newArguments));
 			} else
@@ -672,7 +667,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_MATCHER;
 		}
 	}
-	
+
 	private void endFilterId(String elementName) {
 		if (elementName.equals(ID)) {
 			Long newId = new Long(charBuffer.toString());
@@ -776,7 +771,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_LINK;
 		}
 	}
-	
+
 	/**
 	 * End of an element that is part of a nature list
 	 */
@@ -823,7 +818,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 	}
 
-	
 	/**
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
@@ -909,7 +903,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		if (elementName.equals(SNAPSHOT_LOCATION)) {
 			state = S_SNAPSHOT_LOCATION;
 			return;
-		}	
+		}
 	}
 
 	public ProjectDescription read(InputSource input) {
@@ -925,10 +919,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		} catch (SAXException e) {
 			log(e);
 		}
-		
+
 		if (projectDescription != null && projectDescription.getName() == null)
 			parseProblem(Messages.projRead_missingProjectName);
-			
+
 		switch (problems.getSeverity()) {
 			case IStatus.ERROR :
 				Policy.log(problems);
@@ -1037,7 +1031,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					objectStack.push(new LinkDescription());
 				}
 				break;
-			case S_VARIABLE_LIST:
+			case S_VARIABLE_LIST :
 				if (elementName.equals(VARIABLE)) {
 					state = S_VARIABLE;
 					// Push place holders for the name, type and location of
@@ -1064,10 +1058,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					objectStack.push(new FilterDescription());
 				}
 				break;
-			case S_FILTER:
+			case S_FILTER :
 				if (elementName.equals(ID)) {
 					state = S_FILTER_ID;
-				}else if (elementName.equals(NAME)) {
+				} else if (elementName.equals(NAME)) {
 					state = S_FILTER_PATH;
 				} else if (elementName.equals(TYPE)) {
 					state = S_FILTER_TYPE;
@@ -1077,7 +1071,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					objectStack.push(new Object[2]);
 				}
 				break;
-			case S_MATCHER:
+			case S_MATCHER :
 				if (elementName.equals(ID)) {
 					state = S_MATCHER_ID;
 				} else if (elementName.equals(ARGUMENTS)) {
@@ -1085,14 +1079,14 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					objectStack.push(new ArrayList<FileInfoMatcherDescription>());
 				}
 				break;
-			case S_MATCHER_ARGUMENTS:
+			case S_MATCHER_ARGUMENTS :
 				if (elementName.equals(MATCHER)) {
 					state = S_MATCHER;
 					// Push an array for the matcher id and arguments
 					objectStack.push(new Object[2]);
 				}
 				break;
-			case S_VARIABLE:
+			case S_VARIABLE :
 				if (elementName.equals(NAME)) {
 					state = S_VARIABLE_NAME;
 				} else if (elementName.equals(VALUE)) {

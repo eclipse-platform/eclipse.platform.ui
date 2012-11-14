@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *     Broadcom Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.events;
-
-import org.eclipse.core.resources.IBuildConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +39,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	 * Flag bit indicating if this build command is configurable
 	 */
 	private static final int MASK_CONFIGURABLE = 0x10;
-	
+
 	/**
 	 * Flag bit indicating if the configurable bit has been loaded from
 	 * the builder extension declaration in XML yet.
@@ -50,7 +48,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 
 	private static final int ALL_TRIGGERS = MASK_AUTO | MASK_CLEAN | MASK_FULL | MASK_INCREMENTAL;
 
-	protected HashMap<String,String> arguments = new HashMap<String,String>(0);
+	protected HashMap<String, String> arguments = new HashMap<String, String>(0);
 
 	/** Have we checked the supports configurations flag */
 	private boolean supportsConfigurationsCalculated;
@@ -132,20 +130,18 @@ public class BuildCommand extends ModelObject implements ICommand {
 			return false;
 		BuildCommand command = (BuildCommand) object;
 		// equal if same builder name, arguments, and triggers
-		return getBuilderName().equals(command.getBuilderName()) && getArguments(false).equals(command.getArguments(false)) && 
-								(triggers & ALL_TRIGGERS) == (command.triggers & ALL_TRIGGERS);
+		return getBuilderName().equals(command.getBuilderName()) && getArguments(false).equals(command.getArguments(false)) && (triggers & ALL_TRIGGERS) == (command.triggers & ALL_TRIGGERS);
 	}
 
 	/**
 	 * @see ICommand#getArguments()
 	 */
-	public Map<String,String> getArguments() {
+	public Map<String, String> getArguments() {
 		return getArguments(true);
 	}
 
-	@SuppressWarnings("unchecked")
-	public Map<String,String> getArguments(boolean makeCopy) {
-		return arguments == null ? null : (makeCopy ? (Map<String,String>) arguments.clone() : arguments);
+	public Map<String, String> getArguments(boolean makeCopy) {
+		return arguments == null ? null : (makeCopy ? (Map<String, String>) arguments.clone() : arguments);
 	}
 
 	/**
@@ -218,9 +214,9 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * @see ICommand#setArguments(Map)
 	 */
-	public void setArguments(Map<String,String> value) {
+	public void setArguments(Map<String, String> value) {
 		// copy parameter for safety's sake
-		arguments = value == null ? null : new HashMap<String,String>(value);
+		arguments = value == null ? null : new HashMap<String, String>(value);
 	}
 
 	/**
@@ -234,9 +230,9 @@ public class BuildCommand extends ModelObject implements ICommand {
 			builders = null;
 		} else {
 			if (value instanceof IncrementalProjectBuilder)
-				builder = (IncrementalProjectBuilder)value;
+				builder = (IncrementalProjectBuilder) value;
 			else
-				builders = new HashMap<IBuildConfiguration, IncrementalProjectBuilder>((Map<IBuildConfiguration, IncrementalProjectBuilder>)value);
+				builders = new HashMap<IBuildConfiguration, IncrementalProjectBuilder>((Map<IBuildConfiguration, IncrementalProjectBuilder>) value);
 		}
 	}
 
@@ -293,7 +289,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 		else
 			triggers = ALL_TRIGGERS;
 	}
-	
+
 	/**
 	 * For debugging purposes only
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * interface so we ensure that we get it right since we are making certain
 	 * assumptions about the object type w.r.t. casting.
 	 */
-	protected ObjectMap<QualifiedName,Object> sessionProperties = null;
+	protected ObjectMap<QualifiedName, Object> sessionProperties = null;
 
 	/** 
 	 * The table of sync information. 
@@ -195,17 +195,16 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * Returns a copy of the map of this resource session properties.
 	 * An empty map is returned if there are none.
 	 */
-	@SuppressWarnings("unchecked")
-	public Map<QualifiedName,Object> getSessionProperties() {
+	public Map<QualifiedName, Object> getSessionProperties() {
 		// thread safety: (Concurrency001)
-		ObjectMap<QualifiedName,Object> temp = sessionProperties;
+		ObjectMap<QualifiedName, Object> temp = sessionProperties;
 		if (temp == null)
 			temp = new ObjectMap<QualifiedName, Object>(5);
 		else
 			temp = (ObjectMap<QualifiedName, Object>) sessionProperties.clone();
 		return temp;
 	}
-	
+
 	/** 
 	 * Returns the value of the identified session property
 	 */
@@ -222,7 +221,6 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * interface so we ensure that we get it right since we are making certain
 	 * assumptions about the object type w.r.t. casting.
 	 */
-	@SuppressWarnings("unchecked")
 	public synchronized ObjectMap<QualifiedName, Object> getSyncInfo(boolean makeCopy) {
 		if (syncInfo == null)
 			return null;
@@ -391,7 +389,6 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * Sets the identified session property to the given value.  If
 	 * the value is null, the property is removed.
 	 */
-	@SuppressWarnings("unchecked")
 	public synchronized void setSessionProperty(QualifiedName name, Object value) {
 		// thread safety: (Concurrency001)
 		if (value == null) {

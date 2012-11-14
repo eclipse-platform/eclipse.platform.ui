@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		/**
 		 * Log an exception on the first build, and silently do nothing on subsequent builds.
 		 */
-		protected IProject[] build(int kind, Map<String,String> args, IProgressMonitor monitor) {
+		protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) {
 			if (!hasBeenBuilt && Policy.DEBUG_BUILD_FAILURE) {
 				hasBeenBuilt = true;
 				String msg = NLS.bind(Messages.events_skippingBuilder, name, getProject().getName());
@@ -132,7 +132,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		InternalBuilder.buildManager = this;
 	}
 
-	private void basicBuild(int trigger, IncrementalProjectBuilder builder, Map<String,String> args, MultiStatus status, IProgressMonitor monitor) {
+	private void basicBuild(int trigger, IncrementalProjectBuilder builder, Map<String, String> args, MultiStatus status, IProgressMonitor monitor) {
 		try {
 			currentBuilder = builder;
 			//clear any old requests to forget built state
@@ -251,7 +251,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		if (!canRun(trigger))
 			return Status.OK_STATUS;
 		try {
-			hookStartBuild(new IBuildConfiguration[] { buildConfiguration }, trigger);
+			hookStartBuild(new IBuildConfiguration[] {buildConfiguration}, trigger);
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 			basicBuild(buildConfiguration, trigger, context, status, monitor);
 			return status;
@@ -302,7 +302,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Runs the builder with the given name on the given project config.
 	 * @return A status indicating if the build succeeded or failed
 	 */
-	private IStatus basicBuild(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String,String> args, IProgressMonitor monitor) {
+	private IStatus basicBuild(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String, String> args, IProgressMonitor monitor) {
 		final IProject project = buildConfiguration.getProject();
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -387,7 +387,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Runs the builder with the given name on the given project config.
 	 * @return A status indicating if the build succeeded or failed
 	 */
-	public IStatus build(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String,String> args, IProgressMonitor monitor) {
+	public IStatus build(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String, String> args, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		if (builderName == null) {
 			IBuildContext context = new BuildContext(buildConfiguration);
@@ -447,7 +447,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		/* build the new list */
 		ArrayList<BuilderPersistentInfo> newInfos = new ArrayList<BuilderPersistentInfo>(commands.length * configs.length);
 		for (int i = 0; i < commands.length; i++) {
-			BuildCommand command = (BuildCommand)commands[i];
+			BuildCommand command = (BuildCommand) commands[i];
 			String builderName = command.getBuilderName();
 
 			// If the builder doesn't support configurations, only 1 delta tree to persist
@@ -585,8 +585,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			BuilderPersistentInfo info = it.next();
 			// match on name, config name and build spec index if known
 			// Note: the config name may be null for builders that don't support configurations, or old workspaces
-			if (info.getBuilderName().equals(builderName) && 
-					(info.getConfigName() == null || info.getConfigName().equals(configName))) {
+			if (info.getBuilderName().equals(builderName) && (info.getConfigName() == null || info.getConfigName().equals(configName))) {
 				//we have found a match on name alone
 				if (nameMatch == null)
 					nameMatch = info;
@@ -604,7 +603,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * The list includes entries for all builders that are in the builder spec,
 	 * and that have a last built state but have not been instantiated this session.
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<BuilderPersistentInfo> getBuildersPersistentInfo(IProject project) throws CoreException {
 		return (ArrayList<BuilderPersistentInfo>) project.getSessionProperty(K_BUILD_LIST);
 	}
@@ -683,7 +681,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (Policy.DEBUG_BUILD_DELTA) {
 				Policy.debug("Finished computing delta, time: " + (System.currentTimeMillis() - startTime) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				// Debug the delta
-				Policy.debug(((ResourceDelta)result).toDebugString());
+				Policy.debug(((ResourceDelta) result).toDebugString());
 			}
 			return result;
 		} finally {
@@ -908,13 +906,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	public void interrupt() {
 		autoBuildJob.interrupt();
 	}
-	
+
 	/**
 	 * Returns whether an autobuild is pending (requested but not yet completed).
 	 */
 	public boolean isAutobuildBuildPending() {
 		return autoBuildJob.getState() != Job.NONE;
-		
+
 	}
 
 	/**
@@ -1114,7 +1112,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 							ISchedulingRule builderRule = builder.getRule(trigger, args);
 							if (builderRule != null)
 								rules.add(builderRule);
-							else 
+							else
 								hasNullBuildRule = true;
 						}
 					} catch (CoreException e) {
