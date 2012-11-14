@@ -978,7 +978,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return ref;
 	}
 
-	private List<EditorReference> getCurrentEditorReferences() {
+	private List<EditorReference> getOrderedEditorReferences() {
+
 		List<EditorReference> editorRefs = new ArrayList<EditorReference>();
 		List<MPart> visibleEditors = modelService.findElements(window,
 				CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null);
@@ -992,6 +993,44 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		return editorRefs;
+	}
+
+	List<EditorReference> getSortedEditorReferences() {
+		List<EditorReference> sortedReferences = new ArrayList<EditorReference>();
+		for (MPart part : activationList) {
+			for (EditorReference ref : editorReferences) {
+				if (ref.getModel() == part) {
+					sortedReferences.add(ref);
+					break;
+				}
+			}
+		}
+
+		for (EditorReference ref : editorReferences) {
+			if (!sortedReferences.contains(ref)) {
+				sortedReferences.add(ref);
+			}
+		}
+
+		MPerspective currentPerspective = getCurrentPerspective();
+		if (currentPerspective != null) {
+			List<MPart> placeholders = modelService.findElements(window,
+					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null,
+					EModelService.PRESENTATION);
+			List<EditorReference> visibleReferences = new ArrayList<EditorReference>();
+			for (EditorReference reference : sortedReferences) {
+				for (MPart placeholder : placeholders) {
+					if (reference.getModel() == placeholder && placeholder.isToBeRendered()) {
+						// only rendered placeholders are valid references
+						visibleReferences.add(reference);
+					}
+				}
+			}
+
+			return visibleReferences;
+		}
+
+		return sortedReferences;
 	}
 
 	public List<EditorReference> getInternalEditorReferences() {
@@ -2197,7 +2236,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * java.lang.String, int)
 	 */
 	public IEditorReference[] findEditors(IEditorInput input, String editorId, int matchFlags) {
-		List<EditorReference> filteredReferences = getCurrentEditorReferences();
+		List<EditorReference> filteredReferences = getSortedEditorReferences();
 
 		switch (matchFlags) {
 		case MATCH_INPUT:
@@ -2283,7 +2322,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditorReferences()
 	 */
 	public IEditorReference[] getEditorReferences() {
-		List<EditorReference> references = getCurrentEditorReferences();
+		List<EditorReference> references = getOrderedEditorReferences();
 		return references.toArray(new IEditorReference[references.size()]);
 	}
 	
@@ -2305,7 +2344,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		List<IWorkbenchPartReference> sortedReferences = new ArrayList<IWorkbenchPartReference>();
 		IViewReference[] viewReferences = getViewReferences();
-		List<EditorReference> editorReferences = getCurrentEditorReferences();
+		List<EditorReference> editorReferences = getSortedEditorReferences();
 
 		activationLoop: for (MPart part : activationList) {
 			if (views) {

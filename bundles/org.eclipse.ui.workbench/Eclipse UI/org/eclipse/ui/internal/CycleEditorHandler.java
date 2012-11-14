@@ -11,12 +11,12 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.commands.ICommandService;
@@ -35,18 +35,17 @@ public class CycleEditorHandler extends CycleBaseHandler {
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#addItems(org.eclipse.swt.widgets.Table, org.eclipse.ui.internal.WorkbenchPage)
 	 */
 	protected void addItems(Table table, WorkbenchPage page) {
-		// TODO Auto-generated method stub
-		IEditorReference refs[] = page.getEditorReferences();
-		for (int i = 0; i < refs.length; i++) {
+		List<EditorReference> refs = page.getSortedEditorReferences();
+		for (EditorReference ref : refs) {
             TableItem item = null;
             item = new TableItem(table, SWT.NONE);
-            if (refs[i].isDirty()) {
-				item.setText("*" + refs[i].getTitle()); //$NON-NLS-1$
+			if (ref.isDirty()) {
+				item.setText("*" + ref.getTitle()); //$NON-NLS-1$
 			} else {
-				item.setText(refs[i].getTitle());
+				item.setText(ref.getTitle());
 			}
-            item.setImage(refs[i].getTitleImage());
-            item.setData(refs[i]);
+			item.setImage(ref.getTitleImage());
+			item.setData(ref);
         }
 	}
 
