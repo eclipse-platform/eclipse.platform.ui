@@ -1,11 +1,10 @@
 Native Build Info:
 ------------------
 
-platform:         		Intel Itanium 64-bit
-built by:         		oleg.krasilnikov@intel.com
-build date:       		21-Nov-2007
-OS Name:          	Windows
-OS Version:       	unknown
-Compiler version: unknown
-Compiler config:  	unknown
-Bug reference:		https://bugs.eclipse.org/bugs/show_bug.cgi?id=210121
+platform:         win32.ia64
+built by:         Szymon.Brandys@pl.ibm.com
+build date:       12-Nov-2012
+OS Name:          Microsoft Windows 7
+Compiler version: Microsoft (R) C/C++ Optimizing Compiler Version 14.00.40310.39 for IA-64
+Linker version:   Microsoft (R) Incremental Linker Version 8.00.40310.39
+Java version:     Standard Edition (ibm-java2-sdk-50-win-i386)
