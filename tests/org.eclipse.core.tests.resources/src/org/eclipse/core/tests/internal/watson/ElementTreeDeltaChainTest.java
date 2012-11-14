@@ -62,7 +62,7 @@ public class ElementTreeDeltaChainTest extends WatsonTest implements IPathConsta
 			caught = true;
 			ex = e;
 		} finally {
-			assertTrue(ex.getMessage(), caught);
+			assertTrue("", caught);
 		}
 
 		/* create a tree with a whole bunch of operations in project3 */
