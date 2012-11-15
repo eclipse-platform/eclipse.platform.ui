@@ -47,20 +47,20 @@ public interface IAntCoreConstants {
 	public static final String PREFIX_PROPERTY = "property."; //$NON-NLS-1$
 
 	/**
-	 * Constant representing the word 'id'
-	 * <br><br>
+	 * Constant representing the word 'id' <br>
+	 * <br>
 	 * Value is: <code>id</code>
 	 * 
-	 * @since 3.2.400
+	 * @since 3.2.500
 	 */
 	public static final String ID = "id"; //$NON-NLS-1$
 	
 	/**
-	 * Constant representing the word 'augment'
-	 * <br><br>
+	 * Constant representing the word 'augment' <br>
+	 * <br>
 	 * Value is: <code>augment</code>
 	 * 
-	 * @since 3.2.400
+	 * @since 3.2.500
 	 */
 	public static final String AUGMENT = "augment"; //$NON-NLS-1$
 	
