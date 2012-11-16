@@ -40,7 +40,8 @@ public class NewApplicationModelWizard extends BaseApplicationModelWizard {
 					{ "org.eclipse.e4.ui.bindings.service", "bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon" },
 					{ "org.eclipse.e4.ui.workbench.commands.model", "bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon" },
 					{ "org.eclipse.e4.ui.workbench.contexts.model", "bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon" },
-					{ "org.eclipse.e4.ui.workbench.bindings.model", "bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon" }
+					{ "org.eclipse.e4.ui.workbench.bindings.model", "bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon" },
+					{ "org.eclipse.e4.ui.workbench.handler.model", "bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon" }
 					
 				};
 				

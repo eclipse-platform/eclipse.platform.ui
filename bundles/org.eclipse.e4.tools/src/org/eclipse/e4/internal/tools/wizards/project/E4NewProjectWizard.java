@@ -491,6 +491,11 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			application.getAddons().add(addon);
 
 			addon = MApplicationFactory.INSTANCE.createAddon();
+			addon.setElementId("org.eclipse.e4.ui.workbench.handler.model");
+			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon");
+			application.getAddons().add(addon);
+			
+			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.contexts.model");
 			addon.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon");
 			application.getAddons().add(addon);
