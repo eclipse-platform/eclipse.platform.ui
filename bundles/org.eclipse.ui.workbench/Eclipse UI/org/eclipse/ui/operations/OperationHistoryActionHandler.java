@@ -11,12 +11,6 @@
 package org.eclipse.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IAdvancedUndoableOperation2;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -24,13 +18,16 @@ import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
-
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.LegacyActionTools;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -44,8 +41,6 @@ import org.eclipse.ui.internal.operations.TimeTriggeredProgressMonitorDialog;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.MultiPageEditorSite;
 import org.eclipse.ui.statushandlers.StatusManager;
-
-import org.eclipse.osgi.util.NLS;
 
 /**
  * <p>
@@ -79,7 +74,7 @@ import org.eclipse.osgi.util.NLS;
 public abstract class OperationHistoryActionHandler extends Action implements
 		ActionFactory.IWorkbenchAction, IAdaptable {
 
-	private static final int MAX_LABEL_LENGTH = 32;
+	private static final int MAX_LABEL_LENGTH = 33;
 
 	private class PartListener implements IPartListener {
 		/**
@@ -440,8 +435,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		if (enabled) {
 			tooltipText = NLS.bind(getTooltipString(), getOperation()
 					.getLabel());
-			text = NLS.bind(getCommandString(), shortenText(getOperation()
-					.getLabel()));
+			text = NLS.bind(getCommandString(),
+					LegacyActionTools.escapeMnemonics(shortenText(getOperation().getLabel()))) + '@';
 		} else {
 			tooltipText = NLS.bind(
 					WorkbenchMessages.Operations_undoRedoCommandDisabled,
@@ -467,10 +462,10 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		int length = message.length();
 		if (length > MAX_LABEL_LENGTH) {
 			StringBuffer result = new StringBuffer();
-			int mid = MAX_LABEL_LENGTH / 2;
-			result.append(message.substring(0, mid));
+			int end = MAX_LABEL_LENGTH / 2 - 1;
+			result.append(message.substring(0, end));
 			result.append("..."); //$NON-NLS-1$
-			result.append(message.substring(length - mid));
+			result.append(message.substring(length - end));
 			return result.toString();
 		}
 		return message;

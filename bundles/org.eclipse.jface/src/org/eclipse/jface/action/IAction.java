@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -472,8 +472,13 @@ public interface IAction {
     /**
      * Sets the text for this action.
      * <p>
-     * An accelerator specification may follow the actual text, separated from it by
-     * an '@' or a '\t' character.  An accelerator specification consists of zero or more 
+     * An accelerator is identified by the last index of a '\t' character. If
+     * there are no '\t' characters, then it is identified by the last index of an
+     * '@' character. If neither, then there is no accelerator text. Note that
+     * if you want to insert an '@' character into the text (but no accelerator),
+     * then you can simply insert an '@' or a '\t' at the end of the text.
+     * <br>
+     * An accelerator specification consists of zero or more 
      * modifier tokens followed by a key code token.  The tokens are separated by a '+' character.
      * </p>
      * <p>

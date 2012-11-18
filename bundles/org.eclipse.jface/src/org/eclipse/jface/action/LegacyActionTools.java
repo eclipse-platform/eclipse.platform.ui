@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.swt.SWT;
-
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Util;
+import org.eclipse.swt.SWT;
 
 /**
  * <p>
@@ -183,7 +182,8 @@ public final class LegacyActionTools {
 	/**
 	 * Extracts the accelerator text from the given text. Returns
 	 * <code>null</code> if there is no accelerator text, and the empty string
-	 * if there is no text after the accelerator delimeter (tab or '@').
+	 * if there is no text after the accelerator delimiter (last tab or
+	 * last '@' if there's no tab).
 	 * 
 	 * @param text
 	 *            the text for the action; may be <code>null</code>.
@@ -705,7 +705,8 @@ public final class LegacyActionTools {
 	/**
 	 * Convenience method for removing any optional accelerator text from the
 	 * given string. The accelerator text appears at the end of the text, and is
-	 * separated from the main part by a single tab character <code>'\t'</code>.
+	 * separated from the main part by the last tab character <code>'\t'</code>
+	 * (or the last <code>'@'</code> if there is no tab).
 	 * 
 	 * @param text
 	 *            the text
