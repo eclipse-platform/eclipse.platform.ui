@@ -65,6 +65,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.CategoryEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandParameterEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CoreExpressionEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.DefaultEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledMenuItemEditor;
@@ -526,7 +527,6 @@ public class ModelEditor {
 				}
 			}
 		});
-
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -1093,6 +1093,8 @@ public class ModelEditor {
 					return editor;
 				}
 			}
+			if (editor == null)
+				editor = ContextInjectionFactory.make(DefaultEditor.class, context);
 		}
 		return editor;
 	}
