@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2011 IBM Corporation and others.
+ *  Copyright (c) 2006, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,8 +17,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.help.HelpSystem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -119,8 +121,11 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 			return;
 		}
 		String id = computeContextId();
-		if (id != null)
-			PlatformUI.getWorkbench().getHelpSystem().displayHelp(id);
+		if (id == null || HelpSystem.getContext(id) == null) {
+			// Use the launch configuration help context instead
+			id = IDebugHelpContextIds.LAUNCH_CONFIGURATION_VIEW;
+		}
+		PlatformUI.getWorkbench().getHelpSystem().displayHelp(id);
 	}
 	
 	/* (non-Javadoc)
