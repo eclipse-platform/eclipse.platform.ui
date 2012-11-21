@@ -619,4 +619,5 @@ public class Messages {
 	public String VWindowSharedElementsEditor_AddPartStack;
 	public String Special_UnknownElement;
 	public String Special_UnknownElement_Detail;
+	public String VWindowSharedElementsEditor_Area;
 }

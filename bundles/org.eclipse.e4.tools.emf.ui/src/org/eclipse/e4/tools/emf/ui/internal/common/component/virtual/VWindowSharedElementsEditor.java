@@ -21,6 +21,7 @@ import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -90,6 +91,13 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.PART_STACK);
+			}
+		});
+
+		actions.add(new Action(Messages.VWindowSharedElementsEditor_Area, createImageDescriptor(ResourceProvider.IMG_Area)) {
+			@Override
+			public void run() {
+				handleAdd(AdvancedPackageImpl.Literals.AREA);
 			}
 		});
 	}
@@ -220,7 +228,7 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 					return eclass.getName();
 				}
 			});
-			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.PART_STACK });
+			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.PART_STACK, AdvancedPackageImpl.Literals.AREA });
 			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
