@@ -10,7 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -27,6 +29,7 @@ import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -47,10 +50,21 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
+	private List<Action> actions = new ArrayList<Action>();
 
 	@Inject
 	public VModelFragmentsEditor() {
 		super();
+	}
+
+	@PostConstruct
+	void init() {
+		actions.add(new Action(Messages.VModelFragmentsEditor_AddFragment, createImageDescriptor(ResourceProvider.IMG_ModelFragments)) {
+			@Override
+			public void run() {
+				handleAdd();
+			}
+		});
 	}
 
 	@Override
@@ -174,15 +188,10 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 
-					MStringModelFragment eObject = MFragmentFactory.INSTANCE.createStringModelFragment();
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, eObject);
-
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						getEditor().setSelection(eObject);
-					}
+					handleAdd();
 
 				}
+
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
@@ -212,6 +221,23 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(Object element) {
 		return null;
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
+
+	private void handleAdd() {
+		MStringModelFragment eObject = MFragmentFactory.INSTANCE.createStringModelFragment();
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, eObject);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(eObject);
+		}
 	}
 
 }

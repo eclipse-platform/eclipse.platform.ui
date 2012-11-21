@@ -424,6 +424,7 @@ public class Messages {
 	public String VModelFragmentsEditor_TreeLabel;
 	public String VModelFragmentsEditor_TreeLabelDescription;
 	public String VModelFragmentsEditor_Fragments;
+	public String VModelFragmentsEditor_AddFragment;
 
 	public String VModelImportsEditor_TreeLabel;
 	public String VModelImportsEditor_TreeLabelDescription;
