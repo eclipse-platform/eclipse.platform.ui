@@ -35,8 +35,10 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
@@ -69,6 +71,10 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private AbstractComponentEditor editor;
 	private TableViewer viewer;
 	private Messages Messages;
+	private ModelResultHandlerImpl currentResultHandler;
+	private WritableList list;
+	private ComboViewer eClassViewer;
+	private Text searchText;
 
 	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor, MStringModelFragment fragment, Messages Messages) {
 		super(parentShell);
@@ -101,7 +107,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		Label l = new Label(container, SWT.NONE);
 		l.setText(Messages.FindParentReferenceElementDialog_ContainerType);
 
-		final ComboViewer eClassViewer = new ComboViewer(container);
+		eClassViewer = new ComboViewer(container);
 		eClassViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -124,11 +130,18 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		eClassViewer.setInput(eClassList);
 		eClassViewer.getCombo().select(0);
 		eClassViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		eClassViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateSearch();
+
+			}
+		});
 
 		l = new Label(container, SWT.NONE);
 		l.setText(Messages.FindParentReferenceElementDialog_Search);
 
-		final Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
+		searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		searchText.setLayoutData(gd);
 
@@ -166,24 +179,15 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			}
 		});
 
-		final WritableList list = new WritableList();
+		list = new WritableList();
 		viewer.setInput(list);
 
 		final ClassContributionCollector collector = getCollector();
 
 		searchText.addModifyListener(new ModifyListener() {
-			private ModelResultHandlerImpl currentResultHandler;
 
 			public void modifyText(ModifyEvent e) {
-				if (currentResultHandler != null) {
-					currentResultHandler.cancled = true;
-				}
-				list.clear();
-
-				Filter filter = new Filter((EClass) ((IStructuredSelection) eClassViewer.getSelection()).getFirstElement(), searchText.getText());
-
-				currentResultHandler = new ModelResultHandlerImpl(list, filter, editor, ((EObject) fragment).eResource());
-				collector.findModelElements(filter, currentResultHandler);
+				updateSearch();
 			}
 		});
 
@@ -196,8 +200,20 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 				collector.clearModelCache();
 			}
 		});
-
 		return comp;
+	}
+
+	protected void updateSearch() {
+		if (currentResultHandler != null) {
+			currentResultHandler.cancled = true;
+		}
+		list.clear();
+
+		Filter filter = new Filter((EClass) ((IStructuredSelection) eClassViewer.getSelection()).getFirstElement(), searchText.getText());
+
+		currentResultHandler = new ModelResultHandlerImpl(list, filter, editor, ((EObject) fragment).eResource());
+		getCollector().findModelElements(filter, currentResultHandler);
+
 	}
 
 	@Override

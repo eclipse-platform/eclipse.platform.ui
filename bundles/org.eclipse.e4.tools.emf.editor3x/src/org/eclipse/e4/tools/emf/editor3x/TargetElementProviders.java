@@ -118,6 +118,7 @@ public class TargetElementProviders implements IModelElementProvider {
 	}
 
 	public void clearCache() {
+		if (resourceSet==null) return;
 		for (Resource r : resourceSet.getResources()) {
 			r.unload();
 		}
