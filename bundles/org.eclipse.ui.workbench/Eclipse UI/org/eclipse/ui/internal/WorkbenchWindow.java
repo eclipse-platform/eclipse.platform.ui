@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Zhongwei Zhao - Bug 379495 - Two "Run" on top menu
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -548,7 +549,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				}
 			}
 		}
-		page.setPerspective(perspective);
 
 		populateTopTrimContributions();
 		populateBottomTrimContributions();
@@ -612,6 +612,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, windowWidgetHandler);
 
+		page.setPerspective(perspective);
 		firePageActivated();
 		if (newWindow) {
 			page.fireInitialPartVisibilityEvents();
