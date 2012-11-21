@@ -1,5 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2010 BestSolution.at and others.
+
+
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,14 +28,16 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.swt.widgets.Composite;
 
 public class ApplicationModelEditor extends ModelEditor {
 
-	private static final String EDITORPROJECT = "org.eclipse.e4.tools.emf.ui.editorproject";
+	private static final String EDITORPROJECT = "org.eclipse.e4.tools.emf.ui.editorproject"; //$NON-NLS-1$
 
 	@Inject
+	@Optional
 	MPart part;
 
 	@Inject
@@ -46,12 +50,15 @@ public class ApplicationModelEditor extends ModelEditor {
 	@Inject
 	public ApplicationModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, @Named(EDITORPROJECT) @Optional IProject project, IResourcePool resourcePool) {
 		super(composite, context, modelProvider, project, resourcePool);
-		resource = modelProvider.getEditingDomain().getResourceSet().getResources().get(0);
+		EList<Resource> resources = modelProvider.getEditingDomain().getResourceSet().getResources();
+		if (!resources.isEmpty()) {
+			resource = resources.get(0);
+		}
 	}
 
 	@Inject
 	public void addResourceListener(@Named(EDITORPROJECT) @Optional IProject project) {
-		if (project != null) {
+		if (project != null && resource != null) {
 			this.project = project;
 			project.getWorkspace().addResourceChangeListener(listener);
 		}
@@ -65,8 +72,8 @@ public class ApplicationModelEditor extends ModelEditor {
 	}
 
 	/**
-	 * Listener changes on the resource being edited. Will close the part if the
-	 * resource was deleted or the containing project was closed.
+	 * Listen for changes on the resource being edited. Will close the part if
+	 * the resource was deleted or the containing project was closed.
 	 */
 	private IResourceChangeListener listener = new IResourceChangeListener() {
 		public void resourceChanged(IResourceChangeEvent event) {
