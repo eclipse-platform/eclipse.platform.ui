@@ -139,6 +139,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 		if (getEditor().isModelFragment() && isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
+			folder.setSelection(0);
 			return folder;
 		}
 

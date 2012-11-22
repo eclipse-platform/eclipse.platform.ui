@@ -171,6 +171,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
+			folder.setSelection(0);
 			return folder;
 		}
 
