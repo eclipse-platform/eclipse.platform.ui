@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2010 IBM Corporation and others.
+     Copyright (c) 2005, 2012 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -360,14 +360,14 @@ M4 = Platform-specific fourth key -->
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             type="org.eclipse.ant.AntLaunchConfigurationType"
-            helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant"
+            helpContextId="org.eclipse.ant.ui.ant_type_context"
             description="%antLaunchConfigurationTabGroup.description"
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntTabGroup"
             id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.ant.AntBuilderLaunchConfigurationType"
-            helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant_builder"
+            helpContextId="org.eclipse.ant.ui.ant_builder_type_context"
             description="%antBuilderLaunchConfigurationTabGroup.description"
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntBuilderTabGroup"
             id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant.builder">
