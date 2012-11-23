@@ -202,10 +202,13 @@ public class ExpressionContentProvider extends VariableContentProvider {
 				return true;
 			}
 		}
-		IValue value = ((IExpression)element).getValue();
-		if (value == null) {
-			return false;
+		if (element instanceof IExpression){
+			IValue value = ((IExpression)element).getValue();
+			if (value == null) {
+				return false;
+			}
+			return value.hasVariables();
 		}
-		return value.hasVariables();
+		return false;
 	}	
 }
