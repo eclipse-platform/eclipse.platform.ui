@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *	   Lars Vogel <lars.vogel@gmail.com> - Enhancements
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -68,6 +69,11 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		this.editingDomain = editingDomain;
 		this.feature = feature;
 		this.Messages = Messages;
+	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 
 	@Override
