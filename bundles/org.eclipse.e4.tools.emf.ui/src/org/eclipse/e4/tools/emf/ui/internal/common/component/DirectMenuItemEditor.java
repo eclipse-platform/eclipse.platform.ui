@@ -41,6 +41,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -114,16 +116,17 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		// ------------------------------------------------------------
+		final Link lnk = new Link(parent, SWT.NONE);
 		{
 			final IContributionClassCreator c = getEditor().getContributionCreator(MenuPackageImpl.Literals.DIRECT_MENU_ITEM);
 			if (project != null && c != null) {
-				final Link l = new Link(parent, SWT.NONE);
-				l.setText("<A>" + Messages.DirectMenuItemEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
-				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-				l.addSelectionListener(new SelectionAdapter() {
+
+				lnk.setText("<A>" + Messages.DirectMenuItemEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
+				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				lnk.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project, l.getShell());
+						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project, lnk.getShell());
 					}
 				});
 			} else {
@@ -135,6 +138,12 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 			Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			t.addModifyListener(new ModifyListener() {
+
+				public void modifyText(ModifyEvent e) {
+					lnk.setToolTipText(((Text) (e.getSource())).getText());
+				}
+			});
 			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master), new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());
 			Util.addDecoration(t, binding);
 
