@@ -137,6 +137,11 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 		}
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
+
 	protected abstract Command createStoreCommand(EditingDomain editingDomain, MCommand command);
 
 	private static class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
