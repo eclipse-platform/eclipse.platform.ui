@@ -43,8 +43,12 @@ public class SplitFeedbackOverlay {
 	}
 
 	public void dispose() {
-		if (feedbackShell != null && !feedbackShell.isDisposed())
+		if (feedbackShell != null && !feedbackShell.isDisposed()) {
+			Region region = feedbackShell.getRegion();
+			if (region != null && !region.isDisposed())
+				region.dispose();
 			feedbackShell.dispose();
+		}
 	}
 
 	private void showRects(boolean enclosed) {
