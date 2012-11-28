@@ -34,3 +34,12 @@
 .MToolControl.Draggable {
 	handle-image:  url(./dragHandle.png);
 }
+
+.DragFeedback {
+    background-color: #000000; 
+}
+
+.ModifiedDragFeedback {
+    background-color: #A0A000; 
+}
+
