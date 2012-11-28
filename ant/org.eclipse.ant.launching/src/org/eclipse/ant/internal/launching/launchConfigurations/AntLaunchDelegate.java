@@ -47,7 +47,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -112,14 +111,6 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 	ILaunchManager launchManager;
 
 	private boolean fUserSpecifiedLogger = false;
-
-	private String getProgramArguments(ILaunchConfiguration configuration)
-			throws CoreException {
-		String arguments = configuration.getAttribute(
-				IExternalToolConstants.ATTR_TOOL_ARGUMENTS, ""); //$NON-NLS-1$
-		return VariablesPlugin.getDefault().getStringVariableManager()
-				.performStringSubstitution(arguments);
-	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration,
@@ -194,12 +185,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		idProperty.append(idStamp);
 
 		// resolve arguments
-		String[] arguments = null;
-		if (isSeparateJRE) {
-			arguments = DebugPlugin.parseArguments(getProgramArguments(configuration));
-		} else {
-			arguments = ExternalToolsCoreUtil.getArguments(configuration);
-		}
+		String[] arguments = ExternalToolsCoreUtil.getArguments(configuration);
 
 		Map userProperties = AntLaunchingUtil.getProperties(configuration);
 		if (userProperties != null) {// create a copy so as to not affect the
