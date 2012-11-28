@@ -339,7 +339,7 @@ public class MenuHelper {
 		// This allows using data:, http:, or other custom URL schemes
 		if (!iconPath.matches("\\p{Alpha}[\\p{Alnum}+.-]*:.*")) { //$NON-NLS-1$
 			// First attempt to resolve in ISharedImages (e.g. "IMG_OBJ_FOLDER")
-			// as per bug 291232 & AbstractUIPlugin.imageDescriptorFromPlugin().
+			// as per bug 391232 & AbstractUIPlugin.imageDescriptorFromPlugin().
 			ImageDescriptor d = WorkbenchPlugin.getDefault().getSharedImages()
 					.getImageDescriptor(iconPath);
 			if (d != null) {
