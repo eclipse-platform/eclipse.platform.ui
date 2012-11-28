@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
@@ -685,6 +686,10 @@ public abstract class AbstractUIPlugin extends Plugin {
             } catch (MalformedURLException e) {
                 return null;
             }
+			URL platformURL = FileLocator.find(fullPathString);
+			if (platformURL != null) {
+				fullPathString = platformURL;
+			}
         }
 
         return ImageDescriptor.createFromURL(fullPathString);
