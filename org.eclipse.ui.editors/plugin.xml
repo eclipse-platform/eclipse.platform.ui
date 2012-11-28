@@ -221,6 +221,8 @@
             class="org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage"
             id="org.eclipse.ui.preferencePages.GeneralTextEditor">
             <keywordReference id="org.eclipse.ui.editors.general"/>
+            <keywordReference id="org.eclipse.ui.editors.tabWidth"/>
+            <keywordReference id="org.eclipse.ui.editors.lineNumber"/>
       </page>
       <page
             name="%PreferencePages.Annotations"
@@ -271,6 +273,12 @@
       <keyword
             label="%preferenceKeywords.general"
             id="org.eclipse.ui.editors.general"/>
+      <keyword
+            label="%preferenceKeywords.tabWidth"
+            id="org.eclipse.ui.editors.tabWidth"/>
+      <keyword
+            label="%preferenceKeywords.lineNumber"
+            id="org.eclipse.ui.editors.lineNumber"/>
       <keyword
             label="%preferenceKeywords.annotations"
             id="org.eclipse.ui.editors.annotations"/>
