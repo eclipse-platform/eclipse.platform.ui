@@ -606,7 +606,9 @@ public final class AntUtil {
 	    	if(file != null) {
 	    		IContentType fileType = IDE.getContentType(file);
 	    		IContentType antType = Platform.getContentTypeManager().getContentType(AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE);
-	    		return fileType.isKindOf(antType);
+	    		if(antType != null) { 
+	    			return fileType.isKindOf(antType);
+	    		}
 	    	}
     	}
     	return false;

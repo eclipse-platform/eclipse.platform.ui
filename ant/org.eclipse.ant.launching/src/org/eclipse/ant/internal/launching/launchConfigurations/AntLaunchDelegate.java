@@ -196,7 +196,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		// resolve arguments
 		String[] arguments = null;
 		if (isSeparateJRE) {
-			arguments = new String[] { getProgramArguments(configuration) };
+			arguments = DebugPlugin.parseArguments(getProgramArguments(configuration));
 		} else {
 			arguments = ExternalToolsCoreUtil.getArguments(configuration);
 		}
