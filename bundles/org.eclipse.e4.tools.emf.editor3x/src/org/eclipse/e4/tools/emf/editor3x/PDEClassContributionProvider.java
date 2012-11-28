@@ -53,11 +53,11 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 			// Perform the search only on the type name
 			typeName = currentContent.toCharArray();
 			if( currentContent.startsWith("*") ) {
-				typeName = "".toCharArray();
 				if( ! currentContent.endsWith("*") ) {
 					currentContent += "*";
 				}
-				packageName = currentContent.toCharArray();
+				typeName = currentContent.toCharArray();
+				packageName = "*".toCharArray();
 			}
 			
 		} else if ((index + 1) == currentContent.length()) {
@@ -145,7 +145,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 					packageName, 
 					SearchPattern.R_PATTERN_MATCH, 
 					typeName, 
-					SearchPattern.R_PREFIX_MATCH | SearchPattern.R_CAMELCASE_MATCH, 
+					SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CAMELCASE_MATCH, 
 					IJavaSearchConstants.CLASS, 
 					scope, 
 					req, 
