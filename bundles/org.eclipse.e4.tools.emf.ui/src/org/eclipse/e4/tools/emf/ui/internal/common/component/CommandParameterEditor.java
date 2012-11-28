@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
@@ -46,6 +47,12 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 	@Inject
 	public CommandParameterEditor() {
 		super();
+	}
+
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		// TODO Auto-generated method stub
+		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME), FeaturePath.fromList(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID) };
 	}
 
 	@Override
