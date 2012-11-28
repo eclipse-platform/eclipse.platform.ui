@@ -1158,6 +1158,8 @@ public class ModelEditor {
 				return;
 			}
 
+			o = EcoreUtil.copy((EObject) o);
+
 			Object parent = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
 
 			EStructuralFeature feature = null;
