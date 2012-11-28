@@ -24,9 +24,7 @@ public class OpenHandler {
 
 	@Execute
 	public void execute(
-			IEclipseContext context,
-			@Named(IServiceConstants.ACTIVE_SHELL) Shell shell)
-			throws InvocationTargetException, InterruptedException {
+			@Named(IServiceConstants.ACTIVE_SHELL) Shell shell){
 		FileDialog dialog = new FileDialog(shell);
 		dialog.open();
 	}

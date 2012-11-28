@@ -23,9 +23,8 @@ import org.eclipse.swt.widgets.Shell;
 
 public class QuitHandler {
 	@Execute
-	public void execute(IWorkbench workbench, IEclipseContext context,
-			@Named(IServiceConstants.ACTIVE_SHELL) Shell shell)
-			throws InvocationTargetException, InterruptedException {
+	public void execute(IWorkbench workbench,
+			@Named(IServiceConstants.ACTIVE_SHELL) Shell shell){
 		if (MessageDialog.openConfirm(shell, "Confirmation",
 				"Do you want to exit?")) {
 			workbench.close();
