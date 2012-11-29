@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services.internal.events;
 
-import org.eclipse.e4.ui.di.UISynchronize;
-
-import org.eclipse.e4.core.di.annotations.Optional;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -21,8 +18,10 @@ import java.util.Hashtable;
 import java.util.Map;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.services.Activator;
 import org.eclipse.e4.ui.internal.services.ServiceMessages;
 import org.eclipse.osgi.util.NLS;
@@ -38,7 +37,7 @@ import org.osgi.service.event.EventHandler;
 public class EventBroker implements IEventBroker {
 	
 	// TBD synchronization
-	private Map<EventHandler, ServiceRegistration> registrations = new HashMap<EventHandler, ServiceRegistration>();
+	private Map<EventHandler, Collection<ServiceRegistration<?>>> registrations = new HashMap<EventHandler, Collection<ServiceRegistration<?>>>();
 
 	@Inject
 	Logger logger;
@@ -126,27 +125,40 @@ public class EventBroker implements IEventBroker {
 		if (filter != null)
 			d.put(EventConstants.EVENT_FILTER, filter);
 		EventHandler wrappedHandler = new UIEventHandler(eventHandler, headless ? null : uiSync);
-		ServiceRegistration registration = bundleContext.registerService(EventHandler.class.getName(), wrappedHandler, d);
-		registrations.put(eventHandler, registration);
+		ServiceRegistration<?> registration = bundleContext.registerService(
+				EventHandler.class.getName(), wrappedHandler, d);
+		Collection<ServiceRegistration<?>> handled = registrations
+				.get(eventHandler);
+		if (handled == null) {
+			registrations.put(eventHandler,
+					handled = new ArrayList<ServiceRegistration<?>>());
+		}
+		handled.add(registration);
 		return true;
 	}
 
 	public boolean unsubscribe(EventHandler eventHandler) {
-		ServiceRegistration registration = (ServiceRegistration) registrations.remove(eventHandler);
-		if (registration == null)
+		Collection<ServiceRegistration<?>> handled = registrations
+				.remove(eventHandler);
+		if (handled == null || handled.isEmpty())
 			return false;
-		registration.unregister();
+		for (ServiceRegistration<?> r : handled) {
+			r.unregister();
+		}
 		return true;
 	}
 	
 	@PreDestroy
 	void dispose() {
-		Collection<ServiceRegistration> values = registrations.values();
-		ServiceRegistration[] array = values.toArray(new ServiceRegistration[values.size()]);
+		Collection<Collection<ServiceRegistration<?>>> values = new ArrayList<Collection<ServiceRegistration<?>>>(
+				registrations.values());
 		registrations.clear();
-		for (int i = 0; i < array.length; i++) {
-			//System.out.println("EventBroker dispose:" + array[i] + ")");
-			array[i].unregister();
+		for (Collection<ServiceRegistration<?>> handled : values) {
+			for (ServiceRegistration<?> registration : handled) {
+				// System.out.println("EventBroker dispose:" + registration[i] +
+				// ")");
+				registration.unregister();
+			}
 		}
 	}
 }
