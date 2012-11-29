@@ -26,12 +26,15 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -46,6 +49,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -63,6 +67,11 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 		this.fragment = fragment;
 		this.editingDomain = editingDomain;
 		this.Messages = Messages;
+	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 
 	@Override
@@ -124,6 +133,16 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 					return ((InternalFeature) e1).feature.getName().compareTo(((InternalFeature) e2).feature.getName());
 				}
 				return super.compare(viewer, e1, e2);
+			}
+		});
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				Button buttonOk = getButton(IDialogConstants.OK_ID);
+				if (!selection.isEmpty() && selection.getFirstElement().getClass() == InternalFeature.class)
+					buttonOk.setEnabled(true);
+				else
+					buttonOk.setEnabled(false);
 			}
 		});
 
