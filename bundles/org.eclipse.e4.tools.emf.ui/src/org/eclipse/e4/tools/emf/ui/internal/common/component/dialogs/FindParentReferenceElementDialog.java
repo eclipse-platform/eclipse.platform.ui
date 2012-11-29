@@ -84,6 +84,11 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	}
 
 	@Override
+	protected boolean isResizable() {
+		return true;
+	}
+
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 
