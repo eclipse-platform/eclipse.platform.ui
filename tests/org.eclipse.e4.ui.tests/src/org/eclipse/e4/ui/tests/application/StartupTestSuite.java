@@ -24,6 +24,7 @@ public class StartupTestSuite extends TestSuite {
 		suite.addTestSuite(EModelServiceInsertTest.class);
 		suite.addTestSuite(EPartServiceTest.class);
 		suite.addTestSuite(ESelectionServiceTest.class);
+		suite.addTestSuite(EventBrokerTest.class);
 
 		suite.addTestSuite(HeadlessContactsDemoTest.class);
 		suite.addTestSuite(HeadlessPhotoDemoTest.class);
