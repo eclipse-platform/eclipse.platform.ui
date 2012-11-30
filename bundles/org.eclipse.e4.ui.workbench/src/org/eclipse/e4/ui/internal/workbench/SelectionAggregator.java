@@ -99,6 +99,14 @@ public class SelectionAggregator {
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) final MPart part) {
 		if ((part != null) && (activePart != part)) {
 			activePart = part;
+			IEclipseContext partContext = part.getContext();
+			if (partContext.containsKey(OUT_POST_SELECTION)) {
+				Object selection = partContext.get(OUT_POST_SELECTION);
+				context.set(IServiceConstants.ACTIVE_SELECTION, selection);
+			} else if (partContext.containsKey(OUT_SELECTION)) {
+				Object selection = partContext.get(OUT_SELECTION);
+				context.set(IServiceConstants.ACTIVE_SELECTION, selection);
+			}
 			track(part);
 		}
 	}
