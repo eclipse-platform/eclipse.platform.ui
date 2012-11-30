@@ -53,6 +53,7 @@
     <module>bundles/org.eclipse.core.resources.compatibility</module>
     <module>bundles/org.eclipse.core.resources.spysupport</module>
     <module>bundles/org.eclipse.core.resources.win32.x86</module>
+    <module>bundles/org.eclipse.core.resources.win32.x86_64</module>
     <module>bundles/org.eclipse.core.tools.resources</module>
 
     <module>tests/org.eclipse.core.tests.resources</module>
