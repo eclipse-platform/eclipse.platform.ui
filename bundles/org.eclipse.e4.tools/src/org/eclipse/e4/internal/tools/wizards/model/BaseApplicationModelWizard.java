@@ -157,6 +157,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			return true;
 		}
 		catch (Exception exception) {
+			exception.printStackTrace();
 			MessageDialog.openError(getShell(), "Error", exception.getMessage());
 			return false;
 		}

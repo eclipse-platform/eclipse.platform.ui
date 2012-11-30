@@ -620,4 +620,6 @@ public class Messages {
 	public String Special_UnknownElement;
 	public String Special_UnknownElement_Detail;
 	public String VWindowSharedElementsEditor_Area;
+	public String ModelEditor_ExtractFragment;
+	public String ModelEditor_ExtractFragment_NoParentId;
 }
