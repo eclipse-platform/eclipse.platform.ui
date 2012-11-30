@@ -126,7 +126,9 @@ public class PartServiceImpl implements EPartService {
 	@Inject
 	private IEventBroker eventBroker;
 
+	// @Optional as the context service may not have been installed
 	@Inject
+	@Optional
 	private EContextService contextService;
 
 	private PartActivationHistory partActivationHistory;
@@ -548,7 +550,9 @@ public class PartServiceImpl implements EPartService {
 			UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
 			return;
 		}
-		contextService.deferUpdates(true);
+		if (contextService != null) {
+			contextService.deferUpdates(true);
+		}
 		try {
 			// record any sibling into the activation history if necessary, this will allow it to be
 			// reselected again in the future as it will be an activation candidate in the future,
@@ -578,7 +582,9 @@ public class PartServiceImpl implements EPartService {
 				}
 			}
 		} finally {
-			contextService.deferUpdates(false);
+			if (contextService != null) {
+				contextService.deferUpdates(false);
+			}
 		}
 	}
 
