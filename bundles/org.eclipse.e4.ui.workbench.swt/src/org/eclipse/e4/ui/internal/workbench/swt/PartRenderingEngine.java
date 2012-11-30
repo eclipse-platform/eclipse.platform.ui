@@ -1014,10 +1014,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 					};
 				}
 				// Spin the event loop until someone disposes the display
-				while (((testShell != null && !testShell.isDisposed()) || (!theApp
-						.getChildren().isEmpty() && someAreVisible(theApp
-						.getChildren())))
-						&& !display.isDisposed()) {
+				while (((testShell != null && !testShell.isDisposed()) || (theApp != null
+						&& !theApp.getChildren().isEmpty() && someAreVisible(theApp
+							.getChildren()))) && !display.isDisposed()) {
 					try {
 						if (!display.readAndDispatch()) {
 							runContext.processWaiting();
