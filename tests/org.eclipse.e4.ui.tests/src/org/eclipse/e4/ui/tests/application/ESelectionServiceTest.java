@@ -1058,6 +1058,41 @@ public class ESelectionServiceTest extends UITest {
 		assertTrue(listener.success);
 	}
 
+	public void testBug393137() {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partB);
+		window.setSelectedElement(partA);
+
+		initialize();
+		getEngine().createGui(window);
+
+		IEclipseContext windowContext = window.getContext();
+		IEclipseContext partContextB = partB.getContext();
+
+		EPartService partService = windowContext.get(EPartService.class);
+		partService.activate(partA);
+		ESelectionService selectionServiceB = partContextB
+				.get(ESelectionService.class);
+
+		Object o = new Target("");
+		selectionServiceB.setSelection(o);
+		selectionServiceB.setPostSelection(o);
+
+		SelectionListener listener = new SelectionListener();
+		SelectionListener postListener = new SelectionListener();
+		selectionServiceB.addSelectionListener(listener);
+		selectionServiceB.addPostSelectionListener(postListener);
+		partService.activate(partB);
+		assertEquals(1, listener.count);
+		assertEquals(1, postListener.count);
+	}
+
 	private void initialize() {
 		applicationContext.set(MApplication.class.getName(), application);
 		applicationContext.set(UISynchronize.class, new UISynchronize() {
@@ -1080,15 +1115,18 @@ public class ESelectionServiceTest extends UITest {
 
 		private MPart part;
 		private Object selection;
+		private int count;
 
 		public void reset() {
 			part = null;
 			selection = null;
+			count = 0;
 		}
 
 		public void selectionChanged(MPart part, Object selection) {
 			this.part = part;
 			this.selection = selection;
+			this.count++;
 		}
 
 		public MPart getPart() {
@@ -1099,6 +1137,9 @@ public class ESelectionServiceTest extends UITest {
 			return selection;
 		}
 
+		public int getCount() {
+			return count;
+		}
 	}
 
 	static class Bug343984Listener implements ISelectionListener {
