@@ -46,7 +46,6 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -126,6 +125,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
      * @return a source lookup result
      */
     public SourceLookupResult lookup(Object artifact, ISourceLocator locator) {
+        SourceLookupResult result = new SourceLookupResult(artifact, null, null, null);
         IDebugElement debugElement = null;
         if (artifact instanceof IDebugElement) {
             debugElement = (IDebugElement)artifact;
@@ -140,80 +140,51 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		    }
 		}
 		if (locator != null) {
-			// Do not acquire a lock on the locator if in UI thread.  This is 
-			// because this locator may need to perform a Display.syncExec() 
-			// when performing a lookup.
-			if (Display.getCurrent() != null) {
-				return doLookup(artifact, locator);
-			} else {
-				synchronized(locator) {
-					return doLookup(artifact, locator);
-				}
-			}
-		} else {
-			return new SourceLookupResult(artifact, null, null, null);
-		}
-    }
-    
-    private SourceLookupResult doLookup(Object artifact, ISourceLocator locator) {
-        SourceLookupResult result = new SourceLookupResult(artifact, null, null, null);
-		String editorId =null;
-		IEditorInput editorInput = null;
-		Object sourceElement = null;
-		// Do not acquire a lock on the locator if in UI thread.  This is 
-		// because this locator may need to perform a Display.syncExec() 
-		// when performing a lookup.
-		if (Display.getCurrent() != null) {
-			sourceElement = getSourceElement(locator, artifact);
-		} else {
-			synchronized(locator) {
-				sourceElement = getSourceElement(locator, artifact);
-			}
-		}
-		if (sourceElement == null) {
-			if (locator instanceof AbstractSourceLookupDirector) {
-			    editorInput = new CommonSourceNotFoundEditorInput(artifact);
-				editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
+			String editorId =null;
+			IEditorInput editorInput = null;
+			Object sourceElement = null;
+			if (locator instanceof ISourceLookupDirector) {
+			    ISourceLookupDirector director = (ISourceLookupDirector)locator;
+			    sourceElement = director.getSourceElement(artifact);
 			} else {
 			    if (artifact instanceof IStackFrame) {
-			        IStackFrame frame = (IStackFrame)artifact;
-				    editorInput = new SourceNotFoundEditorInput(frame);
-					editorId = IInternalDebugUIConstants.ID_SOURCE_NOT_FOUND_EDITOR;
+			        sourceElement = locator.getSourceElement((IStackFrame)artifact);
 			    }
 			}
-		} else {
-			ISourcePresentation presentation= null;
-			if (locator instanceof ISourcePresentation) {
-				presentation= (ISourcePresentation) locator;
+			if (sourceElement == null) {
+				if (locator instanceof AbstractSourceLookupDirector) {
+				    editorInput = new CommonSourceNotFoundEditorInput(artifact);
+					editorId = IDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR;
+				} else {
+				    if (artifact instanceof IStackFrame) {
+				        IStackFrame frame = (IStackFrame)artifact;
+					    editorInput = new SourceNotFoundEditorInput(frame);
+						editorId = IInternalDebugUIConstants.ID_SOURCE_NOT_FOUND_EDITOR;
+				    }
+				}
 			} else {
-			    if (artifact instanceof IDebugElement) {
-			        presentation= getPresentation(((IDebugElement)artifact).getModelIdentifier());
-			    }
+				ISourcePresentation presentation= null;
+				if (locator instanceof ISourcePresentation) {
+					presentation= (ISourcePresentation) locator;
+				} else {
+				    if (debugElement != null) {
+				        presentation= getPresentation(debugElement.getModelIdentifier());
+				    }
+				}
+				if (presentation != null) {
+					editorInput= presentation.getEditorInput(sourceElement);
+				}
+				if (editorInput != null && presentation != null) {
+					editorId= presentation.getEditorId(editorInput, sourceElement);
+				}				
 			}
-			if (presentation != null) {
-				editorInput= presentation.getEditorInput(sourceElement);
-			}
-			if (editorInput != null && presentation != null) {
-				editorId= presentation.getEditorId(editorInput, sourceElement);
-			}				
+			result.setEditorInput(editorInput);
+			result.setEditorId(editorId);
+			result.setSourceElement(sourceElement);
 		}
-		result.setEditorInput(editorInput);
-		result.setEditorId(editorId);
-		result.setSourceElement(sourceElement);
-    	return result;
+		return result;
     }
     
-    private Object getSourceElement(ISourceLocator locator, Object artifact) {
-		if (locator instanceof ISourceLookupDirector) {
-		    ISourceLookupDirector director = (ISourceLookupDirector)locator;
-		    return director.getSourceElement(artifact);
-		} else {
-		    if (artifact instanceof IStackFrame) {
-		        return locator.getSourceElement((IStackFrame)artifact);
-		    }
-		}
-		return null;
-    }
     /**
      * Returns the model presentation for the given debug model, or <code>null</code>
      * if none.
