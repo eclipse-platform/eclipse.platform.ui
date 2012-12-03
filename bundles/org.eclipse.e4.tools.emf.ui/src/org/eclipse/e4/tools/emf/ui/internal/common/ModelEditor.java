@@ -610,6 +610,15 @@ public class ModelEditor {
 							manager.add(addMenu);
 						}
 
+						manager.add(new Action(messages.ModelEditor_ExpandSubtree) {
+							public void run() {
+								if (!s.isEmpty())
+									viewer.expandToLevel(s.getFirstElement(), TreeViewer.ALL_LEVELS);
+							}
+						});
+
+						manager.add(new Separator());
+
 						// build the extract action
 						if ((!((VirtualEntry<?>) s.getFirstElement()).getList().isEmpty()) && (!isModelFragment()))
 							manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {

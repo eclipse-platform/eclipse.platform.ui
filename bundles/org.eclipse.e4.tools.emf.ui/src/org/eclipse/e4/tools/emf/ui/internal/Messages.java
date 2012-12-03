@@ -597,6 +597,7 @@ public class Messages {
 	public String AreaIconDialogEditor_DialogMessage;
 
 	public String ModelEditor_Delete;
+	public String ModelEditor_ExpandSubtree;
 	public String ModelEditor_Form;
 	public String ModelEditor_XMI;
 	public String ModelEditor_ExternalizeStrings;
