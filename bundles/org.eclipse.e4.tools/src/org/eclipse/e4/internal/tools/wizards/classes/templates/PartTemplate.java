@@ -18,7 +18,7 @@ public class PartTemplate
   protected final String TEXT_2 = NL + "package ";
   protected final String TEXT_3 = ";";
   protected final String TEXT_4 = NL + NL + "import javax.inject.Inject;";
-  protected final String TEXT_5 = NL + "import javax.annotation.PostConstruct;";
+  protected final String TEXT_5 = NL + "import javax.annotation.PostConstruct;" + NL + "import org.eclipse.swt.widgets.Composite;";
   protected final String TEXT_6 = NL + "import javax.annotation.PreDestroy;";
   protected final String TEXT_7 = NL + "import org.eclipse.e4.ui.di.Focus;";
   protected final String TEXT_8 = NL + "import org.eclipse.e4.ui.di.Persist;";
@@ -26,7 +26,7 @@ public class PartTemplate
   protected final String TEXT_10 = " {" + NL + "\t@Inject" + NL + "\tpublic ";
   protected final String TEXT_11 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
   protected final String TEXT_12 = NL + "\t@PostConstruct" + NL + "\tpublic void ";
-  protected final String TEXT_13 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_13 = "(Composite parent) {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
   protected final String TEXT_14 = NL + "\t";
   protected final String TEXT_15 = NL + "\t@PreDestroy" + NL + "\tpublic void ";
   protected final String TEXT_16 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";

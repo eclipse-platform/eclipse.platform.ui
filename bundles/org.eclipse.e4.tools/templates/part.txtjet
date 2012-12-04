@@ -7,6 +7,7 @@ package <%= domainClass.getPackageFragment().getElementName() %>;
 import javax.inject.Inject;
 <% if( domainClass.isUsePostConstruct() ) { %>
 import javax.annotation.PostConstruct;
+import org.eclipse.swt.widgets.Composite;
 <% } %>
 <% if( domainClass.isUsePredestroy() ) { %>
 import javax.annotation.PreDestroy;
@@ -25,7 +26,7 @@ public class <%= domainClass.getName() %> {
 	}
 	<% if( domainClass.isUsePostConstruct() ) { %>
 	@PostConstruct
-	public void <%= domainClass.getPostConstructMethodName()  %>() {
+	public void <%= domainClass.getPostConstructMethodName()  %>(Composite parent) {
 		//TODO Your code here
 	}
 	<% } %>
