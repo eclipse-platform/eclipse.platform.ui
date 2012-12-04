@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -56,6 +57,7 @@ import org.eclipse.e4.tools.emf.ui.common.MemoryTransfer;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
@@ -150,6 +152,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
+import org.eclipse.e4.ui.workbench.swt.internal.copy.FilteredTree;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -210,6 +213,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TreeAdapter;
+import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -760,7 +765,7 @@ public class ModelEditor {
 							MApplicationElement oe = (MApplicationElement) s.getFirstElement();
 							EObject container = ((EObject) oe).eContainer();
 							String containerId = ((MApplicationElement) container).getElementId();
-							if (containerId == null || containerId.length()==0) {
+							if (containerId == null || containerId.length() == 0) {
 								MessageDialog.openError(viewer.getControl().getShell(), null, messages.ModelEditor_ExtractFragment_NoParentId);
 								return;
 							}
@@ -876,16 +881,20 @@ public class ModelEditor {
 	}
 
 	private TreeViewer createTreeViewerArea(Composite parent) {
-		parent = new Composite(parent, SWT.NONE);
+
+		parent = new FilteredTree(parent, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), true);
 		parent.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
 		parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
 
-		FillLayout l = new FillLayout();
-		l.marginWidth = 5;
-		parent.setLayout(l);
-		ShadowComposite editingArea = new ShadowComposite(parent, SWT.NONE);
-		editingArea.setLayout(new FillLayout());
-		final TreeViewer viewer = new TreeViewer(editingArea, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		// FillLayout l = new FillLayout();
+		// l.marginWidth = 5;
+		// parent.setLayout(l);
+		// ShadowComposite editingArea = new ShadowComposite(parent, SWT.NONE);
+		// editingArea.setLayout(new FillLayout());
+		// final TreeViewer viewer = new TreeViewer(editingArea,
+		// SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		final TreeViewer viewer = ((FilteredTree) parent).getViewer();
+
 		viewer.setLabelProvider(new ComponentLabelProvider(this, messages));
 		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(new ObservableFactoryImpl(), new TreeStructureAdvisorImpl());
 		viewer.setContentProvider(contentProvider);
@@ -920,7 +929,8 @@ public class ModelEditor {
 		}
 
 		viewer.setInput(modelProvider.getRoot());
-		viewer.expandToLevel(2);
+		viewer.setAutoExpandLevel(2);
+		viewer.expandToLevel(viewer.getAutoExpandLevel());
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
 			public void doubleClick(DoubleClickEvent event) {
@@ -930,6 +940,15 @@ public class ModelEditor {
 				viewer.setExpandedState(selectedNode, !viewer.getExpandedState(selectedNode));
 			}
 		});
+
+		// Effect of filtered tree implementation (bug 391086)
+		viewer.getTree().addTreeListener(new TreeAdapter() {
+			@Override
+			public void treeCollapsed(TreeEvent e) {
+				viewer.expandToLevel(viewer.getAutoExpandLevel());
+			}
+		});
+
 		// ViewerDropAdapter adapter = new ViewerDropAdapter(viewer) {
 		//
 		// @Override
