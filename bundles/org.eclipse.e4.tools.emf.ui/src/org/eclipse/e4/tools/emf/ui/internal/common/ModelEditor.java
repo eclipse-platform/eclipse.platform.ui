@@ -626,7 +626,7 @@ public class ModelEditor {
 									VirtualEntry<?> ve = (VirtualEntry<?>) s.getFirstElement();
 									EObject container = (EObject) ve.getOriginalParent();
 									String containerId = ((MApplicationElement) container).getElementId();
-									if (containerId == null || containerId.isEmpty()) {
+									if (containerId == null || containerId.length() == 0) {
 										MessageDialog.openError(viewer.getControl().getShell(), null, messages.ModelEditor_ExtractFragment_NoParentId);
 										return;
 									}
@@ -760,7 +760,7 @@ public class ModelEditor {
 							MApplicationElement oe = (MApplicationElement) s.getFirstElement();
 							EObject container = ((EObject) oe).eContainer();
 							String containerId = ((MApplicationElement) container).getElementId();
-							if (containerId == null || containerId.isEmpty()) {
+							if (containerId == null || containerId.length()==0) {
 								MessageDialog.openError(viewer.getControl().getShell(), null, messages.ModelEditor_ExtractFragment_NoParentId);
 								return;
 							}
