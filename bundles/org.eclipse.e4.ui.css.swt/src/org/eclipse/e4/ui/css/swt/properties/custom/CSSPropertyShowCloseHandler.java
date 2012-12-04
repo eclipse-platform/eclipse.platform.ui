@@ -97,7 +97,8 @@ public class CSSPropertyShowCloseHandler extends CTabETabHelper implements ICSSP
 			
 			Item selection = getSelection(e.widget);
 				
-			if (this.selection == selection) {
+			if (selection == null || selection.isDisposed()
+					|| this.selection == selection) {
 				return;
 			}
 
