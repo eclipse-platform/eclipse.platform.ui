@@ -25,21 +25,21 @@ public abstract class DIViewPart<C> extends ViewPart {
 	private IEclipseContext context;
 	private Class<C> clazz;
 	private C component;
-	
+
 	public DIViewPart(Class<C> clazz) {
 		this.clazz = clazz;
 	}
-	
+
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
 		context = PartHelper.createPartContext(this);
-		
+
 		context.declareModifiable(IViewPart.class);
-		
+
 		context.set(IViewPart.class, this);
 	}
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		component = PartHelper.createComponent(parent, context, clazz, this);
@@ -48,17 +48,13 @@ public abstract class DIViewPart<C> extends ViewPart {
 	protected IEclipseContext getContext() {
 		return context;
 	}
-	
+
 	public C getComponent() {
 		return component;
 	}
-	
+
 	@Override
 	public void setFocus() {
-		try {
-			ContextInjectionFactory.invoke(component, Focus.class, context);	
-		} catch (InjectionException e) {
-			// TODO: handle exception
-		}
+		ContextInjectionFactory.invoke(component, Focus.class, context);
 	}
 }

@@ -93,6 +93,10 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 		makeActions();
 	}
 	
+	protected IEclipseContext getContext() {
+		return context;
+	}
+	
 	public C getComponent() {
 		return component;
 	}
