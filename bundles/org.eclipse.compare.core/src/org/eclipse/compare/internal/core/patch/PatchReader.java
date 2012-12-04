@@ -333,6 +333,10 @@ public class PatchReader {
 						if (line.indexOf("diff ") == 0) //$NON-NLS-1$
 							break;
 						//$FALL-THROUGH$
+					case 'B':
+						if (line.indexOf("Binary files differ") == 0) //$NON-NLS-1$
+							break;
+						//$FALL-THROUGH$
 					default:
 						throw new IOException("Invalid patch"); //$NON-NLS-1$
 				}
