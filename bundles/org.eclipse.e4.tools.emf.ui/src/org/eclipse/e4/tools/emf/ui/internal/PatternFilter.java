@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wim Jongman - 
+ *     Wim Jongman - Maintenance (391086)
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
@@ -16,6 +16,14 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 public class PatternFilter extends org.eclipse.e4.ui.workbench.swt.internal.copy.PatternFilter {
+
+	/**
+	 * This constructor will call {@link #setIncludeLeadingWildcard(boolean)}
+	 * with boolean=true.
+	 */
+	public PatternFilter() {
+		setIncludeLeadingWildcard(true);
+	}
 
 	/**
 	 * Check if the current (leaf) element is a match with the filter text. The
