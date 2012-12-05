@@ -37,7 +37,6 @@ public class PatternFilter extends org.eclipse.e4.ui.workbench.swt.internal.copy
 		if (labelProvider instanceof ILabelProvider) {
 			labelText = ((ILabelProvider) labelProvider).getText(element);
 		} else {
-			System.out.println(element.toString());
 			labelText = element.toString();
 		}
 
