@@ -11,7 +11,8 @@
 package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 public class SaveContext implements ISaveContext {
 	protected String pluginId;

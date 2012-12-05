@@ -14,9 +14,7 @@ package org.eclipse.core.internal.propertytester;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeMatcher;
+import org.eclipse.core.runtime.content.*;
 
 /**
  * A property tester for various properties of files.

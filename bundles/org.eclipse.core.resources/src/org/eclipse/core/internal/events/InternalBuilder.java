@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.resources.IBuildConfiguration;
-
 import java.util.Map;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.watson.ElementTree;

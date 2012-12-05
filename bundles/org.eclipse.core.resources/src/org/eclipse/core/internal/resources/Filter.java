@@ -12,12 +12,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.utils.Policy;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 import org.eclipse.core.runtime.*;

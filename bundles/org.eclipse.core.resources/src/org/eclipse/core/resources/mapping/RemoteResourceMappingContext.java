@@ -9,7 +9,8 @@
 package org.eclipse.core.resources.mapping;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A remote mapping context provides a model element with a view of the remote

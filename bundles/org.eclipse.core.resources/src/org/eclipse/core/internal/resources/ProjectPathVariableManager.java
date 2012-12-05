@@ -12,10 +12,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.core.runtime.IPath;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;

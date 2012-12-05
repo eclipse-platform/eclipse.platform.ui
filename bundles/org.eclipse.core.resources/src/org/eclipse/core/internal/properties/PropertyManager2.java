@@ -12,8 +12,7 @@ package org.eclipse.core.internal.properties;
 
 import java.io.File;
 import java.util.*;
-import org.eclipse.core.internal.localstore.Bucket;
-import org.eclipse.core.internal.localstore.BucketTree;
+import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.localstore.Bucket.Entry;
 import org.eclipse.core.internal.properties.PropertyBucket.PropertyEntry;
 import org.eclipse.core.internal.resources.*;

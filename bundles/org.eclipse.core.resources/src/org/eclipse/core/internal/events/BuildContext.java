@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import java.util.*;
-import org.eclipse.core.resources.*;
+import java.util.Arrays;
+import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.resources.IBuildContext;
 import org.eclipse.core.runtime.Assert;
 
 /**

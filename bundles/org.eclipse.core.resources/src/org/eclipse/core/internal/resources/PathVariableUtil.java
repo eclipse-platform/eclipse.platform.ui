@@ -11,13 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.resources.projectvariables.ParentVariableResolver;
-import org.eclipse.core.internal.resources.projectvariables.WorkspaceLocationVariableResolver;
-
-import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.core.internal.resources.projectvariables.WorkspaceParentLocationVariableResolver;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedList;

@@ -14,9 +14,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.properties.PropertyManager2;
-import org.eclipse.core.resources.ResourcesPlugin;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -27,6 +24,7 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
+import org.eclipse.core.internal.properties.PropertyManager2;
 import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.VertexFilter;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.VertexOrder;

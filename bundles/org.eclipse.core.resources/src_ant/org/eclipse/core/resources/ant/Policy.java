@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.resources.ant;
 
-import java.text.MessageFormat;// can't use ICU, used by ant
+import java.text.MessageFormat;
 import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+// can't use ICU, used by ant
 
 public class Policy {
 	private static final String bundleName = "org.eclipse.core.resources.ant.messages";//$NON-NLS-1$

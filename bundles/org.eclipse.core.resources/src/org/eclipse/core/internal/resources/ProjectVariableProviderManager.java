@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.variableresolvers.PathVariableResolver;
-
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.variableresolvers.PathVariableResolver;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
