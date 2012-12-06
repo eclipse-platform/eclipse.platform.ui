@@ -207,4 +207,13 @@ public interface MMenuFactory {
 	 */
 	MOpaqueMenu createOpaqueMenu();
 
+	/**
+	 * Returns a new object of class '<em>Dynamic Menu Contribution</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Dynamic Menu Contribution</em>'.
+	 * @generated
+	 */
+	MDynamicMenuContribution createDynamicMenuContribution();
+
 } //MMenuFactory

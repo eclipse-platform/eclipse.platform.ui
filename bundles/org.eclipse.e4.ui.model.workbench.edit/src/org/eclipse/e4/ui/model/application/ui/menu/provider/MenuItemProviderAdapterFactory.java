@@ -537,6 +537,29 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected DynamicMenuContributionItemProvider dynamicMenuContributionItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createDynamicMenuContributionAdapter() {
+		if (dynamicMenuContributionItemProvider == null) {
+			dynamicMenuContributionItemProvider = new DynamicMenuContributionItemProvider(this);
+		}
+
+		return dynamicMenuContributionItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -655,6 +678,7 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 		if (opaqueMenuItemItemProvider != null) opaqueMenuItemItemProvider.dispose();
 		if (opaqueMenuSeparatorItemProvider != null) opaqueMenuSeparatorItemProvider.dispose();
 		if (opaqueMenuItemProvider != null) opaqueMenuItemProvider.dispose();
+		if (dynamicMenuContributionItemProvider != null) dynamicMenuContributionItemProvider.dispose();
 	}
 
 }

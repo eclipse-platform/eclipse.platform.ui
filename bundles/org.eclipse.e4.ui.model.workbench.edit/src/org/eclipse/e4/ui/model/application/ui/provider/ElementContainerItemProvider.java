@@ -276,6 +276,11 @@ public class ElementContainerItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createDynamicMenuContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MBasicFactory.INSTANCE.createPart()));
 
 		newChildDescriptors.add

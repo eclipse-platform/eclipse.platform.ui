@@ -592,6 +592,11 @@ public class WindowItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
+				 MMenuFactory.INSTANCE.createDynamicMenuContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS,
 				 MAdvancedFactory.INSTANCE.createPlaceholder()));
 
 		newChildDescriptors.add
@@ -778,6 +783,11 @@ public class WindowItemProvider
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
 				 MMenuFactory.INSTANCE.createOpaqueMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createDynamicMenuContribution()));
 
 		newChildDescriptors.add
 			(createChildParameter

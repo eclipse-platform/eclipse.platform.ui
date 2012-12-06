@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Marco Descher <descher@medevit.at> - Bug 389063 Dynamic Menu Contribution
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -36,6 +37,7 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
@@ -944,6 +946,24 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		if (val != element.isVisible()) {
 			element.setVisible(val);
 			menuManager.markDirty();
+		}
+	}
+
+	/**
+	 * Clean dynamic menu contributions provided by
+	 * {@link MDynamicMenuContribution} application model elements
+	 * 
+	 * @param menuManager
+	 * @param menuModel
+	 * @param dump
+	 */
+	public void removeDynamicMenuContributions(MenuManager menuManager,
+			MMenu menuModel, ArrayList<MMenuElement> dump) {
+		removeMenuContributions(menuModel, dump);
+		for (MMenuElement mMenuElement : dump) {
+			IContributionItem ici = getContribution(mMenuElement);
+			menuManager.remove(ici);
+			clearModelToContribution(menuModel, ici);
 		}
 	}
 }
