@@ -193,8 +193,10 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -211,6 +213,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TreeAdapter;
@@ -304,6 +307,8 @@ public class ModelEditor {
 	private CTabFolder editorTabFolder;
 
 	private SourceViewer sourceViewer;
+
+	private boolean mod1Down = false;
 
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
@@ -615,13 +620,6 @@ public class ModelEditor {
 							manager.add(addMenu);
 						}
 
-						manager.add(new Action(messages.ModelEditor_ExpandSubtree) {
-							public void run() {
-								if (!s.isEmpty())
-									viewer.expandToLevel(s.getFirstElement(), TreeViewer.ALL_LEVELS);
-							}
-						});
-
 						manager.add(new Separator());
 
 						// build the extract action
@@ -785,6 +783,44 @@ public class ModelEditor {
 
 			}
 		});
+
+		// Save the stateMask
+		viewer.getTree().addKeyListener(new KeyListener() {
+			public void keyReleased(KeyEvent e) {
+				if (mod1Down && (e.keyCode & SWT.MOD1) == SWT.MOD1) {
+					mod1Down = false;
+				}
+			}
+
+			public void keyPressed(KeyEvent e) {
+				if (!mod1Down && (e.keyCode & SWT.MOD1) == SWT.MOD1) {
+					mod1Down = true;
+				}
+			}
+		});
+
+		viewer.addTreeListener(new ITreeViewerListener() {
+			public void treeExpanded(final TreeExpansionEvent event) {
+				if (mod1Down) {
+					viewer.getTree().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							viewer.expandToLevel(event.getElement(), TreeViewer.ALL_LEVELS);
+						}
+					});
+				}
+			}
+
+			public void treeCollapsed(final TreeExpansionEvent event) {
+				if (mod1Down) {
+					viewer.getTree().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							viewer.collapseToLevel(event.getElement(), TreeViewer.ALL_LEVELS);
+						}
+					});
+				}
+			}
+		});
+
 		viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
 		viewer.setSelection(new StructuredSelection(modelProvider.getRoot()));
 
@@ -937,7 +973,15 @@ public class ModelEditor {
 				TreeViewer viewer = (TreeViewer) event.getViewer();
 				IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
 				Object selectedNode = thisSelection.getFirstElement();
-				viewer.setExpandedState(selectedNode, !viewer.getExpandedState(selectedNode));
+				if (mod1Down) {
+					if (viewer.getExpandedState(selectedNode))
+						viewer.setExpandedState(selectedNode, false);
+					else
+						viewer.expandToLevel(selectedNode, TreeViewer.ALL_LEVELS);
+				} else {
+					viewer.setExpandedState(selectedNode, !viewer.getExpandedState(selectedNode));
+				}
+
 			}
 		});
 
