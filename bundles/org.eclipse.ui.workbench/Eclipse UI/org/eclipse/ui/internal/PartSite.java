@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,9 +104,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 *      ISelectionProvider)
 	 */
 	public static final void registerContextMenu(final String menuId,
-			final MenuManager menuManager,
-			final ISelectionProvider selectionProvider,
-			final boolean includeEditorInput, final IWorkbenchPart part,
+			final MenuManager menuManager, final ISelectionProvider selectionProvider,
+			final boolean includeEditorInput, final IWorkbenchPart part, IEclipseContext context,
 			final Collection menuExtenders) {
 		/*
 		 * Check to see if the same menu manager and selection provider have
@@ -126,8 +125,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		}
 
 		if (!foundMatch) {
-			menuExtenders.add(new PopupMenuExtender(menuId, menuManager,
-					selectionProvider, part, includeEditorInput));
+			menuExtenders.add(new PopupMenuExtender(menuId, menuManager, selectionProvider, part,
+					context, includeEditorInput));
 		}
 	}
 
@@ -491,8 +490,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			menuExtenders = new ArrayList(1);
 		}
 
-		registerContextMenu(menuID, menuMgr, selProvider, true, getPart(),
-				menuExtenders);
+		registerContextMenu(menuID, menuMgr, selProvider, true, getPart(), e4Context, menuExtenders);
 	}
 
 	/**

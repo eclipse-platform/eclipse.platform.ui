@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,22 +96,10 @@ public class PopupMenuExtender implements IMenuListener2,
 
 	private MPart modelPart;
 
-    /**
-     * Construct a new menu extender.
-     * 
-     * @param id
-     *            the menu id
-     * @param menu
-     *            the menu to extend
-     * @param prov
-     *            the selection provider
-     * @param part
-     *            the part to extend
-     */
-    public PopupMenuExtender(String id, MenuManager menu,
-            ISelectionProvider prov, IWorkbenchPart part) {
-        this(id, menu, prov, part, true);
-    }
+	/**
+	 * The context that will be used to create the popup menu's context under.
+	 */
+	private IEclipseContext context;
 
     /**
      * Construct a new menu extender.
@@ -124,17 +112,39 @@ public class PopupMenuExtender implements IMenuListener2,
      *            the selection provider
      * @param part
      *            the part to extend
+	 * @param context
+	 *            the context to create the child popup menu context under
+     */
+	public PopupMenuExtender(String id, MenuManager menu, ISelectionProvider prov,
+			IWorkbenchPart part, IEclipseContext context) {
+		this(id, menu, prov, part, context, true);
+	}
+
+    /**
+     * Construct a new menu extender.
+     * 
+     * @param id
+     *            the menu id
+     * @param menu
+     *            the menu to extend
+     * @param prov
+     *            the selection provider
+     * @param part
+     *            the part to extend
+	 * @param context
+	 *            the context to create the child popup menu context under
      * @param includeEditorInput
      *            Whether the editor input should be included when adding object
      *            contributions to this context menu.
      */
-    public PopupMenuExtender(final String id, final MenuManager menu,
-            final ISelectionProvider prov, final IWorkbenchPart part,
-            final boolean includeEditorInput) {
+	public PopupMenuExtender(final String id, final MenuManager menu,
+			final ISelectionProvider prov, final IWorkbenchPart part, IEclipseContext context,
+			final boolean includeEditorInput) {
 		super();
 		this.menu = menu;
 		this.selProvider = prov;
 		this.part = part;
+		this.context = context;
 		this.modelPart = (MPart) part.getSite().getService(MPart.class);
 		if (includeEditorInput) {
 			bitSet |= INCLUDE_EDITOR_INPUT;
@@ -179,7 +189,7 @@ public class PopupMenuExtender implements IMenuListener2,
 
 	private void registerE4Support() {
 		if (menuModel.getWidget() == null && menu.getMenu() != null) {
-			MenuService.registerMenu(menu.getMenu().getParent(), menuModel, modelPart);
+			MenuService.registerMenu(menu.getMenu().getParent(), menuModel, context);
 		}
 	}
 	// getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)

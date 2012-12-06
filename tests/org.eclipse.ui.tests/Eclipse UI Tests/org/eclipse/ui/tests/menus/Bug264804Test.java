@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.tests.api.ListElement;
 import org.eclipse.ui.tests.api.ListView;
@@ -56,7 +57,7 @@ public class Bug264804Test extends UITestCase {
 		try {
 			popupMenuExtender = new PopupMenuExtender(
 					"org.eclipse.ui.tests.Bug264804", manager, prov, part,
-					false);
+					((PartSite)part.getSite()).getContext(), false);
 
 			Menu contextMenu = manager.createContextMenu(window.getShell());
 			// contextMenu.setVisible(true);

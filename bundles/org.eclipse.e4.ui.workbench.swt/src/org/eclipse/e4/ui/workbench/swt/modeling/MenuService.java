@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class MenuService implements EMenuService {
 			if (menuId.equals(mmenu.getElementId())
 					&& mmenu instanceof MPopupMenu) {
 				Menu menu = registerMenu(parentControl, (MPopupMenu) mmenu,
-						myPart);
+						myPart.getContext());
 				if (menu != null) {
 					parentControl.setMenu(menu);
 					return (MPopupMenu) mmenu;
@@ -48,26 +48,17 @@ public class MenuService implements EMenuService {
 	}
 
 	public static Menu registerMenu(final Control parentControl,
-			final MPopupMenu mmenu, final MPart part) {
+			final MPopupMenu mmenu, IEclipseContext context) {
 		if (mmenu.getWidget() != null) {
 			return (Menu) mmenu.getWidget();
 		}
 		// we need to delegate to the renderer so that it "processes" the
 		// MenuManager correctly
-		IRendererFactory rendererFactory = part.getContext().get(
-				IRendererFactory.class);
+		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
 		AbstractPartRenderer renderer = rendererFactory.getRenderer(mmenu,
 				parentControl);
 
-		// Check whether the part's is a multi-page editor, if so use its
-		// context instead
-		IEclipseContext parentContext = part.getContext();
-		if (parentContext.get("MultiPageEditorSite") instanceof IEclipseContext) {
-			parentContext = (IEclipseContext) parentContext
-					.get("MultiPageEditorSite");
-		}
-
-		IEclipseContext popupContext = parentContext.createChild("popup:"
+		IEclipseContext popupContext = context.createChild("popup:"
 				+ mmenu.getElementId());
 		mmenu.setContext(popupContext);
 		Object widget = renderer.createWidget(mmenu, parentControl);
