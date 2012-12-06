@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,6 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 						getMultiPageEditor().close();
 					}
 				}, context);
-		site.getModel().getContext().set("MultiPageEditorSite", context); //$NON-NLS-1$
 
 		initializeDefaultServices();
 	}
@@ -547,8 +546,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		if (menuExtenders == null) {
 			menuExtenders = new ArrayList(1);
 		}
-		PartSite.registerContextMenu(menuID, menuMgr, selProvider, true,
-				editor, menuExtenders);
+		PartSite.registerContextMenu(menuID, menuMgr, selProvider, true, editor, context,
+				menuExtenders);
 	}
 
 	public final void registerContextMenu(final String menuId,
@@ -558,8 +557,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		if (menuExtenders == null) {
 			menuExtenders = new ArrayList(1);
 		}
-		PartSite.registerContextMenu(menuId, menuManager, selectionProvider,
-				includeEditorInput, editor, menuExtenders);
+		PartSite.registerContextMenu(menuId, menuManager, selectionProvider, includeEditorInput,
+				editor, context, menuExtenders);
 	}
 
 	/**

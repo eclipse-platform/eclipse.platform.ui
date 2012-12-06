@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogLabelKeys;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -143,9 +144,9 @@ public class ShowViewDialog extends Dialog implements
      */
     protected void createButtonsForButtonBar(Composite parent) {
         okButton = createButton(parent, IDialogConstants.OK_ID,
- IDialogLabelKeys.OK_LABEL_KEY, true);
+				JFaceResources.getString(IDialogLabelKeys.OK_LABEL_KEY), true);
         createButton(parent, IDialogConstants.CANCEL_ID,
- IDialogLabelKeys.CANCEL_LABEL_KEY, false);
+				JFaceResources.getString(IDialogLabelKeys.CANCEL_LABEL_KEY), false);
         updateButtons();
     }
 

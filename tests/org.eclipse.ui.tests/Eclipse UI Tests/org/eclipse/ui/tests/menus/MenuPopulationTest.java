@@ -34,6 +34,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.menus.AbstractContributionFactory;
@@ -99,7 +100,10 @@ public class MenuPopulationTest extends MenuTestCase {
 			manager.setRemoveAllWhenShown(true);
 			Menu contextMenu = manager.createContextMenu(problemsView.getSite().getShell());
 
-			popupMenuExtender = new PopupMenuExtender(IPageLayout.ID_PROBLEM_VIEW, manager, problemsView.getSite().getSelectionProvider(), problemsView, false);
+			popupMenuExtender = new PopupMenuExtender(
+					IPageLayout.ID_PROBLEM_VIEW, manager, problemsView
+							.getSite().getSelectionProvider(), problemsView,
+					((PartSite) problemsView.getSite()).getContext(), false);
 			popupMenuExtender.addMenuId(MarkerSupportRegistry.MARKERS_ID);
 			
 			contextMenu.notifyListeners(SWT.Show, new Event());
@@ -606,7 +610,9 @@ public class MenuPopulationTest extends MenuTestCase {
 
 				manager = new MenuManager();
 				manager.setRemoveAllWhenShown(true);
-				popupMenuExtender = new PopupMenuExtender(activePart.getSite().getId(), manager, null, activePart);
+			popupMenuExtender = new PopupMenuExtender(activePart.getSite()
+					.getId(), manager, null, activePart,
+					((PartSite) activePart.getSite()).getContext());
 				
 				Shell windowShell = window.getShell();
 				contextMenu = manager.createContextMenu(windowShell);

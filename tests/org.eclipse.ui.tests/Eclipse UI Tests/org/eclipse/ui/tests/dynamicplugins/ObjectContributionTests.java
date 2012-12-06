@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ObjectActionContributorManager;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
@@ -93,7 +94,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 			
 		};
 		
-		PopupMenuExtender extender = new PopupMenuExtender(GROUP_ID, menu, provider, part);
+		PopupMenuExtender extender = new PopupMenuExtender(GROUP_ID, menu, provider, part, ((PartSite)part.getSite()).getContext());
 		extender.menuAboutToShow(menu);
 					
 		assertNull(menu.find(VIEWER_ACTION_ID));
