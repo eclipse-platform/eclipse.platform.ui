@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -94,6 +95,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private String factoryUrl;
 
 	IRendererFactory curFactory = null;
+
+	private Map<String, AbstractPartRenderer> customRendererMap = new HashMap<String, AbstractPartRenderer>();
 
 	org.eclipse.swt.widgets.Listener keyListener;
 
@@ -897,6 +900,27 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	private AbstractPartRenderer getRenderer(MUIElement uiElement, Object parent) {
+		// Is there a custom renderer defined ?
+		String customURI = uiElement.getPersistedState().get(
+				IPresentationEngine.CUSTOM_RENDERER_KEY);
+		if (customURI != null) {
+			if (customRendererMap.get(customURI) instanceof AbstractPartRenderer)
+				return customRendererMap.get(customURI);
+
+			IEclipseContext owningContext = modelService
+					.getContainingContext(uiElement);
+			IContributionFactory contributionFactory = (IContributionFactory) owningContext
+					.get(IContributionFactory.class.getName());
+			Object customRenderer = contributionFactory.create(customURI,
+					owningContext);
+			if (customRenderer instanceof AbstractPartRenderer) {
+				customRendererMap.put(customURI,
+						(AbstractPartRenderer) customRenderer);
+				return (AbstractPartRenderer) customRenderer;
+			}
+		}
+
+		// If not then use the default renderer
 		return curFactory.getRenderer(uiElement, parent);
 	}
 
