@@ -46,6 +46,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -61,6 +63,7 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 	private MStringModelFragment fragment;
 	private EditingDomain editingDomain;
 	private Messages Messages;
+	private ViewerFilterImpl filter;
 
 	public FeatureSelectionDialog(Shell parentShell, EditingDomain editingDomain, MStringModelFragment fragment, Messages Messages) {
 		super(parentShell);
@@ -109,6 +112,22 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 		final Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		searchText.addModifyListener(new ModifyListener() {
+
+			public void modifyText(ModifyEvent e) {
+				if (filter != null) {
+					filter.setPattern(searchText.getText());
+					if (viewer != null) {
+						viewer.refresh();
+						if (searchText.getText().length() > 0) {
+							viewer.expandAll();
+						} else {
+							viewer.collapseAll();
+						}
+					}
+				}
+			}
+		});
 		new Label(container, SWT.NONE);
 		viewer = new TreeViewer(container);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -146,7 +165,7 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 			}
 		});
 
-		final ViewerFilterImpl filter = new ViewerFilterImpl();
+		filter = new ViewerFilterImpl();
 
 		viewer.addFilter(filter);
 
@@ -266,24 +285,38 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 	}
 
 	static class ViewerFilterImpl extends ViewerFilter {
+		private static final String WILDCARD = "*"; //$NON-NLS-1$
 		private StringMatcher matcher;
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			ILabelProvider pv = (ILabelProvider) ((StructuredViewer) viewer).getLabelProvider();
 
 			if (element.getClass() == InternalPackage.class) {
-				ILabelProvider pv = (ILabelProvider) ((StructuredViewer) viewer).getLabelProvider();
 				for (InternalClass c : ((InternalPackage) element).classes) {
 					if (match(pv.getText(c))) {
 						return true;
 					}
+					for (InternalFeature f : c.features) {
+						if (match(pv.getText(f))) {
+							return true;
+						}
+					}
 				}
 				return false;
-			} else if (element.getClass() == InternalPackage.class) {
-				ILabelProvider pv = (ILabelProvider) ((StructuredViewer) viewer).getLabelProvider();
+			} else if (element.getClass() == InternalClass.class) {
+				if (match(pv.getText(element))) {
+					return true;
+				}
+				for (InternalFeature f : ((InternalClass) element).features) {
+					if (match(pv.getText(f))) {
+						return true;
+					}
+				}
+				return false;
+			} else if (element.getClass() == InternalFeature.class) {
 				return match(pv.getText(element));
 			}
-
 			return true;
 		}
 
@@ -332,13 +365,13 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 		 */
 		public void setPattern(String patternString) {
 
-			if (patternString == null || patternString.equals("")) { //$NON-NLS-1$
+			if (patternString == null || patternString.length() == 0) {
 				matcher = null;
 			} else {
-				String pattern = patternString + "*"; //$NON-NLS-1$
-				// if (includeLeadingWildcard) {
-				//					pattern = "*" + pattern; //$NON-NLS-1$
-				// }
+				String pattern = patternString + WILDCARD;
+				if (!pattern.startsWith(WILDCARD)) {
+					pattern = WILDCARD + pattern;
+				}
 				matcher = new StringMatcher(pattern, true, false);
 			}
 		}
