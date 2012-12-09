@@ -918,18 +918,15 @@ public class ModelEditor {
 
 	private TreeViewer createTreeViewerArea(Composite parent) {
 
-		parent = new FilteredTree(parent, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), true);
-		parent.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
-		parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		final ShadowComposite treeArea = new ShadowComposite(parent, SWT.NONE);
 
-		// FillLayout l = new FillLayout();
-		// l.marginWidth = 5;
-		// parent.setLayout(l);
-		// ShadowComposite editingArea = new ShadowComposite(parent, SWT.NONE);
-		// editingArea.setLayout(new FillLayout());
-		// final TreeViewer viewer = new TreeViewer(editingArea,
-		// SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		final TreeViewer viewer = ((FilteredTree) parent).getViewer();
+		treeArea.setLayout(new FillLayout());
+		treeArea.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
+		treeArea.setBackgroundMode(SWT.INHERIT_DEFAULT);
+
+		final FilteredTree viewParent = new FilteredTree(treeArea, SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), true);
+
+		final TreeViewer viewer = ((FilteredTree) viewParent).getViewer();
 
 		viewer.setLabelProvider(new ComponentLabelProvider(this, messages));
 		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(new ObservableFactoryImpl(), new TreeStructureAdvisorImpl());
@@ -992,23 +989,6 @@ public class ModelEditor {
 				viewer.expandToLevel(viewer.getAutoExpandLevel());
 			}
 		});
-
-		// ViewerDropAdapter adapter = new ViewerDropAdapter(viewer) {
-		//
-		// @Override
-		// public boolean validateDrop(Object target, int operation,
-		// TransferData transferType) {
-		// // TODO Auto-generated method stub
-		// return false;
-		// }
-		//
-		// @Override
-		// public boolean performDrop(Object data) {
-		// // TODO Auto-generated method stub
-		// return false;
-		// }
-		// };
-		// adapter.setFeedbackEnabled(true);
 
 		int ops = DND.DROP_MOVE;
 		viewer.addDragSupport(ops, new Transfer[] { MemoryTransfer.getInstance() }, new DragListener(viewer));
