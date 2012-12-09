@@ -13,6 +13,7 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.wbm;
 
+import java.io.IOException;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,17 +21,23 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.services.IResourcePool;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+import org.osgi.framework.FrameworkUtil;
 
 public class ApplicationModelEditor extends ModelEditor {
 
@@ -46,6 +53,12 @@ public class ApplicationModelEditor extends ModelEditor {
 	private Resource resource;
 
 	private IProject project;
+
+	@Inject
+	Shell shell;
+
+	@Inject
+	UISynchronize sync;
 
 	@Inject
 	public ApplicationModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, @Named(EDITORPROJECT) @Optional IProject project, IResourcePool resourcePool) {
@@ -96,10 +109,40 @@ public class ApplicationModelEditor extends ModelEditor {
 			if (delta.getKind() == IResourceDelta.REMOVED) {
 				hidePart(true);
 			}
+
+			if (delta.getKind() == IResourceDelta.CHANGED) {
+				try {
+					resource.unload();
+					resource.load(null);
+					// must be done in ui thread because of databinding
+					sync.syncExec(new Runnable() {
+						public void run() {
+							getModelProvider().replaceRoot(resource.getContents().get(0));
+							getModelProvider().save(); // avoids dirty state
+						}
+					});
+				} catch (IOException e) {
+					statusDialog(e);
+				}
+			}
 		}
 
 		private void hidePart(boolean force) {
 			partService.hidePart(part, force);
 		}
 	};
+
+	protected void statusDialog(final Exception exc) {
+		try {
+			sync.syncExec(new Runnable() {
+				public void run() {
+					String bundle = FrameworkUtil.getBundle(getClass()).getSymbolicName();
+					Status status = new Status(IStatus.ERROR, bundle, exc.getMessage());
+					ErrorDialog.openError(shell, exc.getMessage(), exc.getMessage(), status);
+					exc.printStackTrace(System.err);
+				}
+			});
+		} catch (Exception e) {
+		}
+	}
 }

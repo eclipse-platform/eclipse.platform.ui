@@ -61,7 +61,7 @@ class RefactorParticipantDelegate {
 						matchAccess.getMatchLength(), newUrl);
 				change.addEdit(edit);
 				change.addTextEditGroup(new TextEditGroup(
-						"Update contribution reference", edit)); //$NON-NLS-1$
+						"Eclipse 4 Application Model Changes", edit)); //$NON-NLS-1$
 				return true;
 			}
 		};
@@ -71,7 +71,7 @@ class RefactorParticipantDelegate {
 			return null;
 
 		CompositeChange result = new CompositeChange(
-				"Update contribution reference"); //$NON-NLS-1$
+				"Eclipse 4 Application Model Changes"); //$NON-NLS-1$
 		for (TextFileChange c : changes.values()) {
 			result.add(c);
 		}
