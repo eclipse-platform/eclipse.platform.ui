@@ -119,6 +119,12 @@ public interface IPresentationEngine {
 	public static final String ANIMATIONS_ENABLED = "Animations Enabled"; //$NON-NLS-1$
 
 	/**
+	 * This is a persistedState 'key' whose value is expected to be the URI of a subclass of
+	 * ABstractPartRenderer that is to be used to render the element
+	 */
+	public static final String CUSTOM_RENDERER_KEY = "Custom Renderer"; //$NON-NLS-1$	
+
+	/**
 	 * Creates and returns the UI element for the given model element.
 	 * 
 	 * @param element
