@@ -19,6 +19,7 @@
     <groupId>org.eclipse</groupId>
     <artifactId>eclipse-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../eclipse-parent</relativePath>
   </parent>
 
   <groupId>eclipse.platform.ua</groupId>
@@ -26,9 +27,12 @@
   <version>3.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <properties>
+    <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/platform/eclipse.platform.ua.git</tycho.scmUrl>
+  </properties>
+
   <modules>
     <module>org.eclipse.help</module>
-    <module>org.eclipse.help.appserver</module>
     <module>org.eclipse.help.base</module>
     <module>org.eclipse.help.ui</module>
     <module>org.eclipse.help.webapp</module>
@@ -38,4 +42,30 @@
     <module>org.eclipse.ui.intro</module>
     <module>org.eclipse.ui.intro.universal</module>
   </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <configuration>
+          <dependency-resolution>
+            <extraRequirements>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.apache.lucene</id>
+                <versionRange>[3.5,4.0)</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.apache.lucene.analysis</id>
+                <versionRange>[3.5,4.0)</versionRange>
+              </requirement>
+            </extraRequirements>
+          </dependency-resolution>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build> 
+
 </project>

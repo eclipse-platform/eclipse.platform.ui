@@ -20,31 +20,46 @@
   </parent>
   <groupId>eclipse.platform.ua</groupId>
   <artifactId>org.eclipse.help.base</artifactId>
-  <version>3.6.100-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
-        <artifactId>target-platform-configuration</artifactId>
+        <artifactId>tycho-packaging-plugin</artifactId>
+        <version>${tycho.version}</version>
         <configuration>
-          <dependency-resolution>
-            <extraRequirements>
-              <requirement>
-                <type>eclipse-plugin</type>
-                <id>org.apache.lucene</id>
-                <versionRange>[2.9,3.0)</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
-                <id>org.apache.lucene.analysis</id>
-                <versionRange>[2.9,3.0)</versionRange>
-              </requirement>
-            </extraRequirements>
-          </dependency-resolution>
+          <format>'v${maven.build.timestamp}'</format>
         </configuration>
       </plugin>
     </plugins>
-  </build> 
+  </build>
+
+  <profiles>
+    <profile>
+      <id>update-branding-plugins</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>process-resources</phase>
+                <configuration>
+                  <tasks>
+                    <replace file="about.mappings" 
+                             token="@build@" value="${buildId}" />
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
