@@ -21,6 +21,6 @@
   </parent>
   <groupId>eclipse.platform.team</groupId>
   <artifactId>org.eclipse.team.core</artifactId>
-  <version>3.6.100-SNAPSHOT</version>
+  <version>3.7.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
