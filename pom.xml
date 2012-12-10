@@ -33,7 +33,7 @@
 
   <modules>
     <module>bundles/org.eclipse.core.filesystem</module>
-    <module>bundles/org.eclipse.core.filesystem.hpux.ia64_32</module>
+    <module>bundles/org.eclipse.core.filesystem.hpux.ia64</module>
     <module>bundles/org.eclipse.core.filesystem.hpux.PA_RISC</module>
     <module>bundles/org.eclipse.core.filesystem.linux.ppc</module>
     <module>bundles/org.eclipse.core.filesystem.linux.x86</module>
@@ -50,7 +50,6 @@
     <module>bundles/org.eclipse.core.filesystem/fragments/org.eclipse.core.filesystem.solaris.sparcv9</module>
 
     <module>bundles/org.eclipse.core.resources</module>
-    <module>bundles/org.eclipse.core.resources.compatibility</module>
     <module>bundles/org.eclipse.core.resources.spysupport</module>
     <module>bundles/org.eclipse.core.resources.win32.x86</module>
     <module>bundles/org.eclipse.core.resources.win32.x86_64</module>
