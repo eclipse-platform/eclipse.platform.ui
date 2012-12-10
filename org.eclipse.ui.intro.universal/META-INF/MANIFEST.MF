@@ -21,3 +21,4 @@ Import-Package: javax.xml.parsers,
  org.w3c.dom,
  org.xml.sax
 Bundle-ActivationPolicy: lazy;exclude:="org.eclipse.ui.internal.intro.universal.contentdetect"
+Eclipse-BundleShape: dir
