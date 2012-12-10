@@ -13,7 +13,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.wbm;
 
-import java.io.IOException;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -110,21 +109,21 @@ public class ApplicationModelEditor extends ModelEditor {
 				hidePart(true);
 			}
 
-			if (delta.getKind() == IResourceDelta.CHANGED) {
-				try {
-					resource.unload();
-					resource.load(null);
-					// must be done in ui thread because of databinding
-					sync.syncExec(new Runnable() {
-						public void run() {
-							getModelProvider().replaceRoot(resource.getContents().get(0));
-							getModelProvider().save(); // avoids dirty state
-						}
-					});
-				} catch (IOException e) {
-					statusDialog(e);
-				}
-			}
+			// if (delta.getKind() == IResourceDelta.CHANGED) {
+			// try {
+			// resource.unload();
+			// resource.load(null);
+			// // must be done in ui thread because of databinding
+			// sync.syncExec(new Runnable() {
+			// public void run() {
+			// getModelProvider().replaceRoot(resource.getContents().get(0));
+			// // getModelProvider().save(); // avoids dirty state
+			// }
+			// });
+			// } catch (IOException e) {
+			// statusDialog(e);
+			// }
+			// }
 		}
 
 		private void hidePart(boolean force) {
