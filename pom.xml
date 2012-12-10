@@ -118,9 +118,9 @@
     <module>bundles/org.eclipse.ui.views.properties.tabbed</module>
     <module>bundles/org.eclipse.ui.workbench</module>
     <module>bundles/org.eclipse.ui.navigator</module>
-    <module>bundles/org.eclipse.ui.tutorials.rcp.part1</module>
-    <module>bundles/org.eclipse.ui.tutorials.rcp.part2</module>
-    <module>bundles/org.eclipse.ui.tutorials.rcp.part3</module>
+    <module>examples/org.eclipse.ui.tutorials.rcp.part1</module>
+    <module>examples/org.eclipse.ui.tutorials.rcp.part2</module>
+    <module>examples/org.eclipse.ui.tutorials.rcp.part3</module>
     <module>features/org.eclipse.e4.rcp</module>
     <module>bundles/org.eclipse.ui.ide</module>
     <module>bundles/org.eclipse.ui.ide.application</module>
