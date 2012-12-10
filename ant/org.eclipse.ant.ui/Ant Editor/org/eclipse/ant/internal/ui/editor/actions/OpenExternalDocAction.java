@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,11 +141,13 @@ public class OpenExternalDocAction extends Action implements IEditorActionDelega
      * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
      */
     public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-        fEditor= (AntEditor) targetEditor;
-        if (fEditor != null) {
-            IHandlerService handlerService= (IHandlerService) fEditor.getSite().getService(IHandlerService.class);
-            handlerService.activateHandler(COMMAND_ID, new ActionHandler(this));
-        }
+    	if(targetEditor instanceof AntEditor) {
+	        fEditor= (AntEditor) targetEditor;
+	        if (fEditor != null) {
+	            IHandlerService handlerService= (IHandlerService) fEditor.getSite().getService(IHandlerService.class);
+	            handlerService.activateHandler(COMMAND_ID, new ActionHandler(this));
+	        }
+    	}
     }
 
     /* (non-Javadoc)
