@@ -20,6 +20,6 @@
   </parent>
   <groupId>eclipse.platform.debug</groupId>
   <artifactId>org.eclipse.debug.core</artifactId>
-  <version>3.7.100-SNAPSHOT</version>
+  <version>3.8.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
