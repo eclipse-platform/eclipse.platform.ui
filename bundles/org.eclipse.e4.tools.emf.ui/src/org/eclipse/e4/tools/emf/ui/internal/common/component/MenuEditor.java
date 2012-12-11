@@ -126,7 +126,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
-		actions.add(new Action(Messages.MenuEditor_AddHandledMenuItem, createImageDescriptor(ResourceProvider.IMG_MenuItem)) {
+		actions.add(new Action(Messages.MenuEditor_AddHandledMenuItem, createImageDescriptor(ResourceProvider.IMG_HandledMenuItem)) {
 			@Override
 			public void run() {
 				handleAdd(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, false);
@@ -138,7 +138,7 @@ public class MenuEditor extends AbstractComponentEditor {
 				handleAdd(MenuPackageImpl.Literals.MENU, false);
 			}
 		});
-		actions.add(new Action(Messages.MenuEditor_AddDirectMenuItem, createImageDescriptor(ResourceProvider.IMG_MenuItem)) {
+		actions.add(new Action(Messages.MenuEditor_AddDirectMenuItem, createImageDescriptor(ResourceProvider.IMG_DirectMenuItem)) {
 			@Override
 			public void run() {
 				handleAdd(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false);
