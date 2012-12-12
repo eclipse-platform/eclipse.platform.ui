@@ -104,10 +104,7 @@ public class TargetElementProviders implements IModelElementProvider {
 						true);
 				while (it.hasNext()) {
 					EObject o = it.next();
-					if (o.eContainingFeature() == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
-//						System.err
-//								.println("Skipped because it is an import");
-					} else {
+					if (o.eContainingFeature() != FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 						if (o.eClass().equals(filter.eClass)) {
 //							System.err.println("Found: " + o);
 							handler.result(o);

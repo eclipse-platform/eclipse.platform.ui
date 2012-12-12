@@ -15,7 +15,7 @@ public class EditUIUtil {
 		Class<?> fileClass = null;
 		try {
 			fileClass = IFile.class;
-		} catch (Throwable exception) {
+		} catch (Exception exception) {
 			// Ignore any exceptions and assume the class isn't available.
 		}
 		FILE_CLASS = fileClass;
@@ -34,7 +34,7 @@ public class EditUIUtil {
 						.loadClass("org.eclipse.team.core.history.IFileRevision");
 				fileRevisionGetURIMethod = fileRevisionClass
 						.getMethod("getURI");
-			} catch (Throwable exeption) {
+			} catch (Exception exeption) {
 				// Ignore any exceptions and assume the class isn't available.
 			}
 		}
@@ -47,7 +47,7 @@ public class EditUIUtil {
 		Class<?> uriEditorInputClass = null;
 		try {
 			uriEditorInputClass = IURIEditorInput.class;
-		} catch (Throwable exception) {
+		} catch (Exception exception) {
 			// The class is not available.
 		}
 		URI_EDITOR_INPUT_CLASS = uriEditorInputClass;
@@ -69,7 +69,7 @@ public class EditUIUtil {
 					return URI
 							.createURI(((java.net.URI) FILE_REVISION_GET_URI_METHOD
 									.invoke(fileRevision)).toString());
-				} catch (Throwable exception) {
+				} catch (Exception exception) {
 					// TODO Log error
 				}
 			}
