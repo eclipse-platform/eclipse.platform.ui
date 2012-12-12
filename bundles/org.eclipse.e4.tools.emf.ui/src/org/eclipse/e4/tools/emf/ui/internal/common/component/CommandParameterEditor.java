@@ -51,7 +51,6 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 
 	@Override
 	public FeaturePath[] getLabelProperties() {
-		// TODO Auto-generated method stub
 		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME), FeaturePath.fromList(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID) };
 	}
 

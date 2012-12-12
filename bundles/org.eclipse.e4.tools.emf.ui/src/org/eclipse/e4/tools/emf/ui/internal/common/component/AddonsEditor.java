@@ -29,6 +29,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
@@ -227,4 +228,8 @@ public class AddonsEditor extends AbstractComponentEditor {
 		return null;
 	}
 
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] { FeaturePath.fromList(ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI) };
+	}
 }
