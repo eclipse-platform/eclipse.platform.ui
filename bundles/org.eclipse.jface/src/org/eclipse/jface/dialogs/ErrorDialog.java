@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,6 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -36,6 +32,12 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Policy;
 
 /**
  * A dialog to display one or more errors to the user, as contained in an
@@ -473,7 +475,6 @@ public class ErrorDialog extends IconAndMessageDialog {
 		}
 
 		Throwable t = buildingStatus.getException();
-		boolean isCoreException = t instanceof CoreException;
 		boolean incrementNesting = false;
 
 		if (includeStatus) {
@@ -487,7 +488,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 			incrementNesting = true;
 		}
 
-		if (!isCoreException && t != null) {
+		if (!(t instanceof CoreException) && t != null) {
 			// Include low-level exception message
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < nesting; i++) {
@@ -508,7 +509,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 		}
 
 		// Look for a nested core exception
-		if (isCoreException) {
+		if (t instanceof CoreException) {
 			CoreException ce = (CoreException) t;
 			IStatus eStatus = ce.getStatus();
 			// Only print the exception message if it is not contained in the
@@ -545,20 +546,18 @@ public class ErrorDialog extends IconAndMessageDialog {
 		}
 
 		Throwable t = buildingStatus.getException();
-		boolean isCoreException = t instanceof CoreException;
-
 		if (includeStatus) {
 			return true;
 		}
 
-		if (!isCoreException && t != null) {
+		if (!(t instanceof CoreException) && t != null) {
 			return true;
 		}
 		
 		boolean result = false;
 
 		// Look for a nested core exception
-		if (isCoreException) {
+		if (t instanceof CoreException) {
 			CoreException ce = (CoreException) t;
 			IStatus eStatus = ce.getStatus();
 			// Gets exception message if it is not contained in the
