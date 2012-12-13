@@ -244,12 +244,12 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * Composite that holds the separator container and detail pane control.
 	 * Gets disposed/created as the layout changes.
 	 */
-	private Composite fDetailsComposiste;
+	private Composite fDetailsComposite;
 	
 	/**
 	 * Separator used when detail pane background colors of tree/detail pane are different.
 	 */
-	private Label fSepearator;
+	private Label fSeperator;
 	
 	/**
 	 * Parent of the viewer, used to detect re-sizing for automatic layout
@@ -827,23 +827,23 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private void buildDetailPane(int orientation) {
 		try {
 			fDetailsAnchor.setRedraw(false);
-			if (fDetailsComposiste != null) {
+			if (fDetailsComposite != null) {
 				fDetailPane.dispose();
-				fDetailsComposiste.dispose();
+				fDetailsComposite.dispose();
 			}
 			fSashForm.setOrientation(orientation);
 			if (orientation == SWT.VERTICAL) {
-				fDetailsComposiste = SWTFactory.createComposite(fDetailsAnchor, fDetailsAnchor.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
-				GridLayout layout = (GridLayout) fDetailsComposiste.getLayout();
+				fDetailsComposite = SWTFactory.createComposite(fDetailsAnchor, fDetailsAnchor.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
+				GridLayout layout = (GridLayout) fDetailsComposite.getLayout();
 				layout.verticalSpacing = 0;
-				fSepearator = new Label(fDetailsComposiste, SWT.SEPARATOR| SWT.HORIZONTAL);
-				fSepearator.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+				fSeperator = new Label(fDetailsComposite, SWT.SEPARATOR| SWT.HORIZONTAL);
+				fSeperator.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 			} else {
-				fDetailsComposiste = SWTFactory.createComposite(fDetailsAnchor, fDetailsAnchor.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
-				GridLayout layout = (GridLayout) fDetailsComposiste.getLayout();
+				fDetailsComposite = SWTFactory.createComposite(fDetailsAnchor, fDetailsAnchor.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
+				GridLayout layout = (GridLayout) fDetailsComposite.getLayout();
 				layout.horizontalSpacing = 0;
-				fSepearator= new Label(fDetailsComposiste, SWT.SEPARATOR | SWT.VERTICAL);
-				fSepearator.setLayoutData(new GridData(SWT.TOP, SWT.FILL, false, true));
+				fSeperator= new Label(fDetailsComposite, SWT.SEPARATOR | SWT.VERTICAL);
+				fSeperator.setLayoutData(new GridData(SWT.TOP, SWT.FILL, false, true));
 			}
 			// force update so detail pane can adapt to orientation change
 			showDetailPane();
@@ -1144,7 +1144,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
 	 */
 	public Composite getParentComposite() {
-		return fDetailsComposiste;
+		return fDetailsComposite;
 	}
 
 	/* (non-Javadoc)
@@ -1164,26 +1164,18 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				fLastSashWeights = fSashForm.getWeights();
 			}
 			fDetailPane.display(getCurrentSelection());
+			
 			// Adjust sash background color settings and separator based on detail pane background color:
 			//   When the backgrounds are the same, the sash should have a default background, else it should be
 			//   invisible and the label separator should appear with the same background color as the detail pane
 			Control control = fDetailPane.getCurrentControl();
 			if (control.getBackground().equals(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND))) {
-				// don't show the label separator
-				if (!fSepearator.isDisposed()) {
-					getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-					fSepearator.dispose();
-					fDetailsComposiste.layout(true);
-				}
+				fSeperator.setVisible(false);
+				getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 			} else {
-				// show the label separator and make sash invisible
-				if (fSepearator.isDisposed()) {
-					// re-build the detail pane with the separator
-					buildDetailPane(fSashForm.getOrientation());
-					return;
-				}
+				fSeperator.setVisible(true);
 				getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-				fSepearator.setBackground(control.getBackground());
+				fSeperator.setBackground(control.getBackground());
 			}
 		}
 	}
