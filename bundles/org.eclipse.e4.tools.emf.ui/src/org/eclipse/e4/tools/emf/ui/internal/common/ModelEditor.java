@@ -310,6 +310,8 @@ public class ModelEditor {
 
 	private boolean mod1Down = false;
 
+	private boolean saving;
+
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
 		this.modelProvider = modelProvider;
@@ -1213,9 +1215,26 @@ public class ModelEditor {
 
 	@Persist
 	public void doSave(@Optional IProgressMonitor monitor) {
-		if (modelProvider.isSaveable()) {
-			modelProvider.save();
+
+		try {
+			setSaving(true);
+			if (modelProvider.isSaveable()) {
+				modelProvider.save();
+			}
+		} finally {
+			setSaving(false);
 		}
+	}
+
+	private void setSaving(boolean saving) {
+		this.saving = saving;
+	}
+
+	/**
+	 * @return true if the editor is currently in the progress of saving.
+	 */
+	protected boolean isSaving() {
+		return saving;
 	}
 
 	@Focus

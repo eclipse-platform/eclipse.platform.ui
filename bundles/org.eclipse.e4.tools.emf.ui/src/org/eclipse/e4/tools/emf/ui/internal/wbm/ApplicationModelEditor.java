@@ -13,6 +13,7 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.wbm;
 
+import java.io.IOException;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -109,21 +110,15 @@ public class ApplicationModelEditor extends ModelEditor {
 				hidePart(true);
 			}
 
-			// if (delta.getKind() == IResourceDelta.CHANGED) {
-			// try {
-			// resource.unload();
-			// resource.load(null);
-			// // must be done in ui thread because of databinding
-			// sync.syncExec(new Runnable() {
-			// public void run() {
-			// getModelProvider().replaceRoot(resource.getContents().get(0));
-			// // getModelProvider().save(); // avoids dirty state
-			// }
-			// });
-			// } catch (IOException e) {
-			// statusDialog(e);
-			// }
-			// }
+			// If the current model editor is causing this resource change event
+			// then skip the reload.
+			if (!isSaving()) {
+
+				// reload the model if the file has changed
+				if (delta.getKind() == IResourceDelta.CHANGED) {
+					reloadModel();
+				}
+			}
 		}
 
 		private void hidePart(boolean force) {
@@ -131,6 +126,12 @@ public class ApplicationModelEditor extends ModelEditor {
 		}
 	};
 
+	/**
+	 * Shows an error dialog based on the passed exception. It should never
+	 * occur but if it does, the user can report a problem.
+	 * 
+	 * @param exc
+	 */
 	protected void statusDialog(final Exception exc) {
 		try {
 			sync.syncExec(new Runnable() {
@@ -142,6 +143,24 @@ public class ApplicationModelEditor extends ModelEditor {
 				}
 			});
 		} catch (Exception e) {
+		}
+	}
+
+	/**
+	 * Reload the model.
+	 */
+	protected void reloadModel() {
+		try {
+			resource.unload();
+			resource.load(null);
+			// must be done in ui thread because of databinding
+			sync.syncExec(new Runnable() {
+				public void run() {
+					getModelProvider().replaceRoot(resource.getContents().get(0));
+				}
+			});
+		} catch (IOException e) {
+			statusDialog(e);
 		}
 	}
 }
