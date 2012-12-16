@@ -22,7 +22,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
-public class ClassRenameParticipant extends
+public class RenameParticipant extends
 		org.eclipse.ltk.core.refactoring.participants.RenameParticipant {
 	private IType _type;
 	private IPackageFragment _pckage;

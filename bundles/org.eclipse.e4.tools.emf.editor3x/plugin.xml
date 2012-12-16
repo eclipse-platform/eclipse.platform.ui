@@ -35,7 +35,7 @@
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
-            class="org.eclipse.e4.tools.emf.editor3x.ClassRenameParticipant"
+            class="org.eclipse.e4.tools.emf.editor3x.RenameParticipant"
             id="org.eclipse.e4.tools.emf.editor3x.renameParticipant"
             name="Workbench Model Contribution Participant">
          <enablement>
