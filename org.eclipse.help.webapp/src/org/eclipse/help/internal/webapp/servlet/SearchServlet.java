@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.help.internal.search.ISearchHitCollector;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.QueryTooComplexException;
 import org.eclipse.help.internal.search.SearchQuery;
-import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.webapp.utils.SearchXMLGenerator;
 
@@ -76,7 +75,6 @@ public class SearchServlet extends HttpServlet {
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		String phrase = req.getParameter(PARAMETER_PHRASE);
 		if (phrase != null) {
-		    phrase = URLCoder.decode(phrase);
 			ISearchQuery query = new SearchQuery(phrase, false, Collections.EMPTY_LIST, locale);
 			collector.results.clear();
 			BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
