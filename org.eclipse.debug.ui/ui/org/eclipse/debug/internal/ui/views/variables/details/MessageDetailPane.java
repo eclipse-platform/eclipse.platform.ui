@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010 IBM Corporation and others.
+ *  Copyright (c) 2010, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -60,6 +61,7 @@ public class MessageDetailPane implements IDetailPane {
 	 */
 	public Control createControl(Composite parent) {
 		fControlParent = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		fControlParent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		fLabel = SWTFactory.createWrapLabel(fControlParent, "", 1); //$NON-NLS-1$
 		return fControlParent;
 	}

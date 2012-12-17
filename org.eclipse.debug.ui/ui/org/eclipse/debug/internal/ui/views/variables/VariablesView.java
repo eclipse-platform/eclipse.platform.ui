@@ -249,7 +249,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	/**
 	 * Separator used when detail pane background colors of tree/detail pane are different.
 	 */
-	private Label fSeperator;
+	private Label fSeparator;
 	
 	/**
 	 * Parent of the viewer, used to detect re-sizing for automatic layout
@@ -836,14 +836,14 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				fDetailsComposite = SWTFactory.createComposite(fDetailsAnchor, fDetailsAnchor.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
 				GridLayout layout = (GridLayout) fDetailsComposite.getLayout();
 				layout.verticalSpacing = 0;
-				fSeperator = new Label(fDetailsComposite, SWT.SEPARATOR| SWT.HORIZONTAL);
-				fSeperator.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+				fSeparator = new Label(fDetailsComposite, SWT.SEPARATOR| SWT.HORIZONTAL);
+				fSeparator.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 			} else {
 				fDetailsComposite = SWTFactory.createComposite(fDetailsAnchor, fDetailsAnchor.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
 				GridLayout layout = (GridLayout) fDetailsComposite.getLayout();
 				layout.horizontalSpacing = 0;
-				fSeperator= new Label(fDetailsComposite, SWT.SEPARATOR | SWT.VERTICAL);
-				fSeperator.setLayoutData(new GridData(SWT.TOP, SWT.FILL, false, true));
+				fSeparator= new Label(fDetailsComposite, SWT.SEPARATOR | SWT.VERTICAL);
+				fSeparator.setLayoutData(new GridData(SWT.TOP, SWT.FILL, false, true));
 			}
 			// force update so detail pane can adapt to orientation change
 			showDetailPane();
@@ -1165,17 +1165,16 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			}
 			fDetailPane.display(getCurrentSelection());
 			
-			// Adjust sash background color settings and separator based on detail pane background color:
-			//   When the backgrounds are the same, the sash should have a default background, else it should be
-			//   invisible and the label separator should appear with the same background color as the detail pane
+			// Use a grey (widget background) sash for the detail pane normally
+			// If the detail pane is also grey, add a seperator line
 			Control control = fDetailPane.getCurrentControl();
-			if (control.getBackground().equals(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND))) {
-				fSeperator.setVisible(false);
-				getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+			if (control.getBackground().equals(fSashForm.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND))) {
+				fSashForm.setBackground(fSashForm.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+				fSeparator.setVisible(true);
+				fSeparator.setBackground(control.getBackground());
 			} else {
-				fSeperator.setVisible(true);
-				getDefaultControl().setBackground(fDetailsAnchor.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-				fSeperator.setBackground(control.getBackground());
+				fSashForm.setBackground(fSashForm.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+				fSeparator.setVisible(false);
 			}
 		}
 	}
