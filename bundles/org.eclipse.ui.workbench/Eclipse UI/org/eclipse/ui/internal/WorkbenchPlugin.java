@@ -645,6 +645,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return the shared image manager
      */
     public ISharedImages getSharedImages() {
+    	if(sharedImages == null) {
+    		sharedImages = new SharedImages();
+    	}
+    	if(e4Context == null) {
+    		return sharedImages;
+    	}
 		return (ISharedImages) e4Context.get(ISharedImages.class.getName());
     }
 
