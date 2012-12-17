@@ -1,4 +1,4 @@
-bin/
+/*/*/bin/
 *~
 *.rej
 *.bak
@@ -7,5 +7,4 @@ javacore.*
 heapdump.*
 core.*
 Snap.*
-target/
 
