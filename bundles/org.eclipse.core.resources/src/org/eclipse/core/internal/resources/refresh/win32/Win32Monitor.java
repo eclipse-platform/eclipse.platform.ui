@@ -30,7 +30,15 @@ import org.osgi.framework.Bundle;
  * DEPTH_INFINITE.
  */
 class Win32Monitor extends Job implements IRefreshMonitor {
-	private static final long RESCHEDULE_DELAY = 1000;
+	/**
+	 * The delay between invocations of the refresh job.
+	 */
+	private static final long RESCHEDULE_DELAY = 3000;
+	/**
+	 * The time to wait on blocking call to native refresh hook.
+	 */
+	private static final int WAIT_FOR_MULTIPLE_OBJECTS_TIMEOUT = 1000;
+	private static final String DEBUG_PREFIX = "Win32RefreshMonitor: "; //$NON-NLS-1$
 
 	/**
 	 * A ChainedHandle is a linked list of handles.
@@ -294,8 +302,6 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		}
 	}
 
-	private static final String DEBUG_PREFIX = "Win32RefreshMonitor: "; //$NON-NLS-1$
-	private static final int WAIT_FOR_MULTIPLE_OBJECTS_TIMEOUT = 300;
 	/**
 	 * Any errors that have occurred
 	 */
@@ -508,8 +514,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 				System.out.println(DEBUG_PREFIX + "job finished in: " + start + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		//always reschedule the job - so it will come back after errors or cancelation
-		//make sure it doesn't hog more that 5% of CPU
-		long delay = Math.max(RESCHEDULE_DELAY, start * 30);
+		long delay = Math.max(RESCHEDULE_DELAY, start);
 		if (RefreshManager.DEBUG)
 			System.out.println(DEBUG_PREFIX + "rescheduling in: " + delay / 1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 		final Bundle bundle = Platform.getBundle(ResourcesPlugin.PI_RESOURCES);
