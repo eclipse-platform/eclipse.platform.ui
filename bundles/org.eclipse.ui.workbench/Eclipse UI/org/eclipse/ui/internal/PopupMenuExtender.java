@@ -157,7 +157,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		menuModel = null;
 		for (MMenu item : modelPart.getMenus()) {
 			if (id.equals(item.getElementId()) && item instanceof MPopupMenu
-					&& item.getTags().contains(ContributionsAnalyzer.MC_POPUP)) {
+					&& item.getTags().contains("popup")) { //$NON-NLS-1$
 				menuModel = (MPopupMenu) item;
 				break;
 			}
