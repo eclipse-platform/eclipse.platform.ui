@@ -36,6 +36,7 @@
     <module>bundles/org.eclipse.core.filesystem.hpux.ia64</module>
     <module>bundles/org.eclipse.core.filesystem.hpux.PA_RISC</module>
     <module>bundles/org.eclipse.core.filesystem.linux.ppc</module>
+    <module>bundles/org.eclipse.core.filesystem.linux.ppc64</module>
     <module>bundles/org.eclipse.core.filesystem.linux.x86</module>
     <module>bundles/org.eclipse.core.filesystem.linux.x86_64</module>
     <module>bundles/org.eclipse.core.filesystem.macosx</module>
@@ -53,6 +54,7 @@
     <module>bundles/org.eclipse.core.resources.spysupport</module>
     <module>bundles/org.eclipse.core.resources.win32.x86</module>
     <module>bundles/org.eclipse.core.resources.win32.x86_64</module>
+    <module>bundles/org.eclipse.core.resources.win32.ia64</module>
     <module>bundles/org.eclipse.core.tools.resources</module>
 
     <module>tests/org.eclipse.core.tests.resources</module>
