@@ -49,6 +49,18 @@ package org.eclipse.debug.ui.actions;
  * point. A factory and implementation of this interface are not actually
  * required.
  * </p>
+ * <p>
+ * Clients that need to check for presence of launchable adapter using 
+ * standard expression mechanism, should use a property tester as follows:
+ * <pre>
+ * <with variable="selection">
+ *    <iterator operator="and" ifEmpty="false">
+ *       <test property="org.eclipse.debug.core.launchable" value="debug"/>
+ *    </iterator>
+ * </with>
+ * </pre>
+ * 
+ * </p>
  * @see org.eclipse.debug.ui.actions.ContextualLaunchAction
  * @since 3.0
  */
