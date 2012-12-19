@@ -57,7 +57,6 @@ import org.eclipse.e4.tools.emf.ui.common.MemoryTransfer;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
@@ -152,7 +151,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
-import org.eclipse.e4.ui.workbench.swt.internal.copy.FilteredTree;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -926,9 +924,11 @@ public class ModelEditor {
 		treeArea.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
 		treeArea.setBackgroundMode(SWT.INHERIT_DEFAULT);
 
-		final FilteredTree viewParent = new FilteredTree(treeArea, SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), true);
+		// final FilteredTree viewParent = new FilteredTree(treeArea,
+		// SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), true);
+		// final TreeViewer viewer = ((FilteredTree) viewParent).getViewer();
 
-		final TreeViewer viewer = ((FilteredTree) viewParent).getViewer();
+		final TreeViewer viewer = new TreeViewer(treeArea, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		viewer.setLabelProvider(new ComponentLabelProvider(this, messages));
 		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(new ObservableFactoryImpl(), new TreeStructureAdvisorImpl());
