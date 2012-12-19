@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.menus;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -120,6 +119,10 @@ public class FocusControlSourceProvider extends AbstractSourceProvider
 	 * @see org.eclipse.ui.menus.IFocusService#removeTrackerFor(org.eclipse.swt.widgets.Control)
 	 */
 	public void removeFocusTracker(Control control) {
+		if (controlToId == null) {
+			// bug 396909: avoid NPEs if the service has already been disposed
+			return;
+		}
 		controlToId.remove(control);
 		if (control.isDisposed()) {
 			return;
