@@ -35,7 +35,7 @@
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
-            class="org.eclipse.e4.tools.emf.editor3x.RenameParticipant"
+            class="org.eclipse.e4.tools.emf.editor3x.ModelRenameParticipant"
             id="org.eclipse.e4.tools.emf.editor3x.renameParticipant"
             name="Workbench Model Contribution Participant">
          <enablement>
@@ -66,7 +66,7 @@
    <extension
          point="org.eclipse.ltk.core.refactoring.moveParticipants">
       <moveParticipant
-            class="org.eclipse.e4.tools.emf.editor3x.ClassMoveParticipant"
+            class="org.eclipse.e4.tools.emf.editor3x.ModelMoveParticipant"
             id="org.eclipse.e4.tools.emf.editor3x.moveParticipant"
             name="Workbench Model Contribution Participant">
          <enablement>
@@ -76,7 +76,20 @@
 	  	    </iterate>
 	  	  </with>
 	  	  <with variable="element">
-		  	 <instanceof value="org.eclipse.jdt.core.IType"/>
+         <or>
+            <instanceof
+                  value="org.eclipse.jdt.core.IType">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.jdt.core.IPackageFragment">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.core.resources.IFile">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.core.resources.IFolder">
+            </instanceof>
+         </or>
 	  	  </with>
 	  	</enablement>
       </moveParticipant>
