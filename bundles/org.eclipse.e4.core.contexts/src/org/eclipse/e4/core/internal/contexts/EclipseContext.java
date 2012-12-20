@@ -497,7 +497,7 @@ public class EclipseContext implements IEclipseContext {
 			parent.processWaiting();
 			return;
 		}
-		if (waiting == null)
+		if (waiting == null || waiting.isEmpty())
 			return;
 		// create update notifications
 		Computation[] ls = waiting.toArray(new Computation[waiting.size()]);
