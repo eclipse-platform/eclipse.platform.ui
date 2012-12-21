@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -859,13 +859,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		Assert.isNotNull(info);
 
 		/* https://bugs.eclipse.org/bugs/show_bug.cgi?id=98327
-		 * Make sure file gets save in commit() if the underlying file has been deleted */
+		 * Make sure file gets saved in commit() if the underlying file has been deleted */
 		if (info.fElement instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) info.fElement;
 			IResource resource= input.getFile();
 			if (!resource.isSynchronized(IResource.DEPTH_ZERO) && isDeleted(input))
-				info.fTextFileBuffer.setDirty(true);
+					info.fTextFileBuffer.setDirty(true);
 		}
+
 
 		info.fTextFileBuffer.commit(monitor, overwrite);
 		if (info.fModel instanceof AbstractMarkerAnnotationModel) {
