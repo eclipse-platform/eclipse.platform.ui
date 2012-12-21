@@ -255,9 +255,10 @@ public class EclipseContext implements IEclipseContext {
 	 * computations and listeners that depend on this name.
 	 */
 	public void invalidate(String name, int eventType, Object oldValue, Object newValue, Set<Scheduled> scheduled) {
-		ContextChangeEvent event = new ContextChangeEvent(this, eventType, null, name, oldValue);
+		ContextChangeEvent event = null;
 		ValueComputation computation = localValueComputations.get(name);
 		if (computation != null) {
+			event = new ContextChangeEvent(this, eventType, null, name, oldValue);
 			if (computation.shouldRemove(event)) {
 				localValueComputations.remove(name);
 				weakListeners.remove(computation);
@@ -265,7 +266,10 @@ public class EclipseContext implements IEclipseContext {
 			computation.handleInvalid(event, scheduled);
 		}
 		Set<Computation> namedComputations = weakListeners.getListeners(name);
-		if (namedComputations != null) {
+		if (namedComputations != null && namedComputations.size() > 0) {
+			if (event == null) {
+				event = new ContextChangeEvent(this, eventType, null, name, oldValue);
+			}
 			for (Computation listener : namedComputations) {
 				listener.handleInvalid(event, scheduled);
 			}
