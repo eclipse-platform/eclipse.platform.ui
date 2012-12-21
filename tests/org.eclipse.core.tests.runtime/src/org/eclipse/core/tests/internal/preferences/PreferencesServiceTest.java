@@ -1133,4 +1133,70 @@ public class PreferencesServiceTest extends RuntimeTest {
 		// todo
 	}
 
+	private void assertNodeDoesNotExist(String node) {
+		IPreferencesService service = Platform.getPreferencesService();
+		Preferences root = service.getRootNode();
+		String[] order = service.getLookupOrder("", null);
+		for (int i = 0; i < order.length; i++) {
+			try {
+				assertFalse("Node \"" + node + "\" exists in \"" + order[i] + "\" scope", root.node(order[i]).nodeExists(node));
+			} catch (BackingStoreException e) {
+				fail(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void verifyNode(IScopeContext[] contexts, String qualifier, String key, String node) {
+		IPreferencesService service = Platform.getPreferencesService();
+
+		service.getBoolean(qualifier, key, false, contexts);
+		assertNodeDoesNotExist(node);
+
+		service.getByteArray(qualifier, key, null, contexts);
+		assertNodeDoesNotExist(node);
+
+		service.getDouble(qualifier, key, 0.0, contexts);
+		assertNodeDoesNotExist(node);
+
+		service.getFloat(qualifier, key, 0.0f, contexts);
+		assertNodeDoesNotExist(node);
+
+		service.getInt(qualifier, key, 0, contexts);
+		assertNodeDoesNotExist(node);
+
+		service.getLong(qualifier, key, 0, contexts);
+		assertNodeDoesNotExist(node);
+
+		service.getString(qualifier, key, null, contexts);
+		assertNodeDoesNotExist(node);
+	}
+
+	private void doTestBug387898(IScopeContext[] contexts) {
+		String qualifier = getUniqueString();
+		String key = "node//key";
+
+		// If we use contexts, then qualifier node may be created because
+		// internally it uses context.getNode(qualifier) method which may
+		// create a node. Perform verification only when no contexts are used.
+		if (contexts == null)
+			verifyNode(contexts, qualifier, key, qualifier);
+
+		// Create qualifier node for each scope to verify nodes are not created out of the key.
+		IPreferencesService service = Platform.getPreferencesService();
+		String[] order = service.getLookupOrder("", null);
+		Preferences root = service.getRootNode();
+		for (int i = 0; i < order.length; i++)
+			root.node(order[i]).node(qualifier);
+
+		// Child node of qualifier node should never be created from key.
+		verifyNode(contexts, qualifier, key, qualifier + "/node");
+	}
+
+	public void testBug387898WithoutContexts() {
+		doTestBug387898(null);
+	}
+
+	public void testBug387898WithContexts() {
+		doTestBug387898(new IScopeContext[] {InstanceScope.INSTANCE, ConfigurationScope.INSTANCE, DefaultScope.INSTANCE});
+	}
 }
