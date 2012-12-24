@@ -2877,6 +2877,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 		cancelEarlyStartup();
 		if (workbenchService != null)
 			workbenchService.unregister();
+		workbenchService = null;
 
 		// for dynamic UI
 		Platform.getExtensionRegistry().removeRegistryChangeListener(extensionEventHandler);
