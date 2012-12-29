@@ -376,6 +376,23 @@
       <decorator
             lightweight="true"
             adaptable="true"
+			location="TOP_RIGHT"
+            label="%DecoratorSymlinkResource.label"
+            class="org.eclipse.ui.internal.ide.SymlinkDecorator"
+			state="true"
+            id="org.eclipse.ui.SymlinkDecorator">
+			<description>
+				%DecoratorSymlinkResource.description
+			</description>
+            <enablement>
+	            <objectClass
+	                  name="org.eclipse.core.runtime.PlatformObject">
+	            </objectClass>
+            </enablement>
+      </decorator>
+      <decorator
+            lightweight="true"
+            adaptable="true"
             location="BOTTOM_RIGHT"
             label="%DecoratorVirtualResource.label"
             class="org.eclipse.ui.internal.ide.VirtualResourceDecorator"
