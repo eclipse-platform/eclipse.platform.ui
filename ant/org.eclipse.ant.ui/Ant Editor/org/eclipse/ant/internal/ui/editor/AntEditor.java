@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2012 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH,
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials
@@ -30,7 +30,6 @@ import org.eclipse.ant.internal.ui.ExternalHyperlink;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
-import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
 import org.eclipse.ant.internal.ui.editor.actions.RenameInFileAction;
 import org.eclipse.ant.internal.ui.editor.actions.RunToLineAdapter;
 import org.eclipse.ant.internal.ui.editor.actions.ToggleLineBreakpointAction;
@@ -485,6 +484,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
     
     private AntModel fAntModel;
     
+    /**
+     * Default no-argument constructor
+     */
+    public AntEditor() {
+    	setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);
+		setRulerContextMenuId("#AntEditorRulerContext"); //$NON-NLS-1$
+        setEditorContextMenuId("#AntEditorContext"); //$NON-NLS-1$
+		configureInsertMode(SMART_INSERT, false);
+		setInsertMode(INSERT);
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
@@ -497,9 +506,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		IAction action= new TextOperationAction(bundle, "ContentFormat.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
         action.setActionDefinitionId(IJavaEditorActionDefinitionIds.FORMAT);
         setAction("ContentFormat", action); //$NON-NLS-1$
-        
-        action = new OpenDeclarationAction(this);
-        setAction("OpenDeclaration", action); //$NON-NLS-1$
         
         fFoldingGroup= new FoldingActionGroup(this, getViewer());
         
@@ -517,11 +523,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		setPreferenceStore(AntUIPlugin.getDefault().getCombinedPreferenceStore());
 		setCompatibilityMode(false);
 		
-		setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);
-		setRulerContextMenuId("org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext"); //$NON-NLS-1$
-        setEditorContextMenuId("org.eclipse.ant.internal.ui.editor.AntEditor"); //$NON-NLS-1$
-		configureInsertMode(SMART_INSERT, false);
-		setInsertMode(INSERT);
+		
 		fMarkOccurrenceAnnotations= getPreferenceStore().getBoolean(AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES);
 		fStickyOccurrenceAnnotations= getPreferenceStore().getBoolean(AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES);
 		
@@ -921,20 +923,12 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		super.editorContextMenuAboutToShow(menu);
 		
 		if (getAntModel() != null) {
-			IAction action= getAction("OpenDeclaration"); //$NON-NLS-1$
-			if (action != null) {
-				String openGroup = "group.open"; //$NON-NLS-1$
-	    	    menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, new Separator(openGroup));
-				menu.appendToGroup(openGroup, action);
-			}
-			
-			action= getAction("renameInFile"); //$NON-NLS-1$
-			String editGroup = "group.edit"; //$NON-NLS-1$
-		    menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, new Separator(editGroup));
-			menu.appendToGroup(editGroup, action);
+			IAction action= getAction("renameInFile"); //$NON-NLS-1$
+		    menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, new Separator(ITextEditorActionConstants.GROUP_EDIT));
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, action);
 			
 			action= getAction("ContentFormat"); //$NON-NLS-1$
-			menu.appendToGroup(editGroup, action);
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, action);
 		}
 	}
 	

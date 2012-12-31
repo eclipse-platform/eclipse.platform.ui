@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2012 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH,
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials
@@ -18,28 +18,21 @@ package org.eclipse.ant.internal.ui.editor;
 import java.util.ResourceBundle;
 
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
-import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
-import org.eclipse.ant.internal.ui.editor.actions.OpenExternalDocAction;
 import org.eclipse.ant.internal.ui.editor.actions.ToggleAutoReconcileAction;
 import org.eclipse.ant.internal.ui.editor.actions.ToggleMarkOccurrencesAction;
 import org.eclipse.ant.internal.ui.editor.actions.TogglePresentationAction;
-
+import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
-
+import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
-
-import org.eclipse.ui.editors.text.TextEditorActionContributor;
-
-import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 
 /**
  * Contributes interesting Ant Editor actions to the desktop's Edit menu and the toolbar.
@@ -50,9 +43,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 	private final static String TOGGLE_MARK_OCCURRENCES_ID= "org.eclipse.ant.ui.toggleMarkOccurrences"; //$NON-NLS-1$
 	protected RetargetTextEditorAction fContentAssistProposal;
 	protected RetargetTextEditorAction fContentFormat;
-	private OpenDeclarationAction fOpenDeclarationAction;
 	private TogglePresentationAction fTogglePresentation;
-	private OpenExternalDocAction fOpenExternalDocAction;
 	private ToggleMarkOccurrencesAction fToggleMarkOccurrencesAction;
     private ToggleAutoReconcileAction fToggleAutoReconcileAction;
 
@@ -69,11 +60,6 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		
 	}
 	
-	protected void initializeActions(AntEditor editor) {
-		fOpenDeclarationAction= new OpenDeclarationAction(editor);
-		fOpenExternalDocAction= new OpenExternalDocAction(editor);
-	}
-	
 	private void doSetActiveEditor(IEditorPart part) {
 		super.setActiveEditor(part);
 
@@ -87,20 +73,9 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		
 		if (editor instanceof AntEditor) {
 		    AntEditor antEditor= (AntEditor) part;
-			if (fOpenDeclarationAction == null) {
-				initializeActions(antEditor);
-				contributeToMenu(getActionBars().getMenuManager());
-			}
-			
 			FoldingActionGroup foldingActions= antEditor.getFoldingActionGroup();
 			if (foldingActions != null) {
 				foldingActions.updateActionBars();
-			}
-			if (fOpenDeclarationAction != null) {
-				fOpenDeclarationAction.setEditor(antEditor);
-			}
-			if (fOpenExternalDocAction != null) {
-				fOpenExternalDocAction.setActiveEditor(null, antEditor);
 			}
 		}
 		
@@ -115,23 +90,6 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
         }
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
-	 */
-	public void contributeToMenu(IMenuManager menu) {
-		if (fOpenDeclarationAction == null) {
-			return;
-		}
-		super.contributeToMenu(menu);
-		
-		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
-		if (navigateMenu != null) {
-			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenDeclarationAction);
-			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenExternalDocAction);
-			navigateMenu.setVisible(true);
-		}
-	}
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.EditorActionBarContributor#init(org.eclipse.ui.IActionBars)
      */

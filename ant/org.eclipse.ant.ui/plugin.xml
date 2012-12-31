@@ -58,10 +58,12 @@ M4 = Platform-specific fourth key -->
    <extension
          point="org.eclipse.ui.commands">
       <command
-            name="%ActionDefinition.openExternalDoc.name"
-            description="%ActionDefinition.openExternalDoc.description"
             categoryId="org.eclipse.jdt.ui.category.source"
-            id="org.eclipse.ant.ui.openExternalDoc">
+            defaultHandler="org.eclipse.ant.internal.ui.editor.actions.OpenExternalAntDocHandler"
+            description="%ActionDefinition.openExternalDoc.description"
+            helpContextId="open_ext_ant_doc_context"
+            id="org.eclipse.ant.ui.openExternalDoc"
+            name="%ActionDefinition.openExternalDoc.name">
       </command>
       <command
             name="%ActionDefinition.renameInFile.name"
@@ -85,7 +87,15 @@ M4 = Platform-specific fourth key -->
       	name="%toggleMarkOccurrences.label"
       	description="%toggleMarkOccurrences.description"
       	categoryId="org.eclipse.jdt.ui.category.source"
-      	id="org.eclipse.ant.ui.toggleMarkOccurrences" /> 
+      	id="org.eclipse.ant.ui.toggleMarkOccurrences" />
+      <command
+            categoryId="org.eclipse.jdt.ui.category.source"
+            defaultHandler="org.eclipse.ant.internal.ui.editor.actions.OpenAntDeclarationHander"
+            description="%OpenDeclarationCommand.description"
+            helpContextId="open_ant_declaration_context"
+            id="org.eclipse.ant.ui.open.declaration.command"
+            name="%OpenDeclarationCommand.label">
+      </command> 
    </extension>
    <extension point="org.eclipse.ui.bindings">
          <key
@@ -163,7 +173,13 @@ M4 = Platform-specific fourth key -->
       		sequence="M1+M3+O" 
 			contextId="org.eclipse.ant.ui.AntEditorScope"
 			commandId="org.eclipse.ant.ui.toggleMarkOccurrences"
-			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ant.ui.open.declaration.command"
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="F3">
+      </key> 
 	</extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -275,8 +291,8 @@ M4 = Platform-specific fourth key -->
    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution
-            targetID="org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext"
-            id="org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext">
+            targetID="#AntEditorRulerContext"
+            id="#AntEditorRulerContext">
          <action
                label="%AddTask.label"
                helpContextId="org.eclipse.ui.AddTask_action_context"
@@ -315,21 +331,35 @@ M4 = Platform-specific fourth key -->
                id="org.eclipse.ant.ui.folding.toggle">
          </action>
       </viewerContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editorActions">
-      <editorContribution
-            targetID="org.eclipse.ant.ui.internal.editor.AntEditor"
-            id="org.eclipse.ui.editorActions.antEditor">
-          <action
-               definitionId="org.eclipse.ant.ui.openExternalDoc"
-               label="%Dummy.label"
-               class="org.eclipse.ant.internal.ui.editor.actions.OpenExternalDocAction"
-               id="org.eclipse.ant.ui.OpenExternalDocAction">
+      <viewerContribution
+            id="org.eclipse.ant.ui.RulerPopupActions"
+            targetID="#AntEditorRulerContext">
+         <action
+               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
+               id="org.eclipse.ant.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+               label="%EnableBreakpoint.label"
+               menubarPath="debug">
          </action>
-         
-      </editorContribution>
-   </extension>   
+         <action
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+               id="org.eclipse.ant.ui.actions.ManageBreakpointRulerActionDelegate"
+               label="%AddBreakpoint.label"
+               menubarPath="debug">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            id="org.eclipse.ant.ui.debug.AntEditorPopupActions"
+            targetID="org.eclipse.ant.internal.ui.editor.AntEditor">
+         <action
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               helpContextId="run_to_line_action_context"
+               id="org.eclipse.ant.ui.debug.RunToLine"
+               label="%runToLineAction.label"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+   </extension>
    
    <extension
          point="org.eclipse.ant.core.extraClasspathEntries">
@@ -626,37 +656,6 @@ M4 = Platform-specific fourth key -->
       </editorContribution>
    </extension>
    <extension
-         point="org.eclipse.ui.popupMenus">
-   		<viewerContribution
-            targetID="org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext"
-            id="org.eclipse.ant.ui.RulerPopupActions">
-         <action
-               label="%EnableBreakpoint.label"
-               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.ant.ui.actions.EnableDisableBreakpointRulerActionDelegate">
-         </action>
-         <action
-               label="%AddBreakpoint.label"
-               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.ant.ui.actions.ManageBreakpointRulerActionDelegate">
-         </action>
-      </viewerContribution>
-      <viewerContribution
-            targetID="org.eclipse.ant.internal.ui.editor.AntEditor"
-            id="org.eclipse.ant.ui.debug.AntEditorPopupActions">
-         <action
-               label="%runToLineAction.label"
-               helpContextId="run_to_line_action_context"
-               definitionId="org.eclipse.debug.ui.commands.RunToLine"
-               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
-               menubarPath="additions"
-               id="org.eclipse.ant.ui.debug.RunToLine">
-         </action>
-      </viewerContribution>
-       </extension>
-   <extension
          point="org.eclipse.ui.console.consolePatternMatchListeners">
       <consolePatternMatchListener
             class="org.eclipse.ant.internal.ui.console.EclipseJavacPatternMatcher"
@@ -830,5 +829,54 @@ M4 = Platform-specific fourth key -->
                  id="org.eclipse.ant.ui.antLineBreakpointMarker">
            </markerTypeReference>
         </markerTypeCategory>
+     </extension>
+     <extension
+           point="org.eclipse.ui.menus">
+        <menuContribution
+              locationURI="menu:navigate?endof=open.ext">
+           <command
+                 commandId="org.eclipse.ant.ui.open.declaration.command"
+                 style="push">
+              <visibleWhen
+                    checkEnabled="false">
+                 <reference
+                       definitionId="org.eclipse.ant.ui.activeAntEditor">
+                 </reference>
+              </visibleWhen>
+           </command>
+           <command
+                 commandId="org.eclipse.ant.ui.openExternalDoc"
+                 style="push">
+              <visibleWhen
+                    checkEnabled="false">
+                 <reference
+                       definitionId="org.eclipse.ant.ui.activeAntEditor">
+                 </reference>
+              </visibleWhen>
+           </command>
+        </menuContribution>
+        <menuContribution
+              locationURI="popup:#AntEditorContext?endof=group.open">
+           <command
+                 commandId="org.eclipse.ant.ui.open.declaration.command"
+                 style="push">
+           </command>
+           <command
+                 commandId="org.eclipse.ant.ui.openExternalDoc"
+                 style="push">
+           </command>
+        </menuContribution>
+     </extension>
+     <extension
+           point="org.eclipse.core.expressions.definitions">
+        <definition
+              id="org.eclipse.ant.ui.activeAntEditor">
+           <with
+                 variable="activeEditorId">
+              <equals
+                    value="org.eclipse.ant.ui.internal.editor.AntEditor">
+              </equals>
+           </with>
+        </definition>
      </extension>	
 </plugin>
