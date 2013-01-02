@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1152,15 +1152,21 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	private void setDirty(Object source, boolean dirty) {
 		Assert.isNotNull(source);
 		boolean oldDirty = isSaveNeeded();
-		ContentMergeViewer cmv = (ContentMergeViewer) source;
 
-		if (dirty == cmv.internalIsLeftDirty()) {
-			fLeftDirty = cmv.internalIsLeftDirty();
+		if (source instanceof ContentMergeViewer) {
+			ContentMergeViewer cmv = (ContentMergeViewer) source;
+
+			if (dirty == cmv.internalIsLeftDirty()) {
+				fLeftDirty = cmv.internalIsLeftDirty();
+			}
+
+			if (dirty == cmv.internalIsRightDirty()) {
+				fRightDirty = cmv.internalIsRightDirty();
+			}
+		} else {
+			fLeftDirty = dirty;
 		}
 
-		if (dirty == cmv.internalIsRightDirty()) {
-			fRightDirty = cmv.internalIsRightDirty();
-		}
 		boolean newDirty = isSaveNeeded();
 		if (DEBUG) {
 			System.out.println("setDirty(" + source + ", " + dirty + "): " + newDirty); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

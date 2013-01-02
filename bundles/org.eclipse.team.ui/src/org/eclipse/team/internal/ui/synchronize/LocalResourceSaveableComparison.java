@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -287,22 +287,27 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 			if (newValue instanceof Boolean)
 				changed= ((Boolean)newValue).booleanValue();
 
-			ContentMergeViewer cmv = (ContentMergeViewer) e.getSource();
-
-			if (input.getLeft() != null && input.getLeft().equals(fileElement)) {
-				if (changed && cmv.internalIsLeftDirty())
-					setDirty(changed);
-				else if (!changed && !cmv.internalIsLeftDirty()) {
-					setDirty(changed);
+			Object source = e.getSource();
+			if (source instanceof ContentMergeViewer) {
+				ContentMergeViewer cmv = (ContentMergeViewer) source;
+				if (input.getLeft() != null
+						&& input.getLeft().equals(fileElement)) {
+					if (changed && cmv.internalIsLeftDirty())
+						setDirty(changed);
+					else if (!changed && !cmv.internalIsLeftDirty()) {
+						setDirty(changed);
+					}
 				}
-			}
-			if (input.getRight() != null
-					&& input.getRight().equals(fileElement)) {
-				if (changed && cmv.internalIsRightDirty())
-					setDirty(changed);
-				else if (!changed && !cmv.internalIsRightDirty()) {
-					setDirty(changed);
+				if (input.getRight() != null
+						&& input.getRight().equals(fileElement)) {
+					if (changed && cmv.internalIsRightDirty())
+						setDirty(changed);
+					else if (!changed && !cmv.internalIsRightDirty()) {
+						setDirty(changed);
+					}
 				}
+			} else {
+				setDirty(changed);
 			}
 		}			
 	}
