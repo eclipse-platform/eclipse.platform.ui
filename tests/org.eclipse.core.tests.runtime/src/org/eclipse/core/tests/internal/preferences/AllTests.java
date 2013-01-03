@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,11 @@
 package org.eclipse.core.tests.internal.preferences;
 
 import junit.framework.*;
+import org.eclipse.core.tests.runtime.*;
 
 public class AllTests extends TestCase {
 	/**
 	 * AllTests constructor comment.
-	 * @param name java.lang.String
 	 */
 	public AllTests() {
 		super(null);
@@ -36,6 +36,9 @@ public class AllTests extends TestCase {
 		suite.addTest(IScopeContextTest.suite());
 		suite.addTest(ListenerRegistryTest.suite());
 		suite.addTest(TestBug388004.suite());
+		suite.addTest(PreferenceExportTest.suite());
+		suite.addTest(PreferenceForwarderTest.suite());
+		suite.addTest(PreferencesTest.suite());
 		return suite;
 	}
 }

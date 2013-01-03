@@ -32,9 +32,6 @@ public class AllTests extends TestCase {
 		suite.addTest(PathTest.suite());
 		suite.addTest(PlatformTest.suite());
 		suite.addTest(PluginVersionIdentifierTest.suite());
-		suite.addTest(PreferenceExportTest.suite());
-		suite.addTest(PreferenceForwarderTest.suite());
-		suite.addTest(PreferencesTest.suite());
 		suite.addTestSuite(SubMonitorTest.class);
 		suite.addTestSuite(SubProgressTest.class);
 		suite.addTestSuite(SubMonitorSmallTicksTest.class);

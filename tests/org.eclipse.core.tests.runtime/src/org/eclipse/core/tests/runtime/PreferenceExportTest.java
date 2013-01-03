@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.*;
 
 /**
  * Tests the Preferences import/export feature.
+ * @deprecated This class tests intentionally tests deprecated functionality, so tag
+ * added to hide deprecation reference warnings.
  */
 public class PreferenceExportTest extends RuntimeTest {
 	public static Test suite() {
@@ -37,17 +39,13 @@ public class PreferenceExportTest extends RuntimeTest {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 
-		//remove all properties from runtime tests plugin
+		//remove properties modified by this test
 		Plugin testPlugin = Platform.getPlugin(PI_RUNTIME_TESTS);
 		Preferences prefs = testPlugin.getPluginPreferences();
-		String[] defaultNames = prefs.defaultPropertyNames();
-		for (int i = 0; i < defaultNames.length; i++) {
-			prefs.setDefault(defaultNames[i], Preferences.STRING_DEFAULT_DEFAULT);
-		}
-		String[] names = prefs.propertyNames();
-		for (int i = 0; i < names.length; i++) {
-			prefs.setToDefault(names[i]);
-		}
+		prefs.setDefault("SomeTestKey", Preferences.STRING_DEFAULT_DEFAULT);
+		prefs.setDefault("SomeOtherTestKey", Preferences.STRING_DEFAULT_DEFAULT);
+		prefs.setToDefault("SomeTestKey");
+		prefs.setToDefault("SomeOtherTestKey");
 		testPlugin.savePluginPreferences();
 	}
 

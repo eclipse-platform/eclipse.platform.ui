@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 
 /**
- * Assigns some default preference values using intializer extension that
+ * Assigns some default preference values using initializer extension that
  * are later verified by tests.
  */
 public class TestInitializer extends AbstractPreferenceInitializer {

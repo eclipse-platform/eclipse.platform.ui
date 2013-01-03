@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -712,7 +712,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 	}
 
 	/**
-	 * Tests a default preference value set by a preference intializer extension.
+	 * Tests a default preference value set by a preference initializer extension.
 	 */
 	public void testDefaultFromInitializer() {
 		String value = Platform.getPreferencesService().getString(RuntimeTestsPlugin.PI_RUNTIME_TESTS, TestInitializer.DEFAULT_PREF_KEY, null, null);
@@ -760,6 +760,9 @@ public class PreferencesServiceTest extends RuntimeTest {
 		verifier.addExpected(child2.absolutePath(), k2);
 	}
 
+	/**
+	 * @deprecated this tests deprecated functions, so deprecation added to avoid warnings
+	 */
 	public void testValidateVersions() {
 		final char BUNDLE_VERSION_PREFIX = '@';
 
