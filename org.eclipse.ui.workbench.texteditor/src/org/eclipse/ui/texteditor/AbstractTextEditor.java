@@ -902,8 +902,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		/** Cache of the active workbench part. */
 		private IWorkbenchPart fActivePart;
-		/** Indicates whether activation handling is currently be done. */
-		private boolean fIsHandlingActivation= false;
 		/**
 		 * The part service.
 		 * @since 3.1
@@ -975,15 +973,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * Handles the activation triggering a element state check in the editor.
 		 */
 		private void handleActivation() {
-			if (fIsHandlingActivation)
+			if (!fHandleActivation)
 				return;
 
 			if (fActivePart == AbstractTextEditor.this || fActivePart != null && fActivePart.getAdapter(AbstractTextEditor.class) == AbstractTextEditor.this) {
-				fIsHandlingActivation= true;
+				fHandleActivation= false;
 				try {
 					safelySanityCheckState(getEditorInput());
 				} finally {
-					fIsHandlingActivation= false;
+					fHandleActivation= true;
 					fHasBeenActivated= true;
 				}
 			}
@@ -994,7 +992,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @since 3.1
 		 */
 		public void windowActivated(IWorkbenchWindow window) {
-			if (window == getEditorSite().getWorkbenchWindow()) {
+			if (fHandleActivation && window == getEditorSite().getWorkbenchWindow()) {
 				/*
 				 * Workaround for problem described in
 				 * http://dev.eclipse.org/bugs/show_bug.cgi?id=11731
@@ -2528,6 +2526,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	private ActivationListener fActivationListener;
+	/**
+	 * Indicates activation should be handled.
+	 * @since 3.9
+	 */
+	private boolean fHandleActivation= true;
 	/**
 	 * The map of the editor's status fields.
 	 * @since 2.0
@@ -5054,13 +5057,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.0
 	 */
 	protected void performSave(boolean overwrite, IProgressMonitor progressMonitor) {
-
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider == null)
 			return;
 
+		fHandleActivation= false;
 		try {
-
 			provider.aboutToChange(getEditorInput());
 			IEditorInput input= getEditorInput();
 			provider.saveDocument(progressMonitor, input, getDocumentProvider().getDocument(input), overwrite);
@@ -5072,6 +5074,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				handleExceptionOnSave(x, progressMonitor);
 		} finally {
 			provider.changed(getEditorInput());
+			fHandleActivation= true;
 		}
 	}
 
@@ -5086,7 +5089,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void handleExceptionOnSave(CoreException exception, IProgressMonitor progressMonitor) {
 
 		try {
-			++ fErrorCorrectionOnSave;
+			++fErrorCorrectionOnSave;
 
 			boolean isSynchronized= false;
 			IDocumentProvider p= getDocumentProvider();
@@ -5129,7 +5132,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					progressMonitor.setCanceled(true);
 			}
 		} finally {
-			-- fErrorCorrectionOnSave;
+			--fErrorCorrectionOnSave;
 		}
 	}
 
