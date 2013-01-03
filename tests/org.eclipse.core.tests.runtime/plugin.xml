@@ -20,6 +20,9 @@
       <scope
             name="test3"
             storage="org.eclipse.core.tests.internal.preferences.TestNodeStorage3"/>
+      <initializer
+            class="org.eclipse.core.tests.internal.preferences.TestInitializer">
+      </initializer>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
