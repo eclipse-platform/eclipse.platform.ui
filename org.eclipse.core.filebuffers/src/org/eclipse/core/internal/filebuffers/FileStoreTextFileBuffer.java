@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,8 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+
+import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
@@ -416,6 +418,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#commitFileBufferContent(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException {
+		if (!isSynchronized() && !overwrite)
+			throw new CoreException(new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, FileBuffersMessages.FileBuffer_error_outOfSync, null));
+
 		String encoding= computeEncoding();
 
 		Charset charset;

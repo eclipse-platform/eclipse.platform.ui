@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
@@ -51,6 +52,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
+
 
 /**
  * @since 3.0
@@ -332,6 +334,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#commitFileBufferContent(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException {
+		if (!isSynchronized() && !overwrite)
+			throw new CoreException(new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, FileBuffersMessages.FileBuffer_error_outOfSync, null));
+
 		String encoding= computeEncoding();
 
 		if (fBOM == IContentDescription.BOM_UTF_16LE && CHARSET_UTF_16.equals(encoding))
