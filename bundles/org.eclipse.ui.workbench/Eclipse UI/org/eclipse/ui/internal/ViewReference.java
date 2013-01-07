@@ -78,12 +78,12 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 
 	public String getSecondaryId() {
 		MPart part = getModel();
-		for (String tag : part.getTags()) {
-			if (tag.startsWith(WorkbenchPage.SECONDARY_ID_HEADER)) {
-				return tag.substring(WorkbenchPage.SECONDARY_ID_HEADER.length());
-			}
-		}
-		return null;
+
+		int colonIndex = part.getElementId().indexOf(':');
+		if (colonIndex == -1 || colonIndex == (part.getElementId().length() - 1))
+			return null;
+
+		return part.getElementId().substring(colonIndex + 1);
 	}
 
 	public IViewPart getView(boolean restore) {

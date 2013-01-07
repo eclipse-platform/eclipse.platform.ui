@@ -37,13 +37,13 @@ public class ViewSite extends PartSite implements IViewSite {
 	 * @see org.eclipse.ui.IViewSite#getSecondaryId()
 	 */
 	public String getSecondaryId() {
-		for (String tag : model.getTags()) {
-			if (tag.startsWith(WorkbenchPage.SECONDARY_ID_HEADER)) {
-				return tag.substring(WorkbenchPage.SECONDARY_ID_HEADER.length());
-			}
+		MPart part = getModel();
 
-		}
-		return null;
+		int colonIndex = part.getElementId().indexOf(':');
+		if (colonIndex == -1 || colonIndex == (part.getElementId().length() - 1))
+			return null;
+
+		return part.getElementId().substring(colonIndex + 1);
 	}
 
 	@Override

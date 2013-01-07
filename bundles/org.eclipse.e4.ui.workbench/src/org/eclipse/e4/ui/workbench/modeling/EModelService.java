@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.workbench.modeling;
 
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -442,6 +443,23 @@ public interface EModelService {
 	 *         </ul>
 	 */
 	public int getElementLocation(MUIElement element);
+
+	/**
+	 * Returns the descriptor for the given part id.
+	 * <p>
+	 * <b>NOTE:</b> In order to support multiple instance parts there is a convention where the
+	 * part's id may be in the form 'partId:secondaryId'. If the given id contains a ':' then only
+	 * the substring before the ':' will be used to find the descriptor.
+	 * </p>
+	 * <p>
+	 * In order to support this convention it's required that no descriptor contain a ':' in its id
+	 * </p>
+	 * 
+	 * @param id
+	 *            The id of the descriptor to return
+	 * @return The descriptor matching the id or <code>null</code> if none exists
+	 */
+	public MPartDescriptor getPartDescriptor(String id);
 
 	/**
 	 * This method ensures that there will never be two placeholders for the same referenced element

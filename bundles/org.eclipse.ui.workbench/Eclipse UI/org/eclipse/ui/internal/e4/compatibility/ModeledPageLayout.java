@@ -354,28 +354,28 @@ public class ModeledPageLayout implements IPageLayout {
 	public static MStackElement createViewModel(MApplication application, String id,
 			boolean visible,
 			WorkbenchPage page, EPartService partService, boolean createReferences) {
-		for (MPartDescriptor descriptor : application.getDescriptors()) {
-			if (descriptor.getElementId().equals(id)) {
-				MPlaceholder ph = partService.createSharedPart(id);
-				ph.setToBeRendered(visible);
+		EModelService ms = application.getContext().get(EModelService.class);
+		MPartDescriptor partDesc = ms.getPartDescriptor(id);
+		if (partDesc != null) {
+			MPlaceholder ph = partService.createSharedPart(id);
+			ph.setToBeRendered(visible);
 
-				MPart part = (MPart) (ph.getRef());
-				// as a shared part, this should be true, actual un/rendering
-				// will be dependent on any placeholders that are referencing
-				// this part
-				part.setToBeRendered(true);
+			MPart part = (MPart) (ph.getRef());
+			// as a shared part, this should be true, actual un/rendering
+			// will be dependent on any placeholders that are referencing
+			// this part
+			part.setToBeRendered(true);
 
-				// there should only be view references for 3.x views that are
-				// visible to the end user, that is, the tab items are being
-				// drawn
-				if (visible
-						&& createReferences
-						&& CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(descriptor
-								.getContributionURI())) {
-					page.createViewReferenceForPart(part, id);
-				}
-				return ph;
+			// there should only be view references for 3.x views that are
+			// visible to the end user, that is, the tab items are being
+			// drawn
+			if (visible
+					&& createReferences
+					&& CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(partDesc
+							.getContributionURI())) {
+				page.createViewReferenceForPart(part, id);
 			}
+			return ph;
 		}
 		return null;
 	}

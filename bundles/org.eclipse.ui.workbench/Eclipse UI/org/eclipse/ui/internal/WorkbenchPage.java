@@ -159,8 +159,6 @@ import org.osgi.service.event.EventHandler;
  */
 public class WorkbenchPage extends CompatibleWorkbenchPage implements
         IWorkbenchPage {
-	
-	static final String SECONDARY_ID_HEADER = "3x-secondary:"; //$NON-NLS-1$
 
 	class E4PartListener implements org.eclipse.e4.ui.workbench.modeling.IPartListener {
 
@@ -1056,11 +1054,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	private boolean contains(ViewReference reference) {
-		String id = reference.getId();
-		String secondaryId = reference.getSecondaryId();
 		for (ViewReference viewReference : viewReferences) {
-			if (id.equals(viewReference.getId())
-					&& Util.equals(secondaryId, viewReference.getSecondaryId())) {
+			if (reference.getId().equals(viewReference.getId())) {
 				return true;
 			}
 		}
@@ -1078,12 +1073,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	MPartDescriptor findDescriptor(String id) {
-		for (MPartDescriptor descriptor : application.getDescriptors()) {
-			if (descriptor.getElementId().equals(id)) {
-				return descriptor;
-			}
-		}
-		return null;
+		return modelService.getPartDescriptor(id);
 	}
 
 	/**
@@ -1102,28 +1092,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 *         workbench window
 	 * @see EModelService#findElements(MUIElement, String, Class, List, int)
 	 */
-	private MPart findPart(String viewId, String secondaryId, int searchFlags) {
-		Collection<MPart> parts = modelService.findElements(getWindowModel(), viewId, MPart.class,
-				null, searchFlags);
-		if (secondaryId == null) {
-			partsLoop: for (MPart part : parts) {
-				if (part.getElementId().equals(viewId)) {
-					for (String tag : part.getTags()) {
-						if (tag.startsWith(SECONDARY_ID_HEADER)) {
-							continue partsLoop;
-						}
-					}
+	private MPart findPart(String viewId, int searchFlags) {
+		List<MPart> parts = modelService.findElements(getWindowModel(), viewId, MPart.class, null,
+				searchFlags);
+		if (parts.size() > 0)
+			return parts.get(0);
 
-					return part;
-				}
-			}
-		}
-
-		for (MPart part : parts) {
-			if (part.getTags().contains(secondaryId)) {
-				return part;
-			}
-		}
 		return null;
 	}
 
@@ -1139,14 +1113,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
 	}
 
-    /**
-     * Shows a view.
-     * 
-     * Assumes that a busy cursor is active.
-     */
-	protected IViewPart busyShowView(String viewId, String secondaryId, int mode)
-            throws PartInitException {
-    	switch (mode) {
+	/**
+	 * Shows a view.
+	 * 
+	 * Assumes that a busy cursor is active.
+	 */
+	protected IViewPart busyShowView(String viewId, int mode) throws PartInitException {
+		switch (mode) {
 		case VIEW_ACTIVATE:
 		case VIEW_VISIBLE:
 		case VIEW_CREATE:
@@ -1155,27 +1128,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
 		}
 
-		if (secondaryId != null) {
-			if (secondaryId.length() == 0 || secondaryId.indexOf(':') != -1) {
-				throw new IllegalArgumentException(
-						WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
-			}
-
-			secondaryId = SECONDARY_ID_HEADER + secondaryId;
-
-			MPartDescriptor descriptor = findDescriptor(viewId);
-			if (descriptor == null) {
-				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate,
-						viewId));
-			} else if (!descriptor.isAllowMultiple()) {
-				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_noMultiple,
-						viewId));
-			}
-		}
-
-		MPart part = findPart(viewId, secondaryId, EModelService.ANYWHERE);
+		MPart part = findPart(viewId, EModelService.ANYWHERE);
 		if (part == null) {
-			MPlaceholder ph = partService.createSharedPart(viewId, secondaryId != null);
+			MPlaceholder ph = partService.createSharedPart(viewId, false);
 			if (ph == null) {
 				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate,
 						viewId));
@@ -1183,10 +1138,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 			part = (MPart) ph.getRef();
 			part.setCurSharedRef(ph);
-
-			if (secondaryId != null) {
-				part.getTags().add(secondaryId);
-			}
 
 			part = showPart(mode, part);
 
@@ -1203,10 +1154,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		part = showPart(mode, part);
 
-		if (secondaryId != null) {
-			part.getTags().add(secondaryId);
-		}
-
 		CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
 
 		if (compatibilityView != null) {
@@ -1216,9 +1163,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_SHOW);
 		}
 		return compatibilityView.getView();
-        
-    }
 
+	}
 	private MPart showPart(int mode, MPart part) {
 		switch (mode) {
 		case VIEW_ACTIVATE:
@@ -1956,7 +1902,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
 	public void createViewReferenceForPart(final MPart part, String viewId) {
-		IViewDescriptor desc = getWorkbenchWindow().getWorkbench().getViewRegistry().find(viewId);
+		// If the id contains a ':' use the part before it as the descriptor id
+		int colonIndex = viewId.indexOf(':');
+		String descId = colonIndex == -1 ? viewId : viewId.substring(0, colonIndex);
+
+		IViewDescriptor desc = getWorkbenchWindow().getWorkbench().getViewRegistry().find(descId);
 		final ViewReference ref = new ViewReference(window.getContext(), this, part,
 				(ViewDescriptor) desc);
 		if (contains(ref)) {
@@ -1971,7 +1921,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 		addViewReference(ref);
 	}
-
 
     /**
      * Notify property change listeners about a property change.
@@ -3770,38 +3719,39 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String,
      *      java.lang.String, int)
      */
-    public IViewPart showView(final String viewID, final String secondaryID,
-            final int mode) throws PartInitException {
+	public IViewPart showView(final String viewID, final String secondaryID, final int mode)
+			throws PartInitException {
 
-        if (secondaryID != null) {
-            if (secondaryID.length() == 0
- || secondaryID.indexOf(":") != -1) { //$NON-NLS-1$
-				throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
-			} 
-        }
-        if (!certifyMode(mode)) {
+		if (secondaryID != null) {
+			if (secondaryID.length() == 0 || secondaryID.indexOf(":") != -1) { //$NON-NLS-1$
+				throw new IllegalArgumentException(
+						WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
+			}
+		}
+		if (!certifyMode(mode)) {
 			throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
 		}
 
-        // Run op in busy cursor.
-        final Object[] result = new Object[1];
-        BusyIndicator.showWhile(null, new Runnable() {
-            public void run() {
-                try {
-                    result[0] = busyShowView(viewID, secondaryID, mode);
-                } catch (PartInitException e) {
-                    result[0] = e;
-                }
-            }
-        });
-        if (result[0] instanceof IViewPart) {
+		// Run op in busy cursor.
+		final String compoundId = secondaryID != null ? viewID + ':' + secondaryID : viewID;
+		final Object[] result = new Object[1];
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				try {
+					result[0] = busyShowView(compoundId, mode);
+				} catch (PartInitException e) {
+					result[0] = e;
+				}
+			}
+		});
+		if (result[0] instanceof IViewPart) {
 			return (IViewPart) result[0];
 		} else if (result[0] instanceof PartInitException) {
 			throw (PartInitException) result[0];
 		} else {
 			throw new PartInitException(WorkbenchMessages.WorkbenchPage_AbnormalWorkbenchCondition);
-		} 
-    }
+		}
+	}
 
     /**
      * @param mode the mode to test
