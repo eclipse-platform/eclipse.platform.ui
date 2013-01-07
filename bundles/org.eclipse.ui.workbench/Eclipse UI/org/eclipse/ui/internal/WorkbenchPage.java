@@ -4309,7 +4309,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 						}
 					}
 
-					System.out.println("OE: " + references[i].getTitle()); //$NON-NLS-1$
 					editor.setLabel(references[i].getTitle());
 					editor.setTooltip(references[i].getTitleToolTip());
 					editor.setIconURI(getEditorImageURI((EditorReference) references[i]));
