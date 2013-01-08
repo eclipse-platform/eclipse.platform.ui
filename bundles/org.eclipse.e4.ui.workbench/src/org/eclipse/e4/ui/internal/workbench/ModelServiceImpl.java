@@ -18,6 +18,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
@@ -57,6 +58,8 @@ import org.osgi.service.event.EventHandler;
 public class ModelServiceImpl implements EModelService {
 	private static String HOSTED_ELEMENT = "HostedElement"; //$NON-NLS-1$
 
+	private IEclipseContext appContext;
+
 	// Cleans up after a hosted element is disposed
 	private EventHandler hostedElementHandler = new EventHandler() {
 
@@ -88,6 +91,7 @@ public class ModelServiceImpl implements EModelService {
 		if (appContext == null)
 			return;
 
+		this.appContext = appContext;
 		IEventBroker eventBroker = appContext.get(IEventBroker.class);
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, hostedElementHandler);
 	}
@@ -1013,6 +1017,26 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		return NOT_IN_UI;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#getPartDescriptor(java.lang.String)
+	 */
+	public MPartDescriptor getPartDescriptor(String id) {
+		MApplication application = appContext.get(MApplication.class);
+
+		// If the id contains a ':' use the part before it as the descriptor id
+		int colonIndex = id.indexOf(':');
+		String descId = colonIndex == -1 ? id : id.substring(0, colonIndex);
+
+		for (MPartDescriptor descriptor : application.getDescriptors()) {
+			if (descriptor.getElementId().equals(descId)) {
+				return descriptor;
+			}
+		}
+		return null;
 	}
 
 	/*

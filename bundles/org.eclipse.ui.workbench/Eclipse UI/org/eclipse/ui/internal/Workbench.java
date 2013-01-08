@@ -1779,7 +1779,16 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 	private ViewReference createViewReference(MPart part, WorkbenchPage page) {
 		WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
-		IViewDescriptor desc = window.getWorkbench().getViewRegistry().find(part.getElementId());
+
+		// If the partId contains a ':' then only use the substring before it to
+		// fine the descriptor
+		String partId = part.getElementId();
+
+		// If the id contains a ':' use the part before it as the descriptor id
+		int colonIndex = partId.indexOf(':');
+		String descId = colonIndex == -1 ? partId : partId.substring(0, colonIndex);
+
+		IViewDescriptor desc = window.getWorkbench().getViewRegistry().find(descId);
 		ViewReference ref = new ViewReference(window.getModel().getContext(), page, part,
 				(ViewDescriptor) desc);
 		page.addViewReference(ref);

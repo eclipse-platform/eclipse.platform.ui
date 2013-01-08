@@ -643,15 +643,6 @@ public class PartServiceImpl implements EPartService {
 		return activePart;
 	}
 
-	private MPartDescriptor findDescriptor(String id) {
-		for (MPartDescriptor descriptor : application.getDescriptors()) {
-			if (descriptor.getElementId().equals(id)) {
-				return descriptor;
-			}
-		}
-		return null;
-	}
-
 	private MPart createPart(MPartDescriptor descriptor) {
 		if (descriptor == null) {
 			return null;
@@ -676,7 +667,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart createPart(String id) {
-		MPartDescriptor descriptor = findDescriptor(id);
+		MPartDescriptor descriptor = modelService.getPartDescriptor(id);
 		return createPart(descriptor);
 	}
 
@@ -700,11 +691,14 @@ public class PartServiceImpl implements EPartService {
 		}
 
 		if (sharedPart == null) {
-			MPartDescriptor descriptor = findDescriptor(id);
+			MPartDescriptor descriptor = modelService.getPartDescriptor(id);
 			sharedPart = createPart(descriptor);
 			if (sharedPart == null) {
 				return null;
 			}
+
+			// Replace the id to ensure that multi-instance parts work correctly
+			sharedPart.setElementId(id);
 
 			sharedWindow.getSharedElements().add(sharedPart);
 		}
@@ -736,7 +730,30 @@ public class PartServiceImpl implements EPartService {
 	 * @see MPartDescriptor#isAllowMultiple()
 	 */
 	private MPart addPart(MPart providedPart, MPart localPart) {
-		MPartDescriptor descriptor = findDescriptor(providedPart.getElementId());
+
+		// If this is a multi-instance view see if there's a placeholder
+		int colonIndex = providedPart.getElementId().indexOf(':');
+		if (colonIndex >= 0) {
+			String descId = providedPart.getElementId().substring(0, colonIndex);
+			descId += ":*"; //$NON-NLS-1$
+			List<MPlaceholder> phList = modelService.findElements(workbenchWindow, descId,
+					MPlaceholder.class, null);
+			if (phList.size() > 0) {
+				MUIElement phParent = phList.get(0).getParent();
+				if (phParent instanceof MPartStack) {
+					MPartStack theStack = (MPartStack) phParent;
+					adjustPlaceholder(providedPart);
+					MPlaceholder placeholder = providedPart.getCurSharedRef();
+					if (placeholder == null) {
+						theStack.getChildren().add(providedPart);
+					} else {
+						theStack.getChildren().add(placeholder);
+					}
+
+				}
+			}
+		}
+		MPartDescriptor descriptor = modelService.getPartDescriptor(providedPart.getElementId());
 		if (descriptor == null) {
 			// there is no part descriptor backing the provided part, just add it to the container
 			// if it's not already there
@@ -965,7 +982,7 @@ public class PartServiceImpl implements EPartService {
 
 		MPart part = findPart(id);
 		if (part == null) {
-			MPartDescriptor descriptor = findDescriptor(id);
+			MPartDescriptor descriptor = modelService.getPartDescriptor(id);
 			part = createPart(descriptor);
 			if (part == null) {
 				return null;
