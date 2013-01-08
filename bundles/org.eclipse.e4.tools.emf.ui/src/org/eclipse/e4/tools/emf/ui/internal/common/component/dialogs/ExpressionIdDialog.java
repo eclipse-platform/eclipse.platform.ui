@@ -85,8 +85,6 @@ public class ExpressionIdDialog extends TitleAreaDialog {
 			}
 		};
 
-		ControlFactory.attachFiltering(idField, viewer, filter);
-
 		l = new Label(container, SWT.NONE);
 		viewer = new TableViewer(container);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -100,6 +98,8 @@ public class ExpressionIdDialog extends TitleAreaDialog {
 				okPressed();
 			}
 		});
+
+		ControlFactory.attachFiltering(idField, viewer, filter);
 
 		return comp;
 	}
