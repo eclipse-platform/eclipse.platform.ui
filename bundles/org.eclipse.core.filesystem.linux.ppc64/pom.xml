@@ -37,7 +37,7 @@
             <environment>
               <os>linux</os>
               <ws>gtk</ws>
-              <arch>ppc</arch>
+              <arch>ppc64</arch>
             </environment>
           </environments>
         </configuration>
