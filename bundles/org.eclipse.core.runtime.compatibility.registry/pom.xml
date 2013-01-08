@@ -23,4 +23,11 @@
   <artifactId>org.eclipse.core.runtime.compatibility.registry</artifactId>
   <version>3.5.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  <build>
+    <resources>
+      <resource>
+        <directory>classes</directory>
+      </resource>
+    </resources>
+  </build>
 </project>
