@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -281,6 +281,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		QuickDiffRangeDifference diff= region.getDifference();
 		int rOffset= fRightDocument.getLineOffset(line);
 		int rLength= fRightDocument.getLineLength(line);
+		if (line > 0 && line == fRightDocument.getNumberOfLines() - 1) {
+			int lineDelimLength= fRightDocument.getLineDelimiter(line - 1).length();
+			rLength= rLength + lineDelimLength;
+			rOffset= rOffset - lineDelimLength;
+		}
 		int leftLine= diff.leftStart() + region.getOffset();
 		String replacement;
 		if (leftLine >= diff.leftEnd()) // restoring a deleted line?
@@ -307,8 +312,25 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		QuickDiffRangeDifference diff= region.getDifference();
 		int rOffset= fRightDocument.getLineOffset(diff.rightStart());
 		int rLength= fRightDocument.getLineOffset(diff.rightEnd() - 1) + fRightDocument.getLineLength(diff.rightEnd() - 1) - rOffset;
-		int lOffset= fLeftDocument.getLineOffset(diff.leftStart());
-		int lLength= fLeftDocument.getLineOffset(diff.leftEnd() - 1) + fLeftDocument.getLineLength(diff.leftEnd() - 1) - lOffset;
+		int leftStartLine= diff.leftStart();
+		int lOffset;
+		if (leftStartLine < fLeftDocument.getNumberOfLines())
+			lOffset= fLeftDocument.getLineOffset(leftStartLine);
+		else {
+			lOffset= fLeftDocument.getLineOffset(leftStartLine - 1) + fLeftDocument.getLineLength(leftStartLine - 1);
+			String lineDelim= fRightDocument.getLineDelimiter(diff.leftEnd());
+			int lineDelimLength= lineDelim != null ? lineDelim.length() : 0;
+			rOffset= rOffset - lineDelimLength;
+			rLength= rLength + lineDelimLength;
+		}
+
+		int leftEndLine= diff.leftEnd();
+		int lLength;
+		if (leftEndLine > 0)
+			lLength= fLeftDocument.getLineOffset(diff.leftEnd() - 1) + fLeftDocument.getLineLength(diff.leftEnd() - 1) - lOffset;
+		else
+			lLength= fLeftDocument.getLength() - lOffset;
+
 		fRightDocument.replace(rOffset, rLength, fLeftDocument.get(lOffset, lLength));
 	}
 
