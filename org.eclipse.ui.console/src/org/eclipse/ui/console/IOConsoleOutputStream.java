@@ -218,10 +218,6 @@ public class IOConsoleOutputStream extends OutputStream {
      * @throws IOException if the stream is closed.
      */
     public void write(String str) throws IOException {
-        if (fNeedsEncoding) {
-	        byte[] defaultBytes = str.getBytes(fEncoding);
-	        str = new String(defaultBytes, fEncoding);
-        }
         encodedWrite(str);
     }
     
