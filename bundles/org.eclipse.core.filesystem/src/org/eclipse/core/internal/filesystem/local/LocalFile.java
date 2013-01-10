@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [294429] Avoid substring baggage in FileInfo
+ * Martin Lippert (VMware) - [394607] Poor performance when using findFilesForLocationURI
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
@@ -35,6 +36,11 @@ public class LocalFile extends FileStore {
 	 * The absolute file system path of the file represented by this store.
 	 */
 	protected final String filePath;
+
+	/**
+	 * cached value for the toURI method
+	 */
+	private URI uri;
 
 	private static int attributes(File aFile) {
 		if (!aFile.exists() || aFile.canWrite())
@@ -428,6 +434,9 @@ public class LocalFile extends FileStore {
 	 * @see org.eclipse.core.filesystem.IFileStore#toURI()
 	 */
 	public URI toURI() {
-		return URIUtil.toURI(filePath);
+		if (this.uri == null) {
+			this.uri = URIUtil.toURI(filePath);
+		}
+		return this.uri;
 	}
 }
