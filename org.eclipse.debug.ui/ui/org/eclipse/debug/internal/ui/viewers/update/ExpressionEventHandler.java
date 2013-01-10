@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Samrat Dhillon samrat.dhillon@gmail.com - Bug 369012 - [expr] Modifying a variable value using cell editor is not reflected in view. 
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.viewers.update;
@@ -14,6 +15,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
@@ -47,6 +49,15 @@ public class ExpressionEventHandler extends DebugEventHandler {
     			flags = flags | IModelDelta.CONTENT;
     		} 
 	    	delta.addNode(expression, flags);
+			fireDelta(delta);
+		}
+    	if (event.getSource() instanceof IVariable) {
+    		IVariable variable = (IVariable) event.getSource();
+    		int flags = IModelDelta.NO_CHANGE;
+    		if (event.getDetail()==DebugEvent.CONTENT) {
+    			flags = flags | IModelDelta.CONTENT;
+    		} 
+	    	delta.addNode(variable, flags);
 			fireDelta(delta);
 		}
     }
