@@ -223,7 +223,8 @@ public class StackDropAgent extends DropAgent {
 
 		// 'dropIndex' is now the index of the CTabItem to put ourselves before
 		// we need to adjust this to be a model index
-		if (dropIndex < dropCTF.getItemCount()) {
+		int ctfItemCount = dropCTF.getItemCount();
+		if (dropIndex < ctfItemCount) {
 			CTabItem item = dropCTF.getItem(dropIndex);
 			MUIElement itemModel = (MUIElement) item.getData(AbstractPartRenderer.OWNING_ME);
 
@@ -232,6 +233,11 @@ public class StackDropAgent extends DropAgent {
 				return;
 
 			dropIndex = itemModel.getParent().getChildren().indexOf(itemModel);
+			// if the item is dropped at the last position, there is
+			// no existing item to put ourselves before
+			// so we'll just go to the end.
+		} else if (dropIndex == ctfItemCount) {
+			dropIndex = dropStack.getChildren().size();
 		}
 
 		if (dragElement instanceof MStackElement) {
