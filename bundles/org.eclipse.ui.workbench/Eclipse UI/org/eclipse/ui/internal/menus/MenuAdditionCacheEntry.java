@@ -193,6 +193,7 @@ public class MenuAdditionCacheEntry {
 				MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
 				menuItem.setElementId(id);
 				menuItem.setContributionItem(generator);
+				menuItem.setVisibleWhen(MenuHelper.getVisibleWhen(child));
 				container.getChildren().add(menuItem);
 			}
 		}
