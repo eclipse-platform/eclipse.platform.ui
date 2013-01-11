@@ -54,6 +54,20 @@ public class MenuAdditionCacheEntry {
 
 	final static String TRIM_STATUS = "org.eclipse.ui.trim.status"; //$NON-NLS-1$
 
+	/**
+	 * Test whether the location URI is in one of the pre-defined workbench trim
+	 * areas.
+	 * 
+	 * @param location
+	 * @return true if the URI is in workbench trim area.
+	 */
+	static boolean isInWorkbenchTrim(MenuLocationURI location) {
+		final String path = location.getPath();
+		return MAIN_TOOLBAR.equals(path) || TRIM_COMMAND1.equals(path)
+				|| TRIM_COMMAND2.equals(path) || TRIM_VERTICAL1.equals(path)
+				|| TRIM_VERTICAL2.equals(path) || TRIM_STATUS.equals(path);
+	}
+
 	private MApplication application;
 	// private IEclipseContext appContext;
 	private IConfigurationElement configElement;
@@ -90,17 +104,14 @@ public class MenuAdditionCacheEntry {
 			}
 		}
 		if (inToolbar()) {
-			String path = location.getPath();
-			if (path.equals(MAIN_TOOLBAR) || path.equals(TRIM_COMMAND1)
-					|| path.equals(TRIM_COMMAND2) || path.equals(TRIM_VERTICAL1)
-					|| path.equals(TRIM_VERTICAL2) || path.equals(TRIM_STATUS)) {
+			if (isInWorkbenchTrim(location)) {
 				processTrimChildren(trimContributions, toolBarContributions, configElement);
 			} else {
 				String query = location.getQuery();
 				if (query == null || query.length() == 0) {
 					query = "after=additions"; //$NON-NLS-1$
 				}
-				processToolbarChildren(toolBarContributions, configElement, path,
+				processToolbarChildren(toolBarContributions, configElement, location.getPath(),
 						query);
 			}
 			return;

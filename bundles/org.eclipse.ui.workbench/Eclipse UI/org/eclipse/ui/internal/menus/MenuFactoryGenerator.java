@@ -50,13 +50,7 @@ public class MenuFactoryGenerator {
 			ArrayList<MToolBarContribution> toolBarContributions,
 			ArrayList<MTrimContribution> trimContributions) {
 		if (inToolbar()) {
-			String path = location.getPath();
-			if (path.equals(MenuAdditionCacheEntry.MAIN_TOOLBAR)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_COMMAND1)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_COMMAND2)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_VERTICAL1)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_VERTICAL2)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_STATUS)) {
+			if (MenuAdditionCacheEntry.isInWorkbenchTrim(location)) {
 				// processTrimChildren(trimContributions, toolBarContributions,
 				// configElement);
 			} else {
@@ -64,7 +58,8 @@ public class MenuFactoryGenerator {
 				if (query == null || query.length() == 0) {
 					query = "after=additions"; //$NON-NLS-1$
 				}
-				processToolbarChildren(toolBarContributions, configElement, path, query);
+				processToolbarChildren(toolBarContributions, configElement, location.getPath(),
+						query);
 			}
 			return;
 		}

@@ -91,13 +91,7 @@ public class WorkbenchMenuService implements IMenuService {
 		MenuLocationURI location = new MenuLocationURI(factory.getLocation());
 
 		if (inToolbar(location)) {
-			String path = location.getPath();
-			if (path.equals(MenuAdditionCacheEntry.MAIN_TOOLBAR)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_COMMAND1)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_COMMAND2)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_VERTICAL1)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_VERTICAL2)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_STATUS)) {
+			if (MenuAdditionCacheEntry.isInWorkbenchTrim(location)) {
 				// processTrimChildren(trimContributions, toolBarContributions,
 				// configElement);
 			} else {
@@ -105,7 +99,7 @@ public class WorkbenchMenuService implements IMenuService {
 				if (query == null || query.length() == 0) {
 					query = "after=additions"; //$NON-NLS-1$
 				}
-				processToolbarChildren(factory, location, path, query);
+				processToolbarChildren(factory, location, location.getPath(), query);
 			}
 			return;
 		}
