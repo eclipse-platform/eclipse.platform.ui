@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.ContributionRecord;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarContributionRecord;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.102.0
@@ -49,6 +50,11 @@ public class MenuFactoryGenerator {
 	public void mergeIntoModel(ArrayList<MMenuContribution> menuContributions,
 			ArrayList<MToolBarContribution> toolBarContributions,
 			ArrayList<MTrimContribution> trimContributions) {
+		if (location.getPath() == null || location.getPath().length() == 0) {
+			WorkbenchPlugin
+					.log("MenuFactoryGenerator.mergeIntoModel: Invalid menu URI: " + location); //$NON-NLS-1$
+			return;
+		}
 		if (inToolbar()) {
 			if (MenuAdditionCacheEntry.isInWorkbenchTrim(location)) {
 				// processTrimChildren(trimContributions, toolBarContributions,

@@ -38,6 +38,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.commands.ICommandImageService;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.ServiceLocator;
 
@@ -102,6 +103,11 @@ public class MenuAdditionCacheEntry {
 					&& "org.eclipse.update.ui.updateMenu".equals(MenuHelper.getId(menus[0]))) { //$NON-NLS-1$
 				return;
 			}
+		}
+		if (location.getPath() == null || location.getPath().length() == 0) {
+			WorkbenchPlugin
+					.log("MenuAdditionCacheEntry.mergeIntoModel: Invalid menu URI: " + location); //$NON-NLS-1$
+			return;
 		}
 		if (inToolbar()) {
 			if (isInWorkbenchTrim(location)) {
