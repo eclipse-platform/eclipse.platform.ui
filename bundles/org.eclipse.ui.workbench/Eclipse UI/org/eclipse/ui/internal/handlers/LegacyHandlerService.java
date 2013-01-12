@@ -23,6 +23,7 @@ import javax.inject.Named;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -217,12 +218,23 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 		ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
 		Command command = cs.getCommand(cmdId);
+		boolean handled = command.isHandled();
+		boolean enabled = command.isEnabled();
 		E4HandlerProxy handlerProxy = new E4HandlerProxy(command, handler);
 		HandlerActivation activation = new HandlerActivation(context, cmdId, handler, handlerProxy,
 				activeWhen);
 		addHandlerActivation(activation);
 		EHandlerService hs = context.get(EHandlerService.class);
 		hs.activateHandler(cmdId, new HandlerSelectionFunction(cmdId));
+		boolean handledChanged = handled != command.isHandled();
+		boolean enabledChanged = enabled != command.isEnabled();
+		if (handledChanged || enabledChanged) {
+			IHandler proxy = command.getHandler();
+			if (proxy instanceof MakeHandlersGo) {
+				((MakeHandlersGo) proxy).fireHandlerChanged(new HandlerEvent(proxy, enabledChanged,
+						handledChanged));
+			}
+		}
 		return activation;
 	}
 

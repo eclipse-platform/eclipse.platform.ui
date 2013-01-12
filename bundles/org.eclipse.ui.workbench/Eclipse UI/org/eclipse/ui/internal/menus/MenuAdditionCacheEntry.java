@@ -38,6 +38,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.commands.ICommandImageService;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.ServiceLocator;
 
@@ -53,6 +54,20 @@ public class MenuAdditionCacheEntry {
 	final static String TRIM_VERTICAL2 = "org.eclipse.ui.trim.vertical2"; //$NON-NLS-1$
 
 	final static String TRIM_STATUS = "org.eclipse.ui.trim.status"; //$NON-NLS-1$
+
+	/**
+	 * Test whether the location URI is in one of the pre-defined workbench trim
+	 * areas.
+	 * 
+	 * @param location
+	 * @return true if the URI is in workbench trim area.
+	 */
+	static boolean isInWorkbenchTrim(MenuLocationURI location) {
+		final String path = location.getPath();
+		return MAIN_TOOLBAR.equals(path) || TRIM_COMMAND1.equals(path)
+				|| TRIM_COMMAND2.equals(path) || TRIM_VERTICAL1.equals(path)
+				|| TRIM_VERTICAL2.equals(path) || TRIM_STATUS.equals(path);
+	}
 
 	private MApplication application;
 	// private IEclipseContext appContext;
@@ -89,18 +104,20 @@ public class MenuAdditionCacheEntry {
 				return;
 			}
 		}
+		if (location.getPath() == null || location.getPath().length() == 0) {
+			WorkbenchPlugin
+					.log("MenuAdditionCacheEntry.mergeIntoModel: Invalid menu URI: " + location); //$NON-NLS-1$
+			return;
+		}
 		if (inToolbar()) {
-			String path = location.getPath();
-			if (path.equals(MAIN_TOOLBAR) || path.equals(TRIM_COMMAND1)
-					|| path.equals(TRIM_COMMAND2) || path.equals(TRIM_VERTICAL1)
-					|| path.equals(TRIM_VERTICAL2) || path.equals(TRIM_STATUS)) {
+			if (isInWorkbenchTrim(location)) {
 				processTrimChildren(trimContributions, toolBarContributions, configElement);
 			} else {
 				String query = location.getQuery();
 				if (query == null || query.length() == 0) {
 					query = "after=additions"; //$NON-NLS-1$
 				}
-				processToolbarChildren(toolBarContributions, configElement, path,
+				processToolbarChildren(toolBarContributions, configElement, location.getPath(),
 						query);
 			}
 			return;
@@ -193,6 +210,7 @@ public class MenuAdditionCacheEntry {
 				MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
 				menuItem.setElementId(id);
 				menuItem.setContributionItem(generator);
+				menuItem.setVisibleWhen(MenuHelper.getVisibleWhen(child));
 				container.getChildren().add(menuItem);
 			}
 		}

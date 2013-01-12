@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarContributionRecord;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.menus.AbstractContributionFactory;
@@ -89,15 +90,14 @@ public class WorkbenchMenuService implements IMenuService {
 	 */
 	public void addContributionFactory(final AbstractContributionFactory factory) {
 		MenuLocationURI location = new MenuLocationURI(factory.getLocation());
+		if (location.getPath() == null || location.getPath().length() == 0) {
+			WorkbenchPlugin
+					.log("WorkbenchMenuService.addContributionFactory: Invalid menu URI: " + location); //$NON-NLS-1$
+			return;
+		}
 
 		if (inToolbar(location)) {
-			String path = location.getPath();
-			if (path.equals(MenuAdditionCacheEntry.MAIN_TOOLBAR)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_COMMAND1)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_COMMAND2)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_VERTICAL1)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_VERTICAL2)
-					|| path.equals(MenuAdditionCacheEntry.TRIM_STATUS)) {
+			if (MenuAdditionCacheEntry.isInWorkbenchTrim(location)) {
 				// processTrimChildren(trimContributions, toolBarContributions,
 				// configElement);
 			} else {
@@ -105,7 +105,7 @@ public class WorkbenchMenuService implements IMenuService {
 				if (query == null || query.length() == 0) {
 					query = "after=additions"; //$NON-NLS-1$
 				}
-				processToolbarChildren(factory, location, path, query);
+				processToolbarChildren(factory, location, location.getPath(), query);
 			}
 			return;
 		}
