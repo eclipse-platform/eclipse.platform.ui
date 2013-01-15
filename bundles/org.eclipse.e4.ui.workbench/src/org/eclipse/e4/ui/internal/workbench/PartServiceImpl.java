@@ -730,9 +730,9 @@ public class PartServiceImpl implements EPartService {
 	 * @see MPartDescriptor#isAllowMultiple()
 	 */
 	private MPart addPart(MPart providedPart, MPart localPart) {
-
 		// If this is a multi-instance view see if there's a placeholder
-		int colonIndex = providedPart.getElementId().indexOf(':');
+		String partId = providedPart.getElementId();
+		int colonIndex = partId == null ? -1 : partId.indexOf(':');
 		if (colonIndex >= 0) {
 			String descId = providedPart.getElementId().substring(0, colonIndex);
 			descId += ":*"; //$NON-NLS-1$

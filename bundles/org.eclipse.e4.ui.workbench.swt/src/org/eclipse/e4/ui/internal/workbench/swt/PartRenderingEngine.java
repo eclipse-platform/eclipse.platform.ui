@@ -1043,8 +1043,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 				// Spin the event loop until someone disposes the display
 				while (((testShell != null && !testShell.isDisposed()) || (theApp != null
-						&& !theApp.getChildren().isEmpty() && someAreVisible(theApp
-							.getChildren()))) && !display.isDisposed()) {
+						&& someAreVisible(theApp.getChildren()))) && !display.isDisposed()) {
 					try {
 						if (!display.readAndDispatch()) {
 							runContext.processWaiting();
@@ -1083,9 +1082,25 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	protected boolean someAreVisible(List<MWindow> windows) {
-		for (MWindow win : windows) {
-			if (win.isToBeRendered() && win.isVisible()
-					&& win.getWidget() != null) {
+		// This method is called from the event dispatch loop, so the
+		// following optimization is in order...
+
+		// Ideally, we'd just do:
+		// for (MWindow win : theApp.getChildren()) {
+		// But this creates an iterator (which must be GC'd)
+		// at every call. The code below creates no objects.
+		final int limit = windows.size();
+		for (int i = 0; i < limit; i++) {
+			final MWindow win = windows.get(i);
+			// Note: Removed isVisible test, as this should have
+			// no impact on the whether the event loop
+			// terminates - non-visible windows still exists
+			// and can receive events.
+			// Note: isToBeRendered() == true => win.getWidget() != null
+			// but I'm not sure whether there is latency between setting
+			// toBeRendered and the creation of the widget. So, keeping
+			// both tests seems prudent.
+			if (win.isToBeRendered() && win.getWidget() != null) {
 				return true;
 			}
 		}
