@@ -42,10 +42,8 @@
     <module>bundles/org.eclipse.core.filesystem.macosx</module>
     <module>bundles/org.eclipse.core.filesystem.qnx.x86</module>
     <module>bundles/org.eclipse.core.filesystem.solaris.sparc</module>
-    <module>bundles/org.eclipse.core.filesystem.win32.ia64</module>
     <module>bundles/org.eclipse.core.filesystem.win32.x86</module>
     <module>bundles/org.eclipse.core.filesystem.win32.x86_64</module>
-
     <module>bundles/org.eclipse.core.filesystem/fragments/org.eclipse.core.filesystem.aix.ppc</module>
     <module>bundles/org.eclipse.core.filesystem/fragments/org.eclipse.core.filesystem.aix.ppc64</module>
     <module>bundles/org.eclipse.core.filesystem/fragments/org.eclipse.core.filesystem.solaris.sparcv9</module>
@@ -54,7 +52,6 @@
     <module>bundles/org.eclipse.core.resources.spysupport</module>
     <module>bundles/org.eclipse.core.resources.win32.x86</module>
     <module>bundles/org.eclipse.core.resources.win32.x86_64</module>
-    <module>bundles/org.eclipse.core.resources.win32.ia64</module>
     <module>bundles/org.eclipse.core.tools.resources</module>
 
     <module>tests/org.eclipse.core.tests.resources</module>
