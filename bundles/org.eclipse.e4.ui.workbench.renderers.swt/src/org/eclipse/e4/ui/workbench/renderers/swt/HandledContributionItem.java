@@ -213,8 +213,11 @@ public class HandledContributionItem extends ContributionItem {
 		if (updateRunner == null) {
 			updateRunner = new ISafeRunnable() {
 				public void run() throws Exception {
-					model.setEnabled(canExecuteItem(null));
-					update();
+					boolean shouldEnable = canExecuteItem(null);
+					if (shouldEnable != model.isEnabled()) {
+						model.setEnabled(shouldEnable);
+						update();
+					}
 				}
 
 				public void handleException(Throwable exception) {
