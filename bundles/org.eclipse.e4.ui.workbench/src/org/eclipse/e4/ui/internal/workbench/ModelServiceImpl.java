@@ -1028,7 +1028,7 @@ public class ModelServiceImpl implements EModelService {
 		MApplication application = appContext.get(MApplication.class);
 
 		// If the id contains a ':' use the part before it as the descriptor id
-		int colonIndex = id.indexOf(':');
+		int colonIndex = id == null ? -1 : id.indexOf(':');
 		String descId = colonIndex == -1 ? id : id.substring(0, colonIndex);
 
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
