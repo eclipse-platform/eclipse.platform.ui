@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009, 2012 Texas Instruments and others
+ * Copyright (c) 2009, 2013 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -244,7 +244,7 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		setAction(PASTE_ACTION, paste);
 		paste.setActionDefinitionId(ActionFactory.PASTE.getCommandId());
 		//actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), paste);
-		setGlobalAction(ActionFactory.PASTE.getId(), paste);
+		setGlobalAction(PASTE_ACTION, paste);
         getViewer().addSelectionChangedListener(paste);
         paste.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		        

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,13 +22,13 @@ import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate;
 import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * Copies breakpoint labels to the text clipboard and breakpoint objects
@@ -46,7 +46,7 @@ public class CopyBreakpointsActionDelegate extends VirtualCopyToClipboardActionD
 		LocalSelectionTransfer.getTransfer().setSelection(getSelection());
 		fStamp = System.currentTimeMillis();
 		LocalSelectionTransfer.getTransfer().setSelectionSetTime(fStamp);
-		IAction pasteAction = ((AbstractDebugView)getView()).getAction(ActionFactory.PASTE.getCommandId());
+		IAction pasteAction = ((AbstractDebugView)getView()).getAction(IDebugView.PASTE_ACTION);
         // update the enablement of the paste action
         // workaround since the clipboard does not suppot callbacks
         if (pasteAction instanceof PasteBreakpointsAction) {

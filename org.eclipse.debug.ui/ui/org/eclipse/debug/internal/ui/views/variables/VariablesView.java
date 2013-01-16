@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
@@ -704,6 +705,24 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		getViewSite().getActionBars().updateActionBars();		
 	}
 
+	/**
+	 * Save the global actions from action bar so they are not overriden by 
+	 * the detail pane. 
+	 */
+	protected void createContextMenu(Control menuControl) {
+		super.createContextMenu(menuControl);
+		IActionBars actionBars = getViewSite().getActionBars();
+		if (!fGlobalActionMap.containsKey(SELECT_ALL_ACTION)) { 
+			setGlobalAction(IDebugView.SELECT_ALL_ACTION, actionBars.getGlobalActionHandler(SELECT_ALL_ACTION));
+		}
+		if (!fGlobalActionMap.containsKey(COPY_ACTION)) { 
+			setGlobalAction(COPY_ACTION, actionBars.getGlobalActionHandler(COPY_ACTION));
+		}
+		if (!fGlobalActionMap.containsKey(PASTE_ACTION)) { 
+			setGlobalAction(PASTE_ACTION, actionBars.getGlobalActionHandler(PASTE_ACTION));
+		}
+	}
+	
 	private void clearGlobalActions() {
 		for (Iterator keyItr = fGlobalActionMap.keySet().iterator(); keyItr.hasNext();) {
 			String id = (String)keyItr.next();
@@ -946,7 +965,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 
 	/**
 	 * Adds the given action to the set of global actions managed by this 
-	 * variables view.  Global actions are cleard and reset whenever the detail 
+	 * variables view.  Global actions are cleared and reset whenever the detail 
 	 * pane is activated to allow the detail pane to set the actions as 
 	 * well.
 	 * 

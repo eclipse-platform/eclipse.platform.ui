@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -345,6 +345,12 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	private IStructuredSelection fLastDisplayed = null;
 	
 	/**
+	 * Flag used to track whether source viewer has focus.  It helps avoid
+	 * resetting global actions incorrectly.
+	 */
+	private boolean fHasFocus = false;
+	
+	/**
 	 * Variables used to create the detailed information for a selection
 	 */
 	private IDocument fDetailDocument;
@@ -437,7 +443,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 				getViewSite().getActionBars().updateActionBars();
 				
 				updateAction(DETAIL_FIND_REPLACE_TEXT_ACTION);
-				
+				fHasFocus = true;
 			}
 			
 			public void focusLost(FocusEvent e) {
@@ -450,7 +456,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 				setGlobalAction(getAction(DETAIL_CONTENT_ASSIST_ACTION).getActionDefinitionId(), null);
 				
 				getViewSite().getActionBars().updateActionBars();
-				
+				fHasFocus = false;
 			}
 		});
 		
@@ -458,15 +464,17 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		// have been deactivated
 		fSourceViewer.getControl().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
-				setGlobalAction(IDebugView.CUT_ACTION, null);
-				setGlobalAction(IDebugView.COPY_ACTION, null);
-				setGlobalAction(IDebugView.PASTE_ACTION, null);
-				setGlobalAction(IDebugView.FIND_ACTION, null);
-				setGlobalAction(getAction(DETAIL_ASSIGN_VALUE_ACTION)
-						.getActionDefinitionId(), null);
-				setGlobalAction(getAction(DETAIL_CONTENT_ASSIST_ACTION)
-						.getActionDefinitionId(), null);
+				if (fHasFocus) { 
+					setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
+					setGlobalAction(IDebugView.CUT_ACTION, null);
+					setGlobalAction(IDebugView.COPY_ACTION, null);
+					setGlobalAction(IDebugView.PASTE_ACTION, null);
+					setGlobalAction(IDebugView.FIND_ACTION, null);
+					setGlobalAction(getAction(DETAIL_ASSIGN_VALUE_ACTION)
+							.getActionDefinitionId(), null);
+					setGlobalAction(getAction(DETAIL_CONTENT_ASSIST_ACTION)
+							.getActionDefinitionId(), null);
+				}
 			}
 		});
 
