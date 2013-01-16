@@ -312,6 +312,21 @@ public class PartServiceImpl implements EPartService {
 				parent = currentElement.getParent();
 			}
 
+			// If the part is in the same stack as the currently active part then activate it
+			// instead
+			MElementContainer<MUIElement> activeParent = activePart != null ? activePart
+					.getParent() : null;
+			if (activePart != null && activeParent == null) {
+				MPlaceholder activePH = modelService.findPlaceholderFor(getWindow(), activePart);
+				if (activePH != null) {
+					activeParent = activePH.getParent();
+				}
+			}
+			if (parent == activeParent) {
+				activate(part);
+				return;
+			}
+
 			MUIElement oldSelectedElement = parent.getSelectedElement();
 
 			delegateBringToTop(part);
