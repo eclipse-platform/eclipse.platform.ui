@@ -266,6 +266,15 @@ public class VirtualFindAction extends Action implements IUpdate {
         virtualViewer.getTree().setSelection(new VirtualItem[] { findItem } );
         ModelDelta stateDelta = new ModelDelta(virtualViewer.getInput(), IModelDelta.NO_CHANGE);
         virtualViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.SELECT);
+        // Set the force flag to all select delta in order to override model's selection policy.
+        stateDelta.accept(new IModelDeltaVisitor() {
+            public boolean visit(IModelDelta delta, int depth) {
+                if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
+                    ((ModelDelta)delta).setFlags(delta.getFlags() | IModelDelta.FORCE);
+                }
+                return true;
+            }
+        });
         fClientViewer.updateViewer(stateDelta);
         
         ISelection selection = fClientViewer.getSelection();
