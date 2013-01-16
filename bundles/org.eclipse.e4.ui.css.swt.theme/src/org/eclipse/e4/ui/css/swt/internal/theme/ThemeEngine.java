@@ -11,7 +11,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.internal.theme;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -22,18 +26,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -110,20 +109,15 @@ public class ThemeEngine implements IThemeEngine {
 				// copy over files into config area
 				try {
 					done.createNewFile();
-				} catch (IOException e1) {
-				}
-				File[] oldModifiedFiles = oldModDir.listFiles();
-				IFileSystem fileSystem = EFS.getLocalFileSystem();
-				IFileStore configAreaStore = fileSystem.getStore(path);
-				for (int i = 0; i < oldModifiedFiles.length; i++) {
-					if (oldModifiedFiles[i].getName().contains(".css")) {
-						IFileStore tempFile = fileSystem.getStore(new Path(oldModifiedFiles[i].getPath()));
-						IFileStore destFile = fileSystem.getStore(new Path(e4CSSPath + System.getProperty("file.separator") + tempFile.getName()));
-						try {
-							tempFile.copy(destFile, 0, new NullProgressMonitor());
-						} catch (CoreException e1) {
+					File[] oldModifiedFiles = oldModDir.listFiles();
+					for (int i = 0; i < oldModifiedFiles.length; i++) {
+						if (oldModifiedFiles[i].getName().contains(".css")) {
+							copyFile(oldModifiedFiles[i].getPath(), path
+									+ System.getProperty("file.separator")
+									+ oldModifiedFiles[i].getName());
 						}
 					}
+				} catch (IOException e1) {
 				}
 			}
 		}
@@ -274,7 +268,7 @@ public class ThemeEngine implements IThemeEngine {
 			}
 		}
 	}
-
+	
 	private void registerStyle(String id, String stylesheet) {
 		List<String> s = stylesheets.get(id);
 		if (s == null) {
@@ -513,6 +507,26 @@ public class ThemeEngine implements IThemeEngine {
 	private IEclipsePreferences getPreferences() {
 		return new InstanceScope().getNode(FrameworkUtil.getBundle(
 				ThemeEngine.class).getSymbolicName());
+	}
+	
+	void copyFile(String from, String to) throws IOException {
+		FileInputStream fStream = null;
+		BufferedOutputStream outputStream = null;
+		try {
+			fStream = new FileInputStream(from);
+			outputStream = new BufferedOutputStream(new FileOutputStream(to));
+			byte[] buffer = new byte[4096];
+			int c;
+			while ((c = fStream.read(buffer)) != -1) {
+				outputStream.write(buffer, 0, c);
+			}
+
+		} finally {
+			if (fStream != null)
+				fStream.close();
+			if (outputStream != null)
+				outputStream.close();
+		}
 	}
 
 	public void restore(String alternateTheme) {

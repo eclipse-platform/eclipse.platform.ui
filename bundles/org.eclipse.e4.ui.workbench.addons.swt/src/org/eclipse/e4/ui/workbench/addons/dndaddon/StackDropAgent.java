@@ -215,7 +215,7 @@ public class StackDropAgent extends DropAgent {
 			for (CTabItem cti : dropCTF.getItems()) {
 				if (dragCtrl == cti.getControl()) {
 					int itemIndex = dropCTF.indexOf(cti);
-					if (dropIndex > 0 && itemIndex <= dropIndex)
+					if (dropIndex > 0 && itemIndex < dropIndex)
 						dropIndex--;
 				}
 			}
