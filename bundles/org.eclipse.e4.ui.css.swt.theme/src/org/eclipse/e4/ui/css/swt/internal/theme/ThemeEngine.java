@@ -22,12 +22,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -38,6 +45,7 @@ import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -78,8 +86,49 @@ public class ThemeEngine implements IThemeEngine {
 				.getExtensionPoint("org.eclipse.e4.ui.css.swt.theme");
 
 		//load any modified style sheets
-		File modDir= new File(
+		Location configLocation = org.eclipse.core.runtime.Platform.getConfigurationLocation(); 
+		String e4CSSPath = null;
+		try {
+			URL locationURL = new URL(configLocation.getDataArea(ThemeEngine.THEME_PLUGIN_ID).toString());
+			File locationFile = new File(locationURL.getFile());
+			e4CSSPath = locationFile.getPath();
+		} catch (IOException e1) {
+		}
+		
+		IPath path = new Path(e4CSSPath + System.getProperty("file.separator"));
+		File modDir= new File(path.toFile().toURI());
+		if (!modDir.exists()) {
+			modDir.mkdirs();
+		}
+		
+		//Check for old css files
+		File oldModDir= new File(
 				System.getProperty("user.home") + System.getProperty("file.separator") + ".e4css" + System.getProperty("file.separator")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (oldModDir.exists()) {
+			File done = new File(oldModDir, ".processed");
+			if (!done.exists()) {
+				// copy over files into config area
+				try {
+					done.createNewFile();
+				} catch (IOException e1) {
+				}
+				File[] oldModifiedFiles = oldModDir.listFiles();
+				IFileSystem fileSystem = EFS.getLocalFileSystem();
+				IFileStore configAreaStore = fileSystem.getStore(path);
+				for (int i = 0; i < oldModifiedFiles.length; i++) {
+					if (oldModifiedFiles[i].getName().contains(".css")) {
+						IFileStore tempFile = fileSystem.getStore(new Path(oldModifiedFiles[i].getPath()));
+						IFileStore destFile = fileSystem.getStore(new Path(e4CSSPath + System.getProperty("file.separator") + tempFile.getName()));
+						try {
+							tempFile.copy(destFile, 0, new NullProgressMonitor());
+						} catch (CoreException e1) {
+						}
+					}
+				}
+			}
+		}
+		
+	 
 		File[] modifiedFiles = modDir.listFiles();
 		
 		for (IExtension e : extPoint.getExtensions()) {
