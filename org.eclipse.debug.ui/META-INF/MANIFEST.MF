@@ -71,8 +71,7 @@ Export-Package: org.eclipse.debug.internal.ui;
  org.eclipse.debug.ui.contexts,
  org.eclipse.debug.ui.memory,
  org.eclipse.debug.ui.sourcelookup,
- org.eclipse.debug.internal.ui.expression;x-internal:=true,
- org.eclipse.debug.internal.ui.expression.workingset;x-internal:=true
+ org.eclipse.debug.internal.ui.expression;x-internal:=true
 Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.core.variables;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.5.0,4.0.0)",
