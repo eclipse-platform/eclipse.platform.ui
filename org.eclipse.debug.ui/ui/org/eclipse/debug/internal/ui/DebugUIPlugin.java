@@ -560,7 +560,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
         BreakpointOrganizerManager.getDefault();
         
         //start the expression workingset manager
-        ExpressionWorkingSetFilterManager.getInstance().init();
+//        ExpressionWorkingSetFilterManager.getInstance().init();
 				
 		getLaunchConfigurationManager().startup();
 		

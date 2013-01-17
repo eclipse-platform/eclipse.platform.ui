@@ -8,11 +8,10 @@
  * Contributors:
  *     Abeer Bagul (Tensilica Inc) - initial API and implementation (Bug 372181)
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.expression.workingset;
+package org.eclipse.debug.internal.ui.views.expression;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.model.elements.IAddNewExpression;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewerFilter;
 import org.eclipse.jface.viewers.Viewer;
@@ -40,25 +39,18 @@ public class ExpressionWorkingSetFilter extends TreeModelViewerFilter {
 
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		
-		if (selectedWorkingSets == null)
-			return true;
+		if (selectedWorkingSets == null || selectedWorkingSets.length == 0) return true;
 		
-		if (selectedWorkingSets.length == 0)
-			return true;
-		
-		if (element instanceof IAddNewExpression)
-			return true;
-		
-		if (element instanceof IAdaptable)
-		{
+		if (element instanceof IAdaptable) {
 			IExpression expressionToFilter = (IExpression) ((IAdaptable) element).getAdapter(IExpression.class);
-			if (expressionToFilter != null)
-			{
+			if (expressionToFilter != null) {
 				return isInWorkingSet(expressionToFilter);
-			}
+			} 
 		}
 		
-		return false;
+		// Do not filter out elements which do not adapt to IExpression.  These may 
+		// include special elements, such as the "Add New Expression..." element. 
+		return true;
 	}
 
 	private boolean isInWorkingSet(IExpression expression)

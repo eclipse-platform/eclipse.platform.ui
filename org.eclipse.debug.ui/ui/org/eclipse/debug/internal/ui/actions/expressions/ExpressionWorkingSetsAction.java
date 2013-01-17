@@ -8,9 +8,10 @@
  * Contributors:
  *     Abeer Bagul (Tensilica Inc) - initial API and implementation (Bug 372181)
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.expression.workingset;
+package org.eclipse.debug.internal.ui.actions.expressions;
 
 import org.eclipse.debug.internal.ui.views.expression.ExpressionView;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
@@ -24,6 +25,7 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 /**
  * Opens the Working set wizard where user can define expression working sets.
+ * 
  * @since 3.9
  */
 public class ExpressionWorkingSetsAction implements IViewActionDelegate,
@@ -35,9 +37,9 @@ public class ExpressionWorkingSetsAction implements IViewActionDelegate,
 		IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(
         		PlatformUI.getWorkbench().getDisplay().getActiveShell(), 
         		true, 
-        		new String[] {IExpressionWorkingSetConstants.EXPRESSION_WORKINGSET_ID});
+        		new String[] {IDebugUIConstants.EXPRESSION_WORKINGSET_ID});
 		
-		selectionDialog.setSelection(ExpressionWorkingSetFilterManager.getWorkingSets(fView));
+		selectionDialog.setSelection(fView.getWorkingSets());
 		
         if (selectionDialog.open() != Window.OK)
         	return;
@@ -45,8 +47,7 @@ public class ExpressionWorkingSetsAction implements IViewActionDelegate,
         IWorkingSet[] selectedWorkingSets = selectionDialog.getSelection();
         if (selectedWorkingSets == null)
         	return;
-        
-        ExpressionWorkingSetFilterManager.applyWorkingSets(fView, selectedWorkingSets);
+        fView.applyWorkingSets(selectedWorkingSets);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

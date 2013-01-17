@@ -8,7 +8,7 @@
  * Contributors:
  *     Abeer Bagul (Tensilica Inc) - initial API and implementation (Bug 372181)
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.expression.workingset;
+package org.eclipse.debug.internal.ui.views.expression;
 
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.ui.DebugUITools;

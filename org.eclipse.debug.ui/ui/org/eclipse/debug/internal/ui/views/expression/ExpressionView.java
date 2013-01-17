@@ -13,6 +13,9 @@
 package org.eclipse.debug.internal.ui.views.expression;
 
  
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
@@ -20,11 +23,14 @@ import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.expressions.EditWatchExpressinInPlaceAction;
 import org.eclipse.debug.internal.ui.actions.expressions.PasteWatchExpressionsAction;
 import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.variables.AvailableLogicalStructuresAction;
@@ -41,14 +47,19 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
  
@@ -58,8 +69,17 @@ import org.eclipse.ui.actions.ActionFactory;
  */
 public class ExpressionView extends VariablesView {
 	
+	/**
+	 * the preference name for the view part of the sash form
+	 * @since 3.9
+	 */
+	private static final String PREF_ELEMENT_WORKINGSET = DebugUIPlugin.getUniqueIdentifier() + ".workingSet"; //$NON-NLS-1$
+
+	
     private PasteWatchExpressionsAction fPasteAction;
     private EditWatchExpressinInPlaceAction fEditInPlaceAction;
+    
+    private IWorkingSet[] fWorkingSets;
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getHelpContextId()
@@ -253,5 +273,70 @@ public class ExpressionView extends VariablesView {
     	}
     }
 
+    public Viewer createViewer(Composite parent) {
+    	TreeModelViewer viewer = (TreeModelViewer)super.createViewer(parent);
+    	
+		List list = new ArrayList();
+		IMemento[] workingsetMementos = getMemento().getChildren(PREF_ELEMENT_WORKINGSET);
+		for (int j=0; j<workingsetMementos.length; j++) {
+			IMemento workingSetMemento = workingsetMementos[j];
+			String workingSetName = workingSetMemento.getID();
+			IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
+			if (workingSet != null)
+				list.add(workingSet);
+		}
+    	fWorkingSets = (IWorkingSet[]) list.toArray(new IWorkingSet[list.size()]);
+		getWorkingSetFilter(viewer).setSelectedWorkingSets(fWorkingSets);
+		updateWorkingSetsProperty(viewer.getPresentationContext());
+
+    	return viewer;
+    }
     
+    public void saveViewerState(IMemento memento) {
+    	super.saveViewerState(memento);
+    	
+    	
+		for (int i=0; i<fWorkingSets.length; i++) {
+			memento.createChild(PREF_ELEMENT_WORKINGSET, fWorkingSets[i].getName());
+		}
+    }
+
+    public void applyWorkingSets(IWorkingSet[] selectedWorkingSets) {
+    	fWorkingSets = selectedWorkingSets;
+    	TreeModelViewer viewer = (TreeModelViewer)getViewer(); 
+		getWorkingSetFilter(viewer).setSelectedWorkingSets(fWorkingSets);
+		updateWorkingSetsProperty(viewer.getPresentationContext());
+		getViewer().refresh();
+    }
+
+    private void updateWorkingSetsProperty(IPresentationContext presentationContext) {
+		if (fWorkingSets.length > 0) {
+			String[] workingSetNames = new String[fWorkingSets.length];
+			for (int j=0; j<fWorkingSets.length; j++) {
+				workingSetNames[j] = fWorkingSets[j].getName();
+			}		
+			presentationContext.setProperty(IDebugUIConstants.PROP_EXPRESSIONS_WORKING_SETS, workingSetNames);
+		} else {
+			presentationContext.setProperty(IDebugUIConstants.PROP_EXPRESSIONS_WORKING_SETS, new String[0]);
+		}
+    }
+    
+    public IWorkingSet[] getWorkingSets() {
+    	return fWorkingSets;
+    }
+    
+	private ExpressionWorkingSetFilter getWorkingSetFilter(ITreeModelViewer viewer) {
+        ViewerFilter[] existingFilters = viewer.getFilters();
+        for (int i=0; i<existingFilters.length; i++) {
+        	ViewerFilter existingFilter = existingFilters[i];
+        	if (existingFilter instanceof ExpressionWorkingSetFilter) {
+        		return (ExpressionWorkingSetFilter) existingFilter;
+        	}
+        }
+        
+        ExpressionWorkingSetFilter workingSetFilter = new ExpressionWorkingSetFilter();
+        viewer.addFilter(workingSetFilter);
+        return workingSetFilter;
+	}
+
 }
