@@ -28,6 +28,8 @@ Export-Package: org.eclipse.debug.internal.ui;
  org.eclipse.debug.internal.ui.contextlaunching;x-internal:=true,
  org.eclipse.debug.internal.ui.contexts;x-internal:=true,
  org.eclipse.debug.internal.ui.elements.adapters;x-friends:="org.eclipse.jdt.debug.ui",
+ org.eclipse.debug.internal.ui.expression;x-internal:=true,
+ org.eclipse.debug.internal.ui.expression.workingset;x-internal:=true,
  org.eclipse.debug.internal.ui.importexport.breakpoints;x-internal:=true,
  org.eclipse.debug.internal.ui.importexport.launchconfigurations;x-internal:=true,
  org.eclipse.debug.internal.ui.launchConfigurations;x-friends:="org.eclipse.debug.tests",
