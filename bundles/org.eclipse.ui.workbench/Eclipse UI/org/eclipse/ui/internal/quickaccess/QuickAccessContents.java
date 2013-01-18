@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,7 +198,7 @@ public abstract class QuickAccessContents {
 	private List[] computeMatchingEntries(String filter,
 			QuickAccessElement perfectMatch, int maxCount) {
 		// collect matches in an array of lists
-		List[] entries = new ArrayList[providers.length];
+		List<QuickAccessEntry>[] entries = new ArrayList[providers.length];
 		int[] indexPerProvider = new int[providers.length];
 		int countPerProvider = Math.min(maxCount / 4,
 				INITIAL_COUNT_PER_PROVIDER);
@@ -217,30 +217,39 @@ public abstract class QuickAccessContents {
 			for (int i = 0; i < providers.length
 					&& (showAllMatches || countTotal < maxCount); i++) {
 				if (entries[i] == null) {
-					entries[i] = new ArrayList();
+					entries[i] = new ArrayList<QuickAccessEntry>();
 					indexPerProvider[i] = 0;
 				}
 				int count = 0;
 				QuickAccessProvider provider = providers[i];
-				if (filter.length() > 0
- || provider.isAlwaysPresent()
-						|| showAllMatches) {
-					QuickAccessElement[] elements = provider
-							.getElementsSorted();
+				if (filter.length() > 0 || provider.isAlwaysPresent() || showAllMatches) {
+					QuickAccessElement[] sortedElements = provider.getElementsSorted();
+					List<QuickAccessEntry> poorFilterMatches = new ArrayList<QuickAccessEntry>();
+					
 					int j = indexPerProvider[i];
-					while (j < elements.length
+					while (j < sortedElements.length
 							&& (showAllMatches || (count < countPerProvider && countTotal < maxCount))) {
-						QuickAccessElement element = elements[j];
-						QuickAccessEntry entry;
+						QuickAccessElement element = sortedElements[j];
+						QuickAccessEntry entry = null;
 						if (filter.length() == 0) {
 							if (i == 0 || showAllMatches) {
-								entry = new QuickAccessEntry(element, provider,
-										new int[0][0], new int[0][0]);
+								entry = new QuickAccessEntry(element, provider, new int[0][0],
+										new int[0][0], QuickAccessEntry.MATCH_PERFECT);
 							} else {
 								entry = null;
 							}
 						} else {
-							entry = element.match(filter, provider);
+							QuickAccessEntry possibleMatch = element.match(filter, provider);
+							// We only have limited space so only display
+							// excellent filter matches (Bug 398455)
+							if (possibleMatch != null) {
+								if (possibleMatch.getMatchQuality() <= QuickAccessEntry.MATCH_EXCELLENT) {
+									entry = possibleMatch;
+								} else {
+									poorFilterMatches.add(possibleMatch);
+								}
+							}
+
 						}
 						if (entry != null) {
 							entries[i].add(entry);
@@ -251,10 +260,26 @@ public abstract class QuickAccessContents {
 								maxCount = MAX_COUNT_TOTAL;
 							}
 						}
+
 						j++;
 					}
+
 					indexPerProvider[i] = j;
-					if (j < elements.length) {
+					// If there were low quality matches and there is still
+					// room, add them (Bug 398455)
+					for (Iterator<QuickAccessEntry> iterator = poorFilterMatches.iterator(); iterator
+							.hasNext()
+							&& (count < countPerProvider && countTotal < maxCount);) {
+						QuickAccessEntry quickAccessEntry = iterator.next();
+						entries[i].add(quickAccessEntry);
+						count++;
+						countTotal++;
+						if (i == 0 && quickAccessEntry.element == perfectMatch) {
+							perfectMatchAdded = true;
+							maxCount = MAX_COUNT_TOTAL;
+						}
+					}
+					if (j < sortedElements.length) {
 						done = false;
 					}
 				}
@@ -266,7 +291,7 @@ public abstract class QuickAccessContents {
 			QuickAccessEntry entry = perfectMatch.match(filter, providers[0]);
 			if (entry != null) {
 				if (entries[0] == null) {
-					entries[0] = new ArrayList();
+					entries[0] = new ArrayList<QuickAccessEntry>();
 					indexPerProvider[0] = 0;
 				}
 				entries[0].add(entry);

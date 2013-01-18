@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,17 +77,27 @@ public abstract class QuickAccessElement {
 	}
 
 	/**
+	 * If this element is a match (partial, complete, camel case, etc) to the
+	 * given filter, returns a {@link QuickAccessEntry}. Otherwise returns
+	 * <code>null</code>;
+	 * 
 	 * @param filter
-	 * @return
+	 *            filter for matching
+	 * @param providerForMatching
+	 *            the provider that will own the entry
+	 * @return a quick access entry or <code>null</code>
 	 */
 	public QuickAccessEntry match(String filter,
 			QuickAccessProvider providerForMatching) {
 		String sortLabel = getLabel();
 		int index = sortLabel.toLowerCase().indexOf(filter);
 		if (index != -1) {
+			int quality = sortLabel.toLowerCase().equals(filter) ? QuickAccessEntry.MATCH_PERFECT
+					: (sortLabel.toLowerCase().startsWith(filter) ? QuickAccessEntry.MATCH_EXCELLENT
+							: QuickAccessEntry.MATCH_GOOD);
 			return new QuickAccessEntry(this, providerForMatching,
 					new int[][] { { index, index + filter.length() - 1 } },
-					EMPTY_INDICES);
+ EMPTY_INDICES, quality);
 		}
 		String combinedLabel = (providerForMatching.getName() + " " + getLabel()); //$NON-NLS-1$
 		index = combinedLabel.toLowerCase().indexOf(filter);
@@ -97,11 +107,12 @@ public abstract class QuickAccessElement {
 			if (lengthOfElementMatch > 0) {
 				return new QuickAccessEntry(this, providerForMatching,
 						new int[][] { { 0, lengthOfElementMatch - 1 } },
-						new int[][] { { index, index + filter.length() - 1 } });
+ new int[][] { { index,
+						index + filter.length() - 1 } }, QuickAccessEntry.MATCH_GOOD);
 			}
 			return new QuickAccessEntry(this, providerForMatching,
 					EMPTY_INDICES, new int[][] { { index,
-							index + filter.length() - 1 } });
+ index + filter.length() - 1 } }, QuickAccessEntry.MATCH_GOOD);
 		}
 		String camelCase = CamelUtil.getCamelCase(sortLabel);
 		index = camelCase.indexOf(filter);
@@ -109,7 +120,8 @@ public abstract class QuickAccessElement {
 			int[][] indices = CamelUtil.getCamelCaseIndices(sortLabel, index, filter
 					.length());
 			return new QuickAccessEntry(this, providerForMatching, indices,
-					EMPTY_INDICES);
+ EMPTY_INDICES,
+					QuickAccessEntry.MATCH_GOOD);
 		}
 		String combinedCamelCase = CamelUtil.getCamelCase(combinedLabel);
 		index = combinedCamelCase.indexOf(filter);
@@ -124,11 +136,14 @@ public abstract class QuickAccessElement {
 						providerForMatching,
 						CamelUtil.getCamelCaseIndices(sortLabel, 0, lengthOfElementMatch),
 						CamelUtil.getCamelCaseIndices(providerForMatching.getName(),
-								index, filter.length() - lengthOfElementMatch));
+ index,
+								filter.length() - lengthOfElementMatch),
+						QuickAccessEntry.MATCH_GOOD);
 			}
 			return new QuickAccessEntry(this, providerForMatching,
 					EMPTY_INDICES, CamelUtil.getCamelCaseIndices(providerForMatching
-							.getName(), index, filter.length()));
+.getName(), index,
+							filter.length()), QuickAccessEntry.MATCH_GOOD);
 		}
 		return null;
 	}
