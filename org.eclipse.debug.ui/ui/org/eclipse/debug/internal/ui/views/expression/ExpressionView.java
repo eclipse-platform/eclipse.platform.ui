@@ -14,7 +14,12 @@ package org.eclipse.debug.internal.ui.views.expression;
 
  
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -29,6 +34,10 @@ import org.eclipse.debug.internal.ui.actions.expressions.EditWatchExpressinInPla
 import org.eclipse.debug.internal.ui.actions.expressions.PasteWatchExpressionsAction;
 import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.viewers.model.ViewerAdapterService;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
@@ -46,6 +55,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -60,7 +70,9 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
  
 /**
@@ -75,12 +87,21 @@ public class ExpressionView extends VariablesView {
 	 */
 	private static final String PREF_ELEMENT_WORKINGSET = DebugUIPlugin.getUniqueIdentifier() + ".workingSet"; //$NON-NLS-1$
 
+	private static final IWorkingSet[] EMPTY_WORKING_SETS = new IWorkingSet[0];
 	
     private PasteWatchExpressionsAction fPasteAction;
     private EditWatchExpressinInPlaceAction fEditInPlaceAction;
     
     private IWorkingSet[] fWorkingSets;
     
+	private boolean fAutoSelectWorkingSets = true;
+
+	private Map fWorkingSetMementos = new LinkedHashMap();
+    
+	private Set fPendingCompareRequests;
+	
+	private ExpressionElementMementoRequest fPendingMementoRequest;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getHelpContextId()
 	 */
@@ -132,6 +153,10 @@ public class ExpressionView extends VariablesView {
             super.contextActivated(new StructuredSelection(DebugPlugin.getDefault().getExpressionManager()));
 		} else {
 			super.contextActivated(selection);
+			if (fAutoSelectWorkingSets) {
+		        Object element = ((IStructuredSelection)selection).getFirstElement();
+		        compareElementMementos(element);
+			}
 		}
         if (isAvailable() && isVisible()) {
             updateAction("ContentAssist"); //$NON-NLS-1$
@@ -149,6 +174,18 @@ public class ExpressionView extends VariablesView {
             setViewerInput(DebugPlugin.getDefault().getExpressionManager());
         }
         updateAction(FIND_ACTION);
+	}
+	
+	public void elementCompareComplete(String[] workingSetNames) {
+		IWorkingSetManager mgr = PlatformUI.getWorkbench().getWorkingSetManager();
+		List workingSetList = new ArrayList();
+		for (int j = 0; j < workingSetNames.length; j++) {
+			IWorkingSet workingSet = mgr.getWorkingSet(workingSetNames[j]);
+			if (workingSet != null) {
+				workingSetList.add(workingSet);
+			}
+		}
+		doApplyWorkingSets((IWorkingSet[])workingSetList.toArray(new IWorkingSet[workingSetList.size()]));
 	}
 	
 	/* (non-Javadoc)
@@ -193,6 +230,8 @@ public class ExpressionView extends VariablesView {
     
     public void dispose() {
         fEditInPlaceAction.dispose();
+        cancelPendingCompareRequests();
+        if (fPendingMementoRequest != null) fPendingMementoRequest.cancel();
         super.dispose();
     }
     
@@ -276,16 +315,20 @@ public class ExpressionView extends VariablesView {
     public Viewer createViewer(Composite parent) {
     	TreeModelViewer viewer = (TreeModelViewer)super.createViewer(parent);
     	
-		List list = new ArrayList();
 		IMemento[] workingsetMementos = getMemento().getChildren(PREF_ELEMENT_WORKINGSET);
-		for (int j=0; j<workingsetMementos.length; j++) {
-			IMemento workingSetMemento = workingsetMementos[j];
-			String workingSetName = workingSetMemento.getID();
-			IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
-			if (workingSet != null)
-				list.add(workingSet);
+		if (workingsetMementos != null) {
+			List list = new ArrayList();
+			for (int j=0; j<workingsetMementos.length; j++) {
+				IMemento workingSetMemento = workingsetMementos[j];
+				String workingSetName = workingSetMemento.getID();
+				IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
+				if (workingSet != null)
+					list.add(workingSet);
+			}
+	    	fWorkingSets = (IWorkingSet[]) list.toArray(new IWorkingSet[list.size()]);
+		} else {
+			fWorkingSets = EMPTY_WORKING_SETS;
 		}
-    	fWorkingSets = (IWorkingSet[]) list.toArray(new IWorkingSet[list.size()]);
 		getWorkingSetFilter(viewer).setSelectedWorkingSets(fWorkingSets);
 		updateWorkingSetsProperty(viewer.getPresentationContext());
 
@@ -302,11 +345,52 @@ public class ExpressionView extends VariablesView {
     }
 
     public void applyWorkingSets(IWorkingSet[] selectedWorkingSets) {
+    	doApplyWorkingSets(selectedWorkingSets);
+		saveWorkingSetsMemento();
+    }
+
+    private void doApplyWorkingSets(IWorkingSet[] selectedWorkingSets) {
     	fWorkingSets = selectedWorkingSets;
     	TreeModelViewer viewer = (TreeModelViewer)getViewer(); 
 		getWorkingSetFilter(viewer).setSelectedWorkingSets(fWorkingSets);
 		updateWorkingSetsProperty(viewer.getPresentationContext());
-		getViewer().refresh();
+		getViewer().refresh();    	
+    }
+    
+    private void saveWorkingSetsMemento() {
+    	if (fPendingMementoRequest != null) {
+    		fPendingMementoRequest.cancel();
+    	}
+    	Object element = getDebugContextElement();
+		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(element);
+		if (provider == null) return;
+		
+        XMLMemento expressionMemento = XMLMemento.createWriteRoot("EXPRESSION_WORKING_SETS_MEMENTO"); //$NON-NLS-1$
+        fPendingMementoRequest = new ExpressionElementMementoRequest(
+        		this, getPresentationContext(), getDebugContextElement(), expressionMemento, getWorkingSetNames());
+        provider.encodeElements(new IElementMementoRequest[] { fPendingMementoRequest });
+    }
+    
+    void mementoRequestFinished(ExpressionElementMementoRequest request) {
+		if (!request.isCanceled()) {
+			fWorkingSetMementos.put(request.getMemento(), request.getWorkingSets());
+		}    	
+    }
+    
+    private String[] getWorkingSetNames() {
+    	String[] names = new String[fWorkingSets.length];
+    	for (int i = 0; i < fWorkingSets.length; i++) {
+    		names[i] = fWorkingSets[i].getName();
+    	}
+    	return names;
+    }
+    
+    private Object getDebugContextElement() {
+    	ISelection selection = getDebugContext();
+    	if (selection == null || selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
+    		return DebugPlugin.getDefault().getExpressionManager();
+    	}
+    	return ((IStructuredSelection)selection).getFirstElement();
     }
 
     private void updateWorkingSetsProperty(IPresentationContext presentationContext) {
@@ -339,4 +423,44 @@ public class ExpressionView extends VariablesView {
         return workingSetFilter;
 	}
 
+	private void compareElementMementos(Object source) {
+		IElementMementoProvider provdier = ViewerAdapterService.getMementoProvider(source);
+		if (provdier != null) {
+	        Set requests = new HashSet(fWorkingSetMementos.size() * 4/3);
+	        for (Iterator itr = fWorkingSetMementos.entrySet().iterator(); itr.hasNext();) {
+	        	Map.Entry entry = (Map.Entry)itr.next();
+	        	requests.add( new  ExpressionElementCompareRequest(
+	        			this, getPresentationContext(), source, (IMemento)entry.getKey(), (String[])entry.getValue()) );
+	        }
+	
+			// cancel any pending update
+			cancelPendingCompareRequests();
+			fPendingCompareRequests = requests;
+			provdier.compareElements((IElementCompareRequest[])
+					fPendingCompareRequests.toArray(new IElementCompareRequest[fPendingCompareRequests.size()]) );
+		} else {
+			doApplyWorkingSets(EMPTY_WORKING_SETS);
+		}
+	}
+	
+	void compareRequestFinished(final ExpressionElementCompareRequest request) {
+		if (fPendingCompareRequests != null && fPendingCompareRequests.remove(request)) {
+			if (!request.isCanceled() && request.isEqual()) {
+				elementCompareComplete(request.getWorkingSets());
+				cancelPendingCompareRequests();
+			} else if (fPendingCompareRequests.isEmpty()) {
+				elementCompareComplete(new String[0]);
+				fPendingCompareRequests = null;
+			}
+		}
+	}
+	
+	private void cancelPendingCompareRequests() {
+		if (fPendingCompareRequests == null) return;
+        for (Iterator itr = fPendingCompareRequests.iterator(); itr.hasNext();) {
+        	((IElementCompareRequest)itr.next()).cancel();
+        }
+		fPendingCompareRequests = null;
+	}
+	
 }
