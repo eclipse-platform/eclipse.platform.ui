@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 178968 [Viewers] Lines scrambled and different font size in compare
  *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 191524 [Viewers] Synchronize horizontal scrolling by # characters, not % of longest line
  *     Stephan Herrmann (stephan@cs.tu-berlin.de) - Bug 291695: Element compare fails to use source range
+ *     Robin Stocker (robin@nibor.org) - Bug 398594: [Edit] Enable center arrow buttons when editable and for both sides
  *******************************************************************************/
 package org.eclipse.compare.contentmergeviewer;
 
@@ -409,7 +410,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	// points for center curves
 	private double[] fBasicCenterCurve;
 	
-	private Button fCenterButton;
+	private Button fLeftToRightButton;
+	private Button fRightToLeftButton;
 	private Diff fButtonDiff;
 
 	private ContributorInfo fLeftContributor;
@@ -2274,7 +2276,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			fCanvas= c;
 		}
 		public void mouseMove(MouseEvent e) {
-			if (!fIsDown && fUseSingleLine && showResolveUI() && handleMouseMoveOverCenter(fCanvas, e.x, e.y))
+			if (!fIsDown && fUseSingleLine && isAnySideEditable() && handleMouseMoveOverCenter(fCanvas, e.x, e.y))
 				return;
 			super.mouseMove(e);
 		}
@@ -2293,24 +2295,38 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			if (fUseResolveUI) {
 				
 				new HoverResizer(canvas, HORIZONTAL);
-								
-				fCenterButton= new Button(canvas, fIsMac ? SWT.FLAT : SWT.PUSH);
+
 				if (fNormalCursor == null) fNormalCursor= new Cursor(canvas.getDisplay(), SWT.CURSOR_ARROW);
-				fCenterButton.setCursor(fNormalCursor);
-				fCenterButton.setText(COPY_RIGHT_TO_LEFT_INDICATOR);
-				fCenterButton.pack();
-				fCenterButton.setVisible(false);
-				fCenterButton.addSelectionListener(
+				int style= fIsMac ? SWT.FLAT : SWT.PUSH;
+
+				fLeftToRightButton= new Button(canvas, style);
+				fLeftToRightButton.setCursor(fNormalCursor);
+				fLeftToRightButton.setText(COPY_LEFT_TO_RIGHT_INDICATOR);
+				fLeftToRightButton.setToolTipText(
+						Utilities.getString(getResourceBundle(), "action.CopyDiffLeftToRight.tooltip")); //$NON-NLS-1$
+				fLeftToRightButton.pack();
+				fLeftToRightButton.setVisible(false);
+				fLeftToRightButton.addSelectionListener(
 					new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
-							fCenterButton.setVisible(false);
-							if (fButtonDiff != null) {
-								setCurrentDiff(fButtonDiff, false);
-								copy(fCurrentDiff, fCenterButton.getText().equals(
-									COPY_LEFT_TO_RIGHT_INDICATOR), false);
-							}
+							handleCenterButtonSelection(true);
 						}
 					}
+				);
+
+				fRightToLeftButton= new Button(canvas, style);
+				fRightToLeftButton.setCursor(fNormalCursor);
+				fRightToLeftButton.setText(COPY_RIGHT_TO_LEFT_INDICATOR);
+				fRightToLeftButton.setToolTipText(
+						Utilities.getString(getResourceBundle(), "action.CopyDiffRightToLeft.tooltip")); //$NON-NLS-1$
+				fRightToLeftButton.pack();
+				fRightToLeftButton.setVisible(false);
+				fRightToLeftButton.addSelectionListener(
+						new SelectionAdapter() {
+							public void widgetSelected(SelectionEvent e) {
+								handleCenterButtonSelection(false);
+							}
+						}
 				);
 			} else {
 				new Resizer(canvas, HORIZONTAL);
@@ -2320,7 +2336,16 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		}
 		return super.createCenterControl(parent);
 	}
-	
+
+	private void handleCenterButtonSelection(boolean leftToRight) {
+		fLeftToRightButton.setVisible(false);
+		fRightToLeftButton.setVisible(false);
+		if (fButtonDiff != null) {
+			setCurrentDiff(fButtonDiff, false);
+			copy(fCurrentDiff, leftToRight, false);
+		}
+	}
+
 	private boolean handleMouseMoveOverCenter(Canvas canvas, int x, int y) {
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		Diff diff= getDiffUnderMouse(canvas, x, y, r);
@@ -2328,24 +2353,42 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			diff= null;
 		if (diff != fButtonDiff) {
 			if (diff != null) {
-				if (fLeft.getSourceViewer().isEditable()) {
-					fButtonDiff= diff;
-					fCenterButton.setText(COPY_RIGHT_TO_LEFT_INDICATOR);
-					String tt= fCopyDiffRightToLeftItem.getAction().getToolTipText();
-					fCenterButton.setToolTipText(tt);
-					fCenterButton.setBounds(r);
-					fCenterButton.setVisible(true);
-				} else if (fRight.getSourceViewer().isEditable()) {
-					fButtonDiff= diff;
-					fCenterButton.setText(COPY_LEFT_TO_RIGHT_INDICATOR);
-					String tt= fCopyDiffLeftToRightItem.getAction().getToolTipText();
-					fCenterButton.setToolTipText(tt);
-					fCenterButton.setBounds(r);
-					fCenterButton.setVisible(true);
+				fButtonDiff= diff;
+				boolean leftEditable= fLeft.getSourceViewer().isEditable();
+				boolean rightEditable= fRight.getSourceViewer().isEditable();
+				if (leftEditable && rightEditable) {
+					int height= r.height;
+					int leftToRightY= r.y - height/2;
+					int rightToLeftY= leftToRightY + height;
+					Rectangle bounds = canvas.getBounds();
+					if (leftToRightY < 0) {
+						// button must not be hidden at top
+						leftToRightY= 0;
+						rightToLeftY= height;
+					} else if (rightToLeftY + height > bounds.height) {
+						// button must not be hidden at bottom
+						leftToRightY= bounds.height - height - height;
+						rightToLeftY= leftToRightY + height;
+					}
+					Rectangle leftToRightBounds= new Rectangle(r.x, leftToRightY, r.width, r.height);
+					fLeftToRightButton.setBounds(leftToRightBounds);
+					fLeftToRightButton.setVisible(true);
+					Rectangle rightToLeftBounds= new Rectangle(r.x, rightToLeftY, r.width, r.height);
+					fRightToLeftButton.setBounds(rightToLeftBounds);
+					fRightToLeftButton.setVisible(true);
+				} else if (leftEditable) {
+					fRightToLeftButton.setBounds(r);
+					fRightToLeftButton.setVisible(true);
+					fLeftToRightButton.setVisible(false);
+				} else if (rightEditable) {
+					fLeftToRightButton.setBounds(r);
+					fLeftToRightButton.setVisible(true);
+					fRightToLeftButton.setVisible(false);
 				} else
 					fButtonDiff= null;
 			} else {
-				fCenterButton.setVisible(false);
+				fRightToLeftButton.setVisible(false);
+				fLeftToRightButton.setVisible(false);
 				fButtonDiff= null;
 			}
 		}
@@ -3878,6 +3921,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	private boolean showResolveUI() {
 		if (!fUseResolveUI || !isThreeWay() || isIgnoreAncestor())
 			return false;
+		return isAnySideEditable();
+	}
+
+	private boolean isAnySideEditable() {
 		CompareConfiguration cc= getCompareConfiguration();
 		// we only enable the new resolve UI if exactly one side is editable
 		boolean l= cc.isLeftEditable();
@@ -3916,7 +3963,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		if (! fHighlightRanges)
 			return;
 
-		boolean showResolveUI= showResolveUI();
+		boolean isAnySideEditable= isAnySideEditable();
 
 		if (fMerger.hasChanges()) {
 			int lshift= fLeft.getVerticalScrollOffset();
@@ -4000,7 +4047,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 					}
 				}
 				
-				if (fUseSingleLine && showResolveUI && diff.isUnresolvedIncomingOrConflicting()) {
+				if (fUseSingleLine && isAnySideEditable && diff.isUnresolvedIncomingOrConflicting()) {
 					// draw resolve state
 					int cx= (w-RESOLVE_SIZE)/2;
 					int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2;
@@ -4406,8 +4453,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 //			return;
 		boolean diffChanged = fCurrentDiff != d;
 
-		if (fCenterButton != null && !fCenterButton.isDisposed())
-			fCenterButton.setVisible(false);
+		if (fLeftToRightButton != null && !fLeftToRightButton.isDisposed())
+			fLeftToRightButton.setVisible(false);
+		if (fRightToLeftButton != null && !fRightToLeftButton.isDisposed())
+			fRightToLeftButton.setVisible(false);
 
 		if (d != null && revealAndSelect) {
 			
