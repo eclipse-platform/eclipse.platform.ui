@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPaintPositionManager;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
@@ -83,13 +82,6 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	private boolean fCharacterPresentAtCaretLocation;
 
 	/**
-	 * The document this painter is associated with, or <code>null</code>.
-	 * 
-	 * @since 3.8
-	 */
-	private IDocument fDocument;
-
-	/**
 	 * The previous selection, used to determine the need for computing enclosing brackets.
 	 * 
 	 * @since 3.8
@@ -102,13 +94,6 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 * @since 3.8
 	 */
 	private int fPreviousLengthOfDocument;
-
-	/**
-	 * Whether the input document has been replaced or not.
-	 * 
-	 * @since 3.8
-	 */
-	private boolean fDocumentChanged;
 
 	/**
 	 * The text viewer change listener.
@@ -129,7 +114,6 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		fSourceViewer= sourceViewer;
 		fMatcher= matcher;
 		fTextWidget= sourceViewer.getTextWidget();
-		fDocument= fSourceViewer.getDocument();
 	}
 
 	/**
@@ -323,7 +307,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 */
 	public void paint(int reason) {
 
-		IDocument document= fDocument;
+		IDocument document= fSourceViewer.getDocument();
 		if (document == null) {
 			deactivate(false);
 			return;
@@ -343,7 +327,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 				boolean lengthChanged= length != fPreviousLengthOfDocument;
 				fPreviousLengthOfDocument= length;
 
-				if (reason != IPainter.CONFIGURATION && !fDocumentChanged && !lengthChanged && selection.equals(fPreviousSelection)) {
+				if (reason != IPainter.CONFIGURATION && fSourceViewer.getDocument() == document && !lengthChanged && selection.equals(fPreviousSelection)) {
 					return;
 				}
 
@@ -352,7 +336,6 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 					return;
 				}
 
-				fDocumentChanged= false;
 				if (reason != IPainter.CONFIGURATION && !lengthChanged && fPreviousSelection != null && reason != IPainter.INTERNAL) {
 					if (!matcher.isRecomputationOfEnclosingPairRequired(document, selection, fPreviousSelection)) {
 						if (fCharacterPresentAtCaretLocation && !fHighlightCharacterAtCaretLocation) {
@@ -441,11 +424,9 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	
 		if (install) {
 			fTextListener= new TextListener();
-			fSourceViewer.addTextInputListener(fTextListener);
 			fSourceViewer.addTextListener(fTextListener);
 		} else {
 			if (fTextListener != null) {
-				fSourceViewer.removeTextInputListener(fTextListener);
 				fSourceViewer.removeTextListener(fTextListener);
 				fTextListener= null;
 			}
@@ -458,24 +439,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 * 
 	 * @since 3.8
 	 */
-	private class TextListener implements ITextListener, ITextInputListener {
-
-		/**
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument,
-		 *      org.eclipse.jface.text.IDocument)
-		 */
-		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
-			fDocument= null;
-		}
-
-		/**
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument,
-		 *      org.eclipse.jface.text.IDocument)
-		 */
-		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
-			fDocument= newInput;
-			fDocumentChanged= true;
-		}
+	private class TextListener implements ITextListener {
 
 		/**
 		 * @see org.eclipse.jface.text.ITextListener#textChanged(org.eclipse.jface.text.TextEvent)
