@@ -126,8 +126,6 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 
     private ViewerStateTracker fStateTracker = new ViewerStateTracker(this);
 
-    private Runnable fTriggerUpdatesRunnable;
-
     /**
      * Update type constants
      */
@@ -793,14 +791,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                 }
             }
             if (inProgressList == null || inProgressList.isEmpty()) {
-            	fTriggerUpdatesRunnable = new Runnable() {
+                getViewer().getDisplay().asyncExec(new Runnable() {
                     public void run() {
-                    	if (fTriggerUpdatesRunnable != this) return;
                     	if (isDisposed()) return;
                         trigger(update.getSchedulingPath());
-                    }
-                };
-                getViewer().getDisplay().asyncExec(fTriggerUpdatesRunnable);
+                    }                	
+                });
             }
         } else {
             // there are waiting requests: coalesce with existing request and add to list
