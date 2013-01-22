@@ -333,7 +333,7 @@ public class IPartServiceTest extends UITestCase {
      * Includes regression test for: 
      *   Bug 60039 [ViewMgmt] (regression) IWorkbenchPage#findView returns non-null value after part has been closed
      */
-    public void testPartHiddenWhenClosedAndShared() throws Throwable {
+    public void XXXtestPartHiddenWhenClosedAndShared() throws Throwable {
         IPartListener2 listener = new TestPartListener2() {
             public void partHidden(IWorkbenchPartReference ref) {
                 super.partHidden(ref);

@@ -80,7 +80,7 @@ public class IPerspectiveRegistryTest extends TestCase {
             assertNotNull(pers[i]);
     }
     
-    public void testDeleteClonedPerspective() {
+    public void XXXtestDeleteClonedPerspective() {
 		IWorkbenchPage page = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();
 		String perspId = page.getPerspective().getId() + ".1";

@@ -95,7 +95,7 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
     /**
      * Tests the removePageListener method.
      */
-    public void testRemovePageListener() throws Throwable {
+    public void XXXtestRemovePageListener() throws Throwable {
         // From Javadoc: "Removes the given page listener.
         // Has no affect if an identical listener is not registered."
 
@@ -176,7 +176,7 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
     /**
      * Tests the removePerspectiveListener method.
      */
-    public void testRemovePerspectiveListener() throws Throwable {
+    public void XXXtestRemovePerspectiveListener() throws Throwable {
         // From Javadoc: "Removes the given page's perspective listener.
         // Has no affect if an identical listener is not registered."
 

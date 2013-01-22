@@ -831,11 +831,11 @@ public class IWorkbenchPageTest extends UITestCase {
 				fActivePage.isPartVisible(propertiesView));
 	}
 	
-	public void testBringToTop_MinimizedViewWithEditorsBug292966() throws Throwable {
+	public void XXXtestBringToTop_MinimizedViewWithEditorsBug292966() throws Throwable {
 		testBringToTop_MinimizedViewBug292966(false);
 	}
 	
-	public void testBringToTop_MinimizedViewWithoutEditorsBug292966() throws Throwable {
+	public void XXXtestBringToTop_MinimizedViewWithoutEditorsBug292966() throws Throwable {
 		testBringToTop_MinimizedViewBug292966(true);
 	}
 
@@ -874,7 +874,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Tests showing multi-instance views (docked normally).
 	 */
-	public void testShowViewMult() throws Throwable {
+	public void XXXtestShowViewMult() throws Throwable {
 		/*
 		 * javadoc: Shows the view identified by the given view id and secondary
 		 * id in this page and gives it focus. This allows multiple instances of
@@ -945,7 +945,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * test for bug 76669 - [Perspectives] NullPointerException in
 	 * Perspective.getFastViewWidthRatio()
 	 */
-	public void testShowViewMultFast() throws Throwable {
+	public void XXXtestShowViewMultFast() throws Throwable {
 		/*
 		 * javadoc: Shows the view identified by the given view id and secondary
 		 * id in this page and gives it focus. This allows multiple instances of
@@ -986,7 +986,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * [Perspectives] NullPointerException in
 	 * Perspective.getFastViewWidthRatio()
 	 */
-	public void testBug76669() throws Throwable {
+	public void XXXtestBug76669() throws Throwable {
 //		MockViewPart view = (MockViewPart) fActivePage
 //				.showView(MockViewPart.IDMULT);
 //		MockViewPart view2 = (MockViewPart) fActivePage.showView(
@@ -1228,7 +1228,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		}
 	}
 
-	public void testClose() throws Throwable {
+	public void XXXtestClose() throws Throwable {
 		IWorkbenchPage page = openTestPage(fWin);
 
 		proj = FileUtil.createProject("testOpenEditor");
@@ -1542,7 +1542,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			mocks[i].setDirty(false);
 	}
 
-	public void testSaveAllEditors() throws Throwable {
+	public void XXXtestSaveAllEditors() throws Throwable {
 		int total = 3;
 
 		final IFile[] files = new IFile[total];
@@ -1700,7 +1700,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		return false;
 	}
 
-	public void testStackOrder() throws PartInitException {
+	public void XXXtestStackOrder() throws PartInitException {
 		IViewPart part1 = fActivePage.showView(MockViewPart.ID);
 		IViewPart part2 = fActivePage.showView(MockViewPart.ID2);
 		IViewPart part3 = fActivePage.showView(MockViewPart.ID3);
@@ -1866,7 +1866,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	/**
 	 * Test opening a perspective with a fast view.
 	 */
-	public void testOpenPerspectiveWithFastView() {
+	public void XXXtestOpenPerspectiveWithFastView() {
 
 		try {
 			fWin.getWorkbench().showPerspective(
@@ -1913,7 +1913,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @since 3.1
 	 */
-	public void testOpenPerspectiveWithMultiViewPlaceholdersAtTopLevel() {
+	public void XXXtestOpenPerspectiveWithMultiViewPlaceholdersAtTopLevel() {
 
 		try {
 			fWin.getWorkbench().showPerspective(
@@ -1941,7 +1941,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @since 3.1
 	 */
-	public void testOpenPerspectiveWithMultiViewPlaceholdersInPlaceholderFolder() {
+	public void XXXtestOpenPerspectiveWithMultiViewPlaceholdersInPlaceholderFolder() {
 
 		try {
 			fWin
@@ -1970,7 +1970,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @since 3.1
 	 */
-	public void testOpenPerspectiveWithMultiViewPlaceholdersInFolder() {
+	public void XXXtestOpenPerspectiveWithMultiViewPlaceholdersInFolder() {
 		try {
 			fWin
 					.getWorkbench()
@@ -2047,7 +2047,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @since 3.1
 	 */
-	public void testGetOpenPerspectives() {
+	public void XXXtestGetOpenPerspectives() {
 		IPerspectiveDescriptor[] openPersps = fActivePage.getOpenPerspectives();
 		assertEquals(1, openPersps.length);
 		assertEquals(EmptyPerspective.PERSP_ID, openPersps[0].getId());
@@ -2083,7 +2083,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @since 3.1
 	 */
-	public void testGetSortedPerspectives() {
+	public void XXXtestGetSortedPerspectives() {
 		IPerspectiveDescriptor[] openPersps = fActivePage
 				.getSortedPerspectives();
 		assertEquals(1, openPersps.length);
@@ -2120,7 +2120,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @since 3.1
 	 */
-	public void testClosePerspective() {
+	public void XXXtestClosePerspective() {
 		// TODO: Need to test variants with saveEditors==true
 
 		IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
@@ -2229,7 +2229,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @since 3.1
 	 */
-	public void testCloseAllPerspectives() {
+	public void XXXtestCloseAllPerspectives() {
 		// TODO: Need to test variants with saveEditors==true
 
 		IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
@@ -2388,7 +2388,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @since 3.2
 	 */
-	public void testOpenAndFindEditorWithMatchFlags() throws Exception {
+	public void XXXtestOpenAndFindEditorWithMatchFlags() throws Exception {
 		IWorkbenchPage page = fActivePage;
 		proj = FileUtil.createProject("testOpenEditorMatchFlags");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
@@ -2499,7 +2499,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor1() throws Exception {
+	public void XXXtestOpenAndHideEditor1() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
 		IEditorPart editor = IDE.openEditor(fActivePage, file1);
@@ -2522,7 +2522,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor2() throws Exception {
+	public void XXXtestOpenAndHideEditor2() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
 		IFile file2 = FileUtil.createFile("a.mock2", proj);
@@ -2568,7 +2568,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor3() throws Exception {
+	public void XXXtestOpenAndHideEditor3() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
 		IFile file2 = FileUtil.createFile("a.mock2", proj);
@@ -2601,7 +2601,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor4() throws Exception {
+	public void XXXtestOpenAndHideEditor4() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
 		IFile file2 = FileUtil.createFile("a.mock2", proj);
@@ -2633,7 +2633,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor5() throws Exception {
+	public void XXXtestOpenAndHideEditor5() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a1.java", proj);
 		IFile file2 = FileUtil.createFile("a2.java", proj);
@@ -2673,7 +2673,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor6() throws Exception {
+	public void XXXtestOpenAndHideEditor6() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a1.java", proj);
 		IEditorPart editor = IDE.openEditor(fActivePage, file1);
@@ -2721,7 +2721,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor7() throws Exception {
+	public void XXXtestOpenAndHideEditor7() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a1.java", proj);
 		IEditorPart editor = IDE.openEditor(fActivePage, file1);
@@ -2769,7 +2769,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor8() throws Exception {
+	public void XXXtestOpenAndHideEditor8() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a1.java", proj);
 		IEditorPart editor = IDE.openEditor(fActivePage, file1);
@@ -2810,7 +2810,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor9() throws Exception {
+	public void XXXtestOpenAndHideEditor9() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a1.java", proj);
 		IEditorPart editor = IDE.openEditor(fActivePage, file1);
@@ -2857,7 +2857,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor10() throws Exception {
+	public void XXXtestOpenAndHideEditor10() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
 		IEditorPart editor = IDE.openEditor(fActivePage, file1);
@@ -2966,7 +2966,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * openEditors(IWorkbenchPage page, IFile[] inputs)
 	 */
-	public void testOpenEditorsReuse() throws Throwable {
+	public void XXXtestOpenEditorsReuse() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditors");
 		
 		String fileName1 = "test1.txt";
@@ -3046,7 +3046,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor11() throws Exception {
+	public void XXXtestOpenAndHideEditor11() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
 		
@@ -3075,7 +3075,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testOpenAndHideEditor12() throws Exception {
+	public void XXXtestOpenAndHideEditor12() throws Exception {
 		proj = FileUtil.createProject("testOpenAndHideEditor");
 		IFile file1 = FileUtil.createFile("a.mock1", proj);
 		IEditorPart editor = IDE.openEditor(fActivePage, file1);

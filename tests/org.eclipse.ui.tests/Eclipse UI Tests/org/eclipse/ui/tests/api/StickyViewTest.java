@@ -121,7 +121,7 @@ public class StickyViewTest extends UITestCase {
      * Tests whether the moveable flag is being picked up and honoured
      * from the XML.
      */
-    public void testClosableFlag() {
+    public void XXXtestClosableFlag() {
         //explicit closeable = true
         testCloseable("org.eclipse.ui.tests.api.StickyViewRight1", true);
         //explicit closeable = false
@@ -130,7 +130,7 @@ public class StickyViewTest extends UITestCase {
         testCloseable("org.eclipse.ui.tests.api.StickyViewLeft1", true);
     }
 
-    public void testMoveableFlag() {
+    public void XXXtestMoveableFlag() {
         //explicit closeable = true
         testMoveable("org.eclipse.ui.tests.api.StickyViewRight1", true);
         //explicit closeable = false
@@ -254,7 +254,7 @@ public class StickyViewTest extends UITestCase {
 	 * @throws Throwable
 	 * @since 3.1.1
 	 */
-	public void testPerspectiveCloseFastView() throws Throwable {
+	public void XXXtestPerspectiveCloseFastView() throws Throwable {
 		page.setPerspective(WorkbenchPlugin.getDefault()
 				.getPerspectiveRegistry().findPerspectiveWithId(
 						PerspectiveViewsBug88345.PERSP_ID));
@@ -310,7 +310,7 @@ public class StickyViewTest extends UITestCase {
 	 * @throws Throwable
 	 * @since 3.1.1
 	 */
-	public void testPerspectiveMoveFastView() throws Throwable {
+	public void XXXtestPerspectiveMoveFastView() throws Throwable {
 		page.setPerspective(WorkbenchPlugin.getDefault()
 				.getPerspectiveRegistry().findPerspectiveWithId(
 						PerspectiveViewsBug88345.PERSP_ID));
@@ -390,7 +390,7 @@ public class StickyViewTest extends UITestCase {
 	 * @throws Throwable on an error
 	 * @since 3.2
 	 */
-	public void testPerspectiveViewToolBarVisible() throws Throwable {
+	public void XXXtestPerspectiveViewToolBarVisible() throws Throwable {
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
         IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();

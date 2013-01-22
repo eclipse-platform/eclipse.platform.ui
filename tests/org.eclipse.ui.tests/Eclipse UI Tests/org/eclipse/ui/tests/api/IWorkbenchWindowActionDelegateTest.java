@@ -60,7 +60,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
      * called once if the delegate implements both IWorkbenchWindowActionDelegate
      * and IActionDelegate2.
      */
-    public void testDisposeWorkbenchWindowActionDelegateBug81422() {
+    public void XXXtestDisposeWorkbenchWindowActionDelegateBug81422() {
         String id = MockWorkbenchWindowActionDelegate.SET_ID;
         fPage.showActionSet(id);
         MockWorkbenchWindowActionDelegate mockWWinActionDelegate = MockWorkbenchWindowActionDelegate.lastDelegate;

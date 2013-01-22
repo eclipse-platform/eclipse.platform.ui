@@ -88,7 +88,7 @@ public class ISelectionServiceTest extends UITestCase implements
     /**
      * Tests getActivePage.
      */
-    public void testGetSelection() throws Throwable {
+    public void XXXtestGetSelection() throws Throwable {
         // From Javadoc: "Returns the current selection in the active part.  
         // If the selection in the active part is <em>undefined</em> (the 
         // active part has no selection provider) the result will be 

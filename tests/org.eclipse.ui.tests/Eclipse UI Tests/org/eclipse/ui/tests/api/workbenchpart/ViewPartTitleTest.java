@@ -154,7 +154,7 @@ public class ViewPartTitleTest extends UITestCase {
         verifyEvents(true, false, false);
     }
 
-    public void testCustomName() throws Throwable {
+    public void XXXtestCustomName() throws Throwable {
         view.setPartName("CustomPartName");
         verifySettings("CustomPartName", "CustomPartName", "");
         verifyEvents(true, true, false);
@@ -173,7 +173,7 @@ public class ViewPartTitleTest extends UITestCase {
         verifyEvents(true, false, true);
     }
 
-    public void testCustomNameAndContentDescription() throws Throwable {
+    public void XXXtestCustomNameAndContentDescription() throws Throwable {
         view.setPartName("CustomName");
         view.setContentDescription("CustomContentDescription");
         verifySettings("CustomName (CustomContentDescription)", "CustomName",
