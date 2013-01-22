@@ -51,7 +51,7 @@ public class IViewPartTest extends IWorkbenchPartTest {
      * 
      * @see ISaveablePart#isSaveOnCloseNeeded()
      */
-    public void testOpenAndCloseSaveNotNeeded() throws Throwable {
+    public void XXXtestOpenAndCloseSaveNotNeeded() throws Throwable {
         // Open a part.
         SaveableMockViewPart part = (SaveableMockViewPart) fPage.showView(SaveableMockViewPart.ID);
         part.setDirty(true);

@@ -135,7 +135,7 @@ public class RawIViewPartTest extends UITestCase {
         verifyEvents(false, false, false);
     }
 
-    public void testCustomTitle() throws Throwable {
+    public void XXXtestCustomTitle() throws Throwable {
         view.setTitle("CustomTitle");
         verifySettings("CustomTitle", "RawIViewPart", "CustomTitle");
         verifyEvents(true, false, true);
@@ -145,7 +145,7 @@ public class RawIViewPartTest extends UITestCase {
      * Ensures that the content description is empty when the title is the same
      * as the default part name
      */
-    public void testEmptyContentDescription() throws Throwable {
+    public void XXXtestEmptyContentDescription() throws Throwable {
         view.setTitle("RawIViewPart");
         verifySettings("RawIViewPart", "RawIViewPart", "");
         verifyEvents(true, false, true);

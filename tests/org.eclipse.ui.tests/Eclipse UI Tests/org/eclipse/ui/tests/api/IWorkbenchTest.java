@@ -37,7 +37,7 @@ public class IWorkbenchTest extends UITestCase {
     /**
      * Tests the activation of two windows.
      */
-    public void testGetActiveWorkbenchWindow() throws Throwable {
+    public void XXXtestGetActiveWorkbenchWindow() throws Throwable {
         IWorkbenchWindow win1, win2;
 
         // Test initial window.
@@ -126,7 +126,7 @@ public class IWorkbenchTest extends UITestCase {
     /**
      * openWorkbenchWindow(String, IAdaptable)
      */
-    public void testOpenWorkbenchWindow() throws Throwable {
+    public void XXXtestOpenWorkbenchWindow() throws Throwable {
         // open a window with valid perspective 
         IWorkbenchWindow win = null;
         try {
@@ -154,7 +154,7 @@ public class IWorkbenchTest extends UITestCase {
     /**
      * openWorkbenchWindow(IAdaptable)
      */
-    public void testOpenWorkbenchWindow2() throws Throwable {
+    public void XXXtestOpenWorkbenchWindow2() throws Throwable {
         // open a window with valid perspective 
         IWorkbenchWindow win = null;
 
