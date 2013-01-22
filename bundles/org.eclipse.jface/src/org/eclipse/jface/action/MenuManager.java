@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,10 +215,10 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     }
 
     /**
-     * Disposes of this menu manager and frees all allocated SWT resources.
-     * Notifies all contribution items of the dispose. Note that this method does
-     * not clean up references between this menu manager and its associated
-     * contribution items. Use <code>removeAll</code> for that purpose.
+     * Disposes of this menu manager and frees all allocated SWT resources. Notifies all
+     * contribution items of the dispose. Note that this method does not clean up references between
+     * this menu manager and its associated contribution items. Use {@link #removeAll()} for that
+     * purpose, but note that will not dispose the items.
      */
     public void dispose() {
         if (menuExist()) {

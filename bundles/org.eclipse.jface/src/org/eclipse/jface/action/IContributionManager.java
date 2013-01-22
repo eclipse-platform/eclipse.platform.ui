@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -212,6 +212,9 @@ public interface IContributionManager {
 
     /**
      * Removes all contribution items from this manager.
+     * <p>
+     * <strong>Note:</strong> The items will not get disposed.
+     * </p>
      */
     public void removeAll();
 
