@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2012, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.io.PrintStream;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+
+import org.eclipse.test.OrderedTestSuite;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -39,7 +41,7 @@ public class ScreenshotTest extends TestCase {
 	}
 
 	public static Test suite() {
-		return new BytecodeOrderedTestSuite(ScreenshotTest.class);
+		return new OrderedTestSuite(ScreenshotTest.class);
 	}
 
 

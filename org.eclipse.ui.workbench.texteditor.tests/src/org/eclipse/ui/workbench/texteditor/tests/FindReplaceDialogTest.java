@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ import java.util.ResourceBundle;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+
+import org.eclipse.test.OrderedTestSuite;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -47,7 +49,7 @@ public class FindReplaceDialogTest extends TestCase {
 	}
 
 	public static Test suite() {
-		return new BytecodeOrderedTestSuite(FindReplaceDialogTest.class);
+		return new OrderedTestSuite(FindReplaceDialogTest.class);
 	}
 
 	private void runEventQueue() {
