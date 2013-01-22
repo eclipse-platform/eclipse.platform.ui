@@ -661,14 +661,15 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		command.setElementId(commandId);
 		application.getCommands().add(command);
 		{
-			// Create Quit handler for command
-			MHandler quitHandler = MCommandsFactory.INSTANCE.createHandler();
-			quitHandler.setCommand(command);
+			// Create handler for command
+			MHandler handler = MCommandsFactory.INSTANCE.createHandler();
+			handler.setCommand(command);
 			String elementName = fragment.getElementName();
-			quitHandler.setContributionURI("bundleclass://" + projectName + "/"
+			handler.setContributionURI("bundleclass://" + projectName + "/"
 					+ (elementName.equals("") ? "" : elementName + ".")
 					+ "handlers." + className);
-			application.getHandlers().add(quitHandler);
+			handler.setElementId(projectName + ".handler." + name);
+			application.getHandlers().add(handler);
 
 			MKeyBinding binding = MCommandsFactory.INSTANCE.createKeyBinding();
 			binding.setKeySequence(keyBinding);
