@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,9 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 /**
  * A <code>NewWizardMenu</code> augments <code>BaseNewWizardMenu</code> with IDE-specific
  * actions: New Project... (always shown) and New Example... (shown only if there are example wizards installed).
+ * <p>
+ * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
+ * </p>
  */
 public class NewWizardMenu extends BaseNewWizardMenu {
 
@@ -42,6 +45,9 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 
     /**
      * Creates a new wizard shortcut menu for the IDE.
+     * <p>
+     * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
+     * </p>
      * 
      * @param window
      *            the window containing the menu
@@ -53,6 +59,9 @@ public class NewWizardMenu extends BaseNewWizardMenu {
     
     /**
      * Creates a new wizard shortcut menu for the IDE.
+     * <p>
+     * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
+     * </p>
      * 
      * @param window
      *            the window containing the menu
@@ -74,6 +83,9 @@ public class NewWizardMenu extends BaseNewWizardMenu {
      * to suit.  In this case clients are expected to call <code>deregister</code> 
      * when the menu is no longer needed.  This will unhook any perspective
      * listeners.
+     * </p>
+     * <p>
+     * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
      * </p>
      *
      * @param innerMgr the location for the shortcut menu contents

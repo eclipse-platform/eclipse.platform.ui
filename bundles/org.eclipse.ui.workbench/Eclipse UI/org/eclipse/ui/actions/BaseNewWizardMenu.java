@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,9 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * A <code>BaseNewWizardMenu</code> is used to populate a menu manager with
  * New Wizard actions for the current perspective's new wizard shortcuts,
  * including an Other... action to open the new wizard dialog.
+ * <p>
+ * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
+ * </p>
  * 
  * @since 3.1
  */
@@ -98,6 +101,9 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 
     /**
      * Creates a new wizard shortcut menu for the IDE.
+     * <p>
+     * <strong>Note:</strong> Clients must dispose this menu when it is no longer required.
+     * </p>
      * 
      * @param window
      *            the window containing the menu
