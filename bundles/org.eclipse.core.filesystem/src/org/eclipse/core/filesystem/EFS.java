@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -399,7 +399,14 @@ public class EFS {
 	 */
 	public static final int ERROR_READ_ONLY = 279;
 
-	/** Status code constant (value 566) indicating an error internal has occurred.
+	/** Status code constant (value 280) indicating that the 
+	 * file system failed to authenticate the request. This can be caused
+	 * by missing or incorrect authentication information being supplied.
+	 * Severity: error. Category: file system.
+	 */
+	public static final int ERROR_AUTH_FAILED = 280;
+
+	/** Status code constant (value 566) indicating an internal error has occurred.
 	 * Severity: error. Category: internal.
 	 */
 	public static final int ERROR_INTERNAL = 566;
