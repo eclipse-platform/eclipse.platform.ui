@@ -1360,13 +1360,34 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	}
 
 	protected void handleInsert(IModelDelta delta) {
-		// TODO: filters
         IModelDelta parentDelta = delta.getParentDelta();
         if (parentDelta == null) {
             DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Invalid viewer update: " + delta + ", in " + getPresentationContext().getId(), null )); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
-		getViewer().insert(getViewerTreePath(parentDelta), delta.getElement(), delta.getIndex());
+
+		TreePath parentPath = getViewerTreePath(delta.getParentDelta());
+		Object element = delta.getElement();
+		int modelIndex = delta.getIndex();
+		if (modelIndex >= 0) {
+			int viewIndex = modelToViewIndex(parentPath, modelIndex);
+			if (viewIndex >= 0) {
+				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+					DebugUIPlugin.trace("handleInsert(" + parentPath.getLastSegment() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + element); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				}
+				getViewer().insert(parentPath, element, viewIndex);
+			} else {
+				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+					DebugUIPlugin.trace("[filtered] handleInsert(" + delta.getElement() + ") > modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				// Element is filtered - do not insert
+			}
+		} else {
+			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+				DebugUIPlugin.trace("handleInsert(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		    doUpdateChildCount(getViewerTreePath(delta.getParentDelta()));
+		}
 	}
 
 	protected void handleRemove(IModelDelta delta) {
