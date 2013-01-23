@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.Parameterization;
@@ -160,6 +161,26 @@ public class MakeHandlersGo extends AbstractHandler implements IElementUpdater {
 			return h == null ? false : h.isHandled();
 		}
 		return handler != null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
+	 */
+	@Override
+	public void setEnabled(Object evaluationContext) {
+		EHandlerService service = (EHandlerService) workbench.getService(EHandlerService.class);
+		if (service == null) {
+			return;
+		}
+		IEclipseContext ctx = (IEclipseContext) workbench.getService(IEclipseContext.class);
+		Object handler = HandlerServiceImpl.lookUpHandler(ctx, commandId);
+		if (handler instanceof E4HandlerProxy) {
+			Object handler2= ((E4HandlerProxy) handler).getHandler();
+			if (handler2 instanceof IHandler2) {
+				((IHandler2)handler2).setEnabled(evaluationContext);
+			}
+		}
 	}
 
 	/*
