@@ -76,12 +76,12 @@
   	<property name="session-data-folder"
   	 	      value="${eclipse-home}/session_data_folder"/>
   	<delete dir="${session-data-folder}" quiet="true"/>    
-  	<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+  	<!--ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${session-data-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname"
                 value="org.eclipse.ui.tests.session.SessionTests"/>
-    </ant>
+    </ant-->
     
   </target>
 
