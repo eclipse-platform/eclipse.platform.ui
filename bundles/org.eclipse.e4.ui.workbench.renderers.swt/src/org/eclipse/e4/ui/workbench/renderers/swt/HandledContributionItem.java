@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Joseph Carroll <jdsalingerjr@gmail.com> - Bug 385414 Contributing wizards 
- *     to toolbar always displays icon and text
+ *     Joseph Carroll <jdsalingerjr@gmail.com> - Bug 385414 Contributing wizards to toolbar always displays icon and text
+ *     Snjezana Peco <snjezana.peco@redhat.com> - Memory leaks in Juno when opening and closing XML Editor - http://bugs.eclipse.org/397909
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -645,6 +645,10 @@ public class HandledContributionItem extends ContributionItem {
 
 	private void handleWidgetDispose(Event event) {
 		if (event.widget == widget) {
+			if (unreferenceRunnable != null) {
+				unreferenceRunnable.run();
+				unreferenceRunnable = null;
+			}
 			unhookCheckListener();
 			toolItemUpdater.removeItem(this);
 			if (infoContext != null) {
