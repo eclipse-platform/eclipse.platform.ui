@@ -43,7 +43,7 @@ public class IWorkbenchPartTestableTests extends UITestCase {
 	 * Iterate over all parts to ensure that they all return a part testable
 	 * that contains a real composite.
 	 */
-	public void testGetComposite() throws CoreException {
+	public void XXXtestGetComposite() throws CoreException {
 		IWorkbenchPage page = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID)
 				.getActivePage();
 		assertNotNull(page);
