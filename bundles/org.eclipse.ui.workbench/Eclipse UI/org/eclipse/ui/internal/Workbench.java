@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.IEventLoopAdvisor;
+import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
@@ -2568,10 +2569,14 @@ UIEvents.Context.TOPIC_CONTEXT,
 			if (initOK[0] && runEventLoop) {
 				workbenchService = WorkbenchPlugin.getDefault().getBundleContext().registerService(
 						IWorkbench.class.getName(), this, null);
-				// start eager plug-ins
-				startPlugins();
-				addStartupRegistryListener();
-
+				Runnable earlyStartup = new Runnable() {
+					public void run() {
+						// start eager plug-ins
+						startPlugins();
+						addStartupRegistryListener();
+					}
+				};
+				e4Context.set(PartRenderingEngine.EARLY_STARTUP_HOOK, earlyStartup);
 				// WWinPluginAction.refreshActionList();
 
 				display.asyncExec(new Runnable() {

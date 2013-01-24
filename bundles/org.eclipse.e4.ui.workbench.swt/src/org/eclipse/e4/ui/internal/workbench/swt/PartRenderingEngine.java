@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class PartRenderingEngine implements IPresentationEngine {
+	public static final String EARLY_STARTUP_HOOK = "runEarlyStartup";
+
 	public static final String engineURI = "bundleclass://org.eclipse.e4.ui.workbench.swt/"
 			+ "org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine";
 
@@ -1011,6 +1013,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 					}
 				}
 
+				// allow any early startup extensions to run
+				Runnable earlyStartup = (Runnable) runContext
+						.get(EARLY_STARTUP_HOOK);
+				if (earlyStartup != null) {
+					earlyStartup.run();
+				}
+
 				TestableObject testableObject = (TestableObject) runContext
 						.get(TestableObject.class.getName());
 				if (testableObject instanceof E4Testable) {
@@ -1042,8 +1051,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 					};
 				}
 				// Spin the event loop until someone disposes the display
-				while (((testShell != null && !testShell.isDisposed()) || (theApp != null
-						&& someAreVisible(theApp.getChildren()))) && !display.isDisposed()) {
+				while (((testShell != null && !testShell.isDisposed()) || (theApp != null && someAreVisible(theApp
+						.getChildren()))) && !display.isDisposed()) {
 					try {
 						if (!display.readAndDispatch()) {
 							runContext.processWaiting();
