@@ -118,6 +118,7 @@ public class HandledContributionItem extends ContributionItem {
 
 		List<HandledContributionItem> itemsToCheck = new ArrayList<HandledContributionItem>();
 		List<Runnable> windowRunnables = new ArrayList<Runnable>();
+		final List<HandledContributionItem> orphanedToolItems = new ArrayList<HandledContributionItem>();
 
 		public void addWindowRunnable(Runnable r) {
 			windowRunnables.add(r);
@@ -142,8 +143,18 @@ public class HandledContributionItem extends ContributionItem {
 		}
 
 		public void run() {
-			for (HandledContributionItem hci : itemsToCheck) {
-				hci.updateItemEnablement();
+
+			for (final HandledContributionItem hci : itemsToCheck) {
+				// HACK. Remove orphaned entries. See bug 388516.
+				if (hci.model != null && hci.model.getParent() != null) {
+					hci.updateItemEnablement();
+				} else {
+					orphanedToolItems.add(hci);
+				}
+			}
+			if (!orphanedToolItems.isEmpty()) {
+				itemsToCheck.removeAll(orphanedToolItems);
+				orphanedToolItems.clear();
 			}
 
 			Runnable[] array = new Runnable[windowRunnables.size()];
