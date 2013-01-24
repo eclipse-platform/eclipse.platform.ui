@@ -21,6 +21,6 @@
   </parent>
   <groupId>eclipse.platform.ui</groupId>
   <artifactId>org.eclipse.e4.ui.css.core</artifactId>
-  <version>0.10.2-SNAPSHOT</version>
+  <version>0.10.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
