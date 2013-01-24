@@ -118,7 +118,7 @@ public class SearchField {
 			}
 
 			private void closeDropDown() {
-				if (shell.isDisposed() || text.isDisposed() || !shell.isVisible())
+				if (shell == null || shell.isDisposed() || text.isDisposed() || !shell.isVisible())
 					return;
 
 				quickAccessContents.doClose();
