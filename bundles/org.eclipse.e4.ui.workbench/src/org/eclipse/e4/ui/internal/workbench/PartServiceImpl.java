@@ -322,7 +322,7 @@ public class PartServiceImpl implements EPartService {
 					activeParent = activePH.getParent();
 				}
 			}
-			if (parent == activeParent) {
+			if (parent == activeParent && part != activePart) {
 				activate(part);
 				return;
 			}
