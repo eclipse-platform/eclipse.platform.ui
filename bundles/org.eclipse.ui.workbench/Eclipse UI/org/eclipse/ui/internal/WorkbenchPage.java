@@ -2992,6 +2992,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorId));
 		}
 
+		setEditorAreaVisible(true);
+
 		IEditorReference[] editorReferences = findEditors(input, editorId, matchFlags);
 		if (editorReferences.length != 0) {
 			IEditorPart editor = editorReferences[0].getEditor(true);
@@ -3502,6 +3504,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				// make sure it's been rendered if it hasn't been
 				find.setToBeRendered(true);
 			}
+
+			// If the EA is minimized, restore it...
+			if (showEditorArea) {
+				find.getTags().remove(IPresentationEngine.MINIMIZED);
+			}
+
 			find.setVisible(showEditorArea);
 		}
 	}
