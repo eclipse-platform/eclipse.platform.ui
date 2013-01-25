@@ -52,6 +52,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.ElementContainer;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
@@ -208,6 +209,48 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	};
 
+	private EventHandler childUpdater = new EventHandler() {
+		public void handleEvent(Event event) {
+			// Ensure that this event is for a MMenuItem
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenu))
+				return;
+
+			Object menuModel = event.getProperty(UIEvents.EventTags.ELEMENT);
+
+			if (UIEvents.isADD(event)) {
+				processContents((MElementContainer<MUIElement>) menuModel);
+			} else if (UIEvents.isREMOVE(event)) {
+				MenuManager parentManager = getManager((MMenu) menuModel);
+				if (parentManager == null) {
+					return;
+				}
+				Object oldValue = event
+						.getProperty(UIEvents.EventTags.OLD_VALUE);
+				if (oldValue instanceof MMenu) {
+					disposeMenuManager(getManager((MMenu) oldValue),
+							parentManager, (MMenu) oldValue);
+				} else if (oldValue instanceof MMenuElement) {
+					disposeContributionItem(
+							getContribution((MMenuElement) oldValue),
+							parentManager, (MMenuElement) oldValue);
+					parentManager.update(false);
+				} else if (oldValue instanceof List) {
+					for (Object object : (List) oldValue) {
+						if (object instanceof MMenu) {
+							disposeMenuManager(getManager((MMenu) object),
+									parentManager, (MMenu) object);
+						} else if (object instanceof MMenuElement) {
+							disposeContributionItem(
+									getContribution((MMenuElement) object),
+									parentManager, (MMenuElement) object);
+						}
+					}
+					parentManager.update(false);
+				}
+			}
+		}
+	};
+
 	private MenuManagerRendererFilter rendererFilter;
 
 	@PostConstruct
@@ -217,6 +260,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		eventBroker.subscribe(UIEvents.Item.TOPIC_ENABLED, enabledUpdater);
 		eventBroker
 				.subscribe(UIEvents.UIElement.TOPIC_ALL, toBeRenderedUpdater);
+		eventBroker.subscribe(ElementContainer.TOPIC_CHILDREN, childUpdater);
 
 		context.set(MenuManagerRenderer.class, this);
 		Display display = context.get(Display.class);
@@ -239,6 +283,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(selectionUpdater);
 		eventBroker.unsubscribe(enabledUpdater);
 		eventBroker.unsubscribe(toBeRenderedUpdater);
+		eventBroker.unsubscribe(childUpdater);
 
 		ContextInjectionFactory.uninject(MenuManagerEventHelper.showHelper,
 				context);
@@ -535,6 +580,32 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			}
 		}
 		parentManager.update(false);
+	}
+
+	// Disposes the menuManager and its children
+	private void disposeMenuManager(MenuManager menuManager,
+			MenuManager parentManager, MMenu menuModel) {
+		// Cleanup all contributions in menuManager since the parent is being
+		// disposed.
+		for (IContributionItem contributionItem : menuManager.getItems()) {
+			if (contributionItem instanceof MenuManager) {
+				disposeMenuManager((MenuManager) contributionItem, menuManager,
+						getMenuModel((MenuManager) contributionItem));
+			} else {
+				disposeContributionItem(contributionItem, parentManager,
+						getMenuElement(contributionItem));
+			}
+		}
+		clearModelToManager(menuModel, menuManager);
+		parentManager.remove(menuManager);
+		menuManager.dispose();
+	}
+
+	private void disposeContributionItem(IContributionItem contributionItem,
+			MenuManager parentManager, MMenuElement menuElement) {
+		clearModelToContribution(menuElement, contributionItem);
+		parentManager.remove(contributionItem);
+		contributionItem.dispose();
 	}
 
 	private void addToManager(MenuManager parentManager, MMenuElement model,
