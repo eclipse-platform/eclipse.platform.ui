@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,16 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -32,12 +42,6 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Policy;
 
 /**
  * A dialog to display one or more errors to the user, as contained in an
@@ -484,7 +488,11 @@ public class ErrorDialog extends IconAndMessageDialog {
 			}
 			String message = buildingStatus.getMessage();
 			sb.append(message);
-			listToPopulate.add(sb.toString());
+			java.util.List lines = readLines(sb.toString());
+			for (Iterator iterator = lines.iterator(); iterator.hasNext();) {
+				String line = (String) iterator.next();
+				listToPopulate.add(line);
+			}
 			incrementNesting = true;
 		}
 
@@ -526,6 +534,21 @@ public class ErrorDialog extends IconAndMessageDialog {
 		}
 	}
 	
+	private static java.util.List readLines(final String s) {
+		java.util.List lines = new ArrayList();
+		BufferedReader reader = new BufferedReader(new StringReader(s));
+		String line;
+		try {
+			while ((line = reader.readLine()) != null) {
+				if (line.length() > 0)
+					lines.add(line);
+			}
+		} catch (IOException e) {
+			// shouldn't get this
+		}
+		return lines;
+	}
+
 	/**
 	 * This method checks if {@link #populateList(List, IStatus, int, boolean)}
 	 * will add anything to the list.
