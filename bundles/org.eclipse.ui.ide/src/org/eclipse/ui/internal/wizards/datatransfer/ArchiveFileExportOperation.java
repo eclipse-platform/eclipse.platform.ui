@@ -186,7 +186,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
      */
     protected void exportResource(IResource exportResource, int leadupDepth)
             throws InterruptedException {
-        if (!exportResource.isAccessible()) {
+        if (!exportResource.isAccessible() || exportResource.isLinked()) {
 			return;
 		}
 
