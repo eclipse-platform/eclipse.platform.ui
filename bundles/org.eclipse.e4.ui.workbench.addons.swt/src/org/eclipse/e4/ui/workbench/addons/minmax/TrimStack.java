@@ -311,7 +311,8 @@ public class TrimStack {
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
 			// Open if shared area
-			if (getLeafPart(minimizedElement) == changedElement) {
+			if (getLeafPart(minimizedElement) == changedElement
+					&& !(minimizedElement instanceof MPerspectiveStack)) {
 				showStack(true);
 				return;
 			}
