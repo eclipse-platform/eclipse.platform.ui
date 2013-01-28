@@ -74,7 +74,7 @@ public class ListViewerTest extends StructuredViewerTest {
     public void testRevealBug69076() {
     	// TODO remove the Mac OS check when SWT has fixed the bug in List.java
     	// see bug 116105
-    	if (Util.isCarbon()) {
+    	if (Util.isCarbon() || Util.isLinux()) {
     		return;
     	}
 		fViewer = null;
