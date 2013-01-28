@@ -116,7 +116,7 @@ public class SaveableCompareEditorInputTest extends TeamTest {
 	private class TestLogListener implements ILogListener {
 		public void logging(IStatus status, String plugin) {
 			if (status.getSeverity() == IStatus.ERROR)
-				fail(status.getMessage());
+				fail(status.toString());
 		}
 	}
 
