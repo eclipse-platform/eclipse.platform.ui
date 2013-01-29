@@ -27,6 +27,7 @@ import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.actions.CommandAction;
@@ -338,7 +339,9 @@ public final class KeyBindingService implements INestableKeyBindingService {
 
 			IHandlerService hs = (IHandlerService) workbenchPartSite
 					.getService(IHandlerService.class);
-			actionToProxy.put(action, hs.activateHandler(commandId, new ActionHandler(action)));
+			actionToProxy.put(action, hs.activateHandler(commandId, new ActionHandler(action),
+					new LegacyHandlerSubmissionExpression(null, workbenchPartSite.getShell(),
+							workbenchPartSite)));
 
 		}
     }
