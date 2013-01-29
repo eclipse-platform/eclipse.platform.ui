@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christian Walther (Indel AG) - Bug 399458: Fix layout overlap in line-wrapped trim bar
+ *     Christian Walther (Indel AG) - Bug 389012: Fix division by zero in TrimBarLayout
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -233,6 +234,8 @@ public class TrimBarLayout extends Layout {
 	private void tileLine(TrimLine curLine, Rectangle bounds) {
 		int curX = bounds.x;
 		int curY = bounds.y;
+		int remainingExtraSpace = curLine.extraSpace;
+		int remainingSpacerCount = curLine.spacerCount;
 		for (Control ctrl : curLine.ctrls) {
 			if (ctrl.isDisposed()) {
 				continue;
@@ -242,7 +245,7 @@ public class TrimBarLayout extends Layout {
 
 			// If its a 'spacer' then add any available 'extra' space to it
 			if (isSpacer(ctrl)) {
-				int extra = curLine.extraSpace / curLine.spacerCount--;
+				int extra = remainingExtraSpace / remainingSpacerCount;
 				if (horizontal) {
 					ctrlSize.x += extra;
 					// leave out 4 pixels at the bottom to avoid overlapping the
@@ -253,8 +256,8 @@ public class TrimBarLayout extends Layout {
 					ctrl.setBounds(curX, curY, curLine.minor, extra);
 				}
 				zeroSize = false;
-				curLine.extraSpace -= extra;
-				curLine.spacerCount--;
+				remainingExtraSpace -= extra;
+				remainingSpacerCount--;
 			}
 
 			if (horizontal) {
