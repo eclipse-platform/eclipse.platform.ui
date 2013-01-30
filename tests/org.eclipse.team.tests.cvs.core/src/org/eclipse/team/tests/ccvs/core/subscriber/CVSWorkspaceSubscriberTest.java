@@ -31,6 +31,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.util.Util;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
@@ -1300,6 +1301,9 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	}
 	
 	public void testMarkAsMergedOnBinaryFile() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
+		if(Util.isMac()){
+			return; //TODO Disable test for Mac because of intermittent test failures, see bug 399509
+		}
 		// Create a project and checkout a copy
 		IProject project = createProject(new String[] { "file1.txt"});
 		IProject copy = checkoutCopy(project, "-copy");
