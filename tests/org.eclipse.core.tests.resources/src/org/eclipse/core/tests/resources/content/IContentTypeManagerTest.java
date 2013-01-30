@@ -13,7 +13,8 @@ package org.eclipse.core.tests.resources.content;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
-import junit.framework.*;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.TestRegistryChangeListener;
+import org.eclipse.test.OrderedTestSuite;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -78,8 +80,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	private final static String XML_ROOT_ELEMENT_EMPTY_NS = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE Joker SYSTEM \"org.eclipse.core.resources.tests.some.dtd3\"><rootElement>";
 
 	public static Test suite() {
-		//		return new IContentTypeManagerTest("testRootElementAndDTDDescriber");
-		return new TestSuite(IContentTypeManagerTest.class);
+		return new OrderedTestSuite(IContentTypeManagerTest.class);
 	}
 
 	public IContentTypeManagerTest(String name) {
@@ -1119,10 +1120,6 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	 * Regression test for bug 68894  
 	 */
 	public void testPreferences() throws CoreException, BackingStoreException {
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=370649
-		if (Platform.getOS().equals(Platform.OS_MACOSX))
-			return;
-
 		ContentTypeManager manager = ContentTypeManager.getInstance();
 		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
 		Preferences textPrefs = InstanceScope.INSTANCE.getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE).node(text.getId());

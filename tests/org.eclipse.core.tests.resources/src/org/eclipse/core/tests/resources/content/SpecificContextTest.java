@@ -11,13 +11,13 @@
 package org.eclipse.core.tests.resources.content;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.test.OrderedTestSuite;
 
 /**
  * Tests content type matcher with a non-default context for user preferences.
@@ -49,7 +49,7 @@ public class SpecificContextTest extends ContentTypeTest {
 	}
 
 	public static Test suite() {
-		return new TestSuite(SpecificContextTest.class);
+		return new OrderedTestSuite(SpecificContextTest.class);
 	}
 
 	public SpecificContextTest(String name) {
@@ -88,10 +88,6 @@ public class SpecificContextTest extends ContentTypeTest {
 	}
 
 	public void testIsAssociatedWith() {
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=370649
-		if (Platform.getOS().equals(Platform.OS_MACOSX))
-			return;
-
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		final SingleNodeScope scope = new SingleNodeScope();
 		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
