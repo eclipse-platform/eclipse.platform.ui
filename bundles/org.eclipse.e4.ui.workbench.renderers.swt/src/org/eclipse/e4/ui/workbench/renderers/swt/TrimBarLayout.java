@@ -241,19 +241,21 @@ public class TrimBarLayout extends Layout {
 				continue;
 			}
 			Point ctrlSize = curLine.sizeMap.get(ctrl);
-			boolean zeroSize = ctrlSize.x == 0 && ctrlSize.y == 0;
+			int ctrlWidth = ctrlSize.x;
+			int ctrlHeight = ctrlSize.y;
+			boolean zeroSize = ctrlWidth == 0 && ctrlHeight == 0;
 
 			// If its a 'spacer' then add any available 'extra' space to it
 			if (isSpacer(ctrl)) {
 				int extra = remainingExtraSpace / remainingSpacerCount;
 				if (horizontal) {
-					ctrlSize.x += extra;
+					ctrlWidth += extra;
 					// leave out 4 pixels at the bottom to avoid overlapping the
 					// 1px bottom border of the toolbar (bug 389941)
-					ctrl.setBounds(curX, curY, ctrlSize.x, curLine.minor - 4);
+					ctrl.setBounds(curX, curY, ctrlWidth, curLine.minor - 4);
 				} else {
-					ctrlSize.y += extra;
-					ctrl.setBounds(curX, curY, curLine.minor, extra);
+					ctrlHeight += extra;
+					ctrl.setBounds(curX, curY, curLine.minor, ctrlHeight);
 				}
 				zeroSize = false;
 				remainingExtraSpace -= extra;
@@ -261,19 +263,19 @@ public class TrimBarLayout extends Layout {
 			}
 
 			if (horizontal) {
-				int offset = (curLine.minor - ctrlSize.y) / 2;
+				int offset = (curLine.minor - ctrlHeight) / 2;
 				if (!isSpacer(ctrl)) {
 					if (!zeroSize)
-						ctrl.setBounds(curX, curY + offset, ctrlSize.x,
-								ctrlSize.y);
+						ctrl.setBounds(curX, curY + offset, ctrlWidth,
+								ctrlHeight);
 					else
 						ctrl.setBounds(curX, curY, 0, 0);
 				}
-				curX += ctrlSize.x;
+				curX += ctrlWidth;
 			} else {
-				int offset = (curLine.minor - ctrlSize.x) / 2;
-				ctrl.setBounds(curX + offset, curY, ctrlSize.x, ctrlSize.y);
-				curY += ctrlSize.y;
+				int offset = (curLine.minor - ctrlWidth) / 2;
+				ctrl.setBounds(curX + offset, curY, ctrlWidth, ctrlHeight);
+				curY += ctrlHeight;
 			}
 		}
 	}
