@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -234,9 +234,9 @@ public class InternalTreeModelViewer extends TreeViewer
 		}
 		
 		/**
-		 * Disposes client's column editor and cell editors
+		 * Clears client's column editor and cell editors
 		 */
-		protected void dispose() {
+		protected void clear() {
 			fModifier = null;
 			disposeCellEditors();
 			setCellEditors(null);
@@ -404,7 +404,7 @@ public class InternalTreeModelViewer extends TreeViewer
 		if (fColumnPresentation != null) {
 			fColumnPresentation.dispose();
 		}
-		fCellModifier.dispose();
+		fCellModifier.clear();
 		
 		super.handleDispose(event);
 	}
@@ -499,6 +499,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
 	protected void inputChanged(Object input, Object oldInput) {
+	    fCellModifier.clear();
         // Clear items map now that ITreeModelContentProvider.inputChanged() was already called.
         // Bug 326917
         super.unmapAllElements();
