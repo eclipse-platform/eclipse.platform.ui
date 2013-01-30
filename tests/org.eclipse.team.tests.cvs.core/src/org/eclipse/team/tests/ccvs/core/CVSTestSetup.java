@@ -32,6 +32,7 @@ public class CVSTestSetup extends TestSetup {
     public static final boolean RECORD_PROTOCOL_TRAFFIC;
     public static final boolean ENSURE_SEQUENTIAL_ACCESS;
     public static final boolean FAIL_ON_BAD_DIFF;
+    public static final int TIMEOUT = 600;
 	
 	public static CVSRepositoryLocation repository;
 	public static CVSTestLogListener logListener;
@@ -170,6 +171,7 @@ public class CVSTestSetup extends TestSetup {
 			repository = setupRepository(REPOSITORY_LOCATION);
 		}
 		CVSProviderPlugin.getPlugin().setCompressionLevel(COMPRESSION_LEVEL);
+		CVSProviderPlugin.getPlugin().setTimeout(TIMEOUT);
 		// Add a log listener so we can ensure that nothing is logged during a test
 		if (logListener == null) {
 			logListener = new CVSTestLogListener();
