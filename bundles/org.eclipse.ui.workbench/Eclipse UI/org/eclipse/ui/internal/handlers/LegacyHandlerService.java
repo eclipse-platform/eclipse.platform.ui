@@ -244,6 +244,9 @@ public class LegacyHandlerService implements IHandlerService {
 		if (handlerActivations == null) {
 			handlerActivations = new ArrayList();
 		} else {
+			if (handlerActivations.contains(eActivation)) {
+				return;
+			}
 			handlerActivations = new ArrayList(handlerActivations);
 		}
 		handlerActivations.add(eActivation);
