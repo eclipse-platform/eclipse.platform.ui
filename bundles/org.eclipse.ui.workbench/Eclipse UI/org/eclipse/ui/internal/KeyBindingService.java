@@ -326,6 +326,15 @@ public final class KeyBindingService implements INestableKeyBindingService {
 
         unregisterAction(action);
 
+		IWorkbenchPartSite partSite = workbenchPartSite;
+		if (parent != null) {
+			KeyBindingService currentParent = parent;
+			while (currentParent != null) {
+				partSite = currentParent.workbenchPartSite;
+				currentParent = currentParent.parent;
+			}
+		}
+
 		String commandId = action.getActionDefinitionId();
 		if (commandId != null) {
 			for (IAction registeredAction : actionToProxy.keySet()) {
@@ -340,8 +349,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
 			IHandlerService hs = (IHandlerService) workbenchPartSite
 					.getService(IHandlerService.class);
 			actionToProxy.put(action, hs.activateHandler(commandId, new ActionHandler(action),
-					new LegacyHandlerSubmissionExpression(null, workbenchPartSite.getShell(),
-							workbenchPartSite)));
+					new LegacyHandlerSubmissionExpression(null, partSite.getShell(), partSite)));
 
 		}
     }
