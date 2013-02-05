@@ -157,11 +157,13 @@ public class HandledContributionItem extends ContributionItem {
 				orphanedToolItems.clear();
 			}
 
-			Runnable[] array = new Runnable[windowRunnables.size()];
-			windowRunnables.toArray(array);
-			for (Runnable r : array) {
-				runner.setRunnable(r);
-				SafeRunner.run(runner);
+			if (windowRunnables.size() > 0) {
+				Runnable[] array = new Runnable[windowRunnables.size()];
+				windowRunnables.toArray(array);
+				for (Runnable r : array) {
+					runner.setRunnable(r);
+					SafeRunner.run(runner);
+				}
 			}
 
 			// repeat until the list goes empty
