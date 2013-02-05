@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * 	   Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *                                               - fix for bug 178280, 183999, 184609
+ * 	   Ruediger Herrmann <ruediger.herrmann@gmx.de> - fix for bug 395890
  *     IBM Corporation - API refactoring and general maintenance
  *******************************************************************************/
 
@@ -54,8 +55,10 @@ public class TreeColumnLayout extends AbstractColumnLayout {
 			tree.getDisplay().asyncExec(new Runnable() {
 
 				public void run() {
-					tree.update();
-					tree.getParent().layout();
+					if (!tree.isDisposed()) {
+						tree.update();
+						tree.getParent().layout();
+					}
 				}
 				
 			});
