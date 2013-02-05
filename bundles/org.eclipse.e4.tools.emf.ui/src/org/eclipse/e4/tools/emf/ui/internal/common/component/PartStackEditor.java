@@ -81,6 +81,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 	@Inject
 	@Optional
 	private IProject project;
+	private TableViewer viewer;
 
 	@Inject
 	public PartStackEditor() {
@@ -160,7 +161,8 @@ public class PartStackEditor extends AbstractComponentEditor {
 				composite.layout(true, true);
 			}
 		}
-
+		IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+		viewer.setInput(prop.observeDetail(getMaster()));
 		getMaster().setValue(object);
 		return composite;
 	}
@@ -234,7 +236,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 			new Label(parent, SWT.NONE);
 
-			final TableViewer viewer = new TableViewer(parent);
+			viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 			GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1);
