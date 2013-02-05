@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Joseph Carroll <jdsalingerjr@gmail.com> - Bug 385414 Contributing wizards to toolbar always displays icon and text
  *     Snjezana Peco <snjezana.peco@redhat.com> - Memory leaks in Juno when opening and closing XML Editor - http://bugs.eclipse.org/397909
+ *     Marco Descher <marco@descher.at> - Bug 397677
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -279,6 +280,8 @@ public class HandledContributionItem extends ContributionItem {
 		model = item;
 		setId(model.getElementId());
 		generateCommand();
+		if (model.getCommand() == null)
+			logger.error("Element " + model.getElementId() + " invalid, no command defined."); //$NON-NLS-1$ //$NON-NLS-2$
 		updateVisible();
 	}
 
@@ -558,7 +561,7 @@ public class HandledContributionItem extends ContributionItem {
 			parmCmd = model.getWbCommand();
 		}
 
-		if (text == null) {
+		if (parmCmd != null && text == null) {
 			try {
 				text = parmCmd.getName();
 			} catch (NotDefinedException e) {
