@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.ui.workbench.swt.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IStatus;
@@ -46,6 +48,8 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.BindingManager;
+import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -68,6 +72,9 @@ public class BindingProcessingAddon {
 	private BindingTableManager bindingTables;
 
 	@Inject
+	private BindingManager bindingManager;
+
+	@Inject
 	private ECommandService commandService;
 
 	@Inject
@@ -79,9 +86,31 @@ public class BindingProcessingAddon {
 
 	@PostConstruct
 	public void init() {
+		final Scheme activeScheme = bindingManager.getActiveScheme();
+		if (activeScheme != null) {
+			bindingTables.setActiveSchemes(getSchemeIds(activeScheme.getId()));
+		}
 		defineBindingTables();
 		activateContexts(application);
 		registerModelListeners();
+	}
+
+	private final String[] getSchemeIds(String schemeId) {
+		final List<String> strings = new ArrayList<String>();
+		while (schemeId != null) {
+			strings.add(schemeId);
+			try {
+				schemeId = getScheme(schemeId).getParentId();
+			} catch (final NotDefinedException e) {
+				return new String[0];
+			}
+		}
+
+		return strings.toArray(new String[strings.size()]);
+	}
+
+	private final Scheme getScheme(String schemeId) {
+		return bindingManager.getScheme(schemeId);
 	}
 
 	private void activateContexts(Object me) {
