@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,6 +150,33 @@ public class DialogSettingsTest extends TestCase {
 				check(section);
 			}
 		});
+	}
+	
+	public void testRemoveSection() {
+		DialogSettings dialogSettings = new DialogSettings(null);
+		IDialogSettings section = dialogSettings.addNewSection("new-section");
+
+		dialogSettings.removeSection(section);
+
+		assertEquals(0, dialogSettings.getSections().length);
+	}
+
+	public void testRemoveNonExistingSection() {
+		DialogSettings dialogSettings = new DialogSettings(null);
+		IDialogSettings otherSection = new DialogSettings(null);
+
+		dialogSettings.removeSection(otherSection);
+
+		assertEquals(0, dialogSettings.getSections().length);
+	}
+	
+	public void testRemoveSectionWithNullArgument() {
+		DialogSettings dialogSettings = new DialogSettings(null);
+
+		try {
+			dialogSettings.removeSection(null);
+		} catch (NullPointerException expected) {
+		}
 	}
 
 	public void testKeys() throws IOException {
