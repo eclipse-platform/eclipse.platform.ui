@@ -403,6 +403,7 @@ public class EFS {
 	 * file system failed to authenticate the request. This can be caused
 	 * by missing or incorrect authentication information being supplied.
 	 * Severity: error. Category: file system.
+	 * @since 1.4
 	 */
 	public static final int ERROR_AUTH_FAILED = 280;
 
