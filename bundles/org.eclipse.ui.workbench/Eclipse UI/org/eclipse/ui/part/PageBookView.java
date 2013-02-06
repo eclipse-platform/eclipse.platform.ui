@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -508,23 +508,14 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		if (defaultPageRec != null) {
 			// check for null since the default page may not have
 			// been created (ex. perspective never visible)
-			defaultPageRec.page.dispose();
-			Object site = mapPageToSite.remove(defaultPageRec.page);
-			mapPageToNumRecs.remove(defaultPageRec.page);
-			if (defaultPageRec.subActionBars != null) {
-				defaultPageRec.subActionBars.dispose();
-			}
-
-			if (site instanceof PageSite) {
-				((PageSite) site).dispose();
-			}
+			removePage(defaultPageRec, false);
 			defaultPageRec = null;
 		}
 		Map clone = (Map) ((HashMap) mapPartToRec).clone();
 		Iterator itr = clone.values().iterator();
 		while (itr.hasNext()) {
 			PageRec rec = (PageRec) itr.next();
-			removePage(rec);
+			removePage(rec, true);
 		}
 
 		// Run super.
@@ -793,7 +784,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		// Find and remove the part page.
 		PageRec rec = getPageRec(part);
 		if (rec != null) {
-			removePage(rec);
+			removePage(rec, true);
 		}
 		if (part == hiddenPart) {
 			hiddenPart = null;
@@ -844,8 +835,11 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 * it - otherwise just decrement the reference count.
 	 * 
 	 * @param rec
+	 * @param doDestroy
+	 *            if <code>true</code>, also call
+	 *            {@link #doDestroyPage(IWorkbenchPart, PageRec)}
 	 */
-	private void removePage(PageRec rec) {
+	private void removePage(PageRec rec, boolean doDestroy) {
 		mapPartToRec.remove(rec.part);
 
 		int newCount = ((Integer) mapPageToNumRecs.get(rec.page)).intValue() - 1;
@@ -865,8 +859,10 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 				control.dispose();
 			}
 
-			// free the page
-			doDestroyPage(rec.part, rec);
+			if (doDestroy) {
+				// free the page
+				doDestroyPage(rec.part, rec);
+			}
 
 			if (rec.subActionBars != null) {
 				rec.subActionBars.dispose();
