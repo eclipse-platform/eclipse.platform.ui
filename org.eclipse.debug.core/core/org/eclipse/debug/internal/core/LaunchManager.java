@@ -2348,18 +2348,20 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		ILaunch launch = null;
 		for (int i= 0; i < launches.length; i++) {
 			launch = launches[i];
-			try {
-                if (launch instanceof IDisconnect) {
-                    IDisconnect disconnect = (IDisconnect)launch;
-                    if (disconnect.canDisconnect()) {
-                        disconnect.disconnect();
-                    }
-                }
-                if (launch.canTerminate()) {
-                    launch.terminate();
-                }
-			} catch (DebugException e) {
-				DebugPlugin.log(e);
+			if(launch != null) {
+				try {
+	                if (launch instanceof IDisconnect) {
+	                    IDisconnect disconnect = (IDisconnect)launch;
+	                    if (disconnect.canDisconnect()) {
+	                        disconnect.disconnect();
+	                    }
+	                }
+	                if (launch.canTerminate()) {
+	                    launch.terminate();
+	                }
+				} catch (DebugException e) {
+					DebugPlugin.log(e);
+				}
 			}
 		}
 		

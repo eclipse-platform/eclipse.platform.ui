@@ -378,15 +378,20 @@ public class PDAVirtualMachine {
         FileReader fileReader = new FileReader(inputFile);
         StringWriter stringWriter = new StringWriter();
         List code = new LinkedList();
-        int c = fileReader.read();
-        while (c != -1) {
-            if (c == '\n') {
-                code.add(stringWriter.toString().trim());
-                stringWriter = new StringWriter();
-            } else {
-                stringWriter.write(c);
-            }
-            c = fileReader.read();
+        try {
+	        int c = fileReader.read();
+	        while (c != -1) {
+	            if (c == '\n') {
+	                code.add(stringWriter.toString().trim());
+	                stringWriter = new StringWriter();
+	            } else {
+	                stringWriter.write(c);
+	            }
+	            c = fileReader.read();
+	        }
+        }
+        finally {
+        	fileReader.close();
         }
         code.add(stringWriter.toString().trim());
         fCode = (String[])code.toArray(new String[code.size()]);
