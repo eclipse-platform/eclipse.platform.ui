@@ -117,7 +117,6 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
                 String expressionText = DefaultLabelProvider.encodeEsacpedChars((String)value);
                 IWatchExpression newExpression= 
                     DebugPlugin.getDefault().getExpressionManager().newWatchExpression(expressionText);
-                DebugPlugin.getDefault().getExpressionManager().addExpression(newExpression);
                 newExpression.setExpressionContext(getContext());
                 
                 //if any working sets are applied to this view,
@@ -138,6 +137,10 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
                     	workingSet.setElements(newElements);
                 	}
                 }
+                // Add the new expression to the expression manager only after 
+                // working sets are updated.  Otherwise, the viewer may filter
+                // out the new expression.
+                DebugPlugin.getDefault().getExpressionManager().addExpression(newExpression);
             }
         }
 	
