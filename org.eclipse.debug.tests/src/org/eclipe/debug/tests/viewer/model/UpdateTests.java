@@ -22,6 +22,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -327,6 +328,49 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         childrenCountUpdateListener.dispose();
     }
 
+
+    /**
+     * This test case attempts to create a race condition between processing 
+     * of the content updates and processing of add/remove model deltas. 
+     * <br>
+     * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304066">bug 304066</a> 
+     */
+    public void testInsertAtInvalidIndex() throws InterruptedException {
+        TestModel model = TestModel.simpleSingleLevel();
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY);
+
+        // Insert element at the end of the list.
+        final int insertIndex = model.getRootElement().getChildren().length;
+        ModelDelta delta = model.insertElementChild(TreePath.EMPTY, insertIndex, new TestElement(model, "last - invalid index", new TestElement[0]));
+        // Change insert index to out of range
+        delta.accept(new IModelDeltaVisitor() {
+			
+			public boolean visit(IModelDelta visitorDelta, int depth) {
+				if ((visitorDelta.getFlags() & IModelDelta.INSERTED) != 0) {
+					((ModelDelta)visitorDelta).setIndex(insertIndex + 1);
+					return false;
+				}
+				return true;
+			}
+		});
+        
+        // Remove delta should generate no new updates, but we still need to wait for the event to
+        // be processed.
+        fListener.reset();
+        model.postDelta(delta);
+        
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_SEQUENCE_COMPLETE | LABEL_SEQUENCE_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        model.validateData(fViewer, TreePath.EMPTY);                
+    }
     
     /**
      * This test forces the viewer to reschedule pending content updates

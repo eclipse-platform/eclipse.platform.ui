@@ -1365,20 +1365,21 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		TreePath parentPath = getViewerTreePath(delta.getParentDelta());
 		Object element = delta.getElement();
 		int modelIndex = delta.getIndex();
-		if (modelIndex >= 0) {
-			int viewIndex = modelToViewIndex(parentPath, modelIndex);
-			if (viewIndex >= 0) {
-				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-					DebugUIPlugin.trace("handleInsert(" + parentPath.getLastSegment() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + element); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				}
-				getViewer().insert(parentPath, element, viewIndex);
-			} else {
-				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-					DebugUIPlugin.trace("[filtered] handleInsert(" + delta.getElement() + ") > modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				// Element is filtered - do not insert
+		int viewIndex = modelIndex >= 0 ? modelToViewIndex(parentPath, modelIndex) : -1; 
+		int viewCount = getViewer().getChildCount(parentPath);
+		if (viewIndex >= 0 && viewIndex <= viewCount) {
+			// Index in range, insert.
+			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+				DebugUIPlugin.trace("handleInsert(" + parentPath.getLastSegment() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + element); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			}
+			getViewer().insert(parentPath, element, viewIndex);
+		} else if (modelIndex >= 0 && viewIndex < 0) {
+			// Element is filtered - do not insert
+			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+				DebugUIPlugin.trace("[filtered] handleInsert(" + delta.getElement() + ") > modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
+			// Invalid index given, do a refresh instead.
 			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				DebugUIPlugin.trace("handleInsert(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
