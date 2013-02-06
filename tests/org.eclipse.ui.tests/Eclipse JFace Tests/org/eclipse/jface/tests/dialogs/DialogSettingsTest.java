@@ -155,26 +155,51 @@ public class DialogSettingsTest extends TestCase {
 	public void testRemoveSection() {
 		DialogSettings dialogSettings = new DialogSettings(null);
 		IDialogSettings section = dialogSettings.addNewSection("new-section");
+		assertEquals(1, dialogSettings.getSections().length);
 
 		dialogSettings.removeSection(section);
 
 		assertEquals(0, dialogSettings.getSections().length);
 	}
 
+	public void testRemoveSectionByName() {
+		DialogSettings dialogSettings = new DialogSettings(null);
+		IDialogSettings section = dialogSettings.addNewSection("new-section");
+		assertEquals(1, dialogSettings.getSections().length);
+
+		final IDialogSettings removedSection = dialogSettings.removeSection("new-section");
+
+		assertEquals(0, dialogSettings.getSections().length);
+		assertEquals(section, removedSection);
+	}
+
 	public void testRemoveNonExistingSection() {
 		DialogSettings dialogSettings = new DialogSettings(null);
+		dialogSettings.addNewSection("new-section");
+		assertEquals(1, dialogSettings.getSections().length);
 		IDialogSettings otherSection = new DialogSettings(null);
 
 		dialogSettings.removeSection(otherSection);
 
-		assertEquals(0, dialogSettings.getSections().length);
+		assertEquals(1, dialogSettings.getSections().length);
+	}
+	
+	public void testRemoveOtherSection() {
+		DialogSettings dialogSettings = new DialogSettings(null);
+		dialogSettings.addNewSection("new-section");
+		assertEquals(1, dialogSettings.getSections().length);
+		IDialogSettings otherSection = new DialogSettings("new-section");
+
+		dialogSettings.removeSection(otherSection);
+
+		assertEquals(1, dialogSettings.getSections().length);
 	}
 	
 	public void testRemoveSectionWithNullArgument() {
 		DialogSettings dialogSettings = new DialogSettings(null);
 
 		try {
-			dialogSettings.removeSection(null);
+			dialogSettings.removeSection((IDialogSettings)null);
 		} catch (NullPointerException expected) {
 		}
 	}

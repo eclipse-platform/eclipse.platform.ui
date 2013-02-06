@@ -129,14 +129,30 @@ public class DialogSettings implements IDialogSettings {
     }
 
     /**
-	 * Remove a section in the receiver. If the given section does not exist, nothing is done.  
+	 * Remove a section in the receiver. If the given section does not exist,
+	 * nothing is done.
 	 * 
 	 * @param section
-	 *            the section to be removed
-     * @since 3.9
+	 *            the section to be removed. Must not be <code>null</code>.
+	 * @since 3.9
 	 */
 	public void removeSection(IDialogSettings section) {
-		sections.remove(section.getName());
+		if (sections.get(section.getName()) == section) {
+			sections.remove(section.getName());
+		}
+	}
+
+    /**
+	 * Remove a section by name in the receiver. If the given section does not
+	 * exist, nothing is done.
+	 * 
+	 * @param sectionName
+	 *            the name of the section to be removed.  Must not be <code>null</code>.
+     * @return The dialog section removed, or <code>null</code> if it wasn't there.
+	 * @since 3.9
+	 */
+	public IDialogSettings removeSection(String sectionName) {
+		return (IDialogSettings) sections.remove(sectionName);
 	}
 
 	/* (non-Javadoc)
