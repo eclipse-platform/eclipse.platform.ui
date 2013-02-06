@@ -592,7 +592,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                 if (element == null) {
                     if (refChildren[i] instanceof BreakpointContainer) {
                         BreakpointContainer.addChildContainer(container, (BreakpointContainer) refChildren[i], containerDelta);
-                    } else {
+                    } else if(refChildren[i] instanceof IBreakpoint) {
                         BreakpointContainer.addBreakpoint(container, (IBreakpoint) refChildren[i], containerDelta);
                         if (newBreakpoint == null)
                             newBreakpoint = (IBreakpoint) refChildren[i];

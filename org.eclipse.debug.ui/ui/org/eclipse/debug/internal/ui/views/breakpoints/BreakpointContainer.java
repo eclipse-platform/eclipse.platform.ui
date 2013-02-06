@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,19 +153,18 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
      * @return the index of the breakpoint in the cache, -1 if the breakpoint already exist
      */
     private int insertBreakpoint(IBreakpoint breakpoint) {
-    	if (fBreakpoints.contains(breakpoint))
+    	if (fBreakpoints.contains(breakpoint) || breakpoint == null) {
     		return -1;
-    	
+    	}
     	int index = fBreakpoints.size();
     	for (; fComparator != null && index > 0; index--) {
     		if (fComparator.compare(fBreakpoints.get(index-1), breakpoint) < 0)
     			break;
     	}
-    	
-    	if (index < 0)
+    	if (index < 0) {
     		index = 0;
+    	}
     	fBreakpoints.add(index, breakpoint);
-    	    	
     	return index;   	
     }
     
