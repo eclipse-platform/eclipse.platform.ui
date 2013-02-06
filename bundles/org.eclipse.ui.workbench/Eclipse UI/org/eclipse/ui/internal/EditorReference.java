@@ -54,7 +54,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 
 	private IEditorInput input;
 	private EditorDescriptor descriptor;
-	private EditorSite editorSite;
 	private String descriptorId;
 	private IMemento editorState;
 
@@ -349,7 +348,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	@Override
 	public void initialize(IWorkbenchPart part) throws PartInitException {
 		IConfigurationElement element = descriptor.getConfigurationElement();
-		editorSite = new EditorSite(getModel(), part, this, element);
+		EditorSite editorSite = new EditorSite(getModel(), part, this, element);
 		if (element == null) {
 			editorSite.setExtensionId(descriptor.getId());
 		}
@@ -398,7 +397,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 
 	@Override
 	public PartSite getSite() {
-		return editorSite;
+		return (PartSite) legacyPart.getSite();
 	}
 
 	private static HashMap<String, Set<EditorActionBars>> actionCache = new HashMap<String, Set<EditorActionBars>>();

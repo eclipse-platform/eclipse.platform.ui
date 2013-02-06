@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 public class ViewReference extends WorkbenchPartReference implements IViewReference {
 
 	private ViewDescriptor descriptor;
-	private ViewSite viewSite;
 	private IMemento memento;
 
 	public ViewReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
@@ -138,7 +137,7 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 	 */
 	@Override
 	public void initialize(IWorkbenchPart part) throws PartInitException {
-		viewSite = new ViewSite(getModel(), part, this, descriptor == null ? null
+		ViewSite viewSite = new ViewSite(getModel(), part, this, descriptor == null ? null
 				: descriptor.getConfigurationElement());
 		IViewPart view = (IViewPart) part;
 		view.init(viewSite, memento);
@@ -154,6 +153,6 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 
 	@Override
 	public PartSite getSite() {
-		return viewSite;
+		return (PartSite) legacyPart.getSite();
 	}
 }

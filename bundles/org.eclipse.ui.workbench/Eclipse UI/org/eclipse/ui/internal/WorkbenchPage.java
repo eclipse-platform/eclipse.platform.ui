@@ -186,7 +186,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				CompatibilityPart compatibilityPart = (CompatibilityPart) client;
 				IWorkbenchPartSite site = compatibilityPart.getPart().getSite();
 				// if it's an editor, we only want to disable the actions
-				compatibilityPart.deactivateActionBars(site instanceof ViewSite);
+				((PartSite) site).deactivateActionBars(site instanceof ViewSite);
 			}
 
 			((WorkbenchWindow) getWorkbenchWindow()).getStatusLineManager().update(false);
