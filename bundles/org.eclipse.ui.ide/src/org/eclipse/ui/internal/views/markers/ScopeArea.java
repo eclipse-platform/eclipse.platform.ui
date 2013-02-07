@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ class ScopeArea extends GroupFilterConfigurationArea {
 			
 			initializeFontMetrics(parent);
 			GridData layoutData = new GridData();
-			layoutData.horizontalIndent = IDialogConstants.INDENT;
+			layoutData.horizontalIndent = 20;
 			int widthHint = Dialog.convertHorizontalDLUsToPixels(getFontMetrics(),IDialogConstants.BUTTON_WIDTH);
 			Point minSize = selectButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 			layoutData.widthHint = Math.max(widthHint, minSize.x);

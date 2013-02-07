@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -740,7 +740,7 @@ public class ProgressInfoItem extends Composite {
 			linkData.left = new FormAttachment(progressBar, 0, SWT.LEFT);
 			linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
 			// Give an initial value so as to constrain the link shortening
-			linkData.width = IDialogConstants.INDENT;
+			linkData.width = 20;
 
 			((Link) taskEntries.get(0)).setLayoutData(linkData);
 		}
@@ -767,7 +767,7 @@ public class ProgressInfoItem extends Composite {
 				linkData.left = new FormAttachment(top, 0, SWT.LEFT);
 				linkData.right = new FormAttachment(top, 0, SWT.RIGHT);
 				// Give an initial value so as to constrain the link shortening
-				linkData.width = IDialogConstants.INDENT;
+				linkData.width = 20;
 			} else {
 				Link previous = (Link) taskEntries.get(index - 1);
 				linkData.top = new FormAttachment(previous,
@@ -775,7 +775,7 @@ public class ProgressInfoItem extends Composite {
 				linkData.left = new FormAttachment(previous, 0, SWT.LEFT);
 				linkData.right = new FormAttachment(previous, 0, SWT.RIGHT);
 				// Give an initial value so as to constrain the link shortening
-				linkData.width = IDialogConstants.INDENT;
+				linkData.width = 20;
 			}
 
 			link.setLayoutData(linkData);
