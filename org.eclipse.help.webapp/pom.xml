@@ -22,4 +22,27 @@
   <artifactId>org.eclipse.help.webapp</artifactId>
   <version>3.6.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-jspc-maven-plugin</artifactId>
+        <version>8.1.8.v20121106</version>
+        <executions>
+          <execution>
+            <id>jspc</id>
+            <goals>
+              <goal>jspc</goal>
+            </goals>
+            <configuration>
+              <packageRoot>org.eclipse.help.internal.webapp.jsp</packageRoot>
+              <webAppSourceDirectory>${basedir}</webAppSourceDirectory>
+              <useProvidedScope>true</useProvidedScope>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
