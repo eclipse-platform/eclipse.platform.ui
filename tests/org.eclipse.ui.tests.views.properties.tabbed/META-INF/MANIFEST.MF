@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.tests.views.properties.tabbed;singleton:=true
-Bundle-Version: 3.5.100.qualifier
+Bundle-Version: 3.5.200.qualifier
 Bundle-Activator: org.eclipse.ui.tests.views.properties.tabbed.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -17,6 +17,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: CDC-1.0/Foundation-1.0,
  J2SE-1.3
 Export-Package: org.eclipse.ui.tests.views.properties.tabbed,
+ org.eclipse.ui.tests.views.properties.tabbed.decorations,
+ org.eclipse.ui.tests.views.properties.tabbed.decorations.views,
  org.eclipse.ui.tests.views.properties.tabbed.dynamic.filters,
  org.eclipse.ui.tests.views.properties.tabbed.dynamic.model,
  org.eclipse.ui.tests.views.properties.tabbed.dynamic.section.descriptors,
