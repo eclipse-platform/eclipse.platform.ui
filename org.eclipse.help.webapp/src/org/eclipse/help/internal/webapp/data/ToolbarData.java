@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.help.internal.webapp.data;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -30,6 +32,7 @@ public class ToolbarData extends RequestData {
 	private static final String BUTTON_EXTENSION_POINT = "org.eclipse.help.webapp.toolbarButton"; //$NON-NLS-1$
 	private ToolbarButton[] buttons;
 	private String[] scriptFiles;
+	private static Pattern jsNamePattern = Pattern.compile("^[a-zA-Z_$][a-zA-Z1-9_]*"); //$NON-NLS-1$
 	
 
 	public ToolbarData(ServletContext context, HttpServletRequest request,
@@ -75,12 +78,16 @@ public class ToolbarData extends RequestData {
 		for (int i = 0; i < names.length; i++) {
 			if ("".equals(names[i])) //$NON-NLS-1$
 				buttonList.add(new ToolbarButton());
-			else
-				buttonList.add(new ToolbarButton(names[i], ServletResources
-						.getString(tooltips[i], request), preferences
-						.getImagesDirectory()
-						+ "/e_" + images[i], //$NON-NLS-1$
-						actions[i], params[i], states[i]));
+			else{
+				// Is this a valid javascript name (and not a script injection)
+				Matcher matcher = jsNamePattern.matcher(names[i]);
+				if (matcher.matches())
+					buttonList.add(new ToolbarButton(names[i], ServletResources
+							.getString(tooltips[i], request), preferences
+							.getImagesDirectory()
+							+ "/e_" + images[i], //$NON-NLS-1$
+							actions[i], params[i], states[i]));			
+			}
 		}
 		
 		addExtensionButtons(buttonList);
