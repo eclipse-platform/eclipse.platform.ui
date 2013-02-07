@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Semion Chichelnitsky (semion@il.ibm.com) - bug 278064
+ *     Tristan Hume - <trishume@gmail.com> -
+ *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
+ *     		Implemented workbench auto-save to correctly restore state in case of crash.
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -233,5 +236,14 @@ public interface IPreferenceConstants {
 	 * @since 3.4
 	 */
 	public static final String USE_32_THREADING = "use32Threading"; //$NON-NLS-1$
+
+	/**
+	 * Preference value that specifies the time interval in minutes between
+	 * workbench auto-saves. If the value is zero it disables workbench
+	 * auto-save.
+	 * 
+	 * @since 3.105
+	 */
+	public static final String WORKBENCH_SAVE_INTERVAL = "WORKBENCH_SAVE_INTERVAL"; //$NON-NLS-1$
 
 }

@@ -2562,13 +2562,22 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIM_BAR__SIDE = UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE;
 
 	/**
+	 * The feature id for the '<em><b>Pending Cleanup</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_BAR__PENDING_CLEANUP = UiPackageImpl.GENERIC_TRIM_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>Trim Bar</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TRIM_BAR_FEATURE_COUNT = UiPackageImpl.GENERIC_TRIM_CONTAINER_FEATURE_COUNT + 0;
+	public static final int TRIM_BAR_FEATURE_COUNT = UiPackageImpl.GENERIC_TRIM_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
 	 * The operation id for the '<em>Get Localized Accessibility Phrase</em>' operation.
@@ -3201,6 +3210,20 @@ public class BasicPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimBar#getPendingCleanup <em>Pending Cleanup</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Pending Cleanup</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimBar#getPendingCleanup()
+	 * @see #getTrimBar()
+	 * @generated
+	 */
+	public EReference getTrimBar_PendingCleanup() {
+		return (EReference)trimBarEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MStackElement <em>Stack Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3275,6 +3298,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		windowElementEClass = createEClass(WINDOW_ELEMENT);
 
 		trimBarEClass = createEClass(TRIM_BAR);
+		createEReference(trimBarEClass, TRIM_BAR__PENDING_CLEANUP);
 
 		stackElementEClass = createEClass(STACK_ELEMENT);
 	}
@@ -3401,6 +3425,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEClass(windowElementEClass, MWindowElement.class, "WindowElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(trimBarEClass, MTrimBar.class, "TrimBar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getTrimBar_PendingCleanup(), this.getTrimElement(), null, "pendingCleanup", null, 0, -1, MTrimBar.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(stackElementEClass, MStackElement.class, "StackElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 	}
@@ -3621,6 +3646,14 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass TRIM_BAR = eINSTANCE.getTrimBar();
+
+		/**
+		 * The meta object literal for the '<em><b>Pending Cleanup</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference TRIM_BAR__PENDING_CLEANUP = eINSTANCE.getTrimBar_PendingCleanup();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MStackElement <em>Stack Element</em>}' class.

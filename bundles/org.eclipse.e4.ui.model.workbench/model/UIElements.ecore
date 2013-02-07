@@ -409,6 +409,8 @@
       <eClassifiers xsi:type="ecore:EClass" name="WindowElement" abstract="true" interface="true"
           eSuperTypes="#//ui/UIElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="TrimBar">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="pendingCleanup" upperBound="-1"
+            eType="#//ui/basic/TrimElement" transient="true"/>
         <eGenericSuperTypes eClassifier="#//ui/GenericTrimContainer">
           <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
         </eGenericSuperTypes>

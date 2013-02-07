@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Semion Chichelnitsky (semion@il.ibm.com) - bug 278064
+ *     Tristan Hume - <trishume@gmail.com> -
+ *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
+ *     		Implemented workbench auto-save to correctly restore state in case of crash.
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -58,9 +61,13 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean(IPreferenceConstants.OPEN_AFTER_DELAY, false);
 		node.putInt(IPreferenceConstants.RECENT_FILES, 4);
 
-		
+		// FIXME this does not actually set the default since it is the wrong
+		// node. It works because the default-default is false.
 		node.putBoolean(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE, false);
 		
+		// 5 minute workbench save interval
+		node.putInt(IPreferenceConstants.WORKBENCH_SAVE_INTERVAL, 5);
+
 		node.putBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS, true);
 		
 		node.putBoolean(IPreferenceConstants.COOLBAR_VISIBLE, true);
@@ -95,6 +102,8 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 
 		// Heap status preferences
+		// FIXME this does not actually set the default since it is the wrong
+		// node. It works because the default-default is false.
 		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, false);
 		node.putInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL, 500);
 		node.putBoolean(IHeapStatusConstants.PREF_SHOW_MAX, false);

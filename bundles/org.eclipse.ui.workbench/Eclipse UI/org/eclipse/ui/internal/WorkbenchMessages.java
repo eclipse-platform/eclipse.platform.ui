@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  * IBM - Initial API and implementation
  * Sebastian Davids - bug 128529
  * Semion Chichelnitsky (semion@il.ibm.com) - bug 278064
+ * Tristan Hume - <trishume@gmail.com> -
+ * 		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
+ * 		Implemented workbench auto-save to correctly restore state in case of crash.
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -806,6 +809,8 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_reuseEditorsThresholdError;
 	public static String WorkbenchPreference_recentFiles;
 	public static String WorkbenchPreference_recentFilesError;
+	public static String WorkbenchPreference_workbenchSaveInterval;
+	public static String WorkbenchPreference_workbenchSaveIntervalError;
 	public static String WorkbenchEditorsAction_label;
 	public static String WorkbookEditorsAction_label;
 

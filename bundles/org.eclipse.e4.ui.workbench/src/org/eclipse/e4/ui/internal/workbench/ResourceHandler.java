@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tristan Hume - <trishume@gmail.com> -
+ *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
+ *     		Implemented workbench auto-save to correctly restore state in case of crash.
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -122,16 +125,7 @@ public class ResourceHandler implements IModelResourceHandler {
 	}
 
 	public Resource loadMostRecentModel() {
-		File baseLocation;
-		try {
-			baseLocation = new File(URIUtil.toURI(instanceLocation.getURL()));
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-		baseLocation = new File(baseLocation, ".metadata"); //$NON-NLS-1$
-		baseLocation = new File(baseLocation, ".plugins"); //$NON-NLS-1$
-		baseLocation = new File(baseLocation, "org.eclipse.e4.workbench"); //$NON-NLS-1$
-
+		File baseLocation = getBaseLocation();
 		// This is temporary code to migrate existing delta files into full models
 		if (deltaRestore && saveAndRestore && !clearPersistedState) {
 			File deltaFile = new File(baseLocation, "deltas.xml"); //$NON-NLS-1$
@@ -139,7 +133,7 @@ public class ResourceHandler implements IModelResourceHandler {
 				MApplication appElement = null;
 				try {
 					// create new resource in case code below fails somewhere
-					File workbenchData = new File(baseLocation, "workbench.xmi"); //$NON-NLS-1$			
+					File workbenchData = getWorkbenchSaveLocation();
 					URI restoreLocationNew = URI.createFileURI(workbenchData.getAbsolutePath());
 					resource = resourceSetImpl.createResource(restoreLocationNew);
 
@@ -179,7 +173,7 @@ public class ResourceHandler implements IModelResourceHandler {
 			}
 		}
 
-		File workbenchData = new File(baseLocation, "workbench.xmi"); //$NON-NLS-1$			
+		File workbenchData = getWorkbenchSaveLocation();
 
 		if (clearPersistedState && workbenchData.exists())
 			workbenchData.delete();
@@ -204,10 +198,7 @@ public class ResourceHandler implements IModelResourceHandler {
 		if (resource == null) {
 			Resource applicationResource = loadResource(applicationDefinitionInstance);
 			MApplication theApp = (MApplication) applicationResource.getContents().get(0);
-			if (restoreLocation == null)
-				restoreLocation = URI.createFileURI(workbenchData.getAbsolutePath());
-			resource = resourceSetImpl.createResource(restoreLocation);
-			resource.getContents().add((EObject) theApp);
+			resource = createResourceWithApp(theApp);
 		}
 
 		// Add model items described in the model extension point
@@ -225,6 +216,38 @@ public class ResourceHandler implements IModelResourceHandler {
 	public void save() throws IOException {
 		if (saveAndRestore)
 			resource.save(null);
+	}
+
+	/**
+	 * Creates a resource with an app Model, used for saving copies of the main app model.
+	 * 
+	 * @param theApp
+	 *            the application model to add to the resource
+	 * @return a resource with a proper save path with the model as contents
+	 */
+	public Resource createResourceWithApp(MApplication theApp) {
+		URI saveLocation = URI.createFileURI(getWorkbenchSaveLocation().getAbsolutePath());
+		Resource res = resourceSetImpl.createResource(saveLocation);
+		res.getContents().add((EObject) theApp);
+		return res;
+	}
+
+	private File getWorkbenchSaveLocation() {
+		File workbenchData = new File(getBaseLocation(), "workbench.xmi"); //$NON-NLS-1$
+		return workbenchData;
+	}
+
+	private File getBaseLocation() {
+		File baseLocation;
+		try {
+			baseLocation = new File(URIUtil.toURI(instanceLocation.getURL()));
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+		baseLocation = new File(baseLocation, ".metadata"); //$NON-NLS-1$
+		baseLocation = new File(baseLocation, ".plugins"); //$NON-NLS-1$
+		baseLocation = new File(baseLocation, "org.eclipse.e4.workbench"); //$NON-NLS-1$
+		return baseLocation;
 	}
 
 	// Ensures that even models with error are loaded!

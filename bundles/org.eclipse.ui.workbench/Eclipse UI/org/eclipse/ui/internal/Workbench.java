@@ -9,6 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *     Francis Upton - <francisu@ieee.org> - 
  *     		Fix for Bug 217777 [Workbench] Workbench event loop does not terminate if Display is closed
+ *     Tristan Hume - <trishume@gmail.com> -
+ *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
+ *     		Implemented workbench auto-save to correctly restore state in case of crash.
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -81,12 +84,18 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.workbench.IModelResourceHandler;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -217,6 +226,7 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceScopes;
@@ -428,6 +438,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private WorkbenchWindow windowBeingCreated = null;
 
 	private Listener backForwardListener;
+
+	private Job autoSaveJob;
 
 	/**
 	 * Creates a new workbench.
@@ -1019,6 +1031,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (!force && !isClosing) {
 			return false;
 		}
+		
+		// stop the workbench auto-save job so it can't conflict with shutdown
+		if(autoSaveJob != null) {
+			autoSaveJob.cancel();
+			autoSaveJob = null;
+		}
 
 		boolean closeEditors = !force
 				&& PrefUtil.getAPIPreferenceStore().getBoolean(
@@ -1040,48 +1058,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		}
 
-		// discard editors that with non-ppersistable inputs
-		SafeRunner.run(new SafeRunnable() {
-			public void run() {
-				IWorkbenchWindow windows[] = getWorkbenchWindows();
-				for (int i = 0; i < windows.length; i++) {
-					IWorkbenchPage pages[] = windows[i].getPages();
-					for (int j = 0; j < pages.length; j++) {
-						List<EditorReference> editorReferences = ((WorkbenchPage) pages[j])
-								.getInternalEditorReferences();
-						List<EditorReference> referencesToClose = new ArrayList<EditorReference>();
-						for (EditorReference reference : editorReferences) {
-							IEditorPart editor = reference.getEditor(false);
-							if (editor != null && !reference.persist()) {
-								referencesToClose.add(reference);
-							}
-						}
-						
-						for (EditorReference reference : referencesToClose) {
-							((WorkbenchPage) pages[j]).closeEditor(reference);
-						}
-					}
-				}
-			}
-		});
-
-		// persist view states
-		SafeRunner.run(new SafeRunnable() {
-			public void run() {
-				IWorkbenchWindow windows[] = getWorkbenchWindows();
-				for (int i = 0; i < windows.length; i++) {
-					IWorkbenchPage pages[] = windows[i].getPages();
-					for (int j = 0; j < pages.length; j++) {
-						IViewReference[] references = pages[j].getViewReferences();
-						for (int k = 0; k < references.length; k++) {
-							if (references[k].getView(false) != null) {
-								((ViewReference) references[k]).persist();
-							}
-						}
-					}
-				}
-			}
-		});
+		// persist editor inputs and close editors that can't be persisted
+		// also persists views
+		persist(true);
 
 		if (!force && !isClosing) {
 			return false;
@@ -1124,6 +1103,123 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		runEventLoop = false;
 		return true;
+	}
+
+	/**
+	 * Saves the state of the workbench in the same way that closing the it
+	 * would. Can be called while the editor is running so that if it crashes
+	 * the workbench state can be recovered.
+	 * 
+	 * @param shutdown
+	 *            If true, will close any editors that cannot be persisted. Will
+	 *            also skip saving the model to the disk since that is done
+	 *            later in shutdown.
+	 */
+	private void persist(final boolean shutdown) {
+		// persist editors that can be and possibly close the others
+		SafeRunner.run(new SafeRunnable() {
+			public void run() {
+				IWorkbenchWindow windows[] = getWorkbenchWindows();
+				for (int i = 0; i < windows.length; i++) {
+					IWorkbenchPage pages[] = windows[i].getPages();
+					for (int j = 0; j < pages.length; j++) {
+						List<EditorReference> editorReferences = ((WorkbenchPage) pages[j])
+								.getInternalEditorReferences();
+						List<EditorReference> referencesToClose = new ArrayList<EditorReference>();
+						for (EditorReference reference : editorReferences) {
+							IEditorPart editor = reference.getEditor(false);
+							if (editor != null && !reference.persist() && shutdown) {
+								referencesToClose.add(reference);
+							}
+						}
+						if (shutdown) {
+							for (EditorReference reference : referencesToClose) {
+								((WorkbenchPage) pages[j]).closeEditor(reference);
+							}
+						}
+					}
+				}
+			}
+		});
+
+		// persist view states
+		SafeRunner.run(new SafeRunnable() {
+			public void run() {
+				IWorkbenchWindow windows[] = getWorkbenchWindows();
+				for (int i = 0; i < windows.length; i++) {
+					IWorkbenchPage pages[] = windows[i].getPages();
+					for (int j = 0; j < pages.length; j++) {
+						IViewReference[] references = pages[j].getViewReferences();
+						for (int k = 0; k < references.length; k++) {
+							if (references[k].getView(false) != null) {
+								((ViewReference) references[k]).persist();
+							}
+						}
+					}
+				}
+			}
+		});
+
+		// now that we have updated the model, save it to workbench.xmi
+		// skip this during shutdown to be efficient since it is done again
+		// later
+		if (!shutdown) {
+			persistWorkbenchModel();
+		}
+	}
+
+	/**
+	 * Copy the model, clean it up and write it out to workbench.xmi. Called as
+	 * part of persist(false) during auto-save.
+	 */
+	private void persistWorkbenchModel() {
+		final MApplication appCopy = (MApplication) EcoreUtil.copy((EObject) application);
+		final IModelResourceHandler handler = e4Context.get(IModelResourceHandler.class);
+
+		Job cleanAndSaveJob = new Job("Workbench Auto-Save Background Job") { //$NON-NLS-1$
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				final Resource res = handler.createResourceWithApp(appCopy);
+				cleanUpCopy(appCopy);
+				try {
+					res.save(null);
+				} catch (IOException e) {
+					// Just auto-save, we don't really care
+				}
+				return Status.OK_STATUS;
+			}
+
+		};
+		cleanAndSaveJob.setPriority(Job.SHORT);
+		cleanAndSaveJob.setSystem(true);
+		cleanAndSaveJob.schedule();
+	}
+
+	private static void cleanUpCopy(MApplication appCopy) {
+		// clean up all trim bars that come from trim bar contributions
+		// the trim elements that need to be removed are stored in the trimBar.
+		for (MWindow window : appCopy.getChildren()) {
+			if (window instanceof MTrimmedWindow) {
+				MTrimmedWindow trimmedWindow = (MTrimmedWindow) window;
+				// clean up the main menu to avoid duplicate menu items
+				window.setMainMenu(null);
+				// clean up trim bars created through contributions
+				// to avoid duplicate toolbars
+				for (MTrimBar trimBar : trimmedWindow.getTrimBars()) {
+					cleanUpTrimBar(trimBar);
+				}
+			}
+		}
+		appCopy.getMenuContributions().clear();
+		appCopy.getToolBarContributions().clear();
+		appCopy.getTrimContributions().clear();
+	}
+
+	private static void cleanUpTrimBar(MTrimBar element) {
+		for (MTrimElement child : element.getPendingCleanup()) {
+			element.getChildren().remove(child);
+		}
+		element.getPendingCleanup().clear();
 	}
 
 	/*
@@ -2577,6 +2673,26 @@ UIEvents.Context.TOPIC_CONTEXT,
 					}
 				};
 				e4Context.set(PartRenderingEngine.EARLY_STARTUP_HOOK, earlyStartup);
+				// start workspace auto-save
+				final int millisecondInterval = getAutoSaveJobTime();
+				if (millisecondInterval > 0) {
+					autoSaveJob = new WorkbenchJob("Workbench Auto-Save Job") { //$NON-NLS-1$
+						@Override
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							final int nextDelay = getAutoSaveJobTime();
+							persist(false);
+							monitor.done();
+							// repeat
+							if (nextDelay > 0) {
+								this.schedule(nextDelay);
+							}
+							return Status.OK_STATUS;
+						}
+					};
+					autoSaveJob.setSystem(true);
+					autoSaveJob.schedule(millisecondInterval);
+				}
+
 				// WWinPluginAction.refreshActionList();
 
 				display.asyncExec(new Runnable() {
@@ -2610,6 +2726,13 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 		// restart or exit based on returnCode
 		return returnCode;
+	}
+
+	private int getAutoSaveJobTime() {
+		final int minuteSaveInterval = getPreferenceStore().getInt(
+				IPreferenceConstants.WORKBENCH_SAVE_INTERVAL);
+		final int millisecondInterval = minuteSaveInterval * 60 * 1000;
+		return millisecondInterval;
 	}
 
 
