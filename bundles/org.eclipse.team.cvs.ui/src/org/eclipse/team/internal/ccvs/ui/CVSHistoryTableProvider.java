@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -510,7 +510,7 @@ public class CVSHistoryTableProvider {
 		GridData data = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(data);
 
-		TableLayout layout = new TableLayout();
+		TableLayout layout= new TableLayout(true);
 		tree.setLayout(layout);
 
 		this.viewer = new TreeViewer(tree);
