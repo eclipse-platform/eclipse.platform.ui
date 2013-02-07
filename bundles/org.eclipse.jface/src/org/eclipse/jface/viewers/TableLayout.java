@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,11 +64,24 @@ public class TableLayout extends Layout {
 	 * Indicates whether <code>layout</code> has yet to be called.
 	 */
 	private boolean firstTime = true;
+	
+	private boolean adjustForScrollBar;
 
 	/**
 	 * Creates a new table layout.
 	 */
 	public TableLayout() {
+	}
+
+	/**
+	 * Creates a new table layout.
+	 * 
+	 * @param adjustForScrollBar <code>true</code> if the layout should reserve space for the
+	 *            vertical scroll bar
+	 * @since 3.9
+	 */
+	public TableLayout(boolean adjustForScrollBar) {
+		this.adjustForScrollBar = adjustForScrollBar;
 	}
 
 	/**
@@ -177,6 +190,10 @@ public class TableLayout extends Layout {
 
 		// Do we have columns that have a weight
 		if (numberOfWeightColumns > 0) {
+
+			if (adjustForScrollBar && c.getVerticalBar() != null)
+				width -= c.getVerticalBar().getThumbTrackBounds().width;
+
 			// Now distribute the rest to the columns with weight.
 			int rest = width - fixedWidth;
 			int totalDistributed = 0;
