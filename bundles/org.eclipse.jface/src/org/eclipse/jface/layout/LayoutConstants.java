@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jface.layout;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.JFaceResources;
+
 /**
- * Contains various layout constants
+ * Contains various layout constants to be used in dialogs.
  * 
  * @since 3.2
  */
@@ -53,28 +54,42 @@ public final class LayoutConstants {
 	 * 
 	 * @return the default dialog margins, in pixels
 	 */
-    public static final Point getMargins() {
-    	initializeConstants();
-    	return dialogMargins;
-    }
+	public static final Point getMargins() {
+		initializeConstants();
+		return dialogMargins;
+	}
 
-    /**
-     * Returns the default dialog spacing, in pixels
-     * 
-     * @return the default dialog spacing, in pixels
-     */
-    public static final Point getSpacing() {
-    	initializeConstants();
-    	return dialogSpacing;
-    }
+	/**
+	 * Returns the default dialog spacing, in pixels
+	 * 
+	 * @return the default dialog spacing, in pixels
+	 */
+	public static final Point getSpacing() {
+		initializeConstants();
+		return dialogSpacing;
+	}
 
-    /**
-     * Returns the default minimum button size, in pixels
-     * 
-     * @return the default minimum button size, in pixels
-     */
-    public static final Point getMinButtonSize() {
-    	initializeConstants();
-    	return minButtonSize;
-    }
+	/**
+	 * Returns the default minimum button size, in pixels
+	 * 
+	 * @return the default minimum button size, in pixels
+	 */
+	public static final Point getMinButtonSize() {
+		initializeConstants();
+		return minButtonSize;
+	}
+
+	/**
+	 * Returns the indent of dependent controls, in pixels.
+	 * 
+	 * @return the indent of dependent controls, in pixels.
+	 * @since 3.9
+	 */
+	public static final int getIndent() {
+		/*
+		 * Currently we return 20, which is the most widely used indent. Once
+		 * https://bugs.eclipse.org/400320 is fixed, we can compute the correct indent.
+		 */
+		return 20;
+	}
 }
