@@ -11,7 +11,9 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
+import java.util.Hashtable;
 import java.util.List;
+import java.util.UUID;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -23,6 +25,7 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.emf.common.notify.Notifier;
+import org.osgi.framework.ServiceRegistration;
 
 public class E4Workbench implements IWorkbench {
 	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
@@ -42,6 +45,9 @@ public class E4Workbench implements IWorkbench {
 
 	public static final String RTL_MODE = "dir"; //$NON-NLS-1$
 
+	private final String id;
+	private ServiceRegistration<?> osgiRegistration;
+
 	IEclipseContext appContext;
 	IPresentationEngine renderer;
 	MApplication appModel = null;
@@ -52,6 +58,7 @@ public class E4Workbench implements IWorkbench {
 	}
 
 	public E4Workbench(MApplicationElement uiRoot, IEclipseContext applicationContext) {
+		id = createId();
 		appContext = applicationContext;
 		appContext.set(IWorkbench.class.getName(), this);
 		if (uiRoot instanceof MApplication) {
@@ -64,6 +71,19 @@ public class E4Workbench implements IWorkbench {
 
 		uiEventPublisher = new UIEventPublisher(appContext);
 		((Notifier) uiRoot).eAdapters().add(uiEventPublisher);
+		Hashtable<String, Object> properties = new Hashtable<String, Object>();
+		properties.put("id", getId()); //$NON-NLS-1$
+
+		osgiRegistration = Activator.getDefault().getContext()
+				.registerService(IWorkbench.class.getName(), this, properties);
+	}
+
+	public final String getId() {
+		return id;
+	}
+
+	protected String createId() {
+		return UUID.randomUUID().toString();
 	}
 
 	/**
@@ -111,7 +131,6 @@ public class E4Workbench implements IWorkbench {
 
 	/**
 	 * @return
-	 * @return
 	 */
 	public boolean close() {
 		if (renderer != null) {
@@ -121,17 +140,11 @@ public class E4Workbench implements IWorkbench {
 			((Notifier) appModel).eAdapters().remove(uiEventPublisher);
 			uiEventPublisher = null;
 		}
+		if (osgiRegistration != null) {
+			osgiRegistration.unregister();
+			osgiRegistration = null;
+		}
 		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.workbench.IWorkbench#run()
-	 */
-	public int run() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	public static IEclipseContext getServiceContext() {
