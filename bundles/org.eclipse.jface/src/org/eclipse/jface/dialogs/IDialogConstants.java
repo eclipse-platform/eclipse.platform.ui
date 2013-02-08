@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -417,11 +417,17 @@ public interface IDialogConstants {
 
     /**
      * Indent in dialog units (value 21).
+     * 
+     * @deprecated As of 3.9, this is deprecated as it is too big as DLU and got accidentally used
+     *             when setting pixel values
      */
     public int INDENT = 21;
 
     /**
      * Small indent in dialog units (value 7).
+     * 
+     * @deprecated As of 3.9, this is deprecated as it is not clear what the meaning of a
+     *             "small indent" would be
      */
     public int SMALL_INDENT = 7;
 
