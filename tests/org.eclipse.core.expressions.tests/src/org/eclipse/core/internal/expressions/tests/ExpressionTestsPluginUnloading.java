@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,9 +29,8 @@ import org.eclipse.core.internal.expressions.Expressions;
 /**
  * Tests for cache used in {@link Expressions#isInstanceOf(Object, String)}.
  * <p>
- * <b>WARNING:</b> These tests start, stop, and re-start the
- * <code>com.ibm.icu</code> bundle and start the <code>org.junit</code> and
- * <code>org.junit4</code> bundles. Don't include these in another test suite.
+ * <b>WARNING:</b> These tests start, stop, and re-start the <code>com.ibm.icu</code> bundle.
+ * Don't include these in another test suite!
  */
 public class ExpressionTestsPluginUnloading extends TestCase {
 
@@ -74,24 +73,21 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 	}
 
 	public void test02MultipleClassloaders() throws Exception {
-		String vmVersion= System.getProperty("java.vm.version");
-		if (vmVersion == null || vmVersion.compareTo("1.5") < 0)
-			return;
-			
-		Bundle junit= getBundle("org.junit");
-		Bundle junit4= getBundle("org.junit4");
+		Bundle expr= getBundle("org.eclipse.core.expressions.tests");
+		Bundle icu= getBundle("com.ibm.icu");
 		
-		Class junitClass= junit.loadClass("junit.framework.AssertionFailedError");
-		Class junit4Class= junit4.loadClass("junit.framework.AssertionFailedError");
-		assertNotSame(junitClass, junit4Class);
+		Class exprClass= expr.loadClass("com.ibm.icu.text.DecimalFormat");
+		Class icuClass= icu.loadClass("com.ibm.icu.text.DecimalFormat");
+		assertNotSame(exprClass, icuClass);
 		
-		Object junitObj= junitClass.newInstance();
-		Object junit4Obj= junit4Class.newInstance();
+		Object exprObj= exprClass.newInstance();
+		Object icuObj= icuClass.newInstance();
 		
-		assertInstanceOf(junitObj, "java.lang.Error", "java.lang.AssertionError");
+		assertInstanceOf(exprObj, "java.lang.Runnable", "java.lang.String");
+		assertInstanceOf(exprObj, "java.lang.Object", "java.io.Serializable");
 		
-		assertInstanceOf(junit4Obj, "java.lang.AssertionError", "java.lang.String");
-		assertInstanceOf(junit4Obj, "java.lang.Error", "java.lang.Cloneable");
+		assertInstanceOf(icuObj, "java.io.Serializable", "java.lang.String");
+		assertInstanceOf(icuObj, "java.text.Format", "java.lang.Runnable");
 	}
 
 	private void assertInstanceOf(Object obj, String isInstance, String isNotInstance) throws Exception {
