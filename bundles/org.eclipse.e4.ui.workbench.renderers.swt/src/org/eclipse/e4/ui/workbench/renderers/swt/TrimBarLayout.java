@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christian Walther (Indel AG) - Bug 399458: Fix layout overlap in line-wrapped trim bar
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -242,10 +243,12 @@ public class TrimBarLayout extends Layout {
 				int extra = curLine.extraSpace / curLine.spacerCount--;
 				if (horizontal) {
 					ctrlSize.x += extra;
-					ctrl.setBounds(curX, curY, ctrlSize.x, bounds.height - 4);
+					// leave out 4 pixels at the bottom to avoid overlapping the
+					// 1px bottom border of the toolbar (bug 389941)
+					ctrl.setBounds(curX, curY, ctrlSize.x, curLine.minor - 4);
 				} else {
 					ctrlSize.y += extra;
-					ctrl.setBounds(curX, curY, bounds.width, extra);
+					ctrl.setBounds(curX, curY, curLine.minor, extra);
 				}
 				zeroSize = false;
 				curLine.extraSpace -= extra;
