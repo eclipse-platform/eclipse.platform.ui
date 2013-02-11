@@ -35,7 +35,8 @@ Export-Package: org.eclipse.jface,
  org.eclipse.jface.wizard.images
 Require-Bundle: org.eclipse.swt;bundle-version="[3.6.0,4.0.0)";visibility:=reexport,
  org.eclipse.core.commands;bundle-version="[3.4.0,4.0.0)";visibility:=reexport,
- org.eclipse.equinox.common;bundle-version="[3.3.0,4.0.0)"
+ org.eclipse.equinox.common;bundle-version="[3.3.0,4.0.0)",
+ org.eclipse.equinox.bidi;bundle-version="0.9.0";resolution:=optional
 Bundle-RequiredExecutionEnvironment: J2SE-1.4,
  CDC-1.1/Foundation-1.1
 Import-Package: javax.xml.parsers,
