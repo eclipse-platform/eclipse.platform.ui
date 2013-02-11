@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -279,11 +279,17 @@ public class MarkersPropertyPage extends PropertyPage {
 		locationText.setLayoutData(gridData);
 
 		String line = Util.getProperty(IMarker.LINE_NUMBER, marker);
-		if (line.length()==0)
-			locationText.setText(MarkerSupportInternalUtilities.EMPTY_STRING);
-		else
+		if (line.length() == 0) {
+			String location = Util.getProperty(IMarker.LOCATION, marker);
+			if (location.length() == 0) {
+				locationText.setText(MarkerSupportInternalUtilities.EMPTY_STRING);
+			} else {
+				locationText.setText(location);
+			}
+		} else {
 			locationText.setText(NLS
 					.bind(MarkerMessages.label_lineNumber, line));
+		}
 
 	}
 	
