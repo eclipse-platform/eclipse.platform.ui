@@ -815,6 +815,8 @@ public class MenuHelper {
 					toolItem.setTooltip(command.getDescription());
 				}
 
+				String itemId = cci.getId();
+				toolItem.setElementId(itemId == null ? id : itemId);
 				return toolItem;
 			}
 		}
