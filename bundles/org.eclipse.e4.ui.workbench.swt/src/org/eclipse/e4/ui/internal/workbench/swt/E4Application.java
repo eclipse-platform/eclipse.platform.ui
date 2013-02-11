@@ -121,6 +121,12 @@ public class E4Application implements IApplication {
 		return display;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.
+	 * IApplicationContext)
+	 */
 	public Object start(IApplicationContext applicationContext)
 			throws Exception {
 		// set the display name before the Display is
@@ -132,17 +138,20 @@ public class E4Application implements IApplication {
 			Display.setAppName(product.getName());
 		}
 		Display display = getApplicationDisplay();
-		E4Workbench workbench = createE4Workbench(applicationContext, display);
-
-		Location instanceLocation = (Location) workbench.getContext().get(
-				E4Workbench.INSTANCE_LOCATION);
-		Shell shell = display.getActiveShell();
-		if (shell == null) {
-			shell = new Shell();
-			// place it off so it's not visible
-			shell.setLocation(0, 10000);
-		}
+		Location instanceLocation = null;
 		try {
+			E4Workbench workbench = createE4Workbench(applicationContext,
+					display);
+
+			instanceLocation = (Location) workbench.getContext().get(
+					E4Workbench.INSTANCE_LOCATION);
+			Shell shell = display.getActiveShell();
+			if (shell == null) {
+				shell = new Shell();
+				// place it off so it's not visible
+				shell.setLocation(0, 10000);
+			}
+
 			if (!checkInstanceLocation(instanceLocation, shell))
 				return EXIT_OK;
 
