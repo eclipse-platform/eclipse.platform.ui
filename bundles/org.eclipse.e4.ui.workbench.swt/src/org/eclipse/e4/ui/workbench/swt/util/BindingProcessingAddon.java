@@ -27,6 +27,7 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
@@ -58,6 +59,7 @@ import org.osgi.service.event.EventHandler;
  * Process contexts in the model, feeding them into the command service.
  */
 public class BindingProcessingAddon {
+	private static final String[] DEFAULT_SCHEMES = { "org.eclipse.ui.defaultAcceleratorConfiguration" };
 
 	@Inject
 	private MApplication application;
@@ -72,6 +74,7 @@ public class BindingProcessingAddon {
 	private BindingTableManager bindingTables;
 
 	@Inject
+	@Optional
 	private BindingManager bindingManager;
 
 	@Inject
@@ -86,10 +89,14 @@ public class BindingProcessingAddon {
 
 	@PostConstruct
 	public void init() {
-		final Scheme activeScheme = bindingManager.getActiveScheme();
-		if (activeScheme != null) {
-			bindingTables.setActiveSchemes(getSchemeIds(activeScheme.getId()));
+		String[] schemes = DEFAULT_SCHEMES;
+		if (bindingManager != null) {
+			final Scheme activeScheme = bindingManager.getActiveScheme();
+			if (activeScheme != null) {
+				schemes = getSchemeIds(activeScheme.getId());
+			}
 		}
+		bindingTables.setActiveSchemes(schemes);
 		defineBindingTables();
 		activateContexts(application);
 		registerModelListeners();
