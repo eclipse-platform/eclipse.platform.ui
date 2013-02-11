@@ -242,8 +242,9 @@ public abstract class Window implements IShellProvider {
 
 	/**
 	 * Internal fields to detect if shell size has been set
+	 * @since 3.9
 	 */
-	private boolean resizeHasOccurred = false;
+	protected boolean resizeHasOccurred = false;
 
 	private Listener resizeListener;
  
