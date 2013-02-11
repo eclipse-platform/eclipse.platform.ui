@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -214,7 +214,9 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 
 				}
 			}
-			return Status.OK_STATUS;
+			
+			// Return an ok status with no message as SelectionStatusDialog will display default ok message
+			return new Status(IStatus.OK, pluginId, IDEResourceInfoUtils.EMPTY_STRING);
 		}
 	}
 
