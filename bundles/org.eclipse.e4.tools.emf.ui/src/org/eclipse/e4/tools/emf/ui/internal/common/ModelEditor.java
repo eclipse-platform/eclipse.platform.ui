@@ -405,8 +405,8 @@ public class ModelEditor {
 				} while (m != null);
 
 				if (o instanceof MPart) {
-					System.err.println(o);
-					System.err.println(((EObject) o).eContainingFeature());
+					System.err.println(getClass().getName() + ".findAndHighLight: " + o);
+					System.err.println(getClass().getName() + ".findAndHighLight: " + ((EObject) o).eContainingFeature());
 				}
 
 				viewer.setSelection(new StructuredSelection(o));
@@ -458,7 +458,6 @@ public class ModelEditor {
 						e.printStackTrace();
 					}
 				}
-
 			}
 		});
 
@@ -781,6 +780,23 @@ public class ModelEditor {
 
 					});
 
+				if (addSeparator) {
+					manager.add(new Separator());
+				}
+
+				Action expandAction = new Action(messages.ModelEditor_ExpandSubtree) {
+					public void run() {
+						if (!s.isEmpty()) {
+							if (viewer.getExpandedState(s.getFirstElement())) {
+								viewer.collapseToLevel(s.getFirstElement(), TreeViewer.ALL_LEVELS);
+							} else {
+								viewer.expandToLevel(s.getFirstElement(), TreeViewer.ALL_LEVELS);
+							}
+						}
+					}
+				};
+
+				manager.add(expandAction);
 			}
 		});
 
@@ -925,8 +941,9 @@ public class ModelEditor {
 		treeArea.setBackgroundMode(SWT.INHERIT_DEFAULT);
 
 		// final FilteredTree viewParent = new FilteredTree(treeArea,
-		// SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), true);
-		// final TreeViewer viewer = ((FilteredTree) viewParent).getViewer();
+		// SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL, new
+		// PatternFilter(), true);
+		// final TreeViewer viewer = viewParent.getViewer();
 
 		final TreeViewer viewer = new TreeViewer(treeArea, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 
@@ -1071,7 +1088,7 @@ public class ModelEditor {
 	}
 
 	private void registerDefaultEditors() {
-		System.err.println(resourcePool);
+		System.err.println(getClass().getName() + ".registerDefaultEditors: " + resourcePool);
 
 		registerEditor(ApplicationPackageImpl.Literals.APPLICATION, ContextInjectionFactory.make(ApplicationEditor.class, context));
 		registerEditor(ApplicationPackageImpl.Literals.ADDON, ContextInjectionFactory.make(AddonsEditor.class, context));
