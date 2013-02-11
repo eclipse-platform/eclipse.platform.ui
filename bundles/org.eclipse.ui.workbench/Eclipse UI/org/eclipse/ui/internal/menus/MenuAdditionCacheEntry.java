@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 221662 [Contributions] Extension point org.eclipse.ui.menus: sub menu contribution does not have icon even if specified
+ *     Christian Walther (Indel AG) - Bug 398631: Use correct menu item icon from commandImages
  *******************************************************************************/
 
 package org.eclipse.ui.internal.menus;
@@ -247,7 +248,11 @@ public class MenuAdditionCacheEntry {
 			ICommandImageService commandImageService = application.getContext().get(
 					ICommandImageService.class);
 			ImageDescriptor descriptor = commandImageService == null ? null : commandImageService
-					.getImageDescriptor(item.getElementId());
+					.getImageDescriptor(commandId);
+			if (descriptor == null) {
+				descriptor = commandImageService == null ? null : commandImageService
+						.getImageDescriptor(item.getElementId());
+			}
 			if (descriptor != null) {
 				item.setIconURI(MenuHelper.getImageUrl(descriptor));
 			}
