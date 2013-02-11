@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.util.Tracing;
@@ -210,6 +209,7 @@ public class NewKeysPreferencePage extends PreferencePage implements
 				CategoryPatternFilter filter) {
 			super(parent, treeStyle, filter, true);
 			this.filter = filter;
+			setQuickSelectionMode(true);
 		}
 
 		public void filterCategories(boolean b) {

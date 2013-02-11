@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	                | SWT.V_SCROLL | SWT.BORDER, new WizardPatternFilter(), true);
 	        viewer = filteredTree.getViewer();
 	        filteredTree.setFont(parent.getFont());
+			filteredTree.setQuickSelectionMode(true);
 
 	        viewer.setContentProvider(new WizardContentProvider());
 			viewer.setLabelProvider(new DelegatingLabelProviderWithTooltip(

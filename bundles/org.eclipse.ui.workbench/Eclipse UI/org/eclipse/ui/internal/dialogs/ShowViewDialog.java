@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,6 +215,7 @@ public class ShowViewDialog extends Dialog implements
 		PatternFilter filter = new ViewPatternFilter();
 		int styleBits = SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 		filteredTree = new FilteredTree(parent, styleBits, filter, true);
+		filteredTree.setQuickSelectionMode(true);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 		
@@ -418,14 +419,13 @@ public class ShowViewDialog extends Dialog implements
             Object o = i.next();
             if (o instanceof IViewDescriptor) {
                 descs.add(o);
-            }
-        }
-        
-        viewDescs = new IViewDescriptor[descs.size()];
-        descs.toArray(viewDescs);
+			}
+		}
+		viewDescs = new IViewDescriptor[descs.size()];
+		descs.toArray(viewDescs);
     }
 
-    
+
 	/* (non-Javadoc)
      * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
      * 
