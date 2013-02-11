@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *		IBM Corporation - initial API and implementation 
  *  	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  * 		font should be activated and used by other components.
+ *      Robin Stocker <robin@nibor.org> - Add filter text field
  *******************************************************************************/
 package org.eclipse.ui.internal.about;
 
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.util.ConfigureColumns;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -39,9 +41,12 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -53,6 +58,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -60,6 +66,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.misc.StringMatcher;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -361,6 +368,11 @@ public class AboutPluginsPage extends ProductInfoPage {
 	 *            the parent composite to contain the dialog area
 	 */
 	protected void createTable(Composite parent) {
+		final Text filterText = new Text(parent, SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
+		filterText.setLayoutData(GridDataFactory.fillDefaults().create());
+		filterText.setMessage(WorkbenchMessages.AboutPluginsDialog_filterTextMessage);
+		filterText.setFocus();
+
 		vendorInfo = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.SINGLE | SWT.FULL_SELECTION | SWT.BORDER);
 		vendorInfo.setUseHashlookup(true);
@@ -402,6 +414,15 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 		vendorInfo.setContentProvider(new ArrayContentProvider());
 		vendorInfo.setLabelProvider(new BundleTableLabelProvider());
+
+		final BundlePatternFilter searchFilter = new BundlePatternFilter();
+		filterText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				searchFilter.setPattern(filterText.getText());
+				vendorInfo.refresh();
+			}
+		});
+		vendorInfo.addFilter(searchFilter);
 
 		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true,
 				true);
@@ -701,5 +722,33 @@ class TableComparator extends ViewerComparator {
 	 */
 	public void setAscending(boolean ascending) {
 		this.ascending = ascending;
+	}
+}
+
+class BundlePatternFilter extends ViewerFilter {
+
+	private StringMatcher matcher;
+
+	public void setPattern(String searchPattern) {
+		if (searchPattern == null || searchPattern.length() == 0) {
+			this.matcher = null;
+		} else {
+			String pattern = "*" + searchPattern + "*"; //$NON-NLS-1$//$NON-NLS-2$
+			this.matcher = new StringMatcher(pattern, true, false);
+		}
+	}
+
+	@Override
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
+		if (matcher == null) {
+			return true;
+		}
+
+		if (element instanceof AboutBundleData) {
+			AboutBundleData data = (AboutBundleData) element;
+			return matcher.match(data.getName()) || matcher.match(data.getProviderName())
+					|| matcher.match(data.getId());
+		}
+		return true;
 	}
 }

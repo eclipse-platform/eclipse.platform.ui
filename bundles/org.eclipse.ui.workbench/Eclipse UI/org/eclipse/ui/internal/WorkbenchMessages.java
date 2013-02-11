@@ -326,6 +326,7 @@ public class WorkbenchMessages extends NLS {
 	public static String AboutPluginsDialog_columns;
 	public static String AboutPluginsDialog_errorTitle;
 	public static String AboutPluginsDialog_unableToOpenFile;
+	public static String AboutPluginsDialog_filterTextMessage;
 	public static String AboutFeaturesDialog_shellTitle;
 	public static String AboutFeaturesDialog_featureName;
 	public static String AboutFeaturesDialog_featureId;
