@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 221662 [Contributions] Extension point org.eclipse.ui.menus: sub menu contribution does not have icon even if specified
  *     Christian Walther (Indel AG) - Bug 398631: Use correct menu item icon from commandImages
+ *     Christian Walther (Indel AG) - Bug 384056: Use disabled icon from extension definition
  *******************************************************************************/
 
 package org.eclipse.ui.internal.menus;
@@ -439,6 +440,30 @@ public class MenuAdditionCacheEntry {
 		} else {
 			item.setIconURI(iconUrl);
 		}
+
+		iconUrl = MenuHelper.getIconURI(commandAddition,
+				IWorkbenchRegistryConstants.ATT_DISABLEDICON);
+		if (iconUrl == null) {
+			ICommandImageService commandImageService = application.getContext().get(
+					ICommandImageService.class);
+			if (commandImageService != null) {
+				ImageDescriptor descriptor = commandImageService.getImageDescriptor(commandId,
+						ICommandImageService.TYPE_DISABLED,
+						ICommandImageService.IMAGE_STYLE_TOOLBAR);
+				if (descriptor == null) {
+					descriptor = commandImageService.getImageDescriptor(item.getElementId(),
+							ICommandImageService.TYPE_DISABLED,
+							ICommandImageService.IMAGE_STYLE_TOOLBAR);
+				}
+				if (descriptor != null) {
+					iconUrl = MenuHelper.getImageUrl(descriptor);
+				}
+			}
+		}
+		if (iconUrl != null) {
+			MenuHelper.setDisabledIconURI(item, iconUrl);
+		}
+
 		item.setTooltip(MenuHelper.getTooltip(commandAddition));
 		item.setType(MenuHelper.getStyle(commandAddition));
 		if (MenuHelper.hasPulldownStyle(commandAddition)) {
