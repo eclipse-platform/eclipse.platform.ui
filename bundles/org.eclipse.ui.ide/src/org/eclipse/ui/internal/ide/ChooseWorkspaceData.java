@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -222,10 +222,13 @@ public class ChooseWorkspaceData {
 
 		// move the new selection to the front of the list
 		if (selection != null) {
+			File newFolder = new File(selection);			
 			String oldEntry = recentWorkspaces[0];
 			recentWorkspaces[0] = selection;
 			for (int i = 1; i < recentWorkspaces.length && oldEntry != null; ++i) {
-				if (selection.equals(oldEntry)) {
+				File oldFolder = new File (oldEntry);
+				// If selection represents a file location we already have, don't store it
+				if (newFolder.compareTo(oldFolder) == 0){
 					break;
 				}
 				String tmp = recentWorkspaces[i];
