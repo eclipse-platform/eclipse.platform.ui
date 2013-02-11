@@ -818,7 +818,8 @@ public class FilteredTree extends Composite {
 	protected void updateTreeSelection(boolean setFocus) {
 		Tree tree = getViewer().getTree();
 		if (tree.getItemCount() == 0) {
-			Display.getCurrent().beep();
+			if (setFocus)
+				Display.getCurrent().beep();
 		} else {
 			// if the initial filter text hasn't changed, do not try
 			// to match
