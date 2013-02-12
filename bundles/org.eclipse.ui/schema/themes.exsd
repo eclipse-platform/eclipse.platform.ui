@@ -283,9 +283,9 @@ Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsT
             Allows overriding of colors defined in &lt;code&gt;colorDefinition&lt;/code&gt; elements.  These colors will be applied when the theme is in use. The colors that are defined by workbench are:
 
 &lt;ul&gt;
-&lt;li&gt;org.eclipse.jface.preference.JFacePreference.ERROR_COLOR
-&lt;li&gt;org.eclipse.jface.preference.JFacePreference.HYPERLINK_COLOR
-&lt;li&gt;org.eclipse.jface.preference.JFacePreference.ACTIVE_HYPERLINK_COLOR
+&lt;li&gt;org.eclipse.jface.preference.JFacePreferences.ERROR_COLOR
+&lt;li&gt;org.eclipse.jface.preference.JFacePreferences.HYPERLINK_COLOR
+&lt;li&gt;org.eclipse.jface.preference.JFacePreferences.ACTIVE_HYPERLINK_COLOR
 &lt;/ul&gt;
          </documentation>
       </annotation>
@@ -687,7 +687,7 @@ Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2003, 2011 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2003, 2013 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
