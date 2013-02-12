@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -260,7 +261,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		group = new Group(composite, SWT.NONE);
 		GridData groupData = new GridData(GridData.FILL_BOTH);
 		groupData.horizontalSpan = 2;
-		groupData.horizontalIndent = 20;
+		groupData.horizontalIndent = LayoutConstants.getIndent();
 		Object compositeLayout = composite.getLayout();
 		if (compositeLayout instanceof GridLayout) {
 			groupData.horizontalIndent -= ((GridLayout) compositeLayout).marginWidth;

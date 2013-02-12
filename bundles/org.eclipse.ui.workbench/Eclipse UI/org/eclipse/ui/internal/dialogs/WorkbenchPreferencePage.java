@@ -15,6 +15,7 @@ package org.eclipse.ui.internal.dialogs;
 
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -255,7 +256,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
             }
         });
         data = new GridData();
-        data.horizontalIndent = 20;
+		data.horizontalIndent = LayoutConstants.getIndent();
         selectOnHoverButton.setLayoutData(data);
 
         label = WorkbenchMessages.WorkbenchPreference_singleClick_OpenAfterDelay;		
@@ -270,7 +271,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
             }
         });
         data = new GridData();
-        data.horizontalIndent = 20;
+		data.horizontalIndent = LayoutConstants.getIndent();
         openAfterDelayButton.setLayoutData(data);
 
         createNoteComposite(font, buttonComposite, WorkbenchMessages.Preference_note, 
