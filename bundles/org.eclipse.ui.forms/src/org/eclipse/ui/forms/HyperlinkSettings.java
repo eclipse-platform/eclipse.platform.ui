@@ -62,7 +62,7 @@ public class HyperlinkSettings {
 		Color fg = JFaceColors.getHyperlinkText(display);
 		Color afg = JFaceColors.getActiveHyperlinkText(display);
 		if (fg==null)
-			fg = display.getSystemColor(SWT.COLOR_BLUE);
+			fg = display.getSystemColor(SWT.COLOR_LINK_FOREGROUND);
 		setForeground(fg);
 		setActiveForeground(afg);
 	}
