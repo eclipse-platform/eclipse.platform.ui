@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -480,11 +480,11 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	}
 	
 	private void enableCommand(ICommand command, boolean enable) {
-		Map args= command.getArguments();
+		Map/*<String, String>*/ args= command.getArguments();
 		if (args == null) {
 			args= new HashMap(1);
 		}
-		args.put(COMMAND_ENABLED, Boolean.valueOf(enable));
+		args.put(COMMAND_ENABLED, Boolean.toString(enable));
 		command.setArguments(args);
 		userHasMadeChanges= true;
 	}
@@ -861,8 +861,11 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 */
 	private boolean isEnabled(Object element) {
 		if (element instanceof ICommand) {
-			Boolean enabled= (Boolean)((ICommand) element).getArguments().get(COMMAND_ENABLED);
-			if (enabled != null) {
+			ICommand command = (ICommand) element;
+			String val = (String)command.getArguments().get(COMMAND_ENABLED);
+			if(val != null) {
+				//null means enabled, see #doPerformOk
+				Boolean enabled = new Boolean(val);
 				return enabled.booleanValue();
 			}
 		} else if (element instanceof ILaunchConfiguration) {
@@ -978,16 +981,19 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 					data= null;
 				}
 				ICommand command= (ICommand)data;
-				Map args= command.getArguments();
-				Boolean enabled= (Boolean)args.get(COMMAND_ENABLED);
-				if (enabled != null && enabled.equals(Boolean.FALSE)) {
-					ILaunchConfiguration config= disableCommand(command);
-					if (config != null) {
-						data= BuilderUtils.commandFromLaunchConfig(project,config);
-					}
-				} else {
-					args.remove(COMMAND_ENABLED);
-					command.setArguments(args);
+				Map/*<String, String>*/ args = command.getArguments();
+				String val = (String)args.get(COMMAND_ENABLED);
+				if(val != null) {
+					Boolean enabled = new Boolean(val);
+					if (!enabled.booleanValue()) {
+						ILaunchConfiguration config= disableCommand(command);
+						if (config != null) {
+							data= BuilderUtils.commandFromLaunchConfig(project,config);
+						}
+					} else {
+						args.remove(COMMAND_ENABLED);
+						command.setArguments(args);
+				}
 				}
 			} else if (data instanceof ILaunchConfiguration) {
 				ILaunchConfiguration config= (ILaunchConfiguration) data;
@@ -1088,7 +1094,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 * The details of the command is persisted in the launch configuration.
 	 */
 	private ILaunchConfiguration disableCommand(ICommand command) {
-		Map arguments= command.getArguments();
+		Map/*<String, String>*/ arguments= command.getArguments();
 		if (arguments != null) {
 			arguments.remove(COMMAND_ENABLED);
 		}
@@ -1173,8 +1179,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				if(oldName != null && !oldName.equals(newName)) {
 					return true;
 				}
-				Map oldArgs= oldCommand.getArguments();
-				Map newArgs= newCommand.getArguments();
+				Map/*<String, String>*/ oldArgs= oldCommand.getArguments();
+				Map/*<String, String>*/ newArgs= newCommand.getArguments();
 				if (oldArgs == null) {
 					if(newArgs != null) {
 						return true;
@@ -1233,7 +1239,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			Object data = builderTable.getItem(i).getData();
 			if (data instanceof ICommand) {
 				ICommand command= (ICommand)data;
-				Map args= command.getArguments();
+				Map/*<String, String>*/ args= command.getArguments();
 				args.remove(COMMAND_ENABLED);
 				command.setArguments(args);
 			}
