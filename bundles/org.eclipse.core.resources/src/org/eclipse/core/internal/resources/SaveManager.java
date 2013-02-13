@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -225,7 +225,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES);
 		IPath backup = workspace.getMetaArea().getBackupLocationFor(location);
 		try {
-			saveMasterTable(backup);
+			saveMasterTable(ISaveContext.FULL_SAVE, backup);
 		} catch (CoreException e) {
 			Policy.log(e.getStatus());
 			backup.toFile().delete();
@@ -234,7 +234,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (location.toFile().exists() && !location.toFile().delete())
 			return;
 		try {
-			saveMasterTable(location);
+			saveMasterTable(ISaveContext.FULL_SAVE, location);
 		} catch (CoreException e) {
 			Policy.log(e.getStatus());
 			location.toFile().delete();
@@ -1194,7 +1194,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					if (kind == ISaveContext.FULL_SAVE)
 						removeClearDeltaMarks();
 					//this must be done after committing save contexts to update participant save numbers
-					saveMasterTable();
+					saveMasterTable(kind);
 					broadcastLifecycle(DONE_SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
 					hookEndSave(kind, project, start);
 					return warnings;
@@ -1216,14 +1216,16 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 	}
 
-	protected void saveMasterTable() throws CoreException {
-		saveMasterTable(workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES));
+	protected void saveMasterTable(int kind) throws CoreException {
+		saveMasterTable(kind, workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES));
 	}
 
-	protected void saveMasterTable(IPath location) throws CoreException {
+	protected void saveMasterTable(int kind, IPath location) throws CoreException {
 		long start = System.currentTimeMillis();
 		java.io.File target = location.toFile();
 		try {
+			if (kind == ISaveContext.FULL_SAVE || kind == ISaveContext.SNAPSHOT)
+				validateMasterTableBeforeSave(target);
 			SafeChunkyOutputStream output = new SafeChunkyOutputStream(target);
 			try {
 				masterTable.store(output, "master table"); //$NON-NLS-1$
@@ -1543,6 +1545,28 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		String key = DELTA_EXPIRATION_PREFIX + pluginId;
 		if (!masterTable.containsKey(key))
 			masterTable.setProperty(key, Long.toString(System.currentTimeMillis()));
+	}
+
+	private void validateMasterTableBeforeSave(java.io.File target) throws IOException {
+		if (target.exists()) {
+			MasterTable previousMasterTable = new MasterTable();
+			SafeChunkyInputStream input = new SafeChunkyInputStream(target);
+			try {
+				previousMasterTable.load(input);
+				String stringValue = previousMasterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY);
+				// if there was a full save, then there must be a non-null entry for root
+				if (stringValue != null) {
+					int valueInFile = new Integer(stringValue).intValue();
+					int valueInMemory = new Integer(masterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY)).intValue();
+					// new master table must provide greater or equal sequence number for root
+					// throw exception if new value is lower than previous one - we cannot allow to desynchronize master table on disk
+					String message = "Cannot set lower sequence number for root (previous: " + valueInFile + ", new: " + valueInMemory + "). Location: " + target.getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Assert.isLegal(valueInMemory >= valueInFile, message);
+				}
+			} finally {
+				input.close();
+			}
+		}
 	}
 
 	/**
