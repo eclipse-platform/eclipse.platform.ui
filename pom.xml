@@ -38,14 +38,12 @@
     <module>bundles/org.eclipse.core.runtime</module>
     <module>bundles/org.eclipse.core.runtime.compatibility</module>
     <module>bundles/org.eclipse.core.runtime.compatibility.registry</module>
-    <module>bundles/org.eclipse.core.tools</module>
     <module>bundles/org.eclipse.e4.core.contexts</module>
     <module>bundles/org.eclipse.e4.core.di</module>
     <module>bundles/org.eclipse.e4.core.di.extensions</module>
     <module>bundles/org.eclipse.e4.core.services</module>
 
     <module>features/org.eclipse.core.runtime.feature</module>
-    <module>features/org.eclipse.core.tools-feature</module>
 
     <module>tests/com.google.code.atinject.tck</module>
     <module>tests/org.eclipse.core.expressions.tests</module>
