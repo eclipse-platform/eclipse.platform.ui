@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IResource;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -87,7 +88,6 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 
 			composite.setLayout(gridLayout);
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			composite.setFont(parent.getFont());
 
 			Image image= parent.getDisplay().getSystemImage(SWT.ICON_QUESTION);
 			Label imageLabel = new Label(composite, SWT.NULL);
@@ -97,7 +97,6 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 
 			IResource[] resources= fRefactoringProcessor.getResourcesToDelete();
 			Label label= new Label(composite, SWT.WRAP);
-			label.setFont(composite.getFont());
 
 			boolean onlyProjects= Resources.containsOnlyProjects(resources);
 			if (onlyProjects) {
@@ -133,7 +132,6 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 
 			if (onlyProjects) {
 				fDeleteContentsButton= new Button(supportArea, SWT.CHECK);
-				fDeleteContentsButton.setFont(composite.getFont());
 				fDeleteContentsButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 				fDeleteContentsButton.setText(RefactoringUIMessages.DeleteResourcesWizard_project_deleteContents);
 				fDeleteContentsButton.setFocus();
@@ -166,6 +164,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 					}
 				}
 				projectLocationsList.setText(buf.toString());
+				Dialog.applyDialogFont(projectLocationsList);
 				gridData.heightHint= Math.min(convertHeightInCharsToPixels(5), projectLocationsList.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			}
 			setControl(composite);
