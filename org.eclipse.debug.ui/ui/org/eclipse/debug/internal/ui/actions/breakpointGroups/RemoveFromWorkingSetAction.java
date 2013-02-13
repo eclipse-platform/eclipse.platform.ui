@@ -103,6 +103,16 @@ public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
     }
     
     /* (non-Javadoc)
+     * @see org.eclipse.jface.action.Action#isEnabled()
+     */
+    public boolean isEnabled() {
+    	if(fBreakpoints != null) {
+    		return fBreakpoints.length > 0;
+    	}
+    	return false;
+    }
+    
+    /* (non-Javadoc)
      * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
      */
     protected boolean updateSelection(IStructuredSelection selection) {
