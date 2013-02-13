@@ -19,6 +19,6 @@
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.ui</artifactId>
-  <version>3.8.2-SNAPSHOT</version>
+  <version>3.8.3-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

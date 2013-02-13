@@ -1497,10 +1497,10 @@
          </description>
       </colorDefinition>
       <colorDefinition
-            label="%Color.hyperlinkText"
             categoryId="org.eclipse.ui.workbenchMisc"
-            value="COLOR_DARK_BLUE"
-            id="HYPERLINK_COLOR">
+            id="HYPERLINK_COLOR"
+            value="COLOR_LINK_FOREGROUND"
+            label="%Color.hyperlinkText">
          <description>
             %Color.hyperlinkTextDesc
          </description>
@@ -1508,11 +1508,22 @@
       <colorDefinition
             label="%Color.activeHyperlinkText"
             categoryId="org.eclipse.ui.workbenchMisc"
-            value="COLOR_BLUE"
             id="ACTIVE_HYPERLINK_COLOR">
          <description>
             %Color.activeHyperlinkTextDesc
          </description>
+         <colorFactory
+               class="org.eclipse.ui.internal.themes.RGBBrightnessColorFactory"
+               plugin="org.eclipse.ui">
+            <parameter
+                  name="color"
+                  value="COLOR_LINK_FOREGROUND">
+            </parameter>
+            <parameter
+                  name="scaleFactor"
+                  value="0.7">
+            </parameter>
+         </colorFactory>
       </colorDefinition>
          
      <colorDefinition
