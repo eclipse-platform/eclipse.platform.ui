@@ -994,7 +994,7 @@
           id="org.eclipse.ui.editors.hyperlinkColor"
           isEditable="false"
           label="%dummy"
-          value="0,0,255">
+          value="COLOR_LINK_FOREGROUND">
       </colorDefinition>
       <colorDefinition
           id="org.eclipse.ui.editors.findScope"
