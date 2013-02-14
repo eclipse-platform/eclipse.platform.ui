@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Jonas Helming <jhelming@eclipsesource.com>
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.parts;
-
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -31,38 +31,47 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorPart;
 
-public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProviderService {
+/**
+ * This class provides an adapter enabling to plug editors, which are
+ * implemented following the e4 programming model into a 3.x workbench. This
+ * class is supposed to be sub classed by clients.
+ * 
+ * @author Jonas
+ * 
+ * @param <C>
+ */
+public abstract class DIEditorPart<C> extends EditorPart implements
+		IDirtyProviderService {
 	private IEclipseContext context;
 	private C component;
 	private Class<C> clazz;
 	private boolean dirtyState;
-	
+
 	private int features;
 
 	protected static final int COPY = 1;
 	protected static final int PASTE = 1 << 1;
 	protected static final int CUT = 1 << 2;
-	
-	
+
 	public DIEditorPart(Class<C> clazz) {
 		this(clazz, SWT.NONE);
 	}
-	
+
 	public DIEditorPart(Class<C> clazz, int features) {
 		this.clazz = clazz;
 		this.features = features;
 	}
-	
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		IEclipseContext saveContext = context.createChild();
 		ContextInjectionFactory.invoke(component, Persist.class, saveContext);
 		saveContext.dispose();
 	}
-	
+
 	@Override
 	public void doSaveAs() {
-		
+
 	}
 
 	@Override
@@ -75,66 +84,68 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 			throws PartInitException {
 		setSite(site);
 		setInput(input);
-		
+
 		context = PartHelper.createPartContext(this);
 		context.declareModifiable(IEditorInput.class);
 		context.declareModifiable(IEditorPart.class);
 		context.declareModifiable(IDirtyProviderService.class);
-		
-		context.set(IEditorPart.class,this);
-		context.set(IDirtyProviderService.class,this);
+
+		context.set(IEditorPart.class, this);
+		context.set(IDirtyProviderService.class, this);
 		context.set(IEditorInput.class, input);
 	}
 
-	
 	@Override
 	public void createPartControl(Composite parent) {
 		component = PartHelper.createComponent(parent, context, clazz, this);
 		makeActions();
 	}
-	
+
 	protected IEclipseContext getContext() {
 		return context;
 	}
-	
+
 	public C getComponent() {
 		return component;
 	}
-	
+
 	protected void makeActions() {
-		if( (features & COPY) == COPY ) {
+		if ((features & COPY) == COPY) {
 			IClipboardService clipboard = context.get(IClipboardService.class);
-			getEditorSite().getActionBars().setGlobalActionHandler(ActionFactory.COPY.getId(), new CopyAction(clipboard));
+			getEditorSite().getActionBars().setGlobalActionHandler(
+					ActionFactory.COPY.getId(), new CopyAction(clipboard));
 		}
-		
-		if( (features & PASTE) == PASTE ) {
+
+		if ((features & PASTE) == PASTE) {
 			IClipboardService clipboard = context.get(IClipboardService.class);
-			getEditorSite().getActionBars().setGlobalActionHandler(ActionFactory.PASTE.getId(), new PasteAction(clipboard));
+			getEditorSite().getActionBars().setGlobalActionHandler(
+					ActionFactory.PASTE.getId(), new PasteAction(clipboard));
 		}
-		
-		if( (features & CUT) == CUT ) {
+
+		if ((features & CUT) == CUT) {
 			IClipboardService clipboard = context.get(IClipboardService.class);
-			getEditorSite().getActionBars().setGlobalActionHandler(ActionFactory.CUT.getId(), new CutAction(clipboard));
+			getEditorSite().getActionBars().setGlobalActionHandler(
+					ActionFactory.CUT.getId(), new CutAction(clipboard));
 		}
 	}
-	
+
 	public void setDirtyState(boolean dirtyState) {
-		if( dirtyState != this.dirtyState ) {
+		if (dirtyState != this.dirtyState) {
 			this.dirtyState = dirtyState;
 			firePropertyChange(PROP_DIRTY);
 		}
 	}
-	
+
 	@Override
 	public boolean isDirty() {
 		return dirtyState;
 	}
-	
+
 	@Override
 	public void setFocus() {
 		ContextInjectionFactory.invoke(component, Focus.class, context);
 	}
-	
+
 	@Override
 	public void dispose() {
 		context.dispose();
