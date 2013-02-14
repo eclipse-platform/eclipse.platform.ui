@@ -27,8 +27,7 @@ public abstract class AbstractPartRenderer {
 
 	public void init(IEclipseContext context) {
 		this.context = context;
-		modelService = (EModelService) context.get(EModelService.class
-				.getName());
+		modelService = context.get(EModelService.class);
 	}
 
 	public abstract Object createWidget(MUIElement element, Object parent);
@@ -122,5 +121,16 @@ public abstract class AbstractPartRenderer {
 			return element.getParent().getWidget();
 
 		return null;
+	}
+
+	/**
+	 * Force the UI focus into the element if possible. This method should not
+	 * be called directly, it will be called by the IPresentationEngine#focusGui
+	 * method if the normal process used to set the focus cannot be performed.
+	 * 
+	 * @param element
+	 */
+	public void forceFocus(MUIElement element) {
+		// Do nothing by default
 	}
 }

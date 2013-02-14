@@ -18,10 +18,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -898,8 +896,7 @@ public class StackRenderer extends LazyStackRenderer {
 						if ((stackElement instanceof MPart)
 								&& (ctf.isFocusControl())) {
 							MPart thePart = (MPart) stackElement;
-							ContextInjectionFactory.invoke(thePart.getObject(),
-									Focus.class, thePart.getContext(), null);
+							renderer.focusGui(thePart);
 						}
 					}
 				}

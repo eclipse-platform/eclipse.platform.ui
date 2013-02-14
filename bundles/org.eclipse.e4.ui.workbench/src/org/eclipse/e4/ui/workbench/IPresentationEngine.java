@@ -157,6 +157,15 @@ public interface IPresentationEngine {
 	public void removeGui(MUIElement element);
 
 	/**
+	 * Attempts to set the UI focus onto the given element. By default we delegate this to the
+	 * elements implementation's @Focus method (if any). If no such method exists we delegate the
+	 * the renderer's 'forceFocus' method.
+	 * 
+	 * @param element
+	 */
+	public void focusGui(MUIElement element);
+
+	/**
 	 * Run the UI. This method is responsible for creating the initial UI and (if necessary)
 	 * spinning the event loop for the life of the application.
 	 * 

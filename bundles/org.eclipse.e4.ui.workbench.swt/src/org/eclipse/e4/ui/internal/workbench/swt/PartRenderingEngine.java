@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -39,6 +40,7 @@ import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -727,6 +729,55 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 
 		return safeCreateGui(element, parent, parentContext);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.IPresentationEngine#focusGui(org.eclipse.
+	 * e4.ui.model.application.ui.MUIElement)
+	 */
+	public void focusGui(MUIElement element) {
+		AbstractPartRenderer renderer = (AbstractPartRenderer) element
+				.getRenderer();
+		if (renderer == null || element.getWidget() == null)
+			return;
+
+		Object implementation = element instanceof MContribution ? ((MContribution) element)
+				.getObject() : null;
+
+		// If there is no class to call @Focus on then revert to the default
+		if (!(element instanceof MContribution)) {
+			renderer.forceFocus(element);
+			return;
+		}
+
+		try {
+			IEclipseContext context = getContext(element);
+			Object defaultValue = new Object();
+			Object returnValue = ContextInjectionFactory.invoke(implementation,
+					Focus.class, context, defaultValue);
+			if (returnValue == defaultValue) {
+				// No @Focus method, force the focus
+				renderer.forceFocus(element);
+			}
+		} catch (InjectionException e) {
+			log("Failed to grant focus to element", "Failed to grant focus to element ({0})", //$NON-NLS-1$ //$NON-NLS-2$
+					element.getElementId(), e);
+		} catch (RuntimeException e) {
+			log("Failed to grant focus to element via DI", //$NON-NLS-1$
+					"Failed to grant focus via DI to element ({0})", element.getElementId(), e); //$NON-NLS-1$
+		}
+	}
+
+	private void log(String unidentifiedMessage, String identifiedMessage,
+			String id, Exception e) {
+		if (id == null || id.length() == 0) {
+			logger.error(e, unidentifiedMessage);
+		} else {
+			logger.error(e, NLS.bind(identifiedMessage, id));
+		}
 	}
 
 	private Shell getLimboShell() {

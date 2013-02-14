@@ -28,7 +28,6 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
@@ -581,18 +580,11 @@ public class PartServiceImpl implements EPartService {
 
 			partActivationHistory.activate(part, activateBranch);
 
-			Object object = part.getObject();
-			if (object != null && requiresFocus) {
-				try {
-					ContextInjectionFactory.invoke(object, Focus.class, part.getContext(), null);
-				} catch (InjectionException e) {
-					log("Failed to grant focus to part", "Failed to grant focus to part ({0})", //$NON-NLS-1$ //$NON-NLS-2$
-							part.getElementId(), e);
-				} catch (RuntimeException e) {
-					log("Failed to grant focus to part via DI", //$NON-NLS-1$
-							"Failed to grant focus via DI to part ({0})", part.getElementId(), e); //$NON-NLS-1$
-				}
+			if (requiresFocus) {
+				IPresentationEngine pe = part.getContext().get(IPresentationEngine.class);
+				pe.focusGui(part);
 			}
+
 			firePartActivated(part);
 			UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
 		} finally {

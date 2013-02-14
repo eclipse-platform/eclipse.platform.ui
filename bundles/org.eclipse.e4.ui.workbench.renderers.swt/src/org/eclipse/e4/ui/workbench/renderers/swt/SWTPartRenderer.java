@@ -282,4 +282,20 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		return getModelElement(ctrl.getParent());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#forceFocus
+	 * (org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	@Override
+	public void forceFocus(MUIElement element) {
+		if (element.getWidget() instanceof Control) {
+			// Have SWT set the focus
+			Control ctrl = (Control) element.getWidget();
+			if (!ctrl.isDisposed())
+				ctrl.forceFocus();
+		}
+	}
 }

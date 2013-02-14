@@ -24,12 +24,11 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -171,8 +170,9 @@ public class SearchField {
 					if (text.isFocusControl()) {
 						MPart activePart = partService.getActivePart();
 						if (activePart != null) {
-							ContextInjectionFactory.invoke(activePart.getObject(), Focus.class,
-									activePart.getContext(), null);
+							IPresentationEngine pe = activePart.getContext().get(
+									IPresentationEngine.class);
+							pe.focusGui(activePart);
 						}
 					}
 				}

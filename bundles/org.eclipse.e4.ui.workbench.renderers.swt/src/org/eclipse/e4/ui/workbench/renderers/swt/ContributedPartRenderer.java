@@ -11,12 +11,10 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import javax.inject.Inject;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -94,12 +92,14 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 					try {
 						// we are currently asking the part to take focus
 						beingFocused = true;
+
 						// delegate an attempt to set the focus here to the
 						// part's implementation (if there is one)
 						Object object = part.getObject();
 						if (object != null) {
-							ContextInjectionFactory.invoke(object, Focus.class,
-									part.getContext(), null);
+							IPresentationEngine pe = part.getContext().get(
+									IPresentationEngine.class);
+							pe.focusGui(part);
 							return true;
 						}
 						return super.setFocus();
