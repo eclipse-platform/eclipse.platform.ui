@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Marco Descher <marco@descher.at> - https://bugs.eclipse.org/397650
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -40,6 +43,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -70,6 +74,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
+	private List<Action> actions = new ArrayList<Action>();
 
 	@Inject
 	@Optional
@@ -90,6 +95,34 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	@Inject
 	public ToolBarContributionEditor() {
 		super();
+	}
+
+	@PostConstruct
+	void init() {
+		actions.add(new Action(Messages.ToolBarEditor_AddHandledToolItem, createImageDescriptor(ResourceProvider.IMG_HandledToolItem)) {
+			@Override
+			public void run() {
+				handleAddChild(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
+			}
+		});
+		actions.add(new Action(Messages.ToolBarEditor_AddDirectToolItem, createImageDescriptor(ResourceProvider.IMG_DirectToolItem)) {
+			@Override
+			public void run() {
+				handleAddChild(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false);
+			}
+		});
+		actions.add(new Action(Messages.ToolBarEditor_AddToolControl, createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
+			@Override
+			public void run() {
+				handleAddChild(MenuPackageImpl.Literals.TOOL_CONTROL, false);
+			}
+		});
+		actions.add(new Action(Messages.ToolBarEditor_AddToolBarSeparator, createImageDescriptor(ResourceProvider.IMG_ToolBarSeparator)) {
+			@Override
+			public void run() {
+				handleAddChild(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true);
+			}
+		});
 	}
 
 	@Override
@@ -352,5 +385,26 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
+
+	protected void handleAddChild(EClass eClass, boolean separator) {
+		MToolBarElement eObject = (MToolBarElement) EcoreUtil.create(eClass);
+		setElementId(eObject);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			if (!separator) {
+				getEditor().setSelection(eObject);
+			}
+		}
 	}
 }

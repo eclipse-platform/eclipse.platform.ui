@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Marco Descher <marco@descher.at> - https://bugs.eclipse.org/397650
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -39,6 +42,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -69,6 +73,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
+	private List<Action> actions = new ArrayList<Action>();
 
 	@Inject
 	@Optional
@@ -77,6 +82,22 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 	@Inject
 	public TrimContributionEditor() {
 		super();
+	}
+
+	@PostConstruct
+	void init() {
+		actions.add(new Action(Messages.TrimBarEditor_AddToolBar, createImageDescriptor(ResourceProvider.IMG_ToolBar)) {
+			@Override
+			public void run() {
+				handleAddChild(MenuPackageImpl.Literals.TOOL_BAR);
+			}
+		});
+		actions.add(new Action(Messages.TrimBarEditor_AddToolControl, createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
+			@Override
+			public void run() {
+				handleAddChild(MenuPackageImpl.Literals.TOOL_CONTROL);
+			}
+		});
 	}
 
 	@Override
@@ -328,5 +349,24 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+	}
+
+	protected void handleAddChild(EClass eClass) {
+		EObject toolbar = EcoreUtil.create(eClass);
+		setElementId(toolbar);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, toolbar);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(toolbar);
+		}
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
 	}
 }
