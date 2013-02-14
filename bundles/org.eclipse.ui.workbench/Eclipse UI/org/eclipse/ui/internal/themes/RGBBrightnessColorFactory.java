@@ -31,23 +31,15 @@ public class RGBBrightnessColorFactory implements IColorFactory, IExecutableExte
 	 * @see org.eclipse.ui.themes.IColorFactory#createColor()
 	 */
 	public RGB createColor() {
-		RGB finalRGB = new RGB(0, 0, 0);
-		try {
-		if (color != null && scaleFactor != null) {
-				RGB rgb = ColorUtil.getColorValue(color);
-			float scale = Float.parseFloat(scaleFactor);
-			float[] hsb = rgb.getHSB();
-				hsb[2] *= scale;
-			if (hsb[2] < 0)
-				hsb[2] = 0;
-			if (hsb[2] > 255)
-				hsb[2] = 255;
-				finalRGB = new RGB(hsb[0], hsb[1], hsb[2]);
-		}
-		} catch (NumberFormatException ex) {
-		}
-
-		return finalRGB;
+		RGB rgb = ColorUtil.getColorValue(color);
+		float scale = Float.parseFloat(scaleFactor);
+		float[] hsb = rgb.getHSB();
+		float b = hsb[2] * scale;
+		if (b < 0)
+			b = 0;
+		if (b > 1)
+			b = 1;
+		return new RGB(hsb[0], hsb[1], b);
 	}
 
 	/**
