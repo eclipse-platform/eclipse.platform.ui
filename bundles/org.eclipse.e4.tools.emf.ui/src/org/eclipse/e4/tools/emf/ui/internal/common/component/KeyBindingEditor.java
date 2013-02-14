@@ -359,6 +359,10 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 					if (keySequence.isEmpty()) {
 						return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", Messages.KeyBindingEditor_SequenceEmpty); //$NON-NLS-1$
 					}
+					if (!value.toString().toUpperCase().equals(value.toString())) {
+						return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", Messages.KeyBindingEditor_SequenceLowercase); //$NON-NLS-1$ 
+					}
+
 					return Status.OK_STATUS;
 				} catch (Exception e) {
 					return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", e.getMessage(), e); //$NON-NLS-1$
