@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010-2013 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Marco Descher <marco@descher.at> - https://bugs.eclipse.org/397650
+ *     Marco Descher <marco@descher.at> - Bug 397650, Bug 395982
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -113,6 +113,12 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 			@Override
 			public void run() {
 				handleAdd(MenuPackageImpl.Literals.MENU_SEPARATOR, true);
+			}
+		});
+		actions.add(new Action(Messages.MenuEditor_AddDynamicMenuContribution, createImageDescriptor(ResourceProvider.IMG_DynamicMenuContribution)) {
+			@Override
+			public void run() {
+				handleAdd(MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION, false);
 			}
 		});
 	}

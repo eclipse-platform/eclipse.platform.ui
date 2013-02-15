@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010-2013 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Wim Jongman <wim.jongman@remainsoftware.com> - Maintenance
+ *     Marco Descher <marco@descher.at> - Bug395982
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -71,6 +72,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.CoreExpressionEdito
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DefaultEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectToolItemEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.DynamicMenuContributionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandlerEditor;
@@ -1119,6 +1121,7 @@ public class ModelEditor {
 		registerEditor(MenuPackageImpl.Literals.MENU_CONTRIBUTION, ContextInjectionFactory.make(MenuContributionEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION, ContextInjectionFactory.make(ToolBarContributionEditor.class, context));
 		registerEditor(MenuPackageImpl.Literals.TRIM_CONTRIBUTION, ContextInjectionFactory.make(TrimContributionEditor.class, context));
+		registerEditor(MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION, ContextInjectionFactory.make(DynamicMenuContributionEditor.class, context));
 
 		registerEditor(UiPackageImpl.Literals.CORE_EXPRESSION, ContextInjectionFactory.make(CoreExpressionEditor.class, context));
 

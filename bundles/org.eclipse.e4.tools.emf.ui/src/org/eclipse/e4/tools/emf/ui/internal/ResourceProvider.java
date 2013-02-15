@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 BestSolution.at
+ * Copyright (c) 2011-2013 BestSolution.at
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Marco Descher <marco@descher.at> - Bug 395982
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
@@ -32,6 +33,7 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Menu = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.Menu"; //$NON-NLS-1$
 	public static final String IMG_MenuContribution = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.MenuContribution"; //$NON-NLS-1$
 	public static final String IMG_MenuItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.MenuItem"; //$NON-NLS-1$
+	public static final String IMG_DynamicMenuContribution = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.DynamicMenuContribution"; //$NON-NLS-1$
 	public static final String IMG_MenuSeparator = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.MenuSeparator"; //$NON-NLS-1$
 	public static final String IMG_ModelFragments = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.ModelFragments"; //$NON-NLS-1$
 	public static final String IMG_Parameter = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.Parameter"; //$NON-NLS-1$
@@ -66,6 +68,7 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Tbr_Menu = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Menu"; //$NON-NLS-1$
 	public static final String IMG_Tbr_MenuContribution = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.MenuContribution"; //$NON-NLS-1$
 	public static final String IMG_Tbr_MenuItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.MenuItem"; //$NON-NLS-1$
+	public static final String IMG_Tbr_DynamicMenuContribution = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.DynamicMenuContribution"; //$NON-NLS-1$
 	public static final String IMG_Tbr_MenuSeparator = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.MenuSeparator"; //$NON-NLS-1$
 	public static final String IMG_Tbr_ModelFragments = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.ModelFragments"; //$NON-NLS-1$
 	public static final String IMG_Tbr_Parameter = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Parameter"; //$NON-NLS-1$

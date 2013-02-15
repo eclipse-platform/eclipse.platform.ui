@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010-2013 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Marco Descher <marco@descher.at> - Bug 395982
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
@@ -97,6 +98,12 @@ public class Messages {
 	public String HandledMenuItemEditor_Tag;
 	public String HandledMenuItemEditor_Value;
 
+	public String DynamicMenuContributionEditor_Label;
+	public String DynamicMenuContributionEditor_Description;
+
+	public String DynamicMenuContributionEditor_ClassURI;
+	public String DynamicMenuContributionEditor_LabelLabel;
+
 	public String HandledToolItemEditor_Command;
 	public String HandledToolItemEditor_Parameters;
 	public String HandledToolItemEditor_ParametersName;
@@ -140,6 +147,7 @@ public class Messages {
 	public String MenuEditor_AddMenu;
 	public String MenuEditor_AddDirectMenuItem;
 	public String MenuEditor_AddSeparator;
+	public String MenuEditor_AddDynamicMenuContribution;
 	public String MenuEditor_AddCoreExpression;
 
 	public String MenuItemEditor_Type;
