@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Replace deprecated API usage in WorkbenchPlugin#createExtension - http://bugs.eclipse.org/400714 
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -260,8 +261,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         try {
             // If plugin has been loaded create extension.
             // Otherwise, show busy cursor then create extension.
-            if (BundleUtility.isActivated(element.getDeclaringExtension()
-                    .getNamespace())) {
+            if (BundleUtility.isActivated(element.getDeclaringExtension().getNamespaceIdentifier())) {
                 return element.createExecutableExtension(classAttribute);
             }
             final Object[] ret = new Object[1];
