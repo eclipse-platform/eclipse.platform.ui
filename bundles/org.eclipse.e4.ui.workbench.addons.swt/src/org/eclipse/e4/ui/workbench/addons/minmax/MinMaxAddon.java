@@ -407,26 +407,28 @@ public class MinMaxAddon {
 					|| modelService.getTopLevelWindowFor(changedElement) == null)
 				return;
 
-			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
-			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
-				MUIElement removed = (MUIElement) event.getProperty(UIEvents.EventTags.OLD_VALUE);
-				String perspectiveId = removed.getElementId();
-				MWindow window = modelService.getTopLevelWindowFor(changedElement);
-				MTrimBar bar = modelService.getTrim((MTrimmedWindow) window, SideValue.TOP);
+			if (UIEvents.isREMOVE(event)) {
+				for (Object removedElement : UIEvents.asIterable(event,
+						UIEvents.EventTags.OLD_VALUE)) {
+					MUIElement removed = (MUIElement) removedElement;
+					String perspectiveId = removed.getElementId();
+					MWindow window = modelService.getTopLevelWindowFor(changedElement);
+					MTrimBar bar = modelService.getTrim((MTrimmedWindow) window, SideValue.TOP);
 
-				// gather up any minimized stacks for this perspective...
-				List<MToolControl> toRemove = new ArrayList<MToolControl>();
-				for (MUIElement child : bar.getChildren()) {
-					String trimElementId = child.getElementId();
-					if (child instanceof MToolControl && trimElementId.contains(perspectiveId)) {
-						toRemove.add((MToolControl) child);
+					// gather up any minimized stacks for this perspective...
+					List<MToolControl> toRemove = new ArrayList<MToolControl>();
+					for (MUIElement child : bar.getChildren()) {
+						String trimElementId = child.getElementId();
+						if (child instanceof MToolControl && trimElementId.contains(perspectiveId)) {
+							toRemove.add((MToolControl) child);
+						}
 					}
-				}
 
-				// ...and remove them
-				for (MToolControl minStack : toRemove) {
-					minStack.setToBeRendered(false);
-					bar.getChildren().remove(minStack);
+					// ...and remove them
+					for (MToolControl minStack : toRemove) {
+						minStack.setToBeRendered(false);
+						bar.getChildren().remove(minStack);
+					}
 				}
 			}
 		}

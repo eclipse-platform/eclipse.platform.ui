@@ -55,8 +55,7 @@ public class CleanupAddon {
 	private EventHandler childrenHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
-			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
+			if (UIEvents.isREMOVE(event)) {
 				final MElementContainer<?> container = (MElementContainer<?>) changedObj;
 				MUIElement containerParent = container.getParent();
 

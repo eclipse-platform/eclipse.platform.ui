@@ -764,8 +764,9 @@ public class StackRenderer extends LazyStackRenderer {
 			createFlags |= SWT.CLOSE;
 		}
 
-		// Create the tab
-		int index = calcIndexFor(stack, element);
+		// Create the tab; we may have more visible tabs than currently shown
+		// (e.g., a result of calling partStack.getChildren().addAll(partList))
+		int index = Math.min(calcIndexFor(stack, element), ctf.getItemCount());
 		cti = new CTabItem(ctf, createFlags, index);
 
 		cti.setData(OWNING_ME, element);
