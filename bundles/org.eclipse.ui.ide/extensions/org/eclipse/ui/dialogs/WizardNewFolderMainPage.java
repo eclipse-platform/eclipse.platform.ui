@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -815,6 +815,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			return false;
 		if (resourceName.length() > 0) {
 			IPath newFolderPath = containerPath.append(resourceName);
+			if (newFolderPath.segmentCount() < 2)
+				return false;
 			IFolder newFolderHandle = createFolderHandle(newFolderPath);
 			IWorkspace workspace = newFolderHandle.getWorkspace();
 			return !workspace.validateFiltered(newFolderHandle).isOK();
