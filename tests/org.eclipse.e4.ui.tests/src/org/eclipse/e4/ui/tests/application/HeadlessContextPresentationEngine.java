@@ -450,4 +450,14 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	 */
 	public void stop() {
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.IPresentationEngine#focusGui(org.eclipse.
+	 * e4.ui.model.application.ui.MUIElement)
+	 */
+	public void focusGui(MUIElement element) {
+	}
 }
