@@ -21,8 +21,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -35,12 +33,6 @@ import org.eclipse.swt.widgets.Menu;
  * events.
  */
 public class MenuManagerHideProcessor implements IMenuListener2 {
-
-	@Inject
-	private EModelService modelService;
-
-	@Inject
-	private IRendererFactory rendererFactory;
 
 	@Inject
 	private MenuManagerRenderer renderer;
