@@ -2642,9 +2642,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				sortedPerspectives.add(desc);
 			}
 		}
+		restoreWorkingSets();
     }
 
-	@PostConstruct
 	public void restoreWorkingSets() {
 		String workingSetName = getWindowModel().getPersistedState().get(
 				IWorkbenchConstants.TAG_WORKING_SET);
