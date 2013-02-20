@@ -10,33 +10,18 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.uistructure;
 
-import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.services.Translation;
-import org.eclipse.e4.ui.model.fragment.MModelFragments;
-import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
-import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.MoveCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -57,7 +42,12 @@ public class ViewerElement {
 	private ComboViewer dropDown;
 	private Button addButton;
 	private Composite parent;
-	private EReference reference;
+
+	private Button removeButton;
+
+	private Button downButton;
+
+	private Button upButton;
 
 	/**
 	 * @param parent
@@ -65,9 +55,8 @@ public class ViewerElement {
 	 * @param editor
 	 */
 	@Inject
-	public ViewerElement(@Translation Messages Messages, Composite parent, EReference reference, AbstractComponentEditor editor) {
+	public ViewerElement(@Translation Messages Messages, Composite parent, AbstractComponentEditor editor) {
 		this.parent = parent;
-		this.reference = reference;
 		this.editor = editor;
 		this.Messages = Messages;
 		createControl();
@@ -101,77 +90,61 @@ public class ViewerElement {
 		gl.marginHeight = 0;
 		buttonCompBot.setLayout(gl);
 
-		Button b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Up);
-		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 1, 1));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						MModelFragments container = (MModelFragments) editor.getMaster().getValue();
-						int idx = container.getImports().indexOf(obj) - 1;
-						if (idx >= 0) {
-							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), reference, obj, idx);
+		upButton = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
+		upButton.setText(Messages.ModelTooling_Common_Up);
+		upButton.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
+		upButton.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 1, 1));
 
-							if (cmd.canExecute()) {
-								editor.getEditingDomain().getCommandStack().execute(cmd);
-								viewer.setSelection(new StructuredSelection(obj));
-							}
-						}
+		downButton = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
+		downButton.setText(Messages.ModelTooling_Common_Down);
+		downButton.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
+		downButton.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 1, 1));
 
-					}
-				}
-			}
-		});
+		removeButton = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
+		removeButton.setText(Messages.ModelTooling_Common_Remove);
+		removeButton.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_delete));
+		removeButton.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 1, 1));
 
-		b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Down);
-		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 1, 1));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						MModelFragments container = (MModelFragments) editor.getMaster().getValue();
-						int idx = container.getImports().indexOf(obj) + 1;
-						if (idx < container.getImports().size()) {
-							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), reference, obj, idx);
+	}
 
-							if (cmd.canExecute()) {
-								editor.getEditingDomain().getCommandStack().execute(cmd);
-								viewer.setSelection(new StructuredSelection(obj));
-							}
-						}
+	/**
+	 * Returns the button that removes an element from the list. Use it to add
+	 * your {@link SelectionListener} to it.
+	 * 
+	 * @return
+	 */
+	public Button getButtonRemove() {
+		return removeButton;
+	}
 
-					}
-				}
-			}
-		});
+	/**
+	 * Returns the button that adds an element to the list. Use it to add your
+	 * {@link SelectionListener} to it.
+	 * 
+	 * @return
+	 */
+	public Button getButtonAdd() {
+		return addButton;
+	}
 
-		b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Remove);
-		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_delete));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 1, 1));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					List<?> elements = ((IStructuredSelection) viewer.getSelection()).toList();
+	/**
+	 * Returns the button that moves an element down in the list. Use it to add
+	 * your {@link SelectionListener} to it.
+	 * 
+	 * @return
+	 */
+	public Button getButtonDown() {
+		return downButton;
+	}
 
-					Command cmd = RemoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), reference, elements);
-					if (cmd.canExecute()) {
-						editor.getEditingDomain().getCommandStack().execute(cmd);
-					}
-				}
-			}
-		});
+	/**
+	 * Returns the button that moves an element up in the list. Use it to add
+	 * your {@link SelectionListener} to it.
+	 * 
+	 * @return
+	 */
+	public Button getButtonUp() {
+		return upButton;
 	}
 
 	private void createTopButtons() {
@@ -191,20 +164,6 @@ public class ViewerElement {
 		addButton.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_add));
 		addButton.setText(Messages.ModelTooling_Common_AddEllipsis);
 		addButton.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		addButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				EClass eClass = ((FeatureClass) ((IStructuredSelection) dropDown.getSelection()).getFirstElement()).eClass;
-				EObject eObject = EcoreUtil.create(eClass);
-
-				Command cmd = AddCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), reference, eObject);
-
-				if (cmd.canExecute()) {
-					editor.getEditingDomain().getCommandStack().execute(cmd);
-					editor.getEditor().setSelection(eObject);
-				}
-			}
-		});
 
 	}
 
@@ -222,11 +181,10 @@ public class ViewerElement {
 	 * @param editor
 	 * @return a new {@link ViewerElement}
 	 */
-	public static ViewerElement create(IEclipseContext parentContext, Composite parent, EReference reference, AbstractComponentEditor editor) {
+	public static ViewerElement create(IEclipseContext parentContext, Composite parent, AbstractComponentEditor editor) {
 		IEclipseContext mycontext = parentContext.createChild();
 		mycontext.set(Composite.class, parent);
 		mycontext.set(AbstractComponentEditor.class, editor);
-		mycontext.set(EReference.class, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
 		return ContextInjectionFactory.make(ViewerElement.class, mycontext);
 	}
 }

@@ -13,13 +13,15 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.ViewerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
@@ -36,29 +38,28 @@ import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public class VMenuEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private TableViewer viewer;
+	private StructuredViewer viewer;
 	private List<Action> actions = new ArrayList<Action>();
 	private EStructuralFeature feature;
+
+	@Inject
+	IEclipseContext eclipseContext;
 
 	public static final String VIEW_MENU_TAG = "ViewMenu"; //$NON-NLS-1$
 
@@ -134,27 +135,12 @@ public class VMenuEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		viewer = new TableViewer(parent);
-		ObservableListContentProvider cp = new ObservableListContentProvider();
-		viewer.setContentProvider(cp);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		viewer.getControl().setLayoutData(gd);
+		final ViewerElement tableElement = ViewerElement.create(eclipseContext, parent, this);
+		viewer = tableElement.getViewer();
+		viewer.setContentProvider(new ObservableListContentProvider());
 		viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 
-		Composite buttonComp = new Composite(parent, SWT.NONE);
-		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-		GridLayout gl = new GridLayout(2, false);
-		gl.marginLeft = 0;
-		gl.marginRight = 0;
-		gl.marginWidth = 0;
-		gl.marginHeight = 0;
-		buttonComp.setLayout(gl);
-
-		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Up);
-		b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
-		b.addSelectionListener(new SelectionAdapter() {
+		tableElement.getButtonUp().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
@@ -177,11 +163,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 			}
 		});
 
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Down);
-		b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
-		b.addSelectionListener(new SelectionAdapter() {
+		tableElement.getButtonDown().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
@@ -192,7 +174,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 						List<?> list = (List<?>) container.eGet(feature);
 						int idx = list.indexOf(obj) + 1;
 						if (idx < list.size()) {
-							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, obj, idx);
+							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), feature, obj, idx);
 
 							if (cmd.canExecute()) {
 								getEditingDomain().getCommandStack().execute(cmd);
@@ -205,10 +187,8 @@ public class VMenuEditor extends AbstractComponentEditor {
 			}
 		});
 
-		final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
-		childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		childrenDropDown.setContentProvider(new ArrayContentProvider());
-		childrenDropDown.setLabelProvider(new LabelProvider() {
+		tableElement.getDropDown().setContentProvider(new ArrayContentProvider());
+		tableElement.getDropDown().setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
 				if (element == Types.MENU) {
@@ -219,17 +199,13 @@ public class VMenuEditor extends AbstractComponentEditor {
 				return Messages.MenuEditor_Label_ViewMenu;
 			}
 		});
-		childrenDropDown.setInput(Types.values());
-		childrenDropDown.setSelection(new StructuredSelection(Types.MENU));
+		tableElement.getDropDown().setInput(Types.values());
+		tableElement.getDropDown().setSelection(new StructuredSelection(Types.MENU));
 
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
-		b.setText(Messages.ModelTooling_Common_AddEllipsis);
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-		b.addSelectionListener(new SelectionAdapter() {
+		tableElement.getButtonAdd().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Types t = (Types) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
+				Types t = (Types) ((IStructuredSelection) tableElement.getDropDown().getSelection()).getFirstElement();
 				if (t == Types.MENU) {
 					handleAdd(MenuPackageImpl.Literals.MENU);
 				} else if (t == Types.POPUP_MENU) {
@@ -240,11 +216,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 			}
 		});
 
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Remove);
-		b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
-		b.addSelectionListener(new SelectionAdapter() {
+		tableElement.getButtonRemove().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
