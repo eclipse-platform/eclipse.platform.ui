@@ -713,18 +713,17 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 	private class ContentWizard extends Wizard implements IBundleContentWizard {
 
-		String[] dependencies = new String[] { "javax.inject",
-				"org.eclipse.core.runtime", "org.eclipse.swt",
-				"org.eclipse.core.databinding",
-				"org.eclipse.core.databinding.beans", "org.eclipse.jface",
-				"org.eclipse.jface.databinding", "org.eclipse.e4.ui.services",
-				"org.eclipse.e4.ui.workbench", "org.eclipse.e4.core.services",
-				"org.eclipse.e4.core.di", "org.eclipse.e4.ui.di",
+		String[] dependencies = new String[] { 
+				"javax.inject",
+				"org.eclipse.core.runtime", 
+				"org.eclipse.swt",
+				"org.eclipse.jface",
+				"org.eclipse.e4.ui.services",
+				"org.eclipse.e4.ui.workbench", 
+				"org.eclipse.e4.core.di", 
+				"org.eclipse.e4.ui.di",
 				"org.eclipse.e4.core.contexts",
-				"org.eclipse.e4.ui.workbench.swt",
-				"org.eclipse.core.databinding.property",
-				"org.eclipse.e4.ui.css.core", "org.w3c.css.sac",
-				"org.eclipse.e4.core.commands", "org.eclipse.e4.ui.bindings" };
+				};
 
 		public void init(IFieldData data) {
 		}
