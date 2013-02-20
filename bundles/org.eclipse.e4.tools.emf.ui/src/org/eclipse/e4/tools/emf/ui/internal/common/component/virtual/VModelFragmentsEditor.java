@@ -115,11 +115,12 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 
 			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.horizontalSpan = 3;
 			viewer.getControl().setLayoutData(gd);
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout(2, false);
+			GridLayout gl = new GridLayout(4, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;
@@ -129,7 +130,7 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 1, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -156,7 +157,7 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 1, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -197,7 +198,7 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 1, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {

@@ -119,8 +119,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		{
 
 			Composite fragCompo = new Composite(parent, SWT.NONE);
-			fragCompo.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-			fragCompo.setLayout(new GridLayout());
+			fragCompo.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 3, 1));
 			GridLayout fragCompoLayout = new GridLayout(1, false);
 			fragCompoLayout.marginLeft = 0;
 			fragCompoLayout.marginRight = 0;
@@ -131,8 +130,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 			final TableViewer viewer = new TableViewer(fragCompo);
 			viewer.setContentProvider(new ObservableListContentProvider());
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 200;
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			viewer.getControl().setLayoutData(gd);
 
 			IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
@@ -140,7 +138,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout();
+			GridLayout gl = new GridLayout(4, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;
