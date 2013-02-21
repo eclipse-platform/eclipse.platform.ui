@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,29 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.stringsubstitution;
+package org.eclipse.debug.ui.stringsubstitution;
+
+import org.eclipse.core.variables.IStringVariable;
+import org.eclipse.swt.widgets.Shell;
+
 
 /**
  * A variable presentation extension can contribute an argument selector
  * which is use to configure the argument for a string substitution 
  * variable.
  * 
- * @since 3.0
+ * @since 3.9
  */
-public interface IArgumentSelector extends org.eclipse.debug.ui.stringsubstitution.IArgumentSelector{
+public interface IArgumentSelector {
+
+	/**
+	 * Selects and returns an argument for the given variable, 
+	 * or <code>null</code> if none.
+	 * 
+	 * @param variable the variable an argument is being selected for
+	 * @param the shell to create any dialogs on, or <code>null</code> if none
+	 * @return argument for the given variable or <code>null</code>
+	 *  if none
+	 */
+	public String selectArgument(IStringVariable variable, Shell shell);
 }

@@ -62,7 +62,7 @@
                   specifies a fully qualified name of a Java class that implements &lt;code&gt;IArgumentSelector&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.debug.internal.ui.stringsubstitution.IArgumentSelector"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.debug.ui.stringsubstitution.IArgumentSelector"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -96,26 +96,26 @@ In the above example, the contributed presentation will be used for the variable
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         Value of the attribute &lt;b&gt;argumentSelector&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.stringsubstitution.IArgumentSelector&lt;/b&gt;.
-      </documentation>
-   </annotation>
-
 
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2003, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2003, 2013 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 
 &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;argumentSelector&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.stringsubstitution.IArgumentSelector&lt;/b&gt;.
       </documentation>
    </annotation>
 
