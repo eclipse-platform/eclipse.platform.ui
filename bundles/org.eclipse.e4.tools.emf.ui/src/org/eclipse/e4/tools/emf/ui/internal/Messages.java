@@ -623,4 +623,5 @@ public class Messages {
 	public String VWindowSharedElementsEditor_Area;
 	public String ModelEditor_ExtractFragment;
 	public String ModelEditor_ExtractFragment_NoParentId;
+	public String KeyBindingEditor_SequenceLowercase;
 }

@@ -35,7 +35,9 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
@@ -117,8 +119,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		{
 
 			Composite fragCompo = new Composite(parent, SWT.NONE);
-			fragCompo.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-			fragCompo.setLayout(new GridLayout());
+			fragCompo.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 3, 1));
 			GridLayout fragCompoLayout = new GridLayout(1, false);
 			fragCompoLayout.marginLeft = 0;
 			fragCompoLayout.marginRight = 0;
@@ -129,8 +130,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 			final TableViewer viewer = new TableViewer(fragCompo);
 			viewer.setContentProvider(new ObservableListContentProvider());
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 200;
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			viewer.getControl().setLayoutData(gd);
 
 			IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
@@ -138,7 +138,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout();
+			GridLayout gl = new GridLayout(4, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;
@@ -250,7 +250,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		ViewerElement tableElement = ViewerElement.create(context, parent, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, this);
+		final ViewerElement tableElement = ViewerElement.create(context, parent, this);
 		tableElement.getViewer().setContentProvider(new ObservableListContentProvider());
 		tableElement.getViewer().setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 
@@ -268,6 +268,80 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 				FeatureClass eClass1 = (FeatureClass) e1;
 				FeatureClass eClass2 = (FeatureClass) e2;
 				return eClass1.label.compareTo(eClass2.label);
+			}
+		});
+
+		tableElement.getButtonAdd().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				EClass eClass = ((FeatureClass) ((IStructuredSelection) tableElement.getDropDown().getSelection()).getFirstElement()).eClass;
+				EObject eObject = EcoreUtil.create(eClass);
+
+				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
+
+				if (cmd.canExecute()) {
+					getEditingDomain().getCommandStack().execute(cmd);
+					getEditor().setSelection(eObject);
+				}
+			}
+		});
+
+		tableElement.getButtonRemove().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!tableElement.getViewer().getSelection().isEmpty()) {
+					List<?> elements = ((IStructuredSelection) tableElement.getViewer().getSelection()).toList();
+
+					Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, elements);
+					if (cmd.canExecute()) {
+						getEditingDomain().getCommandStack().execute(cmd);
+					}
+				}
+			}
+		});
+
+		tableElement.getButtonDown().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!tableElement.getViewer().getSelection().isEmpty()) {
+					IStructuredSelection s = (IStructuredSelection) tableElement.getViewer().getSelection();
+					if (s.size() == 1) {
+						Object obj = s.getFirstElement();
+						MModelFragments container = (MModelFragments) getMaster().getValue();
+						int idx = container.getImports().indexOf(obj) + 1;
+						if (idx < container.getImports().size()) {
+							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, obj, idx);
+
+							if (cmd.canExecute()) {
+								getEditingDomain().getCommandStack().execute(cmd);
+								tableElement.getViewer().setSelection(new StructuredSelection(obj));
+							}
+						}
+
+					}
+				}
+			}
+		});
+
+		tableElement.getButtonUp().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!tableElement.getViewer().getSelection().isEmpty()) {
+					IStructuredSelection s = (IStructuredSelection) tableElement.getViewer().getSelection();
+					if (s.size() == 1) {
+						Object obj = s.getFirstElement();
+						MModelFragments container = (MModelFragments) getMaster().getValue();
+						int idx = container.getImports().indexOf(obj) - 1;
+						if (idx >= 0) {
+							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, obj, idx);
+
+							if (cmd.canExecute()) {
+								getEditingDomain().getCommandStack().execute(cmd);
+								tableElement.getViewer().setSelection(new StructuredSelection(obj));
+							}
+						}
+					}
+				}
 			}
 		});
 
