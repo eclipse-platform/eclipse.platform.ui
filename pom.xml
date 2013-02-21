@@ -9,28 +9,21 @@
   Contributors:
      Igor Fedorenko - initial implementation
 -->
-
-<project
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.eclipse</groupId>
     <artifactId>eclipse-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../eclipse-parent</relativePath>
   </parent>
-
   <groupId>eclipse.platform.ua</groupId>
   <artifactId>eclipse.platform.ua</artifactId>
   <version>3.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-
   <properties>
     <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/platform/eclipse.platform.ua.git</tycho.scmUrl>
   </properties>
-
   <modules>
     <module>org.eclipse.help</module>
     <module>org.eclipse.help.base</module>
@@ -42,7 +35,6 @@
     <module>org.eclipse.ui.intro</module>
     <module>org.eclipse.ui.intro.universal</module>
   </modules>
-
   <build>
     <plugins>
       <plugin>
@@ -66,6 +58,5 @@
         </configuration>
       </plugin>
     </plugins>
-  </build> 
-
+  </build>
 </project>
