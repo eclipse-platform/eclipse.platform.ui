@@ -316,7 +316,10 @@ public class FilteredTree extends Composite {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		setLayout(layout);
-		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		if (parent.getLayout() instanceof GridLayout) {
+			setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		}
 
 		if (showFilterControls) {
 			if (!useNewLook || useNativeSearchField(parent)) {
