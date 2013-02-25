@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.editors.tests
-Bundle-Version: 3.8.0.qualifier
+Bundle-Version: 3.8.100.qualifier
 Bundle-ClassPath: editorstests.jar
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
