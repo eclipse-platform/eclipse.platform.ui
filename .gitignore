@@ -1,3 +1,4 @@
+/.project
 ant/org.eclipse.ant.tests.core/anttestscore.jar
 ant/org.eclipse.ant.tests.ui/anttestsui.jar
 platform/org.eclipse.platform/platform.jar
