@@ -1,13 +1,5 @@
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
-/*
- * Monitor example snippet: center a shell on the primary monitor
- *
- * For a list of all SWT example snippets see
- * http://www.eclipse.org/swt/snippets/
- * 
- * @since 3.0
- */
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -48,7 +40,6 @@ public class SplitFeedbackOverlay {
 		setFeedback(enclosed, modified);
 
 		defineRegion();
-		feedbackShell.setVisible(true);
 	}
 
 	public void dispose() {
@@ -137,5 +128,17 @@ public class SplitFeedbackOverlay {
 		showRects(enclosed);
 		defineRegion();
 		feedbackShell.update();
+	}
+
+	/**
+	 * Control this instance's visibility.
+	 * 
+	 * @param visible
+	 *            make visible if {@code true} or invisible if {@code false}
+	 */
+	public void setVisible(boolean visible) {
+		if (feedbackShell != null) {
+			feedbackShell.setVisible(visible);
+		}
 	}
 }
