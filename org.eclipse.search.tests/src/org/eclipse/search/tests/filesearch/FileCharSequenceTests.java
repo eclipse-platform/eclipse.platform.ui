@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,12 +23,11 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.search.internal.core.text.FileCharSequenceProvider;
-
 import org.eclipse.search.tests.ResourceHelper;
 
 public class FileCharSequenceTests extends TestCase {
 
-	private final String TEST_CONTENT= "ABCDEFGHIJKLMNOPQRSTUVWXYZÜöäüèéùabcdefghijklmnopqrstuvwxyz1234567890@\'\"\n$¢"; //€
+	private final String TEST_CONTENT= "ABCDEFGHIJKLMNOPQRSTUVWXYZÃœÃ¶Ã¤Ã¼Ã¨Ã©Ã¹abcdefghijklmnopqrstuvwxyz1234567890@\'\"\n$Â¢"; //â‚¬
 	
 	private IProject fProject;
 	
