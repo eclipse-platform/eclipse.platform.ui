@@ -2,15 +2,20 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.debug.core" id="launchDelegates" name="Launch Delegates"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point provides a mechanism for contributing a launch delegate to an existing launch configuration type for one or more launch modes. Since launch modes are extensible, it may be neccessary to contribute additional launch delegates to an existing launch configuration type. Each launch delegate is contributed for a specific launch configuration type. A launch delegate supports one or more launch modes, and specifies a delegate responsible for the implementation of launching.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="launchDelegate" minOccurs="1" maxOccurs="unbounded"/>
@@ -56,9 +61,9 @@
                <documentation>
                   A human readable name for this delegate - for example, &quot;Eclipse JDT Launcher&quot;. This name is presented to the user when more than one launcher is available for a launch configuration and the user must choose a preferred launcher. This attribute was added in the 3.3. release.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="delegate" type="string" use="required">
@@ -67,9 +72,9 @@
                   specifies the fully qualified name of the Java class that implements &lt;code&gt;ILaunchConfigurationDelegate&lt;/code&gt;.
 Launch configuration instances of this delegate&apos;s type will delegate to instances of this class to perform launching in the modes this launch delegate supports - see the &lt;code&gt;modes&lt;/code&gt; attribute and the &lt;code&gt;modeCombination&lt;/code&gt; element.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.debug.core.model.ILaunchConfigurationDelegate"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="modes" type="string">
@@ -90,9 +95,9 @@ This attribute can be used in conjunction with &lt;code&gt;modeCombination&lt;/c
                <documentation>
                   identifier of an existing launch configuration type that this launch delegate is capable of launching.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="sourcePathComputerId" type="string">
@@ -100,9 +105,9 @@ This attribute can be used in conjunction with &lt;code&gt;modeCombination&lt;/c
                <documentation>
                   The unique identifier of a sourcePathComputer extension that is used to compute a default source lookup path for launch configurations of this type. Since 3.1, this attribute cab be specified in a launchDelegate extension when unspecified in the assocaited launchConfigurationType extension. Only one source path computer can be specified per launch configuration type.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.sourcePathComputers/sourcePathComputer/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="sourceLocatorId" type="string">
@@ -110,9 +115,9 @@ This attribute can be used in conjunction with &lt;code&gt;modeCombination&lt;/c
                <documentation>
                   The unique identifier of a sourceLocator extension that is used to create the source locator for sessions launched using launch configurations of this type. Since 3.1, this attribute can be specified in a launchDelegate extension when unspecified in the assocaited launchConfigurationType extension. Only one source locater can be specified per launch configuration type.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.sourceLocators/sourceLocator/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="delegateDescription" type="string">
@@ -154,18 +159,27 @@ Unlike the modes attribute of the &lt;code&gt;launchDeleaget&lt;/code&gt; elemen
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/b&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of a launch delegate extension point:
 
@@ -178,7 +192,7 @@ Unlike the modes attribute of the &lt;code&gt;launchDeleaget&lt;/code&gt; elemen
     type=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;
     name=&quot;Eclipse JDT Java Profile Tooling&quot;&gt;
    &lt;modeCombination 
-    modes=&quot;run, profile&quot;&gt;
+    modes=&quot;run, profile&quot;
     perspective=&quot;com.example.Perspective&quot;&gt;
    &lt;/modeCombination&gt;
    &lt;modeCombination modes=&quot;debug, profile, coverage&quot;&gt;&lt;/modeCombination&gt;
@@ -191,21 +205,11 @@ In the example above, the specified launch delegate is contributed to launch Jav
       </documentation>
    </annotation>
 
-   <annotation>
-      <appinfo>
-         <meta.section type="apiInfo"/>
-      </appinfo>
-      <documentation>
-         Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/b&gt;.
-      </documentation>
-   </annotation>
-
-
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
