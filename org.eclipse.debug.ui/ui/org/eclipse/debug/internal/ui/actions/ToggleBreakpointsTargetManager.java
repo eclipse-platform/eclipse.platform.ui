@@ -290,23 +290,27 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      */
     private static class ToggleBreakpointsTargetAdapterFactory implements IToggleBreakpointsTargetFactory {
 
-        private IAdaptable getAdaptable(IWorkbenchPart part, ISelection selection) {
-            IAdaptable adaptable = null;
+        private Object getSelectionElement(ISelection selection) {
             if (selection instanceof IStructuredSelection) {
-                IStructuredSelection ss = (IStructuredSelection)selection; 
-                if (ss.getFirstElement() instanceof IAdaptable) {
-                    adaptable = (IAdaptable) ss.getFirstElement();
-                }
-            } else {
-                adaptable = part;
-            }
-            return adaptable;
+                IStructuredSelection ss = (IStructuredSelection)selection;
+                return ss.getFirstElement();
+            } 
+            return null;
         }
         
-        private boolean canGetToggleBreakpointsTarget(IAdaptable adaptable) {
+        /**
+         * Checks whether the given element is adaptable to the toggle breakpoints target.  
+         * This method does not force loading of the adapter.  
+         * @param adaptable Element to adapt.
+         * @return returns true if element can be adapted.
+         */
+        private boolean canGetToggleBreakpointsTarget(Object adaptable) {
             if (adaptable != null) {
-                IToggleBreakpointsTarget adapter = (IToggleBreakpointsTarget) 
-                    adaptable.getAdapter(IToggleBreakpointsTarget.class);
+                IToggleBreakpointsTarget adapter = null;
+                if (adaptable instanceof IAdaptable) {
+                    adapter = (IToggleBreakpointsTarget)
+                        ((IAdaptable)adaptable).getAdapter(IToggleBreakpointsTarget.class);
+                } 
                 if (adapter == null) {
                     IAdapterManager adapterManager = Platform.getAdapterManager();
                     if (adapterManager.hasAdapter(adaptable, IToggleBreakpointsTarget.class.getName())) {
@@ -324,24 +328,16 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * It first looks for the target using the factories registered using an 
          * extension point.  If not found it uses the <code>IAdaptable</code>
          * mechanism.
-         * @param adaptable The adaptable object to retrieve the toggle adapter from
+         * @param part The workbench part in which toggle target is to be used
+         * @param element The selection element to retrieve the toggle adapter from
          * @return The toggle breakpoints target, or <code>null</code> if not found.
          */
-        private IToggleBreakpointsTarget getToggleBreakpointsTarget(IAdaptable adaptable) {
-            if (adaptable != null) {
-                IToggleBreakpointsTarget adapter = (IToggleBreakpointsTarget) 
-                    adaptable.getAdapter(IToggleBreakpointsTarget.class);
-                if (adapter == null) {
-                    // attempt to force load adapter
-                    IAdapterManager adapterManager = Platform.getAdapterManager();
-                    if (adapterManager.hasAdapter(adaptable, IToggleBreakpointsTarget.class.getName())) {
-                        adapter = (IToggleBreakpointsTarget) 
-                            adapterManager.loadAdapter(adaptable, IToggleBreakpointsTarget.class.getName());
-                    }
-                }
-                return adapter;
+        private IToggleBreakpointsTarget getToggleBreakpointsTarget(IWorkbenchPart part, Object element) {
+            if (element != null) {
+                return (IToggleBreakpointsTarget) DebugPlugin.getAdapter(element, IToggleBreakpointsTarget.class);
+            } else {
+                return (IToggleBreakpointsTarget)part.getAdapter(IToggleBreakpointsTarget.class);
             }
-            return null;
         }
 
         /**
@@ -353,8 +349,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * @return Whether the adapter (default) toggle target is available. 
          */
         public boolean isEnabled(IWorkbenchPart part, ISelection selection) {
-            IAdaptable adaptable = getAdaptable(part, selection);
-            return adaptable != null && canGetToggleBreakpointsTarget(adaptable);
+            return canGetToggleBreakpointsTarget(getSelectionElement(selection)) || canGetToggleBreakpointsTarget(part);
         }
         
         /**
@@ -374,13 +369,11 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * through the adapter mechanism. 
          */
         public IToggleBreakpointsTarget createDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
-            IAdaptable adaptable = getAdaptable(part, selection);
-            return getToggleBreakpointsTarget(adaptable);
+            return getToggleBreakpointsTarget(part, getSelectionElement(selection));
         }
         
         public Set getToggleTargets(IWorkbenchPart part, ISelection selection) {
-            IAdaptable adaptable = getAdaptable(part, selection);
-            if (canGetToggleBreakpointsTarget(adaptable)) {
+            if (isEnabled(part, selection)) {
                 return DEFAULT_TOGGLE_TARGET_ID_SET;
             } 
             return Collections.EMPTY_SET;
