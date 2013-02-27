@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,8 +44,7 @@ public class ActivePluginsViewLabelProvider extends LabelProvider implements ITa
 		if (!(element instanceof BundleStats))
 			return "not a plug-in"; //$NON-NLS-1$
 		BundleStats info = (BundleStats) element;
-		if (info == null)
-			return "no info for plug-in"; //$NON-NLS-1$
+
 		VMClassloaderInfo loaderInfo = VMClassloaderInfo.getClassloader(info.getSymbolicName());
 		switch (columnIndex) {
 			case 0 : /* id */
