@@ -333,11 +333,14 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
          * @return The toggle breakpoints target, or <code>null</code> if not found.
          */
         private IToggleBreakpointsTarget getToggleBreakpointsTarget(IWorkbenchPart part, Object element) {
+        	IToggleBreakpointsTarget target = null;
             if (element != null) {
-                return (IToggleBreakpointsTarget) DebugPlugin.getAdapter(element, IToggleBreakpointsTarget.class);
-            } else {
-                return (IToggleBreakpointsTarget)part.getAdapter(IToggleBreakpointsTarget.class);
+                target = (IToggleBreakpointsTarget) DebugPlugin.getAdapter(element, IToggleBreakpointsTarget.class);
+            } 
+            if (target == null) {
+                target = (IToggleBreakpointsTarget)part.getAdapter(IToggleBreakpointsTarget.class);
             }
+            return target;
         }
 
         /**
