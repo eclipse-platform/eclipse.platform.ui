@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public interface IMarkerHelpRegistry {
      * for the marker.
      * 
      * @param marker the marker for which to obtain help
+     * @return the help context id
      * @since 2.0
      */
     public String getHelp(IMarker marker);
@@ -43,6 +44,7 @@ public interface IMarkerHelpRegistry {
      * 
      * @param marker the marker for which to determine if there
      * are resolutions
+     * @return <code>true</code> if there may be resolutions
      * @since 2.0
      */
     public boolean hasResolutions(IMarker marker);
@@ -53,6 +55,7 @@ public interface IMarkerHelpRegistry {
      * for the marker.
      * 
      * @param marker the marker for which to obtain resolutions
+     * @return an array with the marker resolutions
      * @since 2.0
      */
     public IMarkerResolution[] getResolutions(IMarker marker);
