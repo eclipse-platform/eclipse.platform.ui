@@ -713,34 +713,12 @@ public class EclipseContext implements IEclipseContext {
 		return null;
 	}
 
-	/**
-	 * Prefix used to distinguish active variables
-	 */
-	static private final String ACTIVE_VARIABLE = "org.eclipse.ui.active_"; //$NON-NLS-1$
-
 	public <T> T getActive(Class<T> clazz) {
 		return clazz.cast(getActive(clazz.getName()));
 	}
 
 	public Object getActive(final String name) {
-		final String internalName = ACTIVE_VARIABLE + name;
-		if (containsKey(internalName, true)) {
-			trackAccess(internalName);
-			return internalGet(this, internalName, true);
-		}
-
-		final EclipseContext originatingContext = this;
-
-		runAndTrack(new RunAndTrack() {
-			public boolean changed(IEclipseContext context) {
-				IEclipseContext activeContext = getActiveLeaf();
-				Object result = activeContext.get(name);
-				originatingContext.set(internalName, result);
-				return true;
-			}
-		});
-		trackAccess(internalName);
-		return internalGet(this, internalName, true);
+		return getActiveLeaf().get(name);
 	}
 
 	public WeakReference<Object> trackedWeakReference(Object object) {
