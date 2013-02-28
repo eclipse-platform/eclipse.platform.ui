@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,9 @@ public class PatchReader {
 	public static final String MULTIPROJECTPATCH_PROJECT= "#P"; //$NON-NLS-1$
 
 	private static final Pattern GIT_PATCH_PATTERN= Pattern.compile("^diff --git a/.+ b/.+[\r\n]+$"); //$NON-NLS-1$
+
+	private static final Pattern GIT_VERSION_PATTERN= Pattern.compile("^\\d+\\.\\d*.*$"); //$NON-NLS-1$
+
 
 	/**
 	 * Create a patch reader for the default date formats.
@@ -338,7 +341,8 @@ public class PatchReader {
 							break;
 						//$FALL-THROUGH$
 					default:
-						throw new IOException("Invalid patch"); //$NON-NLS-1$
+						if (!isGitPatch() || !GIT_VERSION_PATTERN.matcher(line.trim()).matches())
+							throw new IOException("Invalid patch"); //$NON-NLS-1$
 				}
 				return line;
 			}
