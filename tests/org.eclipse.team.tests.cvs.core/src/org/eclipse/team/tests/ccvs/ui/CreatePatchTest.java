@@ -269,13 +269,13 @@ public class CreatePatchTest extends EclipseTest {
 	private IWorkbenchPart getActivePart() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
-		if (window == null) {
-			return null;
-		}
+		assertNotNull(window);
 		IWorkbenchPage page = window.getActivePage();
 		if (page == null) {
-			return null;
+			window.setActivePage(window.getPages()[0]);
+			page = window.getActivePage();
 		}
+		assertNotNull(page);
 		return page.getActivePart();
 	}
 
