@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 389063 Dynamic Menu Contribution
+ *     Marco Descher <marco@descher.at> - Bug 389063, Bug 398865, Bug 398866
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -173,18 +173,33 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 
 				storageMap.remove(DYNAMIC_ELEMENT_STORAGE_KEY);
 
-				// ensure that each element of the list has a valid element id
-				// and set the parent of the entries
-				for (int j = 0; j < mel.size(); j++) {
-					MMenuElement menuElement = mel.get(j);
-					if (menuElement.getElementId() == null
-							|| menuElement.getElementId().length() < 1)
-						menuElement.setElementId(currentMenuElement
-								.getElementId() + "." + j); //$NON-NLS-1$
-					menuElement.setParent(currentMenuElement.getParent());
-					renderer.modelProcessSwitch(menuManager, menuElement);
+				if (mel.size() > 0) {
+
+					int position = 0;
+					while (position < menuModel.getChildren().size()) {
+						if (currentMenuElement == menuModel.getChildren().get(
+								position)) {
+							position++;
+							break;
+						}
+						position++;
+					}
+
+					// ensure that each element of the list has a valid element
+					// id
+					// and set the parent of the entries
+					for (int j = 0; j < mel.size(); j++) {
+						MMenuElement menuElement = mel.get(j);
+						if (menuElement.getElementId() == null
+								|| menuElement.getElementId().length() < 1) {
+							menuElement.setElementId(currentMenuElement
+									.getElementId() + "." + j); //$NON-NLS-1$
+						}
+						menuModel.getChildren().add(position++, menuElement);
+						renderer.modelProcessSwitch(menuManager, menuElement);
+					}
+					storageMap.put(DYNAMIC_ELEMENT_STORAGE_KEY, mel);
 				}
-				storageMap.put(DYNAMIC_ELEMENT_STORAGE_KEY, mel);
 			}
 		}
 	}

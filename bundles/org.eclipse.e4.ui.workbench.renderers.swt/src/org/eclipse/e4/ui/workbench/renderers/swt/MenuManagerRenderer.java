@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Marco Descher <descher@medevit.at> - Bug 389063 Dynamic Menu Contribution
+ *     Marco Descher <marco@descher.at> - Bug 389063, Bug 398865, Bug 398866							  
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -610,6 +610,9 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		} else if (childME instanceof MMenu) {
 			MMenu itemModel = (MMenu) childME;
 			processMenu(menuManager, itemModel);
+		} else if (childME instanceof MDynamicMenuContribution) {
+			MDynamicMenuContribution itemModel = (MDynamicMenuContribution) childME;
+			processDynamicMenuContribution(menuManager, itemModel);
 		}
 	}
 
@@ -701,6 +704,22 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		ci.setModel(itemModel);
 		ci.setVisible(itemModel.isVisible());
 		addToManager(parentManager, itemModel, ci);
+		linkModelToContribution(itemModel, ci);
+	}
+
+	/**
+	 * @param menuManager
+	 * @param itemModel
+	 */
+	private void processDynamicMenuContribution(MenuManager menuManager,
+			MDynamicMenuContribution itemModel) {
+		IContributionItem ici = getContribution(itemModel);
+		if (ici != null) {
+			return;
+		}
+		DynamicContributionContributionItem ci = new DynamicContributionContributionItem(
+				itemModel);
+		addToManager(menuManager, itemModel, ci);
 		linkModelToContribution(itemModel, ci);
 	}
 
