@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,11 @@
  *     Martin Oberhuber (martin.oberhuber@windriver.com)
  *     		- Bug 187318[Wizards] "Import Existing Project" loops forever with cyclic symbolic links
  *     Remy Chi Jian Suen  (remy.suen@gmail.com)
- *     		- Bug 210568 [Import/Export] [Import/Export] - Refresh button does not update list of projects
+ *     		- Bug 210568 [Import/Export] Refresh button does not update list of projects
  *     Matt Hurne (matt@thehurnes.com)
  *     		- Bug 144610 [Import/Export] Import existing projects does not search subdirectories of found projects
+ *     Christian Georgi (christian.georgi@sap.com) 
+ *     		- Bug 400399 [Import/Export] Project import wizard does not remember selected folder or archive
  *******************************************************************************/
 
 package org.eclipse.ui.internal.wizards.datatransfer;
