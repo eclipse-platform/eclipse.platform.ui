@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
  *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
  *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
+ *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -98,6 +99,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private static final String PAGE_NAME= "TextSearchPage"; //$NON-NLS-1$
 	private static final String STORE_CASE_SENSITIVE= "CASE_SENSITIVE"; //$NON-NLS-1$
 	private static final String STORE_IS_REG_EX_SEARCH= "REG_EX_SEARCH"; //$NON-NLS-1$
+	private static final String STORE_IS_WHOLE_WORD= "WHOLE_WORD"; //$NON-NLS-1$
 	private static final String STORE_SEARCH_DERIVED = "SEARCH_DERIVED"; //$NON-NLS-1$
 	private static final String STORE_HISTORY= "HISTORY"; //$NON-NLS-1$
 	private static final String STORE_HISTORY_SIZE= "HISTORY_SIZE"; //$NON-NLS-1$
@@ -113,12 +115,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private boolean fFirstTime= true;
 	private boolean fIsCaseSensitive;
 	private boolean fIsRegExSearch;
+	private boolean fIsWholeWord;
 	private boolean fSearchDerived;
 
 	private Combo fPattern;
 	private Button fIsCaseSensitiveCheckbox;
 	private Combo fExtensions;
 	private Button fIsRegExCheckbox;
+	private Button fIsWholeWordCheckbox;
 	private CLabel fStatusLabel;
 	private Button fSearchDerivedCheckbox;
 
@@ -137,15 +141,17 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private static class SearchPatternData {
 		public final boolean isCaseSensitive;
 		public final boolean isRegExSearch;
+		public final boolean isWholeWord;
 		public final String textPattern;
 		public final String[] fileNamePatterns;
 		public final int scope;
 		public final IWorkingSet[] workingSets;
 
-		public SearchPatternData(String textPattern, boolean isCaseSensitive, boolean isRegExSearch, String[] fileNamePatterns, int scope, IWorkingSet[] workingSets) {
+		public SearchPatternData(String textPattern, boolean isCaseSensitive, boolean isRegExSearch, boolean isWholeWord, String[] fileNamePatterns, int scope, IWorkingSet[] workingSets) {
 			Assert.isNotNull(fileNamePatterns);
 			this.isCaseSensitive= isCaseSensitive;
 			this.isRegExSearch= isRegExSearch;
+			this.isWholeWord= isWholeWord;
 			this.textPattern= textPattern;
 			this.fileNamePatterns= fileNamePatterns;
 			this.scope= scope;
@@ -155,6 +161,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		public void store(IDialogSettings settings) {
 			settings.put("ignoreCase", !isCaseSensitive); //$NON-NLS-1$
 			settings.put("isRegExSearch", isRegExSearch); //$NON-NLS-1$
+			settings.put("isWholeWord", isWholeWord); //$NON-NLS-1$
 			settings.put("textPattern", textPattern); //$NON-NLS-1$
 			settings.put("fileNamePatterns", fileNamePatterns); //$NON-NLS-1$
 			settings.put("scope", scope); //$NON-NLS-1$
@@ -192,8 +199,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				int scope= settings.getInt("scope"); //$NON-NLS-1$
 				boolean isRegExSearch= settings.getBoolean("isRegExSearch"); //$NON-NLS-1$
 				boolean ignoreCase= settings.getBoolean("ignoreCase"); //$NON-NLS-1$
+				boolean isWholeWord= settings.getBoolean("isWholeWord"); //$NON-NLS-1$
 
-				return	new SearchPatternData(textPattern, !ignoreCase, isRegExSearch, fileNamePatterns, scope, workingSets);
+				return new SearchPatternData(textPattern, !ignoreCase, isRegExSearch, isWholeWord, fileNamePatterns, scope, workingSets);
 			} catch (NumberFormatException e) {
 				return null;
 			}
@@ -206,12 +214,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		private final String fSearchText;
 		private final boolean fIsCaseSensitive;
 		private final boolean fIsRegEx;
+		private final boolean fIsWholeWord;
 		private final FileTextSearchScope fScope;
 
-		public TextSearchPageInput(String searchText, boolean isCaseSensitive, boolean isRegEx, FileTextSearchScope scope) {
+		public TextSearchPageInput(String searchText, boolean isCaseSensitive, boolean isRegEx, boolean isWholeWord, FileTextSearchScope scope) {
 			fSearchText= searchText;
 			fIsCaseSensitive= isCaseSensitive;
 			fIsRegEx= isRegEx;
+			fIsWholeWord= isWholeWord;
 			fScope= scope;
 		}
 
@@ -227,6 +237,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			return fIsRegEx;
 		}
 
+		public boolean isWholeWordSearch() {
+			return fIsWholeWord;
+		}
+
 		public FileTextSearchScope getScope() {
 			return fScope;
 		}
@@ -236,7 +250,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	private ISearchQuery newQuery() throws CoreException {
 		SearchPatternData data= getPatternData();
-		TextSearchPageInput input= new TextSearchPageInput(data.textPattern, data.isCaseSensitive, data.isRegExSearch, createTextSearchScope());
+		TextSearchPageInput input= new TextSearchPageInput(data.textPattern, data.isCaseSensitive, data.isRegExSearch, data.isWholeWord, createTextSearchScope());
 		return TextSearchQueryProvider.getPreferred().createQuery(input);
 	}
 
@@ -381,6 +395,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 					getPattern(),
 					isCaseSensitive(),
 					fIsRegExCheckbox.getSelection(),
+					fIsWholeWordCheckbox.getSelection(),
 					getExtensions(),
 					getContainer().getSelectedScope(),
 					getContainer().getSelectedWorkingSets());
@@ -480,7 +495,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private boolean validateRegex() {
 		if (fIsRegExCheckbox.getSelection()) {
 			try {
-				PatternConstructor.createPattern(fPattern.getText(), fIsCaseSensitive, true);
+				PatternConstructor.createPattern(fPattern.getText(), true, true, fIsCaseSensitive, fIsWholeWord);
 			} catch (PatternSyntaxException e) {
 				String locMessage= e.getLocalizedMessage();
 				int i= 0;
@@ -523,7 +538,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 		});
 		fPattern.setFont(group.getFont());
-		GridData data= new GridData(GridData.FILL, GridData.FILL, true, false, 1, 1);
+		GridData data= new GridData(GridData.FILL, GridData.FILL, true, false, 1, 2);
 		data.widthHint= convertWidthInCharsToPixels(50);
 		fPattern.setLayoutData(data);
 
@@ -549,13 +564,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsCaseSensitiveCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		fIsCaseSensitiveCheckbox.setFont(group.getFont());
 
-		// Text line which explains the special characters
-		fStatusLabel= new CLabel(group, SWT.LEAD);
-		fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		fStatusLabel.setFont(group.getFont());
-		fStatusLabel.setAlignment(SWT.LEFT);
-		fStatusLabel.setText(SearchMessages.SearchPage_containingText_hint);
-
 		// RegEx checkbox
 		fIsRegExCheckbox= new Button(group, SWT.CHECK);
 		fIsRegExCheckbox.setText(SearchMessages.SearchPage_regularExpression);
@@ -570,8 +578,27 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
 			}
 		});
-		fIsRegExCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		fIsRegExCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 2));
 		fIsRegExCheckbox.setFont(group.getFont());
+
+		// Text line which explains the special characters
+		fStatusLabel= new CLabel(group, SWT.LEAD);
+		fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 2));
+		fStatusLabel.setFont(group.getFont());
+		fStatusLabel.setAlignment(SWT.LEFT);
+		fStatusLabel.setText(SearchMessages.SearchPage_containingText_hint);
+
+		// Whole Word checkbox
+		fIsWholeWordCheckbox= new Button(group, SWT.CHECK);
+		fIsWholeWordCheckbox.setText(SearchMessages.SearchPage_wholeWord);
+		fIsWholeWordCheckbox.setSelection(fIsWholeWord);
+		fIsWholeWordCheckbox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fIsWholeWord= fIsWholeWordCheckbox.getSelection();
+			}
+		});
+		fIsWholeWordCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		fIsWholeWordCheckbox.setFont(group.getFont());
 	}
 
 	private void handleWidgetSelected() {
@@ -585,6 +612,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsCaseSensitiveCheckbox.setSelection(patternData.isCaseSensitive);
 		fIsRegExSearch= patternData.isRegExSearch;
 		fIsRegExCheckbox.setSelection(fIsRegExSearch);
+		fIsWholeWord= patternData.isWholeWord;
+		fIsWholeWordCheckbox.setSelection(fIsWholeWord);
 		fPattern.setText(patternData.textPattern);
 		fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
 		fFileTypeEditor.setFileTypes(patternData.fileNamePatterns);
@@ -756,6 +785,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		IDialogSettings s= getDialogSettings();
 		fIsCaseSensitive= s.getBoolean(STORE_CASE_SENSITIVE);
 		fIsRegExSearch= s.getBoolean(STORE_IS_REG_EX_SEARCH);
+		fIsWholeWord= s.getBoolean(STORE_IS_WHOLE_WORD);
 		fSearchDerived= s.getBoolean(STORE_SEARCH_DERIVED);
 
 		try {
@@ -796,6 +826,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		IDialogSettings s= getDialogSettings();
 		s.put(STORE_CASE_SENSITIVE, fIsCaseSensitive);
 		s.put(STORE_IS_REG_EX_SEARCH, fIsRegExSearch);
+		s.put(STORE_IS_WHOLE_WORD, fIsWholeWord);
 		s.put(STORE_SEARCH_DERIVED, fSearchDerived);
 
 		int historySize= Math.min(fPreviousSearchPatterns.size(), HISTORY_SIZE);

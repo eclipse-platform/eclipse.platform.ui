@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
+ *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
  *******************************************************************************/
 
 package org.eclipse.search.ui.text;
@@ -58,6 +59,19 @@ public abstract class TextSearchQueryProvider {
 		 * @return whether the pattern denotes a regular expression.
 		 */
 		public abstract boolean isRegExSearch();
+
+		/**
+		 * Returns whether to require a word boundary at the beginning and end of the pattern,
+		 * excluding matches that only match part of a word.
+		 * 
+		 * This implementation returns <code>false</code>, subclasses can override.
+		 * 
+		 * @return <code>true</code> if the pattern should match only whole words
+		 * @since 3.9
+		 */
+		public boolean isWholeWordSearch() {
+			return false;
+		}
 
 		/**
 		 * Returns the scope for the search

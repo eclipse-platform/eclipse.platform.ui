@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
  *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
  *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
+ *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -153,13 +154,20 @@ public class FileSearchQuery implements ISearchQuery {
 	private final String fSearchText;
 	private final boolean fIsRegEx;
 	private final boolean fIsCaseSensitive;
+	private final boolean fIsWholeWord;
 
 	private FileSearchResult fResult;
 
+
 	public FileSearchQuery(String searchText, boolean isRegEx, boolean isCaseSensitive, FileTextSearchScope scope) {
+		this(searchText, isRegEx, isCaseSensitive, false, scope);
+	}
+
+	public FileSearchQuery(String searchText, boolean isRegEx, boolean isCaseSensitive, boolean isWholeWord, FileTextSearchScope scope) {
 		fSearchText= searchText;
 		fIsRegEx= isRegEx;
 		fIsCaseSensitive= isCaseSensitive;
+		fIsWholeWord= isWholeWord;
 		fScope= scope;
 	}
 
@@ -249,7 +257,7 @@ public class FileSearchQuery implements ISearchQuery {
 	}
 
 	protected Pattern getSearchPattern() {
-		return PatternConstructor.createPattern(fSearchText, fIsCaseSensitive, fIsRegEx);
+		return PatternConstructor.createPattern(fSearchText, fIsRegEx, true, fIsCaseSensitive, fIsWholeWord);
 	}
 
 	public boolean isFileNameSearch() {
@@ -262,6 +270,10 @@ public class FileSearchQuery implements ISearchQuery {
 
 	public boolean isCaseSensitive() {
 		return fIsCaseSensitive;
+	}
+
+	public boolean isWholeWord() {
+		return fIsWholeWord;
 	}
 
 	public boolean canRerun() {

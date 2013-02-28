@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
@@ -203,7 +204,60 @@ public class FileSearchTests extends TestCase {
 
 	}
 	
+	public void testWholeWord() throws Exception {
+		StringBuffer buf= new StringBuffer();
+		// nothing after
+		buf.append("hell\n"); // nothing before
+		buf.append("hill\n"); // nothing before
+		buf.append("$hell\n"); // non-word char before
+		buf.append("shell\n"); // word char before
+		// non-word char after
+		buf.append("hell.freeze()\n"); // nothing before
+		buf.append("freeze(hell)\n"); // non-word char before
+		buf.append("shell-script\n"); // word char before
+		// word char after
+		buf.append("hello\n"); // nothing before
+		buf.append("world.hello()\n"); // non-word char before
+		buf.append("shilling\n"); // word char before
+		buf.append("holler\n"); // nothing before
+		IFolder folder= ResourceHelper.createFolder(fProject.getFolder("folder1"));
+		ResourceHelper.createFile(folder, "file1", buf.toString());
+		ResourceHelper.createFile(folder, "file2", buf.toString());
+
+		TextSearchEngine engine= TextSearchEngine.create();
+		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { fProject }, (String[])null, false);
+
+		{
+			// wildcards, whole word = false: match all lines
+			Pattern searchPattern= PatternConstructor.createPattern("h?ll", false, true, false, false);
+			TestResultCollector collector= new TestResultCollector();
+			engine.search(scope, collector, searchPattern, null);
+			assertEquals("Number of partial-word results", 22, collector.getNumberOfResults());
+		}
+		{
+			// wildcards, whole word = true: match only nothing and non-word chars before and after
+			Pattern searchPattern= PatternConstructor.createPattern("h?ll", false, true, false, true);
+			TestResultCollector collector= new TestResultCollector();
+			engine.search(scope, collector, searchPattern, null);
+			assertEquals("Number of whole-word results", 10, collector.getNumberOfResults());
+		}
+		{
+			// regexp, whole word = false: match all lines
+			Pattern searchPattern= PatternConstructor.createPattern("h[eio]ll", true, true, false, false);
+			TestResultCollector collector= new TestResultCollector();
+			engine.search(scope, collector, searchPattern, null);
+			assertEquals("Number of partial-word results", 22, collector.getNumberOfResults());
+		}
+		{
+			// regexp, whole word = true: match only nothing and non-word chars before and after
+			Pattern searchPattern= PatternConstructor.createPattern("h[eio]ll", true, true, false, true);
+			TestResultCollector collector= new TestResultCollector();
+			engine.search(scope, collector, searchPattern, null);
+			assertEquals("Number of whole-word results", 10, collector.getNumberOfResults());
+		}
+	}
 	
+
 	public void testFileOpenInEditor() throws Exception {
 		StringBuffer buf= new StringBuffer();
 		buf.append("File1\n");
