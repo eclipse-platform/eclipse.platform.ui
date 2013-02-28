@@ -29,6 +29,8 @@ abstract public class Requestor implements IRequestor {
 	final protected boolean track;
 	final private boolean groupUpdates;
 	final private boolean isOptional;
+	// since objectRef is weak, must maintain object hashCode for stability
+	final private int objectHashcode;
 
 	final private IInjector injector;
 	final protected PrimaryObjectSupplier primarySupplier;
@@ -49,8 +51,11 @@ abstract public class Requestor implements IRequestor {
 				objectRef = primarySupplier.makeReference(requestingObject);
 			else
 				objectRef = new WeakReference<Object>(requestingObject);
-		} else
+			objectHashcode = requestingObject.hashCode();
+		} else {
 			objectRef = null;
+			objectHashcode = 0;
+		}
 		this.track = track;
 		groupUpdates = (reflectionObject == null) ? false : reflectionObject.isAnnotationPresent(GroupUpdates.class);
 		isOptional = (reflectionObject == null) ? false : reflectionObject.isAnnotationPresent(Optional.class);
@@ -165,8 +170,7 @@ abstract public class Requestor implements IRequestor {
 		result = prime * result + ((injector == null) ? 0 : injector.hashCode());
 		result = prime * result + (isOptional ? 1231 : 1237);
 		result = prime * result + ((primarySupplier == null) ? 0 : primarySupplier.hashCode());
-		Object refObject = getRequestingObject();
-		result = prime * result + ((refObject == null) ? 0 : refObject.hashCode());
+		result = prime * result + objectHashcode;
 		return result;
 	}
 
