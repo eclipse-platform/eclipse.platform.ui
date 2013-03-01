@@ -14,8 +14,12 @@ package org.eclipse.e4.core.commands.internal;
 import java.util.Iterator;
 import java.util.Map;
 import javax.inject.Inject;
+import org.eclipse.core.commands.AbstractParameterValueConverter;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterType;
+import org.eclipse.core.commands.ParameterValueConversionException;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -75,10 +79,39 @@ public class HandlerServiceImpl implements EHandlerService {
 		Iterator i = parms.entrySet().iterator();
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
-			staticContext.set((String) entry.getKey(), entry.getValue());
+			String parameterId = (String) entry.getKey();
+			staticContext.set(
+					parameterId,
+					convertParameterValue(command.getCommand(), parameterId,
+							(String) entry.getValue()));
 		}
 		staticContext.set(PARM_MAP, parms);
 		staticContext.set(ParameterizedCommand.class, command);
+	}
+
+	/**
+	 * Convert the parameter's value according to it's type.
+	 * 
+	 * @param command
+	 * @param parameterId
+	 * @param value
+	 * @return converted value
+	 * @see org.eclipse.e4.ui.model.application.commands.MCommandParameter#getTypeId()
+	 */
+	private Object convertParameterValue(Command command, String parameterId, String value) {
+		try {
+			ParameterType parameterType = command.getParameterType(parameterId);
+
+			if (parameterType != null) {
+				AbstractParameterValueConverter valueConverter = parameterType.getValueConverter();
+				if (valueConverter != null) {
+					return valueConverter.convertToObject(value);
+				}
+			}
+		} catch (NotDefinedException e) {
+		} catch (ParameterValueConversionException e) {
+		}
+		return value;
 	}
 
 	/*
