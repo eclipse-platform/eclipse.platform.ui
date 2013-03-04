@@ -561,7 +561,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 									+ nlExtensions));
 				}
 
-				System.setProperty(E4Workbench.XMI_URI_ARG,
+				System.setProperty(org.eclipse.e4.ui.workbench.IWorkbench.XMI_URI_ARG,
 						"org.eclipse.ui.workbench/LegacyIDE.e4xmi"); //$NON-NLS-1$
 				Object obj = getApplication(Platform.getCommandLineArgs());
 				if (obj instanceof E4Application) {

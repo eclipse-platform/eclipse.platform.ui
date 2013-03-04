@@ -14,6 +14,8 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import org.eclipse.e4.ui.workbench.IWorkbench;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -92,8 +94,8 @@ public class ResourceHandler implements IModelResourceHandler {
 	 * @param deltaRestore
 	 */
 	@Inject
-	public ResourceHandler(@Named(E4Workbench.PERSIST_STATE) boolean saveAndRestore,
-			@Named(E4Workbench.CLEAR_PERSISTED_STATE) boolean clearPersistedState,
+	public ResourceHandler(@Named(IWorkbench.PERSIST_STATE) boolean saveAndRestore,
+			@Named(IWorkbench.CLEAR_PERSISTED_STATE) boolean clearPersistedState,
 			@Named(E4Workbench.DELTA_RESTORE) boolean deltaRestore) {
 		this.saveAndRestore = saveAndRestore;
 		this.clearPersistedState = clearPersistedState;

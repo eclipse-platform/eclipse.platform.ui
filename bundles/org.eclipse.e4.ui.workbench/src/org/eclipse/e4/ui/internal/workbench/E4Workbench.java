@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 BestSolution.at and others.
+ * Copyright (c) 2008, 2013 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
+import java.net.URI;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
@@ -25,24 +26,50 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.ServiceRegistration;
 
+/**
+ * Default implementation of {@link IWorkbench}
+ */
 public class E4Workbench implements IWorkbench {
+	/**
+	 * The argument for the locale active shell <br>
+	 * <br>
+	 * Value is: <code>localActiveShell</code>
+	 */
 	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
-	public static final String XMI_URI_ARG = "applicationXMI"; //$NON-NLS-1$
-	public static final String CSS_URI_ARG = "applicationCSS"; //$NON-NLS-1$
-	public static final String CSS_RESOURCE_URI_ARG = "applicationCSSResources"; //$NON-NLS-1$
-	public static final String PRESENTATION_URI_ARG = "presentationURI"; //$NON-NLS-1$
-	public static final String LIFE_CYCLE_URI_ARG = "lifeCycleURI"; //$NON-NLS-1$
-	public static final String PERSIST_STATE = "persistState"; //$NON-NLS-1$
+	/**
+	 * The argument for the {@link URI} of the initial workbench model <br>
+	 * <br>
+	 * Value is: <code>initialWorkbenchModelURI</code>
+	 */
 	public static final String INITIAL_WORKBENCH_MODEL_URI = "initialWorkbenchModelURI"; //$NON-NLS-1$
+	/**
+	 * The argument for the {@link Location} of the running instance <br>
+	 * <br>
+	 * Value is: <code>instanceLocation</code>
+	 */
 	public static final String INSTANCE_LOCATION = "instanceLocation"; //$NON-NLS-1$
-	public static final String MODEL_RESOURCE_HANDLER = "modelResourceHandler"; //$NON-NLS-1$
+	/**
+	 * The argument for the renderer factory to use <br>
+	 * <br>
+	 * Value is: <code>rendererFactoryUri</code>
+	 */
 	public static final String RENDERER_FACTORY_URI = "rendererFactoryUri"; //$NON-NLS-1$
-
-	public static final String CLEAR_PERSISTED_STATE = "clearPersistedState"; //$NON-NLS-1$
+	/**
+	 * The argument for setting the delta store location <br>
+	 * <br>
+	 * Value is: <code>deltaRestore</code>
+	 * 
+	 * @deprecated
+	 */
 	public static final String DELTA_RESTORE = "deltaRestore"; //$NON-NLS-1$
-
+	/**
+	 * The argument for setting RTL mode <br>
+	 * <br>
+	 * Value is: <code>dir</code>
+	 */
 	public static final String RTL_MODE = "dir"; //$NON-NLS-1$
 
 	private final String id;
@@ -53,10 +80,21 @@ public class E4Workbench implements IWorkbench {
 	MApplication appModel = null;
 	private UIEventPublisher uiEventPublisher;
 
+	/**
+	 * @return the {@link IEclipseContext} for the main application
+	 */
 	public IEclipseContext getContext() {
 		return appContext;
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param uiRoot
+	 *            the root UI element
+	 * @param applicationContext
+	 *            the root context
+	 */
 	public E4Workbench(MApplicationElement uiRoot, IEclipseContext applicationContext) {
 		id = createId();
 		appContext = applicationContext;
@@ -87,9 +125,7 @@ public class E4Workbench implements IWorkbench {
 	}
 
 	/**
-	 * @param renderingEngineURI
-	 * @param cssURI
-	 * @param cssResourcesURI
+	 * @param uiRoot
 	 */
 	public void createAndRunUI(MApplicationElement uiRoot) {
 		// Has someone already created one ?
@@ -106,7 +142,7 @@ public class E4Workbench implements IWorkbench {
 	public void instantiateRenderer() {
 		renderer = (IPresentationEngine) appContext.get(IPresentationEngine.class.getName());
 		if (renderer == null) {
-			String presentationURI = (String) appContext.get(PRESENTATION_URI_ARG);
+			String presentationURI = (String) appContext.get(IWorkbench.PRESENTATION_URI_ARG);
 			if (presentationURI != null) {
 				IContributionFactory factory = (IContributionFactory) appContext
 						.get(IContributionFactory.class.getName());
@@ -129,8 +165,10 @@ public class E4Workbench implements IWorkbench {
 		}
 	}
 
-	/**
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.IWorkbench#close()
 	 */
 	public boolean close() {
 		if (renderer != null) {
@@ -147,6 +185,9 @@ public class E4Workbench implements IWorkbench {
 		return true;
 	}
 
+	/**
+	 * @return a context that can be used to lookup OSGi services
+	 */
 	public static IEclipseContext getServiceContext() {
 		return EclipseContextFactory.getServiceContext(Activator.getDefault().getContext());
 	}
@@ -163,6 +204,7 @@ public class E4Workbench implements IWorkbench {
 	 *            The parent context
 	 * @param contextModel
 	 *            needs a context created
+	 * @return a chained {@link IEclipseContext}
 	 */
 	public static IEclipseContext initializeContext(IEclipseContext parentContext,
 			MContext contextModel) {

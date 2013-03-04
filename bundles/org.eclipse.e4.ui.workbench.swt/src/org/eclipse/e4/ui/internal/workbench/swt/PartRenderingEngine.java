@@ -1204,11 +1204,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 	public static void initializeStyling(Display display,
 			IEclipseContext appContext) {
 		String cssTheme = (String) appContext.get(E4Application.THEME_ID);
-		String cssURI = (String) appContext.get(E4Workbench.CSS_URI_ARG);
+		String cssURI = (String) appContext.get(IWorkbench.CSS_URI_ARG);
 
 		if (cssTheme != null) {
 			String cssResourcesURI = (String) appContext
-					.get(E4Workbench.CSS_RESOURCE_URI_ARG);
+					.get(IWorkbench.CSS_RESOURCE_URI_ARG);
 
 			Bundle bundle = WorkbenchSWTActivator.getDefault().getBundle();
 			BundleContext context = bundle.getBundleContext();
@@ -1265,7 +1265,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			});
 		} else if (cssURI != null) {
 			String cssResourcesURI = (String) appContext
-					.get(E4Workbench.CSS_RESOURCE_URI_ARG);
+					.get(IWorkbench.CSS_RESOURCE_URI_ARG);
 			final CSSSWTEngineImpl engine = new CSSSWTEngineImpl(display, true);
 			WidgetElement.setEngine(display, engine);
 			if (cssResourcesURI != null) {
