@@ -27,4 +27,5 @@ Service-Component: OSGI-INF/realm.xml
 Bundle-Vendor: Eclipse.org
 Import-Package: javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0",
+ org.json,
  org.osgi.service.event;version="[1.2.0,2.0.0)"

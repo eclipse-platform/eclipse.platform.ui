@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
+
+import org.json.JSONException;
 
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
@@ -25,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.core.services.util.JSONObject;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -41,6 +42,7 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
+import org.json.JSONObject;
 import org.osgi.service.event.EventAdmin;
 
 public class ExifTable {
@@ -49,25 +51,27 @@ public class ExifTable {
 	private WritableList inputList = new WritableList();
 	private IContainer input;
 	private String persistedState;
-	
-	final static public String EVENT_NAME = "org/eclipse/e4/demo/e4photo/exif"; 
+
+	final static public String EVENT_NAME = "org/eclipse/e4/demo/e4photo/exif";
 
 	@Inject
 	private Composite parent;
 	@Inject
 	private Logger logger;
-	
+
 	@Inject
 	private EventAdmin eventAdmin;
-	
+
 	private TableViewer viewer;
 
 	public ExifTable() {
 		super();
 	}
 
-	@Inject @Optional
-	void setSelection(@Named(IServiceConstants.ACTIVE_SELECTION) IResource selection) {
+	@Inject
+	@Optional
+	void setSelection(@Named(IServiceConstants.ACTIVE_SELECTION)
+	IResource selection) {
 		if (selection == null)
 			return;
 		IContainer newInput;
@@ -78,7 +82,7 @@ public class ExifTable {
 		if (newInput == input)
 			return;
 		input = newInput;
-	
+
 		inputList.clear();
 		try {
 			IResource[] members = input.members();
@@ -90,8 +94,7 @@ public class ExifTable {
 						Exif exif = new Exif(resource.getLocationURI(), contents);
 						inputList.add(exif);
 					} catch (Exception e) {
-						logger.warn(((IFile) resource).getFullPath() + ": "
-								+ e.getMessage());
+						logger.warn(((IFile) resource).getFullPath() + ": " + e.getMessage());
 					} finally {
 						try {
 							contents.close();
@@ -107,37 +110,41 @@ public class ExifTable {
 		}
 	}
 
-	@Inject @Optional
-	void setPersistedState(@Named("persistedState") String persistedState) {
-		changeSupport.firePropertyChange("persistedState", this.persistedState,
-				this.persistedState = persistedState);
+	@Inject
+	@Optional
+	void setPersistedState(@Named("persistedState")
+	String persistedState) {
+		changeSupport.firePropertyChange("persistedState", this.persistedState, this.persistedState = persistedState);
 	}
 
 	@PostConstruct
 	void init() {
 		parent.setLayout(new FillLayout());
 
-		viewer = new TableViewer(parent, SWT.SINGLE | SWT.FULL_SELECTION
-				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		viewer = new TableViewer(parent, SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
 
 		viewer.getTable().setData("org.eclipse.e4.ui.css.id", "exif");
 		viewer.getTable().setData("org.eclipse.e4.ui.css.CssClassName", "properties");
 
-		final JSONObject state = persistedState == null ? new JSONObject() : JSONObject
-				.deserialize(persistedState);
-		String[] columnNames = new String[] { "name", "make", "model", "orientation",
-				"software", "timestamp", "gpsLatitude", "gpsLongitude", "exposure",
-				"iso", "aperture", "exposureComp", "flash", "width", "height",
-				"focalLength", "whiteBalance", "lightSource", "exposureProgram" };
+		JSONObject restoredState = null;
+		try {
+			if (persistedState != null)
+				restoredState = new JSONObject(persistedState);
+		} catch (JSONException e) {
+			//discard persisted state and start with fresh state
+		}
+		final JSONObject state = restoredState != null ? restoredState : new JSONObject();
+		
+		String[] columnNames = new String[] {"name", "make", "model", "orientation", "software", "timestamp", "gpsLatitude", "gpsLongitude", "exposure", "iso", "aperture", "exposureComp", "flash", "width", "height", "focalLength", "whiteBalance", "lightSource", "exposureProgram"};
 
 		for (int i = 0; i < columnNames.length; i++) {
 			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 			final TableColumn c = column.getColumn();
 			final String name = columnNames[i];
 			c.setText(name);
-			String width = state.getString(name);
+			String width = state.optString(name, null);
 			if (width != null) {
 				c.setWidth(Integer.parseInt(width));
 			} else {
@@ -146,8 +153,12 @@ public class ExifTable {
 			c.addControlListener(new ControlAdapter() {
 				@Override
 				public void controlResized(ControlEvent e) {
-					state.set(name, c.getWidth() + "");
-					setPersistedState(state.serialize());
+					try {
+						state.put(name, Integer.toString(c.getWidth()));
+					} catch (JSONException e1) {
+						//cannot happen because name is not null
+					}
+					setPersistedState(state.toString());
 				}
 			});
 		}
@@ -163,14 +174,11 @@ public class ExifTable {
 			}
 		});
 
-		viewer
-				.setLabelProvider(new ObservableMapLabelProvider(PojoObservables
-						.observeMaps(contentProvider.getKnownElements(), Exif.class,
-								columnNames)));
+		viewer.setLabelProvider(new ObservableMapLabelProvider(PojoObservables.observeMaps(contentProvider.getKnownElements(), Exif.class, columnNames)));
 
 		viewer.setInput(inputList);
 	}
-	
+
 	@Focus
 	void setFocus() {
 		viewer.getControl().setFocus();
