@@ -15,9 +15,11 @@ import org.eclipse.e4.core.internal.contexts.Computation;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
 /**
- * Extended version of a runnable that can be used with the
- * {@link IEclipseContext#runAndTrack(RunAndTrack)} version gets more detailed
- * information on the change, such as the service name and the event type.
+ * Instances of this class contain behavior that is executed within an
+ * {@link IEclipseContext}. The context records all values accessed by this
+ * object, and will re-evaluate this runnable whenever any accessed value changes.
+ * 
+ * @see IEclipseContext#runAndTrack(RunAndTrack)
  */
 abstract public class RunAndTrack {
 

@@ -15,7 +15,8 @@ package org.eclipse.e4.core.contexts;
  * A context is used to isolate application code from its dependencies on an application framework
  * or container. This helps avoid building in dependencies on a specific framework that inhibit
  * reuse of the application code. Fundamentally a context supplies values (either data objects or
- * services), and allows values to be set.
+ * services), and allows values to be set. Typically a client will be provided values
+ * from a context through injection, removing the need for clients to even depend on this interface.
  * <p>
  * While a context appears superficially to be a Map, it may in fact compute values for requested
  * keys dynamically rather than simply retrieving a stored value.
@@ -26,6 +27,11 @@ package org.eclipse.e4.core.contexts;
  * clients need not be concerned with. The content of parent contexts cannot be modified by a child
  * context.
  * </p>
+ * <p>
+ * Contexts may have child contexts. Children inherit context values from their parent
+ * as described earlier. At any time, one of the children may be considered the <i>active</i>
+ * child. The interpretation of what active means depends on the domain in which the context
+ * is used.
  * <p>
  * Like maps, values are stored in the context based on keys. Two types of keys can be used: strings 
  * and classes. When classes are used to access objects in the context, keys are calculated based on 
