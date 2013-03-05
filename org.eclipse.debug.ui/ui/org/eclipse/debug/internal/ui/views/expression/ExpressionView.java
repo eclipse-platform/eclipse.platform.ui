@@ -96,6 +96,9 @@ public class ExpressionView extends VariablesView {
 	// The preference name for saving fWorkingSetMementos.
 	private static final String PREF_ELEMENT_WORKINGSET_MEMENTOS = DebugUIPlugin.getUniqueIdentifier() + ".workingSetMementos"; //$NON-NLS-1$
 
+	// Limit on the number of entries in the working sets / selection map.
+	private static final int MAX_WORKING_SETS_MEMENTOS = 100;
+	
 	private static final IWorkingSet[] EMPTY_WORKING_SETS = new IWorkingSet[0];
 	
     private PasteWatchExpressionsAction fPasteAction;
@@ -105,7 +108,13 @@ public class ExpressionView extends VariablesView {
     
 	private boolean fAutoSelectnWorkingSets = true;
 
-	private Map fWorkingSetMementos = new LinkedHashMap();
+	private Map fWorkingSetMementos = new LinkedHashMap(16, (float)0.75, true) {
+		private static final long serialVersionUID = 1L;
+
+		protected boolean removeEldestEntry(java.util.Map.Entry eldest) {
+			return size() > MAX_WORKING_SETS_MEMENTOS;
+		}
+	};
     
 	private Set fPendingCompareRequests;
 	
