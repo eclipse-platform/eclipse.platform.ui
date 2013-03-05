@@ -14,7 +14,6 @@ Import-Package: javax.annotation;version="1.0.0",
  org.eclipse.core.commands.common,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.services.log,
- org.eclipse.e4.core.services.util,
  org.osgi.framework;version="1.5.0"
 Export-Package: org.eclipse.e4.core.commands;
   x-friends:="org.eclipse.e4.ui.bindings,
