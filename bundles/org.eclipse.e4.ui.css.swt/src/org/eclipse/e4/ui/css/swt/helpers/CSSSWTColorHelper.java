@@ -12,8 +12,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
-import java.util.List;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 
+import org.eclipse.swt.SWT;
+import java.util.List;
 import org.eclipse.e4.ui.css.core.css2.CSS2ColorHelper;
 import org.eclipse.e4.ui.css.core.css2.CSS2RGBColorImpl;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
@@ -30,6 +34,8 @@ import org.w3c.dom.css.RGBColor;
 
 public class CSSSWTColorHelper {
 
+	private static Field[] cachedFields;
+	
 	/*--------------- SWT Color Helper -----------------*/
 
 	public static Color getSWTColor(RGBColor rgbColor, Display display) {
@@ -41,14 +47,74 @@ public class CSSSWTColorHelper {
 		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
 			return null;
 		}
+		Color color = display.getSystemColor(SWT.COLOR_BLACK);
 		RGB rgb = getRGB((CSSPrimitiveValue) value);
 		if (rgb == null) {
-			return null;
+			String name = ((CSSPrimitiveValue) value).getStringValue();
+			if (name.contains("-")) {
+				name = name.replace('-', '_');
+				rgb = process(display, name);
+			}
 		}
-		Color color = new Color(display, rgb.red, rgb.green, rgb.blue);
+		if (rgb != null) color = new Color(display, rgb.red, rgb.green, rgb.blue);
 		return color;
 	}
 
+	/**
+	 * Process the given string and return a corresponding RGB object.
+	 * 
+	 * @param value
+	 *            the SWT constant <code>String</code>
+	 * @return the value of the SWT constant, or <code>SWT.COLOR_BLACK</code>
+	 *         if it could not be determined
+	 */
+	private static RGB process(Display display, String value) {
+		Field [] fields = getFields();
+		try {
+			for (int i = 0; i < fields.length; i++) {
+				Field field = fields[i];
+				if (field.getName().equals(value)) {
+					return display.getSystemColor(field.getInt(null)).getRGB();
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			// no op - shouldnt happen. We check for static before calling
+			// getInt(null)
+		} catch (IllegalAccessException e) {
+			// no op - shouldnt happen. We check for public before calling
+			// getInt(null)
+		}
+		return  display.getSystemColor(SWT.COLOR_BLACK).getRGB();
+	}
+
+	/**
+	 * Get the SWT constant fields.
+	 * 
+	 * @return the fields
+	 * @since 3.3
+	 */
+	private static Field[] getFields() {
+		if (cachedFields == null) {
+			Class clazz = SWT.class;		
+			Field[] allFields = clazz.getDeclaredFields();
+			ArrayList applicableFields = new ArrayList(allFields.length);
+			
+			for (int i = 0; i < allFields.length; i++) {
+				Field field = allFields[i];
+				if (field.getType() == Integer.TYPE
+						&& Modifier.isStatic(field.getModifiers())
+						&& Modifier.isPublic(field.getModifiers())
+						&& Modifier.isFinal(field.getModifiers())
+						&& field.getName().startsWith("COLOR")) { //$NON-NLS-1$
+				
+					applicableFields.add(field);
+				}
+			}
+			cachedFields = (Field []) applicableFields.toArray(new Field [applicableFields.size()]);
+		}
+		return cachedFields;
+	}
+	
 	public static RGB getRGB(String name) {
 		RGBColor color = CSS2ColorHelper.getRGBColor(name);
 		if (color != null) {
