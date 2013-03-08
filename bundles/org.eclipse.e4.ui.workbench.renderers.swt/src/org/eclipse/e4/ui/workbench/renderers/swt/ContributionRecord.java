@@ -255,7 +255,7 @@ public class ContributionRecord {
 		IEclipseContext staticContext = getStaticContext();
 		staticContext.remove(List.class);
 		factoryDispose = (Runnable) ((IContextFunction) obj)
-				.compute(staticContext);
+				.compute(staticContext, null);
 		return staticContext.get(List.class);
 	}
 

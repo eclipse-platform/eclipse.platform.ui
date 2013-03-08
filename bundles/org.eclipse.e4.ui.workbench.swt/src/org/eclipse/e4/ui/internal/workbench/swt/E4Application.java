@@ -14,8 +14,6 @@
 
 package org.eclipse.e4.ui.internal.workbench.swt;
 
-import org.eclipse.e4.ui.workbench.IWorkbench;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,9 +29,9 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
@@ -65,6 +63,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
 import org.eclipse.e4.ui.workbench.IModelResourceHandler;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.lifecycle.PostContextCreate;
 import org.eclipse.e4.ui.workbench.lifecycle.PreSave;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
@@ -276,16 +275,16 @@ public class E4Application implements IApplication {
 
 		// Parse out parameters from both the command line and/or the product
 		// definition (if any) and put them in the context
-		String xmiURI = getArgValue(IWorkbench.XMI_URI_ARG,
-				applicationContext, false);
+		String xmiURI = getArgValue(IWorkbench.XMI_URI_ARG, applicationContext,
+				false);
 		appContext.set(IWorkbench.XMI_URI_ARG, xmiURI);
 
 		String themeId = getArgValue(E4Application.THEME_ID,
 				applicationContext, false);
 		appContext.set(E4Application.THEME_ID, themeId);
 
-		String cssURI = getArgValue(IWorkbench.CSS_URI_ARG,
-				applicationContext, false);
+		String cssURI = getArgValue(IWorkbench.CSS_URI_ARG, applicationContext,
+				false);
 		if (cssURI != null) {
 			appContext.set(IWorkbench.CSS_URI_ARG, cssURI);
 		}
@@ -367,8 +366,8 @@ public class E4Application implements IApplication {
 		eclipseContext.set(E4Workbench.DELTA_RESTORE,
 				Boolean.valueOf(deltaRestore));
 
-		String resourceHandler = getArgValue(
-				IWorkbench.MODEL_RESOURCE_HANDLER, appContext, false);
+		String resourceHandler = getArgValue(IWorkbench.MODEL_RESOURCE_HANDLER,
+				appContext, false);
 
 		if (resourceHandler == null) {
 			resourceHandler = "bundleclass://org.eclipse.e4.ui.workbench/"
@@ -776,8 +775,9 @@ public class E4Application implements IApplication {
 		// we create a selection service handle on every node that we are asked
 		// about as handle needs to know its context
 		appContext.set(ESelectionService.class.getName(),
-				new IContextFunction() {
-					public Object compute(IEclipseContext context) {
+				new ContextFunction() {
+					public Object compute(IEclipseContext context,
+							String contextKey) {
 						return ContextInjectionFactory.make(
 								SelectionServiceImpl.class, context);
 					}

@@ -38,7 +38,7 @@ public class CommandServiceCreationFunction extends ContextFunction {
 	 * .context.IEclipseContext, java.lang.Object[])
 	 */
 	@Override
-	public Object compute(IEclipseContext context) {
+	public Object compute(IEclipseContext context, String contextKey) {
 		if (service == null) {
 			IEclipseContext root = getRootContext(context);
 			manager = new CommandManager();

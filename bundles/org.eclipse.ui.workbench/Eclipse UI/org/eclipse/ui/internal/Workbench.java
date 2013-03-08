@@ -1938,7 +1938,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 	private final void initializeLazyServices() {
 		e4Context.set(IExtensionTracker.class.getName(), new ContextFunction() {
 
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (tracker == null) {
 					tracker = new UIExtensionTracker(getDisplay());
 				}
@@ -1947,7 +1947,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 		});
 		e4Context.set(IWorkbenchActivitySupport.class.getName(), new ContextFunction() {
 
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (workbenchActivitySupport == null) {
 					workbenchActivitySupport = new WorkbenchActivitySupport();
 				}
@@ -1956,7 +1956,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 		});
 		e4Context.set(IProgressService.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return ProgressManager.getInstance();
 			}
 		});

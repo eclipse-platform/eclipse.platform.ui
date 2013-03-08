@@ -200,7 +200,7 @@ public class MenuAdditionCacheEntry {
 			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
 				ContextFunction generator = new ContextFunction() {
 					@Override
-					public Object compute(IEclipseContext context) {
+					public Object compute(IEclipseContext context, String contextKey) {
 						ServiceLocator sl = new ServiceLocator();
 						sl.setContext(context);
 						DynamicMenuContributionItem item = new DynamicMenuContributionItem(

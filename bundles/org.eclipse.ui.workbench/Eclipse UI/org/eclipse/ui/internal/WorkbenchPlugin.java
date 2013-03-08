@@ -1308,7 +1308,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		e4Context.set(IPerspectiveRegistry.class.getName(), new ContextFunction() {
 
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (perspRegistry == null) {
 					perspRegistry = (PerspectiveRegistry) ContextInjectionFactory.make(
 							PerspectiveRegistry.class, e4Context);
@@ -1319,7 +1319,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		e4Context.set(IViewRegistry.class.getName(), new ContextFunction() {
 
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (viewRegistry == null) {
 					viewRegistry = (ViewRegistry) ContextInjectionFactory.make(ViewRegistry.class,
 							e4Context);
@@ -1329,7 +1329,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		});
 		e4Context.set(ActionSetRegistry.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (actionSetRegistry == null) {
 					actionSetRegistry = new ActionSetRegistry();
 				}
@@ -1338,7 +1338,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		});
 		context.set(IDecoratorManager.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (decoratorManager == null) {
 					decoratorManager = new DecoratorManager();
 				}
@@ -1347,19 +1347,19 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		});
 		context.set(ExportWizardRegistry.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return ExportWizardRegistry.getInstance();
 			}
 		});
 		context.set(ImportWizardRegistry.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return ImportWizardRegistry.getInstance();
 			}
 		});
 		context.set(IIntroRegistry.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (introRegistry == null) {
 					introRegistry = new IntroRegistry();
 				}
@@ -1368,13 +1368,13 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		});
 		context.set(NewWizardRegistry.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return NewWizardRegistry.getInstance();
 			}
 		});
 		context.set(IWorkbenchOperationSupport.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (operationSupport == null) {
 					operationSupport = new WorkbenchOperationSupport();
 				}
@@ -1383,7 +1383,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		});
 		context.set(PreferenceManager.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (preferenceManager == null) {
 					preferenceManager = new WorkbenchPreferenceManager(
 							PREFERENCE_PAGE_CATEGORY_SEPARATOR);
@@ -1400,7 +1400,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		});
 		context.set(ISharedImages.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (sharedImages == null) {
 					sharedImages = new SharedImages();
 				}
@@ -1410,7 +1410,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 		context.set(IThemeRegistry.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (themeRegistry == null) {
 					themeRegistry = new ThemeRegistry();
 					ThemeRegistryReader reader = new ThemeRegistryReader();
@@ -1421,7 +1421,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		});
 		context.set(IWorkingSetManager.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (workingSetManager == null) {
 					workingSetManager = new WorkingSetManager(bundleContext);
 					workingSetManager.restoreState();
@@ -1431,7 +1431,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		});
 		context.set(WorkingSetRegistry.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (workingSetRegistry == null) {
 					workingSetRegistry = new WorkingSetRegistry();
 					workingSetRegistry.load();
@@ -1441,7 +1441,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		});
 		context.set(IEditorRegistry.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (editorRegistry == null) {
 					editorRegistry = new EditorRegistry();
 				}

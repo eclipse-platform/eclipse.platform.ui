@@ -85,7 +85,7 @@ public final class EvaluationService implements IEvaluationService {
 		legacyContext = new ExpressionContext(context);
 		ExpressionContext.defaultVariableConverter = new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				Object defaultVariable = context.getLocal(DEFAULT_VAR);
 				if (defaultVariable != null
 						&& defaultVariable != IEvaluationContext.UNDEFINED_VARIABLE) {

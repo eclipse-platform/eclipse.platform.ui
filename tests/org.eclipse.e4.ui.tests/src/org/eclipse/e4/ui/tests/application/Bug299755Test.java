@@ -67,7 +67,7 @@ public class Bug299755Test extends TestCase {
 		windowContext.set(InjectionObject.class.getName(),
 				new ContextFunction() {
 					@Override
-					public Object compute(IEclipseContext context) {
+					public Object compute(IEclipseContext context, String contextKey) {
 						return ContextInjectionFactory.make(
 								InjectionObject.class, context);
 					}

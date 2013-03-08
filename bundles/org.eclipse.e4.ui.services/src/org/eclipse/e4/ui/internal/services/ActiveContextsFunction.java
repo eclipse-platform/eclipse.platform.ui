@@ -19,7 +19,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 public class ActiveContextsFunction extends ContextFunction {
 
 	@Override
-	public Object compute(IEclipseContext context) {
+	public Object compute(IEclipseContext context, String contextKey) {
 		// 1) get active child
 		IEclipseContext current = context.getActiveLeaf();
 		//2 form an answer going up
