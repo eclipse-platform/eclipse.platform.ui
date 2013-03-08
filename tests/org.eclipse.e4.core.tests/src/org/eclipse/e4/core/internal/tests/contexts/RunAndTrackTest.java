@@ -30,7 +30,7 @@ public class RunAndTrackTest extends TestCase {
 
 	private class ActivePartLookupFunction extends ContextFunction {
 
-		public Object compute(IEclipseContext context) {
+		public Object compute(IEclipseContext context, String contextKey) {
 			IEclipseContext childContext = (IEclipseContext) context.getLocal(ACTIVE_CHILD);
 			if (childContext != null) {
 				return childContext.get(ACTIVE_PART);

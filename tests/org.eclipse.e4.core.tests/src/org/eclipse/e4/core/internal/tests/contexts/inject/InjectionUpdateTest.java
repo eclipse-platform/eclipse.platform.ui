@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 
@@ -69,19 +68,19 @@ public class InjectionUpdateTest extends TestCase {
 		c1.set("base", "abc");
 
 		c21.set("derived1", new ContextFunction() {
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				String baseString = (String) context.get("base");
 				return baseString.charAt(0) + "_";
 			}});
 
 		c22.set("derived2", new ContextFunction() {
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				String baseString = (String) context.get("base");
 				return "_" + baseString.charAt(baseString.length() - 1);
 			}});
 
 		c1.set("calculated", new ContextFunction() {
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				IEclipseContext context21 = (IEclipseContext) context.get("c21");
 				String derived1 = (String) context21.get("derived1");
 				
@@ -122,8 +121,8 @@ public class InjectionUpdateTest extends TestCase {
 
 	public void testNestedUpdatesPostConstruct() throws Exception {
 		IEclipseContext appContext = EclipseContextFactory.create();
-		appContext.set(InjectTarget.class.getName(), new IContextFunction() {
-			public Object compute(IEclipseContext context) {
+		appContext.set(InjectTarget.class.getName(), new ContextFunction() {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return ContextInjectionFactory
 						.make(InjectTarget.class, context);
 			}
@@ -157,8 +156,8 @@ public class InjectionUpdateTest extends TestCase {
 
 	public void testNestedUpdatesConstructor() throws Exception {
 		IEclipseContext appContext = EclipseContextFactory.create();
-		appContext.set(InjectTarget2.class.getName(), new IContextFunction() {
-			public Object compute(IEclipseContext context) {
+		appContext.set(InjectTarget2.class.getName(), new ContextFunction() {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return ContextInjectionFactory.make(InjectTarget2.class,
 						context);
 			}

@@ -11,9 +11,11 @@
 package org.eclipse.e4.core.internal.tests.manual;
 
 import javax.inject.Inject;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -66,14 +68,14 @@ public class ComputedValueLimitationTest extends TestCase {
 
 	public class CalcColor extends ContextFunction {
 
-		public Object compute(IEclipseContext context) {
+		public Object compute(IEclipseContext context, String contextKey) {
 			int useArg = ExtenralFactor.useChild();
 			return context.get("arg" + Integer.toString(useArg));
 		}
 	}
 
 	public class Time extends ContextFunction {
-		public Object compute(IEclipseContext context) {
+		public Object compute(IEclipseContext context, String contextKey) {
 			context.get(String.valueOf(System.currentTimeMillis()));
 			return new Long(System.currentTimeMillis());
 		}

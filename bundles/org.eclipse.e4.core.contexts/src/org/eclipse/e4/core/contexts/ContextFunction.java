@@ -29,8 +29,18 @@ public abstract class ContextFunction implements IContextFunction {
 	}
 
 	/**
+	 * @deprecated {@link IContextFunction}'s compute() was changed to take the context key
+	 */
+	public Object compute(IEclipseContext context) {
+		return null;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
-	public abstract Object compute(IEclipseContext context);
+	public Object compute(IEclipseContext context, String contextKey) {
+		// call into now-deprecated method to maintain backwards compatibility
+		return compute(context);
+	}
 
 }

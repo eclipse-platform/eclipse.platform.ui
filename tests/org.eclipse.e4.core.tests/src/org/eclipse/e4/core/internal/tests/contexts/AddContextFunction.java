@@ -12,7 +12,6 @@
 package org.eclipse.e4.core.internal.tests.contexts;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
-
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 
@@ -27,7 +26,7 @@ public class AddContextFunction extends ContextFunction {
 	 * @see org.eclipse.e4.core.services.context.spi.ContextFunction#compute(org.
 	 * eclipse.e4.core.services.context.IEclipseContext, java.lang.Object[])
 	 */
-	public Object compute(IEclipseContext context) {
+	public Object compute(IEclipseContext context, String contextKey) {
 		Integer xInt = (Integer) context.get("x");
 		Integer yInt = (Integer) context.get("y");
 		int sum = xInt == null ? 0 : xInt.intValue();

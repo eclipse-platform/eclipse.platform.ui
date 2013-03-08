@@ -26,7 +26,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 public class ActivationInjectionTest extends TestCase {
 
 	static public class TestRAT extends ContextFunction {
-		public Object compute(IEclipseContext context) {
+		public Object compute(IEclipseContext context, String contextKey) {
 			IEclipseContext activeContext = context.getActiveLeaf();
 			// returns name of the context
 			return "_" + activeContext.get("debugString") + "_";

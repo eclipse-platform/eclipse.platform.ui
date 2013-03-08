@@ -15,9 +15,9 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ObjectSuperClass;
@@ -259,8 +259,8 @@ public class ReparentingTest extends TestCase {
 		final int[] testServiceCount = new int[1];
 		testServiceCount[0] = 0;
 		IEclipseContext parentContext = EclipseContextFactory.create("parent");
-		parentContext.set(TestService.class.getName(), new IContextFunction() {
-			public Object compute(IEclipseContext context) {
+		parentContext.set(TestService.class.getName(), new ContextFunction() {
+			public Object compute(IEclipseContext context, String contextKey) {
 				testServiceCount[0]++;
 				return ContextInjectionFactory.make(TestService.class, context);
 			}

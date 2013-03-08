@@ -21,7 +21,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
 public class EclipseContextTest extends TestCase {
 
 	private static class ComputedValueBar extends ContextFunction {
-		public Object compute(IEclipseContext context) {
+		public Object compute(IEclipseContext context, String contextKey) {
 			return context.get("bar");
 		}
 	}
@@ -138,7 +138,7 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(3, runCounter);
 		assertEquals(null, value[0]);
 		context.set("foo", new ContextFunction() {
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return context.get("bar");
 			}
 		});
