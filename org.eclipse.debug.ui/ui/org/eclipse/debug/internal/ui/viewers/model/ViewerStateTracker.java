@@ -218,13 +218,17 @@ class ViewerStateTracker {
     void dispose() {
         Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );        
 
-        for (Iterator itr = fPendingStateSaves.iterator(); itr.hasNext(); ) {
-            ((IElementMementoCollector)itr.next()).cancel();
+        IElementMementoCollector[] savesToCancel =  (IElementMementoCollector[])
+            fPendingStateSaves.toArray(new IElementMementoCollector[fPendingStateSaves.size()]);
+        for (int i = 0; i < savesToCancel.length; i++) {
+            savesToCancel[i].cancel();
         }
         fStateUpdateListeners.clear();
         
-        for (Iterator itr =  fCompareRequestsInProgress.values().iterator(); itr.hasNext();) {
-            ((ElementCompareRequest)itr.next()).cancel();
+        ElementCompareRequest[] requestsToCancel = (ElementCompareRequest[])
+            fCompareRequestsInProgress.values().toArray(new ElementCompareRequest[fCompareRequestsInProgress.size()]);
+        for (int i = 0; i < requestsToCancel.length; i++) {
+            requestsToCancel[i].cancel();
         }
         fCompareRequestsInProgress.clear();
         

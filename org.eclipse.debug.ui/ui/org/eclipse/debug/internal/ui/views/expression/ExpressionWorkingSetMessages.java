@@ -16,7 +16,7 @@ public class ExpressionWorkingSetMessages extends NLS
 {
 	static
 	{
-		initializeMessages("org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetMessages", //$NON-NLS-1$
+		initializeMessages("org.eclipse.debug.internal.ui.views.expression.ExpressionWorkingSetMessages", //$NON-NLS-1$
 				ExpressionWorkingSetMessages.class);
 	}
 	
