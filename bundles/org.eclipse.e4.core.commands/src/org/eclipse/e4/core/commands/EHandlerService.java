@@ -16,7 +16,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 /**
  */
 public interface EHandlerService {
-	public IEclipseContext getContext();
 
 	public void activateHandler(String commandId, Object handler);
 
