@@ -10,6 +10,7 @@
  *     Sascha Radike - bug 56642
  *     Martin Oberhuber (Wind River) - [327446] Avoid unnecessary wait-for-build dialog.
  *     Mohamed Hussein - bug 381175
+ *     Abeer Bagul (Tensilica) - Working set support for Expressions view (Bug 372181)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -556,6 +557,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
         
         // start the breakpoint organizer manager
         BreakpointOrganizerManager.getDefault();
+        
+        //start the expression workingset manager
+//        ExpressionWorkingSetFilterManager.getInstance().init();
 				
 		getLaunchConfigurationManager().startup();
 		

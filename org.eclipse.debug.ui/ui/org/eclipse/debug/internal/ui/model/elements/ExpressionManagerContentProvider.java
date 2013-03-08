@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind Rvier Systems - added support for columns (bug 235646)
+ *     Abeer Bagul (Tensilica) - Working set support for Expressions view (bug 372181)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.model.elements;
 
@@ -36,6 +37,8 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Default content provider for the expression manager.
@@ -48,9 +51,10 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
      * 
      * @since 3.6
      */
-    private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor, ICellModifier {
+    private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor {
         
         public void update(ILabelUpdate[] updates) {
+        	
             for (int i = 0; i < updates.length; i++) {
                 String[] columnIds = updates[i].getColumnIds();
                 if (columnIds == null) {
@@ -85,9 +89,17 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
         }
         
         public ICellModifier getCellModifier(IPresentationContext context, Object element) {
-            return this;
-        }
-        
+            return new AddNewExpressionCellModifider(context);
+        }                
+    }
+    
+    private static class AddNewExpressionCellModifider implements ICellModifier {
+    	
+    	private final IPresentationContext fPresentationContext;
+    	
+    	AddNewExpressionCellModifider(IPresentationContext presentationContext) {
+    		fPresentationContext = presentationContext;
+    	}
         public boolean canModify(Object element, String property) {
             return (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(property));
         }
@@ -105,11 +117,33 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
                 String expressionText = DefaultLabelProvider.encodeEsacpedChars((String)value);
                 IWatchExpression newExpression= 
                     DebugPlugin.getDefault().getExpressionManager().newWatchExpression(expressionText);
-                DebugPlugin.getDefault().getExpressionManager().addExpression(newExpression);
                 newExpression.setExpressionContext(getContext());
+                
+                //if any working sets are applied to this view,
+                //add this expression to all applied working sets,
+                //otherwise it will be filtered out from the view.
+                Object workingSetsProp = fPresentationContext.getProperty(IDebugUIConstants.PROP_EXPRESSIONS_WORKING_SETS);
+                if (workingSetsProp instanceof String[])
+                {
+                	String[] workingSetNames = (String[])workingSetsProp;
+                	for (int i=0; i<workingSetNames.length; i++)
+                	{
+                		String workingSetName = workingSetNames[i];
+                    	IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
+                    	IAdaptable[] existingElements = workingSet.getElements();
+                    	IAdaptable[] newElements = new IAdaptable[existingElements.length + 1];
+                    	System.arraycopy(existingElements, 0, newElements, 0, existingElements.length);
+                    	newElements[newElements.length - 1] = newExpression;
+                    	workingSet.setElements(newElements);
+                	}
+                }
+                // Add the new expression to the expression manager only after 
+                // working sets are updated.  Otherwise, the viewer may filter
+                // out the new expression.
+                DebugPlugin.getDefault().getExpressionManager().addExpression(newExpression);
             }
         }
-        
+	
         private IDebugElement getContext() {
             IAdaptable object = DebugUITools.getDebugContext();
             IDebugElement context = null;
@@ -120,7 +154,6 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
             }
             return context;
         }
-
     }
     
     private static final AddNewExpressionElement ADD_NEW_EXPRESSION_ELEMENT = new AddNewExpressionElement();
