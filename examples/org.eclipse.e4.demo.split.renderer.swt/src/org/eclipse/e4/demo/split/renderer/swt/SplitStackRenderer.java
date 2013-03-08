@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.split.renderer.swt;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
@@ -368,8 +371,10 @@ public class SplitStackRenderer extends LazyStackRenderer {
 
 				// Do we have any stacks with place holders for the element
 				// that's changed?
-				List<MPlaceholder> refs = ElementReferenceRenderer
-						.getRenderedPlaceholders(part);
+				// FIXME this method needs a new implementation
+				List<MPlaceholder> refs = new ArrayList<MPlaceholder>(); 
+						//ElementReferenceRenderer
+						//.getRenderedPlaceholders(part);
 				for (MPlaceholder ref : refs) {
 					MElementContainer<MUIElement> refParent = ref.getParent();
 					if (refParent.getRenderer() instanceof SplitStackRenderer) {

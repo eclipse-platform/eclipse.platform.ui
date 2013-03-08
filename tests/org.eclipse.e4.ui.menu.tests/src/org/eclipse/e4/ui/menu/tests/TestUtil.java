@@ -453,6 +453,12 @@ class TestUtil {
 			}
 
 			@Override
+			public void focusGui(MUIElement element) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
 			public void removeGui(MUIElement element) {
 				// TODO Auto-generated method stub
 
