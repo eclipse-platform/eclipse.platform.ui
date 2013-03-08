@@ -58,7 +58,7 @@ public class ValueComputation extends Computation {
 		originatingContext.pushComputation(this);
 		computing = true;
 		try {
-			cachedValue = function.compute(originatingContext);
+			cachedValue = function.compute(originatingContext, name);
 		} finally {
 			computing = false;
 			originatingContext.popComputation(this);

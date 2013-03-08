@@ -66,7 +66,7 @@ public interface IEclipseContext {
 	 * <code>null</code>.
 	 * <p>
 	 * If the value associated with this name is an {@link ContextFunction}, this method will
-	 * evaluate {@link ContextFunction#compute(IEclipseContext)}.
+	 * evaluate {@link ContextFunction#compute(IEclipseContext, String)}.
 	 * </p>
 	 * @param name the name of the value to return
 	 * @return an object corresponding to the given name, or <code>null</code>
@@ -89,7 +89,7 @@ public interface IEclipseContext {
 	 * </p>
 	 * <p>
 	 * If the value associated with this name is an {@link ContextFunction}, this method will
-	 * evaluate {@link ContextFunction#compute(IEclipseContext)}.
+	 * evaluate {@link ContextFunction#compute(IEclipseContext, String)}.
 	 * </p>
 	 * @param name the name of the value to return
 	 * @return an object corresponding to the given name, or <code>null</code>
@@ -161,7 +161,7 @@ public interface IEclipseContext {
 	 * Sets a value to be associated with a given name in this context. The value may be an
 	 * arbitrary object, or it may be an {@link ContextFunction}. In the case of a function,
 	 * subsequent invocations of {@link #get(String)} with the same name will invoke
-	 * {@link ContextFunction#compute(IEclipseContext)} to obtain the value. The value
+	 * {@link ContextFunction#compute(IEclipseContext, String)} to obtain the value. The value
 	 * may be <code>null</code>.
 	 * <p>
 	 * Removal can never affect a parent context, so it is possible that a subsequent call to

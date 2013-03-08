@@ -44,7 +44,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 
 		context1.set(SELECTION, new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return "func1";
 			}
 		});
@@ -56,7 +56,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 		
 		context1.set(SELECTION, new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return "func2";
 			}
 		});
@@ -74,7 +74,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 
 		context1.set(SELECTION, new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return "func1";
 			}
 		});
@@ -102,7 +102,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 		// ICF set on top context
 		context1.set(SELECTION, new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return "func1";
 			}
 		});
@@ -115,7 +115,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 		// Override ICF set on the 2nd context
 		context2.set(SELECTION, new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return "func2";
 			}
 		});
@@ -146,7 +146,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 
 		appContext.set(SELECTION, new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				IEclipseContext parent = context.getParent();
 				while (parent != null) {
 					context = parent;

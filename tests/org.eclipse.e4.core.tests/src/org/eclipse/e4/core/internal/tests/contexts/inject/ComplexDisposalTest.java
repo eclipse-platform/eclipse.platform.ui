@@ -45,7 +45,7 @@ public class ComplexDisposalTest extends TestCase {
 
 	public static class TestFunction extends ContextFunction {
 		@Override
-		public Object compute(IEclipseContext context) {
+		public Object compute(IEclipseContext context, String contextKey) {
 			return ContextInjectionFactory.make(Test.class, context);
 		}
 	}

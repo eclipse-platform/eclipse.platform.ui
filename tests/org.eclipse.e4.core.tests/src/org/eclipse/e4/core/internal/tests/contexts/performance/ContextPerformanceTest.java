@@ -82,7 +82,7 @@ public class ContextPerformanceTest extends TestCase {
 
 	public void testLookupContextFunction() {
 		context.set("somefunction", new ContextFunction() {
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return "result";
 			}
 		});
@@ -95,7 +95,7 @@ public class ContextPerformanceTest extends TestCase {
 
 	public void testSetContextFunction() {
 		context.set("somefunction", new ContextFunction() {
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				return context.get("something");
 			}
 		});
@@ -114,7 +114,7 @@ public class ContextPerformanceTest extends TestCase {
 	 */
 	public void testSetValueRunAndTrack() {
 		context.set("somefunction", new ContextFunction() {
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				// make sure this function has a large number of dependencies
 				for (int i = 0; i < 1000; i++) {
 					context.get("NonExistentValue-" + i);

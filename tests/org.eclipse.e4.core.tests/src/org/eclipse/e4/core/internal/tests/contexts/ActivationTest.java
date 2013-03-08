@@ -24,7 +24,7 @@ import org.eclipse.e4.core.contexts.RunAndTrack;
 public class ActivationTest extends TestCase {
 
 	static public class TestRAT extends ContextFunction {
-		public Object compute(IEclipseContext context) {
+		public Object compute(IEclipseContext context, String contextKey) {
 			IEclipseContext activeContext = context.getActiveLeaf();
 			// returns name of the context
 			return activeContext.get("debugString"); 

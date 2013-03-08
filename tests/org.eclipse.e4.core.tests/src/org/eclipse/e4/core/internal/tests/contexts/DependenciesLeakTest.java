@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Stefan Mücke - initial API and implementation
+ *     Stefan Mï¿½cke - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts;
 
@@ -27,7 +27,7 @@ public class DependenciesLeakTest extends TestCase {
 			this.commandId = commandId;
 		}
 		@Override
-		public Object compute(IEclipseContext context) {
+		public Object compute(IEclipseContext context, String contextKey) {
 			return context.get(LEGACY_H_ID + commandId);
 		}
 		@Override

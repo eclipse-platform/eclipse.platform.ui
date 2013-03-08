@@ -63,8 +63,11 @@ public interface IContextFunction {
 	 * 
 	 * @param context
 	 *            The context in which to perform the value computation.
+	 * @param contextKey
+	 *            The context key used to find this function; may be {@code null} such
+	 *            as if invoked directly.
 	 * @return The concrete value.
 	 */
-	public Object compute(IEclipseContext context);
+	public Object compute(IEclipseContext context, String contextKey);
 
 }
