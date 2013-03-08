@@ -28,7 +28,7 @@ public class BindingServiceCreationFunction extends ContextFunction {
 	 * .context.IEclipseContext, java.lang.Object[])
 	 */
 	@Override
-	public Object compute(IEclipseContext context) {
+	public Object compute(IEclipseContext context, String contextKey) {
 		return ContextInjectionFactory.make(BindingServiceImpl.class, context);
 	}
 

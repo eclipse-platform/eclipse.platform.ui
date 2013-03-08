@@ -18,7 +18,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 public class HandlerServiceCreationFunction extends ContextFunction {
 
 	@Override
-	public Object compute(IEclipseContext context) {
+	public Object compute(IEclipseContext context, String contextKey) {
 		return ContextInjectionFactory.make(HandlerServiceImpl.class, context);
 	}
 }

@@ -39,7 +39,7 @@ public class Bug308220Test extends TestCase {
 		// lookup function that goes down the context's active child chain
 		app.set(IServiceConstants.ACTIVE_PART, new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				IEclipseContext childContext = context.getActiveChild();
 				if (childContext == null) {
 					return null;

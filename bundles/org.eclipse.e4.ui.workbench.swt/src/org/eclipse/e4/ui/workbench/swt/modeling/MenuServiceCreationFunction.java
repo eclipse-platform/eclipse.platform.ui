@@ -18,7 +18,7 @@ import org.eclipse.e4.core.di.InjectionException;
 public class MenuServiceCreationFunction extends ContextFunction {
 
 	@Override
-	public Object compute(IEclipseContext context) {
+	public Object compute(IEclipseContext context, String contextKey) {
 		try {
 			return ContextInjectionFactory.make(MenuService.class, context);
 		} catch (InjectionException ie) {

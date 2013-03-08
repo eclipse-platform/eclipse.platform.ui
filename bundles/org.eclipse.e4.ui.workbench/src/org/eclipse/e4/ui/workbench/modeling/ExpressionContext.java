@@ -86,7 +86,7 @@ public class ExpressionContext implements IEvaluationContext {
 	public Object getDefaultVariable() {
 		final Object sel;
 		if (defaultVariableConverter != null) {
-			sel = defaultVariableConverter.compute(eclipseContext);
+			sel = defaultVariableConverter.compute(eclipseContext, null);
 		} else {
 			sel = eclipseContext.getActive(IServiceConstants.ACTIVE_SELECTION);
 		}

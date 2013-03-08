@@ -630,7 +630,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		if (obj instanceof IContextFunction) {
 			final IEclipseContext lclContext = getContext(itemModel);
 			ici = (IContributionItem) ((IContextFunction) obj)
-					.compute(lclContext);
+					.compute(lclContext, null);
 			itemModel.setContributionItem(ici);
 		} else if (obj instanceof IContributionItem) {
 			ici = (IContributionItem) obj;

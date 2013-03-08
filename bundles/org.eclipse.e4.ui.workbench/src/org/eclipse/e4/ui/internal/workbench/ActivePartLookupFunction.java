@@ -13,7 +13,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 public class ActivePartLookupFunction extends ContextFunction {
 
 	@Override
-	public Object compute(IEclipseContext context) {
+	public Object compute(IEclipseContext context, String contextKey) {
 		/**
 		 * This is the specific implementation. TODO: generalize it
 		 */

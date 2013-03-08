@@ -160,7 +160,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 
 		context.set(IContextService.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext ctxt) {
+			public Object compute(IEclipseContext ctxt, String contextKey) {
 				if (contextService == null) {
 					contextService = new NestableContextService(ctxt.getParent().get(
 							IContextService.class), new ActivePartExpression(multiPageEditor));

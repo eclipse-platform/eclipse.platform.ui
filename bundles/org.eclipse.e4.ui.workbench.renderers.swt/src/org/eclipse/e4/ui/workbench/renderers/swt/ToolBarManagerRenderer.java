@@ -844,7 +844,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 					IContextFunction func = (IContextFunction) obj;
 					final IEclipseContext ctx = getContext(toolbarModel);
 					toolbarModel.getTransientData().put(
-							POST_PROCESSING_DISPOSE, func.compute(ctx));
+							POST_PROCESSING_DISPOSE, func.compute(ctx, null));
 				}
 			}
 		}

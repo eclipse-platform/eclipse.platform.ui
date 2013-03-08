@@ -133,7 +133,7 @@ public class PageSite implements IPageSite, INestable {
 
 		e4Context.set(IContextService.class.getName(), new ContextFunction() {
 			@Override
-			public Object compute(IEclipseContext context) {
+			public Object compute(IEclipseContext context, String contextKey) {
 				if (contextService == null) {
 					contextService = new NestableContextService(context.getParent().get(
 							IContextService.class), new ActivePartExpression(parentSite.getPart()));

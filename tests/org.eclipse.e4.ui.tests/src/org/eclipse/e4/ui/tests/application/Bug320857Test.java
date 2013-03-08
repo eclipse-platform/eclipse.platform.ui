@@ -13,8 +13,8 @@ package org.eclipse.e4.ui.tests.application;
 import javax.inject.Inject;
 import javax.inject.Named;
 import junit.framework.TestCase;
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -112,8 +112,9 @@ public class Bug320857Test extends TestCase {
 		getEngine().createGui(window);
 
 		applicationContext.set(Bug320857.class.getName(),
-				new IContextFunction() {
-					public Object compute(IEclipseContext context) {
+				new ContextFunction() {
+					public Object compute(IEclipseContext context,
+							String contextKey) {
 						return ContextInjectionFactory.make(Bug320857.class,
 								context);
 					}
