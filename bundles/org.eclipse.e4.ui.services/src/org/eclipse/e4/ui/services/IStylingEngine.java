@@ -13,6 +13,9 @@ package org.eclipse.e4.ui.services;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 
+/**
+ * @noimplement
+ */
 public interface IStylingEngine {
 	/**
 	 * The service name for a styling engine. This name can be

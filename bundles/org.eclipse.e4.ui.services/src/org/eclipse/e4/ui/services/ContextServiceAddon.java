@@ -10,7 +10,10 @@ import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.internal.services.ContextContextFunction;
 
-public class ContextServiceAddon {
+/**
+ * @noinstantiate
+ */
+public final class ContextServiceAddon {
 	@PostConstruct
 	public void init(IEclipseContext context) {
 		// global context service.

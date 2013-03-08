@@ -17,12 +17,29 @@ import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 
 /**
+ * @noimplement
  */
 public interface ECommandService {
 	public ParameterizedCommand createCommand(String id, Map parameters);
 
+	/**
+	 * @param id
+	 * @param name
+	 * @param description
+	 * @return
+	 * @noreference
+	 */
 	public Category defineCategory(String id, String name, String description);
 
+	/**
+	 * @param id
+	 * @param name
+	 * @param description
+	 * @param category
+	 * @param parameters
+	 * @return
+	 * @noreference
+	 */
 	public Command defineCommand(String id, String name, String description, Category category,
 			IParameter[] parameters);
 

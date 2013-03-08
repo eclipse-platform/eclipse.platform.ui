@@ -14,6 +14,9 @@ import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 
 /**
  * Provide for management of different menus.
+ * 
+ * @noimplement
+ * @noreference
  */
 public interface EMenuService {
 
@@ -24,6 +27,7 @@ public interface EMenuService {
 	 *            The parent for the context menu. A Control in SWT.
 	 * @param menuId
 	 *            the ID of the menu to use
+	 * @noreference
 	 */
 	MPopupMenu registerContextMenu(Object parent, String menuId);
 

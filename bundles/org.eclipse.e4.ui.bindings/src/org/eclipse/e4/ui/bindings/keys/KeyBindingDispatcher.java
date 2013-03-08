@@ -51,6 +51,9 @@ import org.eclipse.swt.widgets.Widget;
  * execution of commands. It is used by the <code>e4 Workbench</code> to listen for events on the
  * <code>Display</code>.
  * </p>
+ * 
+ * @noreference
+ * @noinstantiate
  */
 public class KeyBindingDispatcher {
 

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services;
 
+/**
+ * @noimplement
+ */
 public interface IServiceConstants {
 
 	public final static String ACTIVE_SELECTION = "org.eclipse.ui.selection"; //$NON-NLS-1$
@@ -18,6 +21,8 @@ public interface IServiceConstants {
 	 * Due to the possibly misleading nature of this field's name, it has been
 	 * replaced with {@link #ACTIVE_SELECTION}. All clients of this API should
 	 * change their references to <code>ACTIVE_SELECTION</code>.
+	 * 
+	 * @noreference
 	 */
 	@Deprecated
 	public final static String SELECTION = ACTIVE_SELECTION;
