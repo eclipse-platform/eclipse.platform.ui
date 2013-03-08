@@ -59,9 +59,7 @@
     <module>examples/org.eclipse.ui.examples.views.properties.tabbed.hockeyleague</module>
     <module>examples/org.eclipse.ui.examples.views.properties.tabbed.logic</module>
     <module>examples/org.eclipse.ui.forms.examples</module>
-    <module>tests/org.eclipse.e4.core.commands.tests</module>
     <module>tests/org.eclipse.e4.emf.xpath.test</module>
-    <module>tests/org.eclipse.e4.ui.bindings.tests</module>
     <module>tests/org.eclipse.e4.ui.compat.tests.tweaklet</module>
     <module>tests/org.eclipse.e4.ui.compatibility.tests</module>
     <module>tests/org.eclipse.e4.ui.keybinding.tests</module>
@@ -71,11 +69,13 @@
     <module>tests/org.eclipse.e4.ui.menu.tests.p2</module>
     <module>tests/org.eclipse.e4.ui.menu.tests.p3</module>
     <module>tests/org.eclipse.e4.ui.menu.tests.p4</module>
+    <module>tests/org.eclipse.ui.tests.browser</module>
+     -->
+    <module>tests/org.eclipse.e4.ui.bindings.tests</module>
+    <module>tests/org.eclipse.e4.core.commands.tests</module>
     <module>tests/org.eclipse.e4.ui.tests</module>
     <module>tests/org.eclipse.e4.ui.tests.css.core</module>
     <module>tests/org.eclipse.e4.ui.tests.css.swt</module>
-    <module>tests/org.eclipse.ui.tests.browser</module>
-     -->
     <module>tests/org.eclipse.jface.tests.databinding</module>
     <module>tests/org.eclipse.jface.tests.databinding.conformance</module>
     <module>tests/org.eclipse.ui.tests</module>
