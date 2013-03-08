@@ -80,6 +80,16 @@ public interface EModelService {
 	public static final int GLOBAL = OUTSIDE_PERSPECTIVE | IN_SHARED_AREA;
 
 	/**
+	 * Given a class specification will return a new instance of that class or 'null' if the class
+	 * is not supported.
+	 * 
+	 * @param clazz
+	 * @return
+	 * @generated
+	 */
+	public <T> T createModelElement(Class<T> clazz);
+
+	/**
 	 * Return a list of any elements that match the given search criteria. The search is recursive
 	 * and includes the specified search root. Any of the search parameters may be specified as
 	 * <code>null</code> in which case that field will always 'match'.

@@ -96,6 +96,18 @@ public class ModelServiceImpl implements EModelService {
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, hostedElementHandler);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#createModelElement(java.lang.Class)
+	 * 
+	 * @generated
+	 */
+	public <T> T createModelElement(Class<T> clazz) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/**
 	 * Determine if the element passes the matching test for all non-null parameters.
 	 * 
