@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,6 +106,17 @@ public final class BindingService implements IBindingService {
 			activeSchemeIds = getSchemeIds(activeScheme.getId());
 			tableManager.setActiveSchemes(activeSchemeIds);
 		}
+		// Initialize BindingPersistence, its needed to install
+		// a preferences change listener. See bug 266604.
+		bp = new BindingPersistence(manager, commandManager) {
+			@Override
+			public void reRead() {
+				super.reRead();
+				// after having read the registry and preferences, persist
+				// and update the model
+				persistToModel(manager.getActiveScheme());
+			}
+		};
 	}
 
 	/*
@@ -379,17 +390,6 @@ public final class BindingService implements IBindingService {
 	 * .ui.commands.ICommandService)
 	 */
 	public void readRegistryAndPreferences(ICommandService commandService) {
-		if (bp == null) {
-			bp = new BindingPersistence(manager, commandManager) {
-				@Override
-				public void reRead() {
-					super.reRead();
-					// after having read the registry and preferences, persist
-					// and update the model
-					persistToModel(manager.getActiveScheme());
-				}
-			};
-		}
 		bp.read();
 	}
 
