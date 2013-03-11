@@ -169,6 +169,11 @@ public class E4Application implements IApplication {
 			}
 			saveModel();
 			workbench.close();
+
+			if (workbench.isRestart()) {
+				return EXIT_RESTART;
+			}
+
 			return EXIT_OK;
 		} finally {
 			if (display != null)

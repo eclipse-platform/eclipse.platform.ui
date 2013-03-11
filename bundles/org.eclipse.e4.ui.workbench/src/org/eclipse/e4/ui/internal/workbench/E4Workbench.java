@@ -80,6 +80,8 @@ public class E4Workbench implements IWorkbench {
 	MApplication appModel = null;
 	private UIEventPublisher uiEventPublisher;
 
+	private boolean restart;
+
 	/**
 	 * @return the {@link IEclipseContext} for the main application
 	 */
@@ -183,6 +185,18 @@ public class E4Workbench implements IWorkbench {
 			osgiRegistration = null;
 		}
 		return true;
+	}
+
+	public boolean restart() {
+		this.restart = true;
+		return close();
+	}
+
+	/**
+	 * @return <code>true</code> when the workbench should be restarted
+	 */
+	public boolean isRestart() {
+		return restart;
 	}
 
 	/**
