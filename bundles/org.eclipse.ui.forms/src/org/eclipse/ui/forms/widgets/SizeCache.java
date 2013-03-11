@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -326,7 +326,7 @@ public class SizeCache {
 
     /**
      * Returns true if the preferred length of the given control is 
-     * independent of the width and visa-versa. If this returns true,
+     * independent of the width and vice versa. If this returns true,
      * then changing the widthHint argument to control.computeSize will
      * never change the resulting height and changing the heightHint
      * will never change the resulting width. Returns false if unknown.
@@ -338,7 +338,8 @@ public class SizeCache {
      * </p>
      * 
      * @param control
-     * @return
+     * @return <code>true</code> iff the preferred length of the given control is 
+     * independent of the width and vice versa
      */
     static boolean independentLengthAndWidth(Control control) {
         if (control == null || control.isDisposed()) {
@@ -406,7 +407,7 @@ public class SizeCache {
      * </p> 
      * 
      * @param control
-     * @return
+     * @return value as described above
      */
     private static boolean isPreferredWidthMaximum(Control control) {
         return (control instanceof ToolBar
