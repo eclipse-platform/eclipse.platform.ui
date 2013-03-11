@@ -11,7 +11,6 @@
          IBM Corporation - initial API and implementation
          Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
          Patrick Chuong (Texas Instruments) - Move debug toolbar actions to main window (Bug 332784) 
-         Abeer Bagul (Tensilica) - Working set support for Expressions view (Bug 372181)
  -->
 
 <plugin>
@@ -1228,24 +1227,6 @@
                menubarPath="additions"
                enablesFor="*"
                id="org.eclipse.debug.ui.actions.ConvertToWatchExpression">
-         </action>
-      </viewerContribution>
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.ExpressionView"
-            id="org.eclipse.debug.ui.ExpressionViewPopupActions">
-         <visibility>
-            <and>
-              <objectClass name="org.eclipse.debug.core.model.IWatchExpression"/>
-            </and>
-         </visibility>
-         <action
-               label="%assignWatchExpressionToWorkingSet.label"
-               icon="icons/full/obj16/expression_workingset.gif"
-               helpContextId="assign_expression_to_working_set"
-               class="org.eclipse.debug.internal.ui.actions.expressions.AssignWorkingSetsAction"
-               tooltip="%assignWatchExpressionToWorkingSet.tooltip"
-               menubarPath="additions"
-               id="org.eclipse.debug.ui.watchExpressionActions.AssignWorkingSet">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -3166,43 +3147,4 @@ M4 = Platform-specific fourth key
       </component>
    </extension>
 
-   <extension point="org.eclipse.ui.workingSets">
-     <workingSet
-       id="org.eclipse.debug.ui.expressionWorkingSet"
-       name="%ExpressionWorkingSet.name"
-       description="%ExpressionWorkingSet.description"
-       icon="icons/full/obj16/expression_workingset.gif"
-       pageClass="org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetPage"
-       elementAdapterClass="org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetElementAdapter"
-     />
-   </extension>
-   
-   <extension
-         point="org.eclipse.ui.viewActions">
-         <viewContribution
-            targetID="org.eclipse.debug.ui.ExpressionView"
-            id="org.eclipse.debug.ui.expressionview.toolbar.workingset">
-             <action
-               class="org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetsAction"
-               helpContextId="expression_working_sets_action_context"
-               id="org.eclipse.debug.ui.expressionView.toolbar.workingSets"
-               label="%ExpressionWorkingSet.manageAction.label"
-               menubarPath="additions"
-               style="push"
-               tooltip="%ExpressionWorkingSet.manageAction.tooltip"/>
-         </viewContribution>
-   </extension>
-
-   <extension point="org.eclipse.core.runtime.adapters">
-      <factory 
-	       	class="org.eclipse.debug.internal.ui.expression.ExpressionPersistableElementAdapterFactory" 
-	        adaptableType="org.eclipse.debug.core.model.IExpression">
-         <adapter type="org.eclipse.ui.IPersistableElement"/>
-	  </factory>
-   </extension>
-
-   <extension point="org.eclipse.ui.elementFactories">
-     <factory id="org.eclipse.debug.ui.elementfactory.expressions"
-     		class="org.eclipse.debug.internal.ui.expression.ExpressionFactory" />
-   </extension>
 </plugin>

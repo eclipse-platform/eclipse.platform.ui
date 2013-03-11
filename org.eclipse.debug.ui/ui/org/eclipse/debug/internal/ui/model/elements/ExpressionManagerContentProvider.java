@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind Rvier Systems - added support for columns (bug 235646)
- *     Abeer Bagul (Tensilica) - Working set support for Expressions view (bug 372181)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.model.elements;
 
@@ -23,13 +22,11 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetFilterManager;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
-import org.eclipse.debug.internal.ui.views.expression.ExpressionView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.JFaceResources;
@@ -39,9 +36,6 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Default content provider for the expression manager.
@@ -54,33 +48,10 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
      * 
      * @since 3.6
      */
-    private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor, ICellModifier, IAddNewExpression {
+    private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor, ICellModifier {
         
-    	/* Record the working sets applied to this view (none if null).
-    	 * When a new expression is created, add it to applied working sets.
-    	 */
-    	private String[] workingSetNames = null;
-    	
         public void update(ILabelUpdate[] updates) {
-        	
-        	workingSetNames = null;
-        	
             for (int i = 0; i < updates.length; i++) {
-            	
-            	if (i == 0)
-            	{
-            		//from the presentation context, find out the list of 
-            		//working sets applied to this view.
-            		IWorkbenchPart expressionView = updates[i].getPresentationContext().getPart();
-            		IWorkingSet[] workingSets = ExpressionWorkingSetFilterManager.getWorkingSets((ExpressionView) expressionView);
-            		if (workingSets.length > 0)
-            			workingSetNames = new String[workingSets.length];
-            		for (int j=0; j<workingSets.length; j++)
-            		{
-            			workingSetNames[j] = workingSets[j].getName();
-            		}
-            	}
-            	
                 String[] columnIds = updates[i].getColumnIds();
                 if (columnIds == null) {
                     updateLabel(updates[i], 0);
@@ -136,23 +107,6 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
                     DebugPlugin.getDefault().getExpressionManager().newWatchExpression(expressionText);
                 DebugPlugin.getDefault().getExpressionManager().addExpression(newExpression);
                 newExpression.setExpressionContext(getContext());
-                
-                //if any working sets are applied to this view,
-                //add this expression to all applied working sets,
-                //otherwise it will be filtered out from the view.
-                if (workingSetNames != null)
-                {
-                	for (int i=0; i<workingSetNames.length; i++)
-                	{
-                		String workingSetName = workingSetNames[i];
-                    	IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
-                    	IAdaptable[] existingElements = workingSet.getElements();
-                    	IAdaptable[] newElements = new IAdaptable[existingElements.length + 1];
-                    	System.arraycopy(existingElements, 0, newElements, 0, existingElements.length);
-                    	newElements[newElements.length - 1] = newExpression;
-                    	workingSet.setElements(newElements);
-                	}
-                }
             }
         }
         
@@ -166,6 +120,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
             }
             return context;
         }
+
     }
     
     private static final AddNewExpressionElement ADD_NEW_EXPRESSION_ELEMENT = new AddNewExpressionElement();
