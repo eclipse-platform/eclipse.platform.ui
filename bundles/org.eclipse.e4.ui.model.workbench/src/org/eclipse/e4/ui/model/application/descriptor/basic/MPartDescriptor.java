@@ -23,6 +23,15 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  * A representation of the model object '<em><b>Part Descriptor</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * <p>
+ * <strong>Developers</strong>:
+ * Add more detailed documentation by editing this comment in 
+ * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+ * There is a GenModel/documentation node under each type and attribute.
+ * </p>
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * <ul>
@@ -44,11 +53,15 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	/**
 	 * Returns the value of the '<em><b>Allow Multiple</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Allow Multiple</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * There is a GenModel/documentation node under each type and attribute.
+	 * </p>
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Allow Multiple</em>' attribute.
 	 * @see #setAllowMultiple(boolean)
 	 * @model
@@ -69,11 +82,15 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	/**
 	 * Returns the value of the '<em><b>Category</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Category</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * There is a GenModel/documentation node under each type and attribute.
+	 * </p>
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Category</em>' attribute.
 	 * @see #setCategory(String)
 	 * @model
@@ -95,11 +112,15 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	 * Returns the value of the '<em><b>Menus</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.menu.MMenu}.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Menus</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * There is a GenModel/documentation node under each type and attribute.
+	 * </p>
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Menus</em>' containment reference list.
 	 * @model containment="true"
 	 * @generated
@@ -109,11 +130,15 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	/**
 	 * Returns the value of the '<em><b>Toolbar</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Toolbar</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * There is a GenModel/documentation node under each type and attribute.
+	 * </p>
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Toolbar</em>' containment reference.
 	 * @see #setToolbar(MToolBar)
 	 * @model containment="true"
@@ -135,11 +160,15 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	 * Returns the value of the '<em><b>Closeable</b></em>' attribute.
 	 * The default value is <code>"false"</code>.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Closeable</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * There is a GenModel/documentation node under each type and attribute.
+	 * </p>
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Closeable</em>' attribute.
 	 * @see #setCloseable(boolean)
 	 * @model default="false"
@@ -160,11 +189,15 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	/**
 	 * Returns the value of the '<em><b>Dirtyable</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Dirtyable</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * There is a GenModel/documentation node under each type and attribute.
+	 * </p>
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Dirtyable</em>' attribute.
 	 * @see #setDirtyable(boolean)
 	 * @model
@@ -185,11 +218,15 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	/**
 	 * Returns the value of the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Contribution URI</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * There is a GenModel/documentation node under each type and attribute.
+	 * </p>
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Contribution URI</em>' attribute.
 	 * @see #setContributionURI(String)
 	 * @model
@@ -210,11 +247,15 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	/**
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Description</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * There is a GenModel/documentation node under each type and attribute.
+	 * </p>
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Description</em>' attribute.
 	 * @see #setDescription(String)
 	 * @model
@@ -235,6 +276,14 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * There is a GenModel/documentation node under each type and attribute.
+	 * </p>
+	 * <!-- end-model-doc -->
 	 * @model kind="operation"
 	 * @generated
 	 */

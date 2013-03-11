@@ -16,6 +16,12 @@ package org.eclipse.e4.ui.model.application.ui.menu;
  * A representation of the model object '<em><b>Rendered Menu Item</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Do no use! This class will be removed at the beginning of Luna (4.4) development.
+ * @deprecated Use MMenuItem
+ * @noreference
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * <ul>
@@ -30,11 +36,15 @@ public interface MRenderedMenuItem extends MMenuItem {
 	/**
 	 * Returns the value of the '<em><b>Contribution Item</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Contribution Item</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * There is a GenModel/documentation node under each type and attribute.
+	 * </p>
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Contribution Item</em>' attribute.
 	 * @see #setContributionItem(Object)
 	 * @model transient="true"

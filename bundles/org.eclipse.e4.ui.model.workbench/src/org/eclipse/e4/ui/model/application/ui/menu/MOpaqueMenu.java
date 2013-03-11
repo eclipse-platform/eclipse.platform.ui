@@ -16,6 +16,12 @@ package org.eclipse.e4.ui.model.application.ui.menu;
  * A representation of the model object '<em><b>Opaque Menu</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Do no use! This class will be removed at the beginning of Luna (4.4) development.
+ * @deprecated Use MMenu
+ * @noreference
+ * <!-- end-model-doc -->
+ *
  *
  * @model
  * @generated

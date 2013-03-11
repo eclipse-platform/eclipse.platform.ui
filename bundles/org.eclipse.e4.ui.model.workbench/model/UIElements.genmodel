@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<genmodel:GenModel xmi:version="2.0"
-    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2008, 2012 IBM Corporation and others.&#xD;&#xA;All rights reserved. This program and the accompanying materials&#xD;&#xA;are made available under the terms of the Eclipse Public License v1.0&#xD;&#xA;which accompanies this distribution, and is available at&#xD;&#xA;http://www.eclipse.org/legal/epl-v10.html&#xD;&#xA;&#xD;&#xA;Contributors:&#xD;&#xA;     IBM Corporation - initial API and implementation"
     modelDirectory="/org.eclipse.e4.ui.model.workbench/src" modelPluginID="org.eclipse.e4.ui.model.workbench"
+    templateDirectory="/org.eclipse.e4.ui.model.workbench/templates" dynamicTemplates="true"
     modelName="UIElements" modelPluginClass="org.eclipse.e4.ui.model.application.impl.MWorkbenchModelActivator"
     nonNLSMarkers="true" rootExtendsInterface="" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container"
     suppressEMFTypes="true" suppressEMFMetaData="true" featureMapWrapperInternalInterface=""
@@ -24,17 +24,20 @@
     </genClasses>
     <genClasses ecoreClass="UIElements.ecore#//ApplicationElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/elementId"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ApplicationElement/persistedState"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/tags"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/contributorURI"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/transientData"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ApplicationElement/clonableSnippets"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference UIElements.ecore#//ApplicationElement/transientData"/>
     </genClasses>
     <genClasses image="false" ecoreClass="UIElements.ecore#//Contribution" labelFeature="#//application/Contribution/contributionURI">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Contribution/contributionURI"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Contribution/object"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EReference UIElements.ecore#//Contribution/persistedState"/>
     </genClasses>
     <genClasses ecoreClass="UIElements.ecore#//Addon" labelFeature="#//application/Contribution/contributionURI"/>
+    <genClasses ecoreClass="UIElements.ecore#//StringToObjectMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//StringToObjectMap/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//StringToObjectMap/value"/>
+    </genClasses>
     <nestedGenPackages prefix="Commands" basePackage="org.eclipse.e4.ui.model.application"
         disposableProviderFactory="true" ecorePackage="UIElements.ecore#//commands">
       <genDataTypes ecoreDataType="UIElements.ecore#//commands/ParameterizedCommand"/>
@@ -128,18 +131,18 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/accessibilityPhrase"/>
         <genOperations ecoreOperation="UIElements.ecore#//ui/UIElement/getLocalizedAccessibilityPhrase"/>
       </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/ElementContainer">
+        <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ui/ElementContainer/T"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/ElementContainer/children"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference UIElements.ecore#//ui/ElementContainer/selectedElement"/>
+      </genClasses>
       <genClasses image="false" ecoreClass="UIElements.ecore#//ui/UILabel">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/label"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/iconURI"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/tooltip"/>
         <genOperations ecoreOperation="UIElements.ecore#//ui/UILabel/getLocalizedLabel"/>
         <genOperations ecoreOperation="UIElements.ecore#//ui/UILabel/getLocalizedTooltip"/>
-      </genClasses>
-      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/ElementContainer">
-        <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ui/ElementContainer/T"/>
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/ElementContainer/children"/>
-        <genFeatures notify="false" createChild="false" propertySortChoices="true"
-            ecoreFeature="ecore:EReference UIElements.ecore#//ui/ElementContainer/selectedElement"/>
       </genClasses>
       <genClasses image="false" ecoreClass="UIElements.ecore#//ui/GenericStack">
         <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ui/GenericStack/T"/>
@@ -156,6 +159,9 @@
       <genClasses ecoreClass="UIElements.ecore#//ui/CoreExpression">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/CoreExpression/coreExpressionId"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/CoreExpression/coreExpression"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/SnippetContainer">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/SnippetContainer/snippets"/>
       </genClasses>
       <nestedGenPackages prefix="Menu" basePackage="org.eclipse.e4.ui.model.application.ui"
           disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/menu">
@@ -237,6 +243,7 @@
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/OpaqueMenuSeparator/opaqueItem"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/OpaqueMenu"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/DynamicMenuContribution"/>
       </nestedGenPackages>
       <nestedGenPackages prefix="Basic" basePackage="org.eclipse.e4.ui.model.application.ui"
           disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/basic">
@@ -265,7 +272,10 @@
         <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/TrimElement"/>
         <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/PartSashContainerElement"/>
         <genClasses image="false" ecoreClass="UIElements.ecore#//ui/basic/WindowElement"/>
-        <genClasses ecoreClass="UIElements.ecore#//ui/basic/TrimBar"/>
+        <genClasses ecoreClass="UIElements.ecore#//ui/basic/TrimBar">
+          <genFeatures notify="false" createChild="false" propertySortChoices="true"
+              ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/TrimBar/pendingCleanup"/>
+        </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/StackElement"/>
       </nestedGenPackages>
       <nestedGenPackages prefix="Advanced" basePackage="org.eclipse.e4.ui.model.application.ui"
