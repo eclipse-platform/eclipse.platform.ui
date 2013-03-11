@@ -10,7 +10,7 @@
  *     Michael Fraenkel (fraenkel@us.ibm.com) - contributed a fix for:
  *       o Search dialog not respecting activity enablement
  *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=45729)
- *     Marco Descher <marco@descher.at> - http://bugs.eclipse.org/33710
+ *     Marco Descher <marco@descher.at> - Open Search dialog with previous page instead of using the current selection to detect the page - http://bugs.eclipse.org/33710
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
@@ -96,7 +96,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private static final String DIALOG_NAME= "SearchDialog"; //$NON-NLS-1$
 	private static final String STORE_PREVIOUS_PAGE= "PREVIOUS_PAGE"; //$NON-NLS-1$	
 	private static final String STORE_IS_OPEN_PREVIOUS_PAGE= "IS_OPEN_PREVIOUS_PAGE"; //$NON-NLS-1$
-	
+
+
 	private class TabFolderLayout extends Layout {
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
@@ -152,7 +153,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private final ISelection fCurrentSelection;
 	private final String[] fCurrentEnclosingProject;
 
-	private final IDialogSettings fDefaultDialogSettings= DialogSettings.getOrCreateSection(SearchPlugin.getDefault().getDialogSettings(), DIALOG_NAME);
+	private final IDialogSettings fDialogSettings= DialogSettings.getOrCreateSection(SearchPlugin.getDefault().getDialogSettings(), DIALOG_NAME);
+
 
 	public SearchDialog(IWorkbenchWindow window, String pageId) {
 		super(window.getShell());
@@ -162,11 +164,11 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 		fDescriptors= filterByActivities(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(pageId));
 		fInitialPageId= pageId;
-		
-		if (fInitialPageId == null && fDefaultDialogSettings.getBoolean(STORE_IS_OPEN_PREVIOUS_PAGE)) {
-				fInitialPageId= fDefaultDialogSettings.get(STORE_PREVIOUS_PAGE);
+
+		if (fInitialPageId == null && fDialogSettings.getBoolean(STORE_IS_OPEN_PREVIOUS_PAGE)) {
+			fInitialPageId= fDialogSettings.get(STORE_PREVIOUS_PAGE);
 		}
-		
+
 		fPageChangeListeners= null;
 		setUseEmbeddedProgressMonitorPart(false);
 	}
@@ -342,19 +344,19 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				this.getButton(IDialogConstants.SELECT_ALL_ID).addSelectionListener(listener);
 				this.getButton(IDialogConstants.DESELECT_ALL_ID).addSelectionListener(listener);
 			}
-			
+
 			protected Control createDialogArea(Composite parent) {
-			Composite ret= (Composite)super.createDialogArea(parent);
-			
-				final Button lastUsedPageButton= new Button(ret, SWT.CHECK);
+				Composite control= (Composite)super.createDialogArea(parent);
+
+				final Button lastUsedPageButton= new Button(control, SWT.CHECK);
 				lastUsedPageButton.setText(SearchMessages.SearchPageSelectionDialog_rememberLastUsedPage_message);
-				lastUsedPageButton.setSelection(fDefaultDialogSettings.getBoolean(STORE_IS_OPEN_PREVIOUS_PAGE));
+				lastUsedPageButton.setSelection(fDialogSettings.getBoolean(STORE_IS_OPEN_PREVIOUS_PAGE));
 				lastUsedPageButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						fDefaultDialogSettings.put(STORE_IS_OPEN_PREVIOUS_PAGE, lastUsedPageButton.getSelection());
+						fDialogSettings.put(STORE_IS_OPEN_PREVIOUS_PAGE, lastUsedPageButton.getSelection());
 					}
 				});
-				return ret;
+				return control;
 			}
 		};
 		dialog.setTitle(SearchMessages.SearchPageSelectionDialog_title);
@@ -406,7 +408,6 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		}
 
 		fCurrentIndex= getPreferredPageIndex();
-		final SearchPageDescriptor currentDesc= getDescriptorAt(fCurrentIndex);
 
 		Composite composite= new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
@@ -445,7 +446,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				Control pageControl= createPageControl(folder, descriptor);
 				pageControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 				item.setControl(pageControl);
-				fCurrentPage= currentDesc.getPage();
+				fCurrentPage= descriptor.getPage();
+				fDialogSettings.put(STORE_PREVIOUS_PAGE, descriptor.getId());
 			}
 		}
 
@@ -549,7 +551,6 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 		SearchPageDescriptor descriptor= (SearchPageDescriptor) item.getData("descriptor"); //$NON-NLS-1$
 
-		fDefaultDialogSettings.put(STORE_PREVIOUS_PAGE, descriptor.getId());
 		
 		if (item.getControl() == null) {
 			item.setControl(createPageControl(folder, descriptor));
@@ -567,6 +568,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		}
 
 		fCurrentPage= descriptor.getPage();
+		fDialogSettings.put(STORE_PREVIOUS_PAGE, descriptor.getId());
 		fCurrentIndex= folder.getSelectionIndex();
 
 		setPerformActionEnabled(fCurrentPage != null);
