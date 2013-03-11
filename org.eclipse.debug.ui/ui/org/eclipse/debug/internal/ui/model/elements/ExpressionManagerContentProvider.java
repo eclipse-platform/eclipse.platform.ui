@@ -23,11 +23,13 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetFilterManager;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.internal.ui.views.expression.ExpressionView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.JFaceResources;
@@ -37,6 +39,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
@@ -51,11 +54,33 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
      * 
      * @since 3.6
      */
-    private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor, IAddNewExpression {
+    private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor, ICellModifier, IAddNewExpression {
         
+    	/* Record the working sets applied to this view (none if null).
+    	 * When a new expression is created, add it to applied working sets.
+    	 */
+    	private String[] workingSetNames = null;
+    	
         public void update(ILabelUpdate[] updates) {
         	
+        	workingSetNames = null;
+        	
             for (int i = 0; i < updates.length; i++) {
+            	
+            	if (i == 0)
+            	{
+            		//from the presentation context, find out the list of 
+            		//working sets applied to this view.
+            		IWorkbenchPart expressionView = updates[i].getPresentationContext().getPart();
+            		IWorkingSet[] workingSets = ExpressionWorkingSetFilterManager.getWorkingSets((ExpressionView) expressionView);
+            		if (workingSets.length > 0)
+            			workingSetNames = new String[workingSets.length];
+            		for (int j=0; j<workingSets.length; j++)
+            		{
+            			workingSetNames[j] = workingSets[j].getName();
+            		}
+            	}
+            	
                 String[] columnIds = updates[i].getColumnIds();
                 if (columnIds == null) {
                     updateLabel(updates[i], 0);
@@ -89,17 +114,9 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
         }
         
         public ICellModifier getCellModifier(IPresentationContext context, Object element) {
-            return new AddNewExpressionCellModifider(context);
-        }                
-    }
-    
-    private static class AddNewExpressionCellModifider implements ICellModifier {
-    	
-    	private final IPresentationContext fPresentationContext;
-    	
-    	AddNewExpressionCellModifider(IPresentationContext presentationContext) {
-    		fPresentationContext = presentationContext;
-    	}
+            return this;
+        }
+        
         public boolean canModify(Object element, String property) {
             return (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(property));
         }
@@ -123,10 +140,8 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
                 //if any working sets are applied to this view,
                 //add this expression to all applied working sets,
                 //otherwise it will be filtered out from the view.
-                Object workingSetsProp = fPresentationContext.getProperty(IDebugUIConstants.PROP_EXPRESSIONS_WORKING_SETS);
-                if (workingSetsProp instanceof String[])
+                if (workingSetNames != null)
                 {
-                	String[] workingSetNames = (String[])workingSetsProp;
                 	for (int i=0; i<workingSetNames.length; i++)
                 	{
                 		String workingSetName = workingSetNames[i];
@@ -140,7 +155,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
                 }
             }
         }
-	
+        
         private IDebugElement getContext() {
             IAdaptable object = DebugUITools.getDebugContext();
             IDebugElement context = null;

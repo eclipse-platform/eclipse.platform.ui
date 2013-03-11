@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IWatchExpression;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.internal.ui.expression.workingset.IExpressionWorkingSetConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -130,7 +130,7 @@ public class AssignWorkingSetsAction extends WatchExpressionAction {
 		public void run() {
 			IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 			IWorkingSetNewWizard wizard = manager.createWorkingSetNewWizard(
-					new String[] {IDebugUIConstants.EXPRESSION_WORKINGSET_ID});
+					new String[] {IExpressionWorkingSetConstants.EXPRESSION_WORKINGSET_ID});
 			if (wizard != null)
 			{
 				WizardDialog dialog = new WizardDialog(
@@ -215,7 +215,7 @@ public class AssignWorkingSetsAction extends WatchExpressionAction {
 				for (int i=0; i<allWorkingSets.length; i++)
 				{
 					IWorkingSet workingSet = allWorkingSets[i];
-					if (IDebugUIConstants.EXPRESSION_WORKINGSET_ID.equals(workingSet.getId()))
+					if (IExpressionWorkingSetConstants.EXPRESSION_WORKINGSET_ID.equals(workingSet.getId()))
 						expressionWorkingSets.add(workingSet);
 				}
 				

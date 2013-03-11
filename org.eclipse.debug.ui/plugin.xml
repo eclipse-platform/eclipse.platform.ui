@@ -3172,8 +3172,8 @@ M4 = Platform-specific fourth key
        name="%ExpressionWorkingSet.name"
        description="%ExpressionWorkingSet.description"
        icon="icons/full/obj16/expression_workingset.gif"
-       pageClass="org.eclipse.debug.internal.ui.views.expression.ExpressionWorkingSetPage"
-       elementAdapterClass="org.eclipse.debug.internal.ui.views.expression.ExpressionWorkingSetElementAdapter"
+       pageClass="org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetPage"
+       elementAdapterClass="org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetElementAdapter"
      />
    </extension>
    
@@ -3183,7 +3183,7 @@ M4 = Platform-specific fourth key
             targetID="org.eclipse.debug.ui.ExpressionView"
             id="org.eclipse.debug.ui.expressionview.toolbar.workingset">
              <action
-               class="org.eclipse.debug.internal.ui.actions.expressions.ExpressionWorkingSetsAction"
+               class="org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetsAction"
                helpContextId="expression_working_sets_action_context"
                id="org.eclipse.debug.ui.expressionView.toolbar.workingSets"
                label="%ExpressionWorkingSet.manageAction.label"

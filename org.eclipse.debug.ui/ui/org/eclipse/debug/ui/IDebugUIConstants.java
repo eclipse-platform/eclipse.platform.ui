@@ -1153,16 +1153,6 @@ public interface IDebugUIConstants {
 	public static final String BREAKPOINT_WORKINGSET_ID = "org.eclipse.debug.ui.breakpointWorkingSet"; //$NON-NLS-1$	
 
 	/**
-	 * Identifier for expression working set type.
-	 * <br>
-	 * Value is: <code>org.eclipse.debug.ui.expressionWorkingSet</code> 
-	 * 
-	 * @since 3.9
-	 */
-	public static final String EXPRESSION_WORKINGSET_ID = "org.eclipse.debug.ui.expressionWorkingSet"; //$NON-NLS-1$	
-
-	
-	/**
 	 * Memory view identifier (value <code>"org.eclipse.debug.ui.MemoryView"</code>).
 	 * 
 	 * @since 3.2
@@ -1334,12 +1324,4 @@ public interface IDebugUIConstants {
 	 * @since 3.8
 	 */
 	public final static String COLUMN_ID_VARIABLE_VALUE_TYPE = COLUMN_PRESENTATION_ID_VARIABLE + ".COL_VALUE_TYPE"; //$NON-NLS-1$
-	
-	/**
-	 * Expression view property used to store the currently selected working 
-	 * set names.  The working set names are stored as a <code>String[]</code>.
-	 * 
-	 * @since 3.9
-	 */
-	public final static String PROP_EXPRESSIONS_WORKING_SETS = IDebugUIConstants.PLUGIN_ID + ".PROP_EXPRESSION_WORKING_SETS"; //$NON-NLS-1$
 }

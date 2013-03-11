@@ -270,7 +270,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		 */
 		public void createControl(Composite parent) {
 			Viewer viewer = createViewer(parent);
-			setViewer(viewer);
+			setViewer(viewer);			
 		}
 
 		/**
