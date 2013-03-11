@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
+ *     Marco Descher <marco@descher.at> - Open Search dialog with previous page instead of using the current selection to detect the page - http://bugs.eclipse.org/33710
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
@@ -63,6 +64,7 @@ public final class SearchMessages extends NLS {
 	public static String SearchDialog_noSearchExtension;
 	public static String SearchPageSelectionDialog_title;
 	public static String SearchPageSelectionDialog_message;
+	public static String SearchPageSelectionDialog_rememberLastUsedPage_message;
 	public static String SearchManager_resourceChangedWarning;
 	public static String SearchManager_resourceChanged;
 	public static String SearchManager_resourceDeleted;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Michael Fraenkel (fraenkel@us.ibm.com) - contributed a fix for:
  *       o Search dialog not respecting activity enablement
  *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=45729)
+ *     Marco Descher <marco@descher.at> - http://bugs.eclipse.org/33710
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
@@ -51,6 +52,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.action.LegacyActionTools;
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
@@ -90,6 +92,11 @@ import org.eclipse.search.ui.ISearchPageScoreComputer;
 
 public class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer, IPageChangeProvider {
 
+	// Dialog store id constants
+	private static final String DIALOG_NAME= "SearchDialog"; //$NON-NLS-1$
+	private static final String STORE_PREVIOUS_PAGE= "PREVIOUS_PAGE"; //$NON-NLS-1$	
+	private static final String STORE_IS_OPEN_PREVIOUS_PAGE= "IS_OPEN_PREVIOUS_PAGE"; //$NON-NLS-1$
+	
 	private class TabFolderLayout extends Layout {
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
@@ -145,6 +152,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private final ISelection fCurrentSelection;
 	private final String[] fCurrentEnclosingProject;
 
+	private final IDialogSettings fDefaultDialogSettings= DialogSettings.getOrCreateSection(SearchPlugin.getDefault().getDialogSettings(), DIALOG_NAME);
 
 	public SearchDialog(IWorkbenchWindow window, String pageId) {
 		super(window.getShell());
@@ -154,6 +162,11 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 		fDescriptors= filterByActivities(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(pageId));
 		fInitialPageId= pageId;
+		
+		if (fInitialPageId == null && fDefaultDialogSettings.getBoolean(STORE_IS_OPEN_PREVIOUS_PAGE)) {
+				fInitialPageId= fDefaultDialogSettings.get(STORE_PREVIOUS_PAGE);
+		}
+		
 		fPageChangeListeners= null;
 		setUseEmbeddedProgressMonitorPart(false);
 	}
@@ -328,6 +341,20 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				};
 				this.getButton(IDialogConstants.SELECT_ALL_ID).addSelectionListener(listener);
 				this.getButton(IDialogConstants.DESELECT_ALL_ID).addSelectionListener(listener);
+			}
+			
+			protected Control createDialogArea(Composite parent) {
+			Composite ret= (Composite)super.createDialogArea(parent);
+			
+				final Button lastUsedPageButton= new Button(ret, SWT.CHECK);
+				lastUsedPageButton.setText(SearchMessages.SearchPageSelectionDialog_rememberLastUsedPage_message);
+				lastUsedPageButton.setSelection(fDefaultDialogSettings.getBoolean(STORE_IS_OPEN_PREVIOUS_PAGE));
+				lastUsedPageButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						fDefaultDialogSettings.put(STORE_IS_OPEN_PREVIOUS_PAGE, lastUsedPageButton.getSelection());
+					}
+				});
+				return ret;
 			}
 		};
 		dialog.setTitle(SearchMessages.SearchPageSelectionDialog_title);
@@ -522,6 +549,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 		SearchPageDescriptor descriptor= (SearchPageDescriptor) item.getData("descriptor"); //$NON-NLS-1$
 
+		fDefaultDialogSettings.put(STORE_PREVIOUS_PAGE, descriptor.getId());
+		
 		if (item.getControl() == null) {
 			item.setControl(createPageControl(folder, descriptor));
 		}
