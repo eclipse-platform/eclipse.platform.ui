@@ -51,7 +51,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
      * 
      * @since 3.6
      */
-    private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor {
+    private static class AddNewExpressionElement implements IElementLabelProvider, IElementEditor, IAddNewExpression {
         
         public void update(ILabelUpdate[] updates) {
         	

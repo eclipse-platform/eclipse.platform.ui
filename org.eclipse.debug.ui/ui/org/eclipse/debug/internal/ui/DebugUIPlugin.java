@@ -61,6 +61,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
+import org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetFilterManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.ClosedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.DeletedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationEditDialog;
