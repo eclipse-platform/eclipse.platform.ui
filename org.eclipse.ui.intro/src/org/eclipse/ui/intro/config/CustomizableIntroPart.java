@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,6 @@ import org.eclipse.ui.part.IntroPart;
  * </p>
  * 
  * @since 3.0
- * @noextend This class is not intended to be subclassed by clients.
  */
 
 /*
@@ -222,7 +221,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      * has been tagged for restore, ie: it was open when workbench closed.
      * 
      * @param memento
-     * @return
+     * @return <code>true</code> if we need to recreate a standby part
      */
     private boolean needToRestoreStandby(IMemento memento) {
         // If we have a standby memento, it means we closed with standby open,
@@ -285,8 +284,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      * states. The design here is that if the showStandbyPart flag is set, then
      * we always need to show the standby part.
      * 
-     * @param standby
-     * @return
+     * @return <code>true</code> if we need to show the standby part
      */
     private boolean isStandbyPartNeeded() {
         return container.getData(IIntroConstants.SHOW_STANDBY_PART) == null ? false : true;
