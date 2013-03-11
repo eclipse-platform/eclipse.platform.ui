@@ -14,9 +14,10 @@ package org.eclipse.debug.internal.ui.views.expression;
 
  
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -107,48 +108,6 @@ public class ExpressionView extends VariablesView {
     
 	private boolean fAutoSelectnWorkingSets = true;
 
-	/**
-     * Object used for comparing xml mementos in a map.
-     */
-    private static class XMLMementoKey {
-        final XMLMemento fMemento;
-        private String fKeyString;
-        
-        XMLMementoKey(XMLMemento memento) {
-            fMemento = memento;
-        }
-        
-        String getMementoString() {
-            if (fKeyString == null) {
-                StringWriter writer = new StringWriter();
-            
-                try {
-                    fMemento.save(writer);
-                    fKeyString = writer.toString();
-                } catch (IOException e) {
-                } finally {
-                }
-                fKeyString = fMemento.toString();
-            }
-            return fKeyString;
-        }
-        
-        public boolean equals(Object obj) {
-            if (obj instanceof XMLMementoKey) {
-                return getMementoString().equals(((XMLMementoKey)obj).getMementoString());
-            }
-            return false;
-        }
-        
-        public int hashCode() {
-            return getMementoString().hashCode();
-        }
-        
-        public String toString() {
-            return getMementoString();
-        }
-    }
-    
 	private Map fWorkingSetMementos = new LinkedHashMap(16, (float)0.75, true) {
 		private static final long serialVersionUID = 1L;
 
@@ -156,7 +115,7 @@ public class ExpressionView extends VariablesView {
 			return size() > MAX_WORKING_SETS_MEMENTOS;
 		}
 	};
-	
+    
 	private Set fPendingCompareRequests;
 	
 	private ExpressionElementMementoRequest fPendingMementoRequest;
@@ -427,7 +386,7 @@ public class ExpressionView extends VariablesView {
 		            InputStreamReader reader = new InputStreamReader(bin);
 		            try {
 		                XMLMemento workingSetsKey = XMLMemento.createReadRoot(reader);
-		                fWorkingSetMementos.put( new XMLMementoKey(workingSetsKey), workingSetNames );
+		                fWorkingSetMementos.put(workingSetsKey, workingSetNames);
 		            } catch (WorkbenchException e) {
 		            } finally {
 		                try {
@@ -459,10 +418,28 @@ public class ExpressionView extends VariablesView {
     private void saveWorkingSetMementos(IMemento memento) {
     	for (Iterator itr = fWorkingSetMementos.entrySet().iterator(); itr.hasNext();) {
     		Map.Entry entry = (Map.Entry)itr.next();
-    		String keyMementoString =  ((XMLMementoKey)entry.getKey()).getMementoString();
+    		String keyMementoString = getMenentoString((XMLMemento)entry.getKey());
             IMemento workingSetsForElementMemento = memento.createChild(PREF_ELEMENT_WORKINGSET_MEMENTOS, keyMementoString);
             saveWorkingSets(workingSetsForElementMemento, (String[])entry.getValue());
     	}
+    }
+    
+    private String getMenentoString(XMLMemento memento) {
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		OutputStreamWriter writer = new OutputStreamWriter(bout);
+	
+		try {
+			memento.save(writer);
+			return bout.toString();
+		} catch (IOException e) {
+		} finally {
+			try {
+				writer.close();
+				bout.close();
+			} catch (IOException e) {
+			}
+		}
+		return null;
     }
     
     public void applyWorkingSets(IWorkingSet[] selectedWorkingSets) {
@@ -494,7 +471,7 @@ public class ExpressionView extends VariablesView {
     
     void mementoRequestFinished(ExpressionElementMementoRequest request) {
 		if (!request.isCanceled()) {
-			fWorkingSetMementos.put(new XMLMementoKey((XMLMemento)request.getMemento()), request.getWorkingSets());
+			fWorkingSetMementos.put(request.getMemento(), request.getWorkingSets());
 		}    	
     }
     
@@ -551,8 +528,7 @@ public class ExpressionView extends VariablesView {
 	        for (Iterator itr = fWorkingSetMementos.entrySet().iterator(); itr.hasNext();) {
 	        	Map.Entry entry = (Map.Entry)itr.next();
 	        	requests.add( new  ExpressionElementCompareRequest(
-	        			this, getPresentationContext(), source, ((XMLMementoKey)entry.getKey()).fMemento, 
-	        			(String[])entry.getValue()) );
+	        			this, getPresentationContext(), source, (IMemento)entry.getKey(), (String[])entry.getValue()) );
 	        }
 	
 			// cancel any pending update
