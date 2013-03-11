@@ -393,14 +393,16 @@ public class ExpressionView extends VariablesView {
     }
 
     private String[] loadWorkingSetNames(IMemento memento) {
-		IMemento[] workingsets = memento.getChildren(PREF_ELEMENT_WORKINGSET);
-		if (workingsets != null) {
-			List list = new ArrayList();
-			for (int j=0; j<workingsets.length; j++) {
-				list.add(workingsets[j].getID());
-			}
-			return (String[])list.toArray(new String[list.size()]);
-		} 
+    	if (memento != null) {
+			IMemento[] workingsets = memento.getChildren(PREF_ELEMENT_WORKINGSET);
+			if (workingsets != null) {
+				List list = new ArrayList();
+				for (int j=0; j<workingsets.length; j++) {
+					list.add(workingsets[j].getID());
+				}
+				return (String[])list.toArray(new String[list.size()]);
+			} 
+    	}
 		return new String[0];
     }
 
@@ -417,27 +419,30 @@ public class ExpressionView extends VariablesView {
     }
 
     private void initWorkingSetMementos() {
-		IMemento[] workingsetMementos = getMemento().getChildren(PREF_ELEMENT_WORKINGSET_MEMENTOS);
-		if (workingsetMementos != null) {
-			for (int j=0; j<workingsetMementos.length; j++) {
-				String[] workingSetNames = loadWorkingSetNames(workingsetMementos[j]);
-				String string = workingsetMementos[j].getID();
-		        if(string.length() > 0 && workingSetNames != null) {
-		            ByteArrayInputStream bin = new ByteArrayInputStream(string.getBytes());
-		            InputStreamReader reader = new InputStreamReader(bin);
-		            try {
-		                XMLMemento workingSetsKey = XMLMemento.createReadRoot(reader);
-		                fWorkingSetMementos.put( new XMLMementoKey(workingSetsKey), workingSetNames );
-		            } catch (WorkbenchException e) {
-		            } finally {
-		                try {
-		                    reader.close();
-		                    bin.close();
-		                } catch (IOException e){}
-		            }
-		        }
+    	IMemento memento = getMemento();
+    	if (memento != null) {
+			IMemento[] workingsetMementos = memento.getChildren(PREF_ELEMENT_WORKINGSET_MEMENTOS);
+			if (workingsetMementos != null) {
+				for (int j=0; j<workingsetMementos.length; j++) {
+					String[] workingSetNames = loadWorkingSetNames(workingsetMementos[j]);
+					String string = workingsetMementos[j].getID();
+			        if(string.length() > 0 && workingSetNames != null) {
+			            ByteArrayInputStream bin = new ByteArrayInputStream(string.getBytes());
+			            InputStreamReader reader = new InputStreamReader(bin);
+			            try {
+			                XMLMemento workingSetsKey = XMLMemento.createReadRoot(reader);
+			                fWorkingSetMementos.put( new XMLMementoKey(workingSetsKey), workingSetNames );
+			            } catch (WorkbenchException e) {
+			            } finally {
+			                try {
+			                    reader.close();
+			                    bin.close();
+			                } catch (IOException e){}
+			            }
+			        }
+				}
 			}
-		}
+    	}
     }
 
     public void saveViewerState(IMemento memento) {
