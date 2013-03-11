@@ -18,6 +18,9 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleAttributeAdapter;
+import org.eclipse.swt.accessibility.AccessibleAttributeEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
@@ -269,6 +272,14 @@ public class TitleAreaDialog extends TrayDialog {
 		JFaceColors.setColors(messageLabel, foreground, background);
 		messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
 		messageLabel.setFont(JFaceResources.getDialogFont());
+		messageLabel.getAccessible().addAccessibleAttributeListener(
+				new AccessibleAttributeAdapter() {
+					public void getAttributes(AccessibleAttributeEvent e) {
+						e.attributes = new String[] { "container-live", //$NON-NLS-1$
+								"polite", "live", "polite",   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+								"container-live-role", "status", }; //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				});
 		messageLabelHeight = messageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		// Filler labels
 		leftFillerLabel = new Label(parent, SWT.CENTER);
@@ -609,7 +620,18 @@ public class TitleAreaDialog extends TrayDialog {
 	 *            the message to use
 	 */
 	private void updateMessage(String newMessage) {
+		String oldMessage = messageLabel.getText();
 		messageLabel.setText(newMessage);
+		messageLabel.getAccessible().sendEvent(ACC.EVENT_ATTRIBUTE_CHANGED,
+				null);
+		messageLabel.getAccessible().sendEvent(
+				ACC.EVENT_TEXT_CHANGED,
+				new Object[] { new Integer(ACC.TEXT_DELETE), new Integer(0),
+						new Integer(oldMessage.length()), oldMessage });
+		messageLabel.getAccessible().sendEvent(
+				ACC.EVENT_TEXT_CHANGED,
+				new Object[] { new Integer(ACC.TEXT_INSERT), new Integer(0),
+						new Integer(newMessage.length()), newMessage });
 	}
 
 	/**
