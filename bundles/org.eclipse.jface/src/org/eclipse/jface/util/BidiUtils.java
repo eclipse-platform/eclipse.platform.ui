@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
+import org.eclipse.swt.custom.BidiSegmentEvent;
+import org.eclipse.swt.custom.BidiSegmentListener;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.widgets.Text;
 
@@ -68,8 +71,8 @@ public final class BidiUtils {
 	private static final SegmentListener BASE_TEXT_DIRECTION_AUTO = new BaseTextDirectionSegmentListener(AUTO);
 	
 	/**
-	 * Listener cache. Map from structured text type id to structured text segment listener.
-	 * Key type: {@link String}; value type: {@link SegmentListener}.
+	 * Listener cache. Map from structured text type id ({@link String})
+	 * to structured text segment listener ({@link SegmentListener}).
 	 */
 	private static final Map/*<String, SegmentListener>*/ structuredTextSegmentListeners = new HashMap();
 	
@@ -183,7 +186,7 @@ public final class BidiUtils {
 	 * <p>
 	 * <strong>Note:</strong>
 	 * {@link org.eclipse.swt.widgets.Text#addSegmentListener(SegmentListener)}
-	 * is currently only implemented on Windows and GTK.
+	 * is currently only implemented on Windows and GTK, so this won't do anything on a Mac.
 	 * 
 	 * @param field the text field
 	 * @param handlingType 	the type of handling
@@ -198,11 +201,54 @@ public final class BidiUtils {
 	}
 	
 	/**
+	 * Applies bidi processing to the given styled text field.
+	 * 
+	 * <p>
+	 * Possible values for <code>handlingType</code> are:
+	 * <ul>
+	 * <li>{@link BidiUtils#LEFT_TO_RIGHT}</li>
+	 * <li>{@link BidiUtils#RIGHT_TO_LEFT}</li>
+	 * <li>{@link BidiUtils#AUTO}</li>
+	 * <li>{@link BidiUtils#BTD_DEFAULT}</li>
+	 * <li>the <code>String</code> constants in {@link StructuredTextTypeHandlerFactory}</li>
+	 * <li>if OSGi is running, the types that have been contributed to the
+	 *     <code>org.eclipse.equinox.bidi.bidiTypes</code> extension point.</li>
+	 * </ul>
+	 * <p>
+	 * The 3 values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT}, and {@link #AUTO} are
+	 * usable whether {@link #getBidiSupport() bidi support} is enabled or disabled.
+	 * <p>
+	 * The remaining values only have an effect if bidi support is enabled.
+	 * <p>
+	 * The 4 first values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT}, {@link #AUTO}, and {@link #BTD_DEFAULT}
+	 * are for Base Text Direction (BTD) handling. The remaining values are for Structured Text handling.
+	 * <p>
+	 * <strong>Note:</strong> The Structured Text handling only works if the <code>org.eclipse.equinox.bidi</code>
+	 * bundle is on the classpath!
+	 * </p>
+	 * 
+	 * @param field the styled text field
+	 * @param handlingType 	the type of handling
+	 * @throws IllegalArgumentException
+	 *             if <code>handlingType</code> is not a known type identifier
+	 */
+	public static void applyBidiProcessing(StyledText field, String handlingType) {
+		final SegmentListener listener = getSegmentListener(handlingType);
+		if (listener != null) {
+			field.addBidiSegmentListener(new BidiSegmentListener() {
+				public void lineGetSegments(BidiSegmentEvent event) {
+					listener.getSegments(event);
+				}
+			});
+		}
+	}
+	
+	/**
 	 * Returns a segment listener for the given <code>handlingType</code> that can e.g. be passed to
 	 * {@link Text#addSegmentListener(SegmentListener)}.
 	 * 
 	 * <p>
-	 * <strong>Note:</strong> This method only works if the <code>org.eclipse.equinox.bidi</code>
+	 * <strong>Note:</strong> The Structured Text handling only works if the <code>org.eclipse.equinox.bidi</code>
 	 * bundle is on the classpath!
 	 * </p>
 	 * 
