@@ -327,6 +327,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		String message= SearchMessages.SearchPageSelectionDialog_message;
 
 		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ArrayContentProvider(), labelProvider, message) {
+			Button fLastUsedPageButton;
+			
 			public void create() {
 				super.create();
 				final CheckboxTableViewer viewer= getViewer();
@@ -347,16 +349,15 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 			protected Control createDialogArea(Composite parent) {
 				Composite control= (Composite)super.createDialogArea(parent);
-
-				final Button lastUsedPageButton= new Button(control, SWT.CHECK);
-				lastUsedPageButton.setText(SearchMessages.SearchPageSelectionDialog_rememberLastUsedPage_message);
-				lastUsedPageButton.setSelection(fDialogSettings.getBoolean(STORE_IS_OPEN_PREVIOUS_PAGE));
-				lastUsedPageButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						fDialogSettings.put(STORE_IS_OPEN_PREVIOUS_PAGE, lastUsedPageButton.getSelection());
-					}
-				});
+				fLastUsedPageButton= new Button(control, SWT.CHECK);
+				fLastUsedPageButton.setText(SearchMessages.SearchPageSelectionDialog_rememberLastUsedPage_message);
+				fLastUsedPageButton.setSelection(fDialogSettings.getBoolean(STORE_IS_OPEN_PREVIOUS_PAGE));
 				return control;
+			}
+			
+			protected void okPressed() {
+				fDialogSettings.put(STORE_IS_OPEN_PREVIOUS_PAGE, fLastUsedPageButton.getSelection());
+				super.okPressed();
 			}
 		};
 		dialog.setTitle(SearchMessages.SearchPageSelectionDialog_title);
