@@ -9,7 +9,6 @@
  *     Markus Schorn - initial API and implementation
  *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
  *******************************************************************************/
-
 package org.eclipse.search.ui.text;
 
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +19,7 @@ import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.ISearchQuery;
+
 
 /**
  * Abstract base class for text search query providers supplied via the <code>org.eclipse.search.textSearchQueryProvider</code>
@@ -66,7 +66,10 @@ public abstract class TextSearchQueryProvider {
 		 * 
 		 * This implementation returns <code>false</code>, subclasses can override.
 		 * 
-		 * @return <code>true</code> if the pattern should match only whole words
+		 * @return <code>true</code> if the pattern should match only whole words. <code>true</code>
+		 *         is not allowed if {@link #isRegExSearch()} returns <code>true</code>. In this
+		 *         case, clients can either ignore this option or throw an
+		 *         {@link IllegalArgumentException}.
 		 * @since 3.9
 		 */
 		public boolean isWholeWordSearch() {

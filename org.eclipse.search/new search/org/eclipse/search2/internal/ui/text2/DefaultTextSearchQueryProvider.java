@@ -9,8 +9,9 @@
  *     Markus Schorn - initial API and implementation
  *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
  *******************************************************************************/
-
 package org.eclipse.search2.internal.ui.text2;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.core.resources.IResource;
 
@@ -20,6 +21,7 @@ import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.TextSearchQueryProvider;
+
 
 public class DefaultTextSearchQueryProvider extends TextSearchQueryProvider {
 
@@ -32,6 +34,7 @@ public class DefaultTextSearchQueryProvider extends TextSearchQueryProvider {
 		boolean regEx= input.isRegExSearch();
 		boolean caseSensitive= input.isCaseSensitiveSearch();
 		boolean wholeWord= input.isWholeWordSearch();
+		Assert.isLegal(!(wholeWord && regEx));
 		return new FileSearchQuery(text, regEx, caseSensitive, wholeWord, scope);
 	}
 
