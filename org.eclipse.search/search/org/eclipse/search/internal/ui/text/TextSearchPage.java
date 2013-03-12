@@ -10,7 +10,7 @@
  *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
  *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
  *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
- *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
+ *     Christian Walther (Indel AG) - Bug 399094, 402009: Add whole word option to file search
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -250,7 +250,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	private ISearchQuery newQuery() throws CoreException {
 		SearchPatternData data= getPatternData();
-		TextSearchPageInput input= new TextSearchPageInput(data.textPattern, data.isCaseSensitive, data.isRegExSearch, data.isWholeWord, createTextSearchScope());
+		TextSearchPageInput input= new TextSearchPageInput(data.textPattern, data.isCaseSensitive, data.isRegExSearch, data.isWholeWord && !data.isRegExSearch, createTextSearchScope());
 		return TextSearchQueryProvider.getPreferred().createQuery(input);
 	}
 
@@ -495,7 +495,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private boolean validateRegex() {
 		if (fIsRegExCheckbox.getSelection()) {
 			try {
-				PatternConstructor.createPattern(fPattern.getText(), true, true, fIsCaseSensitive, fIsWholeWord);
+				PatternConstructor.createPattern(fPattern.getText(), fIsCaseSensitive, true);
 			} catch (PatternSyntaxException e) {
 				String locMessage= e.getLocalizedMessage();
 				int i= 0;
@@ -576,6 +576,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 				writeConfiguration();
 				fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
+				fIsWholeWordCheckbox.setEnabled(!fIsRegExSearch);
 			}
 		});
 		fIsRegExCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 2));
@@ -592,6 +593,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsWholeWordCheckbox= new Button(group, SWT.CHECK);
 		fIsWholeWordCheckbox.setText(SearchMessages.SearchPage_wholeWord);
 		fIsWholeWordCheckbox.setSelection(fIsWholeWord);
+		fIsWholeWordCheckbox.setEnabled(!fIsRegExSearch);
 		fIsWholeWordCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fIsWholeWord= fIsWholeWordCheckbox.getSelection();
@@ -614,6 +616,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsRegExCheckbox.setSelection(fIsRegExSearch);
 		fIsWholeWord= patternData.isWholeWord;
 		fIsWholeWordCheckbox.setSelection(fIsWholeWord);
+		fIsWholeWordCheckbox.setEnabled(!fIsRegExSearch);
 		fPattern.setText(patternData.textPattern);
 		fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
 		fFileTypeEditor.setFileTypes(patternData.fileNamePatterns);

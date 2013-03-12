@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christian Walther (Indel AG) - Bug 402009: Disallow "whole word" together with regex
  *******************************************************************************/
 package org.eclipse.search.internal.core.text;
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 
@@ -47,11 +50,7 @@ public class PatternConstructor {
 	public static Pattern createPattern(String pattern, boolean isRegex, boolean isStringMatcher, boolean isCaseSensitive, boolean isWholeWord) throws PatternSyntaxException {
 		if (isRegex) {
 			pattern= substituteLinebreak(pattern);
-			if (isWholeWord) {
-				StringBuffer buffer= new StringBuffer(pattern.length() + 10);
-				buffer.append("\\b(?:").append(pattern).append(")\\b"); //$NON-NLS-1$ //$NON-NLS-2$
-				pattern= buffer.toString();
-			}
+			Assert.isTrue(!isWholeWord, "isWholeWord unsupported together with isRegex"); //$NON-NLS-1$
 		} else {
 			int len= pattern.length();
 			StringBuffer buffer= new StringBuffer(len + 10);

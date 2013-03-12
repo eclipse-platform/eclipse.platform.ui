@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Christian Walther (Indel AG) - Bug 399094: Add whole word option to file search
+ *     Christian Walther (Indel AG) - Bug 399094, 402009: Add whole word option to file search
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
@@ -247,13 +247,6 @@ public class FileSearchTests extends TestCase {
 			TestResultCollector collector= new TestResultCollector();
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals("Number of partial-word results", 22, collector.getNumberOfResults());
-		}
-		{
-			// regexp, whole word = true: match only nothing and non-word chars before and after
-			Pattern searchPattern= PatternConstructor.createPattern("h[eio]ll", true, true, false, true);
-			TestResultCollector collector= new TestResultCollector();
-			engine.search(scope, collector, searchPattern, null);
-			assertEquals("Number of whole-word results", 10, collector.getNumberOfResults());
 		}
 	}
 	
