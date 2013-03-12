@@ -76,22 +76,22 @@ public final class BidiUtils {
 	/**
 	 * The LRE char
 	 */
-	protected static final char LRE = 0x202A;
+	static final char LRE = 0x202A;
 	
 	/**
 	 * The LRM char
 	 */
-	protected static final char LRM = 0x200E;
+	static final char LRM = 0x200E;
 	
 	/**
 	 * The PDF char
 	 */
-	protected static final char PDF = 0x202C;
+	static final char PDF = 0x202C;
 	
 	/**
 	 * The RLE char
 	 */
-	protected static final char RLE = 0x202B;
+	static final char RLE = 0x202B;
 	
 	private static boolean bidiSupport = false;
 	private static String textDirection = "";//$NON-NLS-1$
