@@ -266,12 +266,17 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 	public IEditorPart getActiveEditor() {
 		IWorkbenchPage activePage= fWorkbenchWindow.getActivePage();
-		if (activePage != null) {
-			IEditorPart activeEditor= activePage.getActiveEditor();
-			IWorkbenchPart activePart= activePage.getActivePart();
-			if (activeEditor == activePart || isOldSearchView(activePart))
-				return activeEditor;
-		}
+		if (activePage == null)
+			return null;
+
+		IWorkbenchPart activePart= activePage.getActivePart();
+		if (activePart == null)
+			return null;
+
+		IEditorPart activeEditor= activePage.getActiveEditor();
+		if (activeEditor == activePart || isOldSearchView(activePart))
+			return activeEditor;
+
 		return null;
 	}
 
