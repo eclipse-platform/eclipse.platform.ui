@@ -34,3 +34,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0"
+Eclipse-BundleShape: dir
+
