@@ -1,8 +1,7 @@
-bin/
+/*/*/bin/
 *~
 *.rej
 *.bak
-core
 *.patch
 javacore.*
 heapdump.*
