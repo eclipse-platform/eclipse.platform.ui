@@ -25,6 +25,7 @@ import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.eclipse.osgi.service.debug.DebugOptions;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
@@ -197,16 +198,29 @@ public class ServiceContextTest extends TestCase {
 	 */
 	public void testServiceRemovalOnContextDispose() {
 		StringPrintService stringPrint1 = new StringPrintService();
-		BundleContext bundleContext = CoreTestsActivator.getDefault().getBundleContext();
-		ServiceRegistration<?> reg1 = bundleContext.registerService(PrintService.SERVICE_NAME, stringPrint1, null);
+		BundleContext bundleContext = CoreTestsActivator.getDefault()
+				.getBundleContext();
+		Bundle otherBundle = null;
+		for (Bundle b : bundleContext.getBundles()) {
+			if (b.getSymbolicName().equals("org.eclipse.core.tests.harness")) {
+				otherBundle = b;
+				break;
+			}
+		}
+		assertNotNull(otherBundle);
+		IEclipseContext otherServiceContext = EclipseContextFactory
+				.getServiceContext(otherBundle.getBundleContext());
+		ServiceRegistration<?> reg1 = bundleContext.registerService(
+				PrintService.SERVICE_NAME, stringPrint1, null);
 		try {
 			ServiceReference<?> ref = reg1.getReference();
 
-			PrintService service = (PrintService) context.get(PrintService.SERVICE_NAME);
+			PrintService service = (PrintService) otherServiceContext
+					.get(PrintService.SERVICE_NAME);
 			assertEquals("1.0", stringPrint1, service);
 			assertEquals("1.1", 1, ref.getUsingBundles().length);
 			service = null;
-			context.dispose();
+			otherServiceContext.dispose();
 			assertNull("2.0", ref.getUsingBundles());
 		} finally {
 			reg1.unregister();
