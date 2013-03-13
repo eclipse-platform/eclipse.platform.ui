@@ -23,11 +23,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.fragment.MModelFragment;
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -80,7 +84,8 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			final IFile modelFile = getModelFile();
 			
 			if( modelFile.exists() ) {
-				if( ! MessageDialog.openQuestion(getShell(), "File exists", "The file already exists. Would you like to overwrite?")) {
+				if( ! MessageDialog.openQuestion(getShell(), "File exists", "The file already exists. "
+						+ "Would you like to add the extracted node to this file?")) {
 					return false;
 				}
 			}
@@ -103,12 +108,32 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 							// Create a resource for this file.
 							//
 							Resource resource = resourceSet.createResource(fileURI);
+							
+							// If target file already exists, load its content
+							//
+							if (modelFile.exists()) {
+								resource.load(null);
+							}
 
 							// Add the initial model object to the contents.
 							//
 							EObject rootObject = createInitialModel();
 							if (rootObject != null) {
-								resource.getContents().add(rootObject);
+								if (resource.getContents().size() == 0) {
+									//If target model is empty (file just created) => add as is
+									resource.getContents().add(rootObject);
+								} else {
+									//Otherwise (file already exists) => take the roots of source and target models
+									//and copy multiple attributes 'imports' and 'fragments' objects from source to target
+									MModelFragments sourceFragments = (MModelFragments) rootObject;
+									MModelFragments targetFragments = (MModelFragments) resource.getContents().get(0);
+									for (MApplicationElement element : sourceFragments.getImports()) {
+										targetFragments.getImports().add((MApplicationElement) EcoreUtil.copy((EObject) element));
+									}
+									for (MModelFragment fragment : sourceFragments.getFragments()) {
+										targetFragments.getFragments().add((MModelFragment) EcoreUtil.copy((EObject) fragment));
+									}
+								}
 							}
 
 							// Save the contents of the resource to the file system.
