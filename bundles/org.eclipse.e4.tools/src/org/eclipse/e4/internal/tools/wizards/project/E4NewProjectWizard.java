@@ -670,7 +670,8 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 					+ "handlers." + className);
 			handler.setElementId(projectName + ".handler." + name);
 			application.getHandlers().add(handler);
-
+			
+			// create binding for the command
 			MKeyBinding binding = MCommandsFactory.INSTANCE.createKeyBinding();
 			binding.setKeySequence(keyBinding);
 			binding.setCommand(command);
