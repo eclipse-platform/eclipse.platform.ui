@@ -748,7 +748,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				.getObject() : null;
 
 		// If there is no class to call @Focus on then revert to the default
-		if (!(element instanceof MContribution)) {
+		if (implementation == null) {
 			renderer.forceFocus(element);
 			return;
 		}

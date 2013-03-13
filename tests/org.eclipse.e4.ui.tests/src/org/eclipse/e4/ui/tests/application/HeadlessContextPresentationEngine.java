@@ -19,10 +19,12 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -459,5 +461,23 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	 * e4.ui.model.application.ui.MUIElement)
 	 */
 	public void focusGui(MUIElement element) {
+		Object implementation = element instanceof MContribution ? ((MContribution) element)
+				.getObject() : null;
+		if (implementation != null) {
+			IEclipseContext context = getContext(element);
+			Object defaultValue = new Object();
+			Object returnValue = ContextInjectionFactory.invoke(implementation,
+					Focus.class, context, defaultValue);
+			if (returnValue == defaultValue) {
+				System.err.println("No @Focus method");
+			}
+		}
+	}
+
+	private IEclipseContext getContext(MUIElement parent) {
+		if (parent instanceof MContext) {
+			return ((MContext) parent).getContext();
+		}
+		return modelService.getContainingContext(parent);
 	}
 }
