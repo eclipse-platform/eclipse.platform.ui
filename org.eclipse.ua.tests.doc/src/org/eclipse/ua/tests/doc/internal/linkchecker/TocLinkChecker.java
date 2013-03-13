@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,13 @@ package org.eclipse.ua.tests.doc.internal.linkchecker;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.help.internal.validation.TocValidator;
-import org.eclipse.help.internal.validation.TocValidator.BrokenLink;
-
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.eclipse.help.internal.validation.TocValidator;
+import org.eclipse.help.internal.validation.TocValidator.BrokenLink;
 
 /**
  * Contains tests for the documentation bundles that 
@@ -115,7 +115,7 @@ public class TocLinkChecker extends TestCase {
 		StringBuffer message = new StringBuffer();
 		for (int i = 0; i < failures.size(); i++) {
 			BrokenLink link = (BrokenLink)failures.get(i);
-			message.append("Invalid link in \"" + link.getTocID() + "\": " + link.getHref());
+			message.append("Invalid link in \"" + link.getTocID() + "\": " + link.getHref() + "\n");
 		}
 		Assert.assertTrue(message.toString(), failures.isEmpty());
 	}
