@@ -128,7 +128,7 @@ public class BindingTableTests extends TestCase {
 		BindingTable table = loadTable(ID_WINDOW);
 		Binding paste = getTestBinding(PASTE_ID);
 		ParameterizedCommand pasteCmd = paste.getParameterizedCommand();
-		KeySequence ctrlV = KeySequence.getInstance("CTRL+V");
+		KeySequence ctrlV = KeySequence.getInstance("M1+V");
 		KeySequence shiftIns = KeySequence.getInstance("Shift+Insert");
 		Binding match1 = table.getPerfectMatch(ctrlV);
 		assertEquals(pasteCmd, match1.getParameterizedCommand());
