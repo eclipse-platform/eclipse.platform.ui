@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,9 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
      */
     protected WorkbenchJob fViewerInputUpdateJob = new WorkbenchJob("Asynchronous viewer input update") { //$NON-NLS-1$
         public IStatus runInUIThread(IProgressMonitor monitor) {
+        	if (ViewerInputUpdate.this.isCanceled()){
+        		return Status.CANCEL_STATUS;
+        	}
             fRequestor.viewerInputComplete(ViewerInputUpdate.this);
             return Status.OK_STATUS;
         }
