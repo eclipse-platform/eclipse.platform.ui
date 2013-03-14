@@ -49,7 +49,8 @@ public class EditorTests extends EclipseTest {
 		return new CVSTestSetup(suite);
 	}
 	
-	public void testOpenEditorOnRevision() throws CoreException, InvocationTargetException {
+	//TODO Temporary switched off, see Bug 400540
+	public void _testOpenEditorOnRevision() throws CoreException, InvocationTargetException {
 		IProject project = createProject(new String[] { "file.cvsTest" });
 		IEditorPart localPart = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), project.getFile("file.cvsTest"));
 		assertTrue("The proper local editor was not opened", localPart instanceof TestEditor);
