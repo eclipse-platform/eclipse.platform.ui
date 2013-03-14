@@ -15,10 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BidiSegmentEvent;
 import org.eclipse.swt.custom.BidiSegmentListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SegmentListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -179,6 +182,9 @@ public final class BidiUtils {
 	 * The 4 first values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT}, {@link #AUTO}, and {@link #BTD_DEFAULT}
 	 * are for Base Text Direction (BTD) handling. The remaining values are for Structured Text handling.
 	 * <p>
+	 * <strong>Note:</strong>
+	 * If this method is called on a text control, then {@link #applyTextDirection(Control, String)} must not be called on the same control.
+	 * <p>
 	 * <strong>Note:</strong> The Structured Text handling only works if the <code>org.eclipse.equinox.bidi</code>
 	 * bundle is on the classpath!
 	 * </p>
@@ -186,7 +192,7 @@ public final class BidiUtils {
 	 * <p>
 	 * <strong>Note:</strong>
 	 * {@link org.eclipse.swt.widgets.Text#addSegmentListener(SegmentListener)}
-	 * is currently only implemented on Windows and GTK, so this won't do anything on a Mac.
+	 * is currently only implemented on Windows and GTK, so this method won't have an effect on Cocoa.
 	 * 
 	 * @param field the text field
 	 * @param handlingType 	the type of handling
@@ -223,6 +229,9 @@ public final class BidiUtils {
 	 * The 4 first values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT}, {@link #AUTO}, and {@link #BTD_DEFAULT}
 	 * are for Base Text Direction (BTD) handling. The remaining values are for Structured Text handling.
 	 * <p>
+	 * <strong>Note:</strong>
+	 * If this method is called on a text control, then {@link #applyTextDirection(Control, String)} must not be called on the same control.
+	 * <p>
 	 * <strong>Note:</strong> The Structured Text handling only works if the <code>org.eclipse.equinox.bidi</code>
 	 * bundle is on the classpath!
 	 * </p>
@@ -256,6 +265,7 @@ public final class BidiUtils {
 	 * @return the segment listener, or <code>null</code> if no handling is required
 	 * @throws IllegalArgumentException
 	 *             if <code>handlingType</code> is not a known type identifier
+	 * @see #applyBidiProcessing(Text, String)
 	 */
 	public static SegmentListener getSegmentListener(String handlingType) {
 		SegmentListener listener = null;
@@ -287,5 +297,70 @@ public final class BidiUtils {
 			}
 		}
 		return listener;
+	}
+	
+	/**
+	 * Applies a Base Text Direction to the given control (and its descendants, if it's a {@link Composite}).
+	 * 
+	 * <p>
+	 * Possible values for <code>textDirection</code> are:
+	 * <ul>
+	 * <li>{@link BidiUtils#LEFT_TO_RIGHT}</li>
+	 * <li>{@link BidiUtils#RIGHT_TO_LEFT}</li>
+	 * <li>{@link BidiUtils#AUTO}</li>
+	 * <li>{@link BidiUtils#BTD_DEFAULT}</li>
+	 * </ul>
+	 * <p>
+	 * The 3 values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT}, and {@link BidiUtils#AUTO} are
+	 * usable whether {@link #getBidiSupport() bidi support} is enabled or disabled.
+	 * <p>
+	 * {@link BidiUtils#AUTO} currently only works for {@link Text} and {@link StyledText} controls.
+	 * <p>
+	 * The remaining value {@link BidiUtils#BTD_DEFAULT} only has an effect if bidi support is enabled.
+	 * 
+	 * <p>
+	 * <strong>Note:</strong>
+	 * If this method is called on a control, then no <code>applyBidiProcessing</code> method must be called on the same control.
+	 * <p>
+	 * <strong>Note:</strong>
+	 * {@link org.eclipse.swt.widgets.Control#setTextDirection(int)}
+	 * is currently only implemented on Windows, so the direction won't be inherited by descendants on GTK and Cocoa.
+	 * <p>
+	 * <strong>Note:</strong>
+	 * {@link BidiUtils#BTD_DEFAULT} is currently not inherited by descendants of the control if
+	 * {@link BidiUtils#getTextDirection()} is {@link BidiUtils#AUTO}.
+	 * 
+	 * @param control the control
+	 * @param textDirection the text direction
+	 */
+	public static void applyTextDirection(Control control, String textDirection) {
+		int textDir = 0;
+		boolean auto = false;
+		
+		if (LEFT_TO_RIGHT.equals(textDirection)) {
+			textDir = SWT.LEFT_TO_RIGHT;			
+		} else if (RIGHT_TO_LEFT.equals(textDirection)) {
+			textDir = SWT.RIGHT_TO_LEFT;
+		} else if (AUTO.equals(textDirection)) {
+			auto = true;
+		} else if (getBidiSupport() && BTD_DEFAULT.equals(textDirection)) {
+			if (LEFT_TO_RIGHT.equals(getTextDirection())) {
+				textDir = SWT.LEFT_TO_RIGHT;	
+			} else if (RIGHT_TO_LEFT.equals(getTextDirection())) {
+				textDir = SWT.RIGHT_TO_LEFT;
+			} else if (AUTO.equals(getTextDirection())) {
+				auto = true;
+			}
+		}
+		
+		if (auto) {
+			if (control instanceof Text) {
+				applyBidiProcessing((Text) control, AUTO);
+			} else if (control instanceof StyledText) {
+				applyBidiProcessing((StyledText) control, AUTO);
+			}
+		} else if (textDir != 0) {
+			control.setTextDirection(textDir);
+		}
 	}
 }
