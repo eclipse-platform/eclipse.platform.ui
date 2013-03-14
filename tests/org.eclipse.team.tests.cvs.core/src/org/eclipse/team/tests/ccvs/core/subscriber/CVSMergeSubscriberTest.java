@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -349,7 +349,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		for (int i = 0; i < members.length; i++) {
 			IResource resource = members[i];
 			if (resource.getName().equals(".project")) continue;
-			resource.delete(false, DEFAULT_MONITOR);
+			resource.delete(true, DEFAULT_MONITOR);
 		}
 		
 		// update
