@@ -20,6 +20,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  * object, and will re-evaluate this runnable whenever any accessed value changes.
  * 
  * @see IEclipseContext#runAndTrack(RunAndTrack)
+ * @since 1.3
  */
 abstract public class RunAndTrack {
 

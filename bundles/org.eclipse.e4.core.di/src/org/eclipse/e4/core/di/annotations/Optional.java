@@ -36,6 +36,7 @@ import javax.inject.Qualifier;
  *   }
  *  </pre>
  *  </p>
+ * @since 1.3
  */
 @Qualifier
 @Documented

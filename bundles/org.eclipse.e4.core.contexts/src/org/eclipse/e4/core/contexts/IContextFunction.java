@@ -39,6 +39,7 @@ import org.osgi.framework.BundleContext;
  * @noimplement This interface is not intended to be implemented by clients.
  *              Function implementations must subclass {@link ContextFunction}
  *              instead.
+ * @since 1.3
  */
 public interface IContextFunction {
 	/**

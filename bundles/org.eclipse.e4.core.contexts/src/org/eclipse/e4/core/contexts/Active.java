@@ -24,6 +24,7 @@ import javax.inject.Qualifier;
  * 
  * @see Inject
  * @see IEclipseContext#activate
+ * @since 1.3
  */
 @Qualifier
 @Documented

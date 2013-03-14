@@ -19,6 +19,7 @@ import javax.inject.Qualifier;
 
 /**
  * Specifies that the target class can be created by an injector as needed.
+ * @since 1.3
  */
 @Qualifier
 @Documented

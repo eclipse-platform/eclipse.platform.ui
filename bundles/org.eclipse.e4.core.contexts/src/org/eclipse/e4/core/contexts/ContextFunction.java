@@ -18,6 +18,7 @@ package org.eclipse.e4.core.contexts;
  * This class is intended to be subclassed by clients.
  * </p>
  * @see IContextFunction
+ * @since 1.3
  */
 public abstract class ContextFunction implements IContextFunction {
 

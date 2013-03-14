@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,9 @@ import org.eclipse.e4.core.internal.contexts.osgi.EclipseContextOSGi;
 import org.osgi.framework.BundleContext;
 
 /**
- * A factory for creating context instances.
+ * This factory is used to create new context instances.
+ * @see IEclipseContext
+ * @since 1.3
  */
 public final class EclipseContextFactory {
 

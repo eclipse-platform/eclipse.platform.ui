@@ -33,6 +33,7 @@ import java.lang.annotation.Target;
  * Note that the order of batched events is unspecified and is likely different 
  * from the original event order. As such, it is not recommended to use grouped updates on 
  * the methods that modify other context values.
+ * @since 1.3
  */
 @Documented
 @Target({METHOD, FIELD})

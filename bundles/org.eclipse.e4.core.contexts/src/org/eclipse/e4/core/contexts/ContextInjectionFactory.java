@@ -48,10 +48,11 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  * When a context is disposed, the injection factory will attempt to notify all injected objects by
  * calling methods with the <tt>javax.annotation.PreDestroy</tt> annotation.
  * 
- * @noextend This class is not intended to be extended by clients.
+ * This class is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @since 1.3
  */
-final public class ContextInjectionFactory {
+public final class ContextInjectionFactory {
 
 	final private static IInjector injector = InjectorFactory.getDefault();
 
