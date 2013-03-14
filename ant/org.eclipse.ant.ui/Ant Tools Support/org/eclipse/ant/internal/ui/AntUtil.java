@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.apache.tools.ant.Target;
+
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
@@ -35,13 +38,15 @@ import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.LocationProvider;
 import org.eclipse.ant.launching.IAntLaunchConstants;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -50,17 +55,21 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.ui.console.FileLink;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -74,10 +83,13 @@ import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
+
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.debug.core.ILaunchConfiguration;
+
+import org.eclipse.debug.ui.console.FileLink;
 
 /**
  * General utility class dealing with Ant build files
@@ -605,6 +617,9 @@ public final class AntUtil {
 	    	}
 	    	if(file != null) {
 	    		IContentType fileType = IDE.getContentType(file);
+				if (fileType == null) {
+					return false;
+				}
 	    		IContentType antType = Platform.getContentTypeManager().getContentType(AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE);
 	    		if(antType != null) { 
 	    			return fileType.isKindOf(antType);
