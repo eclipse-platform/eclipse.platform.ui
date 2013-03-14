@@ -26,8 +26,8 @@ import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.internal.net.ProxyType;
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
-
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 
 public class NetTest extends TestCase {
 
@@ -291,6 +291,11 @@ public class NetTest extends TestCase {
 	}
 	
 	public void testSimpleHost() throws CoreException {
+		
+		//TODO test disabled for Window, see Bug 403311
+		if(Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+		
 		setDataTest(IProxyData.HTTP_PROXY_TYPE);
 		setDataTest(IProxyData.HTTPS_PROXY_TYPE);
 		setDataTest(IProxyData.SOCKS_PROXY_TYPE);
