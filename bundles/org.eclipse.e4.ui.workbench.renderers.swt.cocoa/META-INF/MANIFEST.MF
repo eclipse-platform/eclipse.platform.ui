@@ -8,4 +8,4 @@ Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.e4.ui.workbench.renderers.swt;bundle-version="[0.10.0,1.0.0)"
 Bundle-Localization: fragment-cocoa
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.e4.ui.workbench.renderers.swt.cocoa
+Export-Package: org.eclipse.e4.ui.workbench.renderers.swt.cocoa;x-internal:=true
