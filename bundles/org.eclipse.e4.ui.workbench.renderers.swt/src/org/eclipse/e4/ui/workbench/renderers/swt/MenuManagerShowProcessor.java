@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 389063, Bug 398865, Bug 398866
+ *     Marco Descher <marco@descher.at> - Bug 389063, Bug 398865, Bug 398866, Bug403081
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -157,8 +157,10 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 						.create();
 				ArrayList<MMenuElement> mel = new ArrayList<MMenuElement>();
 				dynamicMenuContext.set(List.class, mel);
+				IEclipseContext parentContext = modelService
+						.getContainingContext(currentMenuElement);
 				ContextInjectionFactory.invoke(contribution, AboutToShow.class,
-						dynamicMenuContext);
+						parentContext, dynamicMenuContext, null);
 
 				// remove existing entries for this dynamic contribution item if
 				// there are any

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Marco Descher <marco@descher.at> - Bug403081
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -21,6 +22,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -36,6 +38,9 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 
 	@Inject
 	private MenuManagerRenderer renderer;
+
+	@Inject
+	private EModelService modelService;
 
 	/*
 	 * (non-Javadoc)
@@ -89,8 +94,11 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 									.getTransientData()
 									.get(MenuManagerShowProcessor.DYNAMIC_ELEMENT_STORAGE_KEY);
 							dynamicMenuContext.set(List.class, mel);
+							IEclipseContext parentContext = modelService
+									.getContainingContext(currentMenuElement);
 							ContextInjectionFactory.invoke(contribution,
-									AboutToHide.class, dynamicMenuContext);
+									AboutToHide.class, parentContext,
+									dynamicMenuContext, null);
 						}
 
 					}
