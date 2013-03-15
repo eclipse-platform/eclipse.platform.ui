@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Marco Descher <marco@descher.at> - Bug 389063, Bug 398865, Bug 398866, Bug403081
+ *     Marco Descher <marco@descher.at> - Bug 389063, Bug 398865, Bug 398866, 
+ *         Bug403081, Bug 403083
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -19,7 +20,9 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.AboutToShow;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
@@ -61,6 +64,10 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 
 	@Inject
 	private IContributionFactory contributionFactory;
+
+	@Inject
+	@Optional
+	private Logger logger;
 
 	private HashMap<Menu, Runnable> pendingCleanup = new HashMap<Menu, Runnable>();
 
@@ -159,8 +166,14 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 				dynamicMenuContext.set(List.class, mel);
 				IEclipseContext parentContext = modelService
 						.getContainingContext(currentMenuElement);
-				ContextInjectionFactory.invoke(contribution, AboutToShow.class,
-						parentContext, dynamicMenuContext, null);
+				if (ContextInjectionFactory.invoke(contribution,
+						AboutToShow.class, parentContext, dynamicMenuContext,
+						this) == this) {
+					if (logger != null) {
+						logger.error("Missing @AboutToShow method in " + contribution); //$NON-NLS-1$
+					}
+					continue;
+				}
 
 				// remove existing entries for this dynamic contribution item if
 				// there are any
