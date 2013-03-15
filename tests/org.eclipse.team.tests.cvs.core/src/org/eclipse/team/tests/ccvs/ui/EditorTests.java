@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,8 +49,7 @@ public class EditorTests extends EclipseTest {
 		return new CVSTestSetup(suite);
 	}
 	
-	//TODO Temporary switched off, see Bug 400540
-	public void _testOpenEditorOnRevision() throws CoreException, InvocationTargetException {
+	public void testOpenEditorOnRevision() throws CoreException, InvocationTargetException {
 		IProject project = createProject(new String[] { "file.cvsTest" });
 		IEditorPart localPart = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), project.getFile("file.cvsTest"));
 		assertTrue("The proper local editor was not opened", localPart instanceof TestEditor);

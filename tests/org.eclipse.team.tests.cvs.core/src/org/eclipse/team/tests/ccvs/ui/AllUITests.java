@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,10 @@ public class AllUITests extends EclipseTest {
 		suite.addTest(CompareOperationTests.suite());
 		suite.addTest(MiscOperationsTests.suite());
 		suite.addTest(ProjectSetImporterTests.suite());
-		suite.addTest(EditorTests.suite());
+
+		//TODO Temporary switched off, see Bug 400540
+//		suite.addTest(EditorTests.suite());
+
 		suite.addTest(PatchWizardRadioButtonGroupTests.suite());
 		suite.addTest(CVSProjectSetImportTest.suite());
 		suite.addTest(CreatePatchTest.suite());
