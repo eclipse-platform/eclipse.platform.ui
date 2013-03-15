@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2012, 2013 Eclipse Foundation and others.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Distribution License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/org/documents/edl-v10.php
+ 
+  Contributors:
+     Paul Webster - initial implementation
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>eclipse.platform.ui</groupId>
+    <artifactId>eclipse.platform.ui</artifactId>
+    <version>4.3.0-SNAPSHOT</version>
+  </parent>
+  <groupId>eclipse.platform.ui</groupId>
+  <artifactId>eclipse.platform.ui.tests</artifactId>
+  <version>4.3.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <!--
+    <module>org.eclipse.e4.emf.xpath.test</module>
+    <module>org.eclipse.e4.ui.compat.tests.tweaklet</module>
+    <module>org.eclipse.e4.ui.compatibility.tests</module>
+    <module>org.eclipse.e4.ui.keybinding.tests</module>
+    <module>org.eclipse.e4.ui.menu.tests</module>
+    <module>org.eclipse.e4.ui.menu.tests.debug</module>
+    <module>org.eclipse.e4.ui.menu.tests.p1</module>
+    <module>org.eclipse.e4.ui.menu.tests.p2</module>
+    <module>org.eclipse.e4.ui.menu.tests.p3</module>
+    <module>org.eclipse.e4.ui.menu.tests.p4</module>
+    <module>org.eclipse.ui.tests.browser</module>
+    -->
+    <module>org.eclipse.e4.ui.bindings.tests</module>
+    <module>org.eclipse.e4.core.commands.tests</module>
+    <module>org.eclipse.e4.ui.tests</module>
+    <module>org.eclipse.e4.ui.tests.css.core</module>
+    <module>org.eclipse.e4.ui.tests.css.swt</module>
+    <module>org.eclipse.jface.tests.databinding</module>
+    <module>org.eclipse.jface.tests.databinding.conformance</module>
+    <module>org.eclipse.ui.tests</module>
+    <module>org.eclipse.ui.tests.forms</module>
+    <module>org.eclipse.ui.tests.harness</module>
+    <module>org.eclipse.ui.tests.navigator</module>
+    <module>org.eclipse.ui.tests.performance</module>
+    <module>org.eclipse.ui.tests.rcp</module>
+    <module>org.eclipse.ui.tests.views.properties.tabbed</module>
+  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-compiler-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <compilerArgument>-warn:-deprecation,raw,unchecked,discouraged,forbidden,warningToken</compilerArgument>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
