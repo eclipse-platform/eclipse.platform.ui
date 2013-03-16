@@ -621,7 +621,18 @@ public class ModelEditor {
 							manager.add(addMenu);
 						}
 
-						manager.add(new Separator());
+						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActionsImport(s.getFirstElement());
+						if (actions.size() > 0) {
+							MenuManager menu = new MenuManager("Import");
+							for (Action a : actions) {
+								addSeparator = true;
+								menu.add(a);
+							}
+							manager.add(menu);
+						}
+
+						if (addSeparator)
+							manager.add(new Separator());
 
 						// build the extract action
 						if ((!((VirtualEntry<?>) s.getFirstElement()).getList().isEmpty()) && (!isModelFragment()))
@@ -655,8 +666,11 @@ public class ModelEditor {
 							});
 
 					} else {
+
 						final EObject o = (EObject) s.getFirstElement();
 						AbstractComponentEditor editor = getEditor(o.eClass());
+
+						// Build Add Child menu
 						if (editor != null) {
 							actions = new ArrayList<Action>(editor.getActions(s.getFirstElement()));
 						} else {
@@ -670,6 +684,23 @@ public class ModelEditor {
 								addMenu.add(a);
 							}
 							manager.add(addMenu);
+						}
+
+						// Build import menu
+						if (editor != null) {
+							actions = new ArrayList<Action>(editor.getActionsImport(s.getFirstElement()));
+						} else {
+							actions = new ArrayList<Action>();
+						}
+
+						if (actions.size() > 0) {
+							// TODO WIM - extract nls
+							MenuManager menu = new MenuManager("Import");
+							for (Action a : actions) {
+								addSeparator = true;
+								menu.add(a);
+							}
+							manager.add(menu);
 						}
 
 						if (o.eContainer() != null) {

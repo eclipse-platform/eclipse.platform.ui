@@ -132,6 +132,15 @@ public abstract class AbstractComponentEditor {
 		return Collections.emptyList();
 	}
 
+	/**
+	 * @param element
+	 * @return the list of actions that are populated in the import menu. Can be
+	 *         empty but is never null.
+	 */
+	public List<Action> getActionsImport(Object element) {
+		return Collections.emptyList();
+	}
+
 	protected String getLocalizedLabel(MUILabel element) {
 		return ControlFactory.getLocalizedLabel(translationProvider, element, locale);
 	}

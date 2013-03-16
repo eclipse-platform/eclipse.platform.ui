@@ -20,6 +20,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
@@ -35,6 +36,7 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -54,6 +56,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 
 	private EStructuralFeature commandsFeature;
 	private List<Action> actions = new ArrayList<Action>();
+	private List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	public VCommandEditor() {
@@ -67,6 +70,13 @@ public class VCommandEditor extends AbstractComponentEditor {
 			@Override
 			public void run() {
 				handleAdd();
+			}
+		});
+
+		actionsImport.add(new Action("Import Commands", createImageDescriptor(ResourceProvider.IMG_Command)) {
+			@Override
+			public void run() {
+				handleImport();
 			}
 		});
 	}
@@ -219,13 +229,27 @@ public class VCommandEditor extends AbstractComponentEditor {
 
 	protected void handleAdd() {
 		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
-		setElementId(command);
+		addCommand(command);
+	}
 
+	private void addCommand(MCommand command) {
+		setElementId(command);
 		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), commandsFeature, command);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 			getEditor().setSelection(command);
+		}
+	}
+
+	protected void handleImport() {
+		ModelImportWizard wizard = new ModelImportWizard(MCommand.class, getEditingDomain());
+		WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+		if (wizardDialog.open() == WizardDialog.OK) {
+			MCommand[] elements = (MCommand[]) wizard.getElements(MCommand.class);
+			for (MCommand mCommand : elements) {
+				addCommand(mCommand);
+			}
 		}
 	}
 
@@ -238,6 +262,13 @@ public class VCommandEditor extends AbstractComponentEditor {
 	public List<Action> getActions(Object element) {
 		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
+		return l;
+	}
+
+	@Override
+	public List<Action> getActionsImport(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actionsImport);
 		return l;
 	}
 }

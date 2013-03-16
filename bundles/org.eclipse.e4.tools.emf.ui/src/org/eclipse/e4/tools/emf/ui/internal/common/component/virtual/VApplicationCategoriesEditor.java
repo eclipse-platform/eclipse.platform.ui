@@ -20,6 +20,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
@@ -34,6 +35,7 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -52,6 +54,7 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private List<Action> actions = new ArrayList<Action>();
+	private List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	public VApplicationCategoriesEditor() {
@@ -66,6 +69,23 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 				handleAdd();
 			}
 		});
+		actionsImport.add(new Action(Messages.VApplicationCategoriesEditor_AddCategory, createImageDescriptor(ResourceProvider.IMG_Category)) {
+			@Override
+			public void run() {
+				handleImport();
+			}
+		});
+	}
+
+	protected void handleImport() {
+		ModelImportWizard wizard = new ModelImportWizard(MCategory.class, getEditingDomain());
+		WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+		if (wizardDialog.open() == WizardDialog.OK) {
+			MCategory[] elements = (MCategory[]) wizard.getElements(MCategory.class);
+			for (MCategory category : elements) {
+				addCategory(category);
+			}
+		}
 	}
 
 	@Override
@@ -220,14 +240,18 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleAdd() {
-		MCategory command = CommandsFactoryImpl.eINSTANCE.createCategory();
-		setElementId(command);
+		MCategory category = CommandsFactoryImpl.eINSTANCE.createCategory();
+		addCategory(category);
+	}
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES, command);
+	private void addCategory(MCategory category) {
+		setElementId(category);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES, category);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
-			getEditor().setSelection(command);
+			getEditor().setSelection(category);
 		}
 	}
 
@@ -235,6 +259,13 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 	public List<Action> getActions(Object element) {
 		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
+		return l;
+	}
+
+	@Override
+	public List<Action> getActionsImport(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actionsImport);
 		return l;
 	}
 }
