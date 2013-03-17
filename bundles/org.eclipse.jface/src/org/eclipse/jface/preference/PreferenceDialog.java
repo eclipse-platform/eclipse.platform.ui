@@ -1305,7 +1305,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 					}
 				
 			} else {
-				currentPage.setSize(containerSize);
+				currentPage.getControl().setSize(containerSize);
 			}
 		}
 		
