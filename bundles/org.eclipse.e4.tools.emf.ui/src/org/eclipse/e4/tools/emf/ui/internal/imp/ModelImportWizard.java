@@ -109,6 +109,6 @@ public class ModelImportWizard extends Wizard {
 	 * @return true or false
 	 */
 	public boolean isLiveModel() {
-		return !editor.getEditor().isLiveModel();
+		return editor.getEditor().isLiveModel();
 	}
 }
