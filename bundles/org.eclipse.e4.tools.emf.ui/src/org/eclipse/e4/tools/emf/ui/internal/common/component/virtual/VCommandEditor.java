@@ -243,7 +243,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleImport() {
-		ModelImportWizard wizard = new ModelImportWizard(MCommand.class, getEditingDomain());
+		ModelImportWizard wizard = new ModelImportWizard(MCommand.class, this);
 		WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
 		if (wizardDialog.open() == WizardDialog.OK) {
 			MCommand[] elements = (MCommand[]) wizard.getElements(MCommand.class);

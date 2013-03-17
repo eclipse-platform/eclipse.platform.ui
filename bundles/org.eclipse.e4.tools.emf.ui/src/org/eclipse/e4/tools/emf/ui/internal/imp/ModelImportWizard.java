@@ -13,8 +13,9 @@ package org.eclipse.e4.tools.emf.ui.internal.imp;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.wizard.Wizard;
 
 public class ModelImportWizard extends Wizard {
@@ -23,11 +24,14 @@ public class ModelImportWizard extends Wizard {
 
 	private ModelImportPage1 page1;
 
-	private EditingDomain editingDomain;
+	private MApplication application;
 
-	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, EditingDomain editingDomain) {
+	private AbstractComponentEditor editor;
+
+	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor) {
 		this.applicationElement = applicationElement;
-		this.editingDomain = editingDomain;
+		this.editor = editor;
+		this.application = (MApplication) editor.getMaster().getValue();
 		setWindowTitle("Model Command Import Wizard");
 		Assert.isNotNull(RegistryUtil.getStruct(applicationElement), "Unknown Element: " + applicationElement.getClass().getName());
 	}
@@ -92,6 +96,19 @@ public class ModelImportWizard extends Wizard {
 	 * @return
 	 */
 	public MApplicationElement[] getElements(Class<? extends MApplicationElement> type) {
-		return RegistryUtil.getModelElements(type, editingDomain, page1.getConfigurationElements());
+		return RegistryUtil.getModelElements(type, application, page1.getConfigurationElements());
+	}
+
+	public AbstractComponentEditor getEditor() {
+		return editor;
+	}
+
+	/**
+	 * Returns if this is a live model.
+	 * 
+	 * @return true or false
+	 */
+	public boolean isLiveModel() {
+		return !editor.getEditor().isLiveModel();
 	}
 }

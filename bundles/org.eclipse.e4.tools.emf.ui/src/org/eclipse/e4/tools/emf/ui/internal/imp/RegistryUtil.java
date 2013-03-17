@@ -13,45 +13,48 @@ package org.eclipse.e4.tools.emf.ui.internal.imp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
-import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.PDEExtensionRegistry;
+import org.eclipse.e4.ui.workbench.UIEvents.ApplicationElement;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 public class RegistryUtil {
 
 	/**
 	 * 
 	 * @param t
-	 * @param editingDomain
+	 * @param application
 	 * @param elements
 	 * @return
 	 */
-	public static MApplicationElement[] getModelElements(Class<? extends MApplicationElement> t, EditingDomain editingDomain, IConfigurationElement... elements) {
+	public static MApplicationElement[] getModelElements(Class<? extends MApplicationElement> t, MApplication application, IConfigurationElement... elements) {
 
 		Assert.isNotNull(t);
 		Assert.isNotNull(elements);
 		Assert.isTrue(elements.length > 0);
 
 		if (t.equals(MCommand.class)) {
-			return getCommands(elements, editingDomain);
+			return getCommands(elements, application);
 		} else if (t.equals(MCategory.class)) {
 			return getCategories(elements);
 		}
 		return new MApplicationElement[0];
 	}
 
-	private static MCommand[] getCommands(IConfigurationElement[] elements, EditingDomain editingDomain) {
+	private static MCommand[] getCommands(IConfigurationElement[] elements, MApplication application) {
 
 		ArrayList<MCommand> result = new ArrayList<MCommand>();
 
@@ -65,9 +68,8 @@ public class RegistryUtil {
 			command.setElementId(element.getAttribute("id"));
 			String catId = element.getAttribute("categoryId");
 
-			if (catId != null || catId.trim().length() == 0) {
-				MApplication app = (MApplication) editingDomain.getResourceSet().getResources().get(0).getContents().get(0);
-				List<MCategory> categories = app.getCategories();
+			if (catId != null && catId.trim().length() > 0) {
+				List<MCategory> categories = application.getCategories();
 				for (MCategory category : categories) {
 					if (category.getElementId().equals(catId)) {
 						command.setCategory(category);
@@ -109,13 +111,17 @@ public class RegistryUtil {
 	 * @param extensionPoint
 	 * @return
 	 */
-	public static String[] getProvidingBundles(IExtensionRegistry registry, String extensionPoint) {
+	public static String[] getProvidingBundles(IExtensionRegistry registry, String extensionPoint, boolean isLive) {
 
-		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		PDEExtensionRegistry reg = new PDEExtensionRegistry(models);
+		IExtensionLookup service = getService(IExtensionLookup.class, null);
+
+		if (service == null) {
+			return new String[] { "No " + IExtensionLookup.class.getName() + " service found." };
+		}
+
 		ArrayList<String> result = new ArrayList<String>();
 
-		IExtension[] extensions = reg.findExtensions(extensionPoint, true);
+		IExtension[] extensions = service.findExtensions(extensionPoint, isLive);
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] elements = extension.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
@@ -133,21 +139,20 @@ public class RegistryUtil {
 	/**
 	 * 
 	 * @param registry
-	 * @param MApplicationElement
+	 * @param struct
 	 * @return the array of {@link IConfigurationElement} objects that meets the
 	 *         passed criteria.
 	 */
-	public static IConfigurationElement[] getExtensions(IExtensionRegistry registry, RegistryStruct struct) {
+	public static IConfigurationElement[] getExtensions(IExtensionRegistry registry, RegistryStruct struct, boolean isLive) {
 
-		if (struct == null) {
+		IExtensionLookup service = getService(IExtensionLookup.class, null);
+		if (struct == null || service == null) {
 			return new IConfigurationElement[0];
 		}
 
-		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		PDEExtensionRegistry reg = new PDEExtensionRegistry(models);
 		ArrayList<IConfigurationElement> result = new ArrayList<IConfigurationElement>();
 
-		IExtension[] extensions = reg.findExtensions(struct.getExtensionPoint(), true);
+		IExtension[] extensions = service.findExtensions(struct.getExtensionPoint(), isLive);
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] elements = extension.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
@@ -162,6 +167,14 @@ public class RegistryUtil {
 		return result.toArray(new IConfigurationElement[0]);
 	}
 
+	/**
+	 * This will return a structure that contains the registry information we
+	 * are looking for.
+	 * 
+	 * @param applicationElement
+	 * @return the structure that matches the extension registry to the passed
+	 *         {@link ApplicationElement}
+	 */
 	public static RegistryStruct getStruct(Class<? extends MApplicationElement> applicationElement) {
 
 		if (applicationElement == MCommand.class)
@@ -173,4 +186,18 @@ public class RegistryUtil {
 		return null;
 	}
 
+	private static <T> T getService(Class<T> clazz, String filter) {
+
+		try {
+			BundleContext context = FrameworkUtil.getBundle(RegistryUtil.class).getBundleContext();
+			Collection<ServiceReference<T>> references;
+			references = context.getServiceReferences(clazz, filter);
+			for (ServiceReference<T> reference : references) {
+				return context.getService(reference);
+			}
+		} catch (InvalidSyntaxException e) {
+			// FIXME log
+		}
+		return null;
+	}
 }

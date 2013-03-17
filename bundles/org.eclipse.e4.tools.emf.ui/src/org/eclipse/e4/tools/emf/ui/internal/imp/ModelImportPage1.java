@@ -67,7 +67,7 @@ public class ModelImportPage1 extends WizardPage {
 
 			RegistryStruct input = (RegistryStruct) inputElement;
 
-			return RegistryUtil.getExtensions(registry, input);
+			return RegistryUtil.getExtensions(registry, input, wizard.isLiveModel());
 		}
 
 		public void dispose() {
@@ -79,7 +79,7 @@ public class ModelImportPage1 extends WizardPage {
 
 	private class ComboContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
-			return RegistryUtil.getProvidingBundles(registry, wizard.getExtensionPoint());
+			return RegistryUtil.getProvidingBundles(registry, wizard.getExtensionPoint(), wizard.isLiveModel());
 		}
 
 		public void dispose() {

@@ -78,7 +78,7 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleImport() {
-		ModelImportWizard wizard = new ModelImportWizard(MCategory.class, getEditingDomain());
+		ModelImportWizard wizard = new ModelImportWizard(MCategory.class, this);
 		WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
 		if (wizardDialog.open() == WizardDialog.OK) {
 			MCategory[] elements = (MCategory[]) wizard.getElements(MCategory.class);
