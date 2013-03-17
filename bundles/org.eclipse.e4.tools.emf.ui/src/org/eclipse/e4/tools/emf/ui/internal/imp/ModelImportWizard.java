@@ -31,7 +31,7 @@ public class ModelImportWizard extends Wizard {
 	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor) {
 		this.applicationElement = applicationElement;
 		this.editor = editor;
-		this.application = (MApplication) editor.getMaster().getValue();
+		this.application = (MApplication) editor.getEditor().getModelProvider().getRoot().get(0);
 		setWindowTitle("Model Command Import Wizard");
 		Assert.isNotNull(RegistryUtil.getStruct(applicationElement), "Unknown Element: " + applicationElement.getClass().getName());
 	}

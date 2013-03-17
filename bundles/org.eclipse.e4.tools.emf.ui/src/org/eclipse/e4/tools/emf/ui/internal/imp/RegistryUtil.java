@@ -25,7 +25,14 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.workbench.UIEvents.ApplicationElement;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
@@ -50,6 +57,12 @@ public class RegistryUtil {
 			return getCommands(elements, application);
 		} else if (t.equals(MCategory.class)) {
 			return getCategories(elements);
+		} else if (t.equals(MPerspective.class)) {
+			return getPerspectives(elements);
+		} else if (t.equals(MPart.class)) {
+			return getParts(elements);
+		} else if (t.equals(MHandler.class)) {
+			return getHandlers(elements, application);
 		}
 		return new MApplicationElement[0];
 	}
@@ -84,6 +97,25 @@ public class RegistryUtil {
 		return result.toArray(new MCommand[0]);
 	}
 
+	private static MPerspective[] getPerspectives(IConfigurationElement[] elements) {
+
+		ArrayList<MPerspective> result = new ArrayList<MPerspective>();
+
+		MAdvancedFactory factory = MAdvancedFactory.INSTANCE;
+
+		for (IConfigurationElement element : elements) {
+			MPerspective perspective = factory.createPerspective();
+			perspective.setLabel(element.getAttribute("name"));
+			perspective.setIconURI(getIconURI(element, "icon"));
+			perspective.setElementId(element.getAttribute("id"));
+			perspective.setToBeRendered(true);
+			perspective.setVisible(true);
+			result.add((MPerspective) perspective);
+		}
+
+		return result.toArray(new MPerspective[0]);
+	}
+
 	private static MCategory[] getCategories(IConfigurationElement[] elements) {
 
 		ArrayList<MCategory> result = new ArrayList<MCategory>();
@@ -101,6 +133,58 @@ public class RegistryUtil {
 		}
 
 		return result.toArray(new MCategory[0]);
+	}
+
+	private static MPart[] getParts(IConfigurationElement[] elements) {
+
+		ArrayList<MPart> result = new ArrayList<MPart>();
+		for (IConfigurationElement element : elements) {
+			MPart part = (MPart) EcoreUtil.create(BasicPackageImpl.Literals.PART);
+			part.setElementId(element.getAttribute("id"));
+			part.setLabel(element.getAttribute("name"));
+			part.setIconURI(getIconURI(element, "icon"));
+			part.setContributionURI(getContributionURI(element, "class"));
+			part.setToBeRendered(true);
+			part.setVisible(true);
+			part.setToolbar(MMenuFactory.INSTANCE.createToolBar());
+			part.setCloseable(true);
+			result.add(part);
+		}
+
+		return result.toArray(new MPart[0]);
+	}
+
+	private static MHandler[] getHandlers(IConfigurationElement[] elements, MApplication application) {
+
+		ArrayList<MHandler> result = new ArrayList<MHandler>();
+		for (IConfigurationElement element : elements) {
+			MHandler hand = (MHandler) MCommandsFactory.INSTANCE.createHandler();
+			hand.setElementId(element.getAttribute("id"));
+			hand.setContributionURI(getContributionURI(element, "class"));
+
+			String cmdId = element.getAttribute("commandId");
+
+			if (cmdId != null && cmdId.trim().length() > 0) {
+				List<MCommand> categories = application.getCommands();
+				for (MCommand command : categories) {
+					if (command.getElementId().equals(cmdId)) {
+						hand.setCommand(command);
+						break;
+					}
+				}
+			}
+			result.add(hand);
+		}
+		return result.toArray(new MHandler[0]);
+	}
+
+	private static String getIconURI(IConfigurationElement element, String attribute) {
+		// FIXME don't assume local icon
+		return "platform:/plugin/" + element.getContributor().getName() + "/" + element.getAttribute(attribute);
+	}
+
+	private static String getContributionURI(IConfigurationElement element, String attribute) {
+		return "bundleclass://" + element.getContributor().getName() + "/" + element.getAttribute(attribute);
 	}
 
 	/**
@@ -182,6 +266,18 @@ public class RegistryUtil {
 
 		else if (applicationElement == MCategory.class)
 			return new RegistryStruct("", "org.eclipse.ui.commands", "category", "name");
+
+		else if (applicationElement == MPerspective.class)
+			return new RegistryStruct("", "org.eclipse.ui.perspectives", "perspective", "name");
+
+		else if (applicationElement == MPart.class)
+			return new RegistryStruct("", "org.eclipse.ui.views", "view", "name");
+
+		else if (applicationElement == MHandler.class)
+			return new RegistryStruct("", "org.eclipse.ui.handlers", "handler", "commandId");
+
+		else if (applicationElement == MPart.class)
+			return new RegistryStruct("", "org.eclipse.ui.views", "view", "name");
 
 		return null;
 	}

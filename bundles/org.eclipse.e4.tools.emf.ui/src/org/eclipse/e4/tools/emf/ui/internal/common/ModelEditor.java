@@ -623,7 +623,7 @@ public class ModelEditor {
 
 						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActionsImport(s.getFirstElement());
 						if (actions.size() > 0) {
-							MenuManager menu = new MenuManager("Import");
+							MenuManager menu = new MenuManager("Import 3x");
 							for (Action a : actions) {
 								addSeparator = true;
 								menu.add(a);

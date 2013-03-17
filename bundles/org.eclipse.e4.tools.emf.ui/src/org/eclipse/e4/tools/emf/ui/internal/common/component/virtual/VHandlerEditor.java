@@ -20,6 +20,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
@@ -34,6 +35,7 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -51,6 +53,7 @@ public class VHandlerEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
 	private List<Action> actions = new ArrayList<Action>();
+	private List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	public VHandlerEditor() {
@@ -63,6 +66,14 @@ public class VHandlerEditor extends AbstractComponentEditor {
 			@Override
 			public void run() {
 				handleAdd();
+			}
+		});
+
+		// -- import --
+		actionsImport.add(new Action(Messages.VHandlerEditor_AddHandler, createImageDescriptor(ResourceProvider.IMG_Handler)) {
+			@Override
+			public void run() {
+				handleImport();
 			}
 		});
 	}
@@ -220,13 +231,26 @@ public class VHandlerEditor extends AbstractComponentEditor {
 
 	protected void handleAdd() {
 		MHandler handler = MCommandsFactory.INSTANCE.createHandler();
+		addToModel(handler);
+	}
+
+	private void addToModel(MHandler handler) {
 		setElementId(handler);
-
 		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, handler);
-
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 			getEditor().setSelection(handler);
+		}
+	}
+
+	protected void handleImport() {
+		ModelImportWizard wizard = new ModelImportWizard(MHandler.class, this);
+		WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+		if (wizardDialog.open() == WizardDialog.OK) {
+			MHandler[] elements = (MHandler[]) wizard.getElements(MHandler.class);
+			for (MHandler handler : elements) {
+				addToModel(handler);
+			}
 		}
 	}
 
@@ -234,6 +258,13 @@ public class VHandlerEditor extends AbstractComponentEditor {
 	public List<Action> getActions(Object element) {
 		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
+		return l;
+	}
+
+	@Override
+	public List<Action> getActionsImport(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
+		l.addAll(actionsImport);
 		return l;
 	}
 }

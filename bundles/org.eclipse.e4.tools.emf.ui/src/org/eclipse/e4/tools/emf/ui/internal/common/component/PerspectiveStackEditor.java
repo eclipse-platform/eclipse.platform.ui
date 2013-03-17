@@ -25,6 +25,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
+import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -48,6 +49,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -61,6 +63,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 public class PerspectiveStackEditor extends AbstractComponentEditor {
 	private Composite composite;
@@ -69,6 +72,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
 	private List<Action> actions = new ArrayList<Action>();
+	private List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	@Optional
@@ -79,12 +83,23 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 		super();
 	}
 
+	@Inject
+	Shell shell;
+
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.PerspectiveStackEditor_AddPerspective, createImageDescriptor(ResourceProvider.IMG_Perspective)) {
 			@Override
 			public void run() {
 				handleAddPerspective();
+			}
+		});
+
+		// --- import ---
+		actionsImport.add(new Action(Messages.PerspectiveStackEditor_AddPerspective, createImageDescriptor(ResourceProvider.IMG_Perspective)) {
+			@Override
+			public void run() {
+				handleImportPerspective();
 			}
 		});
 	}
@@ -323,13 +338,26 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 
 	protected void handleAddPerspective() {
 		MPerspective eObject = MAdvancedFactory.INSTANCE.createPerspective();
-		setElementId(eObject);
+		addToModel(eObject);
+	}
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+	protected void handleImportPerspective() {
+		ModelImportWizard wizard = new ModelImportWizard(MPerspective.class, this);
+		WizardDialog wizardDialog = new WizardDialog(shell, wizard);
+		if (wizardDialog.open() == WizardDialog.OK) {
+			MPerspective[] elements = (MPerspective[]) wizard.getElements(MPerspective.class);
+			for (MPerspective category : elements) {
+				addToModel(category);
+			}
+		}
+	}
 
+	private void addToModel(MPerspective perspective) {
+		setElementId(perspective);
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, perspective);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
-			getEditor().setSelection(eObject);
+			getEditor().setSelection(perspective);
 		}
 	}
 
@@ -337,6 +365,13 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	public List<Action> getActions(Object element) {
 		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
+		return l;
+	}
+
+	@Override
+	public List<Action> getActionsImport(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
+		l.addAll(actionsImport);
 		return l;
 	}
 }
