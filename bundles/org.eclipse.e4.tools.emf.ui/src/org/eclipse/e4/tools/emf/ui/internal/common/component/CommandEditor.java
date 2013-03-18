@@ -314,9 +314,8 @@ public class CommandEditor extends AbstractComponentEditor {
 	public String getDetailLabel(Object element) {
 		MCommand cmd = (MCommand) element;
 		if (cmd.getCommandName() != null && cmd.getCommandName().trim().length() > 0) {
-			return cmd.getCommandName();
+			return translate(cmd.getCommandName());
 		}
-
 		return null;
 	}
 

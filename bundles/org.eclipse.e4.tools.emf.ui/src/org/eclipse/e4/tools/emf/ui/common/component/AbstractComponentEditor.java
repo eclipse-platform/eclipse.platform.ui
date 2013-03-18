@@ -132,6 +132,10 @@ public abstract class AbstractComponentEditor {
 		return Collections.emptyList();
 	}
 
+	public String translate(String string) {
+		return ControlFactory.tr(translationProvider, locale, string);
+	}
+
 	/**
 	 * @param element
 	 * @return the list of actions that are populated in the import menu. Can be
