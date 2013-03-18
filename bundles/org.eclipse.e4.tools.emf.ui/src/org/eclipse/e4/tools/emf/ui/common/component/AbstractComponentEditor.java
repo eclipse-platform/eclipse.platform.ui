@@ -26,6 +26,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTransla
 import org.eclipse.e4.tools.services.IClipboardService.Handler;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.tools.services.Translation;
+import org.eclipse.e4.tools.services.impl.AbstractTranslationProvider;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -132,6 +133,16 @@ public abstract class AbstractComponentEditor {
 		return Collections.emptyList();
 	}
 
+	/**
+	 * Translates an input <code>string</code> using the current
+	 * {@link AbstractTranslationProvider} and <code>locale</code> from the
+	 * {@link TranslationService}.
+	 * 
+	 * @param string
+	 *            the string to translate, may not be null.
+	 * @return the translated string or the input string if it could not be
+	 *         translated.
+	 */
 	public String translate(String string) {
 		return ControlFactory.tr(translationProvider, locale, string);
 	}
