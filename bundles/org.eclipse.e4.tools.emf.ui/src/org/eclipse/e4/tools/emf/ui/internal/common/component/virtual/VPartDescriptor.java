@@ -20,12 +20,15 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
+import org.eclipse.e4.tools.emf.ui.internal.imp.RegistryUtil;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
@@ -34,6 +37,7 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -51,6 +55,7 @@ public class VPartDescriptor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
 	private List<Action> actions = new ArrayList<Action>();
+	private List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	public VPartDescriptor() {
@@ -63,6 +68,20 @@ public class VPartDescriptor extends AbstractComponentEditor {
 			@Override
 			public void run() {
 				handleAdd();
+			}
+		});
+
+		// --- Import Actions ---
+		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleImportChild(BasicPackageImpl.Literals.PART_DESCRIPTOR, RegistryUtil.HINT_VIEW);
+			}
+		});
+		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleImportChild(BasicPackageImpl.Literals.PART_DESCRIPTOR, RegistryUtil.HINT_EDITOR);
 			}
 		});
 	}
@@ -219,14 +238,32 @@ public class VPartDescriptor extends AbstractComponentEditor {
 	}
 
 	protected void handleAdd() {
-		MPartDescriptor command = MBasicFactory.INSTANCE.createPartDescriptor();
-		setElementId(command);
+		MPartDescriptor partDescription = MBasicFactory.INSTANCE.createPartDescriptor();
+		addToModel(partDescription);
+	}
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, command);
+	private void addToModel(MPartDescriptor partDescription) {
+		setElementId(partDescription);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, partDescription);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
-			getEditor().setSelection(command);
+			getEditor().setSelection(partDescription);
+		}
+	}
+
+	protected void handleImportChild(EClass eClass, String hint) {
+
+		if (eClass == BasicPackageImpl.Literals.PART_DESCRIPTOR) {
+			ModelImportWizard wizard = new ModelImportWizard(MPartDescriptor.class, this, hint);
+			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+			if (wizardDialog.open() == WizardDialog.OK) {
+				MPartDescriptor[] parts = (MPartDescriptor[]) wizard.getElements(MPartDescriptor.class);
+				for (MPartDescriptor part : parts) {
+					addToModel(part);
+				}
+			}
 		}
 	}
 
@@ -234,6 +271,13 @@ public class VPartDescriptor extends AbstractComponentEditor {
 	public List<Action> getActions(Object element) {
 		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
+		return l;
+	}
+
+	@Override
+	public List<Action> getActionsImport(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
+		l.addAll(actionsImport);
 		return l;
 	}
 }

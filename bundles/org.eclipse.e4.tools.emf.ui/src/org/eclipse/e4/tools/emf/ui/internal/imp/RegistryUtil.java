@@ -26,8 +26,10 @@ import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
@@ -40,6 +42,9 @@ import org.osgi.framework.ServiceReference;
 
 public class RegistryUtil {
 
+	public final static String HINT_VIEW = "view";
+	public final static String HINT_EDITOR = "editor";
+
 	/**
 	 * 
 	 * @param t
@@ -47,7 +52,7 @@ public class RegistryUtil {
 	 * @param elements
 	 * @return
 	 */
-	public static MApplicationElement[] getModelElements(Class<? extends MApplicationElement> t, MApplication application, IConfigurationElement... elements) {
+	public static MApplicationElement[] getModelElements(Class<? extends MApplicationElement> t, String hint, MApplication application, IConfigurationElement... elements) {
 
 		Assert.isNotNull(t);
 		Assert.isNotNull(elements);
@@ -60,9 +65,15 @@ public class RegistryUtil {
 		} else if (t.equals(MPerspective.class)) {
 			return getPerspectives(elements);
 		} else if (t.equals(MPart.class)) {
-			return getParts(elements);
+			return getViews(elements);
+		} else if (t.equals(MInputPart.class)) {
+			return getEditors(elements);
 		} else if (t.equals(MHandler.class)) {
 			return getHandlers(elements, application);
+		} else if (t.equals(MPartDescriptor.class) && HINT_EDITOR.equals(hint)) {
+			return getEditorPartDescriptors(elements);
+		} else if (t.equals(MPartDescriptor.class) && HINT_VIEW.equals(hint)) {
+			return getViewPartDescriptors(elements);
 		}
 		return new MApplicationElement[0];
 	}
@@ -135,7 +146,7 @@ public class RegistryUtil {
 		return result.toArray(new MCategory[0]);
 	}
 
-	private static MPart[] getParts(IConfigurationElement[] elements) {
+	private static MPart[] getViews(IConfigurationElement[] elements) {
 
 		ArrayList<MPart> result = new ArrayList<MPart>();
 		for (IConfigurationElement element : elements) {
@@ -152,6 +163,69 @@ public class RegistryUtil {
 		}
 
 		return result.toArray(new MPart[0]);
+	}
+
+	private static MInputPart[] getEditors(IConfigurationElement[] elements) {
+
+		ArrayList<MInputPart> result = new ArrayList<MInputPart>();
+		for (IConfigurationElement element : elements) {
+			MInputPart part = (MInputPart) EcoreUtil.create(BasicPackageImpl.Literals.INPUT_PART);
+			part.setElementId(element.getAttribute("id"));
+			part.setLabel(element.getAttribute("name"));
+			part.setIconURI(getIconURI(element, "icon"));
+			if (element.getAttribute("class") != null) {
+				part.setContributionURI(getContributionURI(element, "class"));
+			} else {
+				part.setContributionURI(getContributionURI(element, "launcher"));
+			}
+			part.setToBeRendered(true);
+			part.setVisible(true);
+			part.setToolbar(MMenuFactory.INSTANCE.createToolBar());
+			part.setCloseable(true);
+			result.add(part);
+		}
+
+		return result.toArray(new MInputPart[0]);
+	}
+
+	private static MPartDescriptor[] getEditorPartDescriptors(IConfigurationElement[] elements) {
+
+		ArrayList<MPartDescriptor> result = new ArrayList<MPartDescriptor>();
+		for (IConfigurationElement element : elements) {
+			MPartDescriptor part = (MPartDescriptor) EcoreUtil.create(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR);
+			part.setElementId(element.getAttribute("id"));
+			part.setLabel(element.getAttribute("name"));
+			part.setIconURI(getIconURI(element, "icon"));
+			if (element.getAttribute("class") != null) {
+				part.setContributionURI(getContributionURI(element, "class"));
+			} else {
+				part.setContributionURI(getContributionURI(element, "launcher"));
+			}
+			part.setDirtyable(true);
+			part.setAllowMultiple(true);
+			part.setToolbar(MMenuFactory.INSTANCE.createToolBar());
+			part.setCloseable(true);
+			result.add(part);
+		}
+
+		return result.toArray(new MPartDescriptor[0]);
+	}
+
+	private static MPartDescriptor[] getViewPartDescriptors(IConfigurationElement[] elements) {
+
+		ArrayList<MPartDescriptor> result = new ArrayList<MPartDescriptor>();
+		for (IConfigurationElement element : elements) {
+			MPartDescriptor part = (MPartDescriptor) EcoreUtil.create(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR);
+			part.setElementId(element.getAttribute("id"));
+			part.setLabel(element.getAttribute("name"));
+			part.setIconURI(getIconURI(element, "icon"));
+			part.setContributionURI(getContributionURI(element, "class"));
+			part.setToolbar(MMenuFactory.INSTANCE.createToolBar());
+			part.setCloseable(true);
+			result.add(part);
+		}
+
+		return result.toArray(new MPartDescriptor[0]);
 	}
 
 	private static MHandler[] getHandlers(IConfigurationElement[] elements, MApplication application) {
@@ -179,7 +253,13 @@ public class RegistryUtil {
 	}
 
 	private static String getIconURI(IConfigurationElement element, String attribute) {
-		// FIXME don't assume local icon
+		if (element.getAttribute(attribute) == null) {
+			return "";
+		}
+		// FIXME any other cases?
+		if (element.getAttribute(attribute).startsWith("platform:")) {
+			return element.getAttribute(attribute);
+		}
 		return "platform:/plugin/" + element.getContributor().getName() + "/" + element.getAttribute(attribute);
 	}
 
@@ -259,7 +339,7 @@ public class RegistryUtil {
 	 * @return the structure that matches the extension registry to the passed
 	 *         {@link ApplicationElement}
 	 */
-	public static RegistryStruct getStruct(Class<? extends MApplicationElement> applicationElement) {
+	public static RegistryStruct getStruct(Class<? extends MApplicationElement> applicationElement, String hint) {
 
 		if (applicationElement == MCommand.class)
 			return new RegistryStruct("", "org.eclipse.ui.commands", "command", "name");
@@ -276,8 +356,20 @@ public class RegistryUtil {
 		else if (applicationElement == MHandler.class)
 			return new RegistryStruct("", "org.eclipse.ui.handlers", "handler", "commandId");
 
-		else if (applicationElement == MPart.class)
+		else if (applicationElement == MPart.class) {
 			return new RegistryStruct("", "org.eclipse.ui.views", "view", "name");
+		}
+
+		else if (applicationElement == MInputPart.class) {
+			return new RegistryStruct("", "org.eclipse.ui.editors", "editor", "name");
+		}
+
+		else if (applicationElement == MPartDescriptor.class) {
+			if (hint == HINT_EDITOR)
+				return new RegistryStruct("", "org.eclipse.ui.editors", "editor", "name");
+			if (hint == HINT_VIEW)
+				return new RegistryStruct("", "org.eclipse.ui.views", "view", "name");
+		}
 
 		return null;
 	}

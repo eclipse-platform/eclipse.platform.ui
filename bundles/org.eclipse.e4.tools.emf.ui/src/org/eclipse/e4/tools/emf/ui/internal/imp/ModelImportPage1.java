@@ -94,8 +94,8 @@ public class ModelImportPage1 extends WizardPage {
 	 */
 	public ModelImportPage1() {
 		super("wizardPage");
-		setTitle("Import Commands");
-		setDescription("Select plug-in and commands to import");
+		setTitle("Import ");
+		setDescription("Select plug-in and elements to import");
 		wizard = (ModelImportWizard) getWizard();
 		setPageComplete(false);
 	}
@@ -137,7 +137,7 @@ public class ModelImportPage1 extends WizardPage {
 
 			public void selectionChanged(SelectionChangedEvent event) {
 				String bundle = ((IStructuredSelection) event.getSelection()).getFirstElement().toString();
-				RegistryStruct struct = RegistryUtil.getStruct(wizard.getApplicationElement());
+				RegistryStruct struct = RegistryUtil.getStruct(wizard.getApplicationElement(), wizard.getHint());
 				struct.setBundle(bundle);
 				checkboxTableViewer.setInput(struct);
 
@@ -159,6 +159,14 @@ public class ModelImportPage1 extends WizardPage {
 	@Override
 	public void setWizard(IWizard newWizard) {
 		this.wizard = (ModelImportWizard) newWizard;
+		setTitle("Import " + wizard.getApplicationElement().getSimpleName());
+
+		String hint = wizard.getHint();
+		if (hint != null && hint.length() > 0) {
+			setDescription("Select plug-in and elements (" + hint + ") to import");
+			// else already set
+		}
+
 		super.setWizard(newWizard);
 	}
 

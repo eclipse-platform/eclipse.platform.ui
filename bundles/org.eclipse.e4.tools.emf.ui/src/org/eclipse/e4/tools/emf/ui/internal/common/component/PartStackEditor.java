@@ -25,10 +25,13 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
+import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -53,6 +56,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -77,6 +81,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
 	private List<Action> actions = new ArrayList<Action>();
+	private List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	@Optional
@@ -108,6 +113,21 @@ public class PartStackEditor extends AbstractComponentEditor {
 				handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
 			}
 		});
+
+		// --- Import Actions ---
+		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleImportChild(BasicPackageImpl.Literals.PART);
+			}
+		});
+		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleImportChild(BasicPackageImpl.Literals.INPUT_PART);
+			}
+		});
+
 	}
 
 	@Override
@@ -365,6 +385,10 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 	protected void handleAddChild(EClass eClass) {
 		EObject eObject = EcoreUtil.create(eClass);
+		addToModel(eObject);
+	}
+
+	private void addToModel(EObject eObject) {
 		setElementId(eObject);
 
 		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
@@ -375,10 +399,42 @@ public class PartStackEditor extends AbstractComponentEditor {
 		}
 	}
 
+	protected void handleImportChild(EClass eClass) {
+
+		if (eClass == BasicPackageImpl.Literals.PART) {
+			ModelImportWizard wizard = new ModelImportWizard(MPart.class, this);
+			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+			if (wizardDialog.open() == WizardDialog.OK) {
+				MPart[] parts = (MPart[]) wizard.getElements(MPart.class);
+				for (MPart part : parts) {
+					addToModel((EObject) part);
+				}
+			}
+		}
+
+		if (eClass == BasicPackageImpl.Literals.INPUT_PART) {
+			ModelImportWizard wizard = new ModelImportWizard(MInputPart.class, this);
+			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+			if (wizardDialog.open() == WizardDialog.OK) {
+				MInputPart[] parts = (MInputPart[]) wizard.getElements(MInputPart.class);
+				for (MInputPart part : parts) {
+					addToModel((EObject) part);
+				}
+			}
+		}
+	}
+
 	@Override
 	public List<Action> getActions(Object element) {
 		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
+		return l;
+	}
+
+	@Override
+	public List<Action> getActionsImport(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
+		l.addAll(actionsImport);
 		return l;
 	}
 }

@@ -26,10 +26,12 @@ import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
+import org.eclipse.e4.tools.emf.ui.internal.imp.RegistryUtil;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -137,10 +139,16 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		});
 
 		// --- Import Actions ---
-		actionsImport.add(new Action(Messages.PartSashContainerEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
-				handleImportChild(BasicPackageImpl.Literals.PART);
+				handleImportChild(BasicPackageImpl.Literals.PART, RegistryUtil.HINT_VIEW);
+			}
+		});
+		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleImportChild(BasicPackageImpl.Literals.INPUT_PART, RegistryUtil.HINT_EDITOR);
 			}
 		});
 
@@ -451,14 +459,25 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		}
 	}
 
-	protected void handleImportChild(EClass eClass) {
+	protected void handleImportChild(EClass eClass, String hint) {
 
 		if (eClass == BasicPackageImpl.Literals.PART) {
-			ModelImportWizard wizard = new ModelImportWizard(MPart.class, this);
+			ModelImportWizard wizard = new ModelImportWizard(MPart.class, this, hint);
 			WizardDialog wizardDialog = new WizardDialog(shell, wizard);
 			if (wizardDialog.open() == WizardDialog.OK) {
 				MPart[] parts = (MPart[]) wizard.getElements(MPart.class);
 				for (MPart part : parts) {
+					addToModel((EObject) part);
+				}
+			}
+		}
+
+		if (eClass == BasicPackageImpl.Literals.INPUT_PART) {
+			ModelImportWizard wizard = new ModelImportWizard(MInputPart.class, this);
+			WizardDialog wizardDialog = new WizardDialog(shell, wizard);
+			if (wizardDialog.open() == WizardDialog.OK) {
+				MInputPart[] parts = (MInputPart[]) wizard.getElements(MInputPart.class);
+				for (MInputPart part : parts) {
 					addToModel((EObject) part);
 				}
 			}

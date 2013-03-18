@@ -695,7 +695,7 @@ public class ModelEditor {
 
 						if (actions.size() > 0) {
 							// TODO WIM - extract nls
-							MenuManager menu = new MenuManager("Import");
+							MenuManager menu = new MenuManager("Import 3x");
 							for (Action a : actions) {
 								addSeparator = true;
 								menu.add(a);
