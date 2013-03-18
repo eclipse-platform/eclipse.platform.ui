@@ -272,6 +272,7 @@ public class TitleAreaDialog extends TrayDialog {
 		JFaceColors.setColors(messageLabel, foreground, background);
 		messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
 		messageLabel.setFont(JFaceResources.getDialogFont());
+		// Bug 248410 -  This snippet will only work with Windows screen readers.
 		messageLabel.getAccessible().addAccessibleAttributeListener(
 				new AccessibleAttributeAdapter() {
 					public void getAttributes(AccessibleAttributeEvent e) {
@@ -622,6 +623,7 @@ public class TitleAreaDialog extends TrayDialog {
 	private void updateMessage(String newMessage) {
 		String oldMessage = messageLabel.getText();
 		messageLabel.setText(newMessage);
+		// Bug 248410 -  This snippet will only work with Windows screen readers.
 		messageLabel.getAccessible().sendEvent(ACC.EVENT_ATTRIBUTE_CHANGED,
 				null);
 		messageLabel.getAccessible().sendEvent(
