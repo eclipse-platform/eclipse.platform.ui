@@ -724,6 +724,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 				"javax.inject",
 				"org.eclipse.core.runtime", 
 				"org.eclipse.swt",
+				"org.eclipse.e4.ui.model.workbench",
 				"org.eclipse.jface",
 				"org.eclipse.e4.ui.services",
 				"org.eclipse.e4.ui.workbench", 
