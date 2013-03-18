@@ -280,8 +280,11 @@ public class HandledContributionItem extends ContributionItem {
 		model = item;
 		setId(model.getElementId());
 		generateCommand();
-		if (model.getCommand() == null)
-			logger.error("Element " + model.getElementId() + " invalid, no command defined."); //$NON-NLS-1$ //$NON-NLS-2$
+		if (model.getCommand() == null) {
+			if (logger != null) {
+				logger.error("Element " + model.getElementId() + " invalid, no command defined."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 		updateVisible();
 	}
 
