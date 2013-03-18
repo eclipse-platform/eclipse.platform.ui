@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -468,15 +468,33 @@ public class ResourceMapperTests extends EclipseTest {
        }
     }
     
-    private boolean isTimeout(Throwable e){
-    	if(e instanceof InterruptedIOException && e.getMessage() !=null && e.getMessage().indexOf("Timeout while writing to output stream")>0){
-    		return true;
-    	}
-    	if(e.getCause()!=null){
-    		return isTimeout(e.getCause());
-    	}
-    	return false;
-    }
+	private boolean isTimeout(Throwable e) {
+		if (e == null) {
+			return false;
+		}
+
+		if (e instanceof InterruptedIOException
+				&& e.getMessage() != null
+				&& e.getMessage().indexOf(
+						"Timeout while writing to output stream") >= 0) {
+			return true;
+		}
+
+		if (e instanceof CoreException) {
+			CoreException ce = (CoreException) e;
+			if (ce.getStatus() != null && ce.getStatus().isMultiStatus()) {
+				MultiStatus multistatus = (MultiStatus) ce.getStatus();
+				for (int i = 0; i < multistatus.getChildren().length; i++) {
+					if (isTimeout(multistatus.getChildren()[i].getException())) {
+						return true;
+					}
+				}
+			}
+
+		}
+
+		return isTimeout(e.getCause());
+	}
 
     public void testUpdate() throws Exception {
     	try{
