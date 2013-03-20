@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.services" version="2">
+    <resource path="src/org/eclipse/e4/ui/services/internal/events/EventBroker.java" type="org.eclipse.e4.ui.services.internal.events.EventBroker">
+        <filter comment="Our default impllementation of IEventBroker" id="574619656">
+            <message_arguments>
+                <message_argument value="IEventBroker"/>
+                <message_argument value="EventBroker"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
