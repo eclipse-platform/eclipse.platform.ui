@@ -27,6 +27,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
 /**
+ * This service is used to find, create and handle model elements
+ * 
  * @since 1.0
  */
 public interface EModelService {

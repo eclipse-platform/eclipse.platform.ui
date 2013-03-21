@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench;singleton:=true
-Bundle-Version: 0.12.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -36,11 +36,7 @@ Export-Package: org.eclipse.e4.ui.internal.workbench;
    org.eclipse.e4.ui.workbench.renderers.swt,
    org.eclipse.ui.workbench",
  org.eclipse.e4.ui.workbench.lifecycle;x-friends:="org.eclipse.e4.ui.workbench.swt",
- org.eclipse.e4.ui.workbench.modeling;
-  x-friends:="org.eclipse.e4.ui.workbench.swt,
-   org.eclipse.e4.ui.workbench.addons.swt,
-   org.eclipse.e4.ui.workbench.renderers.swt,
-   org.eclipse.ui.workbench"
+ org.eclipse.e4.ui.workbench.modeling
 Bundle-Activator: org.eclipse.e4.ui.internal.workbench.Activator
 Service-Component: OSGI-INF/progress.xml, OSGI-INF/partService.xml
 Import-Package: com.ibm.icu.text;version="3.8.1",
