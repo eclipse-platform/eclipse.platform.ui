@@ -691,8 +691,7 @@ import org.eclipse.swt.widgets.ToolItem;
 				fMessageLabel.setText(fErrorText);
 				fMessageLabel.setImage(fErrorImage);
 			} else {
-				fMessageLabel.setForeground(display
-						.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+				fMessageLabel.setForeground(getForeground());
 				fMessageLabel.setText(fMessageText == null ? "" : fMessageText); //$NON-NLS-1$
 				fMessageLabel.setImage(fMessageImage);
 			}
