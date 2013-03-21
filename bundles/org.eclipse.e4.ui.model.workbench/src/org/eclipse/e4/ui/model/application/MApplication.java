@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Application</b></em>'.
  * <!-- end-user-doc -->
- *
  * <!-- begin-model-doc -->
  * <p>
  * <strong>Developers</strong>:
@@ -50,6 +49,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
  *
  * @model
  * @generated
+ * @since 1.0
  */
 public interface MApplication extends MElementContainer<MWindow>, MContext, MHandlerContainer, MBindingTableContainer, MPartDescriptorContainer, MBindings, MMenuContributions, MToolBarContributions, MTrimContributions, MSnippetContainer {
 	/**

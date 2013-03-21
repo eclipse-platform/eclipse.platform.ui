@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.Map;
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Element</b></em>'.
  * <!-- end-user-doc -->
- *
  * <!-- begin-model-doc -->
  * <p>
  * <strong>Developers</strong>:
@@ -40,6 +39,7 @@ import java.util.Map;
  *
  * @model abstract="true"
  * @generated
+ * @since 1.0
  */
 public interface MApplicationElement {
 	/**
