@@ -6,12 +6,12 @@ Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.e4.ui.css.swt;x-internal:=true,
- org.eclipse.e4.ui.css.swt.dom;x-internal:=true,
+ org.eclipse.e4.ui.css.swt.dom;x-friends:="org.eclipse.e4.ui.workbench.swt",
  org.eclipse.e4.ui.css.swt.dom.html;x-internal:=true,
  org.eclipse.e4.ui.css.swt.engine;x-friends:="org.eclipse.e4.ui.css.swt.theme,org.eclipse.e4.ui.workbench.swt",
  org.eclipse.e4.ui.css.swt.engine.html;x-internal:=true,
  org.eclipse.e4.ui.css.swt.helpers;x-internal:=true,
- org.eclipse.e4.ui.css.swt.properties;x-internal:=true,
+ org.eclipse.e4.ui.css.swt.properties;x-friends:="org.eclipse.ui.workbench",
  org.eclipse.e4.ui.css.swt.properties.converters;x-internal:=true,
  org.eclipse.e4.ui.css.swt.properties.css2;x-internal:=true,
  org.eclipse.e4.ui.css.swt.properties.custom;x-internal:=true,

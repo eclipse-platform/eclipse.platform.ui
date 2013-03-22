@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -35,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Decorating label provider with styled label support for the navigator.
  * <p>
- * If the wrapped label provider is a {@link DelegatingStyledCellLabelProvider.IStyledLabelProvider} it will use
+ * If the wrapped label provider is a {@link org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider} it will use
  * the styled label it provides.
  * </p>
  * <p>The label provider listens to the built-in decoration colors ({@link JFacePreferences#QUALIFIER_COLOR}, 

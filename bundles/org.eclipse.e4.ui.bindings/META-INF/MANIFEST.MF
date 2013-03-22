@@ -28,5 +28,5 @@ Export-Package: org.eclipse.e4.ui.bindings;
    org.eclipse.e4.ui.workbench.renderers.swt,
    org.eclipse.e4.ui.workbench.swt,
    org.eclipse.ui.workbench",
- org.eclipse.e4.ui.bindings.internal;x-friends:="org.eclipse.e4.ui.workbench",
+ org.eclipse.e4.ui.bindings.internal;x-friends:="org.eclipse.e4.ui.workbench,org.eclipse.e4.ui.workbench.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.bindings.keys;x-friends:="org.eclipse.e4.ui.workbench.swt,org.eclipse.ui.workbench"
