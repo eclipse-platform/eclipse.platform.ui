@@ -32,7 +32,9 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.UIEvents.ApplicationElement;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.framework.BundleContext;
@@ -44,6 +46,7 @@ public class RegistryUtil {
 
 	public final static String HINT_VIEW = "view";
 	public final static String HINT_EDITOR = "editor";
+	public final static String HINT_COMPAT_VIEW = "compatibilityView";
 
 	/**
 	 * 
@@ -64,6 +67,8 @@ public class RegistryUtil {
 			return getCategories(elements);
 		} else if (t.equals(MPerspective.class)) {
 			return getPerspectives(elements);
+		} else if (t.equals(MPart.class) && HINT_COMPAT_VIEW.equals(hint)) {
+			return getViewsAsCompatibilityViews(elements);
 		} else if (t.equals(MPart.class)) {
 			return getViews(elements);
 		} else if (t.equals(MInputPart.class)) {
@@ -74,6 +79,8 @@ public class RegistryUtil {
 			return getEditorPartDescriptors(elements);
 		} else if (t.equals(MPartDescriptor.class) && HINT_VIEW.equals(hint)) {
 			return getViewPartDescriptors(elements);
+		} else if (t.equals(MPartDescriptor.class) && HINT_COMPAT_VIEW.equals(hint)) {
+			return getPartDescriptorsAsCompatibilyViews(elements);
 		}
 		return new MApplicationElement[0];
 	}
@@ -157,32 +164,74 @@ public class RegistryUtil {
 			part.setContributionURI(getContributionURI(element, "class"));
 			part.setToBeRendered(true);
 			part.setVisible(true);
-			part.setToolbar(MMenuFactory.INSTANCE.createToolBar());
+			part.setToolbar(createToolBar(part));
+			part.getMenus().add(createViewMenu(part));
 			part.setCloseable(true);
+			part.getTags().add("View");
+			if (element.getAttribute("category") != null) {
+				part.getTags().add("categoryTag:" + element.getAttribute("category"));
+			}
+
 			result.add(part);
 		}
 
 		return result.toArray(new MPart[0]);
 	}
 
+	private static MToolBar createToolBar(MPart part) {
+		MToolBar toolBar = MMenuFactory.INSTANCE.createToolBar();
+		toolBar.setElementId(part.getElementId());
+		return toolBar;
+	}
+
+	private static MMenu createViewMenu(MPart part) {
+		MMenu menu = MMenuFactory.INSTANCE.createMenu();
+		menu.setElementId(part.getElementId());
+		menu.getTags().add("ViewMenu");
+		return menu;
+	}
+
+	private static MPart[] getViewsAsCompatibilityViews(IConfigurationElement[] elements) {
+		ArrayList<MPart> result = new ArrayList<MPart>();
+		MPart[] parts = getViews(elements);
+		for (MPart part : parts) {
+			part.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView");
+			result.add(part);
+		}
+		return result.toArray(new MPart[0]);
+	}
+
+	private static MPartDescriptor[] getPartDescriptorsAsCompatibilyViews(IConfigurationElement[] elements) {
+		ArrayList<MPartDescriptor> result = new ArrayList<MPartDescriptor>();
+		MPartDescriptor[] parts = getViewPartDescriptors(elements);
+		for (MPartDescriptor part : parts) {
+			part.setContributionURI("bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView");
+			result.add(part);
+		}
+		return result.toArray(new MPartDescriptor[0]);
+	}
+
 	private static MInputPart[] getEditors(IConfigurationElement[] elements) {
 
 		ArrayList<MInputPart> result = new ArrayList<MInputPart>();
 		for (IConfigurationElement element : elements) {
-			MInputPart part = (MInputPart) EcoreUtil.create(BasicPackageImpl.Literals.INPUT_PART);
-			part.setElementId(element.getAttribute("id"));
-			part.setLabel(element.getAttribute("name"));
-			part.setIconURI(getIconURI(element, "icon"));
-			if (element.getAttribute("class") != null) {
-				part.setContributionURI(getContributionURI(element, "class"));
-			} else {
-				part.setContributionURI(getContributionURI(element, "launcher"));
+			if ("editor".equals(element.getName())) /* Sanity Check */{
+				MInputPart part = (MInputPart) EcoreUtil.create(BasicPackageImpl.Literals.INPUT_PART);
+				part.setElementId(element.getAttribute("id"));
+				part.setLabel(element.getAttribute("name"));
+				part.setIconURI(getIconURI(element, "icon"));
+				if (element.getAttribute("class") != null) {
+					part.setContributionURI(getContributionURI(element, "class"));
+				} else {
+					part.setContributionURI(getContributionURI(element, "launcher"));
+				}
+				part.setToBeRendered(true);
+				part.setVisible(true);
+				part.setToolbar(createToolBar(part));
+				part.getMenus().add(createViewMenu(part));
+				part.setCloseable(true);
+				result.add(part);
 			}
-			part.setToBeRendered(true);
-			part.setVisible(true);
-			part.setToolbar(MMenuFactory.INSTANCE.createToolBar());
-			part.setCloseable(true);
-			result.add(part);
 		}
 
 		return result.toArray(new MInputPart[0]);
@@ -203,7 +252,16 @@ public class RegistryUtil {
 			}
 			part.setDirtyable(true);
 			part.setAllowMultiple(true);
-			part.setToolbar(MMenuFactory.INSTANCE.createToolBar());
+
+			MToolBar toolBar = MMenuFactory.INSTANCE.createToolBar();
+			toolBar.setElementId(part.getElementId());
+			part.setToolbar(toolBar);
+
+			MMenu menu = MMenuFactory.INSTANCE.createMenu();
+			menu.setElementId(part.getElementId());
+			menu.getTags().add("ViewMenu");
+			part.getMenus().add(menu);
+
 			part.setCloseable(true);
 			result.add(part);
 		}
@@ -219,8 +277,16 @@ public class RegistryUtil {
 			part.setElementId(element.getAttribute("id"));
 			part.setLabel(element.getAttribute("name"));
 			part.setIconURI(getIconURI(element, "icon"));
-			part.setContributionURI(getContributionURI(element, "class"));
-			part.setToolbar(MMenuFactory.INSTANCE.createToolBar());
+
+			MToolBar toolBar = MMenuFactory.INSTANCE.createToolBar();
+			toolBar.setElementId(part.getElementId());
+			part.setToolbar(toolBar);
+
+			MMenu menu = MMenuFactory.INSTANCE.createMenu();
+			menu.setElementId(part.getElementId());
+			menu.getTags().add("ViewMenu");
+			part.getMenus().add(menu);
+
 			part.setCloseable(true);
 			result.add(part);
 		}
@@ -367,7 +433,7 @@ public class RegistryUtil {
 		else if (applicationElement == MPartDescriptor.class) {
 			if (hint == HINT_EDITOR)
 				return new RegistryStruct("", "org.eclipse.ui.editors", "editor", "name");
-			if (hint == HINT_VIEW)
+			if (hint == HINT_VIEW || hint == HINT_COMPAT_VIEW)
 				return new RegistryStruct("", "org.eclipse.ui.views", "view", "name");
 		}
 

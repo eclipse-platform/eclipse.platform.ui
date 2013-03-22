@@ -75,13 +75,20 @@ public class VPartDescriptor extends AbstractComponentEditor {
 		actionsImport.add(new Action("Views", createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
-				handleImportChild(BasicPackageImpl.Literals.PART_DESCRIPTOR, RegistryUtil.HINT_VIEW);
+				handleImport(BasicPackageImpl.Literals.PART_DESCRIPTOR, RegistryUtil.HINT_VIEW);
 			}
 		});
 		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
-				handleImportChild(BasicPackageImpl.Literals.PART_DESCRIPTOR, RegistryUtil.HINT_EDITOR);
+				handleImport(BasicPackageImpl.Literals.PART_DESCRIPTOR, RegistryUtil.HINT_EDITOR);
+			}
+		});
+
+		actionsImport.add(new Action("View as CompatibilityView", createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleImport(BasicPackageImpl.Literals.PART_DESCRIPTOR, RegistryUtil.HINT_COMPAT_VIEW);
 			}
 		});
 	}
@@ -253,7 +260,7 @@ public class VPartDescriptor extends AbstractComponentEditor {
 		}
 	}
 
-	protected void handleImportChild(EClass eClass, String hint) {
+	protected void handleImport(EClass eClass, String hint) {
 
 		if (eClass == BasicPackageImpl.Literals.PART_DESCRIPTOR) {
 			ModelImportWizard wizard = new ModelImportWizard(MPartDescriptor.class, this, hint);
