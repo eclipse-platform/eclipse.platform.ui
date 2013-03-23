@@ -135,6 +135,7 @@ public class Messages {
 	public String MenuEditor_MenuItemType;
 	public String MenuEditor_MenuItemItemType;
 	public String MenuEditor_HandledMenuItem;
+	public String MenuEditor_DynamicMenuContribution;
 	public String MenuEditor_Separator;
 	public String MenuEditor_Menu;
 	public String MenuEditor_DirectMenuItem;
@@ -287,6 +288,7 @@ public class Messages {
 	public String MenuContributionEditor_MenuItemType;
 	public String MenuContributionEditor_MenuItemItemType;
 	public String MenuContributionEditor_HandledMenuItem;
+	public String MenuContributionEditor_DynamicMenuContribution;
 	public String MenuContributionEditor_Separator;
 	public String MenuContributionEditor_Menu;
 	public String MenuContributionEditor_DirectMenuItem;

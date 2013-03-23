@@ -296,7 +296,7 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 			});
 
 			Struct defaultStruct = new Struct(Messages.MenuContributionEditor_HandledMenuItem, MenuPackageImpl.Literals.HANDLED_MENU_ITEM, false);
-			childrenDropDown.setInput(new Struct[] { new Struct(Messages.MenuContributionEditor_Separator, MenuPackageImpl.Literals.MENU_SEPARATOR, true), new Struct(Messages.MenuContributionEditor_Menu, MenuPackageImpl.Literals.MENU, false), defaultStruct, new Struct(Messages.MenuContributionEditor_DirectMenuItem, MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false) });
+			childrenDropDown.setInput(new Struct[] { new Struct(Messages.MenuContributionEditor_Separator, MenuPackageImpl.Literals.MENU_SEPARATOR, true), new Struct(Messages.MenuContributionEditor_Menu, MenuPackageImpl.Literals.MENU, false), defaultStruct, new Struct(Messages.MenuContributionEditor_DirectMenuItem, MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false), new Struct(Messages.MenuContributionEditor_DynamicMenuContribution, MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION, false) });
 			childrenDropDown.setSelection(new StructuredSelection(defaultStruct));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
