@@ -11,20 +11,15 @@
 package org.eclipse.ui.internal.forms;
 
 import org.eclipse.ui.internal.forms.widgets.FormsResources;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class FormsPlugin extends AbstractUIPlugin {
+public class FormsPlugin implements BundleActivator {
 
-	public FormsPlugin() {
-	}
-	
 	public void stop(BundleContext context) throws Exception {
-		try {
-			FormsResources.shutdown();
-		} finally {
-			super.stop(context);
-		}
+		FormsResources.shutdown();
 	}
 
+	public void start(BundleContext context) throws Exception {
+	}
 }
