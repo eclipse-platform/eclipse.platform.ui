@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,7 @@ public final class ThemeElementHelper {
     private static void installFont(FontDefinition definition, ITheme theme,
             IPreferenceStore store, boolean setInRegistry) {
         FontRegistry registry = theme.getFontRegistry();
+		Display display = PlatformUI.getWorkbench().getDisplay();
 
         String id = definition.getId();
         String key = createPreferenceKey(theme, id);
@@ -105,11 +106,11 @@ public final class ThemeElementHelper {
         if (definition.getValue() != null) {
 			defaultFont = definition.getValue();
 		} else if (definition.getDefaultsTo() != null) {
-			defaultFont = registry.filterData(registry
-                    .getFontData(definition.getDefaultsTo()), PlatformUI.getWorkbench().getDisplay());
+			String defaultsToKey = createPreferenceKey(theme, definition.getDefaultsTo());
+			FontData[] defaultFontData = PreferenceConverter.getDefaultFontDataArray(store, defaultsToKey);
+			defaultFont = registry.filterData(defaultFontData, display);
 		} else {
             // values pushed in from jface property files.  Very ugly.
-			Display display = PlatformUI.getWorkbench().getDisplay();
 			
 			//If in high contrast, ignore the defaults in jface and use the default (system) font.
 			//This is a hack to address bug #205474. See bug #228207 for a future fix.
@@ -122,9 +123,15 @@ public final class ThemeElementHelper {
         }
 
         if (setInRegistry) {
-            if (prefFont == null
-                    || prefFont == PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT) {
-                prefFont = defaultFont;
+			if (prefFont == null || prefFont == PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT) {
+				if (definition.getValue() != null) {
+					prefFont = definition.getValue();
+				} else if (definition.getDefaultsTo() != null) {
+					FontData[] fontData = registry.getFontData(definition.getDefaultsTo());
+					prefFont = registry.filterData(fontData, display);
+				} else {
+					prefFont = defaultFont;
+				}
             }
 
             if (prefFont != null) {
@@ -273,9 +280,15 @@ public final class ThemeElementHelper {
         RGB prefColor = store != null 
         	? PreferenceConverter.getColor(store, key) 
         	: null;
-        RGB defaultColor = (definition.getValue() != null)
-        	? definition.getValue()
-            : registry.getRGB(definition.getDefaultsTo());
+		RGB defaultColor;
+		if (definition.getValue() != null) {
+			defaultColor = definition.getValue();
+		} else if (definition.getDefaultsTo() != null) {
+			String defaultsToKey = createPreferenceKey(theme, definition.getDefaultsTo());
+			defaultColor = PreferenceConverter.getDefaultColor(store, defaultsToKey);
+		} else {
+			defaultColor = null;
+		}
      
         if (defaultColor == null) {
 			// default is null, likely because we have a bad definition - the
@@ -284,18 +297,18 @@ public final class ThemeElementHelper {
 			defaultColor = PreferenceConverter.COLOR_DEFAULT_DEFAULT;
 		}
         	
-        if (prefColor == null
-                || prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
-            prefColor = defaultColor;
+		if (prefColor == null || prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
+			if (definition.getValue() != null) {
+				prefColor = definition.getValue();
+			} else if (definition.getDefaultsTo() != null) {
+				prefColor = registry.getRGB(definition.getDefaultsTo());
+			} else {
+				prefColor = defaultColor;
+			}
         }
 
-        //if the preference value isn't the default then retain that pref value
-        RGB colorToUse = ! store.isDefault(key)
-        	 ? prefColor
-             : defaultColor;
-
         if (setInRegistry) {
-        	registry.put(id, colorToUse);
+        	registry.put(id, prefColor);
         }
 
         if (store != null) {
