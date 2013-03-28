@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.ltk.core.refactoring.tests.scripting.RefactoringScriptingTest
 public class AllTests {
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite("All LTK Refactoring Core Tests"); //$NON-NLS-1$
+		TestSuite suite= new TestSuite(AllTests.class.getName());
 		
 		suite.addTestSuite(RefactoringContextTest.class);
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -77,7 +76,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite("All LTK Refactoring Resource Tests"); //$NON-NLS-1$
+		TestSuite suite= new TestSuite(ResourceRefactoringUndoTests.class.getName());
 		suite.addTestSuite(ResourceRefactoringUndoTests.class);
 		return suite;
 	}
@@ -340,26 +339,26 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		// order, but it's an easy way to check.  Of course there are some dependencies on the
 		// order (participant-pre-exec, main-exec, participant-exec)
 		int i= 0;
-		Assert.assertEquals(ElementRenameProcessor.MAIN_CREATE, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.WORKING_CREATE, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_CREATEPRE, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_CREATE, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXECPRE, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.MAIN_EXEC, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.WORKING_EXEC, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXEC, h.get(i++));
+		assertEquals(ElementRenameProcessor.MAIN_CREATE, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKING_CREATE, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKINGPRE_CREATEPRE, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKINGPRE_CREATE, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKINGPRE_EXECPRE, h.get(i++));
+		assertEquals(ElementRenameProcessor.MAIN_EXEC, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKING_EXEC, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKINGPRE_EXEC, h.get(i++));
 
 		undo();
-		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXEC_UNDO, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.WORKING_EXEC_UNDO, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.MAIN_EXEC_UNDO, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXECPRE_UNDO, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKINGPRE_EXEC_UNDO, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKING_EXEC_UNDO, h.get(i++));
+		assertEquals(ElementRenameProcessor.MAIN_EXEC_UNDO, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKINGPRE_EXECPRE_UNDO, h.get(i++));
 
 		redo();
-		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXECPRE, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.MAIN_EXEC, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.WORKING_EXEC, h.get(i++));
-		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXEC, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKINGPRE_EXECPRE, h.get(i++));
+		assertEquals(ElementRenameProcessor.MAIN_EXEC, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKING_EXEC, h.get(i++));
+		assertEquals(ElementRenameProcessor.WORKINGPRE_EXEC, h.get(i++));
 	}
 
 	private void execute(PerformRefactoringOperation op) throws CoreException {

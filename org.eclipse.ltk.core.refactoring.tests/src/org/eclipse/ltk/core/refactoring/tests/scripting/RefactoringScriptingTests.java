@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
 public class RefactoringScriptingTests {
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite("All LTK Refactoring Scripting Tests"); //$NON-NLS-1$
+		TestSuite suite= new TestSuite(RefactoringScriptingTests.class.getName());
 		suite.addTestSuite(RefactoringScriptApplicationTests.class);
 		return suite;
 	}

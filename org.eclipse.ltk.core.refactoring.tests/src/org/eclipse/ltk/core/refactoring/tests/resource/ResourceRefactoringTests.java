@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 public class ResourceRefactoringTests extends TestCase {
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite("All LTK Refactoring Resource Tests"); //$NON-NLS-1$
+		TestSuite suite= new TestSuite(ResourceRefactoringTests.class.getName());
 		suite.addTestSuite(ResourceRefactoringTests.class);
 		suite.addTestSuite(ResourceRefactoringUndoTests.class);
 		return suite;
