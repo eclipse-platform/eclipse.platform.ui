@@ -344,6 +344,9 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 							  		SyncInfo.INCOMING | SyncInfo.DELETION,
 							  		SyncInfo.INCOMING | SyncInfo.CHANGE});
 		
+		//Refresh project to make sure we delete all existing files. See bug 403309
+		project.refreshLocal(IProject.DEPTH_INFINITE, DEFAULT_MONITOR);
+		
 		// scrub the project contents
 		IResource[] members = project.members();
 		for (int i = 0; i < members.length; i++) {
