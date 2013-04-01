@@ -699,6 +699,42 @@
              </separator>
           </toolbar>
        </menuContribution>
+       <menuContribution
+             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+          <command
+                commandId="org.eclipse.debug.ui.actions.WatchCommand"
+                helpContextId="variable_watch_action_context"
+                icon="$nl$/icons/full/etool16/watch_exp.gif"
+                label="%Watch.label">
+             <visibleWhen>
+                <and>
+                   <with
+                         variable="org.eclipse.core.runtime.Platform">
+                      <test
+                            args="org.eclipse.debug.ui"
+                            property="org.eclipse.core.runtime.bundleState"
+                            value="ACTIVE">
+                      </test>
+                   </with>
+                   <with
+                         variable="selection">
+                      <count
+                            value="+">
+                      </count>
+                      <iterate>
+                         <instanceof
+                               value="org.eclipse.core.runtime.IAdaptable">
+                         </instanceof>
+                         <test
+                               property="org.eclipse.debug.ui.canCreateWatchExpression"
+                               value="true">
+                         </test>
+                      </iterate>
+                   </with>
+                </and>
+             </visibleWhen>
+          </command>
+       </menuContribution>
    </extension>  
    
    <extension
@@ -948,224 +984,6 @@
                tooltip="%memoryViewPrefAction.label"/>
       </viewContribution>
    </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-         
-   <!-- memory view contributions -->
-   <objectContribution
-            objectClass="org.eclipse.debug.internal.ui.views.memory.renderings.AbstractIntegerRendering"
-            id="org.eclipse.debug.ui.memory">
-         <menu
-               label="%Endianess"
-               path="additions"
-               id="org.eclipse.debug.ui.memory.rendering.setendianess">
-            <separator name="setEndianessGroup"/>
-            <groupMarker name="defaultEndianessGroup"/>
-         </menu>
-          <action
-                helpContextId="LittleEndianAction_context"
-                enablesFor="1"
-                label="%LittleEndianActionName"
-                class="org.eclipse.debug.internal.ui.views.memory.renderings.LittleEndianAction"
-                menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
-                id="org.eclipse.debug.ui.memory.rendering.LittleEndianAction"> 
-         </action>            
-         <action
-               helpContextId="BigEndianAction_context"
-               enablesFor="1"
-               label="%BigEndianActionName"
-               class="org.eclipse.debug.internal.ui.views.memory.renderings.BigEndianAction"
-               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
-               id="org.eclipse.debug.ui.memory.rendering.BigEndianAction"> 
-         </action>
-         <action
-               class="org.eclipse.debug.internal.ui.views.memory.renderings.DefaultEndianessAction"
-               enablesFor="1"
-               helpContextId="RestoreDefEndianessAction_context"
-               id="org.eclipse.debug.ui.memory.rendering.DefaultEndianAction"
-               label="%RestoreDefEndianessActionName"
-               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/defaultEndianessGroup"/>
-      </objectContribution>
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1"
-            id="org.eclipse.debug.ui.memory.renderingviewpane.1">
-         <menu
-               label="%AddRemoveRenderingMenu.name"
-               path="popUpBegin"
-               id="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove">
-         </menu>
-         <action
-               helpContextId="RemoveRenderingContextAction_context"
-               label="%RemoveRenderingAction.name"
-               class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
-               icon="$nl$/icons/full/elcl16/removememory_tsk.gif"
-               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove"
-               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.remove"/>
-         <action
-               helpContextId="AddRenderingContextAction_context"
-               label="%AddRenderingAction.name"
-               class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
-               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
-               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove"
-               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.add"/>
-      </viewerContribution>
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2"
-            id="org.eclipse.debug.ui.memory.renderingviewpane.2">
-         <menu
-               label="%AddRemoveRenderingMenu.name"
-               path="popUpBegin"
-               id="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"/>
-         <action
-               helpContextId="RemoveRenderingContextAction_context"
-               label="%RemoveRenderingAction.name"
-               class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
-               icon="$nl$/icons/full/elcl16/removememory_tsk.gif"
-               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"
-               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.remove"/>
-         <action
-               helpContextId="AddRenderingContextAction_context"
-               label="%AddRenderingAction.name"
-               class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
-               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
-               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"
-               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.add"/>
-      </viewerContribution>   
-      <viewerContribution
-            id="org.eclipse.debug.ui.memory.memoryBlockTreeViewPane"
-            targetID="org.eclipse.debug.ui.MemoryView.MemoryBlocksTreeViewPane">
-         <action
-               class="org.eclipse.debug.internal.ui.views.memory.ResetMemoryBlockAction"
-               helpContextId="resetMemoryMonitor_context"
-               icon="$nl$/icons/full/elcl16/memoryreset_tsk.gif"
-               id="org.eclipse.debug.ui.resetMemoryBlock"
-               label="%resetMemoryMonitorAction.label"
-               menubarPath="additions"/>
-      </viewerContribution>
-   <!-- contextual launch -->
-      <objectContribution
-            objectClass="java.lang.Object"
-            id="org.eclipse.debug.ui.contextualLaunch.profile">
-        <action
-               label="%ProfileContextMenu.label"
-               style="pulldown"
-               class="org.eclipse.debug.internal.ui.actions.ProfileContextualLaunchAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.debug.ui.contextualLaunch.profile.submenu">
-        </action>    
-        <enablement>
-             <or>
-             	<and>
-             		<not>
-						<with variable="org.eclipse.core.runtime.Platform">
-							<test property="org.eclipse.core.runtime.bundleState"
-								args="org.eclipse.debug.core"
-								value="ACTIVE"/>
-						</with>
-					</not>
-					<adapt type="org.eclipse.core.resources.IResource"/>
-				</and>
-             	<and>
-					<with variable="org.eclipse.core.runtime.Platform">
-						<test property="org.eclipse.core.runtime.bundleState"
-							args="org.eclipse.debug.core"
-							value="ACTIVE"/>
-					</with>
-					<test property="org.eclipse.debug.core.launchable" value="profile"/> 
-				</and>				
-             </or>               
-        </enablement>        
-      </objectContribution>
-      <objectContribution
-            objectClass="java.lang.Object"
-            id="org.eclipse.debug.ui.contextualLaunch.debug">
-        <action
-               label="%DebugContextMenu.label"
-               style="pulldown"
-               class="org.eclipse.debug.internal.ui.actions.DebugContextualLaunchAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.debug.ui.contextualLaunch.debug.submenu">
-         </action>
-        <enablement>
-             <or>
-             	<and>
-             		<not>
-						<with variable="org.eclipse.core.runtime.Platform">
-							<test property="org.eclipse.core.runtime.bundleState"
-								args="org.eclipse.debug.core"
-								value="ACTIVE"/>
-						</with>
-					</not>
-					<adapt type="org.eclipse.core.resources.IResource"/>
-				</and>
-             	<and>
-					<with variable="org.eclipse.core.runtime.Platform">
-						<test property="org.eclipse.core.runtime.bundleState"
-							args="org.eclipse.debug.core"
-							value="ACTIVE"/>
-					</with>
-					<test property="org.eclipse.debug.core.launchable" value="debug"/> 
-				</and>				
-             </or>               
-        </enablement>
-       </objectContribution>    
-       <objectContribution
-            objectClass="java.lang.Object"
-            id="org.eclipse.debug.ui.contextualLaunch.run">
-         <action
-               label="%RunContextMenu.label"
-               style="pulldown"
-               class="org.eclipse.debug.internal.ui.actions.RunContextualLaunchAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.debug.ui.contextualLaunch.run.submenu">
-         </action>                  
-        <enablement>
-             <or>
-             	<and>
-             		<not>
-						<with variable="org.eclipse.core.runtime.Platform">
-							<test property="org.eclipse.core.runtime.bundleState"
-								args="org.eclipse.debug.core"
-								value="ACTIVE"/>
-						</with>
-					</not>
-					<adapt type="org.eclipse.core.resources.IResource"/>
-				</and>
-             	<and>
-					<with variable="org.eclipse.core.runtime.Platform">
-						<test property="org.eclipse.core.runtime.bundleState"
-							args="org.eclipse.debug.core"
-							value="ACTIVE"/>
-					</with>
-					<test property="org.eclipse.debug.core.launchable" value="run"/> 
-				</and>				
-             </or>               
-        </enablement>
-      </objectContribution>
-   <!-- console additions -->
-      <viewerContribution
-             targetID="org.eclipse.debug.ui.ProcessConsoleType.#ContextMenu"
-             id="org.eclipse.debug.ui.processConsoleContextMenu">
-          <action
-                label="%RemoveAllTerminatedAction.label"
-                tooltip="%RemoveAllTerminatedAction.tooltip"
-                icon="$nl$/icons/full/elcl16/rem_all_co.gif"
-                class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
-                menubarPath="additions"
-                id="org.eclipse.debug.ui.consoleRemoveAllTerminatedAction"
-				helpContextId="console_remove_all_terminated_context"/>
-          <action
-                label="%ConsolePreferencesAction.label"
-                tooltip="%ConsolePreferencesAction.tooltip"
-                class="org.eclipse.debug.internal.ui.views.console.ConsoleShowPreferencesAction"
-                menubarPath="preferences"
-                id="org.eclipse.debug.ui.consolePreferencesAction"
-                helpContextId="console_show_preferences_action_context"/>                
-       </viewerContribution>
-   </extension>
 
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
@@ -1177,33 +995,6 @@
       </propertyTester>
    </extension>
 
-   <extension point="org.eclipse.ui.menus">
-       <menuContribution
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <command
-            commandId="org.eclipse.debug.ui.actions.WatchCommand"
-            icon="$nl$/icons/full/etool16/watch_exp.gif"
-            label="%Watch.label"
-            helpContextId="variable_watch_action_context">
-            <visibleWhen>
-             <and>
-             	<with variable="org.eclipse.core.runtime.Platform">
-			   		<test property="org.eclipse.core.runtime.bundleState"
-						args="org.eclipse.debug.ui"
-						value="ACTIVE"/>
-				</with>
-				<with variable="selection">
-					<count value="+"/>
-					<iterate>
-						<instanceof value="org.eclipse.core.runtime.IAdaptable"/>
-				    	<test property="org.eclipse.debug.ui.canCreateWatchExpression" value="true"/>
-					</iterate>
-				</with>             
-             </and>
-            </visibleWhen>
-         </command>
-       </menuContribution>
-   </extension>
 
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -1541,6 +1332,263 @@
                id="org.eclipse.debug.ui.actions.SelectAllVariablesAction">
          </action>
       </viewerContribution>
+      <viewerContribution
+            id="org.eclipse.debug.ui.processConsoleContextMenu"
+            targetID="org.eclipse.debug.ui.ProcessConsoleType.#ContextMenu">
+         <action
+               class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
+               helpContextId="console_remove_all_terminated_context"
+               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               id="org.eclipse.debug.ui.consoleRemoveAllTerminatedAction"
+               label="%RemoveAllTerminatedAction.label"
+               menubarPath="additions"
+               tooltip="%RemoveAllTerminatedAction.tooltip">
+         </action>
+         <action
+               class="org.eclipse.debug.internal.ui.views.console.ConsoleShowPreferencesAction"
+               helpContextId="console_show_preferences_action_context"
+               id="org.eclipse.debug.ui.consolePreferencesAction"
+               label="%ConsolePreferencesAction.label"
+               menubarPath="preferences"
+               tooltip="%ConsolePreferencesAction.tooltip">
+         </action>
+      </viewerContribution>
+      <objectContribution
+            id="org.eclipse.debug.ui.contextualLaunch.run"
+            objectClass="java.lang.Object">
+         <action
+               class="org.eclipse.debug.internal.ui.actions.RunContextualLaunchAction"
+               enablesFor="+"
+               id="org.eclipse.debug.ui.contextualLaunch.run.submenu"
+               label="%RunContextMenu.label"
+               menubarPath="additions"
+               style="pulldown">
+         </action>
+         <enablement>
+            <or>
+               <and>
+                  <not>
+                     <with
+                           variable="org.eclipse.core.runtime.Platform">
+                        <test
+                              args="org.eclipse.debug.core"
+                              property="org.eclipse.core.runtime.bundleState"
+                              value="ACTIVE">
+                        </test>
+                     </with>
+                  </not>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                  </adapt>
+               </and>
+               <and>
+                  <with
+                        variable="org.eclipse.core.runtime.Platform">
+                     <test
+                           args="org.eclipse.debug.core"
+                           property="org.eclipse.core.runtime.bundleState"
+                           value="ACTIVE">
+                     </test>
+                  </with>
+                  <test
+                        property="org.eclipse.debug.core.launchable"
+                        value="run">
+                  </test>
+               </and>
+            </or>
+         </enablement>
+      </objectContribution>
+      <objectContribution
+            id="org.eclipse.debug.ui.contextualLaunch.debug"
+            objectClass="java.lang.Object">
+         <action
+               class="org.eclipse.debug.internal.ui.actions.DebugContextualLaunchAction"
+               enablesFor="+"
+               id="org.eclipse.debug.ui.contextualLaunch.debug.submenu"
+               label="%DebugContextMenu.label"
+               menubarPath="additions"
+               style="pulldown">
+         </action>
+         <enablement>
+            <or>
+               <and>
+                  <not>
+                     <with
+                           variable="org.eclipse.core.runtime.Platform">
+                        <test
+                              args="org.eclipse.debug.core"
+                              property="org.eclipse.core.runtime.bundleState"
+                              value="ACTIVE">
+                        </test>
+                     </with>
+                  </not>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                  </adapt>
+               </and>
+               <and>
+                  <with
+                        variable="org.eclipse.core.runtime.Platform">
+                     <test
+                           args="org.eclipse.debug.core"
+                           property="org.eclipse.core.runtime.bundleState"
+                           value="ACTIVE">
+                     </test>
+                  </with>
+                  <test
+                        property="org.eclipse.debug.core.launchable"
+                        value="debug">
+                  </test>
+               </and>
+            </or>
+         </enablement>
+      </objectContribution>
+      <objectContribution
+            id="org.eclipse.debug.ui.contextualLaunch.profile"
+            objectClass="java.lang.Object">
+         <action
+               class="org.eclipse.debug.internal.ui.actions.ProfileContextualLaunchAction"
+               enablesFor="+"
+               id="org.eclipse.debug.ui.contextualLaunch.profile.submenu"
+               label="%ProfileContextMenu.label"
+               menubarPath="additions"
+               style="pulldown">
+         </action>
+         <enablement>
+            <or>
+               <and>
+                  <not>
+                     <with
+                           variable="org.eclipse.core.runtime.Platform">
+                        <test
+                              args="org.eclipse.debug.core"
+                              property="org.eclipse.core.runtime.bundleState"
+                              value="ACTIVE">
+                        </test>
+                     </with>
+                  </not>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                  </adapt>
+               </and>
+               <and>
+                  <with
+                        variable="org.eclipse.core.runtime.Platform">
+                     <test
+                           args="org.eclipse.debug.core"
+                           property="org.eclipse.core.runtime.bundleState"
+                           value="ACTIVE">
+                     </test>
+                  </with>
+                  <test
+                        property="org.eclipse.debug.core.launchable"
+                        value="profile">
+                  </test>
+               </and>
+            </or>
+         </enablement>
+      </objectContribution>
+      <viewerContribution
+            id="org.eclipse.debug.ui.memory.memoryBlockTreeViewPane"
+            targetID="org.eclipse.debug.ui.MemoryView.MemoryBlocksTreeViewPane">
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.ResetMemoryBlockAction"
+               helpContextId="resetMemoryMonitor_context"
+               icon="$nl$/icons/full/elcl16/memoryreset_tsk.gif"
+               id="org.eclipse.debug.ui.resetMemoryBlock"
+               label="%resetMemoryMonitorAction.label"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            id="org.eclipse.debug.ui.memory.renderingviewpane.2"
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2">
+         <menu
+               id="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"
+               label="%AddRemoveRenderingMenu.name"
+               path="popUpBegin">
+         </menu>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
+               helpContextId="RemoveRenderingContextAction_context"
+               icon="$nl$/icons/full/elcl16/removememory_tsk.gif"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.remove"
+               label="%RemoveRenderingAction.name"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove">
+         </action>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
+               helpContextId="AddRenderingContextAction_context"
+               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.add"
+               label="%AddRenderingAction.name"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            id="org.eclipse.debug.ui.memory.renderingviewpane.1"
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1">
+         <menu
+               id="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove"
+               label="%AddRemoveRenderingMenu.name"
+               path="popUpBegin">
+         </menu>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
+               helpContextId="RemoveRenderingContextAction_context"
+               icon="$nl$/icons/full/elcl16/removememory_tsk.gif"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.remove"
+               label="%RemoveRenderingAction.name"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove">
+         </action>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
+               helpContextId="AddRenderingContextAction_context"
+               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.add"
+               label="%AddRenderingAction.name"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove">
+         </action>
+      </viewerContribution>
+      <objectContribution
+            id="org.eclipse.debug.ui.memory"
+            objectClass="org.eclipse.debug.internal.ui.views.memory.renderings.AbstractIntegerRendering">
+         <menu
+               id="org.eclipse.debug.ui.memory.rendering.setendianess"
+               label="%Endianess"
+               path="additions">
+            <separator
+                  name="setEndianessGroup">
+            </separator>
+            <groupMarker
+                  name="defaultEndianessGroup">
+            </groupMarker>
+         </menu>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.renderings.LittleEndianAction"
+               enablesFor="1"
+               helpContextId="LittleEndianAction_context"
+               id="org.eclipse.debug.ui.memory.rendering.LittleEndianAction"
+               label="%LittleEndianActionName"
+               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup">
+         </action>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.renderings.BigEndianAction"
+               enablesFor="1"
+               helpContextId="BigEndianAction_context"
+               id="org.eclipse.debug.ui.memory.rendering.BigEndianAction"
+               label="%BigEndianActionName"
+               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup">
+         </action>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.renderings.DefaultEndianessAction"
+               enablesFor="1"
+               helpContextId="RestoreDefEndianessAction_context"
+               id="org.eclipse.debug.ui.memory.rendering.DefaultEndianAction"
+               label="%RestoreDefEndianessActionName"
+               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/defaultEndianessGroup">
+         </action>
+      </objectContribution>
    </extension>  
    <extension
          point="org.eclipse.ui.elementFactories">
