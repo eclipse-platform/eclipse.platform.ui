@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -49,6 +50,7 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.LaunchConfiguration;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.tests.TestsPlugin;
 import org.eclipse.debug.ui.DebugUITools;
@@ -75,6 +77,19 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	protected Object fLock = new Object();
 	protected ILaunchConfiguration fAdded;
 	protected ILaunchConfiguration fRemoved;
+	
+	/**
+	 * Class to hold resource description infos
+	 * @since 3.9.0
+	 */
+	class ResourceItem {
+		public ResourceItem(String path, Integer type) {
+			this.path = path;
+			this.type = type;
+		}
+		String path;
+		Integer type;
+	}
 	
 	class Listener implements ILaunchConfigurationListener {
 		
@@ -1399,5 +1414,95 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ImageDescriptor descriptor = DebugUITools.getImageDescriptor("org.eclipse.debug.tests.launch.type");
 		assertNotNull("The image descriptior type.image.2 must exist", descriptor);
 		assertNotSame("The image descriptor is not type.image.2", ImageDescriptor.getMissingImageDescriptor(), descriptor);
+	}
+	
+	/**
+	 * Tests that we can get a project handle from a project name
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395441
+	 * @throws Exception
+	 * @since 3.9.0
+	 */
+	public void testGetProjectMappedResource1() throws Exception {
+		ILaunchConfiguration lc = newConfiguration(null, "test.project.resource.mapping");
+		try {
+			ILaunchConfigurationWorkingCopy wc = lc.getWorkingCopy();
+			assertNotNull("Should have a working copy of the testig launch configuration", wc);
+			setResourceMappings(wc, new ResourceItem[] {new ResourceItem("test.project", new Integer(IResource.PROJECT))});
+			IResource[] res = wc.getMappedResources();
+			assertNotNull("There should be mapped resources", res);
+			assertTrue("There should be one project", res.length == 1);
+		}
+		finally {
+			lc.delete();
+		}
+	}
+	
+	/**
+	 * Tests that we can get a project handle from a bogus project name
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395441
+	 * @throws Exception
+	 * @since 3.9.0
+	 */
+	public void testGetProjectMappedResource2() throws Exception {
+		ILaunchConfiguration lc = newConfiguration(null,"test.project.resource.mapping");
+		try {
+			ILaunchConfigurationWorkingCopy wc = lc.getWorkingCopy();
+			assertNotNull("Should have a working copy of the testig launch configuration", wc);
+			setResourceMappings(wc, new ResourceItem[] {new ResourceItem("test/project", new Integer(IResource.PROJECT))});
+			IResource[] res = wc.getMappedResources();
+			assertNull("There should be no mapped resources", res);
+		}
+		finally {
+			lc.delete();
+		}
+	}
+	
+	/**
+	 * Tests that we can get a project handle from a bogus project name
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395441
+	 * @throws Exception
+	 * @since 3.9.0
+	 */
+	public void testGetProjectMappedResource3() throws Exception {
+		ILaunchConfiguration lc = newConfiguration(null,"test.project.resource.mapping");
+		try {
+			ILaunchConfigurationWorkingCopy wc = lc.getWorkingCopy();
+			assertNotNull("Should have a working copy of the testig launch configuration", wc);
+			setResourceMappings(wc, new ResourceItem[] {new ResourceItem("test\\project", new Integer(IResource.PROJECT))});
+			IResource[] res = wc.getMappedResources();
+			if(Platform.OS_WIN32.equals(Platform.getOS())) {
+				assertNull("There should be no mapped resources", res);
+			}
+			else {
+				assertNotNull("There should be mapped resources", res);
+			}
+		}
+		finally {
+			lc.delete();
+		}
+	}
+	
+	/**
+	 * Proxy to set resource paths, allowing invalid resource paths to be set
+	 * @param resources
+	 * @since 3.9.0
+	 */
+	protected void setResourceMappings(ILaunchConfigurationWorkingCopy config, ResourceItem[] resources) {
+		List/*<String>*/ paths = null;
+		List/*<String>*/ types = null;
+		int size = resources.length;
+		if(resources != null && size > 0) {
+			paths = new ArrayList(size);
+			types = new ArrayList(size);
+			for(int i = 0; i < size; i++) {
+				paths.add(resources[i].path);
+				types.add(resources[i].type.toString());
+			}
+		}
+		config.setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE_PATHS, paths);
+		config.setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE_TYPES, types);
 	}
 }

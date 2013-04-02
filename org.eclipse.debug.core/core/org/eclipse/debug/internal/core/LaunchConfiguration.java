@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -526,20 +526,22 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			IPath path = Path.fromPortableString(pathStr);
 			IResource res = null;
 			switch (type) {
-			case IResource.FILE:
-				res = root.getFile(path);
-				break;
-			case IResource.PROJECT:
-				res = root.getProject(pathStr);
-				break;
-			case IResource.FOLDER:
-				res = root.getFolder(path);
-				break;
-			case IResource.ROOT:
-				res = root;
-				break;
-			default:
-				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.ERROR, null));
+				case IResource.FILE:
+					res = root.getFile(path);
+					break;
+				case IResource.PROJECT:
+					if(Path.ROOT.isValidSegment(pathStr)) {
+						res = root.getProject(pathStr);
+					}
+					break;
+				case IResource.FOLDER:
+					res = root.getFolder(path);
+					break;
+				case IResource.ROOT:
+					res = root;
+					break;
+				default:
+					throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.ERROR, null));
 			}
 			if(res != null) {
 				list.add(res);
