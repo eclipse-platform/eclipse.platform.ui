@@ -122,12 +122,10 @@ public class E4Application implements IApplication {
 		return display;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.
-	 * IApplicationContext)
-	 */
+	 * IApplicationContext) */
 	public Object start(IApplicationContext applicationContext)
 			throws Exception {
 		// set the display name before the Display is
@@ -157,7 +155,6 @@ public class E4Application implements IApplication {
 				return EXIT_OK;
 
 			IEclipseContext workbenchContext = workbench.getContext();
-			workbenchContext.set(Display.class, display);
 
 			// Create and run the UI (if any)
 			workbench.createAndRunUI(workbench.getApplication());
@@ -198,6 +195,7 @@ public class E4Application implements IApplication {
 				IApplicationContext.APPLICATION_ARGS);
 
 		IEclipseContext appContext = createDefaultContext();
+		appContext.set(Display.class, display);
 		appContext.set(Realm.class, SWTObservables.getRealm(display));
 		appContext.set(UISynchronize.class, new UISynchronize() {
 
@@ -553,8 +551,7 @@ public class E4Application implements IApplication {
 			}
 			return false;
 		}
-		/*
-		 * // -data @noDefault or -data not specified, prompt and set
+		/* // -data @noDefault or -data not specified, prompt and set
 		 * ChooseWorkspaceData launchData = new ChooseWorkspaceData(instanceLoc
 		 * .getDefault());
 		 * 
@@ -578,8 +575,7 @@ public class E4Application implements IApplication {
 		 * already in use -- force the user to choose again
 		 * MessageDialog.openError(shell,
 		 * IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
-		 * IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage); }
-		 */
+		 * IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage); } */
 		return false;
 	}
 
