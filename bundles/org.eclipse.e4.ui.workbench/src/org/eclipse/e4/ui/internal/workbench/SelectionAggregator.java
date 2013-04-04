@@ -264,6 +264,9 @@ public class SelectionAggregator {
 						String partId = part.getElementId();
 						boolean continueTracking = targetedListeners.containsKey(partId)
 								|| targetedPostListeners.containsKey(partId);
+						if (!continueTracking) {
+							tracked.remove(part.getContext());
+						}
 						return continueTracking;
 					}
 					return true;
