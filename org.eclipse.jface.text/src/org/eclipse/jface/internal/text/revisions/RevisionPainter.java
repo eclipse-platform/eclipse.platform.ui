@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -986,7 +986,7 @@ public final class RevisionPainter {
 	 *
 	 * @return the list of all change regions, with diff information applied
 	 */
-	private List getRangeCache() {
+	private synchronized List getRangeCache() {
 		if (fRevisionRanges == null) {
 			if (fRevisionInfo == null) {
 				fRevisionRanges= Collections.EMPTY_LIST;
@@ -1007,7 +1007,7 @@ public final class RevisionPainter {
 	 *
 	 * @since 3.3
 	 */
-	private void clearRangeCache() {
+	private synchronized void clearRangeCache() {
 		fRevisionRanges= null;
 	}
 
