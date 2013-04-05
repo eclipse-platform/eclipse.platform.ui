@@ -904,6 +904,19 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		});
 
+		// Detect activation...picks up cases where the user clicks on the
+		// (already active) tab
+		ctf.addListener(SWT.Activate, new org.eclipse.swt.widgets.Listener() {
+			public void handleEvent(org.eclipse.swt.widgets.Event event) {
+				if (event.detail == SWT.MouseDown) {
+					CTabFolder ctf = (CTabFolder) event.widget;
+					MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) ctf
+							.getData(OWNING_ME);
+					activateStack(stack);
+				}
+			}
+		});
+
 		ctf.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
