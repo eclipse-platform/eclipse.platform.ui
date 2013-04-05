@@ -1895,7 +1895,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IViewReference findViewReference(String viewId, String secondaryId) {
 		for (IViewReference reference : getViewReferences()) {
-			if (viewId.equals(reference.getId())) {
+			// If the id contains a ':' use the part before it as the descriptor
+			// id
+			int colonIndex = reference.getId().indexOf(':');
+			String descId = colonIndex == -1 ? viewId : viewId.substring(0, colonIndex);
+
+			if (viewId.equals(descId)) {
 				String refSecondaryId = reference.getSecondaryId();
 				if (refSecondaryId == null) {
 					if (secondaryId == null) {
