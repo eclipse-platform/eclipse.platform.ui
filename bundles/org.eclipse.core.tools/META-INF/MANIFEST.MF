@@ -1,14 +1,15 @@
 Manifest-Version: 1.0
-Bundle-Name: Core Tools
-Bundle-SymbolicName: org.eclipse.core.tools; singleton=true
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.core.tools; singleton:=true
 Bundle-Version: 1.5.100.qualifier
 Bundle-Activator: org.eclipse.core.tools.CoreToolsPlugin
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Provide-Package: org.eclipse.core.tools,
+Export-Package: org.eclipse.core.tools,
  org.eclipse.core.tools.runtime,
  org.eclipse.core.tools.metadata
-Require-Bundle: org.eclipse.core.resources;bundle-version="[3.1.0,4.0.0)";optional=true,
+Require-Bundle: org.eclipse.core.resources;bundle-version="[3.1.0,4.0.0)";resolution:=optional,
  org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.jface.text,
  org.eclipse.ui,
@@ -20,4 +21,5 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.1.0,4.0.0)";option
  org.eclipse.core.filebuffers,
  org.eclipse.ui.ide,
  org.eclipse.search
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
