@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@
 package org.eclipse.ui;
 
 import java.util.Map;
-
 import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -38,15 +38,10 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 
 	/**
 	 * The listeners to this source provider. This value is never
-	 * <code>null</code>. {@link #listenerCount} should be consulted to get
-	 * the real length.
+	 * <code>null</code>.
 	 */
-	private ISourceProviderListener[] listeners = new ISourceProviderListener[7];
+	private final ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 
-	/**
-	 * The number of listeners in the array.
-	 */
-	private int listenerCount = 0;
 
 	public final void addSourceProviderListener(
 			final ISourceProviderListener listener) {
@@ -54,12 +49,7 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 			throw new NullPointerException("The listener cannot be null"); //$NON-NLS-1$
 		}
 
-		if (listenerCount == listeners.length) {
-			final ISourceProviderListener[] growArray = new ISourceProviderListener[listeners.length + 4];
-			System.arraycopy(listeners, 0, growArray, 0, listeners.length);
-			listeners = growArray;
-		}
-		listeners[listenerCount++] = listener;
+		listeners.add(listener);
 	}
 
 	/**
@@ -75,9 +65,9 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	 */
 	protected final void fireSourceChanged(final int sourcePriority,
 			final String sourceName, final Object sourceValue) {
-		for (int i = 0; i < listenerCount; i++) {
-			final ISourceProviderListener listener = listeners[i];
-			listener.sourceChanged(sourcePriority, sourceName, sourceValue);
+		for (Object listener : listeners.getListeners()) {
+			((ISourceProviderListener) listener).sourceChanged(sourcePriority, sourceName,
+					sourceValue);
 		}
 	}
 
@@ -94,9 +84,9 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	 */
 	protected final void fireSourceChanged(final int sourcePriority,
 			final Map sourceValuesByName) {
-		for (int i = 0; i < listenerCount; i++) {
-			final ISourceProviderListener listener = listeners[i];
-			listener.sourceChanged(sourcePriority, sourceValuesByName);
+
+		for (Object listener : listeners.getListeners()) {
+			((ISourceProviderListener) listener).sourceChanged(sourcePriority, sourceValuesByName);
 		}
 	}
 
@@ -122,21 +112,7 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 			throw new NullPointerException("The listener cannot be null"); //$NON-NLS-1$
 		}
 
-		int emptyIndex = -1;
-		for (int i = 0; i < listenerCount; i++) {
-			if (listeners[i] == listener) {
-				listeners[i] = null;
-				emptyIndex = i;
-			}
-		}
-
-		if (emptyIndex != -1) {
-			// Compact the array.
-			for (int i = emptyIndex + 1; i < listenerCount; i++) {
-				listeners[i - 1] = listeners[i];
-			}
-			listenerCount--;
-		}
+		listeners.remove(listener);
 	}
 
 	/**
