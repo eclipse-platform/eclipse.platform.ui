@@ -116,6 +116,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	@Inject
 	private IPresentationEngine engine;
 
+	private EventHandler topWindowHandler;
 	private EventHandler shellUpdater;
 	private EventHandler visibilityHandler;
 	private EventHandler sizeHandler;
@@ -207,6 +208,32 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	@PostConstruct
 	public void init() {
+		topWindowHandler = new EventHandler() {
+
+			public void handleEvent(Event event) {
+				// Ensure that this event is for a MApplication
+				if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MApplication))
+					return;
+				MWindow win = (MWindow) event
+						.getProperty(UIEvents.EventTags.NEW_VALUE);
+				if ((win == null) || !win.getTags().contains("topLevel")) //$NON-NLS-1$
+					return;
+				win.setToBeRendered(true);
+				if (!(win.getRenderer() == WBWRenderer.this))
+					return;
+				Shell shell = (Shell) win.getWidget();
+				if (shell.getMinimized()) {
+					shell.setMinimized(false);
+				}
+				shell.setActive();
+				shell.moveAbove(null);
+
+			}
+		};
+
+		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT,
+				topWindowHandler);
+
 		shellUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
 				// Ensure that this event is for a MMenuItem
@@ -359,6 +386,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	@PreDestroy
 	public void contextDisposed() {
+		eventBroker.unsubscribe(topWindowHandler);
 		eventBroker.unsubscribe(shellUpdater);
 		eventBroker.unsubscribe(visibilityHandler);
 		eventBroker.unsubscribe(sizeHandler);
