@@ -1900,7 +1900,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			int colonIndex = reference.getId().indexOf(':');
 			String descId = colonIndex == -1 ? viewId : viewId.substring(0, colonIndex);
 
-			if (viewId.equals(descId)) {
+			if (descId.equals(reference.getId())) {
 				String refSecondaryId = reference.getSecondaryId();
 				if (refSecondaryId == null) {
 					if (secondaryId == null) {
