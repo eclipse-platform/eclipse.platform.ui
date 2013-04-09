@@ -18,7 +18,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;

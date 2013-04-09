@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import java.util.Collections;
 import java.util.Map;
 import javax.inject.Named;
 import org.eclipse.core.commands.Command;
@@ -22,6 +23,8 @@ import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.core.commands.ExpressionContext;
+import org.eclipse.e4.core.commands.internal.HandlerServiceHandler;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
@@ -30,17 +33,17 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.MakeHandlersGo;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.menus.UIElement;
 
 /**
  * @since 3.5
  * 
  */
-public class E4HandlerProxy implements IHandlerListener {
+public class E4HandlerProxy implements IHandlerListener, IElementUpdater {
 	public HandlerActivation activation = null;
 	private Command command;
 	private IHandler handler;
@@ -75,21 +78,13 @@ public class E4HandlerProxy implements IHandlerListener {
 		if (appContext == null) {
 			appContext = new ExpressionContext(context);
 		}
-		ExecutionEvent event = new ExecutionEvent(command, parms, trigger, appContext);
+		ExecutionEvent event = new ExecutionEvent(command, parms == null ? Collections.EMPTY_MAP
+				: parms, trigger, appContext);
 		if (handler != null && handler.isHandled()) {
-			try {
 				final Object returnValue = handler.execute(event);
-				CommandProxy.firePostExecuteSuccess(command, returnValue);
 				return returnValue;
-			} catch (ExecutionException exception) {
-				CommandProxy.firePostExecuteFailure(command, exception);
-				throw exception;
-			}
 		}
-		final NotHandledException e = new NotHandledException(
-				"There is no handler to execute for command " + command.getId()); //$NON-NLS-1$
-		CommandProxy.fireNotHandled(command, e);
-		throw e;
+		return null;
 	}
 
 	public IHandler getHandler() {
@@ -98,12 +93,25 @@ public class E4HandlerProxy implements IHandlerListener {
 
 	public void handlerChanged(HandlerEvent handlerEvent) {
 		IHandler handler = command.getHandler();
-		if (handler instanceof MakeHandlersGo) {
+		if (handler instanceof HandlerServiceHandler) {
 			IEclipseContext appContext = ((Workbench) PlatformUI.getWorkbench()).getApplication()
 					.getContext();
 			if (HandlerServiceImpl.lookUpHandler(appContext, command.getId()) == this) {
-				((MakeHandlersGo) handler).fireHandlerChanged(handlerEvent);
+				((HandlerServiceHandler) handler).fireHandlerChanged(handlerEvent);
 			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.
+	 * menus.UIElement, java.util.Map)
+	 */
+	public void updateElement(UIElement element, Map parameters) {
+		if (handler instanceof IElementUpdater) {
+			((IElementUpdater) handler).updateElement(element, parameters);
 		}
 	}
 }

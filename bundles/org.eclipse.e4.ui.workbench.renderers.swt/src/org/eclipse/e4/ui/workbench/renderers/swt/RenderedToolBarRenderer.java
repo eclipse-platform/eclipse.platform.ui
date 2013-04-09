@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import org.eclipse.e4.core.commands.ExpressionContext;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.inject.Inject;
@@ -26,7 +28,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
-import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;

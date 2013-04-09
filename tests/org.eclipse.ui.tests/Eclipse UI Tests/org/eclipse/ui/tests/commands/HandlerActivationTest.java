@@ -26,6 +26,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
@@ -36,7 +37,6 @@ import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.MakeHandlersGo;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
@@ -204,7 +204,7 @@ public class HandlerActivationTest extends UITestCase {
 		if (!cmd.isDefined()) {
 			Category cat = commandService.getCategory(CATEGORY_ID);
 			cmd.define("Test Handler", "Test handler activation", cat);
-			cmd.setHandler(new MakeHandlersGo(getWorkbench(), CMD_ID));
+			cmd.setHandler(HandlerServiceImpl.getHandler(CMD_ID));
 		}
 
 	}

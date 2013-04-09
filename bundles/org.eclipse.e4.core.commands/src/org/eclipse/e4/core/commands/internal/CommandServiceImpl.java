@@ -72,6 +72,7 @@ public class CommandServiceImpl implements ECommandService {
 		Command cmd = commandManager.getCommand(id);
 		if (!cmd.isDefined()) {
 			cmd.define(name, description, category, parameters);
+			cmd.setHandler(HandlerServiceImpl.getHandler(id));
 		}
 		return cmd;
 	}

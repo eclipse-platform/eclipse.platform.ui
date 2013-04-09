@@ -35,9 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
-import org.eclipse.core.commands.CommandManagerEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.ICommandManagerListener;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.EventManager;
@@ -2008,21 +2006,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 		appContext.set(IUpdateService.class, service);
 		service.readRegistry();
 
-		Command[] cmds = commandManager.getAllCommands();
-		for (int i = 0; i < cmds.length; i++) {
-			Command cmd = cmds[i];
-			cmd.setHandler(new MakeHandlersGo(this, cmd.getId()));
-		}
-
-		commandManager.addCommandManagerListener(new ICommandManagerListener() {
-			public void commandManagerChanged(CommandManagerEvent commandManagerEvent) {
-				if (commandManagerEvent.isCommandDefined()) {
-					Command cmd = commandManagerEvent.getCommandManager().getCommand(
-							commandManagerEvent.getCommandId());
-					cmd.setHandler(new MakeHandlersGo(Workbench.this, cmd.getId()));
-				}
-			}
-		});
 		return service;
 	}
 
@@ -2254,7 +2237,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 			public void runWithException() {
 				handlerService[0] = new LegacyHandlerService(e4Context);
-				((LegacyHandlerService) handlerService[0]).initPreExecuteHook();
 				e4Context.set(IHandlerService.class.getName(), handlerService[0]);
 				handlerService[0].readRegistry();
 			}

@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.Parameter;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -206,6 +207,7 @@ public final class CommandPersistence extends RegistryPersistence {
 			}
 			if (!command.isDefined()) {
 				command.define(name, description, category, parameters, returnType, helpContextId);
+				command.setHandler(HandlerServiceImpl.getHandler(commandId));
 			}
 			readState(configurationElement, warningsToLog, command);
 		}

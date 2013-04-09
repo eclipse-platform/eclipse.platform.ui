@@ -12,20 +12,23 @@
 package org.eclipse.e4.core.commands.internal;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.AbstractParameterValueConverter;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterValueConversionException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.CanExecute;
-import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 
@@ -33,11 +36,50 @@ import org.eclipse.e4.core.services.log.Logger;
  *
  */
 public class HandlerServiceImpl implements EHandlerService {
-	private static final String TMP_STATIC_CONTEXT = "tmp-staticContext"; //$NON-NLS-1$
+	static final String TMP_STATIC_CONTEXT = "tmp-staticContext"; //$NON-NLS-1$
 	public final static String H_ID = "handler::"; //$NON-NLS-1$
 	public final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
 	public final static String CAN_EXECUTE = "HandlerServiceImpl.canExecute"; //$NON-NLS-1$
 	public final static String NOT_HANDLED = "HandlerServiceImpl.notHandled"; //$NON-NLS-1$
+	public final static String STATIC_CONTEXT = "HandlerServiceImpl.staticContext"; //$NON-NLS-1$
+	public final static String HANDLER_EXCEPTION = "HandlerServiceImpl.exception"; //$NON-NLS-1$
+
+	private static LinkedList<ExecutionContexts> contextStack = new LinkedList<ExecutionContexts>();
+
+	public static ContextFunction handlerGenerator = null;
+
+	public static IHandler getHandler(String commandId) {
+		if (handlerGenerator != null) {
+			return (IHandler) handlerGenerator.compute(null, commandId);
+		}
+		return new HandlerServiceHandler(commandId);
+	}
+
+	static class ExecutionContexts {
+		public IEclipseContext context;
+		public IEclipseContext staticContext;
+
+		public ExecutionContexts(IEclipseContext ctx, IEclipseContext staticCtx) {
+			context = ctx;
+			staticContext = staticCtx;
+		}
+	}
+
+	static LinkedList<ExecutionContexts> getContextStack() {
+		return contextStack;
+	}
+
+	public static void push(IEclipseContext ctx, IEclipseContext staticCtx) {
+		getContextStack().addFirst(new ExecutionContexts(ctx, staticCtx));
+	}
+
+	static ExecutionContexts pop() {
+		return getContextStack().poll();
+	}
+
+	static ExecutionContexts peek() {
+		return getContextStack().peek();
+	}
 
 	/**
 	 * @param context
@@ -47,25 +89,6 @@ public class HandlerServiceImpl implements EHandlerService {
 	 */
 	public static Object lookUpHandler(IEclipseContext context, String commandId) {
 		return context.getActiveLeaf().get(H_ID + commandId);
-	}
-
-	private IEclipseContext context;
-
-	@Inject
-	@Optional
-	private Logger logger;
-
-	public static Object preExecute = null;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.core.commands.EHandlerService#activateHandler(java.lang.String,
-	 * java.lang.Object)
-	 */
-	public void activateHandler(String commandId, Object handler) {
-		String handlerId = H_ID + commandId;
-		context.set(handlerId, handler);
 	}
 
 	/**
@@ -114,12 +137,23 @@ public class HandlerServiceImpl implements EHandlerService {
 		return value;
 	}
 
+	private IEclipseContext context;
+
+	@Inject
+	@Optional
+	Logger logger;
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.e4.core.commands.EHandlerService#canExecute(org.eclipse.core.commands.
-	 * ParameterizedCommand)
+	 * @see org.eclipse.e4.core.commands.EHandlerService#activateHandler(java.lang.String,
+	 * java.lang.Object)
 	 */
+	public void activateHandler(String commandId, Object handler) {
+		String handlerId = H_ID + commandId;
+		context.set(handlerId, handler);
+	}
+
 	public boolean canExecute(ParameterizedCommand command) {
 		final IEclipseContext staticContext = EclipseContextFactory.create(TMP_STATIC_CONTEXT);
 		try {
@@ -130,29 +164,17 @@ public class HandlerServiceImpl implements EHandlerService {
 	}
 
 	public boolean canExecute(ParameterizedCommand command, IEclipseContext staticContext) {
-		String commandId = command.getId();
-		Object handler = lookUpHandler(context, commandId);
-		if (handler == null) {
-			return false;
-		}
-
 		final IEclipseContext executionContext = getExecutionContext();
 		addParms(command, staticContext);
-
+		// executionContext.set(STATIC_CONTEXT, staticContext);
+		push(executionContext, staticContext);
 		try {
-			Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
-					executionContext, staticContext, Boolean.TRUE));
-			staticContext.set(CAN_EXECUTE, result);
-			return result.booleanValue();
-		} catch (Exception e) {
-			if (Command.DEBUG_HANDLERS && logger != null) {
-				StringBuilder message = new StringBuilder();
-				message.append("Handler (").append(handler).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
-				message.append(" for command (").append(commandId).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
-				message.append("threw unexpected exception"); //$NON-NLS-1$
-				logger.trace(e, message.toString());
-			}
-			return false;
+			Command cmd = command.getCommand();
+			cmd.setEnabled(peek());
+			return cmd.isEnabled();
+		} finally {
+			pop();
+			// executionContext.remove(STATIC_CONTEXT);
 		}
 	}
 
@@ -182,27 +204,26 @@ public class HandlerServiceImpl implements EHandlerService {
 	}
 
 	public Object executeHandler(ParameterizedCommand command, IEclipseContext staticContext) {
-		String commandId = command.getId();
 		final IEclipseContext executionContext = getExecutionContext();
 		addParms(command, staticContext);
-		if (preExecute != null) {
-			ContextInjectionFactory.invoke(preExecute, Execute.class, executionContext,
-					staticContext, null);
+		// executionContext.set(STATIC_CONTEXT, staticContext);
+		push(executionContext, staticContext);
+		try {
+			// Command cmd = command.getCommand();
+			return command.executeWithChecks(null, peek());
+		} catch (ExecutionException e) {
+			staticContext.set(HANDLER_EXCEPTION, e);
+		} catch (NotDefinedException e) {
+			staticContext.set(HANDLER_EXCEPTION, e);
+		} catch (NotEnabledException e) {
+			staticContext.set(HANDLER_EXCEPTION, e);
+		} catch (NotHandledException e) {
+			staticContext.set(HANDLER_EXCEPTION, e);
+		} finally {
+			pop();
+			// executionContext.remove(STATIC_CONTEXT);
 		}
-		Object handler = lookUpHandler(context, commandId);
-		if (handler == null) {
-			staticContext.set(NOT_HANDLED, Boolean.TRUE);
-			return null;
-		}
-		staticContext.remove(NOT_HANDLED);
-
-		Object rc = ContextInjectionFactory.invoke(handler, CanExecute.class, executionContext,
-				staticContext, Boolean.TRUE);
-		staticContext.set(CAN_EXECUTE, rc);
-		if (Boolean.FALSE.equals(rc))
-			return null;
-		return ContextInjectionFactory.invoke(handler, Execute.class, executionContext,
-				staticContext, null);
+		return null;
 	}
 
 	@Inject

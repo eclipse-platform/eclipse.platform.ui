@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import org.eclipse.e4.core.commands.ExpressionContext;
+
 import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -30,7 +32,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.MenuItem;

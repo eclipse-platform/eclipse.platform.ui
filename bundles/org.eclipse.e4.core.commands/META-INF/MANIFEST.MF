@@ -4,7 +4,7 @@ Bundle-SymbolicName: org.eclipse.e4.core.commands;singleton:=true
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-Version: 0.10.1.qualifier
+Bundle-Version: 0.10.2.qualifier
 Bundle-Activator: org.eclipse.e4.core.commands.internal.Activator
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
@@ -12,6 +12,7 @@ Import-Package: javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0",
  org.eclipse.core.commands,
  org.eclipse.core.commands.common,
+ org.eclipse.core.expressions,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.services.log,
  org.osgi.framework;version="1.5.0"

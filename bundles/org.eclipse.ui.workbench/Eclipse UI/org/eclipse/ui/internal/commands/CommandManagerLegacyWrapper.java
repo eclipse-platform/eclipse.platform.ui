@@ -22,6 +22,7 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
@@ -29,14 +30,12 @@ import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.ParseException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.CommandManagerEvent;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyConfiguration;
-import org.eclipse.ui.internal.MakeHandlersGo;
 import org.eclipse.ui.internal.handlers.LegacyHandlerWrapper;
 import org.eclipse.ui.internal.keys.SchemeLegacyWrapper;
 import org.eclipse.ui.internal.util.Util;
@@ -288,7 +287,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	public ICommand getCommand(String commandId) {
 		final Command command = commandManager.getCommand(commandId);
 		if (!command.isDefined()) {
-			command.setHandler(new MakeHandlersGo(PlatformUI.getWorkbench(), commandId));
+			command.setHandler(HandlerServiceImpl.getHandler(commandId));
 		}
 		return new CommandLegacyWrapper(command, bindingManager);
 	}

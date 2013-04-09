@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.menus;
 
+import org.eclipse.e4.core.commands.ExpressionContext;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +25,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
-import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.e4.ui.workbench.renderers.swt.ContributionRecord;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarContributionRecord;
 import org.eclipse.jface.action.ContributionManager;

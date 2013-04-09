@@ -19,11 +19,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Named;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -40,24 +38,21 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.commands.ExpressionContext;
+import org.eclipse.e4.core.commands.internal.HandlerServiceHandler;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
-import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
-import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.MakeHandlersGo;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.expressions.AndExpression;
@@ -148,74 +143,11 @@ public class LegacyHandlerService implements IHandlerService {
 
 	private static IHandlerActivation systemHandlerActivation;
 
-	/*
-	 * We are obligated to return a non-null IHandlerActivation from our
-	 * activate calls. It is only used as a token, but must not return null from
-	 * certain methods. This token represents passing the MakeHandlerGo handler
-	 * back into the system.
-	 */
-	private static IHandlerActivation getSystemHandlerActivation(IEclipseContext context, final String cmdId) {
-		if (systemHandlerActivation == null) {
-			final IWorkbench wb = context.get(IWorkbench.class);
 
-			systemHandlerActivation = new IHandlerActivation() {
-
-				public int compareTo(Object o) {
-					return -1;
-				}
-
-				public void setResult(boolean result) {
-				}
-
-				public int getSourcePriority() {
-					return 0;
-				}
-
-				public Expression getExpression() {
-					return null;
-				}
-
-				public boolean evaluate(IEvaluationContext context) {
-					return false;
-				}
-
-				public void clearResult() {
-				}
-
-				public boolean isActive(IEvaluationContext context) {
-					return false;
-				}
-
-				public IHandlerService getHandlerService() {
-					return (IHandlerService) wb.getService(IHandlerService.class);
-				}
-
-				public IHandler getHandler() {
-					return null;
-				}
-
-				public int getDepth() {
-					return 0;
-				}
-
-				public String getCommandId() {
-					return cmdId;
-				}
-
-				public void clearActive() {
-				}
-			};
-		}
-		return systemHandlerActivation;
-	}
 
 	public static IHandlerActivation registerLegacyHandler(final IEclipseContext context,
 			String id, final String cmdId, IHandler handler, Expression activeWhen) {
-		if (handler instanceof MakeHandlersGo) {
-			final String msg = "Invalid Handler MakeHandlerGo"; //$NON-NLS-1$
-			WorkbenchPlugin.log(msg, new Exception(msg));
-			return getSystemHandlerActivation(context, cmdId);
-		}
+
 		ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
 		Command command = cs.getCommand(cmdId);
 		boolean handled = command.isHandled();
@@ -229,11 +161,8 @@ public class LegacyHandlerService implements IHandlerService {
 		boolean handledChanged = handled != command.isHandled();
 		boolean enabledChanged = enabled != command.isEnabled();
 		if (handledChanged || enabledChanged) {
-			IHandler proxy = command.getHandler();
-			if (proxy instanceof MakeHandlersGo) {
-				((MakeHandlersGo) proxy).fireHandlerChanged(new HandlerEvent(proxy, enabledChanged,
-						handledChanged));
-			}
+			// IHandler proxy = command.getHandler();
+			// TODO do we need to fire a handler changed event?
 		}
 		return activation;
 	}
@@ -285,30 +214,6 @@ public class LegacyHandlerService implements IHandlerService {
 		eclipseContext = context;
 		evalContext = new ExpressionContext(eclipseContext);
 		this.defaultExpression = defaultExpression;
-	}
-
-	public void initPreExecuteHook() {
-		EHandlerService hs = eclipseContext.get(EHandlerService.class);
-		if (hs instanceof HandlerServiceImpl) {
-			HandlerServiceImpl.preExecute = new Object() {
-				@Execute
-				public void execute(IEclipseContext context, ParameterizedCommand command,
-						@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms,
-						@Optional Event trigger, @Optional IEvaluationContext staticContext) {
-					if (command == null) {
-						return;
-					}
-					IEvaluationContext appContext = staticContext;
-					if (appContext == null) {
-						appContext = new ExpressionContext(context);
-					}
-					ExecutionEvent event = new ExecutionEvent(command.getCommand(), parms, trigger,
-							appContext);
-					CommandProxy.firePreExecute(command.getCommand(), event);
-				}
-			};
-		}
-
 	}
 
 	/*
@@ -513,20 +418,17 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 		try {
 			final Object rc = hs.executeHandler(command, staticContext);
-			if (staticContext.get(HandlerServiceImpl.NOT_HANDLED) == Boolean.TRUE) {
-				final NotHandledException e = new NotHandledException(
-						"There is no handler to execute for command " + command.getId()); //$NON-NLS-1$
-				CommandProxy.fireNotHandled(command.getCommand(), e);
-				throw e;
-			}
-			final Object obj = staticContext.get(HandlerServiceImpl.CAN_EXECUTE);
-			if (obj instanceof Boolean) {
-				if (!((Boolean) obj).booleanValue()) {
-					final NotEnabledException exception = new NotEnabledException(
-							"Trying to execute the disabled command " + command.getId()); //$NON-NLS-1$
-					CommandProxy.fireNotEnabled(command.getCommand(), exception);
-					throw exception;
-				}
+			final Object obj = staticContext.get(HandlerServiceImpl.HANDLER_EXCEPTION);
+			if (obj instanceof ExecutionException) {
+				throw (ExecutionException) obj;
+			} else if (obj instanceof NotDefinedException) {
+				throw (NotDefinedException) obj;
+			} else if (obj instanceof NotEnabledException) {
+				throw (NotEnabledException) obj;
+			} else if (obj instanceof NotHandledException) {
+				throw (NotHandledException) obj;
+			} else if (obj instanceof Exception) {
+				WorkbenchPlugin.log((Exception) obj);
 			}
 			return rc;
 		} catch (InjectionException e) {
@@ -549,6 +451,8 @@ public class LegacyHandlerService implements IHandlerService {
 			IEvaluationContext context) throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
 
+		IHandler handler = command.getCommand().getHandler();
+		boolean enabled = handler.isEnabled();
 		IEclipseContext staticContext = null;
 		Object defaultVar = null;
 		if (context instanceof ExpressionContext) {
@@ -574,26 +478,26 @@ public class LegacyHandlerService implements IHandlerService {
 		EHandlerService hs = lookupContext.get(EHandlerService.class);
 		try {
 			final Object rc = hs.executeHandler(command, staticContext);
-			if (staticContext.get(HandlerServiceImpl.NOT_HANDLED) == Boolean.TRUE) {
-				final NotHandledException e = new NotHandledException(
-						"There is no handler to execute for command " + command.getId()); //$NON-NLS-1$
-				CommandProxy.fireNotHandled(command.getCommand(), e);
-				throw e;
-			}
-			final Object obj = staticContext.get(HandlerServiceImpl.CAN_EXECUTE);
-			if (obj instanceof Boolean) {
-				if (!((Boolean) obj).booleanValue()) {
-					final NotEnabledException exception = new NotEnabledException(
-							"Trying to execute the disabled command " + command.getId()); //$NON-NLS-1$
-					CommandProxy.fireNotEnabled(command.getCommand(), exception);
-					throw exception;
-				}
+			final Object obj = staticContext.get(HandlerServiceImpl.HANDLER_EXCEPTION);
+			if (obj instanceof ExecutionException) {
+				throw (ExecutionException) obj;
+			} else if (obj instanceof NotDefinedException) {
+				throw (NotDefinedException) obj;
+			} else if (obj instanceof NotEnabledException) {
+				throw (NotEnabledException) obj;
+			} else if (obj instanceof NotHandledException) {
+				throw (NotHandledException) obj;
+			} else if (obj instanceof Exception) {
+				WorkbenchPlugin.log((Exception) obj);
 			}
 			return rc;
 		} catch (InjectionException e) {
 			rethrow(e);
 			throw e;
 		} finally {
+			if (handler.isEnabled() != enabled && handler instanceof HandlerServiceHandler) {
+				((HandlerServiceHandler) handler).overrideEnabled(enabled);
+			}
 			staticContext.dispose();
 		}
 	}

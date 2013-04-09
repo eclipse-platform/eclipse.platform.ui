@@ -20,6 +20,8 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -50,8 +52,21 @@ public class CommandToModelProcessor {
 		}
 		CommandManager commandManager = context.get(CommandManager.class);
 		if (commandManager == null) {
+			HandlerServiceImpl.handlerGenerator = new ContextFunction() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see
+				 * org.eclipse.e4.core.contexts.ContextFunction#compute(org.
+				 * eclipse.e4.core.contexts.IEclipseContext, java.lang.String)
+				 */
+				@Override
+				public Object compute(IEclipseContext context, String contextKey) {
+					return new WorkbenchHandlerServiceHandler(contextKey);
+				}
+			};
 			commandManager = new CommandManager();
-			setCommandFireEvents(commandManager, false);
+			// setCommandFireEvents(commandManager, false);
 			context.set(CommandManager.class, commandManager);
 		}
 
@@ -128,7 +143,7 @@ public class CommandToModelProcessor {
 		}
 	}
 
-	private void setCommandFireEvents(CommandManager manager, boolean b) {
+	void setCommandFireEvents(CommandManager manager, boolean b) {
 		try {
 			Field f = CommandManager.class.getDeclaredField("shouldCommandFireEvents"); //$NON-NLS-1$
 			f.setAccessible(true);
