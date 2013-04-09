@@ -817,6 +817,11 @@
             name="%command.closeAll.name"/>
       <command
             categoryId="org.eclipse.ui.category.file"
+            description="%command.closeAllSaved.description"
+            id="org.eclipse.ui.file.closeAllSaved"
+            name="%command.closeAllSaved.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.file"
             defaultHandler="org.eclipse.ui.internal.handlers.WizardHandler$Import"
             description="%command.import.description"
             id="org.eclipse.ui.file.import"
