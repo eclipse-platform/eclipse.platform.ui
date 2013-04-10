@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Michael Krkoska - initial API and implementation (bug 188333)
+ *     Pawel Piech - Bug 291245 - [Viewers] StyledCellLabelProvider.paint(...) does not respect column alignment
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers.interactive;
 
@@ -16,13 +17,15 @@ import java.text.MessageFormat;
 
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -80,6 +83,7 @@ public class StyledCellLabelProviderTests {
 	}
 
 	protected boolean useBold;
+	protected TableViewerColumn column;
 
 	public StyledCellLabelProviderTests() {
 	}
@@ -110,9 +114,23 @@ public class StyledCellLabelProviderTests {
 		final Button boldButton = new Button(composite, SWT.CHECK);
 		boldButton.setText("use bold");
 
+		final Button leftButton = new Button(composite, SWT.RADIO);
+		leftButton.setText("align left");
+		leftButton.setSelection(true);
+		final Button centerButton = new Button(composite, SWT.RADIO);
+		centerButton.setText("align center");
+		final Button rightButton = new Button(composite, SWT.RADIO);
+		rightButton.setText("align right");
+
 		final TableViewer tableViewer= new TableViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		tableViewer.getTable().setHeaderVisible(true);
+		FontData[] boldFontData= getModifiedFontData(tableViewer.getTable().getFont().getFontData(), SWT.BOLD);
+		Font boldFont = new Font(Display.getCurrent(), boldFontData);
+		final ExampleLabelProvider labelProvider= new ExampleLabelProvider(boldFont);
 		
-		boldButton.addSelectionListener(new SelectionAdapter(){
+		createColumn(tableViewer, SWT.LEFT, labelProvider);
+
+		boldButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				useBold = boldButton.getSelection();
 				tableViewer.refresh();
@@ -124,15 +142,23 @@ public class StyledCellLabelProviderTests {
 				tableViewer.refresh();
 			}
 		};
-		
-		FontData[] boldFontData= getModifiedFontData(tableViewer.getTable().getFont().getFontData(), SWT.BOLD);
 
-		Font boldFont = new Font(Display.getCurrent(), boldFontData);
-		final ExampleLabelProvider labelProvider= new ExampleLabelProvider(boldFont);
+		SelectionAdapter adapter = new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				if (((Button)e.getSource()).getSelection()) {
+					column.getColumn().dispose();
+					int style = e.getSource() == leftButton ? SWT.LEFT : (e.getSource() == centerButton ? SWT.CENTER : SWT.RIGHT);
+					createColumn(tableViewer, style, labelProvider);
+				}
+			}
+		}; 
+		leftButton.addSelectionListener(adapter);
+		centerButton.addSelectionListener(adapter);
+		rightButton.addSelectionListener(adapter);
+
 		TestContentProvider contentProvider= new TestContentProvider();
 		
 		tableViewer.setContentProvider(contentProvider);
-		tableViewer.setLabelProvider(labelProvider);
 		
 		stylingButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
@@ -147,6 +173,14 @@ public class StyledCellLabelProviderTests {
 		tableViewer.setInput(new Object());
 
 		return composite;
+	}
+	
+	private void createColumn(TableViewer viewer, int style, CellLabelProvider labelProvider) {
+		column = new TableViewerColumn(viewer, style);
+		column.getColumn().setWidth(200);
+		column.getColumn().setText("Column");
+		column.setLabelProvider(labelProvider);
+		viewer.refresh();
 	}
 	
 	boolean timerOn = false;
