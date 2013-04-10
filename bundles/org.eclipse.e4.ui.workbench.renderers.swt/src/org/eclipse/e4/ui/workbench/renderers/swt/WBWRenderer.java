@@ -26,6 +26,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -135,7 +136,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		}
 
 		if (activePart != null) {
-			activePart.getTags().remove("active"); //$NON-NLS-1$
+			activePart.getTags().remove(CSSConstants.CSS_ACTIVE_CLASS);
 
 			MUIElement parent = activePart.getParent();
 			if (parent == null && activePart.getCurSharedRef() != null) {
@@ -153,7 +154,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		activePart = p;
 
 		if (activePart != null) {
-			activePart.getTags().add("active"); //$NON-NLS-1$
+			activePart.getTags().add(CSSConstants.CSS_ACTIVE_CLASS);
 			MUIElement parent = activePart.getParent();
 			if (parent == null && activePart.getCurSharedRef() != null) {
 				MPlaceholder ph = activePart.getCurSharedRef();
@@ -169,9 +170,9 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	private void styleStack(MPartStack stack, boolean active) {
 		if (!active)
-			stack.getTags().remove("active"); //$NON-NLS-1$
+			stack.getTags().remove(CSSConstants.CSS_ACTIVE_CLASS);
 		else
-			stack.getTags().add("active"); //$NON-NLS-1$
+			stack.getTags().add(CSSConstants.CSS_ACTIVE_CLASS);
 
 		if (stack.getWidget() != null)
 			setCSSInfo(stack, stack.getWidget());

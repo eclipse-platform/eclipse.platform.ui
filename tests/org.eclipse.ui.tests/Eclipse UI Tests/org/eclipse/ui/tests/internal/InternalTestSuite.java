@@ -63,5 +63,6 @@ public class InternalTestSuite extends TestSuite {
         addTest(new TestSuite(PerspectiveSwitcherTest.class));
         addTest(new TestSuite(StickyViewManagerTest.class));
         addTest(new TestSuite(FileEditorMappingTest.class));
+        addTest(new TestSuite(WorkbenchSiteProgressServiceModelTagsTest.class));
     }
 }

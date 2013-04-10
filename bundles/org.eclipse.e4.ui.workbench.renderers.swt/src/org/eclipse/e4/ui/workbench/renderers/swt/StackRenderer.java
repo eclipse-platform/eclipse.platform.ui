@@ -23,6 +23,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
@@ -149,6 +150,8 @@ public class StackRenderer extends LazyStackRenderer {
 	 * toolbar has been changed.
 	 */
 	private EventHandler childrenHandler;
+
+	private EventHandler tagsChangeHandler;
 
 	private boolean ignoreTabSelChanges = false;
 
@@ -291,6 +294,7 @@ public class StackRenderer extends LazyStackRenderer {
 	public void init() {
 		super.init(eventBroker);
 
+		// TODO: Refactor using findItemForPart(MPart) method
 		itemUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
 				MUIElement element = (MUIElement) event
@@ -342,6 +346,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL, itemUpdater);
 
+		// TODO: Refactor using findItemForPart(MPart) method
 		dirtyUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
 				Object objElement = event
@@ -483,6 +488,39 @@ public class StackRenderer extends LazyStackRenderer {
 		};
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN,
 				childrenHandler);
+
+		tagsChangeHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				MUIElement element = (MUIElement) event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				Object newValue = event
+						.getProperty(UIEvents.EventTags.NEW_VALUE);
+				Object oldValue = event
+						.getProperty(UIEvents.EventTags.OLD_VALUE);
+
+				if (!(element instanceof MPart)
+						|| !isBusyTagModified(oldValue, newValue)) {
+					return;
+				}
+
+				MPart part = (MPart) element;
+				CTabItem cti = findItemForPart(part);
+				if (cti != null) {
+					setCSSInfo(part, cti);
+					reapplyStyles(cti);
+
+				}
+			}
+		};
+		eventBroker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS,
+				tagsChangeHandler);
+	}
+
+	private boolean isBusyTagModified(Object oldValue, Object newValue) {
+		return (newValue == null && CSSConstants.CSS_BUSY_CLASS
+				.equals(oldValue))
+				|| (oldValue == null && CSSConstants.CSS_BUSY_CLASS
+						.equals(newValue));
 	}
 
 	/**
@@ -541,6 +579,7 @@ public class StackRenderer extends LazyStackRenderer {
 		eventBroker.unsubscribe(dirtyUpdater);
 		eventBroker.unsubscribe(viewMenuUpdater);
 		eventBroker.unsubscribe(childrenHandler);
+		eventBroker.unsubscribe(tagsChangeHandler);
 	}
 
 	private String getLabel(MUILabel itemPart, String newName) {
@@ -822,6 +861,40 @@ public class StackRenderer extends LazyStackRenderer {
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getData(OWNING_ME) == element)
 				return items[i];
+		}
+		return null;
+	}
+
+	protected CTabItem findItemForPart(MPart part) {
+		// is this a direct child of the stack?
+		if (part.getParent() != null
+				&& part.getParent().getRenderer() == StackRenderer.this) {
+			CTabItem cti = findItemForPart(part, part.getParent());
+			if (cti != null) {
+				return cti;
+			}
+		}
+
+		// Do we have any stacks with place holders for the element
+		// that's changed?
+		MWindow win = modelService.getTopLevelWindowFor(part);
+		List<MPlaceholder> refs = modelService.findElements(win, null,
+				MPlaceholder.class, null);
+		if (refs != null) {
+			for (MPlaceholder ref : refs) {
+				if (ref.getRef() != part)
+					continue;
+
+				MElementContainer<MUIElement> refParent = ref.getParent();
+				// can be null, see bug 328296
+				if (refParent != null
+						&& refParent.getRenderer() instanceof StackRenderer) {
+					CTabItem cti = findItemForPart(ref, refParent);
+					if (cti != null) {
+						return cti;
+					}
+				}
+			}
 		}
 		return null;
 	}
