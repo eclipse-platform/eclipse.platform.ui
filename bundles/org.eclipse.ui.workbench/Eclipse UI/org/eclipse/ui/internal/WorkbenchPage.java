@@ -1063,7 +1063,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private boolean contains(ViewReference reference) {
 		for (ViewReference viewReference : viewReferences) {
-			if (reference.getId().equals(viewReference.getId())) {
+			if (reference.getModel().getElementId().equals(viewReference.getModel().getElementId())) {
 				return true;
 			}
 		}
