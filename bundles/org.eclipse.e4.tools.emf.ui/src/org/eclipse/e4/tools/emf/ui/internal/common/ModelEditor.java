@@ -13,6 +13,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,13 +45,13 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
-import org.eclipse.e4.internal.tools.wizards.model.ExtractContributionModelWizard;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.IEditorDescriptor;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
+import org.eclipse.e4.tools.emf.ui.common.IModelExtractor;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.IScriptingSupport;
 import org.eclipse.e4.tools.emf.ui.common.ISelectionProviderService;
@@ -202,7 +203,6 @@ import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -297,6 +297,10 @@ public class ModelEditor {
 	@Inject
 	@Translation
 	private Messages messages;
+
+	@Inject
+	@Optional
+	private IModelExtractor modelExtractor;
 
 	private ObservablesManager obsManager;
 
@@ -645,7 +649,7 @@ public class ModelEditor {
 							manager.add(new Separator());
 
 						// build the extract action
-						if ((!((VirtualEntry<?>) s.getFirstElement()).getList().isEmpty()) && (!isModelFragment()))
+						if ((!((VirtualEntry<?>) s.getFirstElement()).getList().isEmpty()) && (!isModelFragment()) && modelExtractor != null) {
 							manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
 								public void run() {
 									VirtualEntry<?> ve = (VirtualEntry<?>) s.getFirstElement();
@@ -661,10 +665,8 @@ public class ModelEditor {
 									while (iterator.hasNext()) {
 										maes.add((MApplicationElement) iterator.next());
 									}
-									ExtractContributionModelWizard extractContributionModelWizard = new ExtractContributionModelWizard(maes);
-									extractContributionModelWizard.setup(project);
-									WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), extractContributionModelWizard);
-									if (wizardDialog.open() == WizardDialog.OK) {
+
+									if (modelExtractor.extract(viewer.getControl().getShell(), project, maes)) {
 										for (MApplicationElement mae : maes) {
 											Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), mae);
 											if (cmd.canExecute()) {
@@ -674,7 +676,7 @@ public class ModelEditor {
 									}
 								};
 							});
-
+						}
 					} else {
 
 						final EObject o = (EObject) s.getFirstElement();
@@ -799,7 +801,7 @@ public class ModelEditor {
 					}
 
 				}
-				if ((s.getFirstElement() instanceof MApplicationElement) && (!isModelFragment()) && (!(s.getFirstElement() instanceof MApplication)))
+				if ((s.getFirstElement() instanceof MApplicationElement) && (!isModelFragment()) && (!(s.getFirstElement() instanceof MApplication)) && modelExtractor != null) {
 					manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
 						public void run() {
 							MApplicationElement oe = (MApplicationElement) s.getFirstElement();
@@ -809,19 +811,16 @@ public class ModelEditor {
 								MessageDialog.openError(viewer.getControl().getShell(), null, messages.ModelEditor_ExtractFragment_NoParentId);
 								return;
 							}
-							ExtractContributionModelWizard extractContributionModelWizard = new ExtractContributionModelWizard(oe);
-							extractContributionModelWizard.setup(project);
-							WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), extractContributionModelWizard);
-							if (wizardDialog.open() == WizardDialog.OK) {
+							if (modelExtractor.extract(viewer.getControl().getShell(), project, Collections.singletonList(oe))) {
 								Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), oe);
 								if (cmd.canExecute()) {
 									ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
 								}
 							}
-
 						};
 
 					});
+				}
 
 				if (addSeparator) {
 					manager.add(new Separator());
