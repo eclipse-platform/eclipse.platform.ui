@@ -63,11 +63,11 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.revisions.IRevisionListener;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.revisions.RevisionEvent;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.revisions.RevisionRange;
-import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationHover;
@@ -898,6 +898,9 @@ public final class RevisionPainter {
 	 * @since 3.3
 	 */
 	private int getBaselineBias(GC gc, int widgetLine) {
+		if (widgetLine == fWidget.getLineCount())
+			widgetLine--;
+
 		/*
 		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=62951
 		 * widget line height may be more than the font height used for the
