@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -628,8 +628,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					isHighlighting= true;
 					// The call below updates the decoration - no need to create new decoration
 					decoration= getDecoration(annotation, decoration);
-					if (decoration == null)
-						highlightedDecorationsMap.remove(annotation);
+					if (decoration == null) {
+						Decoration removedDecoration= (Decoration)highlightedDecorationsMap.remove(annotation);
+						if (removedDecoration != null) {
+							highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, removedDecoration.fPosition.offset);
+							highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, removedDecoration.fPosition.offset + removedDecoration.fPosition.length);
+						}
+					}
+
 				} else {
 					decoration= getDecoration(annotation, decoration);
 					if (decoration != null && decoration.fPaintingStrategy instanceof ITextStyleStrategy) {
@@ -656,7 +662,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						drawRangeEnd= Math.max(drawRangeEnd, position.offset + position.length);
 					}
 				} else {
-					highlightedDecorationsMap.remove(annotation);
+					Decoration removedDecoration= (Decoration)highlightedDecorationsMap.remove(annotation);
+					if (removedDecoration != null) {
+						highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, removedDecoration.fPosition.offset);
+						highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, removedDecoration.fPosition.offset + removedDecoration.fPosition.length);
+					}
 				}
 
 				if (usesDrawingStrategy) {
