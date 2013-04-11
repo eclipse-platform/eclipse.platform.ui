@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.testing;
 
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.SafeRunnable;
-
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
@@ -62,6 +59,13 @@ public class WorkbenchTestable extends TestableObject {
         	// don't use a job, since tests often wait for all jobs to complete before proceeding
             Runnable runnable = new Runnable() {
                 public void run() {
+					// disable workbench auto-save during tests
+					if ("true".equalsIgnoreCase(System.getProperty(PlatformUI.PLUGIN_ID + ".testsDisableWorkbenchAutoSave"))) { //$NON-NLS-1$ //$NON-NLS-2$
+						if (WorkbenchTestable.this.workbench instanceof Workbench) {
+							((Workbench) WorkbenchTestable.this.workbench).setEnableAutoSave(false);
+						}
+						Job.getJobManager().cancel(Workbench.WORKBENCH_AUTO_SAVE_JOB);
+					}
                 	// Some tests (notably the startup performance tests) do not want to wait for early startup.
                 	// Allow this to be disabled by specifying the system property: org.eclipse.ui.testsWaitForEarlyStartup=false
                 	// For details, see bug 94129 [Workbench] Performance test regression caused by workbench harness change
