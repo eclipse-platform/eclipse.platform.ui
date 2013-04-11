@@ -1885,7 +1885,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see org.eclipse.ui.IWorkbenchPage
      */
     public IViewReference findViewReference(String viewId) {
-        return findViewReference(viewId, null);
+		for (IViewReference reference : getViewReferences()) {
+			ViewReference ref = (ViewReference) reference;
+			if (viewId.equals(ref.getModel().getElementId())) {
+				return reference;
+			}
+		}
+		return null;
     }
 
     /*
@@ -1894,25 +1900,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see org.eclipse.ui.IWorkbenchPage
      */
     public IViewReference findViewReference(String viewId, String secondaryId) {
-		for (IViewReference reference : getViewReferences()) {
-			// If the id contains a ':' use the part before it as the descriptor
-			// id
-			String referenceId = reference.getId();
-			int colonIndex = referenceId.indexOf(':');
-			String descId = colonIndex == -1 ? referenceId : referenceId.substring(0, colonIndex);
-
-			if (viewId.equals(descId)) {
-				String refSecondaryId = reference.getSecondaryId();
-				if (refSecondaryId == null) {
-					if (secondaryId == null) {
-						return reference;
-					}
-				} else if (refSecondaryId.equals(secondaryId)) {
-					return reference;
-				}
-			}
-		}
-		return null;
+		String compoundId = viewId;
+		if (secondaryId != null && secondaryId.length() > 0)
+			compoundId += ":" + secondaryId; //$NON-NLS-1$
+		return findViewReference(compoundId);
     }
 
 	public void createViewReferenceForPart(final MPart part, String viewId) {
