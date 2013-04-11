@@ -47,3 +47,11 @@
 .MToolControl.Draggable {
 	handle-image:  url(./dragHandle.png);
 }
+
+CTabItem:selected  {
+	font-style: normal;
+}
+
+CTabItem.busy:selected {
+	font-style: italic;
+}

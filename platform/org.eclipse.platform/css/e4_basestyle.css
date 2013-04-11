@@ -49,3 +49,10 @@
     background-color: #A0A000; 
 }
 
+CTabItem:selected  {
+	font-style: normal;
+}
+
+CTabItem.busy:selected {
+	font-style: italic;
+}

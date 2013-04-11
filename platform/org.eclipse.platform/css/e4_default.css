@@ -39,3 +39,11 @@
     swt-outer-keyline-color: #C3D0E9;
 	swt-inner-keyline-color: #FFFFFF;
 }
+
+CTabItem:selected  {
+	font-style: normal;
+}
+
+CTabItem.busy:selected {
+	font-style: italic;
+}
