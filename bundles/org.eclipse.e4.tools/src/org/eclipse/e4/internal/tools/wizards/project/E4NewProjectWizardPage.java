@@ -24,6 +24,7 @@ public class E4NewProjectWizardPage extends org.eclipse.pde.internal.ui.wizards.
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		fOSGIButton.setSelection(true);
+		fEclipseButton.setSelection(false);
 		fEclipseButton.setEnabled(false);
 		fEclipseCombo.setEnabled(false);
 	}
