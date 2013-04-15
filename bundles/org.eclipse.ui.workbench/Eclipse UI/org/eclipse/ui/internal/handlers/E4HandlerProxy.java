@@ -29,6 +29,7 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
@@ -51,10 +52,14 @@ public class E4HandlerProxy implements IHandlerListener {
 	}
 
 	@CanExecute
-	public boolean canExecute(IEclipseContext context, @Optional IEvaluationContext staticContext) {
+	public boolean canExecute(IEclipseContext context, @Optional IEvaluationContext staticContext,
+			MApplication application) {
 		if (handler instanceof IHandler2) {
-			((IHandler2) handler).setEnabled(staticContext == null ? new ExpressionContext(context)
-					: staticContext);
+			Object ctx = staticContext;
+			if (ctx == null) {
+				ctx = new ExpressionContext(application.getContext());
+			}
+			((IHandler2) handler).setEnabled(ctx);
 		}
 		return handler.isEnabled();
 	}
