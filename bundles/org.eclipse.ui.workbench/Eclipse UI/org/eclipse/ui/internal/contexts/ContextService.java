@@ -129,7 +129,7 @@ public final class ContextService implements IContextService {
 				}
 				return false;
 			}
-			ExpressionContext ctx = new ExpressionContext(eclipseContext.getActiveLeaf());
+			ExpressionContext ctx = new ExpressionContext(eclipseContext);
 			try {
 				if (updating) {
 					EvaluationResult result = expression.evaluate(ctx);
