@@ -172,8 +172,15 @@ public class ControlFactory {
 	}
 
 	public static void createMapProperties(Composite parent, final Messages Messages, final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
+		createMapProperties(parent, Messages, editor, label, null, feature, vIndent);
+	}
+
+	public static void createMapProperties(Composite parent, final Messages Messages, final AbstractComponentEditor editor, String label, String tooltip, final EStructuralFeature feature, int vIndent) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
+		if (tooltip != null) {
+			l.setToolTipText(tooltip);
+		}
 		GridData gd = new GridData(GridData.END, GridData.BEGINNING, false, false);
 		gd.verticalIndent = vIndent;
 		l.setLayoutData(gd);
@@ -326,8 +333,15 @@ public class ControlFactory {
 	}
 
 	public static void createTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp) {
-		createTextField(parent, label, master, context, textProp, modelProp, null);
+		createTextField(parent, label, null, master, context, textProp, modelProp, null);
+	}
 
+	public static void createTextField(Composite parent, String label, String tooltip, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp) {
+		createTextField(parent, label, tooltip, master, context, textProp, modelProp, null);
+	}
+
+	public static void createTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp, final String warningText) {
+		createTextField(parent, label, null, master, context, textProp, modelProp, warningText);
 	}
 
 	/**
@@ -342,9 +356,12 @@ public class ControlFactory {
 	 *            Non null warningText means that a warning with this non-null
 	 *            text will be shown when the field is left empty
 	 */
-	public static void createTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp, final String warningText) {
+	public static void createTextField(Composite parent, String label, String tooltip, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp, final String warningText) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
+		if (tooltip != null) {
+			l.setToolTipText(tooltip);
+		}
 		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 		final Text t = new Text(parent, SWT.BORDER);
@@ -382,8 +399,15 @@ public class ControlFactory {
 	}
 
 	public static void createTranslatedTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp, IResourcePool resourcePool, IProject project) {
+		createTranslatedTextField(parent, label, null, master, context, textProp, modelProp, resourcePool, project);
+	}
+
+	public static void createTranslatedTextField(Composite parent, String label, String tooltip, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp, IResourcePool resourcePool, IProject project) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
+		if (tooltip != null) {
+			l.setToolTipText(tooltip);
+		}
 		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 		final Text t = new Text(parent, SWT.BORDER);
@@ -499,9 +523,16 @@ public class ControlFactory {
 	}
 
 	public static void createBindingContextWiget(Composite parent, final Messages Messages, final AbstractComponentEditor editor, String label) {
+		createBindingContextWiget(parent, Messages, editor, label, null);
+	}
+
+	public static void createBindingContextWiget(Composite parent, final Messages Messages, final AbstractComponentEditor editor, String label, String tooltip) {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(label);
+			if (tooltip != null) {
+				l.setToolTipText(tooltip);
+			}
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 			final TableViewer viewer = new TableViewer(parent);
@@ -609,8 +640,15 @@ public class ControlFactory {
 	}
 
 	public static void createStringListWidget(Composite parent, Messages Messages, final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
+		createStringListWidget(parent, Messages, editor, label, null, feature, vIndent);
+	}
+
+	public static void createStringListWidget(Composite parent, Messages Messages, final AbstractComponentEditor editor, String label, String tooltip, final EStructuralFeature feature, int vIndent) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
+		if (tooltip != null) {
+			l.setToolTipText(tooltip);
+		}
 		GridData gd = new GridData(GridData.END, GridData.BEGINNING, false, false);
 		gd.verticalIndent = vIndent;
 		l.setLayoutData(gd);
@@ -759,8 +797,15 @@ public class ControlFactory {
 	}
 
 	public static void createCheckBox(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty selectionProp, IEMFEditValueProperty modelProp) {
+		createCheckBox(parent, label, null, master, context, selectionProp, modelProp);
+	}
+
+	public static void createCheckBox(Composite parent, String label, String tooltip, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty selectionProp, IEMFEditValueProperty modelProp) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
+		if (tooltip != null) {
+			l.setToolTipText(tooltip);
+		}
 		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 		Button t = new Button(parent, SWT.CHECK);

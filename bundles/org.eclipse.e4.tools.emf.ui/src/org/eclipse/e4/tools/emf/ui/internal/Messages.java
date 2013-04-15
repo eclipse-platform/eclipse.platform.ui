@@ -34,6 +34,7 @@ public class Messages {
 	public String ModelTooling_UIElement_AccessibilityPhrase;
 
 	public String ModelTooling_Context_Variables;
+	public String ModelTooling_Context_Variables_Tooltip;
 	public String ModelTooling_Context_Properties;
 
 	public String ModelTooling_ApplicationElement_Tags;
@@ -189,6 +190,7 @@ public class Messages {
 	public String PartEditor_IconURI;
 	public String PartEditor_ClassURI;
 	public String PartEditor_Closeable;
+	public String PartEditor_Closeable_Tooltip;
 	public String PartEditor_Menus;
 	public String PartEditor_Handlers;
 	public String PartEditor_ContainerData;
