@@ -263,7 +263,7 @@ public class ReopenEditorMenu extends ContributionItem {
                 }
                 IEditorInput input = item.getInput();
                 IEditorDescriptor desc = item.getDescriptor();
-                if (input == null || desc == null) {
+				if (input == null || !input.exists() || desc == null) {
                     String title = WorkbenchMessages.OpenRecent_errorTitle;
                     String msg = NLS.bind(WorkbenchMessages.OpenRecent_unableToOpen,  itemName ); 
                     MessageDialog.openWarning(window.getShell(), title, msg);
