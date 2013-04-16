@@ -48,10 +48,10 @@
 	handle-image:  url(./dragHandle.png);
 }
 
-CTabItem:selected  {
+CTabItem {
 	font-style: normal;
 }
 
-CTabItem.busy:selected {
+CTabItem.busy {
 	font-style: italic;
 }

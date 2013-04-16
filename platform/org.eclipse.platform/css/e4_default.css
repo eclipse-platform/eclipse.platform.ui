@@ -40,10 +40,10 @@
 	swt-inner-keyline-color: #FFFFFF;
 }
 
-CTabItem:selected  {
+CTabItem {
 	font-style: normal;
 }
 
-CTabItem.busy:selected {
+CTabItem.busy {
 	font-style: italic;
 }
