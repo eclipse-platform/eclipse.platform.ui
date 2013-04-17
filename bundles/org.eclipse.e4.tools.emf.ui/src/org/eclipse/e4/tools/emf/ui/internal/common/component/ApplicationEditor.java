@@ -257,15 +257,6 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PART_DESCRIPTORS, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, element, Messages.ApplicationEditor_PartDescriptors) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_COMMAND, APPLICATION__COMMANDS, element, Messages.ApplicationEditor_Commands) {
 
 			@Override
@@ -285,6 +276,15 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_APPLICATION_WINDOWS, ELEMENT_CONTAINER__CHILDREN, element, Messages.ApplicationEditor_Windows) {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PART_DESCRIPTORS, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, element, Messages.ApplicationEditor_PartDescriptors) {
 
 			@Override
 			protected boolean accepted(Object o) {
