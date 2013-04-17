@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.examples.readmetool; singleton:=true
-Bundle-Version: 3.3.100.qualifier
+Bundle-Version: 3.3.200.qualifier
 Bundle-ClassPath: readmetool.jar
 Bundle-Activator: org.eclipse.ui.examples.readmetool.ReadmePlugin
 Bundle-Vendor: %Plugin.providerName
