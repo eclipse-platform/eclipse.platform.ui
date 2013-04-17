@@ -636,4 +636,5 @@ public class Messages {
 	public String ModelEditor_ExtractFragment;
 	public String ModelEditor_ExtractFragment_NoParentId;
 	public String KeyBindingEditor_SequenceLowercase;
+	public String ModelTooling_CommandId_tooltip;
 }
