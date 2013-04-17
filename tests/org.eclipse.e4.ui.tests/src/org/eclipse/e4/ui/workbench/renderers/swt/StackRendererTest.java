@@ -18,21 +18,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.ui.services.internal.events.EventBroker;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Display;
@@ -42,6 +43,7 @@ public class StackRendererTest extends TestCase {
 	private E4Workbench wb;
 	private MPart part;
 	private CTabItemStylingMethodsListener executedMethodsListener;
+	private MPartStack partStack;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -52,7 +54,7 @@ public class StackRendererTest extends TestCase {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.setLabel("some title");
 
@@ -88,50 +90,45 @@ public class StackRendererTest extends TestCase {
 		context.dispose();
 	}
 
-	public void testTagsChangeHandlerWhenBusyTagAddEvent() throws Exception {
-		part.getTags().add(CSSConstants.CSS_BUSY_CLASS);
+	public void testTabStateHandlerWhenOneOfSupportedTagChangeEvents()
+			throws Exception {
+		// given
+		HashMap<String, Object> params = new HashMap<String, Object>();
+		params.put(UIEvents.EventTags.ELEMENT, part);
+		params.put(UIEvents.EventTags.NEW_VALUE, CSSConstants.CSS_BUSY_CLASS);
+		params.put(UIEvents.EventTags.OLD_VALUE, null);
 
+		// when
+		context.get(EventBroker.class).send(
+				UIEvents.ApplicationElement.TOPIC_TAGS.replace(
+						UIEvents.ALL_SUB_TOPICS, UIEvents.EventTypes.SET),
+				params);
+
+		// then
 		assertEquals(1,
 				executedMethodsListener
 						.getMethodExecutionCount("setClassnameAndId(.+)"));
-		assertTrue(executedMethodsListener
-				.isMethodExecuted("setClassnameAndId(.+MPart "
-						+ CSSConstants.CSS_BUSY_CLASS + ".+)"));
 	}
 
-	public void testTagsChangeHandlerWhenBusyTagRemoveEvent() throws Exception {
-		part.getTags().add(CSSConstants.CSS_BUSY_CLASS);
-		part.getTags().remove(CSSConstants.CSS_BUSY_CLASS);
+	public void testTabStateHandlerWhenSelectionChangedEvent() throws Exception {
+		// given
+		MPlaceholder placeHolder = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeHolder.setRef(part);
 
-		assertEquals(2,
-				executedMethodsListener
-						.getMethodExecutionCount("setClassnameAndId(.+)"));
-		assertTrue(executedMethodsListener
-				.isMethodExecuted("setClassnameAndId(.+MPart "
-						+ CSSConstants.CSS_BUSY_CLASS + ".+)"));
-		assertTrue(executedMethodsListener
-				.isMethodExecuted("setClassnameAndId(.+MPart.+)"));
-	}
+		HashMap<String, Object> params = new HashMap<String, Object>();
+		params.put(UIEvents.EventTags.ELEMENT, partStack);
+		params.put(UIEvents.EventTags.NEW_VALUE, placeHolder);
+		params.put(UIEvents.EventTags.OLD_VALUE, null);
 
-	public void testTagsChangeHandlerWhenNotBusyTagModifiedEvent()
-			throws Exception {
-		part.getTags().add("not busy tag");
-
-		assertEquals(0,
-				executedMethodsListener
-						.getMethodExecutionCount("setClassnameAndId(.+)"));
-	}
-
-	public void testTagsChangeHandlerWhenNotTagReleatedEvent() throws Exception {
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put(UIEvents.EventTags.ELEMENT, part);
-
-		context.get(IEventBroker.class).send(
-				UIEvents.ApplicationElement.TOPIC_ELEMENTID.replace(
-						UIEvents.ALL_SUB_TOPICS, UIEvents.EventTypes.ADD),
+		// when
+		context.get(EventBroker.class).send(
+				UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT.replace(
+						UIEvents.ALL_SUB_TOPICS, UIEvents.EventTypes.SET),
 				params);
 
-		assertEquals(0,
+		// then
+		assertEquals(1,
 				executedMethodsListener
 						.getMethodExecutionCount("setClassnameAndId(.+)"));
 	}
@@ -159,10 +156,6 @@ public class StackRendererTest extends TestCase {
 		private boolean isTabItemForPart(Object obj) {
 			return obj instanceof CTabItem
 					&& part.getLabel().equals(((CTabItem) obj).getText());
-		}
-
-		public boolean isMethodExecuted(String methodPattern) {
-			return getMethodExecutionCount(methodPattern) > 0;
 		}
 
 		public int getMethodExecutionCount(String methodPattern) {
