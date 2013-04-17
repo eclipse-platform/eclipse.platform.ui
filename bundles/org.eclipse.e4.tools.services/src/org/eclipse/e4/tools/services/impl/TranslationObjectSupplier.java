@@ -11,20 +11,17 @@
 package org.eclipse.e4.tools.services.impl;
 
 import java.lang.reflect.ParameterizedType;
-
 import java.lang.reflect.Type;
 import java.util.Locale;
 
-import org.eclipse.e4.core.internal.contexts.ContextObjectSupplier;
-
-import org.eclipse.e4.core.internal.di.Requestor;
-import org.eclipse.e4.core.services.translation.TranslationService;
-
+import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
-
-import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
+import org.eclipse.e4.core.internal.contexts.ContextObjectSupplier;
+import org.eclipse.e4.core.internal.di.Requestor;
+import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.tools.services.IMessageFactoryService;
+import org.eclipse.osgi.service.localization.BundleLocalization;
 
 public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 
@@ -39,10 +36,11 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 		
 		String locale = (String) sub.getContext().get(TranslationService.LOCALE);
 		locale = locale == null ? Locale.getDefault().toString() : locale;
+		BundleLocalization localization = sub.getContext().get(BundleLocalization.class);
 		IMessageFactoryService factoryService = sub.getContext().get(IMessageFactoryService.class); 
 		
 		try {
-			return factoryService.createInstance(locale,descriptorsClass);
+			return factoryService.createInstance(locale, descriptorsClass, localization);
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

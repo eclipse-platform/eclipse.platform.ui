@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+
 import org.eclipse.osgi.service.localization.BundleLocalization;
 
 /**

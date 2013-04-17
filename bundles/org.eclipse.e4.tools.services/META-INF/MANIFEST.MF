@@ -17,3 +17,4 @@ Service-Component: OSGI-INF/resourcepoolfunction.xml, OSGI-INF/resourceservice.x
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0"
+Bundle-Activator: org.eclipse.e4.tools.services.ToolsServicesActivator
