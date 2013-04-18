@@ -33,7 +33,7 @@ public class ResourceBundleTranslationProvider {
 	 * 			modified by prefixing and suffixing it with "!" when calling translate(String).
 	 */
 	public ResourceBundleTranslationProvider(ResourceBundle resourceBundle) {
-		this.resourceBundle = resourceBundle;
+		this.setResourceBundle(resourceBundle);
 	}
 
 	/**
@@ -57,7 +57,9 @@ public class ResourceBundleTranslationProvider {
 			if (this.resourceBundle == null) {
 				result = "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			result = resourceBundle.getString(key);
+			else {
+				result = this.resourceBundle.getString(key);
+			}
 		} catch (MissingResourceException e) {
 			if (key.contains("_")) { //$NON-NLS-1$
 				result = translate(key.replace('_', '.'));
@@ -66,5 +68,19 @@ public class ResourceBundleTranslationProvider {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * @return The {@link ResourceBundle} that is used for translations.
+	 */
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+
+	/**
+	 * @param resourceBundle The {@link ResourceBundle} to use for translations.
+	 */
+	public void setResourceBundle(ResourceBundle resourceBundle) {
+		this.resourceBundle = resourceBundle;
 	}
 }

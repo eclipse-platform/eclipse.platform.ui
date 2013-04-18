@@ -21,6 +21,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
@@ -208,18 +209,33 @@ public class ResourceBundleHelper {
         	//there is a equinox.root.locale configured that matches the specified locale 
         	//so the special search order is used
         	//to achieve this we first search without a fallback to the default locale
-        	resourceBundle = ResourceBundle.getBundle(baseName, locale, loader,
-                    ResourceBundle.Control.getNoFallbackControl(Control.FORMAT_DEFAULT));
+        	try {
+        		resourceBundle = ResourceBundle.getBundle(baseName, locale, loader,
+        				ResourceBundle.Control.getNoFallbackControl(Control.FORMAT_DEFAULT));
+        	}
+        	catch (MissingResourceException e) {
+        		//do nothing
+        	}
         	//if there is no ResourceBundle found for that path, we will now search for the default locale ResourceBundle
         	if (resourceBundle == null) {
-            	resourceBundle = ResourceBundle.getBundle(baseName, Locale.getDefault(), loader,
-                        ResourceBundle.Control.getNoFallbackControl(Control.FORMAT_DEFAULT));
+        		try {
+        			resourceBundle = ResourceBundle.getBundle(baseName, Locale.getDefault(), loader,
+        					ResourceBundle.Control.getNoFallbackControl(Control.FORMAT_DEFAULT));
+        		}
+            	catch (MissingResourceException e) {
+            		//do nothing
+            	}
         	}
         }
         else {
         	//there is either no equinox.root.locale configured or it does not match the specified locale
         	// -> use the default search order
-        	resourceBundle = ResourceBundle.getBundle(baseName, locale, loader);
+        	try {
+        		resourceBundle = ResourceBundle.getBundle(baseName, locale, loader);
+        	}
+        	catch (MissingResourceException e) {
+        		//do nothing
+        	}
         }
 
         return resourceBundle;
@@ -227,7 +243,8 @@ public class ResourceBundleHelper {
 	
 	/**
 	 * This method searches for the {@link ResourceBundle} in a modified way by inspecting the configuration option 
-	 * <code>equinox.root.locale</code>. 
+	 * <code>equinox.root.locale</code>. It uses the {@link BundleResourceBundleControl} to load the resources out
+	 * of a {@link Bundle}.
 	 * <p><b>Note: This method will only search for ResourceBundles based on properties files.</b></p>
 	 * <p>
 	 * If the value for this system property is set to an empty String the default search order for ResourceBundles is used:
@@ -267,6 +284,53 @@ public class ResourceBundleHelper {
 	 * @see ResourceBundle#getBundle(String, Locale, Control)
 	 */
 	public static ResourceBundle getEquinoxResourceBundle(String baseName, Locale locale, Bundle bundle) {
+		return getEquinoxResourceBundle(baseName, locale, 
+				new BundleResourceBundleControl(bundle, true), new BundleResourceBundleControl(bundle, false));
+	}
+
+	/**
+	 * This method searches for the {@link ResourceBundle} in a modified way by inspecting the configuration option 
+	 * <code>equinox.root.locale</code>.
+	 * <p><b>Note: This method will only search for ResourceBundles based on properties files.</b></p>
+	 * <p>
+	 * If the value for this system property is set to an empty String the default search order for ResourceBundles is used:
+	 * <ul>
+	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
+	 * <li>bn + Ls + "_" + Cs</li>
+	 * <li>bn + Ls</li>
+	 * <li>bn + Ld + "_" + Cd + "_" + Vd</li>
+	 * <li>bn + Ld + "_" + Cd</li>
+	 * <li>bn + Ld</li>
+	 * <li>bn</li>
+	 * </ul>
+	 * Where bn is this bundle's localization basename, Ls, Cs and Vs are the specified locale (language, country, variant) and 
+	 * Ld, Cd and Vd are the default locale (language, country, variant).
+	 * </p>
+	 * <p>
+	 * If Ls equals the value of <code>equinox.root.locale</code> then the following search order is used:
+	 * <ul>
+	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
+	 * <li>bn + Ls + "_" + Cs</li>
+	 * <li>bn + Ls</li>
+	 * <li>bn</li>
+	 * <li>bn + Ld + "_" + Cd + "_" + Vd</li>
+	 * <li>bn + Ld + "_" + Cd</li>
+	 * <li>bn + Ld</li>
+	 * <li>bn</li>
+	 * </ul>
+	 * </p>
+	 * If <code>equinox.root.locale=en</code> and en_XX or en is asked for then this allows the root file to be used instead of 
+	 * falling back to the default locale.
+	 * 
+     * @param baseName the base name of the resource bundle, a fully qualified class name
+     * @param locale the locale for which a resource bundle is desired
+	 * @param withFallback The {@link Control} that uses the default locale fallback on searching for resource bundles.
+	 * @param withoutFallback The {@link Control} that doesn't use the default locale fallback on searching for resource bundles.
+     * @return a resource bundle for the given base name and locale
+	 * 
+	 * @see ResourceBundle#getBundle(String, Locale, Control)
+	 */
+	public static ResourceBundle getEquinoxResourceBundle(String baseName, Locale locale, Control withFallback, Control withoutFallback) {
 		ResourceBundle resourceBundle = null;
 		
 		String equinoxLocale = getEquinoxRootLocale();
@@ -276,16 +340,31 @@ public class ResourceBundleHelper {
         	//there is a equinox.root.locale configured that matches the specified locale 
         	//so the special search order is used
         	//to achieve this we first search without a fallback to the default locale
-        	resourceBundle = ResourceBundle.getBundle(baseName, locale, new BundleResourceBundleControl(bundle, false));
+        	try {
+        		resourceBundle = ResourceBundle.getBundle(baseName, locale, withoutFallback);
+        	}
+        	catch (MissingResourceException e) {
+        		//do nothing
+        	}
         	//if there is no ResourceBundle found for that path, we will now search for the default locale ResourceBundle
         	if (resourceBundle == null) {
-            	resourceBundle = ResourceBundle.getBundle(baseName, Locale.getDefault(), new BundleResourceBundleControl(bundle, false));
+        		try {
+        			resourceBundle = ResourceBundle.getBundle(baseName, Locale.getDefault(), withoutFallback);
+        		}
+            	catch (MissingResourceException e) {
+            		//do nothing
+            	}
         	}
         }
         else {
         	//there is either no equinox.root.locale configured or it does not match the specified locale
         	// -> use the default search order
-        	resourceBundle = ResourceBundle.getBundle(baseName, locale, new BundleResourceBundleControl(bundle, true));
+        	try {
+        		resourceBundle = ResourceBundle.getBundle(baseName, locale, withFallback);
+        	}
+        	catch (MissingResourceException e) {
+        		//do nothing
+        	}
         }
 		
 		return resourceBundle;
