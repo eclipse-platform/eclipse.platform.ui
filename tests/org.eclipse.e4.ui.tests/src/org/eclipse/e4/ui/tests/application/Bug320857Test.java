@@ -55,8 +55,9 @@ public class Bug320857Test extends TestCase {
 			MApplication application) {
 		applicationContext.set(MApplication.class.getName(), application);
 		application.setContext(applicationContext);
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		final UIEventPublisher ep = new UIEventPublisher(applicationContext);
+		((Notifier) application).eAdapters().add(ep);
+		applicationContext.set(UIEventPublisher.class, ep);
 	}
 
 	private IPresentationEngine getEngine() {

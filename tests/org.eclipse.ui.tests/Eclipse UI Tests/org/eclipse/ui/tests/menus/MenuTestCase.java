@@ -12,11 +12,13 @@
 package org.eclipse.ui.tests.menus;
 
 import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -117,12 +119,16 @@ public class MenuTestCase extends UITestCase {
 			// HACK!! cant find anonyous classes
 			if (classes[i] == null)
 				continue;
-			
-			// minor upgrade ... if the item is an instanceof the class we're good
+
+			// minor upgrade ... if the item is an instanceof the class we're
+			// good
 			// this handles the case where the item is a subclass of
 			// CompoundContributionItem
-			if (!classes[i].isInstance(items[i]))
+			if (!classes[i].isInstance(items[i])
+					&& !(classes[i] == CommandContributionItem.class && HandledContributionItem.class
+							.isInstance(items[i]))) {
 				return i;
+			}
 		}
 		return ALL_OK;
 	}

@@ -10154,8 +10154,9 @@ public class EPartServiceTest extends UITest {
 	}
 
 	private void initialize() {
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		final UIEventPublisher ep = new UIEventPublisher(applicationContext);
+		((Notifier) application).eAdapters().add(ep);
+		applicationContext.set(UIEventPublisher.class, ep);
 
 		applicationContext.set(ISaveHandler.class.getName(),
 				new ISaveHandler() {

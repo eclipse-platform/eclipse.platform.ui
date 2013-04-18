@@ -323,7 +323,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			newMenu.setData(menuManager);
 		}
 		if (!menuManager.getRemoveAllWhenShown()) {
-			processContributions(menuModel, menuBar,
+			processContributions(menuModel, menuModel.getElementId(), menuBar,
 					menuModel instanceof MPopupMenu);
 		}
 		if (newMenu != null) {
@@ -396,19 +396,20 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	 * @param isMenuBar
 	 * @param isPopup
 	 */
-	public void processContributions(MMenu menuModel, boolean isMenuBar,
-			boolean isPopup) {
-		if (menuModel.getElementId() == null) {
+	public void processContributions(MMenu menuModel, String elementId,
+			boolean isMenuBar, boolean isPopup) {
+		if (elementId == null) {
 			return;
 		}
 		final ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
 		ContributionsAnalyzer.XXXgatherMenuContributions(menuModel,
-				application.getMenuContributions(), menuModel.getElementId(),
-				toContribute, null, isPopup);
+				application.getMenuContributions(), elementId, toContribute,
+				null, isPopup);
 		generateContributions(menuModel, toContribute, isMenuBar);
 		for (MMenuElement element : menuModel.getChildren()) {
 			if (element instanceof MMenu) {
-				processContributions((MMenu) element, false, isPopup);
+				processContributions((MMenu) element, element.getElementId(),
+						false, isPopup);
 			}
 		}
 	}
@@ -468,8 +469,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			return false;
 		}
 		if (menuBar || isPartMenu(menuModel)) {
-			final IEclipseContext parentContext = modelService
-					.getContainingContext(menuModel);
+			final IEclipseContext parentContext = getContext(menuModel);
 			parentContext.runAndTrack(new RunAndTrack() {
 				@Override
 				public boolean changed(IEclipseContext context) {

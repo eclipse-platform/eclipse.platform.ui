@@ -11,14 +11,13 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.e4.core.commands.ExpressionContext;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -54,7 +53,6 @@ import org.eclipse.ui.internal.services.WorkbenchSourceProvider;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
-import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.part.IShowInSource;
@@ -130,9 +128,9 @@ public class ShowInMenu extends ContributionItem implements
 		}
 
 		if (currentManager!=null && currentManager.getSize() > 0) {
-			IMenuService service = (IMenuService) locator
-					.getService(IMenuService.class);
-			service.releaseContributions(currentManager);
+			// IMenuService service = (IMenuService) locator
+			// .getService(IMenuService.class);
+			// service.releaseContributions(currentManager);
 			currentManager.removeAll();
 		}
 
@@ -423,11 +421,11 @@ public class ShowInMenu extends ContributionItem implements
 	 */
 	public void dispose() {
 		if (currentManager != null && currentManager.getSize() > 0) {
-			IMenuService service = (IMenuService) locator
-					.getService(IMenuService.class);
-			if (service != null) {
-				service.releaseContributions(currentManager);
-			}
+			// IMenuService service = (IMenuService) locator
+			// .getService(IMenuService.class);
+			// if (service != null) {
+			// service.releaseContributions(currentManager);
+			// }
 			currentManager.removeAll();
 			currentManager = null;
 		}

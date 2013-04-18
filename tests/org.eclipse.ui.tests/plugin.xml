@@ -3646,6 +3646,11 @@
             defaultHandler="org.eclipse.ui.tests.menus.HelloEHandler"
             id="org.eclipse.ui.tests.menus.enabledWorld"
             name="Hello">
+         <commandParameter
+               id="Greeting"
+               name="Greeting"
+               optional="true">
+         </commandParameter>
       </command>
       <command
             categoryId="org.eclipse.ui.category.window"

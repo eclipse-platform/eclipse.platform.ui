@@ -234,8 +234,9 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 		// Create the test harness and hook up the event publisher
 		MTestHarness allData = MTestFactory.eINSTANCE.createTestHarness();
-		((Notifier) allData).eAdapters().add(
-				new UIEventPublisher(applicationContext));
+		final UIEventPublisher ep = new UIEventPublisher(applicationContext);
+		((Notifier) allData).eAdapters().add(ep);
+		applicationContext.set(UIEventPublisher.class, ep);
 
 		// AppElement
 		reset(allTesters);

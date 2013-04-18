@@ -425,10 +425,11 @@ public class MenuAdditionCacheEntry {
 			ICommandImageService commandImageService = application.getContext().get(
 					ICommandImageService.class);
 			ImageDescriptor descriptor = commandImageService == null ? null : commandImageService
-					.getImageDescriptor(commandId);
+					.getImageDescriptor(commandId, ICommandImageService.IMAGE_STYLE_TOOLBAR);
 			if (descriptor == null) {
 				descriptor = commandImageService == null ? null : commandImageService
-						.getImageDescriptor(item.getElementId());
+						.getImageDescriptor(item.getElementId(),
+								ICommandImageService.IMAGE_STYLE_TOOLBAR);
 				if (descriptor == null) {
 					item.setLabel(MenuHelper.getLabel(commandAddition));
 				} else {

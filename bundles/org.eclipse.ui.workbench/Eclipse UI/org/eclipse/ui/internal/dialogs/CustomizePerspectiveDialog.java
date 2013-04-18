@@ -50,7 +50,6 @@ import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -169,8 +168,6 @@ import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.CommandContributionItem;
-import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.services.IServiceLocator;
@@ -2655,16 +2652,16 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				| ActionBarAdvisor.FILL_COOL_BAR);
 
 		// 3.3 start
-		final IMenuService menuService = (IMenuService) window
-				.getService(IMenuService.class);
-		menuService.populateContributionManager(
-				(ContributionManager) customizeActionBars.getMenuManager(),
-				MenuUtil.MAIN_MENU);
-		ICoolBarManager coolbar = customizeActionBars.getCoolBarManager();
-		if (coolbar != null) {
-			menuService.populateContributionManager(
-					(ContributionManager) coolbar, MenuUtil.MAIN_TOOLBAR);
-		}
+		// final IMenuService menuService = (IMenuService) window
+		// .getService(IMenuService.class);
+		// menuService.populateContributionManager(
+		// (ContributionManager) customizeActionBars.getMenuManager(),
+		// MenuUtil.MAIN_MENU);
+		// ICoolBarManager coolbar = customizeActionBars.getCoolBarManager();
+		// if (coolbar != null) {
+		// menuService.populateContributionManager(
+		// (ContributionManager) coolbar, MenuUtil.MAIN_TOOLBAR);
+		// }
 		// 3.3 end
 
 		// Populate the action bars with the action sets' data

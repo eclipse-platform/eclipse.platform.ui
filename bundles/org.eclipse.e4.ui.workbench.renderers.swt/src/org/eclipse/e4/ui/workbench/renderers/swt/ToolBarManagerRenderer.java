@@ -44,7 +44,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.ElementContainer;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ContributionItem;
@@ -88,8 +87,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	@Inject
 	private MApplication application;
-	@Inject
-	private EModelService modelService;
 
 	@Inject
 	IEventBroker eventBroker;
@@ -261,7 +258,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		final MToolBar toolbarModel = (MToolBar) element;
 		ToolBar newTB = createToolbar(toolbarModel, (Composite) parent);
 		bindWidget(element, newTB);
-		processContribution(toolbarModel);
+		processContribution(toolbarModel, toolbarModel.getElementId());
 
 		Control renderedCtrl = newTB;
 		MUIElement parentElement = element.getParent();
@@ -289,11 +286,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	/**
 	 * @param element
 	 */
-	public void processContribution(MToolBar toolbarModel) {
+	public void processContribution(MToolBar toolbarModel, String elementId) {
 		final ArrayList<MToolBarContribution> toContribute = new ArrayList<MToolBarContribution>();
 		ContributionsAnalyzer.XXXgatherToolBarContributions(toolbarModel,
-				application.getToolBarContributions(),
-				toolbarModel.getElementId(), toContribute);
+				application.getToolBarContributions(), elementId, toContribute);
 		generateContributions(toolbarModel, toContribute);
 	}
 
@@ -339,8 +335,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			return false;
 		}
 		if (record.anyVisibleWhen()) {
-			final IEclipseContext parentContext = modelService
-					.getContainingContext(toolbarModel);
+			final IEclipseContext parentContext = getContext(toolbarModel);
 			parentContext.runAndTrack(new RunAndTrack() {
 				@Override
 				public boolean changed(IEclipseContext context) {
