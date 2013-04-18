@@ -12,7 +12,8 @@ package org.eclipse.ui.internal.progress;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
+import java.util.Arrays;
+import java.util.Comparator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
@@ -45,6 +46,46 @@ import org.eclipse.ui.views.IViewDescriptor;
  */
 
 public class ProgressManagerUtil {
+
+	@SuppressWarnings("unchecked")
+	static class ProgressViewerComparator extends ViewerComparator {
+		@SuppressWarnings("rawtypes")
+		public int compare(Viewer testViewer, Object e1, Object e2) {
+			return ((Comparable) e1).compareTo(e2);
+		}
+
+		@Override
+		public void sort(final Viewer viewer, Object[] elements) {
+			/*
+			 * https://bugs.eclipse.org/371354
+			 * 
+			 * This ordering is inherently unstable, since it relies on
+			 * modifiable properties of the elements: E.g. the default
+			 * implementation in JobTreeElement compares getDisplayString(),
+			 * many of whose implementations use getPercentDone().
+			 * 
+			 * JavaSE 7+'s TimSort introduced a breaking change: It now throws a
+			 * new IllegalArgumentException for bad comparators. Workaround is
+			 * to retry a few times.
+			 */
+			for (int retries = 3; retries > 0; retries--) {
+				try {
+					Arrays.sort(elements, new Comparator<Object>() {
+						public int compare(Object a, Object b) {
+							return ProgressViewerComparator.this.compare(viewer, a, b);
+						}
+					});
+					return; // success
+				} catch (IllegalArgumentException e) {
+					// retry
+				}
+			}
+
+			// One last try that will log and throw TimSort's IAE if it happens:
+			super.sort(viewer, elements);
+		}
+	}
+
 	/**
 	 * A constant used by the progress support to determine if an operation is
 	 * too short to show progress.
@@ -97,17 +138,7 @@ public class ProgressManagerUtil {
 	 * @return ViewerComparator
 	 */
 	static ViewerComparator getProgressViewerComparator() {
-		return new ViewerComparator() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public int compare(Viewer testViewer, Object e1, Object e2) {
-				return ((Comparable) e1).compareTo(e2);
-			}
-		};
+		return new ProgressViewerComparator();
 	}
 
 	/**
