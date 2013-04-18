@@ -50,8 +50,13 @@
 
 CTabItem {
 	font-style: normal;
+	font-weight: normal;
 }
 
 CTabItem.busy {
 	font-style: italic;
+}
+
+CTabItem.highlighted {
+	font-weight: bold;
 }
