@@ -97,7 +97,8 @@ public class QuickAccessDialog extends PopupDialog {
 							providerMap.put(providers[i].getId(), providers[i]);
 						}
 						QuickAccessDialog.this.contents = new QuickAccessContents(providers) {
-							void updateFeedback(boolean filterTextEmpty, boolean showAllMatches) {
+							protected void updateFeedback(boolean filterTextEmpty,
+									boolean showAllMatches) {
 								if (filterTextEmpty) {
 									setInfoText(QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
 								} else {
@@ -114,7 +115,7 @@ public class QuickAccessDialog extends PopupDialog {
 							}
 
 							@Override
-							void doClose() {
+							protected void doClose() {
 								QuickAccessDialog.this.close();
 							}
 
@@ -187,14 +188,14 @@ public class QuickAccessDialog extends PopupDialog {
 							}
 
 							@Override
-							QuickAccessElement getPerfectMatch(String filter) {
+							protected QuickAccessElement getPerfectMatch(String filter) {
 								QuickAccessElement perfectMatch = (QuickAccessElement) elementMap
 										.get(filter);
 								return perfectMatch;
 							}
 
 							@Override
-							void handleElementSelected(String text, Object selectedElement) {
+							protected void handleElementSelected(String text, Object selectedElement) {
 								if (selectedElement instanceof QuickAccessElement) {
 									addPreviousPick(text, selectedElement);
 									storeDialog(getDialogSettings());
@@ -286,7 +287,7 @@ public class QuickAccessDialog extends PopupDialog {
 					for (int i = 0; i < sequences.length; i++) {
 						if (sequences[i].equals(keySequence)) {
 							e.doit = false;
-							contents.toggleShowAllMatches();
+							contents.setShowAllMatches(!contents.getShowAllMatches());
 							return;
 						}
 					}
