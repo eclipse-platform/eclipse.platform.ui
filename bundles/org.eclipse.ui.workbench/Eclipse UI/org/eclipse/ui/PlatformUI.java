@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.testing.TestableObject;
 
@@ -166,13 +167,21 @@ public final class PlatformUI {
      * <p>
      * IMPORTANT: This method is only for use by the test harness.
      * Applications and regular plug-ins should not call this method.
-     * </p> 
+     * </p><p>
+     * To avoid depending on the the Workbench a {@link TestableObject}
+     * can be obtained via OSGi service.
+     * </p>
      * 
      * @return the testable object facade
      * @since 3.0
      */
     public static TestableObject getTestableObject() {
-        return Workbench.getWorkbenchTestable();
+		// Try finding a pre-registered TO in the OSGi service registry
+		TestableObject testableObject = WorkbenchPlugin.getDefault().getTestableObject();
+		if (testableObject == null) {
+			return Workbench.getWorkbenchTestable();
+		}
+		return testableObject;
     }
 
     /**
