@@ -653,6 +653,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					false);
 			PrefUtil.saveAPIPrefs();
 		}
+		getWindowAdvisor().postWindowCreate();
 		getWindowAdvisor().openIntro();
 
 		preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, enableAnimations);
