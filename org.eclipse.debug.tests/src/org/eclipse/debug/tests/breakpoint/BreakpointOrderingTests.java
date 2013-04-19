@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.debug.tests.breakpoint;
 
 import java.util.List;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IMarker;
@@ -75,7 +74,7 @@ public class BreakpointOrderingTests extends TestCase {
 				ResourcesPlugin.getWorkspace().run( wr, null );
 			}
 			catch ( CoreException e ) {
-				Assert.fail("Unexpected exception: " + e.toString());
+				fail("Unexpected exception: " + e.toString());
 			}
 			
 		}
@@ -102,40 +101,40 @@ public class BreakpointOrderingTests extends TestCase {
 		}
 
 		public boolean isEnabled() throws CoreException {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return false;
 		}
 
 		public boolean isPersisted() throws CoreException {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return false;
 		}
 
 		public boolean isRegistered() throws CoreException {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return false;
 		}
 
 		public void setEnabled(boolean enabled) throws CoreException {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 		}
 
 		public void setMarker(IMarker marker) throws CoreException {
-			Assert.assertTrue(fMarker == null && marker != null);
+			assertTrue(fMarker == null && marker != null);
 			fMarker = marker;
 		}
 
 		public void setPersisted(boolean registered) throws CoreException {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 		}
 
 		public void setRegistered(boolean registered) throws CoreException {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			
 		}
 
 		public Object getAdapter(Class adapter) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return null;
 		}
 
@@ -157,12 +156,12 @@ public class BreakpointOrderingTests extends TestCase {
 		}
 
 		public int getCharEnd() throws CoreException {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return 0;
 		}
 
 		public int getCharStart() throws CoreException {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return 0;
 		}
 	}
@@ -177,38 +176,38 @@ public class BreakpointOrderingTests extends TestCase {
 		}
 
 		protected Widget doFindInputItem(Object element) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return null;
 		}
 
 		protected Widget doFindItem(Object element) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return null;
 		}
 
 		protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 		}
 
 		protected List getSelectionFromWidget() {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return null;
 		}
 
 		protected void internalRefresh(Object element) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 		}
 
 		public void reveal(Object element) {
-			Assert.fail("not implemented in test");			
+			fail("not implemented in test");			
 		}
 
 		protected void setSelectionToWidget(List l, boolean reveal) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 		}
 
 		public Control getControl() {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return null;
 		}};	
 	
@@ -216,47 +215,47 @@ public class BreakpointOrderingTests extends TestCase {
 	IDebugModelPresentation fDebugModelPres = new IDebugModelPresentation() {
 
 		public void computeDetail(IValue value, IValueDetailListener listener) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 		}
 
 		public Image getImage(Object element) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return null;
 		}
 
 		public String getText(Object element) {
-			Assert.assertTrue("Unexpected element", element instanceof TestBreakpoint);
+			assertTrue("Unexpected element", element instanceof TestBreakpoint);
 			return ((TestBreakpoint)element).getText();
 		}
 
 		public void setAttribute(String attribute, Object value) {			
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 		}
 
 		public void addListener(ILabelProviderListener listener) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 		}
 
 		public void dispose() {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 		}
 
 		public boolean isLabelProperty(Object element, String property) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return false;
 		}
 
 		public void removeListener(ILabelProviderListener listener) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 		}
 
 		public String getEditorId(IEditorInput input, Object element) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return null;
 		}
 
 		public IEditorInput getEditorInput(Object element) {
-			Assert.fail("not implemented in test");
+			fail("not implemented in test");
 			return null;
 		}};
 	
@@ -370,7 +369,7 @@ public class BreakpointOrderingTests extends TestCase {
 					}					
 				}			
 			}
-			Assert.assertFalse(failed);
+			assertFalse(failed);
 		} finally {
 			for (int index = 0; index < testBps.length; index++) {
 				testBps[index].delete();
