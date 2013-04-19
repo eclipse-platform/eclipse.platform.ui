@@ -81,6 +81,7 @@ public class SearchField {
 	private Text text;
 
 	private QuickAccessContents quickAccessContents;
+
 	private MWindow window;
 
 	private Map<String, QuickAccessProvider> providerMap = new HashMap<String, QuickAccessProvider>();
@@ -96,6 +97,9 @@ public class SearchField {
 
 	@Inject
 	private EPartService partService;
+
+	// private Object invokingCommandKeySequences;
+	// private Object invokingCommand;
 
 	@PostConstruct
 	void createWidget(final Composite parent, MApplication application, MWindow window) {
@@ -119,10 +123,7 @@ public class SearchField {
 			private void closeDropDown() {
 				if (shell == null || shell.isDisposed() || text.isDisposed() || !shell.isVisible())
 					return;
-
 				quickAccessContents.doClose();
-				text.setText(""); //$NON-NLS-1$
-				quickAccessContents.resetProviders();
 			}
 		});
 
@@ -139,20 +140,22 @@ public class SearchField {
 		restoreDialog();
 
 		quickAccessContents = new QuickAccessContents(providers) {
-			void updateFeedback(boolean filterTextEmpty, boolean showAllMatches) {
+			protected void updateFeedback(boolean filterTextEmpty, boolean showAllMatches) {
 			}
 
-			void doClose() {
+			protected void doClose() {
+				text.setText(""); //$NON-NLS-1$
+				resetProviders();
 				dialogHeight = shell.getSize().y;
 				dialogWidth = shell.getSize().x;
 				shell.setVisible(false);
 			}
 
-			QuickAccessElement getPerfectMatch(String filter) {
+			protected QuickAccessElement getPerfectMatch(String filter) {
 				return elementMap.get(filter);
 			}
 
-			void handleElementSelected(String string, Object selectedElement) {
+			protected void handleElementSelected(String string, Object selectedElement) {
 				if (selectedElement instanceof QuickAccessElement) {
 					QuickAccessElement element = (QuickAccessElement) selectedElement;
 					addPreviousPick(string, element);
@@ -186,7 +189,6 @@ public class SearchField {
 			@Override
 			public void shellClosed(ShellEvent e) {
 				quickAccessContents.doClose();
-				text.setText(""); //$NON-NLS-1$
 				e.doit = false;
 			}
 		});
@@ -230,6 +232,7 @@ public class SearchField {
 				boolean nowVisible = text.getText().length() > 0;
 				if (!wasVisible && nowVisible) {
 					layoutShell();
+					quickAccessContents.preOpen();
 				}
 				shell.setVisible(nowVisible);
 			}
@@ -250,22 +253,7 @@ public class SearchField {
 				}
 			}
 		});
-	}
-
-	public Table getTable() {
-		return quickAccessContents.getTable();
-	}
-
-	public Text getFilterText() {
-		return text;
-	}
-
-	public void close() {
-		shell.setVisible(false);
-	}
-
-	public void toggleShowAllMatches() {
-		quickAccessContents.toggleShowAllMatches();
+		quickAccessContents.createInfoLabel(shell);
 	}
 
 	private void hookUpSelectAll() {
@@ -391,8 +379,11 @@ public class SearchField {
 		this.previousFocusControl = previousFocusControl;
 		if (!shell.isVisible()) {
 			layoutShell();
+			quickAccessContents.preOpen();
 			shell.setVisible(true);
 			quickAccessContents.refresh(text.getText().toLowerCase());
+		} else {
+			quickAccessContents.setShowAllMatches(!quickAccessContents.getShowAllMatches());
 		}
 	}
 
@@ -415,8 +406,6 @@ public class SearchField {
 			if (!shell.isFocusControl() && !table.isFocusControl()
 					&& !text.isFocusControl()) {
 				quickAccessContents.doClose();
-				text.setText(""); //$NON-NLS-1$
-				quickAccessContents.resetProviders();
 			}
 		}
 	}
@@ -603,5 +592,4 @@ public class SearchField {
 			return true;
 		}
 	}
-
 }

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.quickaccess;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -21,6 +22,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -41,9 +43,11 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.graphics.TextStyle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -52,14 +56,22 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.themes.ColorUtil;
 
 
 /**
- * @since 3.3
- * 
+ * Provides the contents for the quick access shell created by
+ * {@link SearchField}. This was also used by {@link QuickAccessDialog} prior to
+ * e4. The SearchField is responsible for handling opening and closing the shell
+ * as well as setting {@link #setShowAllMatches(boolean)}.
  */
 public abstract class QuickAccessContents {
+	/**
+	 * When opened in a popup we were given the command used to open it. Now
+	 * that we have a shell, we are just using a hard coded command id.
+	 */
+	private static final String QUICK_ACCESS_COMMAND_ID = "org.eclipse.ui.window.quickAccess"; //$NON-NLS-1$
 	private static final int INITIAL_COUNT_PER_PROVIDER = 5;
 	private static final int MAX_COUNT_TOTAL = 20;
 
@@ -68,17 +80,18 @@ public abstract class QuickAccessContents {
 	private QuickAccessProvider[] providers;
 
 	protected Table table;
+	protected Label infoLabel;
 
 	private LocalResourceManager resourceManager = new LocalResourceManager(
 			JFaceResources.getResources());
 
 	protected String rememberedText;
 
-	// private Font italicsFont;
 	private Color grayColor;
 	private TextLayout textLayout;
 	private boolean showAllMatches = false;
 	protected boolean resized = false;
+	private TriggerSequence keySequence;
 
 
 	public QuickAccessContents(QuickAccessProvider[] providers) {
@@ -97,57 +110,126 @@ public abstract class QuickAccessContents {
 	}
 
 	/**
+	 * Refreshes the contents of the quick access shell
+	 * 
+	 * @param filter
+	 *            The filter text to apply to results
 	 * 
 	 */
 	public void refresh(String filter) {
-		int numItems = computeNumberOfItems();
+		if (table != null) {
+			int numItems = computeNumberOfItems();
+			boolean filterTextEmpty = filter.length() == 0;
 
-		// perfect match, to be selected in the table if not null
-		QuickAccessElement perfectMatch = getPerfectMatch(filter);
+			// perfect match, to be selected in the table if not null
+			QuickAccessElement perfectMatch = getPerfectMatch(filter);
 
-		List[] entries = computeMatchingEntries(filter, perfectMatch, numItems);
+			List<QuickAccessEntry>[] entries = computeMatchingEntries(filter, perfectMatch,
+					numItems);
 
-		int selectionIndex = refreshTable(perfectMatch, entries);
+			int selectionIndex = refreshTable(perfectMatch, entries);
 
-		boolean filterTextEmpty = filter.length() == 0;
-		if (table.getItemCount() > 0) {
-			table.setSelection(selectionIndex);
-		} else if (filterTextEmpty) {
-			{
+			if (table.getItemCount() > 0) {
+				table.setSelection(selectionIndex);
+			} else if (filterTextEmpty) {
 				TableItem item = new TableItem(table, SWT.NONE);
-				item.setText(0,
-						QuickAccessMessages.QuickAccess_AvailableCategories);
+				item.setText(0, QuickAccessMessages.QuickAccessContents_QuickAccess);
+				item.setText(1, QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
+				item.setForeground(1, grayColor);
+			} else {
+				TableItem item = new TableItem(table, SWT.NONE);
+				item.setText(0, QuickAccessMessages.QuickAccessContents_NoMatchingResults);
 				item.setForeground(0, grayColor);
 			}
-			for (int i = 0; i < providers.length; i++) {
-				QuickAccessProvider provider = providers[i];
-				TableItem item = new TableItem(table, SWT.NONE);
-				item.setText(1, provider.getName());
-				item.setForeground(1, grayColor);
-			}
+
+			updateFeedback(filterTextEmpty, showAllMatches);
 		}
-
-		updateFeedback(filterTextEmpty, showAllMatches);
 	}
 
-
 	/**
+	 * Allows the quick access content owner to mark a quick access element as
+	 * being a perfect match, putting it at the start of the table.
+	 * 
 	 * @param filter
-	 * @return
+	 *            the filter text used to find a match
+	 * @return an element to be put at the top of the table or <code>null</code>
 	 */
-	abstract QuickAccessElement getPerfectMatch(String filter);
+	protected abstract QuickAccessElement getPerfectMatch(String filter);
 
 	/**
+	 * Notifies the quick access content owner that the contents of the table
+	 * have been changed.
+	 * 
 	 * @param filterTextEmpty
+	 *            whether the filter text used to calculate matches was empty
+	 * @param showAllMatches
+	 *            whether the results were constrained by the size of the dialog
+	 * 
 	 */
-	abstract void updateFeedback(boolean filterTextEmpty, boolean showAllMatches);
+	protected abstract void updateFeedback(boolean filterTextEmpty, boolean showAllMatches);
 
-	public void toggleShowAllMatches() {
-		showAllMatches = !showAllMatches;
-		refresh(filterText.getText().toLowerCase());
+	/**
+	 * Sets whether to display all matches to the current filter or limit the
+	 * results. Will refresh the table contents and update the info label.
+	 * 
+	 * @param showAll
+	 *            whether to display all matches
+	 */
+	public void setShowAllMatches(boolean showAll) {
+		if (showAllMatches != showAll) {
+			showAllMatches = showAll;
+			updateInfoLabel();
+			refresh(filterText.getText().toLowerCase());
+		}
+	}
+	
+	private void updateInfoLabel() {
+		if (infoLabel != null) {
+			TriggerSequence sequence = getTriggerSequence();
+			if (sequence == null) {
+				infoLabel.setText(""); //$NON-NLS-1$
+			} else if (showAllMatches) {
+				infoLabel
+.setText(NLS.bind(
+						QuickAccessMessages.QuickAccessContents_PressKeyToLimitResults,
+						sequence.format()));
+			} else {
+				infoLabel.setText(NLS.bind(
+						QuickAccessMessages.QuickAccess_PressKeyToShowAllMatches,
+								sequence.format()));
+			}
+			infoLabel.getParent().layout(true);
+		}
 	}
 
-	private int refreshTable(QuickAccessElement perfectMatch, List[] entries) {
+	/**
+	 * Returns the trigger sequence that can be used to open the quick access
+	 * dialog as well as toggle the show all results feature. Can return
+	 * <code>null</code> if no trigger sequence is known.
+	 * 
+	 * @return the trigger sequence used to open the quick access or
+	 *         <code>null</code>
+	 */
+	public TriggerSequence getTriggerSequence() {
+		if (keySequence == null) {
+			IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench()
+					.getAdapter(IBindingService.class);
+			keySequence = bindingService.getBestActiveBindingFor(QUICK_ACCESS_COMMAND_ID);
+		}
+		return keySequence;
+	}
+
+	/**
+	 * Return whether the shell is currently set to display all matches or limit
+	 * the results.
+	 * 
+	 * @return whether all matches will be displayed
+	 */
+	public boolean getShowAllMatches() {
+		return showAllMatches;
+	}
+
+	private int refreshTable(QuickAccessElement perfectMatch, List<QuickAccessEntry>[] entries) {
 		if (table.getItemCount() > entries.length
 				&& table.getItemCount() - entries.length > 20) {
 			table.removeAll();
@@ -158,8 +240,8 @@ public abstract class QuickAccessContents {
 		for (int i = 0; i < providers.length; i++) {
 			if (entries[i] != null) {
 				boolean firstEntry = true;
-				for (Iterator it = entries[i].iterator(); it.hasNext();) {
-					QuickAccessEntry entry = (QuickAccessEntry) it.next();
+				for (Iterator<QuickAccessEntry> it = entries[i].iterator(); it.hasNext();) {
+					QuickAccessEntry entry = it.next();
 					entry.firstInCategory = firstEntry;
 					firstEntry = false;
 					if (!it.hasNext()) {
@@ -195,10 +277,11 @@ public abstract class QuickAccessContents {
 		return selectionIndex;
 	}
 
-	private List[] computeMatchingEntries(String filter,
+	private List<QuickAccessEntry>[] computeMatchingEntries(String filter,
 			QuickAccessElement perfectMatch, int maxCount) {
 		// collect matches in an array of lists
-		List<QuickAccessEntry>[] entries = new ArrayList[providers.length];
+		@SuppressWarnings("unchecked")
+		List<QuickAccessEntry>[] entries = new List[providers.length];
 		int[] indexPerProvider = new int[providers.length];
 		int countPerProvider = Math.min(maxCount / 4,
 				INITIAL_COUNT_PER_PROVIDER);
@@ -269,7 +352,7 @@ public abstract class QuickAccessContents {
 					// room, add them (Bug 398455)
 					for (Iterator<QuickAccessEntry> iterator = poorFilterMatches.iterator(); iterator
 							.hasNext()
-							&& (count < countPerProvider && countTotal < maxCount);) {
+							&& (showAllMatches || (count < countPerProvider && countTotal < maxCount));) {
 						QuickAccessEntry quickAccessEntry = iterator.next();
 						entries[i].add(quickAccessEntry);
 						count++;
@@ -300,11 +383,7 @@ public abstract class QuickAccessContents {
 		return entries;
 	}
 
-	protected Control getFocusControl() {
-		return filterText;
-	}
-
-	public void doDispose() {
+	private void doDispose() {
 		if (textLayout != null && !textLayout.isDisposed()) {
 			textLayout.dispose();
 		}
@@ -312,10 +391,9 @@ public abstract class QuickAccessContents {
 			resourceManager.dispose();
 			resourceManager = null;
 		}
-	}
-
-	protected Point getDefaultSize() {
-		return new Point(350, 420);
+		if (grayColor != null) {
+			grayColor.dispose();
+		}
 	}
 
 	protected IDialogSettings getDialogSettings() {
@@ -332,11 +410,8 @@ public abstract class QuickAccessContents {
 		return "org.eclipse.ui.internal.QuickAccess"; //$NON-NLS-1$
 	}
 
-	abstract void handleElementSelected(String text, Object selectedElement);
+	protected abstract void handleElementSelected(String text, Object selectedElement);
 
-	/**
-	 * 
-	 */
 	private void handleSelection() {
 		QuickAccessElement selectedElement = null;
 		String text = filterText.getText().toLowerCase();
@@ -345,20 +420,34 @@ public abstract class QuickAccessContents {
 					.getSelection()[0].getData();
 			selectedElement = entry == null ? null : entry.element;
 		}
-		doClose();
 		if (selectedElement != null) {
+			doClose();
 			handleElementSelected(text, selectedElement);
 		}
 	}
 
 	/**
-	 * Attempts to close the quick access dialog/shell. Must be called from a UI
-	 * thread. Default implementation does nothing.
+	 * Should be called by the owner of the parent composite when the shell is
+	 * being activated (made visible). This allows the show all keybinding to be
+	 * updated.
 	 */
-	abstract void doClose();
+	public void preOpen() {
+		// Make sure we always start filtering
+		setShowAllMatches(false);
+		// In case the key binding has changed, update the label
+		keySequence = null;
+		updateInfoLabel();
+	}
 
 	/**
-	 * @param filterText2
+	 * Informs the owner of the parent composite that the quick access dialog
+	 * should be closed
+	 */
+	protected abstract void doClose();
+
+	/**
+	 * Allows the dialog contents to interact correctly with the text box used to open it
+	 * @param filterText text box to hook up
 	 */
 	public void hookFilterText(Text filterText) {
 		this.filterText = filterText;
@@ -400,7 +489,11 @@ public abstract class QuickAccessContents {
 	}
 
 	/**
-	 * @param composite
+	 * Creates the table providing the contents for the quick access dialog
+	 * 
+	 * @param composite parent composite with {@link GridLayout}
+	 * @param defaultOrientation the window orientation to use for the table {@link SWT#RIGHT_TO_LEFT} or {@link SWT#LEFT_TO_RIGHT}
+	 * @return the created table
 	 */
 	public Table createTable(Composite composite, int defaultOrientation) {
 		composite.addDisposeListener(new DisposeListener() {
@@ -518,9 +611,6 @@ public abstract class QuickAccessContents {
 		if (PlatformUI.getPreferenceStore().getBoolean(
 				IWorkbenchPreferenceConstants.USE_COLORED_LABELS)) {
 			boldStyle = new TextStyle(boldFont, null, null);
-			// italicsFont =
-			// resourceManager.createFont(FontDescriptor.createFrom(
-			// table.getFont()).setStyle(SWT.ITALIC));
 			grayColor = resourceManager.createColor(ColorUtil.blend(table.getBackground().getRGB(),
 					table.getForeground().getRGB()));
 		} else {
@@ -552,16 +642,29 @@ public abstract class QuickAccessContents {
 	}
 
 	/**
+	 * Creates a label which will display the key binding to expand
+	 * the search results.
 	 * 
+	 * @param parent parent composite with {@link GridLayout}
+	 * @return the created label
 	 */
+	public Label createInfoLabel(Composite parent) {
+		infoLabel = new Label(parent, SWT.NONE);
+		infoLabel.setFont(parent.getFont());
+		infoLabel.setForeground(grayColor);
+		infoLabel.setBackground(table.getBackground());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment = SWT.RIGHT;
+		gd.grabExcessHorizontalSpace = false;
+		infoLabel.setLayoutData(gd);
+		updateInfoLabel();
+		return infoLabel;
+	}
+
 	public void resetProviders() {
 		for (QuickAccessProvider provider : providers) {
 			provider.reset();
 		}
-	}
-
-	public Table getTable() {
-		return table;
 	}
 
 }
