@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - clean-up
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
@@ -15,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
@@ -148,7 +148,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
         // Validate the expansion state BEFORE posting the delta.
         
         IInternalTreeModelViewer contentProviderViewer = (IInternalTreeModelViewer)fViewer; 
-        Assert.assertFalse(contentProviderViewer.getExpandedState(path_root_3));
+        assertFalse(contentProviderViewer.getExpandedState(path_root_3));
         
         model.postDelta(deltaRoot);
         while (true) {
@@ -166,15 +166,15 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Validate the expansion state AFTER posting the delta.
-        Assert.assertFalse(contentProviderViewer.getExpandedState(path_root_3));
+        assertFalse(contentProviderViewer.getExpandedState(path_root_3));
         
         // Verify selection
         ISelection selection = fViewer.getSelection();
         if (selection instanceof ITreeSelection) {
             List selectionPathsList = Arrays.asList( ((ITreeSelection)selection).getPaths() );
-            Assert.assertFalse(selectionPathsList.contains(path_root_3));
+            assertFalse(selectionPathsList.contains(path_root_3));
         } else {
-            Assert.fail("Not a tree selection");
+            fail("Not a tree selection");
         }
     }
     
@@ -222,13 +222,13 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
+        assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
         // On windows, getExpandedState() may return true for an element with no children:
-        // Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.0 - new")) == false);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.2")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.3")) == true);
-        Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
+        // assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.0 - new")) == false);
+        assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
+        assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.2")) == true);
+        assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.3")) == true);
+        assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 
     private boolean areTreeSelectionsEqual(ITreeSelection sel1, ITreeSelection sel2) {

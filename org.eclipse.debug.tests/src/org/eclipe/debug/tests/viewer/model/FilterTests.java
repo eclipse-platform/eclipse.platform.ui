@@ -1,18 +1,18 @@
 /*******************************************************************************
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Copyright (c) 2009, 2011 Wind River Systems and others.
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - clean-up
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
 import java.util.regex.Pattern;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
@@ -261,7 +261,7 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
 
         // Verify that the replaced element is in viewer now (i.e. it's not filtered out.
         TreePath[] replacedElementPaths = fViewer.getElementPaths(replacedElement);
-        Assert.assertTrue(replacedElementPaths.length != 0);
+        assertTrue(replacedElementPaths.length != 0);
     }
 
 
@@ -308,7 +308,7 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
 
         // Verify that the replaced element is in viewer now (i.e. it's not filtered out.
         TreePath[] replacedElementPaths = fViewer.getElementPaths(replacedElement);
-        Assert.assertTrue(replacedElementPaths.length != 0);
+        assertTrue(replacedElementPaths.length != 0);
     }    
 
     public void testRefreshToUnfilterElements() throws InterruptedException {
@@ -375,7 +375,7 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
         TreeSelection originalSelection = new TreeSelection(
             new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findElement("6") });
         fViewer.setSelection(originalSelection);
-        Assert.assertTrue( StateTests.areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
+        assertTrue( StateTests.areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
 
         // Set a filter to remove element "1"
         ViewerFilter[] filters = new ViewerFilter[] { new TestViewerFilter("^1$") };
@@ -392,18 +392,18 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true, filters);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
-        Assert.assertTrue( StateTests.areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
+        assertTrue( StateTests.areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
         
         // Note: in past it was observed sub-optimal coalescing in this test due 
         // to scattered update requests from viewer.
-        Assert.assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
+        assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
         
         // Clear the filter, to re-add the element
         filters = new ViewerFilter[0];
@@ -418,14 +418,14 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true, filters);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
-        Assert.assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
-        Assert.assertTrue( StateTests.areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
+        assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
+        assertTrue( StateTests.areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
         
     }
     

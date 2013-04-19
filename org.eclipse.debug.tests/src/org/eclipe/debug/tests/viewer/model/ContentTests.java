@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - clean-up
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
@@ -108,7 +108,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         
         model.validateData(fViewer, TreePath.EMPTY);
         
-        Assert.assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
+        assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
     }
 
     public void testSimpleMultiLevel() throws InterruptedException {
@@ -125,7 +125,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
 
         model.validateData(fViewer, TreePath.EMPTY);
         
-        Assert.assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 3) );
+        assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 3) );
     }
     
     /**
@@ -214,7 +214,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         // Then complete the first set.
         for (int i = 0; i < firstUpdates.size(); i++) {
             ILabelUpdate capturedUpdate = (ILabelUpdate)firstUpdates.get(i); 
-            Assert.assertTrue(capturedUpdate.isCanceled());
+            assertTrue(capturedUpdate.isCanceled());
             capturedUpdate.done();
         }
 
@@ -269,7 +269,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         // Then complete the first set.
         for (int i = 0; i < firstUpdates.size(); i++) {
             ILabelUpdate capturedUpdate = (ILabelUpdate)firstUpdates.get(i); 
-            Assert.assertTrue(capturedUpdate.isCanceled());
+            assertTrue(capturedUpdate.isCanceled());
             capturedUpdate.done();
         }
 
