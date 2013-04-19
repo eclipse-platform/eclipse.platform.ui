@@ -36,6 +36,7 @@ public class AllTests extends TestCase {
 		suite.addTest(IScopeContextTest.suite());
 		suite.addTest(ListenerRegistryTest.suite());
 		suite.addTest(TestBug388004.suite());
+		suite.addTest(TestBug380859.suite());
 		suite.addTest(PreferenceExportTest.suite());
 		suite.addTest(PreferenceForwarderTest.suite());
 		suite.addTest(PreferencesTest.suite());
