@@ -659,7 +659,7 @@
                 label="%LaunchActionSet.label">
              <separator
                    name="launchGroup"
-                   visible="true">
+                   visible="false">
              </separator>
           </toolbar>
           <toolbar
@@ -674,28 +674,23 @@
                    visible="true">
              </separator>
              <separator
-                   name="stepGroup"
-                   visible="true">
+                   name="stepGroup">
              </separator>
              <separator
-                   name="stepIntoGroup"
-                   visible="false">
+                   name="stepIntoGroup">
              </separator>
              <separator
-                   name="stepOverGroup"
-                   visible="false">
+                   name="stepOverGroup">
              </separator>
              <separator
-                   name="stepReturnGroup"
-                   visible="false">
+                   name="stepReturnGroup">
              </separator>
              <separator
-                   name="emptyStepGroup"
-                   visible="false">
+                   name="emptyStepGroup">
              </separator>
              <separator
                    name="renderGroup"
-                   visible="false">
+                   visible="true">
              </separator>
           </toolbar>
        </menuContribution>
