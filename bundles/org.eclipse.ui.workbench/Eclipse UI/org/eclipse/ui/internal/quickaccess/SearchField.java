@@ -97,6 +97,7 @@ public class SearchField {
 
 	@Inject
 	private EPartService partService;
+	private Table table;
 
 	// private Object invokingCommandKeySequences;
 	// private Object invokingCommand;
@@ -193,7 +194,7 @@ public class SearchField {
 			}
 		});
 		GridLayoutFactory.fillDefaults().applyTo(shell);
-		final Table table = quickAccessContents.createTable(shell, Window.getDefaultOrientation());
+		table = quickAccessContents.createTable(shell, Window.getDefaultOrientation());
 		text.addFocusListener(new FocusListener() {
 			public void focusLost(FocusEvent e) {
 				// Once the focus event is complete, check if we should close the shell
@@ -591,5 +592,35 @@ public class SearchField {
 		public boolean isAlwaysPresent() {
 			return true;
 		}
+	}
+
+	/**
+	 * Returns the quick access shell for testing. Should not be referenced
+	 * outside of the tests.
+	 * 
+	 * @return the current quick access shell or <code>null</code>
+	 */
+	public Shell getQuickAccessShell() {
+		return shell;
+	}
+
+	/**
+	 * Returns the quick access search text for testing. Should not be
+	 * referenced outside of the tests.
+	 * 
+	 * @return the search text in the workbench window or <code>null</code>
+	 */
+	public Text getQuickAccessSearchText() {
+		return text;
+	}
+
+	/**
+	 * Returns the table in the shell for testing. Should not be referenced
+	 * outside of the tests.
+	 * 
+	 * @return the table created in the shell or <code>null</code>
+	 */
+	public Table getQuickAccessTable(){
+		return table;
 	}
 }

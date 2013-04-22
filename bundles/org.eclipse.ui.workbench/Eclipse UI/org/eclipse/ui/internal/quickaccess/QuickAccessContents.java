@@ -118,15 +118,11 @@ public abstract class QuickAccessContents {
 	 */
 	public void refresh(String filter) {
 		if (table != null) {
-			int numItems = computeNumberOfItems();
 			boolean filterTextEmpty = filter.length() == 0;
 
 			// perfect match, to be selected in the table if not null
 			QuickAccessElement perfectMatch = getPerfectMatch(filter);
-
-			List<QuickAccessEntry>[] entries = computeMatchingEntries(filter, perfectMatch,
-					numItems);
-
+			List<QuickAccessEntry>[] entries = computeMatchingEntries(filter, perfectMatch);
 			int selectionIndex = refreshTable(perfectMatch, entries);
 
 			if (table.getItemCount() > 0) {
@@ -277,11 +273,28 @@ public abstract class QuickAccessContents {
 		return selectionIndex;
 	}
 
+	/**
+	 * Returns a list per provider containing matching {@link QuickAccessEntry}
+	 * that should be displayed in the table given a text filter and a perfect
+	 * match entry that should be given priority. The number of items returned
+	 * is affected by {@link #getShowAllMatches()} and the size of the table's
+	 * composite.
+	 * 
+	 * @param filter
+	 *            the string text filter to apply, possibly empty
+	 * @param perfectMatch
+	 *            a quick access element that should be given priority or
+	 *            <code>null</code>
+	 * @return the array of lists (one per provider) containg the quick access
+	 *         entries that should be added to the table, possibly empty
+	 */
 	private List<QuickAccessEntry>[] computeMatchingEntries(String filter,
-			QuickAccessElement perfectMatch, int maxCount) {
+			QuickAccessElement perfectMatch) {
 		// collect matches in an array of lists
 		@SuppressWarnings("unchecked")
 		List<QuickAccessEntry>[] entries = new List[providers.length];
+
+		int maxCount = computeNumberOfItems();
 		int[] indexPerProvider = new int[providers.length];
 		int countPerProvider = Math.min(maxCount / 4,
 				INITIAL_COUNT_PER_PROVIDER);
