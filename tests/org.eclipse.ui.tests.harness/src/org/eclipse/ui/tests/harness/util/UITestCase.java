@@ -273,7 +273,7 @@ public abstract class UITestCase extends TestCase {
 			waitOnShell(window.getShell());
 			return window;
 		} catch (WorkbenchException e) {
-			fail();
+			fail("Problem opening test window", e);
 			return null;
 		}
 	}
@@ -333,7 +333,7 @@ public abstract class UITestCase extends TestCase {
             }
             return pages;
         } catch (WorkbenchException e) {
-            fail();
+        	fail("Problem opening test page", e);
             return null;
         }
     }
