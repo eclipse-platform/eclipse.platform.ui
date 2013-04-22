@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 /**
  * Provide for management of different menus.
  * 
- * @noimplement
- * @noreference
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 public interface EMenuService {
 
@@ -27,7 +27,6 @@ public interface EMenuService {
 	 *            The parent for the context menu. A Control in SWT.
 	 * @param menuId
 	 *            the ID of the menu to use
-	 * @noreference
 	 */
 	MPopupMenu registerContextMenu(Object parent, String menuId);
 

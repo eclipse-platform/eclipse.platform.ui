@@ -22,7 +22,7 @@ import org.eclipse.e4.ui.internal.services.ContextContextFunction;
 
 /**
  * @noinstantiate This class is not intended to be instantiated by clients.
- * @noreference
+ * @noreference This class is not intended to be referenced by clients.
  * @since 1.0
  */
 public final class ContextServiceAddon {

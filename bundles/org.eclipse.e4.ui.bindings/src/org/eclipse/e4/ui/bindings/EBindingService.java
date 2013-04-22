@@ -17,8 +17,6 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 
 /**
- * @noreference
- * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface EBindingService {
 

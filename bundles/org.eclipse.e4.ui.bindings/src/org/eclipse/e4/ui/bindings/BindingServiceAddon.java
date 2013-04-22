@@ -22,8 +22,6 @@ import org.eclipse.e4.ui.bindings.internal.ContextSet;
 /**
  * Provide the binding and context id services as an add-on. Must be instantiated against the
  * application level context.
- * 
- * @noreference
  */
 public final class BindingServiceAddon {
 	@PostConstruct
