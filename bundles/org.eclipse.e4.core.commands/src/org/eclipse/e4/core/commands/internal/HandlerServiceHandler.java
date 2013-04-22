@@ -20,6 +20,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl.ExecutionContexts;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -36,6 +37,26 @@ public class HandlerServiceHandler extends AbstractHandler {
 		this.commandId = commandId;
 	}
 
+	@Override
+	public boolean isEnabled() {
+		ExecutionContexts contexts = HandlerServiceImpl.peek();
+		// setEnabled(contexts);
+		IEclipseContext executionContext = getExecutionContext(contexts);
+		if (executionContext == null) {
+			return super.isEnabled();
+		}
+		Object handler = HandlerServiceImpl.lookUpHandler(executionContext, commandId);
+		if (handler == null) {
+			setBaseEnabled(false);
+			return super.isEnabled();
+		}
+		IEclipseContext staticContext = getStaticContext(contexts);
+		Boolean result = (Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
+				executionContext, staticContext, Boolean.TRUE);
+		setBaseEnabled(result.booleanValue());
+		return super.isEnabled();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -43,22 +64,24 @@ public class HandlerServiceHandler extends AbstractHandler {
 	 */
 	@Override
 	public void setEnabled(Object evaluationContext) {
+		boolean createContext = false;
 		IEclipseContext executionContext = getExecutionContext(evaluationContext);
 		if (executionContext == null) {
 			return;
 		}
-		IEclipseContext staticContext = getStaticContext(evaluationContext);
 		Object handler = HandlerServiceImpl.lookUpHandler(executionContext, commandId);
 		if (handler == null) {
-			setBaseEnabled(false);
 			return;
 		}
-		try {
-			Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
-					executionContext, staticContext, Boolean.TRUE));
-			setBaseEnabled(result.booleanValue());
-		} catch (Exception e) {
-			e.printStackTrace();
+		IEclipseContext staticContext = getStaticContext(evaluationContext);
+		if (staticContext == null) {
+			staticContext = EclipseContextFactory.create();
+			createContext = true;
+		}
+		ContextInjectionFactory.invoke(handler, SetEnabled.class, executionContext, staticContext,
+				Boolean.TRUE);
+		if (createContext) {
+			staticContext.dispose();
 		}
 	}
 
@@ -114,6 +137,8 @@ public class HandlerServiceHandler extends AbstractHandler {
 		ExecutionContexts contexts = HandlerServiceImpl.peek();
 		if (contexts != null) {
 			Object handler = HandlerServiceImpl.lookUpHandler(contexts.context, commandId);
+			// TODO used to check if E4HandlerProxy.getHandler() was an IHandler
+			// then IHandler.isHandled();
 			return handler != null;
 
 		}
