@@ -31,6 +31,8 @@ import org.eclipse.swt.widgets.Text;
  * @since 3.9
  */
 public final class BidiUtils {
+	
+	private static final boolean DEBUG = false;
 
 	/**
 	 * Left-To-Right Base Text Direction.
@@ -203,6 +205,27 @@ public final class BidiUtils {
 		SegmentListener listener = getSegmentListener(handlingType);
 		if (listener != null) {
 			field.addSegmentListener(listener);
+			if (DEBUG) {
+				int color = 0;
+				if (LEFT_TO_RIGHT.equals(handlingType)) {
+					color = SWT.COLOR_RED;
+				} else if (RIGHT_TO_LEFT.equals(handlingType)) {
+					color = SWT.COLOR_GREEN;
+				} else if (BTD_DEFAULT.equals(handlingType)) {
+					color = SWT.COLOR_YELLOW;
+				} else if (AUTO.equals(handlingType)) {
+					color = SWT.COLOR_MAGENTA;
+				} else {
+					color = SWT.COLOR_CYAN;
+				}
+				field.setBackground(field.getDisplay().getSystemColor(color));
+				if (field.getMessage().length() == 0) {
+					field.setMessage('<' + handlingType + '>');
+				}
+				if (field.getToolTipText() == null) {
+					field.setToolTipText('<' + handlingType + '>');
+				}
+			}
 		}
 	}
 	
