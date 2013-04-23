@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.model.workbench" version="2">
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/SideValue.java" type="org.eclipse.e4.ui.model.application.ui.SideValue">
+        <filter comment="This accepted as you cannot technically cast to the internal interface or the EMF interface " id="576725006">
+            <message_arguments>
+                <message_argument value="InternalSideValue"/>
+                <message_argument value="SideValue"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/ItemType.java" type="org.eclipse.e4.ui.model.application.ui.menu.ItemType">
+        <filter comment="This accepted as you cannot technically cast to the internal interface or the EMF interface " id="576725006">
+            <message_arguments>
+                <message_argument value="InternalItemType"/>
+                <message_argument value="ItemType"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
