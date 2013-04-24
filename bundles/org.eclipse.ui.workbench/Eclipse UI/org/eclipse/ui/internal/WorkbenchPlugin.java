@@ -260,8 +260,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         try {
             // If plugin has been loaded create extension.
             // Otherwise, show busy cursor then create extension.
-            if (BundleUtility.isActivated(element.getDeclaringExtension()
-                    .getNamespace())) {
+		if (BundleUtility.isActivated(element.getContributor().getName())) {
                 return element.createExecutableExtension(classAttribute);
             }
             final Object[] ret = new Object[1];
