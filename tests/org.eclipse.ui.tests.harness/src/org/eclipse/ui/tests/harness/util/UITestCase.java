@@ -163,7 +163,7 @@ public abstract class UITestCase extends TestCase {
      * @param msg the trace message
      */
     protected void trace(String msg) {
-        System.err.println(msg);
+        System.out.println(msg);
     }
 
     /**
