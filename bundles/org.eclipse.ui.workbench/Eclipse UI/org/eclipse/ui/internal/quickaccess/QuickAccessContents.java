@@ -87,20 +87,22 @@ public abstract class QuickAccessContents {
 
 	protected String rememberedText;
 
+	/**
+	 * A color for dulled out items created by mixing the table foreground. Will
+	 * be disposed when the {@link #resourceManager} is disposed.
+	 */
 	private Color grayColor;
 	private TextLayout textLayout;
 	private boolean showAllMatches = false;
 	protected boolean resized = false;
 	private TriggerSequence keySequence;
 
-
 	public QuickAccessContents(QuickAccessProvider[] providers) {
 		this.providers = providers;
 	}
 
-
 	/**
-	 * 
+	 * Returns the number of items the table can fit in its current layout
 	 */
 	private int computeNumberOfItems() {
 		Rectangle rect = table.getClientArea ();
@@ -401,11 +403,9 @@ public abstract class QuickAccessContents {
 			textLayout.dispose();
 		}
 		if (resourceManager != null) {
+			// Disposing the resource manager will dispose the color
 			resourceManager.dispose();
 			resourceManager = null;
-		}
-		if (grayColor != null) {
-			grayColor.dispose();
 		}
 	}
 
