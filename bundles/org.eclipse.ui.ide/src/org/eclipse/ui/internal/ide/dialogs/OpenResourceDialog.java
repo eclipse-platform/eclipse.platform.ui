@@ -24,16 +24,17 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -217,25 +218,20 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		GridLayout parentLayout = (GridLayout)parent.getLayout();
 		parentLayout.makeColumnsEqualWidth = false;
 
-		int dropDownOrientation = parent.getOrientation() == SWT.LEFT_TO_RIGHT ? SWT.RIGHT_TO_LEFT : SWT.LEFT_TO_RIGHT;
-		showInButton = createButton(parent, SHOW_IN_ID, forceLRT(IDEWorkbenchMessages.OpenResourceDialog_showInButton_text, parent), false);
-		showInButton.setOrientation(dropDownOrientation);
-		showInButton.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_BUTTON_MENU));
-		showInButton.addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				showShowInMenu();
-			}
-		});
+		showInButton = createDropdownButton(parent, SHOW_IN_ID, IDEWorkbenchMessages.OpenResourceDialog_showInButton_text,
+				new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						showShowInMenu();
+					}
+				});
 		setButtonLayoutData(showInButton);
 		
-		openWithButton = createButton(parent, OPEN_WITH_ID, forceLRT(IDEWorkbenchMessages.OpenResourceDialog_openWithButton_text, parent), false);
-		openWithButton.setOrientation(dropDownOrientation);
-		openWithButton.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_BUTTON_MENU));
-		openWithButton.addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				showOpenWithMenu();
-			}
-		});
+		openWithButton = createDropdownButton(parent, OPEN_WITH_ID, IDEWorkbenchMessages.OpenResourceDialog_openWithButton_text,
+				new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						showOpenWithMenu();
+					}
+				});
 		setButtonLayoutData(openWithButton);
 		
 		GridData showInLayoutData = (GridData) showInButton.getLayoutData();
@@ -257,11 +253,21 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		okLayoutData.widthHint = buttonWidth;
 	}
 
-	private static String forceLRT(String string, Control parent) {
+	private Button createDropdownButton(final Composite parent, int id, String label, MouseListener mouseListener) {
 		char textEmbedding = parent.getOrientation() == SWT.LEFT_TO_RIGHT ? '\u202a' : '\u202b';
-		return textEmbedding + string + '\u202c';
+		Button button = createButton(parent, id, textEmbedding + label + '\u202c', false);
+		if (Util.isMac()) {
+			// Button#setOrientation(int) is a no-op on the Mac. Use a Unicode BLACK DOWN-POINTING SMALL TRIANGLE.
+			button.setText(button.getText() + " \u25BE"); //$NON-NLS-1$
+		} else {
+			int dropDownOrientation = parent.getOrientation() == SWT.LEFT_TO_RIGHT ? SWT.RIGHT_TO_LEFT : SWT.LEFT_TO_RIGHT;
+			button.setOrientation(dropDownOrientation);
+			button.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_BUTTON_MENU));
+			button.addMouseListener(mouseListener);
+		}
+		return button;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
