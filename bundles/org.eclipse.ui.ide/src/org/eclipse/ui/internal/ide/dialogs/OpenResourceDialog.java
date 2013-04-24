@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,22 +24,17 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.ACC;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
@@ -72,6 +67,81 @@ import org.eclipse.ui.views.IViewDescriptor;
  */
 public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 
+	private final class ResourceOpenWithMenu extends OpenWithMenu {
+		private ResourceOpenWithMenu(IWorkbenchPage page, IAdaptable file) {
+			super(page, file);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.IEditorDescriptor, boolean)
+		 */
+		protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
+			computeResult();
+			setResult(Collections.EMPTY_LIST);
+			close();
+			super.openEditor(editorDescriptor, openUsingDescriptor);
+		}
+	}
+
+	private final class ResourceShowInMenu extends ShowInMenu {
+		private final IStructuredSelection selectedItems;
+
+		private ResourceShowInMenu(IStructuredSelection selectedItems, IWorkbenchWindow workbenchWindow) {
+			this.selectedItems = selectedItems;
+			setId(ContributionItemFactory.VIEWS_SHOW_IN.getId());
+			initialize(workbenchWindow);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.ShowInMenu#getContext(org.eclipse.ui.IWorkbenchPart)
+		 */
+		protected ShowInContext getContext(IWorkbenchPart sourcePart) {
+			return new ShowInContext(null, selectedItems);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.ShowInMenu#getContributionItem(org.eclipse.ui.views.IViewDescriptor)
+		 */
+		protected IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {
+			final String targetId= viewDescriptor.getId();
+			String label = '&' + viewDescriptor.getLabel();
+			ImageDescriptor icon = viewDescriptor.getImageDescriptor();
+			Action action = new Action(label, icon) {
+				/* (non-Javadoc)
+				 * @see org.eclipse.jface.action.Action#run()
+				 */
+				public void run() {
+					computeResult();
+					setResult(Collections.EMPTY_LIST);
+					close();
+					
+					IWorkbenchPage page = getActivePage();
+					IViewPart view;
+					try {
+						view = page.showView(targetId);
+						IShowInTarget target = getShowInTarget(view);
+						if (!(target != null && target.show(getContext(null)))) {
+							page.getWorkbenchWindow().getShell().getDisplay().beep();
+						}
+					} catch (PartInitException e) {
+						StatusManager.getManager().handle(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+										IStatus.ERROR, "", e)); //$NON-NLS-1$
+					}
+				}
+				private IShowInTarget getShowInTarget(IWorkbenchPart targetPart) {
+					return (IShowInTarget) org.eclipse.ui.internal.util.Util.getAdapter(targetPart, IShowInTarget.class);
+				}
+			};
+			action.setId(targetId);
+			return new ActionContributionItem(action);
+		}
+	}
+
+	private static final int OPEN_WITH_ID = IDialogConstants.CLIENT_ID + 1;
+	private static final int SHOW_IN_ID = IDialogConstants.CLIENT_ID + 2;
+	
+	private Button showInButton;
 	private Button openWithButton;
 
 	/**
@@ -124,18 +194,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 				
 				// Add 'Open With' sub-menu
 				MenuManager subMenu = new MenuManager(IDEWorkbenchMessages.OpenResourceDialog_openWithMenu_label);
-				OpenWithMenu openWithMenu = new OpenWithMenu(activePage, selectedAdaptable) {
-					/*
-					 * (non-Javadoc)
-					 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.IEditorDescriptor, boolean)
-					 */
-					protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
-						computeResult();
-						setResult(Collections.EMPTY_LIST);
-						close();
-						super.openEditor(editorDescriptor, openUsingDescriptor);
-					}
-				};
+				OpenWithMenu openWithMenu = new ResourceOpenWithMenu(activePage, selectedAdaptable);
 				subMenu.add(openWithMenu);
 				menuManager.add(subMenu);
 			}
@@ -144,52 +203,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		
 		// Add 'Show In' sub-menu
 		MenuManager showInMenuManager = new MenuManager(IDEWorkbenchMessages.OpenResourceDialog_showInMenu_label);
-		ShowInMenu showInMenu = new ShowInMenu() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.ShowInMenu#getContext(org.eclipse.ui.IWorkbenchPart)
-			 */
-			protected ShowInContext getContext(IWorkbenchPart sourcePart) {
-				return new ShowInContext(null, selectedItems);
-			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.ShowInMenu#getContributionItem(org.eclipse.ui.views.IViewDescriptor)
-			 */
-			protected IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {
-				final String targetId= viewDescriptor.getId();
-				String label = '&' + viewDescriptor.getLabel();
-				ImageDescriptor icon = viewDescriptor.getImageDescriptor();
-				Action action = new Action(label, icon) {
-					/* (non-Javadoc)
-					 * @see org.eclipse.jface.action.Action#run()
-					 */
-					public void run() {
-						computeResult();
-						setResult(Collections.EMPTY_LIST);
-						close();
-						
-						IWorkbenchPage page = getActivePage();
-						IViewPart view;
-						try {
-							view = page.showView(targetId);
-							IShowInTarget target = getShowInTarget(view);
-							if (!(target != null && target.show(getContext(null)))) {
-								page.getWorkbenchWindow().getShell().getDisplay().beep();
-							}
-						} catch (PartInitException e) {
-							StatusManager.getManager().handle(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
-											IStatus.ERROR, "", e)); //$NON-NLS-1$
-						}
-					}
-					private IShowInTarget getShowInTarget(IWorkbenchPart targetPart) {
-						return (IShowInTarget) org.eclipse.ui.internal.util.Util.getAdapter(targetPart, IShowInTarget.class);
-					}
-				};
-				action.setId(targetId);
-				return new ActionContributionItem(action);
-			}
-		};
-        showInMenu.setId(ContributionItemFactory.VIEWS_SHOW_IN.getId());
-        showInMenu.initialize(activePage.getWorkbenchWindow());
+		ShowInMenu showInMenu = new ResourceShowInMenu(selectedItems, activePage.getWorkbenchWindow());
 		showInMenuManager.add(showInMenu);
 		menuManager.add(showInMenuManager);
 	}
@@ -200,77 +214,67 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 	 * @since 3.5
 	 */
 	protected void createButtonsForButtonBar(final Composite parent) {
-		// increment the number of columns in the button bar
 		GridLayout parentLayout = (GridLayout)parent.getLayout();
-		parentLayout.numColumns++;
 		parentLayout.makeColumnsEqualWidth = false;
+
+		int dropDownOrientation = parent.getOrientation() == SWT.LEFT_TO_RIGHT ? SWT.RIGHT_TO_LEFT : SWT.LEFT_TO_RIGHT;
+		showInButton = createButton(parent, SHOW_IN_ID, forceLRT(IDEWorkbenchMessages.OpenResourceDialog_showInButton_text, parent), false);
+		showInButton.setOrientation(dropDownOrientation);
+		showInButton.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_BUTTON_MENU));
+		showInButton.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				showShowInMenu();
+			}
+		});
+		setButtonLayoutData(showInButton);
 		
-		final Composite openComposite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.horizontalSpacing = 0;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		openComposite.setLayout(layout);
-
-		Button okButton = createButton(openComposite, IDialogConstants.OK_ID, IDEWorkbenchMessages.OpenResourceDialog_openButton_text, true);
-
-		// Arrow down button for Open With menu
-		((GridLayout)openComposite.getLayout()).numColumns++;
-		openWithButton = new Button(openComposite, SWT.PUSH);
-		openWithButton.setToolTipText(IDEWorkbenchMessages.OpenResourceDialog_openWithButton_toolTip);
+		openWithButton = createButton(parent, OPEN_WITH_ID, forceLRT(IDEWorkbenchMessages.OpenResourceDialog_openWithButton_text, parent), false);
+		openWithButton.setOrientation(dropDownOrientation);
 		openWithButton.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_BUTTON_MENU));
-
-		GridData data = new GridData(SWT.CENTER, SWT.FILL, false, true);
-		openWithButton.setLayoutData(data);
-
 		openWithButton.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
-				showOpenWithMenu(openComposite);
+				showOpenWithMenu();
 			}
 		});
-		openWithButton.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				showOpenWithMenu(openComposite);
-			}
-		});
-		openWithButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			public void getName(AccessibleEvent e) {
-				if (e.childID == ACC.CHILDID_SELF)
-					e.result= IDEWorkbenchMessages.OpenResourceDialog_openWithButton_toolTip;
-			}
-		});
-
+		setButtonLayoutData(openWithButton);
+		
+		GridData showInLayoutData = (GridData) showInButton.getLayoutData();
+		GridData openWithLayoutData = (GridData) openWithButton.getLayoutData();
+		int buttonWidth = Math.max(showInLayoutData.widthHint, openWithLayoutData.widthHint);
+		showInLayoutData.widthHint = buttonWidth;
+		openWithLayoutData.widthHint = buttonWidth;
+		
+		new Label(parent, SWT.NONE).setLayoutData(new GridData(5, 0));
+		parentLayout.numColumns++;
+		
+		Button okButton = createButton(parent, IDialogConstants.OK_ID, IDEWorkbenchMessages.OpenResourceDialog_openButton_text, true);
 		Button cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 
 		GridData cancelLayoutData = (GridData) cancelButton.getLayoutData();
 		GridData okLayoutData = (GridData) okButton.getLayoutData();
-		int buttonWidth = Math.max(cancelLayoutData.widthHint, okLayoutData.widthHint);
+		buttonWidth = Math.max(cancelLayoutData.widthHint, okLayoutData.widthHint);
 		cancelLayoutData.widthHint = buttonWidth;
 		okLayoutData.widthHint = buttonWidth;
-		
-		if (openComposite.getDisplay().getDismissalAlignment() == SWT.RIGHT) {
-			// Make the default button the right-most button.
-			// See also special code in org.eclipse.jface.dialogs.Dialog#initializeBounds()
-			openComposite.moveBelow(null);
-			if (Util.isCarbon()) {
-			okLayoutData.horizontalIndent = -10;
-		}
 	}
+
+	private static String forceLRT(String string, Control parent) {
+		char textEmbedding = parent.getOrientation() == SWT.LEFT_TO_RIGHT ? '\u202a' : '\u202b';
+		return textEmbedding + string + '\u202c';
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#initializeBounds()
-	 * @since 3.5
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
-	protected void initializeBounds() {
-		super.initializeBounds();
-		if (openWithButton.getDisplay().getDismissalAlignment() == SWT.RIGHT) {
-			// Move the menu button back to the right of the default button.
-			if (!Util.isMac()) {
-				// On the Mac, the round buttons and the big padding would destroy the visual coherence of the split button.
-				openWithButton.moveBelow(null);
-				openWithButton.getParent().layout();
-			}
+	protected void buttonPressed(int buttonId) {
+		switch (buttonId) {
+		case OPEN_WITH_ID:
+			showOpenWithMenu();
+			break;
+		case SHOW_IN_ID:
+			showShowInMenu();
+			break;
+		default:
+			super.buttonPressed(buttonId);
 		}
 	}
 
@@ -280,8 +284,10 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 	 */
 	protected void updateButtonsEnableState(IStatus status) {
 		super.updateButtonsEnableState(status);
-		if (openWithButton != null && !openWithButton.isDisposed()) {
+		if (showInButton != null && !showInButton.isDisposed()
+				&& openWithButton != null && !openWithButton.isDisposed()) {
 			openWithButton.setEnabled(!status.matches(IStatus.ERROR) && getSelectedItems().size() == 1);
+			showInButton.setEnabled(!status.matches(IStatus.ERROR) && getSelectedItems().size() > 0);
 		}
 	}
 
@@ -305,7 +311,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 		return activeWorkbenchWindow.getActivePage();
 	}
 
-	private void showOpenWithMenu(final Composite openComposite) {
+	private void showOpenWithMenu() {
 		IWorkbenchPage activePage = getActivePage();
 		if (activePage == null) {
 			return;
@@ -315,28 +321,32 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 			return;
 		}
 
-		OpenWithMenu openWithMenu = new OpenWithMenu(activePage, selectedAdaptable) {
-			/*
-			 * (non-Javadoc)
-			 * @see org.eclipse.ui.actions.OpenWithMenu#openEditor(org.eclipse.ui.IEditorDescriptor, boolean)
-			 */
-			protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
-				computeResult();
-				setResult(Collections.EMPTY_LIST);
-				close();
-				super.openEditor(editorDescriptor, openUsingDescriptor);
-			}
-		};
-
-		Menu menu = new Menu(openComposite.getParent());
-		Control c = openComposite;
-		Point p = c.getLocation();
-		p.y = p.y + c.getSize().y;
-		p = c.getParent().toDisplay(p);
-
-		menu.setLocation(p);
-		openWithMenu.fill(menu, -1);
-		menu.setVisible(true);
+		ResourceOpenWithMenu openWithMenu = new ResourceOpenWithMenu(activePage, selectedAdaptable);
+		showMenu(openWithButton, openWithMenu);
 	}
 
+	private void showShowInMenu() {
+		IWorkbenchPage activePage = getActivePage();
+		if (activePage == null) {
+			return;
+		}
+		IStructuredSelection selectedItems = getSelectedItems();
+		if (selectedItems.isEmpty()) {
+			return;
+		}
+		
+		ShowInMenu showInMenu = new ResourceShowInMenu(selectedItems, activePage.getWorkbenchWindow());
+		showMenu(showInButton, showInMenu);
+	}
+
+	private void showMenu(Button button, IContributionItem menuContribution) {
+		Menu menu = new Menu(button);
+		Point p = button.getLocation();
+		p.y = p.y + button.getSize().y;
+		p = button.getParent().toDisplay(p);
+
+		menu.setLocation(p);
+		menuContribution.fill(menu, 0);
+		menu.setVisible(true);
+	}
 }

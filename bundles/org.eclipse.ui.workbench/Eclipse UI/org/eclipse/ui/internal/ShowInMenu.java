@@ -138,15 +138,24 @@ public class ShowInMenu extends ContributionItem implements
 
 		currentManager = new MenuManager();
 		fillMenu(currentManager);
+		int itemCount = menu.getItemCount();
 		IContributionItem[] items = currentManager.getItems();
 		if (items.length == 0) {
-			MenuItem item = new MenuItem(menu, SWT.NONE, index++);
+			MenuItem item = new MenuItem(menu, SWT.NONE, index == -1 ? itemCount : index);
 			item.setText(NO_TARGETS_MSG);
 			item.setEnabled(false);
 		} else {
 			for (int i = 0; i < items.length; i++) {
-				if (items[i].isVisible()) {
-					items[i].fill(menu, index++);
+				IContributionItem item = items[i];
+				if (item.isVisible()) {
+					if (index == -1) {
+						item.fill(menu, -1);
+					} else {
+						item.fill(menu, index);
+						int newItemCount = menu.getItemCount();
+						index += newItemCount - itemCount;
+						itemCount = newItemCount;
+					}
 				}
 			}
 		}

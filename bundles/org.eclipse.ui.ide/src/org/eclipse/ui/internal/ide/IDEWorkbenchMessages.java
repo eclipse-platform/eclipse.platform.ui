@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -755,9 +755,12 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceSelectionDialog_showDerived;
 
 	public static String OpenResourceDialog_title;
+	public static String OpenResourceDialog_openWithButton_text;
+
 	public static String OpenResourceDialog_openWithMenu_label;
 	public static String OpenResourceDialog_openButton_text;
-	public static String OpenResourceDialog_openWithButton_toolTip;
+
+	public static String OpenResourceDialog_showInButton_text;
 
 	public static String OpenResourceDialog_showInMenu_label;
 
