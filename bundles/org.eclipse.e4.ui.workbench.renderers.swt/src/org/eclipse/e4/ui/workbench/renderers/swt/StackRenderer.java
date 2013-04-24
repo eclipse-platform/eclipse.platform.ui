@@ -1612,7 +1612,7 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 
 			setCSSInfo(part, cti);
-			reapplyStyles(cti);
+			reapplyStyles(cti.getParent());
 		}
 
 		public boolean validateElement(MUIElement element) {

@@ -96,7 +96,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	protected void reapplyStyles(Widget widget) {
 		CSSEngine engine = WidgetElement.getEngine(widget);
 		if (engine != null) {
-			engine.reapply();
+			engine.applyStyles(widget, false);
 		}
 	}
 
