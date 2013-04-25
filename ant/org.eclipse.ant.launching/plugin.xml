@@ -99,5 +99,13 @@
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.debug.core.lineBreakpointMarker"/>
       <persistent value="true"/>
-   </extension>   
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            name="%antSourceLookupDirector.name"
+            class="org.eclipse.ant.internal.launching.debug.AntSourceLookupDirector"
+            id="org.eclipse.ant.ui.debug.sourceLookupDirector">
+      </sourceLocator>
+   </extension>  
 </plugin>
