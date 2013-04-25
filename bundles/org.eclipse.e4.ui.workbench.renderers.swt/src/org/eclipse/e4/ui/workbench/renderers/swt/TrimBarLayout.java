@@ -156,8 +156,10 @@ public class TrimBarLayout extends Layout {
 		Point ctrlSize = ctrl.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 		// Hack! the StatusLine doesn't compute a useable size
-		if (isStatusLine(ctrl))
+		if (isStatusLine(ctrl)) {
 			ctrlSize.x = 375;
+			ctrlSize.y = 26;
+		}
 
 		return ctrlSize;
 	}
