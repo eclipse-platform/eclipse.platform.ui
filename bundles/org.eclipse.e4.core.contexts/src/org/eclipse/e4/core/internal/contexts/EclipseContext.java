@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -277,8 +277,8 @@ public class EclipseContext implements IEclipseContext {
 
 		// invalidate this name in child contexts
 		for (EclipseContext childContext : getChildren()) {
-			// unless it is already set to the same value
-			if (eventType == ContextChangeEvent.ADDED && childContext.isLocalEquals(name, newValue))
+			// unless it is already set in this context (and thus hides the change)
+			if ((eventType == ContextChangeEvent.ADDED || eventType == ContextChangeEvent.REMOVED) && childContext.isSetLocally(name))
 				continue;
 			childContext.invalidate(name, eventType, oldValue, newValue, scheduled);
 		}
@@ -336,7 +336,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 		boolean containsKey = localValues.containsKey(name);
 		Object oldValue = localValues.put(name, value);
-		if (!containsKey || value != oldValue) {
+		if (!containsKey || oldValue != value) {
 			Set<Scheduled> scheduled = new LinkedHashSet<Scheduled>();
 			invalidate(name, ContextChangeEvent.ADDED, oldValue, value, scheduled);
 			processScheduled(scheduled);
@@ -370,7 +370,7 @@ public class EclipseContext implements IEclipseContext {
 				throw new IllegalArgumentException(tmp);
 			}
 			Object oldValue = localValues.put(name, value);
-			if (value != oldValue)
+			if (oldValue != value)
 				invalidate(name, ContextChangeEvent.ADDED, oldValue, value, scheduled);
 			return true;
 		}

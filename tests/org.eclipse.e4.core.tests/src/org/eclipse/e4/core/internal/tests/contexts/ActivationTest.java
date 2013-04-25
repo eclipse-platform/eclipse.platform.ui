@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -238,15 +238,70 @@ public class ActivationTest extends TestCase {
 		
 		child12.activateBranch();
 		assertEquals("1", result[0]);
-		assertEquals(2, called[0]);
+		assertEquals(3, called[0]);
 		
 		child22.activateBranch();
 		assertEquals("1", result[0]);
-		assertEquals(2, called[0]);
+		assertEquals(3, called[0]);
 		
 		child21.activateBranch();
 		assertEquals("1", result[0]);
+		assertEquals(3, called[0]);
+	}
+
+	/**
+	 * A variation of {@link #testGetActiveRATNumberOfCalls()} that
+	 * uses distinct values in the leaf contexts.
+	 */
+	public void testGetActiveRATNumberOfCalls2() {
+		IEclipseContext root = EclipseContextFactory.create("root");
+		
+		IEclipseContext child1 = root.createChild("child1");
+		IEclipseContext child11 = child1.createChild("child11");
+		IEclipseContext child12 = child1.createChild("child12");
+		
+		IEclipseContext child2 = root.createChild("child2");
+		IEclipseContext child21 = child2.createChild("child21");
+		IEclipseContext child22 = child2.createChild("child22");
+		
+		child11.set("var", "11");
+		child12.set("var", "12");
+		child1.set("var", "3");
+		child21.set("var", "21");
+		child22.set("var", "22");
+		child2.set("var", "6");
+		root.set("var", "7");
+		
+		final String[] result = new String[1];
+		final int[] called = new int[1];
+		called[0] = 0;
+		
+		child1.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
+				result[0] = (String) context.getActive("var");
+				called[0]++;
+				return true;
+			}});
+		
+		// nothing is active - we get value from the node
+		assertEquals("3", result[0]);
+		assertEquals(1, called[0]);
+		
+		child11.activateBranch();
+		assertEquals("11", result[0]);
 		assertEquals(2, called[0]);
+		
+		child12.activateBranch();
+		assertEquals("12", result[0]);
+		assertEquals(3, called[0]);
+		
+		child22.activateBranch();
+		assertEquals("12", result[0]);
+		assertEquals(3, called[0]);
+		
+		child21.activateBranch();
+		assertEquals("12", result[0]);
+		assertEquals(3, called[0]);
 	}
 
 	public static class ActiveInject {
