@@ -306,6 +306,11 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 			if (!handlePartInitException(e)) {
 				return;
 			}
+		} catch (Exception e) {
+			WorkbenchPlugin.log("Unable to initialize part", e); //$NON-NLS-1$
+			if (!handlePartInitException(new PartInitException(e.getMessage()))) {
+				return;
+			}
 		}
 
 		// hook reference listeners to the part
