@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -5097,7 +5097,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (p instanceof IDocumentProviderExtension3)  {
 				IDocumentProviderExtension3 p3= (IDocumentProviderExtension3) p;
 				isSynchronized= p3.isSynchronized(getEditorInput());
-			} else  {
+			} else if (p != null) {
 				long modifiedStamp= p.getModificationStamp(getEditorInput());
 				long synchStamp= p.getSynchronizationStamp(getEditorInput());
 				isSynchronized= (modifiedStamp == synchStamp);
