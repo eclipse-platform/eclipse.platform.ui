@@ -90,10 +90,13 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IModelResourceHandler;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -1209,7 +1212,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				final Resource res = handler.createResourceWithApp(appCopy);
-				cleanUpCopy(appCopy);
+				cleanUpCopy(appCopy, e4Context);
 				try {
 					res.save(null);
 				} catch (IOException e) {
@@ -1227,10 +1230,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 		cleanAndSaveJob.schedule();
 	}
 
-	private static void cleanUpCopy(MApplication appCopy) {
+	private static void cleanUpCopy(MApplication appCopy, IEclipseContext context) {
 		// clean up all trim bars that come from trim bar contributions
 		// the trim elements that need to be removed are stored in the trimBar.
-		for (MWindow window : appCopy.getChildren()) {
+		EModelService modelService = context.get(EModelService.class);
+		List<MWindow> windows = modelService.findElements(appCopy, null, MWindow.class, null);
+		for (MWindow window : windows) {
 			if (window instanceof MTrimmedWindow) {
 				MTrimmedWindow trimmedWindow = (MTrimmedWindow) window;
 				// clean up the main menu to avoid duplicate menu items
@@ -1245,6 +1250,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 		appCopy.getMenuContributions().clear();
 		appCopy.getToolBarContributions().clear();
 		appCopy.getTrimContributions().clear();
+
+		List<MPart> parts = modelService.findElements(appCopy, null, MPart.class, null);
+		for (MPart part : parts) {
+			for (MMenu menu : part.getMenus()) {
+				menu.getChildren().clear();
+			}
+			MToolBar tb = part.getToolbar();
+			if (tb != null) {
+				tb.getChildren().clear();
+			}
+		}
 	}
 
 	private static void cleanUpTrimBar(MTrimBar element) {

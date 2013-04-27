@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -433,5 +435,12 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 		ESelectionService selectionService = (ESelectionService) part.getContext().get(
 				ESelectionService.class.getName());
 		selectionService.setSelection(e.getSelection());
+	}
+
+	protected void clearMenuItems() {
+		// in the workbench, view menus are re-created on startup
+		for (MMenu menu : part.getMenus()) {
+			menu.getChildren().clear();
+		}
 	}
 }

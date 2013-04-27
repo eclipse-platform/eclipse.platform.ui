@@ -111,6 +111,7 @@ public class CompatibilityView extends CompatibilityPart {
 	 */
 	@Override
 	protected boolean createPartControl(IWorkbenchPart legacyPart, Composite parent) {
+		clearMenuItems();
 		part.getContext().set(IViewPart.class, (IViewPart) legacyPart);
 
 		final IEclipseContext partContext = getModel().getContext();
@@ -139,11 +140,6 @@ public class CompatibilityView extends CompatibilityPart {
 			menu.getTags().add(ContributionsAnalyzer.MC_MENU);
 			part.getMenus().add(menu);
 
-		} else {
-			// clear out the e4 model items so they can be re-created by
-			// contributions
-			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=402561
-			menu.getChildren().clear();
 		}
 		AbstractPartRenderer apr = rendererFactory.getRenderer(menu, parent);
 		if (apr instanceof MenuManagerRenderer) {
