@@ -49,7 +49,7 @@
       <property name="data-dir" value="${sniff-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname"
-                value="org.eclipse.ui.tests.api.ApiTestSuite"/>
+                value="org.eclipse.ui.tests.UiTestSuite"/>
 
     </ant>
     
