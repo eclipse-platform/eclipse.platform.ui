@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1251,10 +1251,13 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//ensure all jobs in first family are either running or waiting
 		runningCount = 0;
 		for (int i = 0; i < JOBS_PER_FAMILY; i++) {
-			if (family1[i].getState() == Job.RUNNING)
+			int state = family1[i].getState();
+			if (state == Job.RUNNING) {
 				runningCount++;
-			else
-				assertState("7.1." + i, family1[i], Job.WAITING);
+			} else {
+				if (state != Job.WAITING)
+					assertTrue("7.1." + i + ": expected state: " + printState(Job.WAITING) + " actual state: " + printState(state), false);
+			}
 		}
 		//ensure only one job is running (it is possible that none have started yet)
 		assertTrue("7.running", runningCount <= 1);
