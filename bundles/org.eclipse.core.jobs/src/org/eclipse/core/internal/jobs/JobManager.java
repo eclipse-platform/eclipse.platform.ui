@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -881,10 +881,20 @@ public class JobManager implements IJobManager {
 							jobs.remove(event.getJob());
 					}
 
-					//update the list of jobs if new ones are added during the join
+					//update the list of jobs if new ones are started during the join
+					public void running(IJobChangeEvent event) {
+						Job job = event.getJob();
+						if (job.belongsTo(family))
+							jobs.add(job);
+					}
+
+					//update the list of jobs if new ones are scheduled during the join
 					public void scheduled(IJobChangeEvent event) {
 						//don't add to list if job is being rescheduled
 						if (((JobChangeEvent) event).reschedule)
+							return;
+						//if job manager is suspended we only wait for running jobs
+						if (isSuspended())
 							return;
 						Job job = event.getJob();
 						if (job.belongsTo(family))

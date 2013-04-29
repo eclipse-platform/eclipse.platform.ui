@@ -21,10 +21,10 @@ import org.eclipse.core.tests.harness.*;
  */
 public class IJobManagerTest extends AbstractJobManagerTest {
 	class TestJobListener extends JobChangeAdapter {
-		private Set scheduled = Collections.synchronizedSet(new HashSet());
+		private Set<Job> scheduled = Collections.synchronizedSet(new HashSet<Job>());
 
 		public void cancelAllJobs() {
-			Job[] jobs = (Job[]) scheduled.toArray(new Job[0]);
+			Job[] jobs = scheduled.toArray(new Job[0]);
 			for (int i = 0; i < jobs.length; i++) {
 				jobs[i].cancel();
 			}
@@ -89,9 +89,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	/**
 	 * Cancels a list of jobs
 	 */
-	protected void cancel(ArrayList jobs) {
-		for (Iterator it = jobs.iterator(); it.hasNext();)
-			((Job) it.next()).cancel();
+	protected void cancel(ArrayList<Job> jobs) {
+		for (Iterator<Job> it = jobs.iterator(); it.hasNext();)
+			it.next().cancel();
 	}
 
 	private String printState(int state) {
@@ -515,7 +515,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//try finding all jobs by supplying the NULL parameter
 		//note that this might find other jobs that are running as a side-effect of the test
 		//suites running, such as snapshot
-		HashSet allJobs = new HashSet();
+		HashSet<Job> allJobs = new HashSet<Job>();
 		allJobs.addAll(Arrays.asList(jobs));
 		Job[] result = manager.find(null);
 		assertTrue("1.0", result.length >= NUM_JOBS);
@@ -1038,6 +1038,228 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 	}
 
+	/**
+	 * Tests scenario 1 described in https://bugs.eclipse.org/bugs/show_bug.cgi?id=403271#c0:
+	 *  - join is called when job manager is suspended
+	 *  - waiting job is scheduled when job manager is suspended
+	 * In this scenario main job should not wait for the waiting job.
+	 */
+	public void testJobFamilyJoinWhenSuspended_1() throws InterruptedException {
+		final Object family = new TestJobFamily(TestJobFamily.TYPE_ONE);
+		final int[] familyJobsCount = new int[] {-1};
+		final TestBarrier barrier = new TestBarrier();
+		final Job waiting = new FamilyTestJob("waiting job", 1000000, 10, TestJobFamily.TYPE_ONE);
+		final Job running = new FamilyTestJob("running job", 200, 10, TestJobFamily.TYPE_ONE);
+		final IJobChangeListener listener = new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				if (event.getJob() == running)
+					barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+			}
+
+			public void running(IJobChangeEvent event) {
+				if (event.getJob() == running)
+					barrier.setStatus(TestBarrier.STATUS_RUNNING);
+			}
+		};
+		Job job = new Job("main job") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					manager.addJobChangeListener(listener);
+					running.schedule();
+					// wait until running job is actually running
+					barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+					manager.setLockListener(new LockListener() {
+						private boolean scheduled = false;
+
+						public boolean aboutToWait(Thread lockOwner) {
+							// aboutToWait will be called when main job will start joining the running job
+							if (!scheduled) {
+								waiting.schedule();
+								barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+							}
+							return super.aboutToWait(lockOwner);
+						}
+					});
+					// suspend before join
+					manager.suspend();
+					manager.join(family, null);
+					familyJobsCount[0] = manager.find(family).length;
+					barrier.setStatus(TestBarrier.STATUS_DONE);
+				} catch (InterruptedException e) {
+					// ignore
+				} finally {
+					// clean up
+					manager.removeJobChangeListener(listener);
+					manager.setLockListener(null);
+					running.cancel();
+					waiting.cancel();
+					try {
+						running.join();
+						waiting.join();
+					} catch (InterruptedException e) {
+						// ignore
+					}
+					manager.resume();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		try {
+			job.schedule();
+			barrier.waitForStatus(TestBarrier.STATUS_DONE);
+			assertEquals(1, familyJobsCount[0]);
+		} catch (AssertionFailedError e) {
+			// interrupt to avoid deadlock and perform cleanup
+			job.getThread().interrupt();
+			// re-throw since the test failed
+			throw e;
+		} finally {
+			// wait until cleanup is done
+			job.join();
+		}
+	}
+
+	/**
+	 * Tests scenario 2 - verifies if the suspended flag is checked each time a job is scheduled:
+	 *  - join is called when job manager is NOT suspended
+	 *  - waiting job is scheduled when job manager is suspended
+	 * In this scenario main job should not wait for the waiting job.
+	 */
+	public void testJobFamilyJoinWhenSuspended_2() throws InterruptedException {
+		final Object family = new TestJobFamily(TestJobFamily.TYPE_ONE);
+		final int[] familyJobsCount = new int[] {-1};
+		final TestBarrier barrier = new TestBarrier();
+		final Job waiting = new FamilyTestJob("waiting job", 1000000, 10, TestJobFamily.TYPE_ONE);
+		final Job running = new FamilyTestJob("running job", 200, 10, TestJobFamily.TYPE_ONE);
+		final IJobChangeListener listener = new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				if (event.getJob() == running)
+					barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+			}
+
+			public void running(IJobChangeEvent event) {
+				if (event.getJob() == running)
+					barrier.setStatus(TestBarrier.STATUS_RUNNING);
+			}
+		};
+		Job job = new Job("main job") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					manager.addJobChangeListener(listener);
+					running.schedule();
+					// wait until running job is actually running
+					barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+					manager.setLockListener(new LockListener() {
+						private boolean scheduled = false;
+
+						public boolean aboutToWait(Thread lockOwner) {
+							// aboutToWait will be called when main job will start joining the running job
+							if (!scheduled) {
+								// suspend before scheduling new job
+								getJobManager().suspend();
+								waiting.schedule();
+								barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+							}
+							return super.aboutToWait(lockOwner);
+						}
+					});
+					manager.join(family, null);
+					familyJobsCount[0] = manager.find(family).length;
+					barrier.setStatus(TestBarrier.STATUS_DONE);
+				} catch (InterruptedException e) {
+					// ignore
+				} finally {
+					// clean up
+					manager.removeJobChangeListener(listener);
+					manager.setLockListener(null);
+					running.cancel();
+					waiting.cancel();
+					try {
+						running.join();
+						waiting.join();
+					} catch (InterruptedException e) {
+						// ignore
+					}
+					manager.resume();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		try {
+			job.schedule();
+			barrier.waitForStatus(TestBarrier.STATUS_DONE);
+			assertEquals(1, familyJobsCount[0]);
+		} catch (AssertionFailedError e) {
+			// interrupt to avoid deadlock and perform cleanup
+			job.getThread().interrupt();
+			// re-throw since the test failed
+			throw e;
+		} finally {
+			// wait until cleanup is done
+			job.join();
+		}
+	}
+
+	/**
+	 * Tests scenario 3:
+	 *  - join is called when job manager is NOT suspended
+	 *  - waiting job is scheduled when job manager is suspended
+	 *  - job manager is resumed causing waiting job to start
+	 * In this scenario main thread should wait for the waiting job since the job was started before the join ended.
+	 */
+	public void testJobFamilyJoinWhenSuspended_3() throws InterruptedException {
+		final Object family = new TestJobFamily(TestJobFamily.TYPE_ONE);
+		final TestBarrier barrier = new TestBarrier();
+		final Job waiting = new FamilyTestJob("waiting job", 400, 10, TestJobFamily.TYPE_ONE);
+		final Job running = new FamilyTestJob("running job", 200, 10, TestJobFamily.TYPE_ONE);
+		final IJobChangeListener listener = new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				if (event.getJob() == running)
+					barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+			}
+
+			public void running(IJobChangeEvent event) {
+				if (event.getJob() == running)
+					barrier.setStatus(TestBarrier.STATUS_RUNNING);
+				else if (event.getJob() == waiting)
+					barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+			}
+		};
+		try {
+			manager.addJobChangeListener(listener);
+			running.schedule();
+			// wait until the running job is actually running
+			barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+			manager.setLockListener(new LockListener() {
+				private boolean scheduled = false;
+
+				public boolean aboutToWait(Thread lockOwner) {
+					// aboutToWait will be called when main thread will start joining the running job
+					if (!scheduled) {
+						// suspend before scheduling the waiting job
+						manager.suspend();
+						waiting.schedule();
+						// resume to start the waiting job
+						manager.resume();
+						scheduled = true;
+					}
+					return super.aboutToWait(lockOwner);
+				}
+			});
+			manager.join(family, null);
+			assertEquals(0, manager.find(family).length);
+		} finally {
+			// clean up
+			manager.removeJobChangeListener(listener);
+			manager.setLockListener(null);
+			running.cancel();
+			waiting.cancel();
+			running.join();
+			waiting.join();
+			manager.resume();
+		}
+	}
+
 	public void testJobFamilyNULL() {
 		//test methods that accept the null job family (i.e. all jobs)
 		final int NUM_JOBS = 20;
@@ -1307,7 +1529,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 	public void testOrder() {
 		//ensure jobs are run in order from lowest to highest sleep time.
-		final List done = Collections.synchronizedList(new ArrayList());
+		final List<Job> done = Collections.synchronizedList(new ArrayList<Job>());
 		IJobChangeListener listener = new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				if (event.getJob() instanceof TestJob)
@@ -1328,7 +1550,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				Thread.yield();
 				sleep(100);
 			}
-			Job[] doneOrder = (Job[]) done.toArray(new Job[done.size()]);
+			Job[] doneOrder = done.toArray(new Job[done.size()]);
 			assertEquals("1.0", jobs.length, doneOrder.length);
 			for (int i = 0; i < doneOrder.length; i++)
 				assertEquals("1.1." + i, jobs[i], doneOrder[i]);
@@ -1339,7 +1561,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 	public void testReverseOrder() {
 		//ensure jobs are run in order from lowest to highest sleep time.
-		final List done = Collections.synchronizedList(new ArrayList());
+		final List<Job> done = Collections.synchronizedList(new ArrayList<Job>());
 		IJobChangeListener listener = new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				if (event.getJob() instanceof TestJob)
@@ -1361,7 +1583,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				Thread.yield();
 				sleep(100);
 			}
-			Job[] doneOrder = (Job[]) done.toArray(new Job[done.size()]);
+			Job[] doneOrder = done.toArray(new Job[done.size()]);
 			assertEquals("1.0", jobs.length, doneOrder.length);
 			for (int i = 0; i < doneOrder.length; i++)
 				assertEquals("1.1." + i, jobs[i], doneOrder[i]);
