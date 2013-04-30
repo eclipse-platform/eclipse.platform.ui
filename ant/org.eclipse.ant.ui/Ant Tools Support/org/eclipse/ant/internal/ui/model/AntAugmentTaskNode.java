@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Nov 13, 2012 IBM Corporation and others.
+ * Copyright (c) Nov 13, 2012, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
  * Supports the Ant augment task, which over-writes (augments) existing nodes
  * based on their id
  * 
- * @see http://ant.apache.org/manual/Tasks/augment.html
+ * @see "http://ant.apache.org/manual/Tasks/augment.html"
  */
 public class AntAugmentTaskNode extends AntTaskNode {
 
@@ -68,12 +68,12 @@ public class AntAugmentTaskNode extends AntTaskNode {
 	 */
 	public boolean containsOccurrence(String identifier) {
 		if(identifier != null) {
-		boolean prop= identifier.startsWith("${") && identifier.endsWith("}"); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean prop= identifier.startsWith("${") && identifier.endsWith("}"); //$NON-NLS-1$ //$NON-NLS-2$
 			//the 'id' is the only attribute of an augment
 			if(!prop) {
 				return identifier.equals(attrId);
 			}
-			return identifier.indexOf(attrId) > -1;
+			return attrId  != null && identifier.indexOf(attrId) > -1;
 		}
 		return false;
 	}
