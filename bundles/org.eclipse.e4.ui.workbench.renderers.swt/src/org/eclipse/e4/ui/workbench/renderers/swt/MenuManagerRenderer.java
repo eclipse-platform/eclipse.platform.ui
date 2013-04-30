@@ -78,6 +78,7 @@ import org.osgi.service.event.EventHandler;
  * Create a contribute part.
  */
 public class MenuManagerRenderer extends SWTPartRenderer {
+	public static final String VISIBILITY_IDENTIFIER = "IIdentifier"; //$NON-NLS-1$
 	private static final String NO_LABEL = "UnLabled"; //$NON-NLS-1$
 	public static final String GROUP_MARKER = "org.eclipse.jface.action.GroupMarker.GroupMarker(String)"; //$NON-NLS-1$
 
@@ -965,13 +966,25 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	 */
 	public static void updateVisibility(MenuManager menuManager,
 			MMenuElement element, ExpressionContext evalContext) {
-		if (!(element.getVisibleWhen() instanceof MCoreExpression)) {
-			return;
+		boolean current = element.isVisible();
+		boolean visible = true;
+		boolean evaluated = false;
+		if (element.getPersistedState().get(VISIBILITY_IDENTIFIER) != null) {
+			evaluated = true;
+			String identifier = element.getPersistedState().get(
+					VISIBILITY_IDENTIFIER);
+			Object rc = evalContext.eclipseContext.get(identifier);
+			if (rc instanceof Boolean) {
+				visible = ((Boolean) rc).booleanValue();
+			}
 		}
-		boolean val = ContributionsAnalyzer.isVisible(
-				(MCoreExpression) element.getVisibleWhen(), evalContext);
-		if (val != element.isVisible()) {
-			element.setVisible(val);
+		if (visible && (element.getVisibleWhen() instanceof MCoreExpression)) {
+			evaluated = true;
+			visible = ContributionsAnalyzer.isVisible(
+					(MCoreExpression) element.getVisibleWhen(), evalContext);
+		}
+		if (evaluated && visible != current) {
+			element.setVisible(visible);
 			menuManager.markDirty();
 		}
 	}

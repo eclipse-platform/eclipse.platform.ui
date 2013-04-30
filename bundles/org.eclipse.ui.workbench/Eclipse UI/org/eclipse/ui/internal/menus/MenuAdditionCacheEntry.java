@@ -21,6 +21,7 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
@@ -39,6 +40,11 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.IIdentifierListener;
+import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -76,7 +82,9 @@ public class MenuAdditionCacheEntry {
 	private IConfigurationElement configElement;
 	private MenuLocationURI location;
 
-	// private String namespaceIdentifier;
+	private String namespaceIdentifier;
+
+	private IActivityManager activityManager;
 
 	public MenuAdditionCacheEntry(MApplication application, IEclipseContext appContext,
 			IConfigurationElement configElement, String attribute, String namespaceIdentifier) {
@@ -85,7 +93,10 @@ public class MenuAdditionCacheEntry {
 		assert appContext.equals(this.application.getContext());
 		this.configElement = configElement;
 		this.location = new MenuLocationURI(attribute);
-		// this.namespaceIdentifier = namespaceIdentifier;
+		this.namespaceIdentifier = namespaceIdentifier;
+
+		IWorkbench workbench = application.getContext().get(IWorkbench.class);
+		activityManager = workbench.getActivitySupport().getActivityManager();
 	}
 
 	private boolean inToolbar() {
@@ -265,7 +276,29 @@ public class MenuAdditionCacheEntry {
 		item.setTooltip(MenuHelper.getTooltip(commandAddition));
 		item.setType(MenuHelper.getStyle(commandAddition));
 		item.setVisibleWhen(MenuHelper.getVisibleWhen(commandAddition));
+		createIdentifierTracker(item);
 		return item;
+	}
+
+	private class IdListener implements IIdentifierListener {
+		public void identifierChanged(IdentifierEvent identifierEvent) {
+			application.getContext().set(identifierEvent.getIdentifier().getId(),
+					identifierEvent.getIdentifier().isEnabled());
+		}
+	}
+
+	private IdListener idUpdater = new IdListener();
+
+	private void createIdentifierTracker(MApplicationElement item) {
+		if (item.getElementId() != null && item.getElementId().length() > 0) {
+			String id = namespaceIdentifier + "/" + item.getElementId(); //$NON-NLS-1$
+			item.getPersistedState().put(MenuManagerRenderer.VISIBILITY_IDENTIFIER, id);
+			final IIdentifier identifier = activityManager.getIdentifier(id);
+			if (identifier != null) {
+				application.getContext().set(identifier.getId(), identifier.isEnabled());
+				identifier.addIdentifierListener(idUpdater);
+			}
+		}
 	}
 
 	private MMenuElement createMenuSeparatorAddition(final IConfigurationElement sepAddition) {
@@ -383,6 +416,7 @@ public class MenuAdditionCacheEntry {
 		control.setContributionURI(CompatibilityWorkbenchWindowControlContribution.CONTROL_CONTRIBUTION_URI);
 		ControlContributionRegistry.add(id, element);
 		control.setVisibleWhen(MenuHelper.getVisibleWhen(element));
+		createIdentifierTracker(control);
 		return control;
 	}
 
@@ -474,6 +508,7 @@ public class MenuAdditionCacheEntry {
 			item.setMenu(element);
 		}
 		item.setVisibleWhen(MenuHelper.getVisibleWhen(commandAddition));
+		createIdentifierTracker(item);
 		return item;
 	}
 }
