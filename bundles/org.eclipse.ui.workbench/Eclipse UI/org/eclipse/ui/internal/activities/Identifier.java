@@ -56,7 +56,7 @@ final class Identifier implements IIdentifier {
 		}
 
         if (identifierListeners == null) {
-			identifierListeners = new ListenerList();
+			identifierListeners = new ListenerList(ListenerList.IDENTITY);
 		}
 
 		identifierListeners.add(identifierListener);
