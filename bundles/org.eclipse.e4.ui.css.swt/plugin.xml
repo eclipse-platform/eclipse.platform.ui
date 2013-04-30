@@ -111,6 +111,14 @@
                name="unselected-tabs-color" deprecated="renamed as swt-unselected-tabs-color">
          </property-name>
       </handler>
+       <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabPositionSWTHandler">
+         <property-name
+               name="swt-tab-position">
+         </property-name>
+      </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
