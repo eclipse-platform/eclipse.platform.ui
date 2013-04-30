@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 MEDEVIT, FHV and others.
+ * Copyright (c) 2012, 2013 MEDEVIT, FHV and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marco Descher <marco@descher.at> - initial API and implementation
+ *     IBM Corporation - bug fixes
  *******************************************************************************/
 package org.eclipse.e4.ui.di;
 
@@ -24,6 +25,7 @@ import java.lang.annotation.Target;
  * public void aboutToHide(List&lt;MMenuElement&gt; items) { }
  * 
  * @see org.eclipse.jface.action.IMenuListener2
+ * @since 1.0
  */
 @Documented
 @Target({ ElementType.METHOD })

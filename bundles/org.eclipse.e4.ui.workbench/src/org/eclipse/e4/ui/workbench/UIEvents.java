@@ -29,6 +29,10 @@ import org.osgi.service.event.Event;
  * When the UI model changes org.eclipse.e4.ui.internal.workbench.swt.GenTopic should be run as an
  * Eclipse application and the console results should be pasted into this file replacing the code
  * below the "Place Generated Code Here" comment
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @since 1.0
  */
 public class UIEvents {
 

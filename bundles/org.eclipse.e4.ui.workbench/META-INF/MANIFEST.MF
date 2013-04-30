@@ -30,11 +30,7 @@ Export-Package: org.eclipse.e4.ui.internal.workbench;
    org.eclipse.ui.workbench",
  org.eclipse.e4.ui.internal.workbench.addons;x-internal:=true,
  org.eclipse.e4.ui.internal.workbench.handlers;x-internal:=true,
- org.eclipse.e4.ui.workbench;
-  x-friends:="org.eclipse.e4.ui.workbench.swt,
-   org.eclipse.e4.ui.workbench.addons.swt,
-   org.eclipse.e4.ui.workbench.renderers.swt,
-   org.eclipse.ui.workbench",
+ org.eclipse.e4.ui.workbench,
  org.eclipse.e4.ui.workbench.lifecycle;x-friends:="org.eclipse.e4.ui.workbench.swt",
  org.eclipse.e4.ui.workbench.modeling
 Bundle-Activator: org.eclipse.e4.ui.internal.workbench.Activator

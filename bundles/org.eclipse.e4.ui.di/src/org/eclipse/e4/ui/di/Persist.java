@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
  * This annotation must not be applied to more than one method on a class. If multiple methods of
  * the class are tagged with this this annotation, only one of them will be called to persist data.
  * </p>
+ * @since 1.0
  */
 @Documented
 @Target({ ElementType.METHOD })
