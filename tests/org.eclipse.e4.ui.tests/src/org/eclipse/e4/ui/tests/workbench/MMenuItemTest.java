@@ -19,6 +19,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.bindings.BindingServiceAddon;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon;
 import org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
@@ -701,6 +702,7 @@ public class MMenuItemTest extends TestCase {
 
 		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
 		command.setElementId("testElementHierarchyInContext_HandledItem");
+		command.setCommandName("Test HandledItem");
 
 		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
 		MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
@@ -739,6 +741,7 @@ public class MMenuItemTest extends TestCase {
 		appContext.set(MApplication.class.getName(), application);
 		// The handler processing addon cannot run until the context
 		// contains the MApplication
+		ContextInjectionFactory.make(CommandProcessingAddon.class, appContext);
 		ContextInjectionFactory.make(HandlerProcessingAddon.class, appContext);
 
 		wb = new E4Workbench(window, appContext);
