@@ -15,6 +15,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.commands.ExpressionContext;
@@ -137,8 +138,9 @@ public class HandlerServiceHandler extends AbstractHandler {
 		ExecutionContexts contexts = HandlerServiceImpl.peek();
 		if (contexts != null) {
 			Object handler = HandlerServiceImpl.lookUpHandler(contexts.context, commandId);
-			// TODO used to check if E4HandlerProxy.getHandler() was an IHandler
-			// then IHandler.isHandled();
+			if (handler instanceof IHandler) {
+				return ((IHandler) handler).isHandled();
+			}
 			return handler != null;
 
 		}
