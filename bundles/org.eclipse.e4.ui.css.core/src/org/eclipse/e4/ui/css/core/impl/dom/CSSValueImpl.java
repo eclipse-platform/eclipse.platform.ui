@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Angelo Zerr and others.
+ * Copyright (c) 2008, 2013 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation - ongoing development
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
 
-import java.io.Serializable;
 import org.eclipse.e4.ui.css.core.exceptions.DOMExceptionImpl;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSPrimitiveValue;
@@ -20,7 +20,7 @@ import org.w3c.dom.css.Counter;
 import org.w3c.dom.css.RGBColor;
 import org.w3c.dom.css.Rect;
 
-public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimitiveValue, CSSValue, Serializable {
+public abstract class CSSValueImpl extends AbstractCSSNode implements CSSPrimitiveValue, CSSValue {
 
 	// W3C CSSValue API methods
 	

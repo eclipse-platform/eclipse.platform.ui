@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Angelo Zerr and others.
+ * Copyright (c) 2008, 2013 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,12 @@
 
 package org.eclipse.e4.ui.css.core.impl.dom;
 
-import java.io.Serializable;
-
 import org.w3c.css.sac.LexicalUnit;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.RGBColor;
 
-public class RGBColorImpl extends CSSValueImpl implements RGBColor, Serializable {
+public class RGBColorImpl extends CSSValueImpl implements RGBColor {
 
 	private CSSPrimitiveValue red;
 	private CSSPrimitiveValue green;

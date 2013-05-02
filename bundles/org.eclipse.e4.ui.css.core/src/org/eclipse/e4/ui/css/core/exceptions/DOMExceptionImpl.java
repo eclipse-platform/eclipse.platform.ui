@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2013 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation\
- *     IBM Corporation
+ *     IBM Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.exceptions;
 
@@ -21,6 +21,8 @@ import org.w3c.dom.DOMException;
  */
 public class DOMExceptionImpl extends DOMException {
 
+	private static final long serialVersionUID = 4001374962941459011L;
+	
 	public static final int SYNTAX_ERROR = 0;
 	public static final int ARRAY_OUT_OF_BOUNDS = 1;
 	public static final int READ_ONLY_STYLE_SHEET = 2;

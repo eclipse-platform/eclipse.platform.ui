@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2013 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,16 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation
+ *     IBM Corporation - ongoing development
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
-
-import java.io.Serializable;
 
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSUnknownRule;
 
-public class CSSUnknownRuleImpl extends CSSRuleImpl implements CSSUnknownRule, Serializable {
+public class CSSUnknownRuleImpl extends CSSRuleImpl implements CSSUnknownRule {
 
 	public CSSUnknownRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
 			String atRule) {
