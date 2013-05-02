@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.e4.rcp"
       label="%featureName"
-      version="1.2.0.qualifier"
+      version="1.3.0.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg"
       license-feature="org.eclipse.license"
@@ -344,6 +344,14 @@
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.osgi.compatibility.state"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.osgi.services"
          download-size="0"
          install-size="0"
@@ -406,7 +414,6 @@
          install-size="0"
          version="0.0.0"
          fragment="true"/>
-
 
    <plugin
          id="org.eclipse.equinox.launcher.gtk.linux.ppc"
