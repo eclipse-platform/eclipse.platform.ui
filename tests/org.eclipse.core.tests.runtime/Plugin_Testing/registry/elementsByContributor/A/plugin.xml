@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
-<plugin id="testByContributorsA" name="Test Elements By Contributors A" version="1.0.0" provider-name="">
+<plugin>
    <extension-point id="org.eclipse.test.registryByContrib.PointA" 
          name="By Contributors PointA" 
          schema="schema/PointA.exsd"/>

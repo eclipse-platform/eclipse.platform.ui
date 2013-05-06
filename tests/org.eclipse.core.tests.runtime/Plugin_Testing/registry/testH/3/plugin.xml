@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="testH3"
-   name="TesH3 Plug-in"
-   version="1.0.0"
-   provider-name="">
+<plugin>
  
       <extension-point id="unused" name="unused in tests" schema="schema/xptH1.exsd"/>
       

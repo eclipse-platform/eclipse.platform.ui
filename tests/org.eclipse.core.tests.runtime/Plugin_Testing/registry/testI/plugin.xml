@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="testI"
-   name="TestI Plug-in"
-   version="1.0.0"
-   provider-name="">
+<plugin>
   
      <extension-point id="xptI" name="Label xptI" schema="schema/xptI.exsd"/>
      

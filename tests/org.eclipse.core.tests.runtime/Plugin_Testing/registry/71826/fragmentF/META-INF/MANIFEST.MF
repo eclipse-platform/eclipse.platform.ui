@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: 71826F
+Bundle-SymbolicName: 71826F;singleton:=true
+Bundle-Version: 1.0.0
+Fragment-Host: 71826A; bundle-version=1.0.0

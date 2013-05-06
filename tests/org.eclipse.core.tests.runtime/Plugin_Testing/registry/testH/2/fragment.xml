@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<fragment
-   id="testH2"
-   name="TestH2 Plug-in"
-   version="1.0.0"
-
-   plugin-id="testH3"
-   plugin-version="1.0.0">
+<fragment>
   
   	<extension point="testH1.xptH1" id="ext1">
 	</extension>

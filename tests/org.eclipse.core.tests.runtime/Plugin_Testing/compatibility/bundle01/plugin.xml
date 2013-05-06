@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
-<!-- no runtime libraries -->
-<plugin
-  name="bundle01"
-  id="bundle01"
-  provider-name="Eclipse.org"
-  version="1.0"
-  />

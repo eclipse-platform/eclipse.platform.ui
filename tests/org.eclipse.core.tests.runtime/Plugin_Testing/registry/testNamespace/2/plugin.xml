@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
-<plugin id="testNamespace2" name="TestNamespace Plug-in2" version="1.0.0" provider-name="">
+<plugin>
   
     <extension-point id="org.abc.xptNS2" name="Label xptNS2" schema="schema/xptNS2.exsd"/>
     

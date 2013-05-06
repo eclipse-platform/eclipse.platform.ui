@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin id="testErrorHandling" name="Test XML Error Handling" version="1.0.0" provider-name="">
+<plugin>
    
    <extension-point id="xptErrorTestA" name="Label xptErrorTestA" schema="schema/xptErrorTestA.exsd"/>
    <extension-point id="xptErrorTestB" name="Label xptErrorTestB" schema="schema/xptErrorTestB.exsd"/>

@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: testC1
+Bundle-SymbolicName: testC1;singleton:=true
+Bundle-Version: 1.0.0

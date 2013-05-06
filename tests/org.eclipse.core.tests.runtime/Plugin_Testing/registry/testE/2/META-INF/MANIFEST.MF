@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: testE2
+Bundle-SymbolicName: testE2;singleton:=true
+Bundle-Version: 1.0.0
+Fragment-Host: testE1; bundle-version=1.0.0

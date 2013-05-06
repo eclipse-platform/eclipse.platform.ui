@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="testD2"
-   name="TestD2 Plug-in"
-   version="1.0.0"
-   provider-name="">
+<plugin>
   
   	<extension point="testD1.xptD1" id="ext1">
 	</extension>

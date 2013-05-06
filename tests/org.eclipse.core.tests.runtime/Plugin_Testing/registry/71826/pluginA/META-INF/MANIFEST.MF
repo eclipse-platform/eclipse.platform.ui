@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: 71826A
+Bundle-SymbolicName: 71826A;singleton:=true
+Bundle-Version: 1.0.0

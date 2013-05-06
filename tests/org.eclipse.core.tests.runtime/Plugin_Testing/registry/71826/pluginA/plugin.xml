@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="71826A"
-   name="71826A Plug-in"
-   version="1.0.0"
-   provider-name="">
+<plugin>
    
    <extension-point id="xptE" name="Label xptE" schema="schema/xptE.exsd"/>
 
