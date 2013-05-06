@@ -2729,11 +2729,14 @@ UIEvents.Context.TOPIC_CONTEXT,
 								return Status.CANCEL_STATUS;
 							}
 							final int nextDelay = getAutoSaveJobTime();
-							persist(false);
-							monitor.done();
-							// repeat
-							if (nextDelay > 0 && workbenchAutoSave) {
-								this.schedule(nextDelay);
+							try {
+								persist(false);
+								monitor.done();
+							} finally {
+								// repeat
+								if (nextDelay > 0 && workbenchAutoSave) {
+									this.schedule(nextDelay);
+								}
 							}
 							return Status.OK_STATUS;
 						}
