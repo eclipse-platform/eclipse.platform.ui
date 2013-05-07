@@ -14,7 +14,7 @@ package org.eclipse.e4.ui.workbench.modeling;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 
 /**
- * @noreference
+ * @noreference This interface is not intended to be referenced by clients.
  * @since 1.0
  */
 public interface IPartListener {

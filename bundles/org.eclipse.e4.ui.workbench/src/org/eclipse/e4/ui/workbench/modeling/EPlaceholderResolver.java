@@ -21,7 +21,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
  * elements' but instantiating the snippet in a new window requires that the shared elements list be
  * updated.
  * 
- * @noreference
+ * @noreference This interface is not intended to be referenced by clients.
  * @since 1.0
  */
 public interface EPlaceholderResolver {

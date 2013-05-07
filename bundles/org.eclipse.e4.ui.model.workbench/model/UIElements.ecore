@@ -673,7 +673,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuContribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
             defaultValueLiteral="">
@@ -755,7 +755,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="MenuContributions" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="menuContributions"
             upperBound="-1" eType="#//ui/menu/MenuContribution" containment="true">
@@ -790,7 +790,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -809,7 +809,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContributions" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolBarContributions"
             upperBound="-1" eType="#//ui/menu/ToolBarContribution" containment="true">
@@ -820,7 +820,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimContribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -839,7 +839,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="TrimContributions" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="trimContributions"
             upperBound="-1" eType="#//ui/menu/TrimContribution" containment="true">
@@ -850,7 +850,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="RenderedMenuItem" eSuperTypes="#//ui/menu/MenuItem">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
             transient="true">
@@ -861,7 +861,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueToolItem" eSuperTypes="#//ui/menu/ToolItem">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MToolItem&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
             transient="true">
@@ -872,7 +872,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenuItem" eSuperTypes="#//ui/menu/MenuItem">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
             transient="true">
@@ -883,7 +883,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenuSeparator" eSuperTypes="#//ui/menu/MenuSeparator">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuSeparator&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
             transient="true">
@@ -894,7 +894,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenu" eSuperTypes="#//ui/menu/Menu">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenu&#xD;&#xA;@noreference&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="Do no use! This class will be removed at the beginning of Luna (4.4) development.&#xD;&#xA;@deprecated Use MMenuItem&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DynamicMenuContribution" eSuperTypes="#//ui/menu/MenuItem #//Contribution">

@@ -319,8 +319,7 @@ public interface EPartService {
 	 * @param perspective
 	 *            the perspective to switch to, must not be <code>null</code> and it must be a
 	 *            perspective that's being managed by this service
-	 * @noreference This method is not intended to be referenced by clients as it may be removed or
-	 *              moved to another interface.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void switchPerspective(MPerspective perspective);
 }

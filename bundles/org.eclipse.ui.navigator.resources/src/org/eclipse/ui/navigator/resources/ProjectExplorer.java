@@ -98,7 +98,7 @@ public final class ProjectExplorer extends CommonNavigator {
 	 * The superclass does not deal with the content description, handle it
 	 * here.
 	 * 
-	 * @noreference
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void updateTitle() {
 		super.updateTitle();
@@ -132,7 +132,7 @@ public final class ProjectExplorer extends CommonNavigator {
 	 * @param element
 	 *            the element
 	 * @return the tooltip
-	 * @noreference
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public String getFrameToolTipText(Object element) {
 		String result;

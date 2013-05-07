@@ -29,7 +29,7 @@ public interface IServiceConstants {
 	 * replaced with {@link #ACTIVE_SELECTION}. All clients of this API should
 	 * change their references to <code>ACTIVE_SELECTION</code>.
 	 * 
-	 * @noreference
+	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public final static String SELECTION = ACTIVE_SELECTION;

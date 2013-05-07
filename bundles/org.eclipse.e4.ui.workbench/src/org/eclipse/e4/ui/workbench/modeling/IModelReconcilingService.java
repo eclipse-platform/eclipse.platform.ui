@@ -15,7 +15,7 @@ import java.util.Collection;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * @noreference
+ * @noreference This interface is not intended to be referenced by clients.
  * @since 1.0
  */
 public interface IModelReconcilingService {

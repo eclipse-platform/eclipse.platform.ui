@@ -11,7 +11,7 @@
 package org.eclipse.e4.ui.workbench.modeling;
 
 /**
- * @noreference
+ * @noreference This class is not intended to be referenced by clients.
  * @since 1.0
  */
 public class ModelHandlerBase {

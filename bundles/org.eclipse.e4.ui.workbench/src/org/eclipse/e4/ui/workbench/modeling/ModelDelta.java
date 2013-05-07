@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * @noreference
+ * @noreference This class is not intended to be referenced by clients.
  * @since 1.0
  */
 public abstract class ModelDelta implements IDelta {
