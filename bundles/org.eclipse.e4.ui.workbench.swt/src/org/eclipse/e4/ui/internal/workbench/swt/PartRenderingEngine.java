@@ -118,14 +118,16 @@ public class PartRenderingEngine implements IPresentationEngine {
 						.eContainer();
 			}
 
-			boolean menuChild = parent instanceof MMenu;
-
-			// If the parent isn't displayed who cares?
-			if (!(parent instanceof MApplication)
-					&& (parent == null || parent.getWidget() == null || menuChild))
+			// menus are not handled here... ??
+			if (parent instanceof MMenu)
 				return;
 
-			if (changedElement.isToBeRendered()) {
+			// If the parent isn't visible we don't care (The application is
+			// never rendered)
+			boolean okToRender = parent instanceof MApplication
+					|| parent.getWidget() != null;
+
+			if (changedElement.isToBeRendered() && okToRender) {
 				Activator.trace(Policy.DEBUG_RENDERER, "visible -> true", null); //$NON-NLS-1$
 
 				// Note that the 'createGui' protocol calls 'childAdded'
@@ -142,12 +144,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (parent.getSelectedElement() == changedElement)
 					parent.setSelectedElement(null);
 
-				// Un-maximize the element before tearing it down
-				if (changedElement.getTags().contains(MAXIMIZED))
-					changedElement.getTags().remove(MAXIMIZED);
+				if (okToRender) {
+					// Un-maximize the element before tearing it down
+					if (changedElement.getTags().contains(MAXIMIZED))
+						changedElement.getTags().remove(MAXIMIZED);
 
-				// Note that the 'removeGui' protocol calls 'childRemoved'
-				removeGui(changedElement);
+					// Note that the 'removeGui' protocol calls 'childRemoved'
+					removeGui(changedElement);
+				}
 			}
 
 		}
