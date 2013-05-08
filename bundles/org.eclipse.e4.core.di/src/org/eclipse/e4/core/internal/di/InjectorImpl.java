@@ -80,7 +80,13 @@ public class InjectorImpl implements IInjector {
 	private PrimaryObjectSupplier defaultSupplier;
 
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) {
-		inject(object, objectSupplier, null);
+		try {
+			inject(object, objectSupplier, null);
+		} catch (NoClassDefFoundError e) {
+			throw new InjectionException(e);
+		} catch (NoSuchMethodError e) {
+			throw new InjectionException(e);
+		}
 	}
 
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier) {
@@ -167,33 +173,39 @@ public class InjectorImpl implements IInjector {
 	}
 
 	public void uninject(Object object, PrimaryObjectSupplier objectSupplier) {
-		if (!forgetInjectedObject(object, objectSupplier))
-			return; // not injected at this time
-		processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<Class<?>>(5));
+		try {
+			if (!forgetInjectedObject(object, objectSupplier))
+				return; // not injected at this time
+			processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<Class<?>>(5));
 
-		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
-		processClassHierarchy(object, objectSupplier, null, true /* track */, false /* inverse order */, requestors);
+			ArrayList<Requestor> requestors = new ArrayList<Requestor>();
+			processClassHierarchy(object, objectSupplier, null, true /* track */, false /* inverse order */, requestors);
 
-		for (Requestor requestor : requestors) {
-			// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-			Object[] actualArgs = resolveArgs(requestor, null, null, true, false, false);
-			int unresolved = unresolved(actualArgs);
-			if (unresolved == -1) {
-				requestor.setResolvedArgs(actualArgs);
-				requestor.execute();
-			} else {
-				if (requestor.isOptional())
-					requestor.setResolvedArgs(null);
-				else if (shouldDebug) {
-					StringBuffer tmp = new StringBuffer();
-					tmp.append("Uninjecting object \""); //$NON-NLS-1$
-					tmp.append(object.toString());
-					tmp.append("\": dependency on \""); //$NON-NLS-1$
-					tmp.append(requestor.getDependentObjects()[unresolved].toString());
-					tmp.append("\" is not optional."); //$NON-NLS-1$
-					LogHelper.logError(tmp.toString(), null);
+			for (Requestor requestor : requestors) {
+				// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
+				Object[] actualArgs = resolveArgs(requestor, null, null, true, false, false);
+				int unresolved = unresolved(actualArgs);
+				if (unresolved == -1) {
+					requestor.setResolvedArgs(actualArgs);
+					requestor.execute();
+				} else {
+					if (requestor.isOptional())
+						requestor.setResolvedArgs(null);
+					else if (shouldDebug) {
+						StringBuffer tmp = new StringBuffer();
+						tmp.append("Uninjecting object \""); //$NON-NLS-1$
+						tmp.append(object.toString());
+						tmp.append("\": dependency on \""); //$NON-NLS-1$
+						tmp.append(requestor.getDependentObjects()[unresolved].toString());
+						tmp.append("\" is not optional."); //$NON-NLS-1$
+						LogHelper.logError(tmp.toString(), null);
+					}
 				}
 			}
+		} catch (NoClassDefFoundError e) {
+			throw new InjectionException(e);
+		} catch (NoSuchMethodError e) {
+			throw new InjectionException(e);
 		}
 	}
 
@@ -328,6 +340,10 @@ public class InjectorImpl implements IInjector {
 				}
 			}
 			throw new InjectionException("Could not find satisfiable constructor in " + clazz.getName()); //$NON-NLS-1$
+		} catch (NoClassDefFoundError e) {
+			throw new InjectionException(e);
+		} catch (NoSuchMethodError e) {
+			throw new InjectionException(e);
 		} finally {
 			if (shouldDebug)
 				classesBeingCreated.remove(clazz);
