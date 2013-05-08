@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -60,7 +60,6 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String LaunchConfigurationFilteredTree_search_with_changes;
 	public static String LaunchConfigurationFilteredTree_search_with_errors;
-	public static String LaunchConfigurationTabGroupViewer_0;
 	public static String LaunchConfigurationDialog_Create__manage__and_run_launch_configurations_8;
 	public static String LaunchConfigurationDialog_Discard_changes__38;
 	public static String LaunchConfigurationDialog_Do_you_wish_to_discard_changes_37;
@@ -82,7 +81,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationDialog_Confirm_Launch_Configuration_Deletion_3;
 	public static String LaunchConfigurationDialog_Close_1;
 	public static String LaunchConfigurationDialog_Revert_2;
-	public static String LaunchConfigurationDialog_Cancel_3;
 	public static String LaunchConfigurationsDialog_Error_1;
 	public static String LaunchConfigurationsDialog_Warning_2;
 	public static String LaunchConfigurationsDialog_Information_3;
@@ -99,9 +97,6 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String LaunchConfigurationTabGroupViewer_18;
 	public static String LaunchConfigurationTabGroupViewer_13;
-
-	public static String LaunchConfigurationTabGroupViewer_19;
-
 	public static String LaunchConfigurationView_0;
 
 	public static String LaunchShortcutSelectionDialog_0;

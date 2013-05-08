@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,15 +23,7 @@ public class DebugUIViewsMessages extends NLS {
 	public static String SourceNotFoundEditorInput_Source_Not_Found_1;
 	public static String SourceNotFoundEditorInput_Source_not_found_for__0__2;
 
-	public static String BreakpointsView_6;
-	public static String BreakpointsView_7;
-	public static String BreakpointsView_8;
-	public static String BreakpointsView_9;
-	public static String BreakpointsView_0;
-	public static String BreakpointsView_10;
-	public static String BreakpointsView_11;
 	public static String BreakpointsView_12;
-	public static String BreakpointsView_1;
 	public static String BreakpointWorkingSetPage_0;
 	public static String BreakpointWorkingSetPage_1;
 	public static String BreakpointWorkingSetPage_2;
