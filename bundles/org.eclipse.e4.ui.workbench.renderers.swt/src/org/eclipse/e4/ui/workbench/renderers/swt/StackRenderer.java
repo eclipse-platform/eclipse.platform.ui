@@ -25,7 +25,6 @@ import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -155,73 +154,10 @@ public class StackRenderer extends LazyStackRenderer {
 
 	private boolean ignoreTabSelChanges = false;
 
-	private ActivationJob activationJob = null;
-
-	@Inject
-	private MApplication application;
-
 	// private ToolBar menuTB;
 	// private boolean menuButtonShowing = false;
 
 	// private Control partTB;
-
-	private class ActivationJob implements Runnable {
-
-		/**
-		 * Returns whether it is acceptable for a stack to be activated. As the
-		 * activation occurs asynchronously, the original activation request may
-		 * have been invalidated since the request was originally enqueued.
-		 * <p>
-		 * For example, an activation request that was enqueued no longer should
-		 * be honoured if a dialog window gets opened in the interim.
-		 * </p>
-		 * 
-		 * @return <code>true</code> if the requested stack should be activated,
-		 *         <code>false</code> otherwise
-		 */
-		private boolean shouldActivate() {
-			if (application != null) {
-				IEclipseContext applicationContext = application.getContext();
-				IEclipseContext activeChild = applicationContext
-						.getActiveChild();
-				if (activeChild == null
-						|| activeChild.get(MWindow.class) != application
-								.getSelectedElement()
-						|| application.getSelectedElement() != modelService
-								.getTopLevelWindowFor(stackToActivate)) {
-					return false;
-				}
-			}
-			return true;
-		}
-
-		public MElementContainer<MUIElement> stackToActivate = null;
-
-		public void run() {
-			activationJob = null;
-			if (stackToActivate != null
-					&& stackToActivate.getSelectedElement() != null
-					&& shouldActivate()) {
-				// Ensure we're activating a stack in the current perspective,
-				// when using a dialog to open a perspective
-				// we end up in the situation where this stack is in the
-				// previously active perspective
-				int location = modelService.getElementLocation(stackToActivate);
-				if ((location & EModelService.IN_ACTIVE_PERSPECTIVE) == 0
-						&& (location & EModelService.OUTSIDE_PERSPECTIVE) == 0
-						&& (location & EModelService.IN_SHARED_AREA) == 0)
-					return;
-
-				MUIElement selElement = stackToActivate.getSelectedElement();
-				if (!isValid(selElement))
-					return;
-
-				if (selElement instanceof MPlaceholder)
-					selElement = ((MPlaceholder) selElement).getRef();
-				activate((MPart) selElement);
-			}
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -242,48 +178,6 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		return super.requiresFocus(element);
-	}
-
-	private boolean isValid(MUIElement element) {
-		if (element == null || !element.isToBeRendered()) {
-			return false;
-		}
-
-		if (element instanceof MApplication) {
-			return true;
-		}
-
-		MUIElement parent = element.getParent();
-		if (parent == null && element instanceof MWindow) {
-			// might be a detached window
-			parent = (MUIElement) ((EObject) element).eContainer();
-		}
-
-		if (parent == null) {
-			// might be a shared part, try to find the placeholder
-			MWindow window = modelService.getTopLevelWindowFor(element);
-			return window == null ? false : isValid(modelService
-					.findPlaceholderFor(window, element));
-		}
-
-		return isValid(parent);
-	}
-
-	synchronized private void activateStack(MElementContainer<MUIElement> stack) {
-		if (stack == null || !(stack.getWidget() instanceof CTabFolder))
-			return;
-
-		CTabFolder ctf = (CTabFolder) stack.getWidget();
-		if (ctf == null || ctf.isDisposed())
-			return;
-
-		if (activationJob == null) {
-			activationJob = new ActivationJob();
-			activationJob.stackToActivate = stack;
-			ctf.getDisplay().asyncExec(activationJob);
-		} else {
-			activationJob.stackToActivate = stack;
-		}
 	}
 
 	public StackRenderer() {
@@ -956,9 +850,24 @@ public class StackRenderer extends LazyStackRenderer {
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
 				if (event.detail == SWT.MouseDown) {
 					CTabFolder ctf = (CTabFolder) event.widget;
-					MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) ctf
-							.getData(OWNING_ME);
-					activateStack(stack);
+					if (ctf.getSelection() == null)
+						return;
+
+					// get the item under the cursor
+					Point cp = event.display.getCursorLocation();
+					cp = event.display.map(null, ctf, cp);
+					CTabItem overItem = ctf.getItem(cp);
+
+					// If the item we're over is *not* the current one do
+					// nothing (it'll get activated when the tab changes)
+					if (overItem == null || overItem == ctf.getSelection()) {
+						MUIElement uiElement = (MUIElement) ctf.getSelection()
+								.getData(OWNING_ME);
+						if (uiElement instanceof MPlaceholder)
+							uiElement = ((MPlaceholder) uiElement).getRef();
+						if (uiElement instanceof MPart)
+							activate((MPart) uiElement);
+					}
 				}
 			}
 		});
@@ -974,7 +883,10 @@ public class StackRenderer extends LazyStackRenderer {
 
 				MUIElement ele = (MUIElement) e.item.getData(OWNING_ME);
 				ele.getParent().setSelectedElement(ele);
-				activateStack(stack);
+				if (ele instanceof MPlaceholder)
+					ele = ((MPlaceholder) ele).getRef();
+				if (ele instanceof MPart)
+					activate((MPart) ele);
 			}
 		});
 
