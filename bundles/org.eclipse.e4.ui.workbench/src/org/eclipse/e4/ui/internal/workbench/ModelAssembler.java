@@ -223,7 +223,11 @@ public class ModelAssembler {
 			Object o = factory
 					.create("bundleclass://" + ce.getContributor().getName() + "/" + ce.getAttribute("class"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 							context, localContext);
-			ContextInjectionFactory.invoke(o, Execute.class, context, localContext);
+			if (o == null) {
+				logger.warn("Unable to create processor " + ce.getAttribute("class") + " from " + ce.getContributor().getName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			} else {
+				ContextInjectionFactory.invoke(o, Execute.class, context, localContext);
+			}
 		} catch (Exception e) {
 			logger.warn(e, "Could not run processor"); //$NON-NLS-1$
 		}
