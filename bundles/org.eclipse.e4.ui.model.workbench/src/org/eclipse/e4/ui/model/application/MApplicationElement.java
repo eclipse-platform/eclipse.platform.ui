@@ -17,13 +17,22 @@ import java.util.Map;
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Element</b></em>'.
  * <!-- end-user-doc -->
+ *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This is the root element for all UI Model elements, defining attribtues common
+ * to every element; the element's id as well as three general storage elements:
+ * <ul>
+ * <li>Tags: This is a set of strings which can be used to stereotype a particular
+ * element. Tags may be specified in element searches and can also be referred
+ * to in the CSS styling definition.</li>
+ * <li>PersistedState: A string to string map used to store information that nneds
+ * to be persisted between sessions.</li>
+ * <li>TransientData: A string to object map which can be used to store runtime data
+ * relevant to a particular model element.</li>
+ * </ul>
  * </p>
+ * @since 1.0
  * <!-- end-model-doc -->
  *
  * <p>
@@ -39,7 +48,6 @@ import java.util.Map;
  *
  * @model abstract="true"
  * @generated
- * @since 1.0
  */
 public interface MApplicationElement {
 	/**

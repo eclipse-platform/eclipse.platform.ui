@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
-import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
-import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.advanced.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -44,7 +40,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	 */
 	public static AdvancedFactoryImpl init() {
 		try {
-			AdvancedFactoryImpl theAdvancedFactory = (AdvancedFactoryImpl)EPackage.Registry.INSTANCE.getEFactory("http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced"); //$NON-NLS-1$ 
+			AdvancedFactoryImpl theAdvancedFactory = (AdvancedFactoryImpl)EPackage.Registry.INSTANCE.getEFactory(AdvancedPackageImpl.eNS_URI);
 			if (theAdvancedFactory != null) {
 				return theAdvancedFactory;
 			}

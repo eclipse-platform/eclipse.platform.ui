@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.impl;
 
-import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
-import org.eclipse.e4.ui.model.application.ui.MUiFactory;
-import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -43,7 +41,7 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	 */
 	public static UiFactoryImpl init() {
 		try {
-			UiFactoryImpl theUiFactory = (UiFactoryImpl)EPackage.Registry.INSTANCE.getEFactory("http://www.eclipse.org/ui/2010/UIModel/application/ui"); //$NON-NLS-1$ 
+			UiFactoryImpl theUiFactory = (UiFactoryImpl)EPackage.Registry.INSTANCE.getEFactory(UiPackageImpl.eNS_URI);
 			if (theUiFactory != null) {
 				return theUiFactory;
 			}

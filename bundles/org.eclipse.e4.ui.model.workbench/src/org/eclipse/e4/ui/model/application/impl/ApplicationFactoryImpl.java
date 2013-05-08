@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,7 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Map;
-import org.eclipse.e4.ui.model.application.MAddon;
-import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -44,7 +42,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 */
 	public static ApplicationFactoryImpl init() {
 		try {
-			ApplicationFactoryImpl theApplicationFactory = (ApplicationFactoryImpl)EPackage.Registry.INSTANCE.getEFactory("http://www.eclipse.org/ui/2010/UIModel/application"); //$NON-NLS-1$ 
+			ApplicationFactoryImpl theApplicationFactory = (ApplicationFactoryImpl)EPackage.Registry.INSTANCE.getEFactory(ApplicationPackageImpl.eNS_URI);
 			if (theApplicationFactory != null) {
 				return theApplicationFactory;
 			}

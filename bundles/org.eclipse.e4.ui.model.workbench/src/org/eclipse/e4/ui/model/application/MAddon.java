@@ -15,19 +15,24 @@ package org.eclipse.e4.ui.model.application;
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Addon</b></em>'.
  * <!-- end-user-doc -->
+ *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * An MAddon represents a self-contained application logic. Addons may be used
+ * to augment the UI in a variety of ways without requriing that the base application
+ * be aware of the extensions.
+ * </p><p>
+ * Addons aare expected to be capable of being removed without damage to the
+ * original UI. While not yet implemented there will be an uninstall protocol defined
+ * ni the future allowing an addon to remove any model elements specific to the
+ * addon (i.e. The MinMaxAddon's TrimElements.
  * </p>
+ * @since 1.0
  * <!-- end-model-doc -->
  *
  *
  * @model
  * @generated
- * @since 1.0
  */
 public interface MAddon extends MContribution {
 } // MAddon

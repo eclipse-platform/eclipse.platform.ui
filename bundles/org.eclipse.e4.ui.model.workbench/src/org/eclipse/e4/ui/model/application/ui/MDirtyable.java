@@ -18,11 +18,11 @@ package org.eclipse.e4.ui.model.application.ui;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This class should be mixed into any UI element that should participate in the
+ * dirty / save handling. Parts are the most likely scenario for this but it exists as
+ * a mix-in to allow for future model extensions.
  * </p>
+ * @since 1.0
  * <!-- end-model-doc -->
  *
  * <p>
@@ -34,7 +34,6 @@ package org.eclipse.e4.ui.model.application.ui;
  *
  * @model interface="true" abstract="true"
  * @generated
- * @since 1.0
  */
 public interface MDirtyable {
 	/**
@@ -43,10 +42,7 @@ public interface MDirtyable {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * The current dirty state of the UI element.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Dirty</em>' attribute.

@@ -29,13 +29,24 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Application</b></em>'.
  * <!-- end-user-doc -->
+ *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * The MApplication acts as the root of the UI Model. It's children are the
+ *  MWindows representing the UI for this application. It also owns the application's
+ * context (which is hooked to the OSGI context, allowing access not only to its
+ * own runtime information but also to any registered OSGI service.
+ * </p><p>
+ * It also owns a number of caches which, while independent of the UI itself are
+ * used by the appliecation to populate new windows or to define state that is
+ * epected to be the same for all windows:
+ * <ui>
+ * <li>Keybindings, Handlers, Commands</li>
+ * <li>Part Descriptors (to support a 'Show View' dialog...)</li>
+ * <li>Snippets of model (such as saved perspectives...)</li>
+ * </ui>
  * </p>
+ * @since 1.0
  * <!-- end-model-doc -->
  *
  * <p>
@@ -49,7 +60,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
  *
  * @model
  * @generated
- * @since 1.0
  */
 public interface MApplication extends MElementContainer<MWindow>, MContext, MHandlerContainer, MBindingTableContainer, MPartDescriptorContainer, MBindings, MMenuContributions, MToolBarContributions, MTrimContributions, MSnippetContainer {
 	/**

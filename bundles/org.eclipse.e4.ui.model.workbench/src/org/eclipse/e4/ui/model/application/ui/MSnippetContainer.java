@@ -24,6 +24,7 @@ import java.util.List;
  * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
  * There is a GenModel/documentation node under each type and attribute.
  * </p>
+ * @since 1.0
  * <!-- end-model-doc -->
  *
  * <p>
@@ -35,7 +36,6 @@ import java.util.List;
  *
  * @model interface="true" abstract="true"
  * @generated
- * @since 1.0
  */
 public interface MSnippetContainer {
 	/**

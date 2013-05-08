@@ -24,12 +24,12 @@ import org.eclipse.e4.ui.model.application.MContribution;
  * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
  * There is a GenModel/documentation node under each type and attribute.
  * </p>
+ * @since 1.0
  * <!-- end-model-doc -->
  *
  *
  * @model
  * @generated
- * @since 1.0
  */
 public interface MDirectToolItem extends MToolItem, MContribution {
 } // MDirectToolItem

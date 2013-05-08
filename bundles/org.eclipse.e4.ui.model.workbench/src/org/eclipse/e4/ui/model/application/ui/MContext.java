@@ -21,11 +21,12 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This class is mixed into a UI element when that element is expected to participate
+ * in the Dependency Injection context hierarchy. The context life-cycle matches
+ * that of the rendered element it belongs to. It's automatically created when the
+ * element is rendered and disposed when the element is unrendered.
  * </p>
+ * @since 1.0
  * <!-- end-model-doc -->
  *
  * <p>
@@ -39,7 +40,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  *
  * @model interface="true" abstract="true"
  * @generated
- * @since 1.0
  */
 public interface MContext {
 	/**
@@ -48,10 +48,8 @@ public interface MContext {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This attribute is a reference to the IEclipseContext for this UI element. It will be 
+	 * non-null only when the element is rendered.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Context</em>' attribute.

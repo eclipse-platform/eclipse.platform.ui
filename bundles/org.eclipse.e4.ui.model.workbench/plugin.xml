@@ -17,38 +17,67 @@
 <plugin>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated UIElements -->
       <package
+            uri="http://www.eclipse.org/ui/2010/UIModel/application"
             class="org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl"
-            genModel="model/UIElements.genmodel"
-            uri="http://www.eclipse.org/ui/2010/UIModel/application"/>
+            genModel="model/UIElements.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated UIElements -->
       <package
             uri="http://www.eclipse.org/ui/2010/UIModel/application/commands"
-            genModel="model/UIElements.genmodel"
-            class="org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl"/>
+            class="org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl"
+            genModel="model/UIElements.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated UIElements -->
       <package
             uri="http://www.eclipse.org/ui/2010/UIModel/application/ui"
-            genModel="model/UIElements.genmodel"
-            class="org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl"/>
+            class="org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl"
+            genModel="model/UIElements.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated UIElements -->
       <package
             uri="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu"
-            genModel="model/UIElements.genmodel"
-            class="org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl"/>
+            class="org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl"
+            genModel="model/UIElements.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated UIElements -->
       <package
             uri="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
-            genModel="model/UIElements.genmodel"
-            class="org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl"/>
+            class="org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl"
+            genModel="model/UIElements.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated UIElements -->
       <package
             uri="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced"
-            genModel="model/UIElements.genmodel"
-            class="org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl"/>
+            class="org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl"
+            genModel="model/UIElements.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated UIElements -->
       <package
             uri="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic"
-            genModel="model/UIElements.genmodel"
-            class="org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl"/>
-      <package
-            class="org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl"
-            genModel="model/ModelFragment.genmodel"
-            uri="http://www.eclipse.org/ui/2010/UIModel/fragment"/>
+            class="org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl"
+            genModel="model/UIElements.genmodel"/>
    </extension>
    
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated ModelFragment -->
+      <package
+            uri="http://www.eclipse.org/ui/2010/UIModel/fragment"
+            class="org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl"
+            genModel="model/ModelFragment.genmodel"/>
+   </extension>
+
 </plugin>

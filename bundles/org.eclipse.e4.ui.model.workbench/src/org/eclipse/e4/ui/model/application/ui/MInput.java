@@ -18,11 +18,10 @@ package org.eclipse.e4.ui.model.application.ui;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This class should be mixed into UI elements such as editors that need to 
+ * reference an external resource (files...).
  * </p>
+ * @since 1.0
  * <!-- end-model-doc -->
  *
  * <p>
@@ -34,7 +33,6 @@ package org.eclipse.e4.ui.model.application.ui;
  *
  * @model interface="true" abstract="true"
  * @generated
- * @since 1.0
  */
 public interface MInput {
 	/**
@@ -43,10 +41,8 @@ public interface MInput {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * The specification of the particular resource's location. This will be interpreted by
+	 * the class using it (i.e. a Part).
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Input URI</em>' attribute.

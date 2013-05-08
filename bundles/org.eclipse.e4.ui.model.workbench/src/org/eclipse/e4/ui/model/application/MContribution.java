@@ -15,13 +15,13 @@ package org.eclipse.e4.ui.model.application;
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Contribution</b></em>'.
  * <!-- end-user-doc -->
+ *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * An MContribution defined the complete path to a class implementing the logic
+ * for elements representing the active parts of the UI such as MParts and MHandlers.
  * </p>
+ * @since 1.0
  * <!-- end-model-doc -->
  *
  * <p>
@@ -34,7 +34,6 @@ package org.eclipse.e4.ui.model.application;
  *
  * @model abstract="true"
  * @generated
- * @since 1.0
  */
 public interface MContribution extends MApplicationElement {
 	/**

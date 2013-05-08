@@ -77,6 +77,14 @@ public class ModelRobustnessTest extends TestCase {
 			fail("The adding of this should have failed");
 		} catch (IllegalArgumentException e) {
 			// This exception is expected!
+		} catch (ArrayStoreException e) {
+			// EMF 2.9 now throws this instead of IllegalArgumentException. See
+			// bug 407539
+		} catch (ClassCastException e) {
+			// EList.add says this is the expected exception, although testing
+			// indicates its one of the two previous exceptions that is really
+			// thrown.
+			// See bug 407539
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

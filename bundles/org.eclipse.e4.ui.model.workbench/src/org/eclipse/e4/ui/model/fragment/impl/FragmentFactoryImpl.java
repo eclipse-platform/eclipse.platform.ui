@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2013 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,7 @@
  */
 package org.eclipse.e4.ui.model.fragment.impl;
 
-import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
-import org.eclipse.e4.ui.model.fragment.MModelFragments;
-import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
+import org.eclipse.e4.ui.model.fragment.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -43,7 +41,7 @@ public class FragmentFactoryImpl extends EFactoryImpl implements MFragmentFactor
 	 */
 	public static FragmentFactoryImpl init() {
 		try {
-			FragmentFactoryImpl theFragmentFactory = (FragmentFactoryImpl)EPackage.Registry.INSTANCE.getEFactory("http://www.eclipse.org/ui/2010/UIModel/fragment"); //$NON-NLS-1$ 
+			FragmentFactoryImpl theFragmentFactory = (FragmentFactoryImpl)EPackage.Registry.INSTANCE.getEFactory(FragmentPackageImpl.eNS_URI);
 			if (theFragmentFactory != null) {
 				return theFragmentFactory;
 			}

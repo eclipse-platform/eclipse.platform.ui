@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 	 */
 	public List<MPerspective> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MPerspective>(MUIElement.class, this, AdvancedPackageImpl.PERSPECTIVE_STACK__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT);
+			children = new EObjectContainmentWithInverseEList<MPerspective>(MPerspective.class, this, AdvancedPackageImpl.PERSPECTIVE_STACK__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) { private static final long serialVersionUID = 1L; @Override public Class<?> getInverseFeatureClass() { return MUIElement.class; } };
 		}
 		return children;
 	}

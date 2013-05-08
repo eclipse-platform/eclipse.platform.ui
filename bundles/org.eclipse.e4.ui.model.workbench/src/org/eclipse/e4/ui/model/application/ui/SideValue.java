@@ -19,11 +19,18 @@ import java.util.List;
  * A representation of the literals of the enumeration '<em><b>Side Value</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * 
+ * <!-- begin-model-doc -->
+ * <p>
+ * <strong>Developers</strong>:
+ * Add more detailed documentation by editing this comment in 
+ * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+ * There is a GenModel/documentation node under each type and attribute.
+ * </p>
+ * @since 1.0
+ * <!-- end-model-doc -->
  * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getSideValue()
  * @model
  * @generated
- * @since 1.0
  */
 public enum SideValue implements InternalSideValue {
 	/**

@@ -15,10 +15,9 @@ package org.eclipse.e4.ui.model.application.commands;
  * <!-- begin-user-doc -->
  * The <b>Factory</b> for the model.
  * It provides a create method for each non-abstract class of the model.
- * <!-- end-user-doc -->
- * 
- * @generated
  * @since 1.0
+ * <!-- end-user-doc -->
+ * @generated
  */
 public interface MCommandsFactory {
 	/**

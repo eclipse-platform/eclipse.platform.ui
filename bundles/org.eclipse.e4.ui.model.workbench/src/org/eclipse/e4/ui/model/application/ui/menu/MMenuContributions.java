@@ -22,6 +22,7 @@ import java.util.List;
  * Provisional for 4.3.
  * </p>
  * @noreference
+ * @since 1.0
  * <!-- end-model-doc -->
  *
  * <p>
@@ -33,7 +34,6 @@ import java.util.List;
  *
  * @model interface="true" abstract="true"
  * @generated
- * @since 1.0
  */
 public interface MMenuContributions {
 	/**
