@@ -319,12 +319,24 @@ public final class EvaluationService implements IEvaluationService {
 		for (EvaluationReference ref : refs) {
 			Expression expr = ref.getExpression();
 			if (expr != null) {
+				boolean evaluated = false;
 				ExpressionInfo info = expr.computeExpressionInfo();
 				String[] names = info.getAccessedPropertyNames();
 				for (String name : names) {
 					if (propertyName.equals(name)) {
+						evaluated = true;
 						ref.evaluate();
 						break;
+					}
+				}
+				if (!evaluated) {
+					names = info.getAccessedVariableNames();
+					for (String name : names) {
+						if (propertyName.equals(name)) {
+							evaluated = true;
+							ref.evaluate();
+							break;
+						}
 					}
 				}
 			}

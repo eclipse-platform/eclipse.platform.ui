@@ -23,9 +23,6 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IntroAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.internal.OpenPreferencesAction;
-import org.eclipse.ui.internal.SaveAction;
-import org.eclipse.ui.internal.SaveAllAction;
-import org.eclipse.ui.internal.SaveAsAction;
 import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -1283,8 +1280,12 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new SaveAction(window);
+			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
+			action.setText(WorkbenchMessages.SaveAction_text);
+			action.setToolTipText(WorkbenchMessages.SaveAction_toolTip);
             action.setId(getId());
+			window.getWorkbench().getHelpSystem()
+					.setHelp(action, IWorkbenchHelpContextIds.SAVE_ACTION);
             return action;
         }
     };
@@ -1303,7 +1304,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new SaveAllAction(window);
+			IWorkbenchAction action = new WorkbenchCommandAction(getCommandId(), window);
+			action.setText(WorkbenchMessages.SaveAll_text);
+			action.setToolTipText(WorkbenchMessages.SaveAll_toolTip);
+			window.getWorkbench().getHelpSystem()
+					.setHelp(action, IWorkbenchHelpContextIds.SAVE_ALL_ACTION);
             action.setId(getId());
             return action;
         }
@@ -1323,7 +1328,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new SaveAsAction(window);
+			IWorkbenchAction action = new WorkbenchCommandAction(getCommandId(), window);
+			action.setText(WorkbenchMessages.SaveAs_text);
+			action.setToolTipText(WorkbenchMessages.SaveAs_toolTip);
+			window.getWorkbench().getHelpSystem()
+					.setHelp(action, IWorkbenchHelpContextIds.SAVE_AS_ACTION);
             action.setId(getId());
             return action;
         }

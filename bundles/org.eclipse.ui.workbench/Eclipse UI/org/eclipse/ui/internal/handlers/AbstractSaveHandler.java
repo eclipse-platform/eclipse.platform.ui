@@ -66,6 +66,10 @@ public abstract class AbstractSaveHandler extends AbstractEvaluationHandler {
 		if (activePart instanceof ISaveablePart)
 			return (ISaveablePart) activePart;
 
+		ISaveablePart part = (ISaveablePart) Util.getAdapter(activePart, ISaveablePart.class);
+		if (part != null)
+			return part;
+
 		return InternalHandlerUtil.getActiveEditor(context);
 	}
 	
