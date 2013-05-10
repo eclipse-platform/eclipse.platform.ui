@@ -530,6 +530,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 					res = root.getFile(path);
 					break;
 				case IResource.PROJECT:
+					pathStr = path.makeRelative().toPortableString();
 					if(Path.ROOT.isValidSegment(pathStr)) {
 						res = root.getProject(pathStr);
 					}

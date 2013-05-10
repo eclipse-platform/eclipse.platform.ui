@@ -1439,7 +1439,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	}
 	
 	/**
-	 * Tests that we can get a project handle from a bogus project name
+	 * Tests that we cannot get a project handle from a bogus project name
 	 * 
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395441
 	 * @throws Exception
@@ -1460,7 +1460,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	}
 	
 	/**
-	 * Tests that we can get a project handle from a bogus project name
+	 * Tests that we cannot get a project handle from a bogus project name
 	 * 
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395441
 	 * @throws Exception
@@ -1479,6 +1479,27 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			else {
 				assertNotNull("There should be mapped resources", res);
 			}
+		}
+		finally {
+			lc.delete();
+		}
+	}
+
+	/**
+	 * Tests that we can get a project handle from an absolute project name
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395441
+	 * @throws Exception
+	 * @since 3.9.0
+	 */
+	public void testGetProjectMappedResource4() throws Exception {
+		ILaunchConfiguration lc = newConfiguration(null,"test.project.resource.mapping");
+		try {
+			ILaunchConfigurationWorkingCopy wc = lc.getWorkingCopy();
+			assertNotNull("Should have a working copy of the testig launch configuration", wc);
+			setResourceMappings(wc, new ResourceItem[] {new ResourceItem("/project", new Integer(IResource.PROJECT))});
+			IResource[] res = wc.getMappedResources();
+			assertNotNull("There should be mapped resources", res);
 		}
 		finally {
 			lc.delete();
