@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2004, 2013 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -33,7 +33,6 @@ public class DataTransferMessages extends NLS {
 	public static String AntBuildfileExportPage_2;
 	public static String AntBuildfileExportPage_3;
 	public static String AntBuildfileExportPage_4;
-	public static String AntBuildfileExportPage_6;
 	public static String AntNewJavaProjectPage_9;
 	public static String AntNewJavaProjectPage_0;
 	public static String AntNewJavaProjectPage_10;
@@ -70,6 +69,14 @@ public class DataTransferMessages extends NLS {
 	public static String AntBuildfileExportPage_20;
 
 	public static String AntBuildfileExportPage_creating_build_files;
+
+	public static String AntBuildfileExportPage_cycle_error_in_project;
+
+	public static String AntBuildfileExportPage_cycle_error_in_projects;
+
+	public static String AntBuildfileExportPage_cycle_warning_in_project;
+
+	public static String AntBuildfileExportPage_cycle_warning_in_projects;
 
 	public static String BuildFileCreator_generating_buildfile_for;
 }

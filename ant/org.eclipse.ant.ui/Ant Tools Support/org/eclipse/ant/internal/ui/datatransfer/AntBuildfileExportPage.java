@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 Richard Hoefter and others.
+ * Copyright (c) 2004, 2013 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -250,14 +251,30 @@ public class AntBuildfileExportPage extends WizardPage {
         	setErrorMessage(DataTransferMessages.AntBuildfileExportPage_18);
             complete = false;
         }
-        List cyclicProjects;
         try {
-            cyclicProjects = getCyclicProjects(getProjects(false));
-            if (cyclicProjects.size() > 0) {
-            	setErrorMessage(MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_6,
-                        new String[] {ExportUtil.toString(cyclicProjects, ", ")})); //$NON-NLS-1$
-            	complete = false;
-            }
+			List projectsWithErrors = new ArrayList();
+			List projectsWithWarnings = new ArrayList();
+			findCyclicProjects(getProjects(false), projectsWithErrors, projectsWithWarnings);
+			if (projectsWithErrors.size() > 0) {
+				String message = DataTransferMessages.AntBuildfileExportPage_cycle_error_in_projects;
+				if(projectsWithErrors.size() == 1) {
+					message = DataTransferMessages.AntBuildfileExportPage_cycle_error_in_project;
+				}
+				setErrorMessage(MessageFormat.format(
+						message,
+						new String[] { ExportUtil.toString(projectsWithErrors, ", ") })); //$NON-NLS-1$
+				complete = false;
+			} else if (projectsWithWarnings.size() > 0) {
+				String message = DataTransferMessages.AntBuildfileExportPage_cycle_warning_in_projects;
+				if(projectsWithWarnings.size() == 1) {
+					message = DataTransferMessages.AntBuildfileExportPage_cycle_warning_in_project;
+				}
+				setMessage(MessageFormat.format(
+						message,
+						new String[] { ExportUtil.toString(projectsWithWarnings, ", ") }), WARNING); //$NON-NLS-1$
+			} else {
+				setMessage(null);
+			}
         } catch (CoreException e) {}
         if (buildfilenameText.getText().length() == 0) {
             setErrorMessage(DataTransferMessages.AntBuildfileExportPage_19);
@@ -383,25 +400,30 @@ public class AntBuildfileExportPage extends WizardPage {
         return projects;
     }
 
-    /**
-     * Returns given projects that have cyclic dependencies.
-     * 
-     * @param javaProjects list of IJavaProject objects
-     * @return set of project names
-     */
-    private List getCyclicProjects(Set projects) throws CoreException {
-        
-        List cyclicProjects = new ArrayList();
-        for (Iterator iter = projects.iterator(); iter.hasNext();)
-        {
-            IJavaProject javaProject = (IJavaProject) iter.next();
-            if (ExportUtil.hasCyclicDependency(javaProject))
-            {
-                cyclicProjects.add(javaProject.getProject().getName());
-            }
-        }
-        return cyclicProjects;
-    }
+	/**
+	 * Splits a set of given projects into a list of projects that have cyclic
+	 * dependency errors and a list of projects that have cyclic dependency
+	 * warnings.
+	 */
+	private void findCyclicProjects(Set projects, List errors, List warnings) throws CoreException {
+		for (Iterator iter = projects.iterator(); iter.hasNext();) {
+			IJavaProject javaProject = (IJavaProject) iter.next();
+			IMarker marker = ExportUtil.getCyclicDependencyMarker(javaProject);
+			if (marker != null) {
+				Integer severityAttr = (Integer) marker.getAttribute(IMarker.SEVERITY);
+				if (severityAttr != null) {
+					switch (severityAttr.intValue()) {
+					case IMarker.SEVERITY_ERROR:
+						errors.add(javaProject.getProject().getName());
+						break;
+					case IMarker.SEVERITY_WARNING:
+						warnings.add(javaProject.getProject().getName());
+						break;
+					}
+				}
+			}
+		}
+	}
 
     /**
      * Get list of projects which have already a buildfile that was not
