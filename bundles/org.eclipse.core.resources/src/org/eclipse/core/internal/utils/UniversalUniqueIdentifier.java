@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,11 +129,11 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	}
 
 	public static int compareTime(byte[] fBits1, byte[] fBits2) {
-		for (int i = TIME_FIELD_STOP; i >= 0; i--) 
+		for (int i = TIME_FIELD_STOP; i >= 0; i--)
 			if (fBits1[i] != fBits2[i])
-				return (0xFF & fBits1[i]) - (0xFF & fBits2[i]);		
+				return (0xFF & fBits1[i]) - (0xFF & fBits2[i]);
 		return 0;
-	}		
+	}
 
 	/**
 	 * Answers the node address attempting to mask the IP
@@ -206,6 +206,10 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		} catch (UnknownHostException e) {
 			//valid for this to be thrown be a machine with no IP connection
 			//It is VERY important NOT to throw this exception
+			return null;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// there appears to be a bug in the VM if there is an alias
+			// see bug 354820. As above it is important not to throw this
 			return null;
 		}
 	}
