@@ -81,12 +81,6 @@ public class TrimStack {
 
 	private static final String RESTORE_ICON_URI = "platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/icons/full/etool16/fastview_restore.gif"; //$NON-NLS-1$
 
-	/**
-	 * If the minimized shared editor area is empty, the editor area tool item will have this
-	 * constant as its data.
-	 */
-	private static final Object EMPTY_EDITOR_AREA = new Object();
-
 	static final String STATE_XSIZE = "XSize"; //$NON-NLS-1$
 
 	static final String STATE_YSIZE = "YSize"; //$NON-NLS-1$
@@ -522,7 +516,7 @@ public class TrimStack {
 				} else if (data instanceof MPerspective) {
 					// A perspective in a perspective stack (for now we just support restore)
 					createEmtpyEditorAreaMenu();
-				} else if (EMPTY_EDITOR_AREA.equals(data)) {
+				} else if (isEditorStack()) {
 					// An empty editor area
 					createEmtpyEditorAreaMenu();
 				}
@@ -738,14 +732,9 @@ public class TrimStack {
 		}
 
 		if (isEditorStack() && trimStackTB.getItemCount() == 1) {
-			Object data = getLeafPart(minimizedElement);
-			if (data == null) {
-				data = EMPTY_EDITOR_AREA;
-			}
 			ToolItem ti = new ToolItem(trimStackTB, SWT.CHECK);
 			ti.setToolTipText(Messages.TrimStack_SharedAreaTooltip);
 			ti.setImage(getLayoutImage());
-			ti.setData(data);
 			ti.addSelectionListener(toolItemSelectionListener);
 		} else if (minimizedElement instanceof MGenericStack<?>) {
 			// Handle *both* PartStacks and PerspectiveStacks here...
