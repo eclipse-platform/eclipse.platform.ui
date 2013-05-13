@@ -1447,10 +1447,13 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//ensure all jobs in second family are either running or waiting
 		int runningCount = 0;
 		for (int i = 0; i < JOBS_PER_FAMILY; i++) {
-			if (family2[i].getState() == Job.RUNNING)
+			int state = family2[i].getState();
+			if (state == Job.RUNNING) {
 				runningCount++;
-			else
-				assertState("4.2." + i, family2[i], Job.WAITING);
+			} else {
+				if (state != Job.WAITING)
+					assertTrue("4.2." + i + ": expected state: " + printState(Job.WAITING) + " actual state: " + printState(state), false);
+			}
 		}
 		//ensure only one job is running (it is possible that none have started yet)
 		assertTrue("4.running", runningCount <= 1);
