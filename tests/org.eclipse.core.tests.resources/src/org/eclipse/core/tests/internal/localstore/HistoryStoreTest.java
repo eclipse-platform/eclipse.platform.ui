@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -260,7 +260,7 @@ public class HistoryStoreTest extends ResourceTest {
 		// assert that states are in the correct order (newer ones first)
 		long lastModified = states[0].getModificationTime();
 		for (int i = 1; i < states.length; i++) {
-			assertTrue("1.3." + i, lastModified > states[i].getModificationTime());
+			assertTrue("1.3." + i, lastModified >= states[i].getModificationTime());
 			lastModified = states[i].getModificationTime();
 		}
 
@@ -535,7 +535,7 @@ public class HistoryStoreTest extends ResourceTest {
 			// assert that states are in the correct order (newer ones first)
 			long lastModified = states[0].getModificationTime();
 			for (int i = 1; i < states.length; i++) {
-				assertTrue("2.4." + i, lastModified > states[i].getModificationTime());
+				assertTrue("2.4." + i, lastModified >= states[i].getModificationTime());
 				lastModified = states[i].getModificationTime();
 			}
 			// Make sure we kept the 3 newer states.
