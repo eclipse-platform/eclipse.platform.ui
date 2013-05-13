@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,8 +92,9 @@ public class ProcessPropertyPage extends PropertyPage {
 				GridData.FILL_BOTH);
 		styledText.setBackground(parent.getBackground());
 		((GridData)styledText.getLayoutData()).horizontalIndent = 10;
-		String commandLineText = getCommandLineText(proc);
-		if (commandLineText != null) {
+		String commandLineText = DebugPreferencesMessages.ProcessPropertyPage_5;
+		if (proc != null) {
+			commandLineText = proc.getAttribute(IProcess.ATTR_CMDLINE);
 			String[] arguments = DebugPlugin.parseArguments(commandLineText);
 			int count = arguments.length;
 			if (count > 1) {
@@ -131,6 +132,8 @@ public class ProcessPropertyPage extends PropertyPage {
 					}
 				});
 			}
+		}
+		if(commandLineText != null) {
 			styledText.setText(commandLineText);
 		}
 		
@@ -232,22 +235,6 @@ public class ProcessPropertyPage extends PropertyPage {
 			}
 		}
 		return text;
-	}
-	
-	/** 
-	 * Initializes the text to be displayed in the command line text widget
-	 * @param proc the process to compile the label fragment from
-	 * @return the command line text or the empty string
-	 * 
-	 * @see IProcess#ATTR_CMDLINE
-	 * @since 3.2
-	 */
-	private String getCommandLineText(IProcess proc) {
-		String cmdline = DebugPreferencesMessages.ProcessPropertyPage_5;
-		if(proc != null) {
-			cmdline = proc.getAttribute(IProcess.ATTR_CMDLINE);
-		}
-		return cmdline;
 	}
 	
 	/**
