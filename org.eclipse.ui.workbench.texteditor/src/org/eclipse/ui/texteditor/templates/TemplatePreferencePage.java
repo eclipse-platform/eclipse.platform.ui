@@ -80,6 +80,7 @@ import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnPixelData;
@@ -334,6 +335,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 						}
 					}
 				});
+				BidiUtils.applyBidiProcessing(fNameText, BidiUtils.BTD_DEFAULT);
 
 				createLabel(composite, TemplatesMessages.EditTemplateDialog_context);
 				fContextCombo= new Combo(composite, SWT.READ_ONLY);
@@ -356,6 +358,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			fDescriptionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 			fDescriptionText.addModifyListener(listener);
+			BidiUtils.applyBidiProcessing(fDescriptionText, BidiUtils.BTD_DEFAULT);
 
 			Label patternLabel= createLabel(parent, TemplatesMessages.EditTemplateDialog_pattern);
 			patternLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -950,6 +953,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				d.setEnabled(event.getChecked());
 			}
 		});
+		
+		BidiUtils.applyTextDirection(fTableViewer.getControl(), BidiUtils.BTD_DEFAULT);
 
 		Composite buttons= new Composite(innerParent, SWT.NONE);
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
