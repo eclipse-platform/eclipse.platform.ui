@@ -44,7 +44,10 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.InjectionException;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
 import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -208,6 +211,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	@Inject
 	private IEventBroker eventBroker;
+
+	@Inject
+	@Optional
+	private Logger logger;
 
 	@Inject
 	private IExtensionRegistry extensionRegistry;
@@ -468,7 +475,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		});
 
 		final ISaveHandler defaultSaveHandler = windowContext.get(ISaveHandler.class);
-		windowContext.set(ISaveHandler.class, new ISaveHandler() {
+		final PartServiceSaveHandler localSaveHandler = new PartServiceSaveHandler() {
 			public Save promptToSave(MPart dirtyPart) {
 				Object object = dirtyPart.getObject();
 				if (object instanceof CompatibilityPart) {
@@ -514,7 +521,39 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				}
 				return retSaves;
 			}
-		});
+
+			public boolean save(MPart dirtyPart, boolean confirm) {
+				Object object = dirtyPart.getObject();
+				if (object instanceof CompatibilityPart) {
+					IWorkbenchPart workbenchPart = ((CompatibilityPart) object).getPart();
+					if (workbenchPart instanceof ISaveablePart) {
+						ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
+						return page.saveSaveable(saveablePart, workbenchPart, confirm, false);
+					}
+				}
+				return super.save(dirtyPart, confirm);
+			}
+
+			public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm) {
+				ArrayList<ISaveablePart> saveables = new ArrayList<ISaveablePart>();
+				for (MPart part : dirtyParts) {
+					Object object = part.getObject();
+					if (object instanceof CompatibilityPart) {
+						IWorkbenchPart workbenchPart = ((CompatibilityPart) object).getPart();
+						if (workbenchPart instanceof ISaveablePart) {
+							saveables.add((ISaveablePart) workbenchPart);
+						}
+					}
+				}
+				if (saveables.isEmpty()) {
+					return super.saveParts(dirtyParts, confirm);
+				}
+				return WorkbenchPage.saveAll(saveables, confirm, false, true, WorkbenchWindow.this,
+						WorkbenchWindow.this);
+			}
+		};
+		localSaveHandler.logger = logger;
+		windowContext.set(ISaveHandler.class, localSaveHandler);
 
 		windowContext.set(IWorkbenchWindow.class.getName(), this);
 		windowContext.set(IPageService.class, this);
@@ -1600,7 +1639,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		if (!getWorkbenchImpl().isClosing()) {
 			IWorkbenchPage page = getActivePage();
 			if (page != null) {
-				return ((WorkbenchPage) page).saveAllEditors(true, true);
+				return ((WorkbenchPage) page).saveAllEditors(true, true, true);
 			}
 		}
 		return true;

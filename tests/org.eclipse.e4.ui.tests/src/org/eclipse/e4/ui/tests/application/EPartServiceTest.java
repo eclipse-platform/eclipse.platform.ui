@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
 import org.eclipse.e4.ui.internal.workbench.UIEventPublisher;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -3785,7 +3786,7 @@ public class EPartServiceTest extends UITest {
 		editor.setThrowException(throwException);
 
 		window.getContext().set(ISaveHandler.class.getName(),
-				new ISaveHandler() {
+				new PartServiceSaveHandler() {
 					public Save[] promptToSave(Collection<MPart> saveablePart) {
 						return null;
 					}
@@ -4110,7 +4111,7 @@ public class EPartServiceTest extends UITest {
 		editor2.setThrowException(throwException[1]);
 
 		window.getContext().set(ISaveHandler.class.getName(),
-				new ISaveHandler() {
+				new PartServiceSaveHandler() {
 					public Save[] promptToSave(Collection<MPart> saveableParts) {
 						int index = 0;
 						Save[] prompt = new Save[saveableParts.size()];
@@ -10159,7 +10160,7 @@ public class EPartServiceTest extends UITest {
 		applicationContext.set(UIEventPublisher.class, ep);
 
 		applicationContext.set(ISaveHandler.class.getName(),
-				new ISaveHandler() {
+				new PartServiceSaveHandler() {
 					public Save[] promptToSave(Collection<MPart> saveablePart) {
 						Save[] ret = new Save[saveablePart.size()];
 						Arrays.fill(ret, ISaveHandler.Save.YES);
@@ -10169,6 +10170,7 @@ public class EPartServiceTest extends UITest {
 					public Save promptToSave(MPart saveablePart) {
 						return ISaveHandler.Save.YES;
 					}
+
 				});
 	}
 

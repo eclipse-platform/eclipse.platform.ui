@@ -53,7 +53,6 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.IPartListener;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
-import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.osgi.util.NLS;
@@ -1199,15 +1198,8 @@ public class PartServiceImpl implements EPartService {
 			return true;
 		}
 
-		if (confirm && saveHandler != null) {
-			switch (saveHandler.promptToSave(part)) {
-			case NO:
-				return true;
-			case CANCEL:
-				return false;
-			case YES:
-				break;
-			}
+		if (saveHandler != null) {
+			return saveHandler.save(part, confirm);
 		}
 
 		Object client = part.getObject();
@@ -1230,25 +1222,8 @@ public class PartServiceImpl implements EPartService {
 		if (dirtyParts.isEmpty()) {
 			return true;
 		}
-
-		if (confirm && saveHandler != null) {
-			List<MPart> dirtyPartsList = Collections.unmodifiableList(new ArrayList<MPart>(
-					dirtyParts));
-			Save[] decisions = saveHandler.promptToSave(dirtyPartsList);
-			for (Save decision : decisions) {
-				if (decision == Save.CANCEL) {
-					return false;
-				}
-			}
-
-			for (int i = 0; i < decisions.length; i++) {
-				if (decisions[i] == Save.YES) {
-					if (!savePart(dirtyPartsList.get(i), false)) {
-						return false;
-					}
-				}
-			}
-			return true;
+		if (saveHandler != null) {
+			return saveHandler.saveParts(dirtyParts, confirm);
 		}
 
 		for (MPart dirtyPart : dirtyParts) {

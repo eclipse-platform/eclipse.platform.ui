@@ -1283,7 +1283,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		for (IWorkbenchWindow window : getWorkbenchWindows()) {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
-				if (!((WorkbenchPage) page).saveAllEditors(confirm, closing)) {
+				if (!((WorkbenchPage) page).saveAllEditors(confirm, closing, false)) {
 					return false;
 				}
 			}

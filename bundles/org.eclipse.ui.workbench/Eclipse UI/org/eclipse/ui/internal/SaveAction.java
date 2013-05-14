@@ -73,7 +73,7 @@ public class SaveAction extends BaseSaveAction implements IBackgroundSaveListene
 			} else {
 				workbenchPage = (WorkbenchPage) getActivePage();
 			}
-			workbenchPage.saveSaveable(saveView, false, false);
+			workbenchPage.saveSaveable(saveView, activePart, false, false);
 			return;
         }
 
