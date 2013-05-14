@@ -636,7 +636,7 @@ public class MinMaxAddon {
 
 				loc = modelService.getElementLocation(theStack);
 				if (loc != EModelService.IN_SHARED_AREA && theStack.getWidget() != null
-						&& !theStack.getTags().contains(MINIMIZED)) {
+						&& theStack.isVisible() && !theStack.getTags().contains(MINIMIZED)) {
 					elementsToMinimize.add(theStack);
 				}
 			}
@@ -646,7 +646,7 @@ public class MinMaxAddon {
 				MPlaceholder eaPlaceholder = (MPlaceholder) modelService
 						.find(ID_EDITOR_AREA, persp);
 				if (element != eaPlaceholder && eaPlaceholder != null
-						&& eaPlaceholder.isToBeRendered()) {
+						&& eaPlaceholder.getWidget() != null && eaPlaceholder.isVisible()) {
 					elementsToMinimize.add(eaPlaceholder);
 				}
 			}
