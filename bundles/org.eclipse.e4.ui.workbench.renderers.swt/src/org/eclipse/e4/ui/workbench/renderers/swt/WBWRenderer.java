@@ -25,6 +25,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -460,7 +461,7 @@ public class WBWRenderer extends SWTPartRenderer {
 				return wbwShell;
 			}
 		});
-		localContext.set(ISaveHandler.class, new ISaveHandler() {
+		final PartServiceSaveHandler saveHandler = new PartServiceSaveHandler() {
 			public Save promptToSave(MPart dirtyPart) {
 				Shell shell = (Shell) context
 						.get(IServiceConstants.ACTIVE_SHELL);
@@ -488,7 +489,9 @@ public class WBWRenderer extends SWTPartRenderer {
 				}
 				return response;
 			}
-		});
+		};
+		saveHandler.logger = logger;
+		localContext.set(ISaveHandler.class, saveHandler);
 
 		if (wbwModel.getLabel() != null)
 			wbwShell.setText(wbwModel.getLocalizedLabel());

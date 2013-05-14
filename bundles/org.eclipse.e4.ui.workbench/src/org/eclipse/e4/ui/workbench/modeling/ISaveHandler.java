@@ -20,6 +20,10 @@ public interface ISaveHandler {
 		YES, NO, CANCEL
 	}
 
+	public boolean save(MPart dirtyPart, boolean confirm);
+
+	public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm);
+
 	public Save promptToSave(MPart dirtyPart);
 
 	public Save[] promptToSave(Collection<MPart> dirtyParts);
