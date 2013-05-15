@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.ICommandLink;
 import org.eclipse.help.IContext;
@@ -36,14 +35,8 @@ import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.help.ui.internal.util.EscapeUtils;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.IDialogPage;
-import org.eclipse.jface.dialogs.IPageChangeProvider;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -56,6 +49,17 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+
+import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardContainer;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
@@ -235,7 +239,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	/**
-	 * @return Returns the defaultText.
+	 * @return returns the default text
 	 */
 	public String getDefaultText() {
 		return defaultText;
