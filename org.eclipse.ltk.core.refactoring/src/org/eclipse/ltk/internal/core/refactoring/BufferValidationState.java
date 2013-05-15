@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -264,7 +264,7 @@ class NoStampValidationState extends BufferValidationState {
 		RefactoringStatus result= super.isValid(needsSaving, resilientForDerived);
 		if (result.hasFatalError())
 			return result;
-		// If we have initialized the content stamp with the null stamp then we can't compare it with
+		// If we have initialized the content stamp with the 'null' stamp then we can't compare it with
 		// the current stamp since a change executed later could have set a concrete stamp for the
 		// current content
 		// if (fChanged || (fContentStamp != IResource.NULL_STAMP && fContentStamp != fFile.getModificationStamp())
