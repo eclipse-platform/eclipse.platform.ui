@@ -201,9 +201,9 @@ public class ProgressInfoItem extends Composite {
 			JobTreeElement progressInfo) {
 		super(parent, style);
 		info = progressInfo;
-		createChildren();
 		setData(info);
 		setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+		createChildren();
 		ILabelDecorator labelDecorator = PlatformUI.getWorkbench().getDecoratorManager()
 				.getLabelDecorator(ContributingPluginDecorator.ID);
 		if (labelDecorator != null && info.isJobInfo()) {
