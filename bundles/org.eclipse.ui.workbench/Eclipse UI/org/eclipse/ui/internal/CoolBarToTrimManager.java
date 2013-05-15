@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -704,10 +704,12 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				container, null);
 
 		for (IContributionItem item : manager.getItems()) {
-			if (item == null || !isChildVisible(item)) {
+			if (item == null) {
 				continue;
 			}
-
+			if (renderer.getToolElement(item) != null) {
+				continue;
+			}
 			if (item instanceof IToolBarContributionItem) {
 				IToolBarManager manager2 = ((IToolBarContributionItem) item).getToolBarManager();
 				//new Exception("fill(MToolBar container, IContributionManager manager) with " //$NON-NLS-1$
@@ -735,21 +737,5 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				renderer.linkModelToContribution(toolItem, item);
 			}
 		}
-	}
-
-	private boolean isChildVisible(IContributionItem item) {
-		Boolean v;
-
-		IContributionManagerOverrides overrides = getOverrides();
-		if (overrides == null) {
-			v = null;
-		} else {
-			v = getOverrides().getVisible(item);
-		}
-
-		if (v != null) {
-			return v.booleanValue();
-		}
-		return item.isVisible();
 	}
 }
