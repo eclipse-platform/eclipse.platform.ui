@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ public class WorkbenchSWTMessages extends NLS {
 	public static String ViewLabel_unknown;
 	public static String ShowView_noDesc;
 	public static String ShowView_selectViewHelp;
-	public static String ICategory_other;
 	public static String ICategory_general;
 	public static String ShowView_shellTitle;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,27 +162,9 @@ public class TaskListMessages extends NLS {
 	public static String TaskList_limitVisibleTasksTo;
 	public static String TaskList_titleMarkerLimitInvalid;
 	public static String TaskList_messageMarkerLimitInvalid;
-	public static String TaskPropertiesDialog_WorkingOnMarker;
-	public static String TaskPropertiesDialog_CreatingMarker;
-
-	// --- Properties Dialog ---
-	public static String TaskProp_newTaskTitle;
-	public static String TaskProp_propertiesTitle;
-	//TaskProp.titleFmt = {0} - {1}
-	public static String TaskProp_description;
-	public static String TaskProp_creationTime;
-	public static String TaskProp_priority;
-	public static String TaskProp_completed;
-	public static String TaskProp_severity;
-	public static String TaskProp_onResource;
-	public static String TaskProp_inFolder;
-	public static String TaskProp_location;
-	public static String TaskProp_errorMessage;
 
 	public static String CopyToClipboardProblemDialog_title;
 	public static String CopyToClipboardProblemDialog_message;
-
-	public static String TaskPropertiesDialog_UpdatingAttributes;
 
 	static {
 		// load message values from bundle file

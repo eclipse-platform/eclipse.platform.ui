@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ public class DataTransferMessages extends NLS {
 	// Data Transfer Wizards
 	// ==============================================================================
 	public static String DataTransfer_fileSystemTitle;
-	public static String ZipExport_exportTitle;
 	public static String ArchiveExport_exportTitle;
 
 	public static String DataTransfer_browse;
@@ -56,19 +55,15 @@ public class DataTransferMessages extends NLS {
 	public static String FileImport_importElementsAs;
 	public static String FileImport_createVirtualFoldersTooltip;
 	public static String FileImport_createLinksInWorkspace;
-	public static String FileImport_advanced;
 	public static String FileImport_noneSelected;
 	public static String FileImport_cannotImportFilesUnderAVirtualFolder;
 	public static String FileImport_haveToCreateLinksUnderAVirtualFolder;
 	public static String FileImport_invalidSource;
 	public static String FileImport_sourceEmpty;
 	public static String FileImport_importProblems;
-	public static String ZipImport_description;
 	public static String ZipImport_couldNotClose;
 	public static String ZipImport_badFormat;
 	public static String ZipImport_couldNotRead;
-	public static String ZipImport_fromFile;
-	public static String ZipImportSource_title;
 
 	public static String ArchiveImport_description;
 	public static String ArchiveImport_fromFile;
@@ -122,20 +117,16 @@ public class DataTransferMessages extends NLS {
 	public static String FileExport_noneSelected;
 	public static String FileExport_directoryExists;
 	public static String FileExport_conflictingContainer;
-	public static String FileExport_rootName;
 	public static String FileSystemExportOperation_problemsExporting;
 	public static String FileExport_toDirectory;
 	public static String FileExport_damageWarning;
 
 	public static String ZipExport_compressContents;
-	public static String ZipExport_destinationLabel;
 	public static String ZipExport_mustBeFile;
 	public static String ZipExport_alreadyExists;
 	public static String ZipExport_alreadyExistsError;
 	public static String ZipExport_cannotOpen;
 	public static String ZipExport_cannotClose;
-	public static String ZipExport_selectDestinationTitle;
-	public static String ZipExport_destinationEmpty;
 
 	public static String ArchiveExport_description;
 	public static String ArchiveExport_destinationLabel;
