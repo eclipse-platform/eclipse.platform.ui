@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -133,14 +133,14 @@ public class ExpressionInfo {
 	}
 
 	/**
-	 * Returns the set of expression types which don't implement the
-	 * new (@link Expression#computeReevaluationInfo(IEvaluationContext)}
-	 * method. If one expression didn't implement the method the expression
-	 * tree no optimizations can be done. Returns <code>null</code> if
+	 * Returns the set of expression types which don't reimplement the
+	 * new {@link Expression#collectExpressionInfo(ExpressionInfo)}
+	 * method. If one expression in the expression tree didn't implement the
+	 * method, then no optimizations can be done. Returns <code>null</code> if
 	 * all expressions implement the method.
 	 *
 	 * @return the set of expression types which don't implement the
-	 *  <code>computeReevaluationInfo</code> method.
+	 *  <code>computeReevaluationInfo</code> method, or <code>null</code> if all do
 	 */
 	public Class[] getMisbehavingExpressionTypes() {
 		if (fMisbehavingExpressionTypes == null)
