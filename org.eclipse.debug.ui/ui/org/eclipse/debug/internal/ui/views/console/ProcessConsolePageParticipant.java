@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -237,10 +237,12 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     public void activated() {
         // add EOF submissions
         IPageSite site = fPage.getSite();
-        IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
-        IContextService contextService = (IContextService)site.getService(IContextService.class);
-        fActivatedContext = contextService.activateContext(fContextId);
-        fActivatedHandler = handlerService.activateHandler("org.eclipse.debug.ui.commands.eof", fEOFHandler); //$NON-NLS-1$
+        if(fActivatedContext == null && fActivatedHandler == null) {
+	        IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
+	        IContextService contextService = (IContextService)site.getService(IContextService.class);
+	        fActivatedContext = contextService.activateContext(fContextId);
+	        fActivatedHandler = handlerService.activateHandler("org.eclipse.debug.ui.commands.eof", fEOFHandler); //$NON-NLS-1$
+        }
     }
 
     /* (non-Javadoc)
@@ -253,6 +255,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         IContextService contextService = (IContextService)site.getService(IContextService.class);
         handlerService.deactivateHandler(fActivatedHandler);
 		contextService.deactivateContext(fActivatedContext);
+		fActivatedContext = null;
+		fActivatedHandler = null;
     }
 
 	/* (non-Javadoc)
