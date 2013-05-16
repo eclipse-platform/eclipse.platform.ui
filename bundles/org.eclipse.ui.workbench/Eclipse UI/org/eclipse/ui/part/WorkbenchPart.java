@@ -61,7 +61,7 @@ public abstract class WorkbenchPart extends EventManager implements
 
     private Image titleImage;
 
-    private String toolTip = ""; //$NON-NLS-1$
+	private String toolTip = null;
 
     private IConfigurationElement configElement;
 
