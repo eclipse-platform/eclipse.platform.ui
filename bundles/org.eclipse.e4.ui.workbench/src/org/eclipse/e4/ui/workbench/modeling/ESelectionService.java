@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
  * This interface describes the workbench selection service
  * 
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ESelectionService {
 
