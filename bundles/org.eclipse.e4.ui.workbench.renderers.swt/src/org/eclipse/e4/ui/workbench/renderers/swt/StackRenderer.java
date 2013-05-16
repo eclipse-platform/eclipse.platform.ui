@@ -1494,8 +1494,7 @@ public class StackRenderer extends LazyStackRenderer {
 	@SuppressWarnings("javadoc")
 	public class TabStateHandler implements EventHandler {
 		public void handleEvent(Event event) {
-			MUIElement element = (MUIElement) event
-					.getProperty(UIEvents.EventTags.ELEMENT);
+			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 			Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
 			Object oldValue = event.getProperty(UIEvents.EventTags.OLD_VALUE);
 
@@ -1527,7 +1526,7 @@ public class StackRenderer extends LazyStackRenderer {
 			reapplyStyles(cti.getParent());
 		}
 
-		public boolean validateElement(MUIElement element) {
+		public boolean validateElement(Object element) {
 			return element instanceof MPart || element instanceof MPartStack;
 		}
 
