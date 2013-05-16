@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Performance Plug-in
 Bundle-ClassPath: uiperformance.jar
 Bundle-SymbolicName: org.eclipse.ui.tests.performance;singleton:=true
-Bundle-Version: 1.1.300.qualifier
+Bundle-Version: 1.1.400.qualifier
 Bundle-Activator: org.eclipse.ui.tests.performance.UIPerformancePlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
