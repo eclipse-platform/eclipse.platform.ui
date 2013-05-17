@@ -13,7 +13,6 @@ package org.eclipse.e4.tools.emf.ui.common.component;
 import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Named;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -26,7 +25,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTransla
 import org.eclipse.e4.tools.services.IClipboardService.Handler;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.tools.services.Translation;
-import org.eclipse.e4.tools.services.impl.AbstractTranslationProvider;
+import org.eclipse.e4.tools.services.impl.ResourceBundleTranslationProvider;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -73,10 +72,6 @@ public abstract class AbstractComponentEditor {
 	@Inject
 	@Optional
 	private ProjectOSGiTranslationProvider translationProvider;
-
-	@Inject
-	@Named(TranslationService.LOCALE)
-	private String locale;
 
 	private Composite editorControl;
 
@@ -134,9 +129,9 @@ public abstract class AbstractComponentEditor {
 	}
 
 	/**
-	 * Translates an input <code>string</code> using the current
-	 * {@link AbstractTranslationProvider} and <code>locale</code> from the
-	 * {@link TranslationService}.
+	 * Translates an input <code>String</code> using the current
+	 * {@link ResourceBundleTranslationProvider} and <code>locale</code> from
+	 * the {@link TranslationService}.
 	 * 
 	 * @param string
 	 *            the string to translate, may not be null.
@@ -144,7 +139,7 @@ public abstract class AbstractComponentEditor {
 	 *         translated.
 	 */
 	public String translate(String string) {
-		return ControlFactory.tr(translationProvider, locale, string);
+		return ControlFactory.tr(translationProvider, string);
 	}
 
 	/**
@@ -157,7 +152,7 @@ public abstract class AbstractComponentEditor {
 	}
 
 	protected String getLocalizedLabel(MUILabel element) {
-		return ControlFactory.getLocalizedLabel(translationProvider, element, locale);
+		return ControlFactory.getLocalizedLabel(translationProvider, element);
 	}
 
 	private boolean isFocusChild(Control control) {

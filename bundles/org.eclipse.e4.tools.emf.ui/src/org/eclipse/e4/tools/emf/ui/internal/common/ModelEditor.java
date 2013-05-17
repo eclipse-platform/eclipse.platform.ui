@@ -45,6 +45,7 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.IEditorDescriptor;
@@ -328,10 +329,10 @@ public class ModelEditor {
 		this.context.set(ModelEditor.class, this);
 		this.obsManager = new ObservablesManager();
 		if (project != null) {
-			ProjectOSGiTranslationProvider translationProvider = new ProjectOSGiTranslationProvider(project) {
+			ProjectOSGiTranslationProvider translationProvider = new ProjectOSGiTranslationProvider(project, (String) this.context.get(TranslationService.LOCALE)) {
 				@Override
-				protected void clearCache() {
-					super.clearCache();
+				protected void updateResourceBundle() {
+					super.updateResourceBundle();
 					viewer.getControl().getDisplay().asyncExec(new Runnable() {
 
 						public void run() {

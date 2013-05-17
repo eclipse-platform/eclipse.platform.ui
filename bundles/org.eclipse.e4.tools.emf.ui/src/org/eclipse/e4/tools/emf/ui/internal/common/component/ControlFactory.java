@@ -814,11 +814,11 @@ public class ControlFactory {
 
 	}
 
-	public static String getLocalizedLabel(ProjectOSGiTranslationProvider translationProvider, MUILabel element, String locale) {
-		return getLocalizedValue(translationProvider, (MApplicationElement) element, UiPackageImpl.Literals.UI_LABEL__LABEL, UiPackageImpl.Literals.UI_LABEL___GET_LOCALIZED_LABEL, locale);
+	public static String getLocalizedLabel(ProjectOSGiTranslationProvider translationProvider, MUILabel element) {
+		return getLocalizedValue(translationProvider, (MApplicationElement) element, UiPackageImpl.Literals.UI_LABEL__LABEL, UiPackageImpl.Literals.UI_LABEL___GET_LOCALIZED_LABEL);
 	}
 
-	public static String getLocalizedValue(ProjectOSGiTranslationProvider translationProvider, MApplicationElement element, EStructuralFeature feature, EOperation operation, String locale) {
+	public static String getLocalizedValue(ProjectOSGiTranslationProvider translationProvider, MApplicationElement element, EStructuralFeature feature, EOperation operation) {
 		EObject eo = (EObject) element;
 		if (translationProvider == null) {
 			try {
@@ -834,16 +834,16 @@ public class ControlFactory {
 
 		String value = (String) eo.eGet(feature);
 		if (value != null && value.trim().length() > 0) {
-			return tr(translationProvider, locale, value);
+			return tr(translationProvider, value);
 		}
 		return null;
 
 	}
 
-	public static String tr(ProjectOSGiTranslationProvider translationProvider, String locale, String label) {
+	public static String tr(ProjectOSGiTranslationProvider translationProvider, String label) {
 		if (label.startsWith("%") && translationProvider != null) { //$NON-NLS-1$
 			String key = label.substring(1);
-			String translation = translationProvider.translate(locale, key);
+			String translation = translationProvider.translate(key);
 			return translation == key ? label : translation;
 		}
 		return label;
