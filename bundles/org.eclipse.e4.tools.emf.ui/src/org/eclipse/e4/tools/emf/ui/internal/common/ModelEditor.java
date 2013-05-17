@@ -333,12 +333,14 @@ public class ModelEditor {
 				@Override
 				protected void updateResourceBundle() {
 					super.updateResourceBundle();
-					viewer.getControl().getDisplay().asyncExec(new Runnable() {
+					if (viewer != null) {
+						viewer.getControl().getDisplay().asyncExec(new Runnable() {
 
-						public void run() {
-							viewer.refresh();
-						}
-					});
+							public void run() {
+								viewer.refresh();
+							}
+						});
+					}
 				}
 			};
 			context.set(ProjectOSGiTranslationProvider.class, translationProvider);
