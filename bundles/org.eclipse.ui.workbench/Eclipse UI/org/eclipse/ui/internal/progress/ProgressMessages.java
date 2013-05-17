@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ public class ProgressMessages extends NLS {
 	public static String JobInfo_DoneNoProgressMessage;
 	public static String JobInfo_NoTaskNameDoneMessage;
 	public static String JobsViewPreferenceDialog_Note;
+	public static String JobErrorDialog_CustomJobText;
 	public static String JobInfo_UnknownProgress;
 	public static String JobInfo_Waiting;
 	public static String JobInfo_Sleeping;
@@ -42,16 +43,20 @@ public class ProgressMessages extends NLS {
 	public static String NewProgressView_RemoveAllJobsToolTip;
 	public static String NewProgressView_CancelJobToolTip;
 	public static String NewProgressView_ClearJobToolTip;
+	public static String NewProgressView_errorDialogTitle;
+	public static String NewProgressView_errorDialogMessage;
 	public static String ProgressAnimationItem_tasks;
 	public static String ProgressAnimationItem_ok;
 	public static String ProgressAnimationItem_error;
 	public static String SubTaskInfo_UndefinedTaskName;
 	public static String DeferredTreeContentManager_ClearJob;
 	public static String ProgressContentProvider_UpdateProgressJob;
+	public static String JobErrorDialog_MultipleErrorsTitle;
 	public static String ProgressManager_openJobName;
 	public static String ProgressManager_showInDialogName;
 	public static String ProgressMonitorJobsDialog_DetailsTitle;
 	public static String ProgressMonitorJobsDialog_HideTitle;
+	public static String ErrorNotificationManager_OpenErrorDialogJob;
 	public static String AnimationManager_AnimationStart;
 	public static String ProgressFloatingWindow_EllipsisValue;
 	public static String BlockedJobsDialog_UserInterfaceTreeElement;
@@ -61,6 +66,7 @@ public class ProgressMessages extends NLS {
 	public static String ProgressMonitorFocusJobDialog_CLoseDialogJob;
 	public static String ProgressMonitorFocusJobDialog_RunInBackgroundButton;
 
+	public static String JobErrorDialog_MultipleErrorsMessage;
 	public static String JobErrorDialog_CloseDialogTitle;
 	public static String JobsViewPreferenceDialog_Title;
 	public static String JobErrorDialog_DoNotShowAgainMessage;

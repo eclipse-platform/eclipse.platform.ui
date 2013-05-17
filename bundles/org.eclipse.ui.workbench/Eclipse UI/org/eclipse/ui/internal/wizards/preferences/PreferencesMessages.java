@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -28,6 +28,7 @@ public class PreferencesMessages extends NLS {
 	public static String PreferencesExportWizard_export;
 	public static String WizardPreferencesExportPage1_exportTitle;
 	public static String WizardPreferencesExportPage1_exportDescription;
+	public static String WizardPreferencesExportPage1_preferences;
 	public static String WizardPreferencesExportPage1_noPrefFile;
 	public static String WizardPreferencesExportPage1_overwrite;
 	public static String WizardPreferencesExportPage1_title;

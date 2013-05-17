@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,10 @@ public class UndoMessages extends NLS {
 	
 	public static String CopyResourcesOperation_NotAllowedDueToDataLoss;
 	
+	public static String ProjectDescription_NewProjectProgress;
 	public static String FileDescription_NewFileProgress;
+	public static String GroupDescription_NewGroupProgress;
+	public static String FileDescription_SavingUndoInfoProgress;
 	public static String FileDescription_ContentsCouldNotBeRestored;
 	public static String FolderDescription_NewFolderProgress;
 	public static String FolderDescription_SavingUndoInfoProgress;

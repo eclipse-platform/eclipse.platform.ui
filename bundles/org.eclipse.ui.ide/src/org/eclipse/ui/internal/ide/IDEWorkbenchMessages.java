@@ -46,6 +46,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ConfigurationLogUpdateSection_bundleHeader;
 	public static String ConfigurationLogUpdateSection_timestamp;
 
+	public static String ErrorClosing;
 	public static String ErrorOnSaveAll;
 
 	public static String ResourceInfoPage_noResource;
@@ -282,6 +283,8 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String AddBookmarkLabel;
 	public static String AddBookmarkToolTip;
+	public static String AddBookmarkDialog_title;
+	public static String AddBookmarkDialog_message;
 
 	public static String AddTaskLabel;
 	public static String AddTaskToolTip;
@@ -294,6 +297,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String OpenLocalFileAction_message_fileNotFound;
 	public static String OpenLocalFileAction_message_filesNotFound;
 	public static String OpenLocalFileAction_message_errorOnOpen;
+	public static String OpenLocalFileAction_title_selectWorkspaceFile;
+	public static String OpenLocalFileAction_message_fileLinkedToMultiple;
 	
 	public static String OpenResourceAction_text;
 	public static String OpenResourceAction_toolTip;
@@ -338,6 +343,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String SelectWorkingSetAction_text;
 
 	// --- Operations ---
+	public static String CopyProjectOperation_progressTitle;
 	public static String CopyProjectOperation_copyFailedMessage;
 	public static String CopyProjectOperation_copyFailedTitle;
 	public static String CopyProjectOperation_internalError;
@@ -443,6 +449,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFolderMainPage_folderName;
 	public static String WizardNewFolderMainPage_folderLabel;
 	public static String WizardNewFolderMainPage_description;
+	public static String WizardNewFolderCreationPage_progress;
 	public static String WizardNewFolderCreationPage_errorTitle;
 	public static String WizardNewFolderCreationPage_internalErrorTitle;
 	public static String WizardNewFolderCreationPage_resourceWillBeFilteredWarning;
@@ -452,6 +459,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFolderCreationPage_createLinkLocationQuestion;
 
 	// --- New File ---
+	public static String WizardNewFileCreationPage_progress;
 	public static String WizardNewFileCreationPage_errorTitle;
 	public static String WizardNewFileCreationPage_fileLabel;
 	public static String WizardNewFileCreationPage_file;
@@ -518,6 +526,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String LinkedResourcesPreference_promptVirtual;
 	public static String LinkedResourcesPreference_linkAndVirtualFolder;
 	public static String LinkedResourcesPreference_linkVirtual;
+	public static String linkedResourcesPreference_copyVirtual;
 	public static String LinkedResourcesPreference_linkAndVirtualFolderVirtual;
 
 	// The following six keys are marked as unused by the NLS search, but they are indirectly used
@@ -581,6 +590,7 @@ public class IDEWorkbenchMessages extends NLS {
 
 	// --- Startup preferences ---
 	public static String StartupPreferencePage_refreshButton;
+	public static String StartupPreferencePage_launchPromptButton;
 	public static String StartupPreferencePage_exitPromptButton;
 
 	// --- Startup -> Workspaces preferences ---
@@ -654,6 +664,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String LinkedResourceEditor_convertToVariableLocation;
 	public static String LinkedResourceEditor_remove;
 	public static String LinkedResourceEditor_resourceName;
+	public static String LinkedResourceEditor_path;
 	public static String LinkedResourceEditor_location;
 	public static String LinkedResourceEditor_fixed;
 	public static String LinkedResourceEditor_broken;
@@ -805,11 +816,14 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ImportTypeDialog_importElementsAsTooltip;
 	public static String ImportTypeDialog_importElementsAsTooltipSet;
 	public static String ImportTypeDialog_editVariables;
+	public static String ImportTypeDialog_alwaysPerformThisOperation;
 	public static String ImportTypeDialog_configureSettings;
 
 	// ==============================================================================
 	// Editor Framework
 	// ==============================================================================
+	public static String EditorManager_saveResourcesMessage;
+	public static String EditorManager_saveResourcesTitle;
 
 	public static String OpenSystemEditorAction_dialogTitle;
 	public static String OpenSystemEditorAction_text;
@@ -952,6 +966,14 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WorkbenchEncoding_invalidCharset;
 	public static String CopyProjectAction_confirm;
 	public static String CopyProjectAction_warning;
+	public static String DeleteResourceAction_confirm;
+	public static String DeleteResourceAction_warning;
+	public static String CopyFilesAndFoldersOperation_confirmMove;
+	public static String CopyFilesAndFoldersOperation_warningMove;
+	public static String CopyFilesAndFoldersOperation_confirmCopy;
+	public static String CopyFilesAndFoldersOperation_warningCopy;
+	public static String RenameResourceAction_confirm;
+	public static String RenameResourceAction_warning;
 
 	public static String IDE_sideEffectWarning;
 
@@ -975,6 +997,7 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String editorAssociationOverride_error_couldNotCreate_message;
 	public static String editorAssociationOverride_error_invalidElementName_message;
+	public static String editorAssociationOverride_error_invalidExtension_message;
 
 	static {
 		// load message values from bundle file
