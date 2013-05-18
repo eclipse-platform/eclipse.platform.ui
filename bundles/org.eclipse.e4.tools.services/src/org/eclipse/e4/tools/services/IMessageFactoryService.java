@@ -20,13 +20,6 @@ public interface IMessageFactoryService {
 	 * @param localization The service that is needed to retrieve {@link ResourceBundle} objects from a bundle 
 	 * 			with a given locale.
 	 * @return An instance of the given messages class and {@link Locale}.
-	 * 
-	 * @throws InstantiationException if the requested message class represents an abstract class, an interface, 
-	 * 			an array class, a primitive type, or void; 
-	 * 			or if the class has no nullary constructor; 
-	 * 			or if the instantiation fails for some other reason.
-	 * @throws IllegalAccessException if the requested message class or its nullary constructor is not accessible.
 	 */
-	public <M> M getMessageInstance(final Locale locale, final Class<M> messages, BundleLocalization localization)
-			throws InstantiationException, IllegalAccessException;
+	public <M> M getMessageInstance(final Locale locale, final Class<M> messages, BundleLocalization localization);
 }

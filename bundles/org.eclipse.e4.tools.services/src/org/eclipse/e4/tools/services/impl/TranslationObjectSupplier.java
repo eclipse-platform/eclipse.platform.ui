@@ -122,19 +122,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	 * @return The instance of the requested message class
 	 */
 	private Object getMessageInstance(Class<?> descriptorsClass) {
-		try {
-			return this.factoryService.getMessageInstance(
-					this.locale, descriptorsClass, this.localization);
-		} catch (InstantiationException e) {
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR,
-						"Instantiation of messages class failed", e); //$NON-NLS-1$
-		} catch (IllegalAccessException e) {
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR,
-						"Failed to access messages class", e); //$NON-NLS-1$
-		}
-		return null;
+		return this.factoryService.getMessageInstance(this.locale, descriptorsClass, this.localization);
 	}
 	
 	/**

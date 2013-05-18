@@ -15,6 +15,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Collections;
@@ -26,14 +27,20 @@ import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import javax.annotation.PostConstruct;
+
 import org.eclipse.e4.tools.services.IMessageFactoryService;
 import org.eclipse.e4.tools.services.Message;
 import org.eclipse.e4.tools.services.Message.ReferenceType;
+import org.eclipse.e4.tools.services.ToolsServicesActivator;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.log.LogService;
 
 public class MessageFactoryServiceImpl implements IMessageFactoryService {
+
+	private static LogService logService = ToolsServicesActivator.getDefault().getLogService();
 
 	// Cache so when multiple instance use the same message class
 	private Map<Object, Reference<Object>> SOFT_CACHE = Collections
@@ -45,8 +52,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	private int CLEANUPCOUNT = 0;
 
 	@Override
-	public <M> M getMessageInstance(final Locale locale, final Class<M> messages, final BundleLocalization localization)
-			throws InstantiationException, IllegalAccessException {
+	public <M> M getMessageInstance(final Locale locale, final Class<M> messages, final BundleLocalization localization) {
 		String key = messages.getName() + "_" + locale; //$NON-NLS-1$
 
 		final Message annotation = messages.getAnnotation(Message.class);
@@ -98,14 +104,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 			instance = AccessController.doPrivileged(new PrivilegedAction<M>() {
 
 				public M run() {
-					try {
-						return createInstance(locale, messages, annotation, localization);
-					} catch (InstantiationException e) {
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					}
-					return null;
+					return createInstance(locale, messages, annotation, localization);
 				}
 
 			});
@@ -149,17 +148,12 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	 * 			to retrieve the URI of the location to search for the {@link ResourceBundle}.
 	 * @param localization The service that is needed to retrieve {@link ResourceBundle} objects from a bundle 
 	 * 			with a given locale.
-	 * @return The created instance of the given messages class and {@link Locale}.
 	 * 
-	 * @throws InstantiationException if the requested message class represents an abstract class, an interface, 
-	 * 			an array class, a primitive type, or void; 
-	 * 			or if the class has no nullary constructor; 
-	 * 			or if the instantiation fails for some other reason.
-	 * @throws IllegalAccessException if the requested message class or its nullary constructor is not accessible.
+	 * @return The created instance of the given messages class and {@link Locale} or <code>null</code>
+	 * 			if an error occured on creating the instance.
 	 */
 	private static <M> M createInstance(Locale locale, Class<M> messages,
-			Message annotation, BundleLocalization localization) throws InstantiationException,
-			IllegalAccessException {
+			Message annotation, BundleLocalization localization) {
 
 		ResourceBundle resourceBundle = null;
 		if (annotation != null && annotation.contributorURI().length() > 0) {
@@ -190,18 +184,64 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		//be returned by this provider to show that there is something wrong on loading it
 		ResourceBundleTranslationProvider provider = new ResourceBundleTranslationProvider(resourceBundle);
 		
-		M instance = messages.newInstance();
-		Field[] fields = messages.getDeclaredFields();
-
-		for (int i = 0; i < fields.length; i++) {
-			if (!fields[i].isAccessible()) {
-				fields[i].setAccessible(true);
+		M instance = null;
+		try {
+			instance = messages.newInstance();
+			Field[] fields = messages.getDeclaredFields();
+			
+			for (int i = 0; i < fields.length; i++) {
+				if (!fields[i].isAccessible()) {
+					fields[i].setAccessible(true);
+				}
+				
+				fields[i].set(instance,
+						provider.translate(fields[i].getName()));
 			}
-
-			fields[i].set(instance,
-					provider.translate(fields[i].getName()));
+		} catch (InstantiationException e) {
+			if (logService != null)
+				logService.log(LogService.LOG_ERROR,
+						"Instantiation of messages class failed", e); //$NON-NLS-1$
+		} catch (IllegalAccessException e) {
+			if (logService != null)
+				logService.log(LogService.LOG_ERROR,
+						"Failed to access messages class", e); //$NON-NLS-1$
 		}
-
+		
+		//invoke the method annotated with @PostConstruct
+		processPostConstruct(instance, messages);
+		
 		return instance;
 	}
+	
+	/**
+	 * Searches for the method annotated {@link PostConstruct} in the messages class.
+	 * If there is one found it will be executed.
+	 * <p>
+	 * Note: The method annotated with {@link PostConstruct} does not support method injection
+	 * 		 because we are not using the injection mechanism to call.
+	 * @param messageObject The message instance of the given class where the method annotated with
+	 * 			{@link PostConstruct} should be called
+	 * @param messageClass The type of the message class whose instance is requested.
+	 */
+	private static void processPostConstruct(Object messageObject, Class<?> messageClass) {
+		if (messageObject != null) {
+			Method[] methods = messageClass.getDeclaredMethods();
+			for (int i = 0; i < methods.length; i++) {
+				Method method = methods[i];
+				if (!method.isAnnotationPresent(PostConstruct.class)) {
+					continue;
+				}
+				else {
+					try {
+						method.invoke(messageObject);
+					} catch (Exception e) {
+						if (logService != null)
+							logService.log(LogService.LOG_ERROR,
+								"Exception on trying to execute the @PostConstruct annotated method in " + messageClass, e); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+	}
+
 }
