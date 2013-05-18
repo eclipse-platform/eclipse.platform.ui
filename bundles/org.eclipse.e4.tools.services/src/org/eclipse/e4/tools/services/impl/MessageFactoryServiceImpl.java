@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Dirk Fauth <dirk.fauth@gmail.com> - modifications to instance creation
  ******************************************************************************/
 package org.eclipse.e4.tools.services.impl;
 
@@ -28,15 +29,11 @@ import java.util.ResourceBundle;
 import org.eclipse.e4.tools.services.IMessageFactoryService;
 import org.eclipse.e4.tools.services.Message;
 import org.eclipse.e4.tools.services.Message.ReferenceType;
-import org.eclipse.e4.tools.services.ToolsServicesActivator;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
-import org.osgi.service.log.LogService;
 
 public class MessageFactoryServiceImpl implements IMessageFactoryService {
-
-	private static LogService logService = ToolsServicesActivator.getDefault().getLogService();
 
 	// Cache so when multiple instance use the same message class
 	private Map<Object, Reference<Object>> SOFT_CACHE = Collections
@@ -47,7 +44,8 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 
 	private int CLEANUPCOUNT = 0;
 
-	public <M> M createInstance(final String locale, final Class<M> messages, final BundleLocalization localization)
+	@Override
+	public <M> M getMessageInstance(final Locale locale, final Class<M> messages, final BundleLocalization localization)
 			throws InstantiationException, IllegalAccessException {
 		String key = messages.getName() + "_" + locale; //$NON-NLS-1$
 
@@ -95,13 +93,13 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		M instance;
 
 		if (System.getSecurityManager() == null) {
-			instance = doCreateInstance(locale, messages, annotation, localization);
+			instance = createInstance(locale, messages, annotation, localization);
 		} else {
 			instance = AccessController.doPrivileged(new PrivilegedAction<M>() {
 
 				public M run() {
 					try {
-						return doCreateInstance(locale, messages, annotation, localization);
+						return createInstance(locale, messages, annotation, localization);
 					} catch (InstantiationException e) {
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
@@ -124,24 +122,48 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		return instance;
 	}
 
-	private static <M> M doCreateInstance(String locale, Class<M> messages,
+	/**
+	 * Creates and returns an instance of the of a given messages class for the given {@link Locale}.
+	 * The message class gets instantiated and the fields are initialized with values out of a {@link ResourceBundle}.
+	 * As there are several options to specify the location of the {@link ResourceBundle} to load, the 
+	 * following search order is used:
+	 * <ol>
+	 * <li>URI location<br/>
+	 * 		If the message class is annotated with <code>@Message</code> and the <i>contributorURI</i>
+	 * 		attribute is set, the {@link ResourceBundle} is searched at the specified location</li> 
+	 * <li>Relative location<br/>
+	 * 		If the message class is not annotated with <code>@Message</code> and a contributorURI
+	 * 		attribute value or there is no {@link ResourceBundle} found at the specified location, a 
+	 * 		{@link ResourceBundle} with the same name in the same package as the message class is searched.</li> 
+	 * <li>Bundle localization<br/>
+	 * 		If there is no {@link ResourceBundle} found by URI or relative location, the OSGi {@link ResourceBundle}
+	 * 		configured in the MANIFEST.MF is tried to load.</li> 
+	 * </ol>
+	 * Note: Even if there is no {@link ResourceBundle} found in any of the mentioned locations, this method will
+	 * 		 not break. In this case the fields of the message class will get initialized with values that look 
+	 * 		 like <code>!key!</code> to indicate that there is no translation value found for that key.
+	 * 
+	 * @param locale The {@link Locale} for which the message class instance is requested.
+	 * @param messages The type of the message class whose instance is requested.
+	 * @param annotation The annotation that is used in the message class. If specified it is needed
+	 * 			to retrieve the URI of the location to search for the {@link ResourceBundle}.
+	 * @param localization The service that is needed to retrieve {@link ResourceBundle} objects from a bundle 
+	 * 			with a given locale.
+	 * @return The created instance of the given messages class and {@link Locale}.
+	 * 
+	 * @throws InstantiationException if the requested message class represents an abstract class, an interface, 
+	 * 			an array class, a primitive type, or void; 
+	 * 			or if the class has no nullary constructor; 
+	 * 			or if the instantiation fails for some other reason.
+	 * @throws IllegalAccessException if the requested message class or its nullary constructor is not accessible.
+	 */
+	private static <M> M createInstance(Locale locale, Class<M> messages,
 			Message annotation, BundleLocalization localization) throws InstantiationException,
 			IllegalAccessException {
 
-		Locale loc = null;
-		try {
-			loc = locale == null ? Locale.getDefault() : ResourceBundleHelper.toLocale(locale);
-		}
-		catch (Exception e) {
-			//parsing the locale String to a Locale failed, so we use the default Locale
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR, "Invalid locale", e); //$NON-NLS-1$
-			loc = Locale.getDefault();
-		}
-		
 		ResourceBundle resourceBundle = null;
 		if (annotation != null && annotation.contributorURI().length() > 0) {
-			resourceBundle = ResourceBundleHelper.getResourceBundleForUri(annotation.contributorURI(), loc, localization);
+			resourceBundle = ResourceBundleHelper.getResourceBundleForUri(annotation.contributorURI(), locale, localization);
 		}
 		
 		if (resourceBundle == null) {
@@ -149,7 +171,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 			String baseName = messages.getName().replace('.', '/');
 			
 			try {
-				resourceBundle = ResourceBundleHelper.getEquinoxResourceBundle(baseName, loc, messages.getClassLoader());
+				resourceBundle = ResourceBundleHelper.getEquinoxResourceBundle(baseName, locale, messages.getClassLoader());
 			}
 			catch (MissingResourceException e) {
 				//do nothing as this just means there is no resource bundle named
@@ -161,7 +183,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		if (resourceBundle == null) {
 			//retrieve the OSGi resource bundle
 			Bundle bundle = FrameworkUtil.getBundle(messages);
-			resourceBundle = localization.getLocalization(bundle, locale);
+			resourceBundle = localization.getLocalization(bundle, locale.toString());
 		}
 		
 		//always create a provider, if there is no resource bundle found, simply the modified keys will
