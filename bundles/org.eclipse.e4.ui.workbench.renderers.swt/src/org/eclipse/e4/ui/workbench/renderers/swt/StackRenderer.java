@@ -732,7 +732,7 @@ public class StackRenderer extends LazyStackRenderer {
 		return null;
 	}
 
-	protected CTabItem findItemForPart(MPart part) {
+	public CTabItem findItemForPart(MPart part) {
 		// is this a direct child of the stack?
 		if (part.getParent() != null
 				&& part.getParent().getRenderer() == StackRenderer.this) {
@@ -983,7 +983,7 @@ public class StackRenderer extends LazyStackRenderer {
 		IEclipseContext ctxt = getContext(stack);
 		final BasicPartList editorList = new BasicPartList(ctf.getShell(),
 				SWT.ON_TOP, SWT.V_SCROLL | SWT.H_SCROLL,
-				ctxt.get(EPartService.class), stack,
+				ctxt.get(EPartService.class), stack, this,
 				(ISWTResourceUtilities) ctxt.get(IResourceUtilities.class),
 				getInitialMRUValue(ctf));
 		editorList.setInput();
