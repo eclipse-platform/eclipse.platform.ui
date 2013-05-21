@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1346,7 +1346,7 @@ public class ContentProposalAdapter {
 	 * dispose the label provider when it is no longer needed.
 	 * 
 	 * @param labelProvider
-	 *            the (@link ILabelProvider} used to show proposals.
+	 *            the {@link ILabelProvider} used to show proposals.
 	 */
 	public void setLabelProvider(ILabelProvider labelProvider) {
 		this.labelProvider = labelProvider;
