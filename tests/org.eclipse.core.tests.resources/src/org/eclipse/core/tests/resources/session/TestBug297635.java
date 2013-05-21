@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2012 IBM Corporation and others.
+ *  Copyright (c) 2010, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class TestBug297635 extends WorkspaceSessionTest implements ISaveParticip
 		try {
 			Bundle b = BundleTestingHelper.installBundle("1", getContext(), ContentTypeTest.TEST_FILES_ROOT + "content/bundle01");
 			BundleTestingHelper.resolveBundles(getContext(), new Bundle[] {b});
-			b.start();
+			b.start(Bundle.START_TRANSIENT);
 		} catch (MalformedURLException e) {
 			fail("1.0", e);
 		} catch (BundleException e) {
@@ -82,10 +82,10 @@ public class TestBug297635 extends WorkspaceSessionTest implements ISaveParticip
 		// we rely on the fact that the core.resources bundle doesn't save the tree when it is stopped
 		try {
 			Bundle coreResourcesBundle = Platform.getBundle(ResourcesPlugin.PI_RESOURCES);
-			coreResourcesBundle.stop();
+			coreResourcesBundle.stop(Bundle.STOP_TRANSIENT);
 			Bundle b = BundleTestingHelper.installBundle("1", getContext(), ContentTypeTest.TEST_FILES_ROOT + "content/bundle01");
 			BundleTestingHelper.resolveBundles(getContext(), new Bundle[] {b});
-			coreResourcesBundle.start();
+			coreResourcesBundle.start(Bundle.START_TRANSIENT);
 		} catch (MalformedURLException e2) {
 			fail("1.0", e2);
 		} catch (BundleException e2) {
