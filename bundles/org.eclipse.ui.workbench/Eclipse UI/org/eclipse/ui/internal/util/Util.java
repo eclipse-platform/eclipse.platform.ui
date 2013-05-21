@@ -245,18 +245,20 @@ public final class Util {
      *         <code>null</code>. Otherwise, the left identity hash code
      *         minus the right identity hash code.
      */
-    public static final int compareIdentity(Object left, Object right) {
-        if (left == null && right == null) {
+	public static final int compareIdentity(Object left, Object right) {
+		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
 			return -1;
 		} else if (right == null) {
 			return 1;
-		} else {
-			return System.identityHashCode(left)
-                    - System.identityHashCode(right);
 		}
-    }
+		int rc = Math.abs(System.identityHashCode(left)) - Math.abs(System.identityHashCode(right));
+		if (rc != 0) {
+			return rc;
+		}
+		return left == right ? 0 : System.identityHashCode(left) - System.identityHashCode(right);
+	}
 
     public static void diff(Map left, Map right, Set leftOnly, Set different,
             Set rightOnly) {
