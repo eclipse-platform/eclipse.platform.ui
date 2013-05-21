@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -273,7 +273,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.2
 	 */
 	public static final int TEAM_PRIVATE = 0x800;
-	
+
 	/**
 	 * Update flag constant (bit mask value 0x1000) indicating that a 
 	 * resource should be marked as a hidden resource.
@@ -281,7 +281,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.4
 	 */
 	public static final int HIDDEN = 0x1000;
-	
+
 	/**
 	 * Update flag constant (bit mask value 0x2000) indicating that a 
 	 * resource should be marked as a virtual resource.
@@ -929,7 +929,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Creates and returns the marker with the specified type on this resource.
-	 * Marker type ids are the id of an extension installed in the
+	 * Marker type ids should be the id of an extension installed in the
 	 * <code>org.eclipse.core.resources.markers</code> extension
 	 * point. The specified type string must not be <code>null</code>.
 	 *
@@ -1508,7 +1508,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setPersistentProperty(QualifiedName, String)
 	 * @since 3.4
 	 */
-	public Map<QualifiedName,String> getPersistentProperties() throws CoreException;
+	public Map<QualifiedName, String> getPersistentProperties() throws CoreException;
 
 	/**
 	 * Returns the value of the persistent property of this resource identified
@@ -1669,7 +1669,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setSessionProperty(QualifiedName, Object)
 	 * @since 3.4
 	 */
-	public Map<QualifiedName,Object> getSessionProperties() throws CoreException;
+	public Map<QualifiedName, Object> getSessionProperties() throws CoreException;
 
 	/**
 	 * Returns the value of the session property of this resource identified
@@ -1752,7 +1752,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 2.0
 	 */
 	public boolean isDerived();
-	
+
 	/**
 	 * Returns whether this resource subtree is marked as derived. Returns 
 	 * <code>false</code> if this resource does not exist.
@@ -1789,7 +1789,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.4
 	 */
 	public boolean isHidden();
-	
+
 	/**
 	 * Returns whether this resource is hidden in the resource tree. Returns
 	 * <code>false</code> if this resource does not exist.
@@ -2003,7 +2003,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.5
 	 */
 	public boolean isTeamPrivateMember(int options);
-	
+
 	/**
 	 * Moves this resource so that it is located at the given path.  
 	 * <p>
@@ -2531,7 +2531,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.6
 	 */
 	public void setDerived(boolean isDerived, IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
 	 * Sets whether this resource and its members are hidden in the resource tree.
 	 * <p>
