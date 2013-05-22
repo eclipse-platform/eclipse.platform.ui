@@ -1,22 +1,27 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="startup" name="Startup"/>
       </appInfo>
       <documentation>
-         This extension point is used to register plugins that want to be activated on startup. The class given as the attribute on the startup element must implement the interface &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;. Once the workbench is started, the method earlyStartup() will be called from a separate thread.
+         This extension point is used to register plug-ins that want to be activated on startup. The class given as the attribute on the startup element must implement the interface &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;. Once the workbench is started, the method earlyStartup() will be called from a separate thread.
 
-If the startup element has a class attribute, the class will be instantiated and earlyStartup() will be called on the result.  Otherwise, this method will be called on the plug-in class.  Do not specify the plug-in class as the value of the class attribute, or it will be instantiated twice (once by regular plug-in activation, and once by this mechanism).
+The class specified by the startup element&apos;s class attribute will be instantiated and earlyStartup() will be called on the result. Do not specify the plug-in class as the value of the class attribute, or it will be instantiated twice (once by regular plug-in activation, and once by this mechanism).
 
 If the extension does not provide a class as an attribute on the startup element, the plug-in&apos;s activator (plug-in class) must implement &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;. Note that this form is deprecated and should no longer be used. Its functioning relies on the availability of the org.eclipse.core.runtime.compatibility plug-in and the org.eclipse.core.runtime.compatibility.registry fragment.
 
-Plugins that provide an extension to this extension point are listed in the workbench preferences and the user may disable any plugin from early startup.
+Plug-ins that provide an extension to this extension point are listed in the workbench preferences and the user may disable any plug-in from early startup.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="startup" minOccurs="0" maxOccurs="unbounded"/>
@@ -55,8 +60,7 @@ Plugins that provide an extension to this extension point are listed in the work
                <documentation>
                   a fully qualified name of the class that implements 
 &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;.
-If not specified, the plug-in class is used.   Do not specify the plug-in class as an explicit value, or it will be instantiated twice (once by regular plug-in activation, and once by this mechanism).
-Since release 3.0.
+Mandatory since 3.0. Do not specify the plug-in class as it would be instantiated twice (once by regular plug-in activation, and once by this mechanism).
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IStartup"/>
@@ -65,6 +69,15 @@ Since release 3.0.
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         See interface &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;.
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -89,30 +102,13 @@ Since release 3.0.
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         See interface &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2013 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
