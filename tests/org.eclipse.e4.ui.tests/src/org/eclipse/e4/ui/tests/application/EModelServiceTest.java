@@ -162,7 +162,7 @@ public class EModelServiceTest extends UITest {
 		getEngine().createGui(windowA);
 		getEngine().createGui(windowB);
 
-		assertEquals(windowA, application.getSelectedElement());
+		assertEquals(windowB, application.getSelectedElement());
 
 		EModelService modelService = applicationContext
 				.get(EModelService.class);
