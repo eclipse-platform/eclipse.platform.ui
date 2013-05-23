@@ -294,8 +294,12 @@ public class StackDropAgent extends DropAgent {
 	public boolean drop(MUIElement dragElement, DnDInfo info) {
 		if (dndManager.getFeedbackStyle() != DnDManager.HOSTED) {
 			int dropIndex = getDropIndex(info);
-			if (dropIndex != -1)
+			if (dropIndex != -1) {
+				MUIElement toActivate = dragElement instanceof MPartStack ? ((MPartStack) dragElement)
+						.getSelectedElement() : dragElement;
 				dock(dragElement, dropIndex);
+				reactivatePart(toActivate);
+			}
 		}
 		return true;
 	}

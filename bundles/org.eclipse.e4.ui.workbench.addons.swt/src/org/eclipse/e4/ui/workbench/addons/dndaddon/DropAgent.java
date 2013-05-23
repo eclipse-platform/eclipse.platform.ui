@@ -11,7 +11,12 @@
 
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Rectangle;
@@ -28,6 +33,41 @@ abstract class DropAgent {
 	 */
 	public DropAgent(DnDManager manager) {
 		dndManager = manager;
+	}
+
+	public void reactivatePart(MUIElement dragElement) {
+		IEclipseContext context = dndManager.getModelService().getContainingContext(dragElement);
+		if (context == null)
+			return;
+
+		EPartService ps = context.get(EPartService.class);
+		if (ps == null)
+			return;
+
+		MPart partToActivate = null;
+		if (dragElement instanceof MPart) {
+			partToActivate = (MPart) dragElement;
+		} else if (dragElement instanceof MPlaceholder) {
+			MPlaceholder ph = (MPlaceholder) dragElement;
+			if (ph.getRef() instanceof MPart) {
+				partToActivate = (MPart) ph.getRef();
+			}
+		} else if (dragElement instanceof MPartStack) {
+			MPartStack stack = (MPartStack) dragElement;
+			if (stack.getSelectedElement() instanceof MPart) {
+				partToActivate = (MPart) stack.getSelectedElement();
+			} else if (stack.getSelectedElement() instanceof MPlaceholder) {
+				MPlaceholder ph = (MPlaceholder) stack.getSelectedElement();
+				if (ph.getRef() instanceof MPart) {
+					partToActivate = (MPart) ph.getRef();
+				}
+			}
+		}
+
+		if (partToActivate != null) {
+			ps.activate(null);
+			ps.activate(partToActivate);
+		}
 	}
 
 	public abstract boolean canDrop(MUIElement dragElement, DnDInfo info);
