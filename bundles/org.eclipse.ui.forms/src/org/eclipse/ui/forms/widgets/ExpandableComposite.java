@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Kai Nacke - Fix for Bug 202382
  *     Bryan Hunt - Fix for Bug 245457
  *     Didier Villevalois - Fix for Bug 178534 
+ *     Robin Stocker - Fix for Bug 193034 (tool tip also on text)
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -826,6 +827,16 @@ public class ExpandableComposite extends Canvas {
 			return;
 		}
 		layout();
+	}
+
+	public void setToolTipText(String string) {
+		super.setToolTipText(string);
+		// Also set on label, otherwise it's just on the background without text.
+		if (textLabel instanceof Label) {
+			((Label) textLabel).setToolTipText(string);
+		} else if (textLabel instanceof Hyperlink) {
+			((Hyperlink) textLabel).setToolTipText(string);
+		}
 	}
 
 	/**
