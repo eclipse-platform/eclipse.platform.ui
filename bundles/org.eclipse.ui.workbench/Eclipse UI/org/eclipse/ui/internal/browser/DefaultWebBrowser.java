@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.browser;
 
 import java.io.IOException;
 import java.net.URL;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.program.Program;
@@ -23,6 +22,10 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * The default implementation of the web browser instance.
+ * <p>
+ * This class is used when no alternative implementation is plugged in via the
+ * 'org.eclipse.ui.browserSupport' extension point.
+ * </p>
  * 
  * @since 3.1
  */
