@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,11 @@ import org.eclipse.help.internal.base.*;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Browser adapter for browsers supporting -remote openURL command line option
- * i.e. Mozilla and Netscape.
+ * Browser adapter for Linux-based browsers supporting -remote openURL command line option i.e.
+ * Mozilla and Netscape.
+ * <p>
+ * The {@link MozillaFactory} creates this adapter.
+ * </p>
  */
 public class MozillaBrowserAdapter implements IBrowser {
 	// delay that it takes mozilla to start responding
