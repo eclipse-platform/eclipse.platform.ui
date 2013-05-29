@@ -112,6 +112,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -1751,12 +1752,18 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		if (manager == null || progressHack) {
 			runnable.run(new NullProgressMonitor());
 		} else {
+			EPartService partService = model.getContext().get(EPartService.class);
+			final MPart curActive = partService.getActivePart();
 			boolean wasCancelEnabled = manager.isCancelEnabled();
 			boolean enableMainMenu = false;
 			
 			IBindingService bs = model.getContext().get(IBindingService.class);
 			boolean keyFilterEnabled = bs.isKeyFilterEnabled();
 			List<Control> toEnable = new ArrayList<Control>();
+			Shell theShell = getShell();
+			Display display = theShell.getDisplay();
+			Control currentFocus = display.getFocusControl();
+
 			try {
 				Menu mainMenu = (Menu) model.getMainMenu().getWidget();
 				if (mainMenu != null && !mainMenu.isDisposed() && mainMenu.isEnabled()) {
@@ -1767,12 +1774,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				if (keyFilterEnabled)
 					bs.setKeyFilterEnabled(false);
 				
-				// disable child shells
-				Shell theShell = getShell();
-				for (Shell childShell : theShell.getShells()) {
-					disableControl(childShell, toEnable);
+				// disable all other shells
+				for (Shell childShell : display.getShells()) {
+					if (childShell != theShell) {
+						disableControl(childShell, toEnable);
+					}
 				}
 				
+
 				//Disable the presentation (except the bottom trim)
 				TrimmedPartLayout tpl = (TrimmedPartLayout) getShell().getLayout();
 				disableControl(tpl.clientArea, toEnable);
@@ -1831,8 +1840,22 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 				// Re-enable any disabled controls
 				for (Control ctrl : toEnable) {
-					if (!ctrl.isDisposed())
+					if (!ctrl.isDisposed() && !ctrl.isEnabled())
 						ctrl.setEnabled(true);
+				}
+
+				MPart activePart = partService.getActivePart();
+				if (curActive != activePart && activePart != null) {
+					engine.focusGui(activePart);
+				} else if (currentFocus != null && !currentFocus.isDisposed()) {
+					// It's necessary to restore focus after reenabling the
+					// controls
+					// because disabling them causes focus to jump elsewhere.
+					// Use forceFocus rather than setFocus to avoid SWT's
+					// search for children which can take focus, so focus
+					// ends up back on the actual control that previously had
+					// it.
+					currentFocus.forceFocus();
 				}
 			}
 		}
