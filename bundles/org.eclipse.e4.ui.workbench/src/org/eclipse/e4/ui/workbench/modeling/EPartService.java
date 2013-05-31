@@ -247,9 +247,19 @@ public interface EPartService {
 	 * If the part has been tagged with the {@link #REMOVE_ON_HIDE_TAG} tag, it will be removed from
 	 * the model when the service hides it.
 	 * </p>
+	 * <p>
+	 * To save the part before hiding, use {@link #savePart(MPart, boolean)}:
+	 * </p>
+	 * 
+	 * <pre>
+	 * if (partService.savePart(part, true)) {
+	 * 	partService.hidePart(part);
+	 * }
+	 * </pre>
 	 * 
 	 * @param part
 	 *            the part to hide
+	 * @see #savePart(MPart, boolean)
 	 */
 	public void hidePart(MPart part);
 
@@ -259,12 +269,22 @@ public interface EPartService {
 	 * If <code>force</code> is <code>true</code> or the part has been tagged with the
 	 * {@link #REMOVE_ON_HIDE_TAG} tag, it will be removed from the model when the service hides it.
 	 * </p>
+	 * <p>
+	 * To save the part before hiding, use {@link #savePart(MPart, boolean)}:
+	 * </p>
+	 * 
+	 * <pre>
+	 * if (partService.savePart(part, true)) {
+	 * 	partService.hidePart(part);
+	 * }
+	 * </pre>
 	 * 
 	 * @param part
 	 *            the part to hide
 	 * @param force
 	 *            if the part should be removed from the model regardless of its
 	 *            {@link #REMOVE_ON_HIDE_TAG} tag
+	 * @see #savePart(MPart, boolean)
 	 */
 	public void hidePart(MPart part, boolean force);
 
@@ -287,6 +307,7 @@ public interface EPartService {
 	 *            <code>false</code> to save changes without asking
 	 * @return <code>true</code> if the operation completed successfully, <code>false</code> if the
 	 *         user canceled the operation or if an error occurred while saving the changes
+	 * @see #hidePart(MPart, boolean)
 	 */
 	public boolean savePart(MPart part, boolean confirm);
 
