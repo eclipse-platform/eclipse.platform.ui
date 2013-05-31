@@ -18,10 +18,8 @@ package org.eclipse.e4.ui.model.application.ui;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This type defines the base type for 'tile' type containers. These containers are
+ * expected to only show all their visible children at the same time.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -43,10 +41,8 @@ public interface MGenericTile<T extends MUIElement> extends MElementContainer<T>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This field determines which direction the tiling should take; 'true' for horizontal' tiling,
+	 * 'false' for vertical.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Horizontal</em>' attribute.

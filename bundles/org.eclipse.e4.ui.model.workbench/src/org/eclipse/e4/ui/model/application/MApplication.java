@@ -69,10 +69,11 @@ public interface MApplication extends MElementContainer<MWindow>, MContext, MHan
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is the list of MCommand elements available in the application. Commands
+	 * represent some logical operation. The actual implementation of the operation is
+	 * determined by the MHandler chosen by the system based on the current execution
+	 * context.
+	 * 
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Commands</em>' containment reference list.
@@ -88,10 +89,8 @@ public interface MApplication extends MElementContainer<MWindow>, MContext, MHan
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is the ordered list of MAddons for this model. The individual addons will be
+	 * created through injection after the model loads but before it is rendered.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Addons</em>' containment reference list.

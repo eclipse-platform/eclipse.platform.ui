@@ -15,13 +15,13 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
         eType="#//commands/Command" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the list of MCommand elements available in the application. Commands&#xD;&#xA;represent some logical operation. The actual implementation of the operation is&#xD;&#xA;determined by the MHandler chosen by the system based on the current execution&#xD;&#xA;context.&#xD;&#xA;&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="addons" upperBound="-1"
         eType="#//Addon" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the ordered list of MAddons for this model. The individual addons will be&#xD;&#xA;created through injection after the model loads but before it is rendered.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="categories" upperBound="-1"
@@ -55,39 +55,39 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="persistedState" upperBound="-1"
         eType="#//StringToStringMap" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is a Strimg to String map that can be used to persist information avout model&#xD;&#xA;elements across program sessions. The format of the 'value' string is defined by&#xD;&#xA;the code setting the value into the map. Information stored in this map is part of&#xD;&#xA;the model and will be persisted and restored as such.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tags" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;Tags are a list of Strings that are persistent parts of the UI Model. They can be used to 'refine' a particular&#xD;&#xA;model element, supplying extra 'meta' information. These tags interact with the CSS engine so that it's&#xD;&#xA;possible to write CSS specific to a particular tag. The platform currently uses this mechanism to cause the&#xD;&#xA;color change in the stack comtaining the currently active part&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributorURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This field is used to track the bundle (if any) from which the UI element was&#xD;&#xA;derived in order to faciliate its removal should the bundle go away or be updated.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="transientData" upperBound="-1"
         eType="#//StringToObjectMap" transient="true" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is a String to Object map into which any desired runtime information realted to a particular element&#xD;&#xA;may be stored. It is &lt;i>not&lt;/i> persisted across sessions so it is not necessary that the 'values' be&#xD;&#xA;serializable.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Contribution" abstract="true" eSuperTypes="#//ApplicationElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="&lt;p>&#xD;&#xA;An MContribution defined the complete path to a class implementing the logic&#xD;&#xA;for elements representing the active parts of the UI such as MParts and MHandlers.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+      <details key="documentation" value="&lt;p>&#xD;&#xA;MContribution is a mix-in class used by concrete elements such as Parts to define&#xD;&#xA;the location of the client supplied class implementing the specific logic needed.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;The ContributionURI defines the complete path to a class implementing the logic&#xD;&#xA;for elements require external code to handle the UI such as MParts and MHandlers.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="object" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         transient="true" derived="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the DI created instance of the class implementing the logic for the element.&#xD;&#xA;It will only be non-null if the element has been rendered into the presentation.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -105,7 +105,7 @@
     <eClassifiers xsi:type="ecore:EClass" name="BindingTableContainer" abstract="true"
         interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This type contains the list of binding 'tables', representing the various sets of bindings&#xD;&#xA;based on the applicaiton's current running 'context'. Here the 'context' represents&#xD;&#xA;the applicaiton's UI state (i.e. whenther a Dialog is open...).&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="bindingTables" upperBound="-1"
           eType="#//commands/BindingTable" containment="true">
@@ -171,32 +171,32 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Command" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;A Command represents a logical operation within the applicaiton. The implementation&#xD;&#xA;is provided by an MHandler chosen by examining all the candidate's enablement.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eOperations name="getLocalizedCommandName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will return the translated name.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eOperations>
       <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will return the translated description.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="commandName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field holds the command's name, used in the UI by default when there&#xD;&#xA;are menu or toolbar items representing this command.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field holds the command's description, used in the UI when the commands&#xD;&#xA;being shown in dialogs....&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
           eType="#//commands/CommandParameter" containment="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This list defines the ste of parameters that this command expects to have defined&#xD;&#xA;during execution.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="category" eType="#//commands/Category">
@@ -207,41 +207,41 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CommandParameter" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This represents the format of a parameter to be used in a Command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The name of the parameter.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The type of the parameter.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="optional" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Determines whether or not this parameter is optional.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Handler" eSuperTypes="#//Contribution">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;Handlers provide the execution logic that provides the implementation of a&#xD;&#xA;particular command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
           eType="#//commands/Command">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a reference to the Command for which this is an execution candidate.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="HandlerContainer" abstract="true"
         interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This provides a container in which to store lists of Handlers. &#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="handlers" upperBound="-1"
           eType="#//commands/Handler" containment="true">
@@ -252,44 +252,44 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="KeyBinding" eSuperTypes="#//ApplicationElement #//commands/KeySequence">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;Keybindings map a particular keyboard sequence (i.e. Ctrl + C for Copy...) onto&#xD;&#xA;some command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
           eType="#//commands/Command">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A reference to the Command to (attempt to) execute if the given key sequence is&#xD;&#xA;detected.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
           eType="#//commands/Parameter" containment="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This allows a KeyBinding to provide a particular set of parameters to be used when&#xD;&#xA;the Command is to be executed. This allows generic commands like 'Open Part' to&#xD;&#xA;have bindings that will open a &lt;i>specific&lt;/i> Part...&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="KeySequence" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This represents the sequence of characters in a KeyBinding whose detection will&#xD;&#xA;fire the associated Command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="keySequence" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a formatted string used by the key binding infrastructure to determine the&#xD;&#xA;exact key sequence for a KeyBinding.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Parameter" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This defines the value of a Parameter to be used by a Command.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the name of this parameter.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the value of this parameter.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
@@ -297,27 +297,27 @@
         serializable="false"/>
     <eClassifiers xsi:type="ecore:EClass" name="Category" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This defines a logical grouping of Commands in order to facilitate showing &#xD;&#xA;the current set of Commands in dialogs, lists etc&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eOperations name="getLocalizedName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will return the translated name of the Category.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eOperations>
       <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will return the translated description of the Category.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The name to be displayed for this category.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The description to display for this category.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
@@ -360,39 +360,39 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Input" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into UI elements such as editors that need to &#xD;&#xA;reference an external resource (files...).&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This class should be mixed into UI elements such as InputParts that need to &#xD;&#xA;reference an external resource (files...).&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;The specification of the particular resource's location. This will be interpreted by&#xD;&#xA;the class using it (i.e. a Part).&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The specification of the particular resource's location or other meta information.&#xD;&#xA;The format of this field will be interpreted by the class using it (i.e. a Part).&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="UIElement" abstract="true" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base mix-in shared by all model elements that can be rendered into the&#xD;&#xA;UI presentation of the application. Its main job is to manage the bindings between&#xD;&#xA;the concrete element and the UI 'widget' representing it in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eOperations name="getLocalizedAccessibilityPhrase" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field is intended to allow enhanced support for accessibility by providing the &#xD;&#xA;ability to have a screen reader 'say' this phrase along with its normal output.&#xD;&#xA;This is currently unused in teh base SWT renderer but is available for use by&#xD;&#xA;other rendering platforms...&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="widget" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
           transient="true" derived="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field represents the platform specific UI 'widget' that is representing this&#xD;&#xA;UIElement on the screen. It will only be non-null when the element has been rendered.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="renderer" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
           transient="true" derived="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field tracks the specific renderer used to create the 'widget'.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="toBeRendered" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field controls whether the given UIElement should be displayed within&#xD;&#xA;the application. Note that due to lazy loading it is possible to have this field&#xD;&#xA;set to true but to not have actually rendered the element itself (it does show up&#xD;&#xA;as a tab on the appropiate stack but will only be rendered when that tab is&#xD;&#xA;selected.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="onTop" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
@@ -403,12 +403,12 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="visible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field determines whether or not the given UIElement appears in the presentation&#xD;&#xA;or whether it should be 'cached' for specialized use. Under normal circumstances&#xD;&#xA;this flag should always be 'true'.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;The MinMaxAddon uses this flag for example when a stack becomes minimized. By&#xD;&#xA;setting the flag to false the stack's widget is cleanly removed from the UI but&#xD;&#xA;is still 'rendered'. Once the widget has been cached the minimized stack can then&#xD;&#xA;display the widget using its own technques.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eOpposite="#//ui/ElementContainer/children">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field is a reference to this element's container. Note that while this field is valid&#xD;&#xA;for most UIElements there are a few (such as TrimBars and the Windows associated&#xD;&#xA;with top level windows and perspectives) where this will return 'null' &#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
         <eGenericType eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/UIElement"/>
@@ -416,13 +416,13 @@
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="containerData" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a persistend field that may be used by the &lt;b>parent&lt;/b> element's renderer&#xD;&#xA;to maintain any data that it needs to control the container. For example this is where&#xD;&#xA;the SashRenderer stores the 'weight' of a particular element.&#xD;&#xA;&lt;/p> &lt;p>&#xD;&#xA;&lt;b>NOTE:&lt;/b> This field is effectively deprecated in favor of the parent renderer&#xD;&#xA;simply adding a new keyed value to the UIElement's 'persistentData' map.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="curSharedRef" eType="#//ui/advanced/Placeholder"
           transient="true" derived="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a transient (i.e. non-persisted) field which is used in conjunction with&#xD;&#xA;MPlaceholders which are used to share elements actoss multiple perspectives. This&#xD;&#xA;field will point back to the MPlaceholder (if any) currently hosting this one.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="visibleWhen" eType="#//ui/Expression"
@@ -434,14 +434,14 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="accessibilityPhrase"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field is provided as a way to inform accessibility screen readers with extra&#xD;&#xA;information. The intent is that the reader should 'say' this phrase as well as what&#xD;&#xA;it would normally emit given the widget hierarchy.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ElementContainer" abstract="true"
         eSuperTypes="#//ui/UIElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base for the two different types of containment used in the model;&#xD;&#xA;'Stacks' (where only one element would be visible at a time) and 'Tiles' (where &#xD;&#xA;all the ele elements are visible at the same time.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;All containers define the type of element that they are to contain. By design this is&#xD;&#xA;always a single type. Where different concrete types are to be contained within the&#xD;&#xA;same container they all both mix in a container-specific type. For example both&#xD;&#xA;MParts and MPlaceholders are valid children for an MPartStack so they both mix in&#xD;&#xA;'StackElement' (which is an empty stub used only to constran the stack's types.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eTypeParameters name="T">
         <eBounds eClassifier="#//ui/UIElement"/>
@@ -449,50 +449,50 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
           containment="true" eOpposite="#//ui/UIElement/parent">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the list of contained elements in this container. All elements must be of type &lt;T>.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
         <eGenericType eTypeParameter="#//ui/ElementContainer/T"/>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="selectedElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field contains the reference to the currently 'selected' element within a container.&#xD;&#xA;Note that the element must not only be in the container's children list but must also be&#xD;&#xA;visible in the presentation (&quot;toBeRendered' == true).&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
         <eGenericType eTypeParameter="#//ui/ElementContainer/T"/>
       </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="UILabel" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This is a mix in that will be used for UI Elements that are capable of showing label&#xD;&#xA;information in the GUI (e.g. Parts, Menus / Toolbars, Persepectives...)&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eOperations name="getLocalizedLabel" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will retrieve the internationalized label by using the current&#xD;&#xA;value of the label itself and some translation service.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eOperations>
       <eOperations name="getLocalizedTooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will retrieve the internationalized tooltip by using the current&#xD;&#xA;value of the label itself and some translation service.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eOperations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The label to display for this element. If the label is expected to be internationalized&#xD;&#xA;then the label may be set to a 'key' value to be used by the translation service.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="iconURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field contains a fully qualified URL defining the path to an Image to display&#xD;&#xA;for this element.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="tooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The tooltip to display for this element. If the tooltip is expected to be internationalized&#xD;&#xA;then the tooltip may be set to a 'key' value to be used by the translation service.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="GenericStack" abstract="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This type defines the base type for 'stack' type containers. These containers are&#xD;&#xA;expected to only show their currently 'selected' element.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eTypeParameters name="T">
         <eBounds eClassifier="#//ui/UIElement"/>
@@ -503,14 +503,14 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="GenericTile" abstract="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This type defines the base type for 'tile' type containers. These containers are&#xD;&#xA;expected to only show all their visible children at the same time.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eTypeParameters name="T">
         <eBounds eClassifier="#//ui/UIElement"/>
       </eTypeParameters>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This field determines which direction the tiling should take; 'true' for horizontal' tiling,&#xD;&#xA;'false' for vertical.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
@@ -519,7 +519,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="GenericTrimContainer" abstract="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This provides a collection specifically for TrimBars.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eTypeParameters name="T">
         <eBounds eClassifier="#//ui/UIElement"/>
@@ -527,7 +527,7 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="side" lowerBound="1"
           eType="#//ui/SideValue">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is an enum defining the side of the UI Window on which this collection&#xD;&#xA;should be displayed.&#xD;&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
@@ -536,7 +536,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EEnum" name="SideValue">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;An enum providing the specific values determining the side of a trimmedWindow&#xD;&#xA;on which particular trim bars should be displayed.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eLiterals name="Top"/>
       <eLiterals name="Bottom" value="1"/>
@@ -545,7 +545,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Expression" abstract="true" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;A class upon which specific types of expressions are based.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CoreExpression" eSuperTypes="#//ui/Expression">
@@ -568,7 +568,7 @@
     <eClassifiers xsi:type="ecore:EClass" name="SnippetContainer" abstract="true"
         interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This provides a collection of model fragments that can be subsequently cloned and&#xD;&#xA;inserterd into the model using the EModelService. For example saving a customized&#xD;&#xA;Perspective will create a clone and store it in this container.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="snippets" upperBound="-1"
           eType="#//ui/UIElement" containment="true">
@@ -581,7 +581,7 @@
         nsPrefix="menu">
       <eClassifiers xsi:type="ecore:EEnum" name="ItemType">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This enum defines the style of a menu or toolbar item.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eLiterals name="Push"/>
         <eLiterals name="Check" value="1"/>
@@ -589,81 +589,81 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Item" abstract="true" eSuperTypes="#//ui/UIElement #//ui/UILabel">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base type for various menu and toolbar items.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Defines the current enablement state of a given menu or toolbar item.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="selected" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Defines the current selection state for a menu or tool item&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
             eType="#//ui/menu/ItemType">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Defines the item type for this item.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="HandledItem" abstract="true" eSuperTypes="#//ui/menu/Item">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base class for menu and tool items associated with Commands.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="command" eType="#//commands/Command">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;A reference to the Command associated with this item.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="wbCommand" eType="#//commands/ParameterizedCommand"
             transient="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;This is used for low level implementation and is not intended to be used by clients&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
             eType="#//commands/Parameter" containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Defines the specific parameters to use when executing the command through this item.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuElement" abstract="true" eSuperTypes="#//ui/UIElement #//ui/UILabel">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the bsae type for both menu items and Separators.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eOperations name="getLocalizedMnemonics" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;This is a method that will return the translated mnemonic for this element.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eOperations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="mnemonics" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;This is the character that is interpreted by the platform to allow for easier navigation&#xD;&#xA;through menus.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuItem" abstract="true" eSuperTypes="#//ui/menu/Item #//ui/menu/MenuElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base type for both Handled and direct menu items.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuSeparator" eSuperTypes="#//ui/menu/MenuElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;An element representing a separator in a menu.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Menu">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class used to represent a menu in the UI Model.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;This field determines whether the associated menu is enabled or not.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eGenericSuperTypes eClassifier="#//ui/menu/MenuElement"/>
@@ -673,18 +673,18 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuContribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This represents a potential extension to some menu already&#xD;&#xA;defined in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
             defaultValueLiteral="">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Indicates the position in the parent menu where this contribution should be placed.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The element id of the Menu to be contributed to.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
@@ -693,33 +693,33 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PopupMenu" eSuperTypes="#//ui/menu/Menu #//ui/Context">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class representing context menus. Menus of this type are generally&#xD;&#xA;managed by code within the running application since they're not visible in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//ui/menu/MenuItem #//Contribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class use to represent a menu item that is directly &#xD;&#xA;invoked when selected.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuItem #//ui/menu/HandledItem">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete UI Model element representing a menu item that is managed&#xD;&#xA;through the Commands / Handlers infrastructure.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolItem" abstract="true" eSuperTypes="#//ui/menu/Item #//ui/menu/ToolBarElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the base type for both Direct and Handled tool items.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="menu" eType="#//ui/menu/Menu"
             containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;When set this represents the menu that appears when the 'drop down' arrow is&#xD;&#xA;clicked on this tool item.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBar">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing a Toolbar in the UI Model.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/menu/ToolBarElement"/>
@@ -729,33 +729,33 @@
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarElement" abstract="true"
           eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a placeholder class mixed in to any other type that can be added to a Toolbar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolControl" eSuperTypes="#//ui/menu/ToolBarElement #//Contribution #//ui/basic/TrimElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class representing a widget hosted directly in the trim &#xD;&#xA;or as an item in a Toolbar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem" eSuperTypes="#//ui/menu/ToolItem #//ui/menu/HandledItem">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete UI Model element representing a tool item that is managed&#xD;&#xA;through the Commands / Handlers infrastructure.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DirectToolItem" eSuperTypes="#//ui/menu/ToolItem #//Contribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class use to represent a tool item that is directly &#xD;&#xA;invoked when selected.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarSeparator" eSuperTypes="#//ui/menu/ToolBarElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class used to represent a separator in a Toolbar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuContributions" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This is a container aggregating the menu contributions to be&#xD;&#xA;applied to menus.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="menuContributions"
             upperBound="-1" eType="#//ui/menu/MenuContribution" containment="true">
@@ -790,16 +790,16 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This represents a potential extension to some toolbar already&#xD;&#xA;defined in the UI.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The element id of the Toolbar to be contributed to.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Indicates the position in the Toolbar where this contribution should be placed.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
@@ -809,7 +809,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContributions" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This is a container aggregating the toolbar contributions to be&#xD;&#xA;applied to existing toolbars.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolBarContributions"
             upperBound="-1" eType="#//ui/menu/ToolBarContribution" containment="true">
@@ -820,16 +820,16 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimContribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This represents a potential extension to some trim bar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The element id of the TrimBar to be contributed to.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Indicates the position in the TrimBar where this contribution should be placed.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
@@ -839,7 +839,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="TrimContributions" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;Provisional for 4.3. This is a container aggregating the trim bar contributions to be&#xD;&#xA;applied.&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference This interface is not intended to be referenced by clients.&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="trimContributions"
             upperBound="-1" eType="#//ui/menu/TrimContribution" containment="true">
@@ -899,7 +899,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DynamicMenuContribution" eSuperTypes="#//ui/menu/MenuItem #//Contribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class used to represent a menu item that replaces itself through&#xD;&#xA;the execution of the associated client code.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
     </eSubpackages>
@@ -907,7 +907,7 @@
         nsPrefix="basic">
       <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//ui/UIElement #//ui/basic/PartSashContainerElement #//ui/basic/StackElement #//Contribution #//ui/Context #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings #//ui/basic/WindowElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This a concrete class representing the core UI functionality within a Window. It's what&#xD;&#xA;used to be a View / Editor in Eclipse 3.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -917,35 +917,35 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;This defines the list of the menus associated with this part. There are two specific menus&#xD;&#xA;that are managed by the core UI;&#xD;&#xA;&lt;ul>&#xD;&#xA;&lt;li>If the menu is the part's id prefixed with &quot;menu:&quot; then it will appear as the &#xD;&#xA;drop down menu available from the view's toolbar.&lt;/li>&#xD;&#xA;&lt;li>If the menu is the part's id prefixed with &quot;popup:&quot; then it will appear as the &#xD;&#xA;ddefault context menu for this view.&lt;/li>&#xD;&#xA;&lt;/ul>&#xD;&#xA;Other menus can be added here but have to be managed by the part itsefl...&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
             containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;This is the Toolbar associated with tihs Part (if any).&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="closeable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="false">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Determines whether the user is allowed to close this view.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The description of this Part; used when the Part appears in a list of Parts&#xD;&#xA;(i.e. 'Show View').&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="InputPart" eSuperTypes="#//ui/basic/Part #//ui/Input">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a subclass of Part that allows tracking of an 'input'. While originally defined as&#xD;&#xA;a type of 'editor' it turns out that it may well be better to just use a regular Part and&#xD;&#xA;to store what would be the input as an entry on the Part's 'persistentData' map.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartStack">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing a stack of Parts in the UI Model.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eGenericSuperTypes eClassifier="#//ui/GenericStack">
           <eTypeArguments eClassifier="#//ui/basic/StackElement"/>
@@ -955,7 +955,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartSashContainer">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing sashed containment in the UI Model. This&#xD;&#xA;type is recursive, allowing the creation of a tree of sashes whose leafs are Parts.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eGenericSuperTypes eClassifier="#//ui/GenericTile">
           <eTypeArguments eClassifier="#//ui/basic/PartSashContainerElement"/>
@@ -965,48 +965,48 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Window">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class representing a bare bones window in the UI Model. Unless&#xD;&#xA;specifically desired it's likely better to use the TrimmedWindow instead.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="mainMenu" eType="#//ui/menu/Menu"
             containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The main menu (if any) for this window.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
             defaultValueLiteral="-2147483648">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The 'X' position of this window&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
             defaultValueLiteral="-2147483648">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The 'Y' position of this window&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
             defaultValueLiteral="-1">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The width of this window&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
             defaultValueLiteral="-1">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The heigfht of this window&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EReference" name="windows" upperBound="-1"
             eType="#//ui/basic/Window" containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The collection of 'Detached' windows associated with this window.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EReference" name="sharedElements" upperBound="-1"
             eType="#//ui/UIElement" containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;This is the collection of UI Elements that are referenced by Placeholders, allowing&#xD;&#xA;the re-use of these elements in different Perspectives.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
@@ -1020,40 +1020,40 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimmedWindow" eSuperTypes="#//ui/basic/Window">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A subclass of Window that also supports TrimBars on its edges.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="trimBars" upperBound="-1"
             eType="#//ui/basic/TrimBar" containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The collection of TrimBars associated with this window.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimElement" abstract="true" eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to a TrimBar.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartSashContainerElement" abstract="true"
           interface="true" eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to&#xD;&#xA;a PartSashContainer. Since a PartSashContainer is itself a PartSashContainerElement&#xD;&#xA;we can defined nested 'trees' of sash containment.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="WindowElement" abstract="true" interface="true"
           eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to a&#xD;&#xA;Window.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimBar">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class representing the trim along a Window's edge.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="pendingCleanup" upperBound="-1"
             eType="#//ui/basic/TrimElement" transient="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;This is for internal use...&#xD;&#xA;&lt;/p>&#xD;&#xA;@noreference"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eGenericSuperTypes eClassifier="#//ui/GenericTrimContainer">
@@ -1064,7 +1064,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="StackElement" abstract="true" interface="true"
           eSuperTypes="#//ui/UIElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A class to be mixed in to any element that should be allowed to be added to a&#xD;&#xA;PartStack.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
     </eSubpackages>
@@ -1072,24 +1072,24 @@
         nsPrefix="advanced">
       <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//ui/UIElement #//ui/basic/PartSashContainerElement #//ui/basic/StackElement">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A Placeholder is a concrete class used to share elements between perspectives. The&#xD;&#xA;elements referenced by a Placeholder generally exist in the Window's 'sharedElements'&#xD;&#xA;list. By convention a placeholder usually shares the same elementId as the element&#xD;&#xA;that it's referencing.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1"
             eType="#//ui/UIElement">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The reference to the actual UI element that this Placeholder is acting as a proxy for.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="closeable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="false">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Determines whether the element (usually a Part) referenced by this Placeholder can&#xD;&#xA;be closed by the User. This allows a Part to be closeable in one perspective but&#xD;&#xA;not closeable in a different one.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Perspective">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The Persepctive defines a part of the UI presentation that can be switched independently&#xD;&#xA;of the rest of the UI. By using Placeholders it's possible to share elements between&#xD;&#xA;different perspectives.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="windows" upperBound="-1"
             eType="#//ui/basic/Window" containment="true">
@@ -1105,7 +1105,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PerspectiveStack">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;The PerspectiveStack is a collectin of Perspectives. Only one perspective may be&#xD;&#xA;visible at a time and is determined by the container's 'selectedElement'.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
         <eGenericSuperTypes eClassifier="#//ui/GenericStack">
@@ -1116,7 +1116,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="Area" eSuperTypes="#//ui/basic/PartSashContainer #//ui/UILabel">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete element representing a (possibly sashed) chunk of the UI presentation&#xD;&#xA;that will minimize / maximize as one unit. This is used in Eclipse 4 to allow for a split&#xD;&#xA;Editor Area.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
     </eSubpackages>
@@ -1127,66 +1127,66 @@
         nsPrefix="basic">
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//ApplicationElement #//ui/UILabel #//commands/HandlerContainer #//commands/Bindings">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This element represents a template from which an MPart can be created on demand.&#xD;&#xA;The collection of PartDescriptors owned by the Application represents the contributed&#xD;&#xA;parts and is used in the e4 version of 'Show View'...&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;A method that will return the translated description.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eOperations>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="allowMultiple" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Determines whether or not the part represented by this descriptot can have multiple&#xD;&#xA;instances with a given window.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The category that the view represented by this descriptor belongs to.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;This defines the list of the menus associated with the part represented by this descriptor. &#xD;&#xA;There are two specific menus that are managed by the core UI;&#xD;&#xA;&lt;ul>&#xD;&#xA;&lt;li>If the menu is the part's id prefixed with &quot;menu:&quot; then it will appear as the &#xD;&#xA;drop down menu available from the view's toolbar.&lt;/li>&#xD;&#xA;&lt;li>If the menu is the part's id prefixed with &quot;popup:&quot; then it will appear as the &#xD;&#xA;ddefault context menu for this view.&lt;/li>&#xD;&#xA;&lt;/ul>&#xD;&#xA;Other menus can be added here but have to be managed by the part itsefl...&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
             containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;This is the Toolbar associated with tihs Part (if any).&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="closeable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="false">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Defines whether instances of views created from this descriptor are closeable by the&#xD;&#xA;User.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirtyable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;Determines whether Parts generated from this template can participate in the&#xD;&#xA;Dirty -> Save cycle. At best this is a hint since all Parts are inherently dirtyable.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The fully qualified path to the class implementing the behavior of the Part.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;The description of this Part.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer" abstract="true"
           interface="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;A type specific collection of PartDescriptors.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
         <eStructuralFeatures xsi:type="ecore:EReference" name="descriptors" upperBound="-1"
             eType="#//descriptor/basic/PartDescriptor" containment="true">
           <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-            <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
+            <details key="documentation" value="&lt;p>&#xD;&#xA;A collection of PartDescriptors.&#xD;&#xA;&lt;/p>"/>
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>

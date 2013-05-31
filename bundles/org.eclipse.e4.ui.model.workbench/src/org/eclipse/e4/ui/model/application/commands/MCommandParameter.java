@@ -19,10 +19,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This represents the format of a parameter to be used in a Command.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -46,10 +43,7 @@ public interface MCommandParameter extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * The name of the parameter.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
@@ -75,10 +69,7 @@ public interface MCommandParameter extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * The type of the parameter.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Type Id</em>' attribute.
@@ -105,10 +96,7 @@ public interface MCommandParameter extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * Determines whether or not this parameter is optional.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Optional</em>' attribute.

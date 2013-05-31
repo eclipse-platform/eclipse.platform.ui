@@ -19,10 +19,8 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This defines a logical grouping of Commands in order to facilitate showing 
+ * the current set of Commands in dialogs, lists etc
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -45,10 +43,7 @@ public interface MCategory extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * The name to be displayed for this category.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
@@ -74,10 +69,7 @@ public interface MCategory extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * The description to display for this category.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Description</em>' attribute.
@@ -102,10 +94,7 @@ public interface MCategory extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is a method that will return the translated name of the Category.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @model kind="operation"
@@ -118,10 +107,7 @@ public interface MCategory extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is a method that will return the translated description of the Category.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @model kind="operation"

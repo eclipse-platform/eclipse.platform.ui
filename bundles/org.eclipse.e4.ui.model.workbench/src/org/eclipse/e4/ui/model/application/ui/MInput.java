@@ -18,7 +18,7 @@ package org.eclipse.e4.ui.model.application.ui;
  *
  * <!-- begin-model-doc -->
  * <p>
- * This class should be mixed into UI elements such as editors that need to 
+ * This class should be mixed into UI elements such as InputParts that need to 
  * reference an external resource (files...).
  * </p>
  * @since 1.0
@@ -41,8 +41,8 @@ public interface MInput {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * The specification of the particular resource's location. This will be interpreted by
-	 * the class using it (i.e. a Part).
+	 * The specification of the particular resource's location or other meta information.
+	 * The format of this field will be interpreted by the class using it (i.e. a Part).
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Input URI</em>' attribute.

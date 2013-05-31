@@ -19,10 +19,8 @@ import org.eclipse.e4.ui.model.application.MContribution;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * Handlers provide the execution logic that provides the implementation of a
+ * particular command.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -44,10 +42,7 @@ public interface MHandler extends MContribution {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is a reference to the Command for which this is an execution candidate.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Command</em>' reference.

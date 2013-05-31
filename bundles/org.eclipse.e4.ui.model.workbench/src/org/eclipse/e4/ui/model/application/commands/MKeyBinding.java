@@ -20,10 +20,8 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * Keybindings map a particular keyboard sequence (i.e. Ctrl + C for Copy...) onto
+ * some command.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -46,10 +44,8 @@ public interface MKeyBinding extends MApplicationElement, MKeySequence {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * A reference to the Command to (attempt to) execute if the given key sequence is
+	 * detected.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Command</em>' reference.
@@ -76,10 +72,9 @@ public interface MKeyBinding extends MApplicationElement, MKeySequence {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This allows a KeyBinding to provide a particular set of parameters to be used when
+	 * the Command is to be executed. This allows generic commands like 'Open Part' to
+	 * have bindings that will open a <i>specific</i> Part...
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Parameters</em>' containment reference list.

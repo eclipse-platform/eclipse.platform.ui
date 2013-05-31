@@ -19,10 +19,9 @@ import org.eclipse.e4.ui.model.application.ui.MInput;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This is a subclass of Part that allows tracking of an 'input'. While originally defined as
+ * a type of 'editor' it turns out that it may well be better to just use a regular Part and
+ * to store what would be the input as an entry on the Part's 'persistentData' map.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->

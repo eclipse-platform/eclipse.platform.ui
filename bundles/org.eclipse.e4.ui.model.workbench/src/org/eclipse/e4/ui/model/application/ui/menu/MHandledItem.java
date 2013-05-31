@@ -22,10 +22,7 @@ import org.eclipse.e4.ui.model.application.commands.MParameter;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This is the base class for menu and tool items associated with Commands.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -49,10 +46,7 @@ public interface MHandledItem extends MItem {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * A reference to the Command associated with this item.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Command</em>' reference.
@@ -78,11 +72,9 @@ public interface MHandledItem extends MItem {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is used for low level implementation and is not intended to be used by clients
 	 * </p>
+	 * @noreference
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Wb Command</em>' attribute.
 	 * @see #setWbCommand(ParameterizedCommand)
@@ -108,10 +100,7 @@ public interface MHandledItem extends MItem {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * Defines the specific parameters to use when executing the command through this item.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Parameters</em>' containment reference list.

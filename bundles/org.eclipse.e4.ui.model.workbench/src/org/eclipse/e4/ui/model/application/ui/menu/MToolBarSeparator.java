@@ -18,10 +18,7 @@ package org.eclipse.e4.ui.model.application.ui.menu;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This is the concrete class used to represent a separator in a Toolbar.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->

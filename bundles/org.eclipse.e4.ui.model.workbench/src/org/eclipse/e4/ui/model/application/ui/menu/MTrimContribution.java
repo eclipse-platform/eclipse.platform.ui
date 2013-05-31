@@ -20,9 +20,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * Provisional for 4.3.
+ * Provisional for 4.3. This represents a potential extension to some trim bar.
  * </p>
- * @noreference This interface is not intended to be referenced by clients
+ * @noreference This interface is not intended to be referenced by clients.
  * @since 1.0
  * <!-- end-model-doc -->
  *
@@ -45,10 +45,7 @@ public interface MTrimContribution extends MElementContainer<MTrimElement> {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * The element id of the TrimBar to be contributed to.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Parent Id</em>' attribute.
@@ -74,10 +71,7 @@ public interface MTrimContribution extends MElementContainer<MTrimElement> {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * Indicates the position in the TrimBar where this contribution should be placed.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Position In Parent</em>' attribute.

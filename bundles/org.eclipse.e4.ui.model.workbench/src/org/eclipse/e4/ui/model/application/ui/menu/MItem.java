@@ -20,10 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This is the base type for various menu and toolbar items.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -48,10 +45,7 @@ public interface MItem extends MUIElement, MUILabel {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * Defines the current enablement state of a given menu or toolbar item.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Enabled</em>' attribute.
@@ -77,10 +71,7 @@ public interface MItem extends MUIElement, MUILabel {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * Defines the current selection state for a menu or tool item
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Selected</em>' attribute.
@@ -107,10 +98,7 @@ public interface MItem extends MUIElement, MUILabel {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * Defines the item type for this item.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Type</em>' attribute.

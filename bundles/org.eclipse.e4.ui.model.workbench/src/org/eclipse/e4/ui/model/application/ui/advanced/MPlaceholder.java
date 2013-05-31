@@ -21,10 +21,10 @@ import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * A Placeholder is a concrete class used to share elements between perspectives. The
+ * elements referenced by a Placeholder generally exist in the Window's 'sharedElements'
+ * list. By convention a placeholder usually shares the same elementId as the element
+ * that it's referencing.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -47,10 +47,7 @@ public interface MPlaceholder extends MUIElement, MPartSashContainerElement, MSt
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * The reference to the actual UI element that this Placeholder is acting as a proxy for.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Ref</em>' reference.
@@ -77,10 +74,9 @@ public interface MPlaceholder extends MUIElement, MPartSashContainerElement, MSt
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * Determines whether the element (usually a Part) referenced by this Placeholder can
+	 * be closed by the User. This allows a Part to be closeable in one perspective but
+	 * not closeable in a different one.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Closeable</em>' attribute.

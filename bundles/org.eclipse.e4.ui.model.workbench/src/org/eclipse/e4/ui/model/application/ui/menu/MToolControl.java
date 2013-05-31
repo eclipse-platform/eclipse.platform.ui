@@ -20,10 +20,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This is a concrete class representing a widget hosted directly in the trim 
+ * or as an item in a Toolbar.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->

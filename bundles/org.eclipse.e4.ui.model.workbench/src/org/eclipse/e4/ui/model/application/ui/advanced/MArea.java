@@ -20,10 +20,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This is a concrete element representing a (possibly sashed) chunk of the UI presentation
+ * that will minimize / maximize as one unit. This is used in Eclipse 4 to allow for a split
+ * Editor Area.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->

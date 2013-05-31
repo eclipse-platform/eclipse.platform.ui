@@ -20,10 +20,9 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This is the base mix-in shared by all model elements that can be rendered into the
+ * UI presentation of the application. Its main job is to manage the bindings between
+ * the concrete element and the UI 'widget' representing it in the UI.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -54,10 +53,8 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This field represents the platform specific UI 'widget' that is representing this
+	 * UIElement on the screen. It will only be non-null when the element has been rendered.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Widget</em>' attribute.
@@ -83,10 +80,7 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This field tracks the specific renderer used to create the 'widget'.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Renderer</em>' attribute.
@@ -113,10 +107,11 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This field controls whether the given UIElement should be displayed within
+	 * the application. Note that due to lazy loading it is possible to have this field
+	 * set to true but to not have actually rendered the element itself (it does show up
+	 * as a tab on the appropiate stack but will only be rendered when that tab is
+	 * selected.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>To Be Rendered</em>' attribute.
@@ -172,10 +167,14 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This field determines whether or not the given UIElement appears in the presentation
+	 * or whether it should be 'cached' for specialized use. Under normal circumstances
+	 * this flag should always be 'true'.
+	 * </p><p>
+	 * The MinMaxAddon uses this flag for example when a stack becomes minimized. By
+	 * setting the flag to false the stack's widget is cleanly removed from the UI but
+	 * is still 'rendered'. Once the widget has been cached the minimized stack can then
+	 * display the widget using its own technques.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Visible</em>' attribute.
@@ -202,10 +201,9 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This field is a reference to this element's container. Note that while this field is valid
+	 * for most UIElements there are a few (such as TrimBars and the Windows associated
+	 * with top level windows and perspectives) where this will return 'null' 
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Parent</em>' container reference.
@@ -232,10 +230,12 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is a persistend field that may be used by the <b>parent</b> element's renderer
+	 * to maintain any data that it needs to control the container. For example this is where
+	 * the SashRenderer stores the 'weight' of a particular element.
+	 * </p> <p>
+	 * <b>NOTE:</b> This field is effectively deprecated in favor of the parent renderer
+	 * simply adding a new keyed value to the UIElement's 'persistentData' map.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Container Data</em>' attribute.
@@ -261,10 +261,9 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is a transient (i.e. non-persisted) field which is used in conjunction with
+	 * MPlaceholders which are used to share elements actoss multiple perspectives. This
+	 * field will point back to the MPlaceholder (if any) currently hosting this one.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Cur Shared Ref</em>' reference.
@@ -319,10 +318,9 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This field is provided as a way to inform accessibility screen readers with extra
+	 * information. The intent is that the reader should 'say' this phrase as well as what
+	 * it would normally emit given the widget hierarchy.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Accessibility Phrase</em>' attribute.
@@ -347,10 +345,10 @@ public interface MUIElement extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This field is intended to allow enhanced support for accessibility by providing the 
+	 * ability to have a screen reader 'say' this phrase along with its normal output.
+	 * This is currently unused in teh base SWT renderer but is available for use by
+	 * other rendering platforms...
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @model kind="operation"

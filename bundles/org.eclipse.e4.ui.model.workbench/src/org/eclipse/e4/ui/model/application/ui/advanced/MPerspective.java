@@ -24,10 +24,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * The Persepctive defines a part of the UI presentation that can be switched independently
+ * of the rest of the UI. By using Placeholders it's possible to share elements between
+ * different perspectives.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->

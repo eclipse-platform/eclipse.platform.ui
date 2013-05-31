@@ -19,10 +19,15 @@ import java.util.List;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This is the base for the two different types of containment used in the model;
+ * 'Stacks' (where only one element would be visible at a time) and 'Tiles' (where 
+ * all the ele elements are visible at the same time.
+ * </p><p>
+ * All containers define the type of element that they are to contain. By design this is
+ * always a single type. Where different concrete types are to be contained within the
+ * same container they all both mix in a container-specific type. For example both
+ * MParts and MPlaceholders are valid children for an MPartStack so they both mix in
+ * 'StackElement' (which is an empty stub used only to constran the stack's types.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -47,10 +52,7 @@ public interface MElementContainer<T extends MUIElement> extends MUIElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is the list of contained elements in this container. All elements must be of type <T>.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Children</em>' containment reference list.
@@ -66,10 +68,9 @@ public interface MElementContainer<T extends MUIElement> extends MUIElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This field contains the reference to the currently 'selected' element within a container.
+	 * Note that the element must not only be in the container's children list but must also be
+	 * visible in the presentation ("toBeRendered' == true).
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Selected Element</em>' reference.

@@ -18,10 +18,8 @@ package org.eclipse.e4.ui.model.application.commands;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This represents the sequence of characters in a KeyBinding whose detection will
+ * fire the associated Command.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -43,10 +41,8 @@ public interface MKeySequence {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is a formatted string used by the key binding infrastructure to determine the
+	 * exact key sequence for a KeyBinding.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Key Sequence</em>' attribute.

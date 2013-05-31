@@ -87,10 +87,10 @@ public interface MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is a Strimg to String map that can be used to persist information avout model
+	 * elements across program sessions. The format of the 'value' string is defined by
+	 * the code setting the value into the map. Information stored in this map is part of
+	 * the model and will be persisted and restored as such.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Persisted State</em>' map.
@@ -106,10 +106,10 @@ public interface MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * Tags are a list of Strings that are persistent parts of the UI Model. They can be used to 'refine' a particular
+	 * model element, supplying extra 'meta' information. These tags interact with the CSS engine so that it's
+	 * possible to write CSS specific to a particular tag. The platform currently uses this mechanism to cause the
+	 * color change in the stack comtaining the currently active part
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Tags</em>' attribute list.
@@ -124,10 +124,8 @@ public interface MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This field is used to track the bundle (if any) from which the UI element was
+	 * derived in order to faciliate its removal should the bundle go away or be updated.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Contributor URI</em>' attribute.
@@ -155,10 +153,9 @@ public interface MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is a String to Object map into which any desired runtime information realted to a particular element
+	 * may be stored. It is <i>not</i> persisted across sessions so it is not necessary that the 'values' be
+	 * serializable.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Transient Data</em>' map.

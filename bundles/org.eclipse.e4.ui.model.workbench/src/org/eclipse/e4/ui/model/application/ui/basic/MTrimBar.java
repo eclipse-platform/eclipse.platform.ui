@@ -21,10 +21,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This is a concrete class representing the trim along a Window's edge.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -48,11 +45,9 @@ public interface MTrimBar extends MGenericTrimContainer<MTrimElement>, MUIElemen
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is for internal use...
 	 * </p>
+	 * @noreference
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Pending Cleanup</em>' reference list.
 	 * @model transient="true"

@@ -19,10 +19,7 @@ import java.util.List;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * A subclass of Window that also supports TrimBars on its edges.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -45,10 +42,7 @@ public interface MTrimmedWindow extends MWindow {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * The collection of TrimBars associated with this window.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Trim Bars</em>' containment reference list.

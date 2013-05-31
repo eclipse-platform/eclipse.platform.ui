@@ -18,8 +18,8 @@ package org.eclipse.e4.ui.model.application;
  *
  * <!-- begin-model-doc -->
  * <p>
- * An MContribution defined the complete path to a class implementing the logic
- * for elements representing the active parts of the UI such as MParts and MHandlers.
+ * MContribution is a mix-in class used by concrete elements such as Parts to define
+ * the location of the client supplied class implementing the specific logic needed.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -42,11 +42,10 @@ public interface MContribution extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * The ContributionURI defines the complete path to a class implementing the logic
+	 * for elements require external code to handle the UI such as MParts and MHandlers.
 	 * </p>
+	 * @since 1.0
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Contribution URI</em>' attribute.
 	 * @see #setContributionURI(String)
@@ -71,10 +70,8 @@ public interface MContribution extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is the DI created instance of the class implementing the logic for the element.
+	 * It will only be non-null if the element has been rendered into the presentation.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Object</em>' attribute.

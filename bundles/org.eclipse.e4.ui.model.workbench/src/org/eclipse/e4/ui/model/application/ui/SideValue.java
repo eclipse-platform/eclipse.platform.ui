@@ -21,10 +21,8 @@ import java.util.List;
  * <!-- end-user-doc -->
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * An enum providing the specific values determining the side of a trimmedWindow
+ * on which particular trim bars should be displayed.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->

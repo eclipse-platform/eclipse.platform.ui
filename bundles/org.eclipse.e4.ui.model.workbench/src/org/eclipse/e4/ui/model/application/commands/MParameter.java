@@ -19,10 +19,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
- * There is a GenModel/documentation node under each type and attribute.
+ * This defines the value of a Parameter to be used by a Command.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
@@ -45,10 +42,7 @@ public interface MParameter extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is the name of this parameter.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
@@ -74,10 +68,7 @@ public interface MParameter extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
-	 * There is a GenModel/documentation node under each type and attribute.
+	 * This is the value of this parameter.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Value</em>' attribute.
