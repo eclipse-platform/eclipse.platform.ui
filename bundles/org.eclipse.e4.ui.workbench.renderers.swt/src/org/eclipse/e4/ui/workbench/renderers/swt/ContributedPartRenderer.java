@@ -109,18 +109,6 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 					}
 				}
 
-				if (logger != null) {
-					String id = part.getElementId();
-					if (id == null) {
-						logger.warn(new IllegalStateException(),
-								"Blocked recursive attempt to activate part " //$NON-NLS-1$
-										+ id);
-					} else {
-						logger.warn(new IllegalStateException(),
-								"Blocked recursive attempt to activate part"); //$NON-NLS-1$
-					}
-				}
-
 				// already being focused, likely some strange recursive call,
 				// just return
 				return true;
