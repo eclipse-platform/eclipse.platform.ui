@@ -129,12 +129,21 @@ Search participants are associated with the plug-in the extension appears in. In
                   a reference to the search participant declared elsewhere using &lt;code&gt;searchParticipant&lt;/code&gt; element. Binding can be used to reuse search participants in plug-ins without violating the top-down policy. Binding is only needed for indexing documents that are part of the TOC. Otherwise, participant has global scope.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.help.base.luceneSearchParticipants/searchParticipant/@id"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.help.base.searchParticipant/searchParticipant/@id"/>
                </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The supplied search participant class must extend the &lt;samp&gt;org.eclipse.help.search.SearchParticipant&lt;/samp&gt; abstract class.
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -166,15 +175,6 @@ Search participants are associated with the plug-in the extension appears in. In
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The supplied search participant class must extend the &lt;samp&gt;org.eclipse.help.search.SearchParticipant&lt;/samp&gt; abstract class.
       </documentation>
    </annotation>
 
