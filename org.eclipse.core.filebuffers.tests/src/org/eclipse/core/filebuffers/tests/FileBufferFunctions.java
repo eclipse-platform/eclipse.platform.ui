@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -813,9 +813,19 @@ public abstract class FileBufferFunctions extends TestCase {
 				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				IPath newLocation= moveUnderlyingFile();
 				if (newLocation != null) {
-					assertTrue(listener.count == 1);
-					assertTrue(listener.buffer == fileBuffer);
-					assertEquals(listener.newLocation, newLocation);
+					if (listener.count != 1 || listener.buffer != fileBuffer || !newLocation.equals(listener.newLocation)) {
+						StringBuffer buf= new StringBuffer();
+						buf.append("Wrong listener notifcation in " + getClass().getName() + ":\n");
+						buf.append("listener.count: " + listener.count + " (expected: 1)\n");
+						if (newLocation.equals(listener.newLocation))
+							buf.append("newLocation identical: true\n");
+						else { 
+							buf.append("listener.newLocation: " + listener.newLocation + "\n");
+							buf.append("newLocation: " + newLocation + "\n");
+						}
+						buf.append("buffers identical: " + new Boolean(listener.buffer == fileBuffer));
+						fail(buf.toString());
+					}
 				}
 
 			} finally {
