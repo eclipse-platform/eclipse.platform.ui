@@ -20,7 +20,8 @@ import org.eclipse.e4.ui.model.application.MContribution;
  * <!-- begin-model-doc -->
  * <p>
  * This is a concrete class used to represent a menu item that replaces itself through
- * the execution of the associated client code.
+ * the execution of the associated client code.  The supplied contribution will
+ * provide the appropriate MMenuElement model elements when queried.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->

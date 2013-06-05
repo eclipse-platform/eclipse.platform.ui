@@ -122,7 +122,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Bindings" abstract="true" interface="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;Mixin interface that lists MBindingContexts that should be active when this&#xA;object is active.&#xD;&#xA;&lt;/p>&#xA;&lt;p>Example values: org.eclipse.ui.contexts.dialog, org.eclipse.ui.contexts.window&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="bindingContexts" upperBound="-1"
           eType="#//commands/BindingContext">
@@ -133,7 +133,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="BindingContext" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;This class describes the hierarchy of contexts that are used by the &#xA;&lt;code>EBindingService&lt;/code> to determine which Bindings are currently &#xA;available to the user.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -154,7 +154,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="BindingTable" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;A set of Bindings that will be active if the matching &lt;code>MBindingContext&lt;/code>&#xA;is active.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="bindings" upperBound="-1"
           eType="#//commands/KeyBinding" containment="true">
@@ -545,12 +545,12 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Expression" abstract="true" eSuperTypes="#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;A class upon which specific types of expressions are based.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;A class upon which specific types of expressions are based.  These are often used to&#xA;evaluate visibility and enablement of model elements.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CoreExpression" eSuperTypes="#//ui/Expression">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;org.eclipse.ui.model.workbench/model/UIElements.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+        <details key="documentation" value="&lt;p>&#xD;&#xA;A specific kind of expression used by the Eclipse Workbench.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="coreExpressionId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
           defaultValueLiteral="">
@@ -698,7 +698,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//ui/menu/MenuItem #//Contribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class use to represent a menu item that is directly &#xD;&#xA;invoked when selected.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class use to represent a menu item that is directly &#xD;&#xA;invoked when selected.  The supplied contribution is asked to execute&#xA;when selected.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//ui/menu/MenuItem #//ui/menu/HandledItem">
@@ -744,7 +744,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DirectToolItem" eSuperTypes="#//ui/menu/ToolItem #//Contribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class use to represent a tool item that is directly &#xD;&#xA;invoked when selected.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is the concrete class use to represent a tool item that is directly &#xD;&#xA;invoked when selected.  The supplied contribution is asked to execute&#xA;when selected.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarSeparator" eSuperTypes="#//ui/menu/ToolBarElement">
@@ -899,7 +899,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DynamicMenuContribution" eSuperTypes="#//ui/menu/MenuItem #//Contribution">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class used to represent a menu item that replaces itself through&#xD;&#xA;the execution of the associated client code.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a concrete class used to represent a menu item that replaces itself through&#xD;&#xA;the execution of the associated client code.  The supplied contribution will&#xA;provide the appropriate MMenuElement model elements when queried.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
         </eAnnotations>
       </eClassifiers>
     </eSubpackages>

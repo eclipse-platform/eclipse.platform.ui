@@ -20,7 +20,8 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * A class upon which specific types of expressions are based.
+ * A class upon which specific types of expressions are based.  These are often used to
+ * evaluate visibility and enablement of model elements.
  * </p>
  * @since 1.0
  * <!-- end-model-doc -->
