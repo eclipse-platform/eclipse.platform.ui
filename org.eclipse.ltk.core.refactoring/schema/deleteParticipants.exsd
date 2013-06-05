@@ -6,16 +6,19 @@
          <meta.schema plugin="org.eclipse.ltk.core.refactoring" id="deleteParticipants" name="Delete Participants"/>
       </appInfo>
       <documentation>
-         This extension point is used to define refactoring delete participants. The reader of the expression provides the following predefined variables which can be referenced via the &amp;lt;with variable=&quot;...&quot;&amp;gt; expression element:
+         This extension point is used to define refactoring delete participants.
 
+&lt;p&gt;
+This extension point supports the &lt;code&gt;&amp;lt;enablement&amp;gt;&lt;/code&gt; element.
+&lt;!-- see org.eclipse.ltk.core.refactoring.participants.ParticipantExtensionPoint#createEvaluationContext(..): --&gt;
+The default variable is the element to be deleted.
+&lt;br&gt;Defined variables for &lt;code&gt;&amp;lt;with&amp;gt;&lt;/code&gt; expressions are:
+&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;Object element: the element to be deleted&lt;/li&gt;
-  &lt;li&gt;List&amp;lt;String&amp;gt; affectedNatures: a list containing the natures of the projects affected 
-      by the refactoring&lt;/li&gt;
-  &lt;li&gt;String processorId: the id of the refactoring processor that will own the participant.
+&lt;li&gt;&quot;element&quot;: type &lt;code&gt;java.lang.Object&lt;/code&gt;; the element to be deleted (same as the default variable)&lt;/li&gt;
+&lt;li&gt;&quot;affectedNatures&quot;: type &lt;code&gt;java.util.List&amp;lt;String&amp;gt;&lt;/code&gt;; the natures of all projects affected by the refactoring&lt;/li&gt;
+&lt;li&gt;&quot;processorIdentifier&quot;: type &lt;code&gt;java.lang.String&lt;/code&gt;; the id of the refactoring processor that will own the participant&lt;/li&gt;
 &lt;/ul&gt;
-
-The default variable used during expression evaluation is bound to the element variable.
       </documentation>
    </annotation>
 
@@ -147,7 +150,7 @@ The default variable used during expression evaluation is bound to the element v
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2004 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2013 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>

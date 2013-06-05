@@ -6,15 +6,17 @@
          <meta.schema plugin="org.eclipse.ltk.ui.refactoring" id="statusContextViewers" name="Refactoring Status Context Viewers"/>
       </appInfo>
       <documentation>
-         This extension point is used to define a special viewer capable to present the context of a refactoring status entry to the user. The reader of the extension point provides the following predefined variables which can be accessed during expression evaluation using the &amp;lt;with variable=&quot;...&quot;/&amp;gt; tag:
+         This extension point is used to define a special viewer capable to present the context of a refactoring status entry to the user.
+
 &lt;p&gt;
-&lt;dl&gt;
-  &lt;dt&gt;context&lt;/dt&gt;
-  &lt;dd&gt;the context object managed by the refactoring status entry that is to be presented
-      in the user interface.&lt;/dd&gt;
-&lt;/dl&gt;
+This extension point supports the &lt;code&gt;&amp;lt;enablement&amp;gt;&lt;/code&gt; element.
+&lt;!-- see org.eclipse.ltk.internal.ui.refactoring.AbstractDescriptor#matches(Object, String): --&gt;
+The default variable is the refactoring status context.
+&lt;br&gt;Defined variables for &lt;code&gt;&amp;lt;with&amp;gt;&lt;/code&gt; expressions are:
 &lt;/p&gt;
-Variables can be accessed using the &amp;lt;with variable=&quot;...&quot;/&amp;gt; expression. The default variable used during expression evaluation is bound to the context variable.
+&lt;ul&gt;
+&lt;li&gt;&quot;context&quot;: type &lt;code&gt;org.eclipse.ltk.core.refactoring.RefactoringStatusContext&lt;/code&gt;; the context object managed by the refactoring status entry that is to be presented in the user interface (same as the default variable)&lt;/li&gt;
+&lt;/ul&gt;
       </documentation>
    </annotation>
 
@@ -130,7 +132,7 @@ Variables can be accessed using the &amp;lt;with variable=&quot;...&quot;/&amp;g
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2004 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2013 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
