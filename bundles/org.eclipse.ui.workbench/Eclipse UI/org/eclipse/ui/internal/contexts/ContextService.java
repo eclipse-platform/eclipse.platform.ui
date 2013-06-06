@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.contexts;
 
-import org.eclipse.e4.core.commands.ExpressionContext;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,6 +20,7 @@ import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.services.EContextService;
@@ -107,7 +106,7 @@ public final class ContextService implements IContextService {
 		private String contextId;
 		private Expression expression;
 
-		private EvaluationResult cached = null;
+		EvaluationResult cached = null;
 
 		public UpdateExpression(String contextId, Expression expression) {
 			this.contextId = contextId;
@@ -117,13 +116,6 @@ public final class ContextService implements IContextService {
 		@Override
 		public boolean changed(IEclipseContext context) {
 			if (!updating) {
-				if (cached != null && cached != EvaluationResult.FALSE) {
-					runExternalCode(new Runnable() {
-						public void run() {
-							contextService.deactivateContext(contextId);
-						}
-					});
-				}
 				return false;
 			}
 			ExpressionContext ctx = new ExpressionContext(eclipseContext);
@@ -230,6 +222,9 @@ public final class ContextService implements IContextService {
 			final UpdateExpression rat = activationToRat.remove(activation);
 			if (rat != null) {
 				rat.updating = false;
+				if (rat.cached != null && rat.cached != EvaluationResult.FALSE) {
+					contextService.deactivateContext(activation.getContextId());
+				}
 			} else {
 				contextService.deactivateContext(activation.getContextId());
 			}
