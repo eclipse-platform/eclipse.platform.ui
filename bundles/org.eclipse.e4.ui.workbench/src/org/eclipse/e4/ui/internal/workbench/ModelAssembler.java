@@ -118,7 +118,7 @@ public class ModelAssembler {
 				try {
 					resource = resourceSet.getResource(uri, true);
 				} catch (RuntimeException e) {
-					logger.warn(e, "Unable to read model extension"); //$NON-NLS-1$
+					logger.warn(e, "Unable to read model extension from " + uri.toString()); //$NON-NLS-1$
 					continue;
 				}
 
@@ -169,6 +169,8 @@ public class ModelAssembler {
 					if (merged.size() > 0) {
 						evalImports = true;
 						addedElements.addAll(merged);
+					} else {
+						logger.info("Nothing to merge for \"{0}\"", uri); //$NON-NLS-1$				
 					}
 				}
 
