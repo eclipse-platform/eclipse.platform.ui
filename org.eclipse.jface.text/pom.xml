@@ -18,6 +18,6 @@
   </parent>
   <groupId>org.eclipse.jface</groupId>
   <artifactId>org.eclipse.jface.text</artifactId>
-  <version>3.8.100-SNAPSHOT</version>
+  <version>3.8.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
