@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -251,6 +251,42 @@ public class FastPartitionerTest extends TestCase {
 
 		fDoc.set("/**");
 		assertEqualPartition(0, 3, COMMENT);
+
+	}
+
+	public void testBug409538_1() throws Exception {
+		fPartitioner.disconnect();
+		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
+			{
+				IToken comment= new Token(COMMENT);
+				IPredicateRule[] rules= new IPredicateRule[] { new MultiLineRule("<!--", "-->", comment, (char)0, true) };
+				setPredicateRules(rules);
+			}
+		};
+		fPartitioner= createPartitioner(scanner);
+		fDoc.setDocumentPartitioner(fPartitioner);
+		fPartitioner.connect(fDoc);
+
+		fDoc.set("<");
+		assertEqualPartition(0, 1, DEFAULT);
+
+	}
+
+	public void testBug409538_2() throws Exception {
+		fPartitioner.disconnect();
+		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
+			{
+				IToken comment= new Token(COMMENT);
+				IPredicateRule[] rules= new IPredicateRule[] { new MultiLineRule("<!--", "-->", comment, (char)0, true) };
+				setPredicateRules(rules);
+			}
+		};
+		fPartitioner= createPartitioner(scanner);
+		fDoc.setDocumentPartitioner(fPartitioner);
+		fPartitioner.connect(fDoc);
+
+		fDoc.set("<!-- blah");
+		assertEqualPartition(0, 9, COMMENT);
 
 	}
 

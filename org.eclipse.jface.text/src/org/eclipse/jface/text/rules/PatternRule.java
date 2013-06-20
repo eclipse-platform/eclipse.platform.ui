@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -191,7 +191,7 @@ public class PatternRule implements IPredicateRule {
 
 			int c= scanner.read();
 			if (c == fStartSequence[0]) {
-				if (sequenceDetected(scanner, fStartSequence, fBreaksOnEOF)) {
+				if (sequenceDetected(scanner, fStartSequence, false)) {
 					if (endSequenceDetected(scanner))
 						return fToken;
 				}
