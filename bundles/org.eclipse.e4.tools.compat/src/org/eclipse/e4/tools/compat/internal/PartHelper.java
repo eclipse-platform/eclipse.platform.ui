@@ -42,7 +42,7 @@ public class PartHelper {
 				Object instance = site.getService(clazz);
 				Method m = clazz.getMethod("getContext", new Class[0]);
 				IEclipseContext ctx = (IEclipseContext) m.invoke(instance);
-				IEclipseContext rv = ctx.createChild();
+				IEclipseContext rv = ctx;
 				while( ctx.getParent() != null ) {
 					ctx = ctx.getParent();
 				}

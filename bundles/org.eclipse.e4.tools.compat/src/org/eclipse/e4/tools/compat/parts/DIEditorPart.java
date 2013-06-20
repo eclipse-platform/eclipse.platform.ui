@@ -148,8 +148,15 @@ public abstract class DIEditorPart<C> extends EditorPart implements
 
 	@Override
 	public void dispose() {
-		context.dispose();
-		context = null;
+		IEclipseContext parentContext = (IEclipseContext) getSite().getService(
+				IEclipseContext.class);
+		// Check if running in 3.x, otherwise there was no dedicated context
+		// created
+		if (parentContext
+				.get("org.eclipse.e4.ui.workbench.IPresentationEngine") != null) {
+			context.dispose();
+			context = null;
+		}
 		super.dispose();
 	}
 }
