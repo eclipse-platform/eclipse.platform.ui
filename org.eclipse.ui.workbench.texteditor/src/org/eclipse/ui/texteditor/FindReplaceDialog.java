@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,10 +119,23 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private class FindModifyListener implements ModifyListener {
 
+		// XXX: Workaround for Combo bug on Linux (see bug 404202 and bug 410603)
+		private boolean fIgnoreNextEvent;
+		private void ignoreNextEvent() {
+			fIgnoreNextEvent= true;
+		}
+
 		/*
 		 * @see ModifyListener#modifyText(ModifyEvent)
 		 */
 		public void modifyText(ModifyEvent e) {
+
+			// XXX: Workaround for Combo bug on Linux (see bug 404202 and bug 410603)
+			if (fIgnoreNextEvent) {
+				fIgnoreNextEvent= false;
+				return;
+			}
+
 			if (isIncrementalSearch() && !isRegExSearchAvailableAndChecked()) {
 				if (fFindField.getText().equals("") && fTarget != null) { //$NON-NLS-1$
 					// empty selection at base location
@@ -169,7 +182,7 @@ class FindReplaceDialog extends Dialog {
 	private Shell fActiveShell;
 
 	private final ActivationListener fActivationListener= new ActivationListener();
-	private final ModifyListener fFindModifyListener= new FindModifyListener();
+	private final FindModifyListener fFindModifyListener= new FindModifyListener();
 
 	private Label fReplaceLabel, fStatusLabel;
 	private Button fForwardRadioButton, fGlobalRadioButton, fSelectedRangeRadioButton;
@@ -1641,6 +1654,11 @@ class FindReplaceDialog extends Dialog {
 	private void updateFindHistory() {
 		if (okToUse(fFindField)) {
 			fFindField.removeModifyListener(fFindModifyListener);
+
+			// XXX: Workaround for Combo bug on Linux (see bug 404202 and bug 410603)
+			if (Util.isLinux())
+				fFindModifyListener.ignoreNextEvent();
+
 			updateHistory(fFindField, fFindHistory);
 			fFindField.addModifyListener(fFindModifyListener);
 		}
