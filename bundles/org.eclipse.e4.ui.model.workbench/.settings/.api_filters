@@ -1,6 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.e4.ui.model.workbench" version="2">
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.e4.ui.model.workbench" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="923795461">
+            <message_arguments>
+                <message_argument value="1.0.0"/>
+                <message_argument value="1.0.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/SideValue.java" type="org.eclipse.e4.ui.model.application.ui.SideValue">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="371236918">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.SideValue"/>
+            </message_arguments>
+        </filter>
         <filter comment="This accepted as you cannot technically cast to the internal interface or the EMF interface " id="576725006">
             <message_arguments>
                 <message_argument value="InternalSideValue"/>
@@ -9,10 +21,201 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/ItemType.java" type="org.eclipse.e4.ui.model.application.ui.menu.ItemType">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="371236918">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.ItemType"/>
+            </message_arguments>
+        </filter>
         <filter comment="This accepted as you cannot technically cast to the internal interface or the EMF interface " id="576725006">
             <message_arguments>
                 <message_argument value="InternalItemType"/>
                 <message_argument value="ItemType"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MMenuContribution.java" type="org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution"/>
+                <message_argument value="getParentId()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution"/>
+                <message_argument value="getPositionInParent()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution"/>
+                <message_argument value="setParentId(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution"/>
+                <message_argument value="setPositionInParent(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MMenuContributions.java" type="org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions"/>
+                <message_argument value="getMenuContributions()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueMenuItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem"/>
+                <message_argument value="getOpaqueItem()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem"/>
+                <message_argument value="setOpaqueItem(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueMenuSeparator.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator"/>
+                <message_argument value="getOpaqueItem()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator"/>
+                <message_argument value="setOpaqueItem(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MOpaqueToolItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem"/>
+                <message_argument value="getOpaqueItem()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem"/>
+                <message_argument value="setOpaqueItem(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MRenderedMenu.java" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu"/>
+                <message_argument value="getContributionManager()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu"/>
+                <message_argument value="setContributionManager(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MRenderedMenuItem.java" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem"/>
+                <message_argument value="getContributionItem()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem"/>
+                <message_argument value="setContributionItem(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MRenderedToolBar.java" type="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar"/>
+                <message_argument value="getContributionManager()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar"/>
+                <message_argument value="setContributionManager(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MToolBarContribution.java" type="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution"/>
+                <message_argument value="getParentId()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution"/>
+                <message_argument value="getPositionInParent()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution"/>
+                <message_argument value="setParentId(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution"/>
+                <message_argument value="setPositionInParent(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MToolBarContributions.java" type="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions"/>
+                <message_argument value="getToolBarContributions()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MTrimContribution.java" type="org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution"/>
+                <message_argument value="getParentId()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution"/>
+                <message_argument value="getPositionInParent()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution"/>
+                <message_argument value="setParentId(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution"/>
+                <message_argument value="setPositionInParent(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/MTrimContributions.java" type="org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions"/>
+                <message_argument value="getTrimContributions()"/>
             </message_arguments>
         </filter>
     </resource>

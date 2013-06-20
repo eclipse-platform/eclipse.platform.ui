@@ -1,10 +1,294 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.e4.ui.workbench" version="2">
-    <resource path="src/org/eclipse/e4/ui/workbench/modeling/ExpressionContext.java" type="org.eclipse.e4.ui.workbench.modeling.ExpressionContext">
-        <filter id="574619656">
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.e4.ui.workbench" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="923795461">
             <message_arguments>
-                <message_argument value="IEvaluationContext"/>
-                <message_argument value="ExpressionContext"/>
+                <message_argument value="1.0.100"/>
+                <message_argument value="1.0.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/EObjModelHandler.java" type="org.eclipse.e4.ui.workbench.modeling.EObjModelHandler">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EObjModelHandler"/>
+                <message_argument value="getAdapter(Object, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EObjModelHandler"/>
+                <message_argument value="getAdapterList()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EObjModelHandler"/>
+                <message_argument value="getChildren(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EObjModelHandler"/>
+                <message_argument value="getPropIds(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EObjModelHandler"/>
+                <message_argument value="getProperty(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EObjModelHandler"/>
+                <message_argument value="setProperty(Object, String, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EObjModelHandler"/>
+                <message_argument value="EObjModelHandler()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/EPlaceholderResolver.java" type="org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver"/>
+                <message_argument value="resolvePlaceholderRef(MPlaceholder, MWindow)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/IDelta.java" type="org.eclipse.e4.ui.workbench.modeling.IDelta">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IDelta"/>
+                <message_argument value="apply()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IDelta"/>
+                <message_argument value="getObject()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/IModelReconcilingService.java" type="org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService"/>
+                <message_argument value="applyDeltas(Collection&lt;ModelDelta&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService"/>
+                <message_argument value="applyDeltas(Collection&lt;ModelDelta&gt;, String[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService"/>
+                <message_argument value="createModelReconciler()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/IPartListener.java">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="0"/>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/IPartListener.java" type="org.eclipse.e4.ui.workbench.modeling.IPartListener">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IPartListener"/>
+                <message_argument value="partActivated(MPart)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IPartListener"/>
+                <message_argument value="partBroughtToTop(MPart)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IPartListener"/>
+                <message_argument value="partDeactivated(MPart)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IPartListener"/>
+                <message_argument value="partHidden(MPart)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IPartListener"/>
+                <message_argument value="partVisible(MPart)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/ISaveHandler.java" type="org.eclipse.e4.ui.workbench.modeling.ISaveHandler">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ISaveHandler"/>
+                <message_argument value="promptToSave(Collection&lt;MPart&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ISaveHandler"/>
+                <message_argument value="promptToSave(MPart)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ISaveHandler"/>
+                <message_argument value="save(MPart, boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ISaveHandler"/>
+                <message_argument value="saveParts(Collection&lt;MPart&gt;, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/ISelectionListener.java" type="org.eclipse.e4.ui.workbench.modeling.ISelectionListener">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ISelectionListener"/>
+                <message_argument value="selectionChanged(MPart, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/IWindowCloseHandler.java" type="org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler"/>
+                <message_argument value="close(MWindow)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/ModelDelta.java" type="org.eclipse.e4.ui.workbench.modeling.ModelDelta">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelDelta"/>
+                <message_argument value="convert(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelDelta"/>
+                <message_argument value="getAttributeName()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelDelta"/>
+                <message_argument value="getAttributeValue()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelDelta"/>
+                <message_argument value="getObject()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelDelta"/>
+                <message_argument value="ModelDelta(Object, String, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/ModelHandlerBase.java" type="org.eclipse.e4.ui.workbench.modeling.ModelHandlerBase">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelHandlerBase"/>
+                <message_argument value="getChildren(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelHandlerBase"/>
+                <message_argument value="getPropIds(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelHandlerBase"/>
+                <message_argument value="getProperty(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelHandlerBase"/>
+                <message_argument value="setProperty(Object, String, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelHandlerBase"/>
+                <message_argument value="ModelHandlerBase()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/ModelReconciler.java" type="org.eclipse.e4.ui.workbench.modeling.ModelReconciler">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelReconciler"/>
+                <message_argument value="constructDeltas(Object, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelReconciler"/>
+                <message_argument value="recordChanges(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelReconciler"/>
+                <message_argument value="serialize()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelReconciler"/>
+                <message_argument value="ModelReconciler()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/ModelService.java" type="org.eclipse.e4.ui.workbench.modeling.ModelService">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
+                <message_argument value="getChildren(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
+                <message_argument value="getPropIds(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
+                <message_argument value="getProperty(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
+                <message_argument value="setProperty(Object, String, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.ModelService"/>
+                <message_argument value="ModelService(IAdapterManager)"/>
             </message_arguments>
         </filter>
     </resource>

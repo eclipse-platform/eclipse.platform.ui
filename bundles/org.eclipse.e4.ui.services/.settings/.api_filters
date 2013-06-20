@@ -1,5 +1,52 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.e4.ui.services" version="2">
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.e4.ui.services" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="923795461">
+            <message_arguments>
+                <message_argument value="1.0.0"/>
+                <message_argument value="1.0.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/services/ContextServiceAddon.java" type="org.eclipse.e4.ui.services.ContextServiceAddon">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.services.ContextServiceAddon"/>
+                <message_argument value="init(IEclipseContext)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/services/IStylingEngine.java" type="org.eclipse.e4.ui.services.IStylingEngine">
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.services.IStylingEngine"/>
+                <message_argument value="getStyle(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.services.IStylingEngine"/>
+                <message_argument value="setClassname(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.services.IStylingEngine"/>
+                <message_argument value="setClassnameAndId(Object, String, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.services.IStylingEngine"/>
+                <message_argument value="setId(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.services.IStylingEngine"/>
+                <message_argument value="style(Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/services/internal/events/EventBroker.java" type="org.eclipse.e4.ui.services.internal.events.EventBroker">
         <filter comment="Our default impllementation of IEventBroker" id="574619656">
             <message_arguments>
