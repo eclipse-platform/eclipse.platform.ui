@@ -54,7 +54,7 @@
    <element name="support">
       <complexType>
          <sequence>
-            <element ref="localScopeCheckbox"/>
+            <element ref="localScopeCheckbox" minOccurs="0" maxOccurs="1"/>
             <element ref="documentMessage"/>
             <element ref="showAllMessage"/>
          </sequence>
@@ -82,10 +82,10 @@
    <element name="localScopeCheckbox" type="string">
       <annotation>
          <appInfo>
-            <meta.element translatable="true"/>
+            <meta.element translatable="true" deprecated="true"/>
          </appInfo>
          <documentation>
-            a label of the checkbox in the local search scope preference page. When the checkbox is selected, search hits in documents that belong to disabled activites will be included in the search results.
+            a label of the checkbox in the local search scope preference page. When the checkbox is selected, search hits in documents that belong to disabled activites will be included in the search results. &lt;strong&gt;As of 3.6, this element is no longer used&lt;/strong&gt;.
          </documentation>
       </annotation>
    </element>
@@ -178,7 +178,7 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005, 2013 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which accompanies 
 this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
