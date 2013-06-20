@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,14 +82,26 @@ public final class HyperlinkDetectorDescriptor {
 	}
 
 	/**
-	 * Creates a new {@link IHyperlinkDetector}.
-	 *
+	 * Creates a new {@link AbstractHyperlinkDetector}.
+	 * 
 	 * @return the hyperlink detector or <code>null</code> if the plug-in isn't loaded yet
 	 * @throws CoreException if a failure occurred during creation
+	 * @deprecated As of 3.9, replaced by {@link #createHyperlinkDetectorImplementation()}
 	 */
 	public AbstractHyperlinkDetector createHyperlinkDetector() throws CoreException {
+		return (AbstractHyperlinkDetector)createHyperlinkDetectorImplementation();
+	}
+
+	/**
+	 * Creates a new {@link IHyperlinkDetector}.
+	 * 
+	 * @return the hyperlink detector or <code>null</code> if the plug-in isn't loaded yet
+	 * @throws CoreException if a failure occurred during creation
+	 * @since 3.9
+	 */
+	public IHyperlinkDetector createHyperlinkDetectorImplementation() throws CoreException {
 		final Throwable[] exception= new Throwable[1];
-		final AbstractHyperlinkDetector[] result= new AbstractHyperlinkDetector[1];
+		final IHyperlinkDetector[] result= new IHyperlinkDetector[1];
 		String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetector_couldNotCreate_message, new String[] { getId(), fElement.getContributor().getName() });
 		ISafeRunnable code= new SafeRunnable(message) {
 			/*
@@ -99,7 +111,7 @@ public final class HyperlinkDetectorDescriptor {
 		 		String pluginId = fElement.getContributor().getName();
 				boolean isPlugInActivated= Platform.getBundle(pluginId).getState() == Bundle.ACTIVE;
 				if (isPlugInActivated || canActivatePlugIn())
-					result[0]= (AbstractHyperlinkDetector)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
+					result[0]= (IHyperlinkDetector)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 			}
 			/*
 			 * @see org.eclipse.jface.util.SafeRunnable#handleException(java.lang.Throwable)

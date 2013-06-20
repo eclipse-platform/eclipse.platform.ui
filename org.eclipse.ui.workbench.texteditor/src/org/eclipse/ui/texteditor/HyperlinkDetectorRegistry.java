@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public final class HyperlinkDetectorRegistry {
 	private class HyperlinkDetectorDelegate implements IHyperlinkDetector, IHyperlinkDetectorExtension, IHyperlinkDetectorExtension2 {
 
 		private HyperlinkDetectorDescriptor fHyperlinkDescriptor;
-		private AbstractHyperlinkDetector fHyperlinkDetector;
+		private IHyperlinkDetector fHyperlinkDetector;
 		private boolean fFailedDuringCreation= false;
 		private IAdaptable fContext;
 		private int fStateMask;
@@ -69,12 +69,12 @@ public final class HyperlinkDetectorRegistry {
 
 			if (!fFailedDuringCreation && fHyperlinkDetector == null) {
 				try {
-					fHyperlinkDetector= fHyperlinkDescriptor.createHyperlinkDetector();
+					fHyperlinkDetector= fHyperlinkDescriptor.createHyperlinkDetectorImplementation();
 				} catch (CoreException ex) {
 					fFailedDuringCreation= true;
 				}
-				if (fHyperlinkDetector != null && fContext != null)
-					fHyperlinkDetector.setContext(fContext);
+				if (fContext != null && fHyperlinkDetector instanceof AbstractHyperlinkDetector)
+					((AbstractHyperlinkDetector)fHyperlinkDetector).setContext(fContext);
 			}
 			if (fHyperlinkDetector != null)
 				return fHyperlinkDetector.detectHyperlinks(textViewer, region, canShowMultipleHyperlinks);
@@ -94,10 +94,10 @@ public final class HyperlinkDetectorRegistry {
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension#dispose()
 		 */
 		public void dispose() {
-			if (fHyperlinkDetector != null) {
-				fHyperlinkDetector.dispose();
-				fHyperlinkDetector= null;
-			}
+			if (fHyperlinkDetector instanceof AbstractHyperlinkDetector)
+				((AbstractHyperlinkDetector)fHyperlinkDetector).dispose();
+
+			fHyperlinkDetector= null;
 			fHyperlinkDescriptor= null;
 			fContext= null;
 		}
