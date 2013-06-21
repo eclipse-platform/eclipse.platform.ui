@@ -109,10 +109,12 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 		create(viewer, null, editorActivationStrategy, feature);
 	}
 
+	@Override
 	protected void setEditor(Control w, Item item, int fColumnNumber) {
 		treeEditor.setEditor(w, (TreeItem) item, fColumnNumber);
 	}
 
+	@Override
 	protected void setLayoutData(LayoutData layoutData) {
 		treeEditor.grabHorizontal = layoutData.grabHorizontal;
 		treeEditor.horizontalAlignment = layoutData.horizontalAlignment;
@@ -123,6 +125,7 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 		}
 	}
 
+	@Override
 	public ViewerCell getFocusCell() {
 		if (focusCellManager != null) {
 			return focusCellManager.getFocusCell();
@@ -131,6 +134,7 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 		return super.getFocusCell();
 	}
 
+	@Override
 	protected void updateFocusCell(ViewerCell focusCell,
 			ColumnViewerEditorActivationEvent event) {
 		// Update the focus cell when we activated the editor with these 2

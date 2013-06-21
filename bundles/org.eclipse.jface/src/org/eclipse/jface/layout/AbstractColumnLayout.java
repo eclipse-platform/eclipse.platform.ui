@@ -224,6 +224,7 @@ public abstract class AbstractColumnLayout extends Layout {
 	 * org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite
 	 * , int, int, boolean)
 	 */
+	@Override
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
 		return computeTableTreeSize(getControl(composite), wHint, hHint);
@@ -236,6 +237,7 @@ public abstract class AbstractColumnLayout extends Layout {
 	 * org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
 	 * boolean)
 	 */
+	@Override
 	protected void layout(Composite composite, boolean flushCache) {
 		Rectangle area = composite.getClientArea();
 		Scrollable table = getControl(composite);

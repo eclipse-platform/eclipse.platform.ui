@@ -58,6 +58,7 @@ class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.WrappedViewerLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
+	@Override
 	public void update(ViewerCell cell) {
 
 		Object element = cell.getElement();

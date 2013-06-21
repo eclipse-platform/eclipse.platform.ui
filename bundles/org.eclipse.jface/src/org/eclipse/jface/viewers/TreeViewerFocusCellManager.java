@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 	private static final CellNavigationStrategy TREE_NAVIGATE = new CellNavigationStrategy() {
+		@Override
 		public void collapse(ColumnViewer viewer, ViewerCell cellToCollapse,
 				Event event) {
 			if (cellToCollapse != null) {
@@ -37,6 +38,7 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 			}
 		}
 
+		@Override
 		public void expand(ColumnViewer viewer, ViewerCell cellToExpand,
 				Event event) {
 			if (cellToExpand != null) {
@@ -46,6 +48,7 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 			}
 		}
 
+		@Override
 		public boolean isCollapseEvent(ColumnViewer viewer,
 				ViewerCell cellToCollapse, Event event) {
 
@@ -59,6 +62,7 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 					&& isFirstColumnCell(cellToCollapse);
 		}
 
+		@Override
 		public boolean isExpandEvent(ColumnViewer viewer,
 				ViewerCell cellToExpand, Event event) {
 
@@ -116,6 +120,7 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 		super(viewer, focusDrawingDelegate, navigationStrategy);
 	}
 
+	@Override
 	ViewerCell getInitialFocusCell() {
 		Tree tree = (Tree) getViewer().getControl();
 
@@ -139,6 +144,7 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 		return row.getBounds(colIndex).x >= clientArea.x;
 	}
 
+	@Override
 	public ViewerCell getFocusCell() {
 		ViewerCell cell = super.getFocusCell();
 		Tree t = (Tree) getViewer().getControl();

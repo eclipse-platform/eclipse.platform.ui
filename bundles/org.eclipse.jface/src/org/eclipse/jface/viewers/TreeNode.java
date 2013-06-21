@@ -56,6 +56,7 @@ public class TreeNode {
 		this.value = value;
 	}
 	
+	@Override
 	public boolean equals(final Object object) {
 		if (object instanceof TreeNode) {
 			return Util.equals(this.value, ((TreeNode) object).value);
@@ -108,6 +109,7 @@ public class TreeNode {
 		return children != null && children.length > 0;
 	}
 	
+	@Override
 	public int hashCode() {
 		return Util.hashCode(value);
 	}

@@ -67,7 +67,8 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void adjustForNumColumns(int numColumns) {
+    @Override
+	protected void adjustForNumColumns(int numColumns) {
         ((GridData) getTextControl().getLayoutData()).horizontalSpan = numColumns - 2;
     }
 
@@ -87,7 +88,8 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
     /* (non-Javadoc)
      * Method declared on StringFieldEditor (and FieldEditor).
      */
-    protected void doFillIntoGrid(Composite parent, int numColumns) {
+    @Override
+	protected void doFillIntoGrid(Composite parent, int numColumns) {
         super.doFillIntoGrid(parent, numColumns - 1);
         changeButton = getChangeControl(parent);
         GridData gd = new GridData();
@@ -113,7 +115,8 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
             changeButton.setText(changeButtonText);
             changeButton.setFont(parent.getFont());
             changeButton.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent evt) {
+                @Override
+				public void widgetSelected(SelectionEvent evt) {
                     String newValue = changePressed();
                     if (newValue != null) {
                         setStringValue(newValue);
@@ -134,7 +137,8 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    public int getNumberOfControls() {
+    @Override
+	public int getNumberOfControls() {
         return 3;
     }
 
@@ -169,7 +173,8 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean, org.eclipse.swt.widgets.Composite)
      */
-    public void setEnabled(boolean enabled, Composite parent) {
+    @Override
+	public void setEnabled(boolean enabled, Composite parent) {
         super.setEnabled(enabled, parent);
         if (changeButton != null) {
             changeButton.setEnabled(enabled);

@@ -52,6 +52,7 @@ class URLImageDescriptor extends ImageDescriptor {
 	/*
 	 * (non-Javadoc) Method declared on Object.
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof URLImageDescriptor)) {
 			return false;
@@ -63,6 +64,7 @@ class URLImageDescriptor extends ImageDescriptor {
 	 * (non-Javadoc) Method declared on ImageDesciptor. Returns null if the
 	 * image data cannot be read.
 	 */
+	@Override
 	public ImageData getImageData() {
 		ImageData result = null;
 		InputStream in = getStream();
@@ -104,6 +106,7 @@ class URLImageDescriptor extends ImageDescriptor {
 	/*
 	 * (non-Javadoc) Method declared on Object.
 	 */
+	@Override
 	public int hashCode() {
 		return url.toExternalForm().hashCode();
 	}
@@ -116,6 +119,7 @@ class URLImageDescriptor extends ImageDescriptor {
 	 * <code>Object</code> method returns a string representation of this
 	 * object which is suitable only for debugging.
 	 */
+	@Override
 	public String toString() {
 		return "URLImageDescriptor(" + url + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -151,6 +155,7 @@ class URLImageDescriptor extends ImageDescriptor {
 	 * @see org.eclipse.jface.resource.ImageDescriptor#createImage(boolean,
 	 *      org.eclipse.swt.graphics.Device)
 	 */
+	@Override
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
 
 		// Try to see if we can optimize using SWTs file based image support.

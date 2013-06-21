@@ -224,6 +224,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * @return A string representation for this key sequence using the default
 	 *         look; never <code>null</code>.
 	 */
+	@Override
 	public final String format() {
 		return KeyFormatterFactory.getDefault().format(this);
 	}
@@ -248,6 +249,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * 
 	 * @see org.eclipse.jface.bindings.TriggerSequence#getPrefixes()
 	 */
+	@Override
 	public final TriggerSequence[] getPrefixes() {
 		final int numberOfPrefixes = triggers.length;
 		final TriggerSequence[] prefixes = new TriggerSequence[numberOfPrefixes];
@@ -285,6 +287,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 *         Guaranteed not to be <code>null</code>.
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public final String toString() {
 		return KeyFormatterFactory.getFormalKeyFormatter().format(this);
 	}

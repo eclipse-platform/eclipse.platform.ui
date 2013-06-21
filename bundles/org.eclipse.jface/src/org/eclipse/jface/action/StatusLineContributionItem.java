@@ -91,6 +91,7 @@ public class StatusLineContributionItem extends ContributionItem {
 		setVisible(false); // no text to start with
 	}
 
+	@Override
 	public void fill(Composite parent) {
 		statusLine = parent;
 

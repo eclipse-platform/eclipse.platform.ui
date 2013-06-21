@@ -85,7 +85,8 @@ public class ImageRegistry {
             this.originalDisplay = originalDisplay;
         }
         
-        public Object createResource(Device device) throws DeviceResourceException {
+        @Override
+		public Object createResource(Device device) throws DeviceResourceException {
             if (device == originalDisplay) {
                 refCount++;
                 return original;
@@ -93,7 +94,8 @@ public class ImageRegistry {
             return super.createResource(device);
         }
         
-        public void destroyResource(Object toDispose) {
+        @Override
+		public void destroyResource(Object toDispose) {
             if (original == toDispose) {
                 refCount--;
                 if (refCount == 0) {
@@ -108,7 +110,8 @@ public class ImageRegistry {
         /* (non-Javadoc)
          * @see org.eclipse.jface.resource.ImageDescriptor#getImageData()
          */
-        public ImageData getImageData() {
+        @Override
+		public ImageData getImageData() {
             return original.getImageData();
         }
     }

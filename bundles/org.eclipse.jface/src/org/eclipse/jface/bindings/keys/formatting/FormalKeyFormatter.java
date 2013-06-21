@@ -31,6 +31,7 @@ public final class FormalKeyFormatter extends AbstractKeyFormatter {
 	 * 
 	 * @see org.eclipse.jface.bindings.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
 	 */
+	@Override
 	public String format(final int key) {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
 		return lookup.formalNameLookup(key);
@@ -41,6 +42,7 @@ public final class FormalKeyFormatter extends AbstractKeyFormatter {
 	 * 
 	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#getKeyDelimiter()
 	 */
+	@Override
 	protected String getKeyDelimiter() {
 		return KeyStroke.KEY_DELIMITER;
 	}
@@ -50,6 +52,7 @@ public final class FormalKeyFormatter extends AbstractKeyFormatter {
 	 * 
 	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
 	 */
+	@Override
 	protected String getKeyStrokeDelimiter() {
 		return KeySequence.KEY_STROKE_DELIMITER;
 	}
@@ -59,6 +62,7 @@ public final class FormalKeyFormatter extends AbstractKeyFormatter {
 	 * 
 	 * @see org.eclipse.jface.bindings.keys.AbstractKeyFormatter#sortModifierKeys(int)
 	 */
+	@Override
 	protected int[] sortModifierKeys(final int modifierKeys) {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
 		final int[] sortedKeys = new int[4];

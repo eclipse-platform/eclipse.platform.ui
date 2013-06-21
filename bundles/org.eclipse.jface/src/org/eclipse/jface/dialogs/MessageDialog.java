@@ -202,7 +202,8 @@ public class MessageDialog extends IconAndMessageDialog {
      *  (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
      */
-    protected void buttonPressed(int buttonId) {
+    @Override
+	protected void buttonPressed(int buttonId) {
         setReturnCode(buttonId);
         close();
     }
@@ -211,7 +212,8 @@ public class MessageDialog extends IconAndMessageDialog {
      *  (non-Javadoc)
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
-    protected void configureShell(Shell shell) {
+    @Override
+	protected void configureShell(Shell shell) {
         super.configureShell(shell);
         if (title != null) {
 			shell.setText(title);
@@ -224,7 +226,8 @@ public class MessageDialog extends IconAndMessageDialog {
     /*
      * (non-Javadoc) Method declared on Dialog.
      */
-    protected void createButtonsForButtonBar(Composite parent) {
+    @Override
+	protected void createButtonsForButtonBar(Composite parent) {
         buttons = new Button[buttonLabels.length];
         for (int i = 0; i < buttonLabels.length; i++) {
             String label = buttonLabels[i];
@@ -257,7 +260,8 @@ public class MessageDialog extends IconAndMessageDialog {
      * override <code>createCustomArea</code> to add contents below the
      * message.
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         // create message area
         createMessageArea(parent);
         // create the top level composite for the dialog area
@@ -285,7 +289,8 @@ public class MessageDialog extends IconAndMessageDialog {
      *            the index of the button in the dialog's button bar
      * @return a button in the dialog's button bar, or <code>null</code> if there's no button with that index
      */
-    protected Button getButton(int index) {
+    @Override
+	protected Button getButton(int index) {
         if (buttons == null || index < 0 || index >= buttons.length)
             return null;
         return buttons[index];
@@ -310,7 +315,8 @@ public class MessageDialog extends IconAndMessageDialog {
      * 
      * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
      */
-    protected void handleShellCloseEvent() {
+    @Override
+	protected void handleShellCloseEvent() {
         //Sets a return code of SWT.DEFAULT since none of the dialog buttons
         // were pressed to close the dialog.
         super.handleShellCloseEvent();
@@ -330,7 +336,8 @@ public class MessageDialog extends IconAndMessageDialog {
 	 *
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
-    public int open() {
+    @Override
+	public int open() {
     	return super.open();
     }
 
@@ -477,7 +484,8 @@ public class MessageDialog extends IconAndMessageDialog {
      * @see org.eclipse.jface.dialogs.Dialog#createButton(org.eclipse.swt.widgets.Composite,
      *      int, java.lang.String, boolean)
      */
-    protected Button createButton(Composite parent, int id, String label,
+    @Override
+	protected Button createButton(Composite parent, int id, String label,
             boolean defaultButton) {
         Button button = super.createButton(parent, id, label, defaultButton);
         //Be sure to set the focus if the custom area cannot so as not
@@ -510,7 +518,8 @@ public class MessageDialog extends IconAndMessageDialog {
      *  (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
      */
-    public Image getImage() {
+    @Override
+	public Image getImage() {
         return image;
     }
 

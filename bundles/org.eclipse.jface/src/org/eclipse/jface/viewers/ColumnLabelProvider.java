@@ -31,6 +31,7 @@ public class ColumnLabelProvider extends CellLabelProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.CellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
+	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
 		cell.setText(getText(element));

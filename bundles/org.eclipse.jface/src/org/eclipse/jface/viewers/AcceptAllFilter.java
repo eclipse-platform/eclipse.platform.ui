@@ -43,6 +43,7 @@ public final class AcceptAllFilter implements IFilter {
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
+	@Override
 	public boolean equals(Object other) {
 		return other == this || other instanceof AcceptAllFilter;
 	}

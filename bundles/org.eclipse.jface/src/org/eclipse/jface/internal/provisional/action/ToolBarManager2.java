@@ -163,6 +163,7 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.ToolBarManager#relayout(org.eclipse.swt.widgets.ToolBar, int, int)
 	 */
+	@Override
 	protected void relayout(ToolBar layoutBar, int oldCount, int newCount) {
 		super.relayout(layoutBar, oldCount, newCount);
 		firePropertyChange(PROP_LAYOUT, new Integer(oldCount), new Integer(newCount));

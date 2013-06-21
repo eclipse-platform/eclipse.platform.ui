@@ -238,6 +238,7 @@ public abstract class ViewerRow implements Cloneable {
 	 */
 	public abstract TreePath getTreePath();
 
+	@Override
 	public abstract Object clone();
 
 	/**
@@ -245,6 +246,7 @@ public abstract class ViewerRow implements Cloneable {
 	 */
 	public abstract Object getElement();
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -253,6 +255,7 @@ public abstract class ViewerRow implements Cloneable {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

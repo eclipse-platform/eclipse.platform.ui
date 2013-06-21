@@ -109,6 +109,7 @@ public class ImageAndMessageArea extends Composite {
 			 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
 			 *      boolean)
 			 */
+			@Override
 			public void layout(Composite parent, boolean changed) {
 				Rectangle carea = getClientArea();
 				container.setBounds(carea.x + BORDER_MARGIN, carea.y
@@ -122,6 +123,7 @@ public class ImageAndMessageArea extends Composite {
 			 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
 			 *      int, int, boolean)
 			 */
+			@Override
 			public Point computeSize(Composite parent, int wHint, int hHint,
 					boolean changed) {
 				Point size;
@@ -142,6 +144,7 @@ public class ImageAndMessageArea extends Composite {
 	 * 
 	 * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
 	 */
+	@Override
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		messageField.getLayoutControl().setBackground(bg);
@@ -196,6 +199,7 @@ public class ImageAndMessageArea extends Composite {
 	 * 
 	 * @see org.eclipse.swt.widgets.Control#setFont(org.eclipse.swt.graphics.Font)
 	 */
+	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
 		((Text) messageField.getControl()).setFont(font);
@@ -206,6 +210,7 @@ public class ImageAndMessageArea extends Composite {
 	 * 
 	 * @see org.eclipse.swt.widgets.Control#setToolTipText(java.lang.String)
 	 */
+	@Override
 	public void setToolTipText(String text) {
 		super.setToolTipText(text);
 		((Text) messageField.getControl()).setToolTipText(text);

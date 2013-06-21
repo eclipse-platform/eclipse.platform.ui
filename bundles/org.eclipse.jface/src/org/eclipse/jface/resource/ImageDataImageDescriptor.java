@@ -50,7 +50,8 @@ class ImageDataImageDescriptor extends ImageDescriptor {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.DeviceResourceDescriptor#create(org.eclipse.swt.graphics.Device)
      */
-    public Object createResource(Device device) throws DeviceResourceException {
+    @Override
+	public Object createResource(Device device) throws DeviceResourceException {
 
         // If this descriptor is an existing font, then we can return the original font
         // if this is the same device.
@@ -67,7 +68,8 @@ class ImageDataImageDescriptor extends ImageDescriptor {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.DeviceResourceDescriptor#destroy(java.lang.Object)
      */
-    public void destroyResource(Object previouslyCreatedObject) {
+    @Override
+	public void destroyResource(Object previouslyCreatedObject) {
         if (previouslyCreatedObject == originalImage) {
             return;
         }
@@ -78,14 +80,16 @@ class ImageDataImageDescriptor extends ImageDescriptor {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.ImageDescriptor#getImageData()
      */
-    public ImageData getImageData() {
+    @Override
+	public ImageData getImageData() {
         return data;
     }
     
     /* (non-Javadoc)
      * @see Object#hashCode
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
     	 if (originalImage != null) {
              return System.identityHashCode(originalImage);
          }
@@ -95,7 +99,8 @@ class ImageDataImageDescriptor extends ImageDescriptor {
     /* (non-Javadoc)
      * @see Object#equals
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (!(obj instanceof ImageDataImageDescriptor)) {
 			return false;
 		} 

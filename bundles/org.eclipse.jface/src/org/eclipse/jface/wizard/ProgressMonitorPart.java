@@ -266,7 +266,8 @@ public class ProgressMonitorPart extends Composite implements
         	// It would have been nice to use the fCancelListener, but that
         	// listener operates on the fCancelComponent which must be a control.
         	fStopButton.addSelectionListener(new SelectionAdapter() {
-        		public void widgetSelected(SelectionEvent e) {
+        		@Override
+				public void widgetSelected(SelectionEvent e) {
         			setCanceled(true);
         			if (fStopButton != null) {
         				fStopButton.setEnabled(false);
@@ -334,7 +335,8 @@ public class ProgressMonitorPart extends Composite implements
     /**
      * Sets the progress monitor part's font.
      */
-    public void setFont(Font font) {
+    @Override
+	public void setFont(Font font) {
         super.setFont(font);
         fLabel.setFont(font);
         fProgressIndicator.setFont(font);

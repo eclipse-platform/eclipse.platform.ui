@@ -33,6 +33,7 @@ public final class NamedHandleObjectLabelProvider extends LabelProvider {
 	 * @return the name of the handle object; <code>null</code> if there is no
 	 *         name or if the element is not a named handle object.
 	 */
+	@Override
 	public final String getText(final Object element) {
 		if (element instanceof NamedHandleObject) {
 			try {

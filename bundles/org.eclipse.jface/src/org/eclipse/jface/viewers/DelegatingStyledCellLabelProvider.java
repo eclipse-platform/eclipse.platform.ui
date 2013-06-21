@@ -97,6 +97,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
+	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
 
@@ -204,20 +205,24 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 		return this.styledLabelProvider;
 	}
 
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		super.addListener(listener);
 		this.styledLabelProvider.addListener(listener);
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		super.removeListener(listener);
 		this.styledLabelProvider.removeListener(listener);
 	}
 
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return this.styledLabelProvider.isLabelProperty(element, property);
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		this.styledLabelProvider.dispose();

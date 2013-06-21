@@ -99,6 +99,7 @@ public final class TreePath {
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof TreePath)) {
 			return false;
@@ -111,6 +112,7 @@ public final class TreePath {
 	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		if (hash == 0) {
 			hash = hashCode(null);

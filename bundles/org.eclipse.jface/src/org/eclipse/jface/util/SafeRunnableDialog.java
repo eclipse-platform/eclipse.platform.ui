@@ -94,6 +94,7 @@ class SafeRunnableDialog extends ErrorDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.ErrorDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control area = super.createDialogArea(parent);
 		createStatusList((Composite) area);
@@ -190,6 +191,7 @@ class SafeRunnableDialog extends ErrorDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.CellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 			 */
+			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(((IStatus) cell.getElement()).getMessage());
 
@@ -255,6 +257,7 @@ class SafeRunnableDialog extends ErrorDialog {
 			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public int compare(Viewer testViewer, Object e1, Object e2) {
 				String message1 = ((IStatus) e1).getMessage();
 				String message2 = ((IStatus) e2).getMessage();
@@ -314,6 +317,7 @@ class SafeRunnableDialog extends ErrorDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.ErrorDialog#shouldShowDetailsButton()
 	 */
+	@Override
 	protected boolean shouldShowDetailsButton() {
 		return true;
 	}

@@ -101,7 +101,8 @@ public class ComboViewer extends AbstractListViewer {
         hookControl(list);
     }
 
-    protected void listAdd(String string, int index) {
+    @Override
+	protected void listAdd(String string, int index) {
         if (combo == null) {
             ccombo.add(string, index);
         } else {
@@ -109,7 +110,8 @@ public class ComboViewer extends AbstractListViewer {
         }
     }
 
-    protected void listSetItem(int index, String string) {
+    @Override
+	protected void listSetItem(int index, String string) {
         if (combo == null) {
             ccombo.setItem(index, string);
         } else {
@@ -117,7 +119,8 @@ public class ComboViewer extends AbstractListViewer {
         }
     }
 
-    protected int[] listGetSelectionIndices() {
+    @Override
+	protected int[] listGetSelectionIndices() {
         if (combo == null) {
             return new int[] { ccombo.getSelectionIndex() };
         } else {
@@ -125,7 +128,8 @@ public class ComboViewer extends AbstractListViewer {
         }
     }
 
-    protected int listGetItemCount() {
+    @Override
+	protected int listGetItemCount() {
         if (combo == null) {
             return ccombo.getItemCount();
         } else {
@@ -133,7 +137,8 @@ public class ComboViewer extends AbstractListViewer {
         }
     }
 
-    protected void listSetItems(String[] labels) {
+    @Override
+	protected void listSetItems(String[] labels) {
         if (combo == null) {
             ccombo.setItems(labels);
         } else {
@@ -141,7 +146,8 @@ public class ComboViewer extends AbstractListViewer {
         }
     }
 
-    protected void listRemoveAll() {
+    @Override
+	protected void listRemoveAll() {
         if (combo == null) {
             ccombo.removeAll();
         } else {
@@ -149,7 +155,8 @@ public class ComboViewer extends AbstractListViewer {
         }
     }
 
-    protected void listRemove(int index) {
+    @Override
+	protected void listRemove(int index) {
         if (combo == null) {
             ccombo.remove(index);
         } else {
@@ -160,7 +167,8 @@ public class ComboViewer extends AbstractListViewer {
     /* (non-Javadoc)
      * Method declared on Viewer.
      */
-    public Control getControl() {
+    @Override
+	public Control getControl() {
         if (combo == null) {
             return ccombo;
         } else {
@@ -196,13 +204,15 @@ public class ComboViewer extends AbstractListViewer {
      * we can ensure that the given element is visible without changing the selection.
      * Method defined on StructuredViewer.
      */
-    public void reveal(Object element) {
+    @Override
+	public void reveal(Object element) {
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.AbstractListViewer#listSetSelection(int[])
      */
-    protected void listSetSelection(int[] ixs) {
+    @Override
+	protected void listSetSelection(int[] ixs) {
         if (combo == null) {
             for (int idx = 0; idx < ixs.length; idx++) {
                 ccombo.select(ixs[idx]);
@@ -217,7 +227,8 @@ public class ComboViewer extends AbstractListViewer {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.AbstractListViewer#listDeselectAll()
      */
-    protected void listDeselectAll() {
+    @Override
+	protected void listDeselectAll() {
         if (combo == null) {
             ccombo.deselectAll();
             ccombo.clearSelection();
@@ -230,6 +241,7 @@ public class ComboViewer extends AbstractListViewer {
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.AbstractListViewer#listShowSelection()
      */
-    protected void listShowSelection() {
+    @Override
+	protected void listShowSelection() {
     }
 }

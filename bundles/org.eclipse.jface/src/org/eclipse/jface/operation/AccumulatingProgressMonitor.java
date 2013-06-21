@@ -116,7 +116,8 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public void beginTask(final String name, final int totalWork) {
+    @Override
+	public void beginTask(final String name, final int totalWork) {
         synchronized (this) {
             collector = null;
         }
@@ -154,7 +155,8 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public void done() {
+    @Override
+	public void done() {
         synchronized (this) {
             collector = null;
         }
@@ -168,7 +170,8 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public synchronized void internalWorked(final double work) {
+    @Override
+	public synchronized void internalWorked(final double work) {
         if (collector == null) {
             createCollector(null, work);
         } else {
@@ -179,7 +182,8 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public void setTaskName(final String name) {
+    @Override
+	public void setTaskName(final String name) {
         synchronized (this) {
             collector = null;
         }
@@ -194,7 +198,8 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public synchronized void subTask(final String name) {
+    @Override
+	public synchronized void subTask(final String name) {
         if (collector == null) {
             createCollector(name, 0);
         } else {
@@ -205,14 +210,16 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public synchronized void worked(int work) {
+    @Override
+	public synchronized void worked(int work) {
         internalWorked(work);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.ProgressMonitorWrapper#clearBlocked()
      */
-    public void clearBlocked() {
+    @Override
+	public void clearBlocked() {
 
         //If this is a monitor that can report blocking do so.
         //Don't bother with a collector as this should only ever
@@ -236,7 +243,8 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.ProgressMonitorWrapper#setBlocked(org.eclipse.core.runtime.IStatus)
      */
-    public void setBlocked(final IStatus reason) {
+    @Override
+	public void setBlocked(final IStatus reason) {
         //If this is a monitor that can report blocking do so.
         //Don't bother with a collector as this should only ever
         //happen once and prevent any more progress.

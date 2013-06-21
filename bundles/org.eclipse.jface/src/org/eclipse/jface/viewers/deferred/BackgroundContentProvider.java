@@ -459,6 +459,7 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 			super(name);
 		}
 
+		@Override
 		public void run() {
 			loop: while (true) {
 				synchronized (lock) {

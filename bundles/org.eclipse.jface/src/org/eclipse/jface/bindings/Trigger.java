@@ -30,12 +30,14 @@ public abstract class Trigger implements Comparable {
      * @return <code>true</code> if the objects are equal; <code>false</code>
      *         otherwise.
      */
-    public abstract boolean equals(final Object object);
+    @Override
+	public abstract boolean equals(final Object object);
 
     /**
      * Computes the hash code for this object.
      * 
      * @return The hash code for this object.
      */
-    public abstract int hashCode();
+    @Override
+	public abstract int hashCode();
 }

@@ -40,6 +40,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getBounds(int)
 	 */
+	@Override
 	public Rectangle getBounds(int columnIndex) {
 		return item.getBounds(columnIndex);
 	}
@@ -47,6 +48,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getBounds()
 	 */
+	@Override
 	public Rectangle getBounds() {
 		return item.getBounds();
 	}
@@ -54,6 +56,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getItem()
 	 */
+	@Override
 	public Widget getItem() {
 		return item;
 	}
@@ -65,6 +68,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getColumnCount()
 	 */
+	@Override
 	public int getColumnCount() {
 		return item.getParent().getColumnCount();
 	}
@@ -72,6 +76,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getBackground(int)
 	 */
+	@Override
 	public Color getBackground(int columnIndex) {
 		return item.getBackground(columnIndex);
 	}
@@ -79,6 +84,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getFont(int)
 	 */
+	@Override
 	public Font getFont(int columnIndex) {
 		return item.getFont(columnIndex);
 	}
@@ -86,6 +92,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getForeground(int)
 	 */
+	@Override
 	public Color getForeground(int columnIndex) {
 		return item.getForeground(columnIndex);
 	}
@@ -93,6 +100,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getImage(int)
 	 */
+	@Override
 	public Image getImage(int columnIndex) {
 		return item.getImage(columnIndex);
 	}
@@ -100,6 +108,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getText(int)
 	 */
+	@Override
 	public String getText(int columnIndex) {
 		return item.getText(columnIndex);
 	}
@@ -107,6 +116,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#setBackground(int, org.eclipse.swt.graphics.Color)
 	 */
+	@Override
 	public void setBackground(int columnIndex, Color color) {
 		item.setBackground(columnIndex, color);
 	}
@@ -114,6 +124,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#setFont(int, org.eclipse.swt.graphics.Font)
 	 */
+	@Override
 	public void setFont(int columnIndex, Font font) {
 		item.setFont(columnIndex, font);
 	}
@@ -121,6 +132,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#setForeground(int, org.eclipse.swt.graphics.Color)
 	 */
+	@Override
 	public void setForeground(int columnIndex, Color color) {
 		item.setForeground(columnIndex, color);
 	}
@@ -128,6 +140,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#setImage(int, org.eclipse.swt.graphics.Image)
 	 */
+	@Override
 	public void setImage(int columnIndex, Image image) {
 		Image oldImage = item.getImage(columnIndex);
 		if (oldImage != image) {
@@ -138,6 +151,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#setText(int, java.lang.String)
 	 */
+	@Override
 	public void setText(int columnIndex, String text) {
 		item.setText(columnIndex, text == null ? "" : text); //$NON-NLS-1$
 	}
@@ -145,10 +159,12 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return item.getParent();
 	}
 
+	@Override
 	public ViewerRow getNeighbor(int direction, boolean sameLevel) {
 		if( direction == ViewerRow.ABOVE ) {
 			return getRowAbove();
@@ -184,18 +200,22 @@ public class TableViewerRow extends ViewerRow {
 		return null;
 	}
 
+	@Override
 	public TreePath getTreePath() {
 		return new TreePath(new Object[] {item.getData()});
 	}
 
+	@Override
 	public Object clone() {
 		return new TableViewerRow(item);
 	}
 
+	@Override
 	public Object getElement() {
 		return item.getData();
 	}
 
+	@Override
 	public int getVisualIndex(int creationIndex) {
 		int[] order = item.getParent().getColumnOrder();
 
@@ -208,6 +228,7 @@ public class TableViewerRow extends ViewerRow {
 		return super.getVisualIndex(creationIndex);
 	}
 
+	@Override
 	public int getCreationIndex(int visualIndex) {
 		if( item != null && ! item.isDisposed() && hasColumns() && isValidOrderIndex(visualIndex) ) {
 			return item.getParent().getColumnOrder()[visualIndex];
@@ -218,6 +239,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getTextBounds(int)
 	 */
+	@Override
 	public Rectangle getTextBounds(int index) {
 		return item.getTextBounds(index);
 	}
@@ -225,6 +247,7 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getImageBounds(int)
 	 */
+	@Override
 	public Rectangle getImageBounds(int index) {
 		return item.getImageBounds(index);
 	}
@@ -237,10 +260,12 @@ public class TableViewerRow extends ViewerRow {
 		return currentIndex < this.item.getParent().getColumnOrder().length;
 	}
 	
+	@Override
 	int getWidth(int columnIndex) {
 		return item.getParent().getColumn(columnIndex).getWidth();
 	}
 	
+	@Override
 	protected boolean scrollCellIntoView(int columnIndex) {
 		item.getParent().showItem(item);
 		if( hasColumns() ) {

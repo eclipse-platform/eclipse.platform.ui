@@ -161,7 +161,8 @@ public class CoolBarManager extends ContributionManager implements
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionManager#checkDuplication(org.eclipse.jface.action.IContributionItem)
      */
-    protected boolean allowItem(IContributionItem itemToAdd) {
+    @Override
+	protected boolean allowItem(IContributionItem itemToAdd) {
         /* We will allow as many null entries as they like, though there should
          * be none.
          */
@@ -454,7 +455,8 @@ public class CoolBarManager extends ContributionManager implements
      * 
      * @see org.eclipse.jface.action.ContributionManager#itemAdded(org.eclipse.jface.action.IContributionItem)
      */
-    protected void itemAdded(IContributionItem item) {
+    @Override
+	protected void itemAdded(IContributionItem item) {
         Assert.isNotNull(item);
         super.itemAdded(item);
         int insertedAt = indexOf(item);
@@ -482,7 +484,8 @@ public class CoolBarManager extends ContributionManager implements
      * 
      * @see org.eclipse.jface.action.ContributionManager#itemRemoved(org.eclipse.jface.action.IContributionItem)
      */
-    protected void itemRemoved(IContributionItem item) {
+    @Override
+	protected void itemRemoved(IContributionItem item) {
         Assert.isNotNull(item);
         super.itemRemoved(item);
         CoolItem coolItem = findCoolItem(item);

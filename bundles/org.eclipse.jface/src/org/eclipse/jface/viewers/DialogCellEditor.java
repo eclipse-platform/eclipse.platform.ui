@@ -98,7 +98,8 @@ public abstract class DialogCellEditor extends CellEditor {
      * Internal class for laying out the dialog.
      */
     private class DialogCellLayout extends Layout {
-        public void layout(Composite editor, boolean force) {
+        @Override
+		public void layout(Composite editor, boolean force) {
             Rectangle bounds = editor.getClientArea();
             Point size = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
             if (contents != null) {
@@ -107,7 +108,8 @@ public abstract class DialogCellEditor extends CellEditor {
             button.setBounds(bounds.width - size.x, 0, size.x, bounds.height);
         }
 
-        public Point computeSize(Composite editor, int wHint, int hHint,
+        @Override
+		public Point computeSize(Composite editor, int wHint, int hHint,
                 boolean force) {
             if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 				return new Point(wHint, hHint);
@@ -203,7 +205,8 @@ public abstract class DialogCellEditor extends CellEditor {
     /* (non-Javadoc)
      * Method declared on CellEditor.
      */
-    protected Control createControl(Composite parent) {
+    @Override
+	protected Control createControl(Composite parent) {
 
         Font font = parent.getFont();
         Color bg = parent.getBackground();
@@ -223,7 +226,8 @@ public abstract class DialogCellEditor extends CellEditor {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
              */
-            public void keyReleased(KeyEvent e) {
+            @Override
+			public void keyReleased(KeyEvent e) {
                 if (e.character == '\u001b') { // Escape
                     fireCancelEditor();
                 }
@@ -236,7 +240,8 @@ public abstract class DialogCellEditor extends CellEditor {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
-            public void widgetSelected(SelectionEvent event) {
+            @Override
+			public void widgetSelected(SelectionEvent event) {
             	// Remove the button's focus listener since it's guaranteed
             	// to lose focus when the dialog opens
             	button.removeFocusListener(getButtonFocusListener());
@@ -273,7 +278,8 @@ public abstract class DialogCellEditor extends CellEditor {
      * 
      * @see org.eclipse.jface.viewers.CellEditor#deactivate()
      */
-    public void deactivate() {
+    @Override
+	public void deactivate() {
     	if (button != null && !button.isDisposed()) {
     		button.removeFocusListener(getButtonFocusListener());
     	}
@@ -284,7 +290,8 @@ public abstract class DialogCellEditor extends CellEditor {
 	/* (non-Javadoc)
      * Method declared on CellEditor.
      */
-    protected Object doGetValue() {
+    @Override
+	protected Object doGetValue() {
         return value;
     }
 
@@ -292,7 +299,8 @@ public abstract class DialogCellEditor extends CellEditor {
      * Method declared on CellEditor.
      * The focus is set to the cell editor's button. 
      */
-    protected void doSetFocus() {
+    @Override
+	protected void doSetFocus() {
         button.setFocus();
         
         // add a FocusListener to the button
@@ -329,7 +337,8 @@ public abstract class DialogCellEditor extends CellEditor {
 	/* (non-Javadoc)
      * Method declared on CellEditor.
      */
-    protected void doSetValue(Object value) {
+    @Override
+	protected void doSetValue(Object value) {
         this.value = value;
         updateContents(value);
     }

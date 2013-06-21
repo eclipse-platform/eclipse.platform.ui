@@ -36,12 +36,14 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class TextState extends PersistentState {
 
+	@Override
 	public final void load(final IPreferenceStore store,
 			final String preferenceKey) {
 		final String value = store.getString(preferenceKey);
 		setValue(value);
 	}
 
+	@Override
 	public final void save(final IPreferenceStore store,
 			final String preferenceKey) {
 		final Object value = getValue();
@@ -50,6 +52,7 @@ public class TextState extends PersistentState {
 		}
 	}
 
+	@Override
 	public void setValue(final Object value) {
 		if (!(value instanceof String) && value != null) {
 			throw new IllegalArgumentException(

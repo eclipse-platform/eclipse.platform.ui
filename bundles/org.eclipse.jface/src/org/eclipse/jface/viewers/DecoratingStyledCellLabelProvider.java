@@ -127,6 +127,7 @@ public class DecoratingStyledCellLabelProvider extends
 		return isDecorationPending;
 	}
 
+	@Override
 	public void update(ViewerCell cell) {
 		if (waitForPendingDecoration(cell)) {
 			return; // wait until the decoration is ready
@@ -134,6 +135,7 @@ public class DecoratingStyledCellLabelProvider extends
 		super.update(cell);
 	}
 
+	@Override
 	public Color getForeground(Object element) {
 		if (this.decorator instanceof IColorDecorator) {
 			Color foreground = ((IColorDecorator) this.decorator)
@@ -144,6 +146,7 @@ public class DecoratingStyledCellLabelProvider extends
 		return super.getForeground(element);
 	}
 
+	@Override
 	public Color getBackground(Object element) {
 		if (this.decorator instanceof IColorDecorator) {
 			Color color = ((IColorDecorator) this.decorator)
@@ -154,6 +157,7 @@ public class DecoratingStyledCellLabelProvider extends
 		return super.getBackground(element);
 	}
 
+	@Override
 	public Font getFont(Object element) {
 		if (this.decorator instanceof IFontDecorator) {
 			Font font = ((IFontDecorator) this.decorator).decorateFont(element);
@@ -163,6 +167,7 @@ public class DecoratingStyledCellLabelProvider extends
 		return super.getFont(element);
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		Image image = super.getImage(element);
 		if (this.decorator == null) {
@@ -188,6 +193,7 @@ public class DecoratingStyledCellLabelProvider extends
 	 *            the element for which to provide the styled label text
 	 * @return the styled text string used to label the element
 	 */
+	@Override
 	protected StyledString getStyledText(Object element) {
 		StyledString styledString = super.getStyledText(element);
 		if (this.decorator == null) {
@@ -260,6 +266,7 @@ public class DecoratingStyledCellLabelProvider extends
 		fireLabelProviderChanged(new LabelProviderChangedEvent(this));
 	}
 
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		super.addListener(listener);
 		if (this.decorator != null) {
@@ -267,6 +274,7 @@ public class DecoratingStyledCellLabelProvider extends
 		}
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		super.removeListener(listener);
 		if (this.decorator != null && !isListenerAttached()) {
@@ -274,6 +282,7 @@ public class DecoratingStyledCellLabelProvider extends
 		}
 	}
 
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		if (super.isLabelProperty(element, property)) {
 			return true;
@@ -282,6 +291,7 @@ public class DecoratingStyledCellLabelProvider extends
 				&& this.decorator.isLabelProperty(element, property);
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (this.decorator != null) {

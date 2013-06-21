@@ -130,7 +130,8 @@ public class SubStatusLineManager extends SubContributionManager implements
     /* (non-Javadoc)
      * Method declared on SubContributionManager.
      */
-    public void setVisible(boolean visible) {
+    @Override
+	public void setVisible(boolean visible) {
         super.setVisible(visible);
         if (visible) {
             getParentStatusLineManager().setErrorMessage(errorImage,

@@ -97,6 +97,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		if (style == SEPARATE_LABEL) {
 			numColumns--;
@@ -107,6 +108,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		String text = getLabelText();
 		switch (style) {
@@ -151,6 +153,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	 * (non-Javadoc) Method declared on FieldEditor. Loads the value from the
 	 * preference store and sets it to the check box.
 	 */
+	@Override
 	protected void doLoad() {
 		if (checkBox != null) {
 			boolean value = getPreferenceStore().getBoolean(getPreferenceName());
@@ -163,6 +166,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	 * (non-Javadoc) Method declared on FieldEditor. Loads the default value
 	 * from the preference store and sets it to the check box.
 	 */
+	@Override
 	protected void doLoadDefault() {
 		if (checkBox != null) {
 			boolean value = getPreferenceStore().getDefaultBoolean(getPreferenceName());
@@ -174,6 +178,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void doStore() {
 		getPreferenceStore().setValue(getPreferenceName(), checkBox.getSelection());
 	}
@@ -200,6 +205,7 @@ public class BooleanFieldEditor extends FieldEditor {
 			checkBox = new Button(parent, SWT.CHECK | SWT.LEFT);
 			checkBox.setFont(parent.getFont());
 			checkBox.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					boolean isSelected = checkBox.getSelection();
 					valueChanged(wasSelected, isSelected);
@@ -220,6 +226,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	public int getNumberOfControls() {
 		switch (style) {
 		case SEPARATE_LABEL:
@@ -232,6 +239,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	public void setFocus() {
 		if (checkBox != null) {
 			checkBox.setFocus();
@@ -241,6 +249,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	public void setLabelText(String text) {
 		super.setLabelText(text);
 		Label label = getLabelControl();
@@ -269,6 +278,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	/*
 	 * @see FieldEditor.setEnabled
 	 */
+	@Override
 	public void setEnabled(boolean enabled, Composite parent) {
 		// Only call super if there is a label already
 		if (style == SEPARATE_LABEL) {

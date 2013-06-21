@@ -136,7 +136,8 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
         if (!(o instanceof DecorationOverlayIcon)) {
 			return false;
 		}
@@ -148,7 +149,8 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         int code = System.identityHashCode(base);
         for (int i = 0; i < overlays.length; i++) {
             if (overlays[i] != null) {
@@ -161,7 +163,8 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
      */
-    protected void drawCompositeImage(int width, int height) {
+    @Override
+	protected void drawCompositeImage(int width, int height) {
     	if (overlays.length > IDecoration.UNDERLAY) {
 	        ImageDescriptor underlay = overlays[IDecoration.UNDERLAY];
 	        if (underlay != null) {
@@ -179,14 +182,16 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
      */
-    protected Point getSize() {
+    @Override
+	protected Point getSize() {
         return size;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.CompositeImageDescriptor#getTransparentPixel()
      */
-    protected int getTransparentPixel() {
+    @Override
+	protected int getTransparentPixel() {
     	return base.getImageData().transparentPixel;
     }
 

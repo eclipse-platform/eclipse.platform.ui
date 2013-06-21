@@ -57,6 +57,7 @@ public final class ActionHandler extends AbstractHandler {
 		this.action = action;
 	}
 
+	@Override
 	public final void addHandlerListener(final IHandlerListener handlerListener) {
 		if (!hasListeners()) {
 			attachListener();
@@ -101,6 +102,7 @@ public final class ActionHandler extends AbstractHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#dispose()
 	 */
+	@Override
 	public final void dispose() {
 		if (hasListeners()) {
 			action.removePropertyChangeListener(propertyChangeListener);
@@ -137,14 +139,17 @@ public final class ActionHandler extends AbstractHandler {
 		return action;
 	}
 	
+	@Override
 	public final boolean isEnabled() {
 		return action.isEnabled();
 	}
 	
+	@Override
 	public final boolean isHandled() {
 		return action.isHandled();
 	}
 	
+	@Override
 	public final void removeHandlerListener(
 			final IHandlerListener handlerListener) {
 		super.removeHandlerListener(handlerListener);
@@ -154,6 +159,7 @@ public final class ActionHandler extends AbstractHandler {
 		}
 	}
 	
+	@Override
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 

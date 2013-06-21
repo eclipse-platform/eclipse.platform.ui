@@ -85,6 +85,7 @@ public class DefaultToolTip extends ToolTip {
 	 *            the parent of the content area
 	 * @return the content area created
 	 */
+	@Override
 	protected Composite createToolTipContentArea(Event event, Composite parent) {
 		Image image = getImage(event);
 		Image bgImage = getBackgroundImage(event);

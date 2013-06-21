@@ -79,7 +79,8 @@ public class IntegerFieldEditor extends StringFieldEditor {
      * Method declared on StringFieldEditor.
      * Checks whether the entered String is a valid integer or not.
      */
-    protected boolean checkState() {
+    @Override
+	protected boolean checkState() {
 
         Text text = getTextControl();
 
@@ -108,7 +109,8 @@ public class IntegerFieldEditor extends StringFieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void doLoad() {
+    @Override
+	protected void doLoad() {
         Text text = getTextControl();
         if (text != null) {
             int value = getPreferenceStore().getInt(getPreferenceName());
@@ -121,7 +123,8 @@ public class IntegerFieldEditor extends StringFieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void doLoadDefault() {
+    @Override
+	protected void doLoadDefault() {
         Text text = getTextControl();
         if (text != null) {
             int value = getPreferenceStore().getDefaultInt(getPreferenceName());
@@ -133,7 +136,8 @@ public class IntegerFieldEditor extends StringFieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void doStore() {
+    @Override
+	protected void doStore() {
         Text text = getTextControl();
         if (text != null) {
             Integer i = new Integer(text.getText());

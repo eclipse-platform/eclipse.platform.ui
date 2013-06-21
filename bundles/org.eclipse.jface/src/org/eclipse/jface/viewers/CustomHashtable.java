@@ -407,7 +407,8 @@ import java.util.NoSuchElementException;
      *
      * @return		the string representation of this Hashtable
      */
-    public String toString() {
+    @Override
+	public String toString() {
         if (size() == 0) {
 			return "{}"; //$NON-NLS-1$
 		}

@@ -624,6 +624,7 @@ public abstract class Dialog extends Window {
 		button.setFont(JFaceResources.getDialogFont());
 		button.setData(new Integer(id));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				buttonPressed(((Integer) event.widget.getData()).intValue());
 			}
@@ -712,6 +713,7 @@ public abstract class Dialog extends Window {
 	 * {@link Display#getDismissalAlignment() platform convention}.
 	 * </p>
 	 */
+	@Override
 	protected void initializeBounds() {
 		Shell shell = getShell();
 		if (shell != null) {
@@ -759,6 +761,7 @@ public abstract class Dialog extends Window {
 	 * <code>createButtonBar</code> are recommended rather than overriding
 	 * this method.
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		// create the top level composite for the dialog
 		Composite composite = new Composite(parent, 0);
@@ -986,6 +989,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
+	@Override
 	public boolean close() {
 		if (getShell() != null && !getShell().isDisposed()) {
 			saveDialogBounds(getShell());
@@ -1100,6 +1104,7 @@ public abstract class Dialog extends Window {
 	 * 
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
+	@Override
 	public void create() {
 		super.create();
 		applyDialogFont(buttonBar);
@@ -1207,6 +1212,7 @@ public abstract class Dialog extends Window {
 	 * @see #getDialogBoundsSettings()
 	 * @see #getDialogBoundsStrategy()
 	 */
+	@Override
 	protected Point getInitialSize() {
 		Point result = super.getInitialSize();
 		
@@ -1267,6 +1273,7 @@ public abstract class Dialog extends Window {
 	 * @see #getDialogBoundsSettings()
 	 * @see #getDialogBoundsStrategy()
 	 */
+	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		Point result = super.getInitialLocation(initialSize);
 		if ((getDialogBoundsStrategy() & DIALOG_PERSISTLOCATION)!= 0) {

@@ -136,6 +136,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 */
 	private void addAccessibleListeners(Label label, final Image image) {
 		label.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent event) {
 				final String accessibleMessage = getAccessibleMessageFor(image);
 				if (accessibleMessage == null) {
@@ -160,6 +161,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 	/*
 	 * @see Dialog.createButtonBar()
 	 */
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(0) // this is incremented
@@ -188,6 +190,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 	/*
 	 * @see Dialog.createContents(Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		// initialize the dialog units
 		initializeDialogUnits(parent);

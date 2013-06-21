@@ -80,7 +80,8 @@ public class CheckboxCellEditor extends CellEditor {
      * the toggling of the checkbox control and notifies
      * listeners with <code>ICellEditorListener.applyEditorValue</code>.
      */
-    public void activate() {
+    @Override
+	public void activate() {
         value = !value;
         fireApplyEditorValue();
     }
@@ -90,7 +91,8 @@ public class CheckboxCellEditor extends CellEditor {
      * this <code>CellEditor</code> framework method does
      * nothing and returns <code>null</code>.
      */
-    protected Control createControl(Composite parent) {
+    @Override
+	protected Control createControl(Composite parent) {
         return null;
     }
 
@@ -101,14 +103,16 @@ public class CheckboxCellEditor extends CellEditor {
      *
      * @return the Boolean checkbox value
      */
-    protected Object doGetValue() {
+    @Override
+	protected Object doGetValue() {
         return value ? Boolean.TRUE : Boolean.FALSE;
     }
 
     /* (non-Javadoc)
      * Method declared on CellEditor.
      */
-    protected void doSetFocus() {
+    @Override
+	protected void doSetFocus() {
         // Ignore
     }
 
@@ -119,12 +123,14 @@ public class CheckboxCellEditor extends CellEditor {
      *
      * @param value a Boolean value
      */
-    protected void doSetValue(Object value) {
+    @Override
+	protected void doSetValue(Object value) {
         Assert.isTrue(value instanceof Boolean);
         this.value = ((Boolean) value).booleanValue();
     }
 
-    public void activate(ColumnViewerEditorActivationEvent activationEvent) {
+    @Override
+	public void activate(ColumnViewerEditorActivationEvent activationEvent) {
     	if (activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL) {
     		super.activate(activationEvent);
     	}

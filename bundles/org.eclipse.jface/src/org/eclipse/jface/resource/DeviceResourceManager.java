@@ -36,7 +36,8 @@ public final class DeviceResourceManager extends AbstractResourceManager {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.ResourceManager#getDevice()
      */
-    public Device getDevice() {
+    @Override
+	public Device getDevice() {
         return device;
     }
     
@@ -52,21 +53,24 @@ public final class DeviceResourceManager extends AbstractResourceManager {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.AbstractResourceManager#allocate(org.eclipse.jface.resource.DeviceResourceDescriptor)
      */
-    protected Object allocate(DeviceResourceDescriptor descriptor) throws DeviceResourceException {
+    @Override
+	protected Object allocate(DeviceResourceDescriptor descriptor) throws DeviceResourceException {
         return descriptor.createResource(device);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.AbstractResourceManager#deallocate(java.lang.Object, org.eclipse.jface.resource.DeviceResourceDescriptor)
      */
-    protected void deallocate(Object resource, DeviceResourceDescriptor descriptor) {
+    @Override
+	protected void deallocate(Object resource, DeviceResourceDescriptor descriptor) {
         descriptor.destroyResource(resource);
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.ResourceManager#getDefaultImage()
      */
-    protected Image getDefaultImage() {
+    @Override
+	protected Image getDefaultImage() {
         if (missingImage == null) {
             missingImage = ImageDescriptor.getMissingImageDescriptor().createImage();
         }
@@ -76,7 +80,8 @@ public final class DeviceResourceManager extends AbstractResourceManager {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.AbstractResourceManager#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         super.dispose();
         if (missingImage != null) {
             missingImage.dispose();

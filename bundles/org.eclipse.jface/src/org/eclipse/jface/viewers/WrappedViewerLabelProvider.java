@@ -77,6 +77,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 	 */
+	@Override
 	public Font getFont(Object element) {
 		if (fontProvider == null) {
 			return null;
@@ -91,6 +92,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
+	@Override
 	public Color getBackground(Object element) {
 		if (colorProvider == null) {
 			return null;
@@ -104,6 +106,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		return getLabelProvider().getText(element);
 	}
@@ -113,6 +116,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		return getLabelProvider().getImage(element);
 	}
@@ -122,6 +126,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
+	@Override
 	public Color getForeground(Object element) {
 		if (colorProvider == null) {
 			return null;
@@ -157,6 +162,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 		return fontProvider;
 	}
 
+	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
 		if(viewerLabelProvider == null && treePathLabelProvider == null){

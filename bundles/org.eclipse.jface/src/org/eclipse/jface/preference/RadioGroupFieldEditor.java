@@ -140,7 +140,8 @@ public class RadioGroupFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void adjustForNumColumns(int numColumns) {
+    @Override
+	protected void adjustForNumColumns(int numColumns) {
         Control control = getLabelControl();
         if (control != null) {
             ((GridData) control.getLayoutData()).horizontalSpan = numColumns;
@@ -171,7 +172,8 @@ public class RadioGroupFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void doFillIntoGrid(Composite parent, int numColumns) {
+    @Override
+	protected void doFillIntoGrid(Composite parent, int numColumns) {
         if (useGroup) {
             Control control = getRadioBoxControl(parent);
             GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -193,21 +195,24 @@ public class RadioGroupFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void doLoad() {
+    @Override
+	protected void doLoad() {
         updateValue(getPreferenceStore().getString(getPreferenceName()));
     }
 
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void doLoadDefault() {
+    @Override
+	protected void doLoadDefault() {
         updateValue(getPreferenceStore().getDefaultString(getPreferenceName()));
     }
 
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void doStore() {
+    @Override
+	protected void doStore() {
         if (value == null) {
             getPreferenceStore().setToDefault(getPreferenceName());
             return;
@@ -219,7 +224,8 @@ public class RadioGroupFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    public int getNumberOfControls() {
+    @Override
+	public int getNumberOfControls() {
         return 1;
     }
 
@@ -265,7 +271,8 @@ public class RadioGroupFieldEditor extends FieldEditor {
                 radio.setData(labelAndValue[1]);
                 radio.setFont(font);
                 radio.addSelectionListener(new SelectionAdapter() {
-                    public void widgetSelected(SelectionEvent event) {
+                    @Override
+					public void widgetSelected(SelectionEvent event) {
                         String oldValue = value;
                         value = (String) event.widget.getData();
                         setPresentsDefaultValue(false);
@@ -337,7 +344,8 @@ public class RadioGroupFieldEditor extends FieldEditor {
     /*
      * @see FieldEditor.setEnabled(boolean,Composite).
      */
-    public void setEnabled(boolean enabled, Composite parent) {
+    @Override
+	public void setEnabled(boolean enabled, Composite parent) {
         if (!useGroup) {
 			super.setEnabled(enabled, parent);
 		}

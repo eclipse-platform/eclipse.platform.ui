@@ -106,7 +106,8 @@ public class InputDialog extends Dialog {
     /*
      * (non-Javadoc) Method declared on Dialog.
      */
-    protected void buttonPressed(int buttonId) {
+    @Override
+	protected void buttonPressed(int buttonId) {
         if (buttonId == IDialogConstants.OK_ID) {
             value = text.getText();
         } else {
@@ -120,7 +121,8 @@ public class InputDialog extends Dialog {
      * 
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
-    protected void configureShell(Shell shell) {
+    @Override
+	protected void configureShell(Shell shell) {
         super.configureShell(shell);
         if (title != null) {
 			shell.setText(title);
@@ -132,7 +134,8 @@ public class InputDialog extends Dialog {
      * 
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
      */
-    protected void createButtonsForButtonBar(Composite parent) {
+    @Override
+	protected void createButtonsForButtonBar(Composite parent) {
         // create OK and Cancel buttons by default
         okButton = createButton(parent, IDialogConstants.OK_ID,
                 IDialogConstants.OK_LABEL, true);
@@ -150,7 +153,8 @@ public class InputDialog extends Dialog {
     /*
      * (non-Javadoc) Method declared on Dialog.
      */
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         // create composite
         Composite composite = (Composite) super.createDialogArea(parent);
         // create message

@@ -184,6 +184,7 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 		return false;
 	}
 
+	@Override
 	protected void focusCellChanged(ViewerCell newCell, ViewerCell oldCell) {
 		super.focusCellChanged(newCell, oldCell);
 

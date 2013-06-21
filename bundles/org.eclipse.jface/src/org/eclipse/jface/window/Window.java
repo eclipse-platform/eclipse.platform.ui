@@ -682,6 +682,7 @@ public abstract class Window implements IShellProvider {
 	 */
 	protected ShellListener getShellListener() {
 		return new ShellAdapter() {
+			@Override
 			public void shellClosed(ShellEvent event) {
 				event.doit = false; // don't close now
 				if (canHandleShellCloseEvent()) {

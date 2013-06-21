@@ -222,6 +222,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		/*
 		 * (non-Javadoc) Method declared on Layout.
 		 */
+		@Override
 		public Point computeSize(Composite composite, int wHint, int hHint,
 				boolean force) {
 			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
@@ -273,6 +274,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		/*
 		 * (non-Javadoc) Method declared on Layout.
 		 */
+		@Override
 		public void layout(Composite composite, boolean force) {
 			Rectangle rect = getClientArea(composite);
 			Control[] children = composite.getChildren();
@@ -319,6 +321,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		// since VAJava can't initialize an instance var with an anonymous
 		// class outside a constructor we do it here:
 		cancelListener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				cancelPressed();
 			}
@@ -414,6 +417,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 		case IDialogConstants.HELP_ID: {
@@ -463,6 +467,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected void cancelPressed() {
 		if (activeRunningOperations <= 0) {
 			// Close the dialog. The check whether the dialog can be
@@ -481,6 +486,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 * 
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
+	@Override
 	public boolean close() {
 		if (okToClose()) {
 			return hardClose();
@@ -491,6 +497,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	/*
 	 * (non-Javadoc) Method declared on Window.
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		// Register help listener on the shell
@@ -515,6 +522,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 * @param parent
 	 *            the parent composite to contain the buttons
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		((GridLayout) parent.getLayout()).makeColumnsEqualWidth = false;
 		if (wizard.isHelpAvailable()) {
@@ -540,6 +548,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#setButtonLayoutData(org.eclipse.swt.widgets.Button)
 	 */
+	@Override
 	protected void setButtonLayoutData(Button button) {
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -582,6 +591,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 *            the button id
 	 * @return the button corresponding to the button id
 	 */
+	@Override
 	protected Button getButton(int id) {
 		if (id == IDialogConstants.CANCEL_ID) {
 			return cancelButton;
@@ -598,6 +608,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 * pre-create their page controls prior to opening, so that the wizard opens
 	 * to the correct size. And finally it shows the first page.
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		// Allow the wizard to add pages to itself
 		// Need to call this now so page count is correct
@@ -614,6 +625,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		// Build the Page container
@@ -657,6 +669,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			 * 
 			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#setBlocked(org.eclipse.core.runtime.IStatus)
 			 */
+			@Override
 			public void setBlocked(IStatus reason) {
 				super.setBlocked(reason);
 				if (!lockedUI) {
@@ -670,6 +683,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			 * 
 			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#clearBlocked()
 			 */
+			@Override
 			public void clearBlocked() {
 				super.clearBlocked();
 				if (!lockedUI) {
@@ -683,6 +697,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#beginTask(java.lang.String,
 			 *      int)
 			 */
+			@Override
 			public void beginTask(String name, int totalWork) {
 				super.beginTask(name, totalWork);
 				currentTask = name;
@@ -693,6 +708,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			 * 
 			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#setTaskName(java.lang.String)
 			 */
+			@Override
 			public void setTaskName(String name) {
 				super.setTaskName(name);
 				currentTask = name;
@@ -703,6 +719,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			 * 
 			 * @see org.eclipse.jface.wizard.ProgressMonitorPart#subTask(java.lang.String)
 			 */
+			@Override
 			public void subTask(String name) {
 				super.subTask(name);
 				// If we haven't got anything yet use this value for more
@@ -780,12 +797,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		// make sure screen readers skip visual '<', '>' chars on buttons:
 		final String backReaderText = IDialogConstants.BACK_LABEL.replace('<', ' ');
 		backButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = backReaderText;
 			}
 		});
 		final String nextReaderText = IDialogConstants.NEXT_LABEL.replace('>', ' ');
 		nextButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = nextReaderText;
 			}
@@ -805,6 +824,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 				JFaceResources.getString("WizardClosingDialog.message"), //$NON-NLS-1$
 				MessageDialog.QUESTION,
 				new String[] { IDialogConstants.OK_LABEL }, 0) {
+			@Override
 			protected int getShellStyle() {
 				return super.getShellStyle() | SWT.SHEET;
 			}

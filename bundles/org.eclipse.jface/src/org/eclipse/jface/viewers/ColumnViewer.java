@@ -70,6 +70,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	}
 
+	@Override
 	protected void hookControl(Control control) {
 		super.hookControl(control);
 		viewerEditor = createViewerEditor();
@@ -89,6 +90,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		// own impl
 		if (viewerEditor != null) {
 			mouseListener = new MouseAdapter() {
+				@Override
 				public void mouseDown(MouseEvent e) {
 					// Workaround for bug 185817
 					if (e.count != 2) {
@@ -96,6 +98,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 					}
 				}
 
+				@Override
 				public void mouseDoubleClick(MouseEvent e) {
 					handleMouseDown(e);
 				}
@@ -223,6 +226,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 				 * org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang
 				 * .Object)
 				 */
+				@Override
 				public boolean canEdit(Object element) {
 					Object[] properties = getColumnProperties();
 
@@ -241,6 +245,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 				 * org.eclipse.jface.viewers.EditingSupport#getCellEditor(java
 				 * .lang.Object)
 				 */
+				@Override
 				public CellEditor getCellEditor(Object element) {
 					CellEditor[] editors = getCellEditors();
 					if (columnIndex < editors.length) {
@@ -256,6 +261,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 				 * org.eclipse.jface.viewers.EditingSupport#getValue(java.lang
 				 * .Object)
 				 */
+				@Override
 				public Object getValue(Object element) {
 					Object[] properties = getColumnProperties();
 
@@ -274,6 +280,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 				 * org.eclipse.jface.viewers.EditingSupport#setValue(java.lang
 				 * .Object, java.lang.Object)
 				 */
+				@Override
 				public void setValue(Object element, Object value) {
 					Object[] properties = getColumnProperties();
 
@@ -284,6 +291,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 					}
 				}
 
+				@Override
 				boolean isLegacySupport() {
 					return true;
 				}
@@ -338,6 +346,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getItem(int, int)
 	 */
+	@Override
 	protected Item getItem(int x, int y) {
 		return getItemAt(getControl().toControl(x, y));
 	}
@@ -363,6 +372,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * </p>
 	 * 
 	 */
+	@Override
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
 		Assert.isTrue(labelProvider instanceof ITableLabelProvider
 				|| labelProvider instanceof ILabelProvider
@@ -375,6 +385,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		}
 	}
 
+	@Override
 	void internalDisposeLabelProvider(IBaseLabelProvider oldProvider) {
 		if (oldProvider instanceof CellLabelProvider) {
 			((CellLabelProvider) oldProvider).dispose(this, null);
@@ -533,6 +544,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		return false;
 	}
 
+	@Override
 	public void refresh(Object element) {
 		if (checkBusy())
 			return;
@@ -544,6 +556,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		super.refresh(element);
 	}
 
+	@Override
 	public void refresh(Object element, boolean updateLabels) {
 		if (checkBusy())
 			return;
@@ -555,6 +568,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		super.refresh(element, updateLabels);
 	}
 
+	@Override
 	public void update(Object element, String[] properties) {
 		if (checkBusy())
 			return;
@@ -676,6 +690,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ContentViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
 	 */
+	@Override
 	protected void handleDispose(DisposeEvent event) {
 		if (mouseListener != null && event.widget instanceof Control) {
 			((Control)event.widget).removeMouseListener(mouseListener);
@@ -714,6 +729,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		return viewerEditor;
 	}
 
+	@Override
 	protected Object[] getRawChildren(Object parent) {
 		boolean oldBusy = isBusy();
 		setBusy(true);

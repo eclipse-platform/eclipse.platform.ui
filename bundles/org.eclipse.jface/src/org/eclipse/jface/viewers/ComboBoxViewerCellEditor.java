@@ -77,6 +77,7 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 	/*
 	 * (non-Javadoc) Method declared on CellEditor.
 	 */
+	@Override
 	protected Control createControl(Composite parent) {
 
 		CCombo comboBox = new CCombo(parent, getStyle());
@@ -85,16 +86,19 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 
 		comboBox.addKeyListener(new KeyAdapter() {
 			// hook key pressed - see PR 14201
+			@Override
 			public void keyPressed(KeyEvent e) {
 				keyReleaseOccured(e);
 			}
 		});
 
 		comboBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent event) {
 				applyEditorValueAndDeactivate();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				ISelection selection = viewer.getSelection();
 				if (selection.isEmpty()) {
@@ -116,6 +120,7 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 		});
 
 		comboBox.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusLost(FocusEvent e) {
 				ComboBoxViewerCellEditor.this.focusLost();
 			}
@@ -131,6 +136,7 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 	 * @return the zero-based index of the current selection wrapped as an
 	 *         <code>Integer</code>
 	 */
+	@Override
 	protected Object doGetValue() {
 		return selectedValue;
 	}
@@ -138,6 +144,7 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 	/*
 	 * (non-Javadoc) Method declared on CellEditor.
 	 */
+	@Override
 	protected void doSetFocus() {
 		viewer.getControl().setFocus();
 	}
@@ -150,6 +157,7 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 	 * to make sure the arrow button and some text is visible. The list of
 	 * CCombo will be wide enough to show its longest item.
 	 */
+	@Override
 	public LayoutData getLayoutData() {
 		LayoutData layoutData = super.getLayoutData();
 		if ((viewer.getControl() == null) || viewer.getControl().isDisposed()) {
@@ -170,6 +178,7 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 	 * @param value
 	 *            the new value
 	 */
+	@Override
 	protected void doSetValue(Object value) {
 	    Assert.isTrue(viewer != null);
 	    selectedValue = value;
@@ -258,6 +267,7 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 	 *
 	 * @see org.eclipse.jface.viewers.CellEditor#focusLost()
 	 */
+	@Override
 	protected void focusLost() {
 		if (isActivated()) {
 			applyEditorValueAndDeactivate();
@@ -269,6 +279,7 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 	 *
 	 * @see org.eclipse.jface.viewers.CellEditor#keyReleaseOccured(org.eclipse.swt.events.KeyEvent)
 	 */
+	@Override
 	protected void keyReleaseOccured(KeyEvent keyEvent) {
 		if (keyEvent.character == '\u001b') { // Escape character
 			fireCancelEditor();

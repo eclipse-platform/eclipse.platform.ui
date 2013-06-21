@@ -218,6 +218,7 @@ public class DecoratedField {
 				}
 			});
 			hoverShell.addMouseListener(new MouseAdapter() {
+				@Override
 				public void mouseDown(MouseEvent e) {
 					hideHover();
 				}

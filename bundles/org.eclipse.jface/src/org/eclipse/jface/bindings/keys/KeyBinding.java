@@ -100,6 +100,7 @@ public final class KeyBinding extends Binding {
 	 * 
 	 * @see org.eclipse.jface.bindings.Binding#getTriggerSequence()
 	 */
+	@Override
 	public TriggerSequence getTriggerSequence() {
 		return getKeySequence();
 	}

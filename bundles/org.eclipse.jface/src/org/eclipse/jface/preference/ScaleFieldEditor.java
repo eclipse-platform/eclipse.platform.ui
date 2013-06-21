@@ -102,7 +102,8 @@ public class ScaleFieldEditor extends FieldEditor {
      * 
      * @see org.eclipse.jface.preference.FieldEditor#adjustForNumColumns(int)
      */
-    protected void adjustForNumColumns(int numColumns) {
+    @Override
+	protected void adjustForNumColumns(int numColumns) {
         ((GridData) scale.getLayoutData()).horizontalSpan = numColumns - 1;
     }
 
@@ -112,7 +113,8 @@ public class ScaleFieldEditor extends FieldEditor {
      * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite,
      *      int)
      */
-    protected void doFillIntoGrid(Composite parent, int numColumns) {
+    @Override
+	protected void doFillIntoGrid(Composite parent, int numColumns) {
         Control control = getLabelControl(parent);
         GridData gd = new GridData();
         control.setLayoutData(gd);
@@ -131,7 +133,8 @@ public class ScaleFieldEditor extends FieldEditor {
      * 
      * @see org.eclipse.jface.preference.FieldEditor#doLoad()
      */
-    protected void doLoad() {
+    @Override
+	protected void doLoad() {
         if (scale != null) {
             int value = getPreferenceStore().getInt(getPreferenceName());
             scale.setSelection(value);
@@ -144,7 +147,8 @@ public class ScaleFieldEditor extends FieldEditor {
      * 
      * @see org.eclipse.jface.preference.FieldEditor#doLoadDefault()
      */
-    protected void doLoadDefault() {
+    @Override
+	protected void doLoadDefault() {
         if (scale != null) {
             int value = getPreferenceStore().getDefaultInt(getPreferenceName());
             scale.setSelection(value);
@@ -157,7 +161,8 @@ public class ScaleFieldEditor extends FieldEditor {
      * 
      * @see org.eclipse.jface.preference.FieldEditor#doStore()
      */
-    protected void doStore() {
+    @Override
+	protected void doStore() {
         getPreferenceStore()
                 .setValue(getPreferenceName(), scale.getSelection());
     }
@@ -197,7 +202,8 @@ public class ScaleFieldEditor extends FieldEditor {
      * 
      * @see org.eclipse.jface.preference.FieldEditor#getNumberOfControls()
      */
-    public int getNumberOfControls() {
+    @Override
+	public int getNumberOfControls() {
         return 2;
     }
 
@@ -234,7 +240,8 @@ public class ScaleFieldEditor extends FieldEditor {
             scale = new Scale(parent, SWT.HORIZONTAL);
             scale.setFont(parent.getFont());
             scale.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent event) {
+                @Override
+				public void widgetSelected(SelectionEvent event) {
                     valueChanged();
                 }
             });
@@ -267,7 +274,8 @@ public class ScaleFieldEditor extends FieldEditor {
      * 
      * @see org.eclipse.jface.preference.FieldEditor#setFocus()
      */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         if (scale != null && !scale.isDisposed()) {
             scale.setFocus();
         }

@@ -115,6 +115,7 @@ public class ModalContext {
 		/*
 		 * (non-Javadoc) Method declared on Thread.
 		 */
+		@Override
 		public void run() {
 			try {
 				if (runnable != null) {

@@ -41,6 +41,7 @@ public class TableColumnLayout extends AbstractColumnLayout {
 	 * 
 	 * @since 3.5
 	 */
+	@Override
 	protected int getColumnCount(Scrollable tableTree) {
 		return ((Table) tableTree).getColumnCount();
 	}
@@ -50,6 +51,7 @@ public class TableColumnLayout extends AbstractColumnLayout {
 	 * 
 	 * @since 3.5
 	 */
+	@Override
 	protected void setColumnWidths(Scrollable tableTree, int[] widths) {
 		TableColumn[] columns = ((Table) tableTree).getColumns();
 		for (int i = 0; i < widths.length; i++) {
@@ -62,6 +64,7 @@ public class TableColumnLayout extends AbstractColumnLayout {
 	 * 
 	 * @since 3.5
 	 */
+	@Override
 	protected ColumnLayoutData getLayoutData(Scrollable tableTree,
 			int columnIndex) {
 		TableColumn column = ((Table) tableTree).getColumn(columnIndex);
@@ -75,6 +78,7 @@ public class TableColumnLayout extends AbstractColumnLayout {
 	/**
 	 * @since 3.5
 	 */
+	@Override
 	protected void updateColumnData(Widget column) {
 		TableColumn tColumn = (TableColumn) column;
 		Table t = tColumn.getParent();

@@ -55,6 +55,7 @@ public class ColorFieldEditor extends FieldEditor {
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		((GridData) colorSelector.getButton().getLayoutData()).horizontalSpan = numColumns - 1;
 	}
@@ -88,6 +89,7 @@ public class ColorFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		Control control = getLabelControl(parent);
 		GridData gd = new GridData();
@@ -103,6 +105,7 @@ public class ColorFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoad()
 	 */
+	@Override
 	protected void doLoad() {
 		if (colorSelector == null) {
 			return;
@@ -114,6 +117,7 @@ public class ColorFieldEditor extends FieldEditor {
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void doLoadDefault() {
 		if (colorSelector == null) {
 			return;
@@ -125,6 +129,7 @@ public class ColorFieldEditor extends FieldEditor {
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void doStore() {
 		PreferenceConverter.setValue(getPreferenceStore(), getPreferenceName(),
 				colorSelector.getColorValue());
@@ -167,6 +172,7 @@ public class ColorFieldEditor extends FieldEditor {
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	public int getNumberOfControls() {
 		return 2;
 	}
@@ -177,6 +183,7 @@ public class ColorFieldEditor extends FieldEditor {
 	 * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean,
 	 *      org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void setEnabled(boolean enabled, Composite parent) {
 		super.setEnabled(enabled, parent);
 		getChangeControl(parent).setEnabled(enabled);

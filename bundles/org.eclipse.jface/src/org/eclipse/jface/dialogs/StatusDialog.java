@@ -191,6 +191,7 @@ public abstract class StatusDialog extends TrayDialog {
 	/*
 	 * @see Window#create(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (fTitle != null) {
@@ -201,6 +202,7 @@ public abstract class StatusDialog extends TrayDialog {
 	/*
 	 * @see Window#create()
 	 */
+	@Override
 	public void create() {
 		super.create();
 		if (fLastStatus != null) {
@@ -218,6 +220,7 @@ public abstract class StatusDialog extends TrayDialog {
 	/*
 	 * @see Dialog#createButtonsForButtonBar(Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		fOkButton = createButton(parent, IDialogConstants.OK_ID,
 				IDialogConstants.OK_LABEL, true);
@@ -228,6 +231,7 @@ public abstract class StatusDialog extends TrayDialog {
 	/*
 	 * @see Dialog#createButtonBar(Composite)
 	 */
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();

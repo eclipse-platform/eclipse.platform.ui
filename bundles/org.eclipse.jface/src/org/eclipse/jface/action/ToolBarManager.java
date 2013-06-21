@@ -125,6 +125,7 @@ public class ToolBarManager extends ContributionManager implements
 	 */
 	private AccessibleListener getAccessibleListener() {
 		return new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				if (e.childID != ACC.CHILDID_SELF) {
 					ToolItem item = toolBar.getItem(e.childID);

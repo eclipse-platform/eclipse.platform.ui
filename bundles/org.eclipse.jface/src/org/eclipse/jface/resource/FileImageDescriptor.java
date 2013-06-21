@@ -65,6 +65,7 @@ class FileImageDescriptor extends ImageDescriptor {
 	/*
 	 * (non-Javadoc) Method declared on Object.
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof FileImageDescriptor)) {
 			return false;
@@ -88,6 +89,7 @@ class FileImageDescriptor extends ImageDescriptor {
 	 *      {@link ImageDescriptor#createImage(boolean, Device)} as of version
 	 *      3.4 so that the SWT OS optimised loading can be used.
 	 */
+	@Override
 	public ImageData getImageData() {
 		InputStream in = getStream();
 		ImageData result = null;
@@ -142,6 +144,7 @@ class FileImageDescriptor extends ImageDescriptor {
 	/*
 	 * (non-Javadoc) Method declared on Object.
 	 */
+	@Override
 	public int hashCode() {
 		int code = name.hashCode();
 		if (location != null) {
@@ -158,6 +161,7 @@ class FileImageDescriptor extends ImageDescriptor {
 	 * <code>Object</code> method returns a string representation of this
 	 * object which is suitable only for debugging.
 	 */
+	@Override
 	public String toString() {
 		return "FileImageDescriptor(location=" + location + ", name=" + name + ")";//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
 	}
@@ -168,6 +172,7 @@ class FileImageDescriptor extends ImageDescriptor {
 	 * @see org.eclipse.jface.resource.ImageDescriptor#createImage(boolean,
 	 *      org.eclipse.swt.graphics.Device)
 	 */
+	@Override
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
 		String path = getFilePath();
 		if (path == null)

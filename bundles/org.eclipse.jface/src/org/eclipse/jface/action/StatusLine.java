@@ -129,6 +129,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	public class StatusLineLayout extends Layout {
 		private final StatusLineLayoutData DEFAULT_DATA = new StatusLineLayoutData();
 
+		@Override
 		public Point computeSize(Composite composite, int wHint, int hHint,
 				boolean changed) {
 
@@ -170,6 +171,7 @@ import org.eclipse.swt.widgets.ToolItem;
 			return new Point(totalWidth, maxHeight);
 		}
 
+		@Override
 		public void layout(Composite composite, boolean flushCache) {
 
 			if (composite == null) {
@@ -268,6 +270,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		super(parent, style);
 		
 		getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
+			@Override
 			public void getRole(AccessibleControlEvent e) {
 				e.detail = ACC.ROLE_STATUSBAR;
 			}
@@ -295,6 +298,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		copyMenuItem = new MenuItem(menu, SWT.PUSH);
 		copyMenuItem.setText(JFaceResources.getString("copy")); //$NON-NLS-1$
 		copyMenuItem.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String text = fMessageLabel.getText();
 				if (text != null && text.length() > 0) {
@@ -316,6 +320,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		fCancelButton.setToolTipText(JFaceResources
 				.getString("Cancel_Current_Operation")); //$NON-NLS-1$
 		fCancelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setCanceled(true);
 			}
@@ -540,6 +545,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	/**
 	 * Applies the given font to this status line.
 	 */
+	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
 		Control[] children = getChildren();

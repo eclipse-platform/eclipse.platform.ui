@@ -435,6 +435,7 @@ public class ContentProposalAdapter {
 			/*
 			 * Create a text control for showing the info about a proposal.
 			 */
+			@Override
 			protected Control createDialogArea(Composite parent) {
 				text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP
 						| SWT.NO_FOCUS);
@@ -449,6 +450,7 @@ public class ContentProposalAdapter {
 
 				// since SWT.NO_FOCUS is only a hint...
 				text.addFocusListener(new FocusAdapter() {
+					@Override
 					public void focusGained(FocusEvent event) {
 						ContentProposalPopup.this.close();
 					}
@@ -459,6 +461,7 @@ public class ContentProposalAdapter {
 			/*
 			 * Adjust the bounds so that we appear adjacent to our parent shell
 			 */
+			@Override
 			protected void adjustBounds() {
 				Rectangle parentBounds = getParentShell().getBounds();
 				Rectangle proposedBounds;
@@ -506,6 +509,7 @@ public class ContentProposalAdapter {
 			 * (non-Javadoc)
 			 * @see org.eclipse.jface.dialogs.PopupDialog#getForeground()
 			 */
+			@Override
 			protected Color getForeground() {
 				return control.getDisplay().
 						getSystemColor(SWT.COLOR_INFO_FOREGROUND);
@@ -515,6 +519,7 @@ public class ContentProposalAdapter {
 			 * (non-Javadoc)
 			 * @see org.eclipse.jface.dialogs.PopupDialog#getBackground()
 			 */
+			@Override
 			protected Color getBackground() {
 				return control.getDisplay().
 						getSystemColor(SWT.COLOR_INFO_BACKGROUND);
@@ -608,6 +613,7 @@ public class ContentProposalAdapter {
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.PopupDialog#getForeground()
 		 */
+		@Override
 		protected Color getForeground() {
 			return JFaceResources.getColorRegistry().get(
 					JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR);
@@ -617,6 +623,7 @@ public class ContentProposalAdapter {
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.PopupDialog#getBackground()
 		 */
+		@Override
 		protected Color getBackground() {
 			return JFaceResources.getColorRegistry().get(
 					JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR);
@@ -630,6 +637,7 @@ public class ContentProposalAdapter {
 		 * @param parent The parent composite to contain the dialog area; must
 		 * not be <code>null</code>.
 		 */
+		@Override
 		protected final Control createDialogArea(final Composite parent) {
 			// Use virtual where appropriate (see flag definition).
 			if (USE_VIRTUAL) {
@@ -677,6 +685,7 @@ public class ContentProposalAdapter {
 		 * 
 		 * @see org.eclipse.jface.dialogs.PopupDialog.adjustBounds()
 		 */
+		@Override
 		protected void adjustBounds() {
 			// Get our control's location in display coordinates.
 			Point location = control.getDisplay().map(control.getParent(), null, control.getLocation());			
@@ -887,6 +896,7 @@ public class ContentProposalAdapter {
 		 * 
 		 * @see org.eclipse.jface.window.Window#open()
 		 */
+		@Override
 		public int open() {
 			int value = super.open();
 			if (popupCloser == null) {
@@ -907,6 +917,7 @@ public class ContentProposalAdapter {
 		 * @return <code>true</code> if the window is (or was already) closed,
 		 *         and <code>false</code> if it is still open
 		 */
+		@Override
 		public boolean close() {
 			popupCloser.removeListeners();
 			if (infoPopup != null) {

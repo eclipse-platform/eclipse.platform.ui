@@ -159,6 +159,7 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 	/*
 	 * (non-Javadoc) Method declared on ImageDesciptor.
 	 */
+	@Override
 	public ImageData getImageData() {
 		Point size = getSize();		
 		

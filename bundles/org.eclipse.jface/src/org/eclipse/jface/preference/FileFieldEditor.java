@@ -100,7 +100,8 @@ public class FileFieldEditor extends StringButtonFieldEditor {
      * Method declared on StringButtonFieldEditor.
      * Opens the file chooser dialog and returns the selected file.
      */
-    protected String changePressed() {
+    @Override
+	protected String changePressed() {
         File f = new File(getTextControl().getText());
         if (!f.exists()) {
 			f = null;
@@ -117,7 +118,8 @@ public class FileFieldEditor extends StringButtonFieldEditor {
      * Method declared on StringFieldEditor.
      * Checks whether the text input field specifies an existing file.
      */
-    protected boolean checkState() {
+    @Override
+	protected boolean checkState() {
 
         String msg = null;
 

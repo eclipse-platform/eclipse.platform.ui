@@ -160,7 +160,8 @@ public class StringFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void adjustForNumColumns(int numColumns) {
+    @Override
+	protected void adjustForNumColumns(int numColumns) {
         GridData gd = (GridData) textField.getLayoutData();
         gd.horizontalSpan = numColumns - 1;
         // We only grab excess space if we have to
@@ -224,7 +225,8 @@ public class StringFieldEditor extends FieldEditor {
      * but must call <code>super.doFillIntoGrid</code>.
      * </p>
      */
-    protected void doFillIntoGrid(Composite parent, int numColumns) {
+    @Override
+	protected void doFillIntoGrid(Composite parent, int numColumns) {
         getLabelControl(parent);
 
         textField = getTextControl(parent);
@@ -248,7 +250,8 @@ public class StringFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void doLoad() {
+    @Override
+	protected void doLoad() {
         if (textField != null) {
             String value = getPreferenceStore().getString(getPreferenceName());
             textField.setText(value);
@@ -259,7 +262,8 @@ public class StringFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void doLoadDefault() {
+    @Override
+	protected void doLoadDefault() {
         if (textField != null) {
             String value = getPreferenceStore().getDefaultString(
                     getPreferenceName());
@@ -271,7 +275,8 @@ public class StringFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void doStore() {
+    @Override
+	protected void doStore() {
         getPreferenceStore().setValue(getPreferenceName(), textField.getText());
     }
 
@@ -288,7 +293,8 @@ public class StringFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    public int getNumberOfControls() {
+    @Override
+	public int getNumberOfControls() {
         return 2;
     }
 
@@ -335,7 +341,8 @@ public class StringFieldEditor extends FieldEditor {
                     /* (non-Javadoc)
                      * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
                      */
-                    public void keyReleased(KeyEvent e) {
+                    @Override
+					public void keyReleased(KeyEvent e) {
                         valueChanged();
                     }
                 });
@@ -343,7 +350,8 @@ public class StringFieldEditor extends FieldEditor {
                 	// Ensure that the value is checked on focus loss in case we
                 	// missed a keyRelease or user hasn't released key.
                 	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=214716
-                    public void focusLost(FocusEvent e) {
+                    @Override
+					public void focusLost(FocusEvent e) {
                         valueChanged();
                     }
                 });
@@ -352,16 +360,19 @@ public class StringFieldEditor extends FieldEditor {
                 break;
             case VALIDATE_ON_FOCUS_LOST:
                 textField.addKeyListener(new KeyAdapter() {
-                    public void keyPressed(KeyEvent e) {
+                    @Override
+					public void keyPressed(KeyEvent e) {
                         clearErrorMessage();
                     }
                 });
                 textField.addFocusListener(new FocusAdapter() {
-                    public void focusGained(FocusEvent e) {
+                    @Override
+					public void focusGained(FocusEvent e) {
                         refreshValidState();
                     }
 
-                    public void focusLost(FocusEvent e) {
+                    @Override
+					public void focusLost(FocusEvent e) {
                         valueChanged();
                         clearErrorMessage();
                     }
@@ -398,14 +409,16 @@ public class StringFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    public boolean isValid() {
+    @Override
+	public boolean isValid() {
         return isValid;
     }
 
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    protected void refreshValidState() {
+    @Override
+	protected void refreshValidState() {
         isValid = checkState();
     }
 
@@ -432,7 +445,8 @@ public class StringFieldEditor extends FieldEditor {
     /* (non-Javadoc)
      * Method declared on FieldEditor.
      */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         if (textField != null) {
             textField.setFocus();
         }
@@ -524,7 +538,8 @@ public class StringFieldEditor extends FieldEditor {
     /*
      * @see FieldEditor.setEnabled(boolean,Composite).
      */
-    public void setEnabled(boolean enabled, Composite parent) {
+    @Override
+	public void setEnabled(boolean enabled, Composite parent) {
         super.setEnabled(enabled, parent);
         getTextControl(parent).setEnabled(enabled);
     }

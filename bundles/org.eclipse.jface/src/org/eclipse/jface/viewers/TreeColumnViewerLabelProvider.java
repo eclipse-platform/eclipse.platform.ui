@@ -96,6 +96,7 @@ public class TreeColumnViewerLabelProvider extends
 	 * 
 	 * @see org.eclipse.jface.viewers.ViewerLabelProvider#setProviders(java.lang.Object)
 	 */
+	@Override
 	public void setProviders(Object provider) {
 		super.setProviders(provider);
 		if (provider instanceof ITreePathLabelProvider)

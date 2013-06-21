@@ -692,21 +692,24 @@ public class FontRegistry extends ResourceRegistry {
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
      */
-    public Set getKeySet() {
+    @Override
+	public Set getKeySet() {
         return Collections.unmodifiableSet(stringToFontData.keySet());
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.ResourceRegistry#hasValueFor(java.lang.String)
      */
-    public boolean hasValueFor(String fontKey) {
+    @Override
+	public boolean hasValueFor(String fontKey) {
         return stringToFontData.containsKey(fontKey);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
      */
-    protected void clearCaches() {
+    @Override
+	protected void clearCaches() {
 
         Iterator iterator = stringToFontRecord.values().iterator();
         while (iterator.hasNext()) {
