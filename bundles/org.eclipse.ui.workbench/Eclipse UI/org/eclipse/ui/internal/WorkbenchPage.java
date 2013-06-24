@@ -2807,7 +2807,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private EventHandler selectionHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+			Object changedElement = event.getProperty(UIEvents.EventTags.ELEMENT);
 
 			if (!(changedElement instanceof MPerspectiveStack)) {
 				return;
@@ -4956,7 +4956,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private EventHandler firingHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 			Object value = event.getProperty(UIEvents.EventTags.NEW_VALUE);
 			if (value instanceof CompatibilityPart && element instanceof MPart) {
 				Integer events = partEvents.remove(element);
