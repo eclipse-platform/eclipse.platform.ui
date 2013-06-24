@@ -1459,8 +1459,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (save) {
 			if (workbenchPart instanceof ISaveablePart) {
 				ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
-				if (!saveSaveable(saveablePart, workbenchPart, confirm, true)) {
-					return false;
+				if (saveablePart.isSaveOnCloseNeeded()) {
+					if (!saveSaveable(saveablePart, workbenchPart, confirm, true)) {
+						return false;
+					}
 				}
 			}
 		}
