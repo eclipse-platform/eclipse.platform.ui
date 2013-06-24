@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,7 +139,6 @@ public final class Messages extends NLS {
 	public static String InfoCenterPage_tocError;
 	public static String WebSearchPage_label;
 	public static String WebSearchPage_info;
-	public static String LocalHelpPage_capabilityFiltering_name;
 	public static String RootScopePage_masterButton;
 	public static String RootScopePage_name;
 	public static String RootScopePage_desc;
