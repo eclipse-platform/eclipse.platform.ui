@@ -248,7 +248,7 @@ public class TabStateHandlerTest extends TestCase {
 		}
 
 		@Override
-		protected CTabItem findItemForPart(MPart part) {
+		public CTabItem findItemForPart(MPart part) {
 			return tabItemForPart;
 		}
 	}
