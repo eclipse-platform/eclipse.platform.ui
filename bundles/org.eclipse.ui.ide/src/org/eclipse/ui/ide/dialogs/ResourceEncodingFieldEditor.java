@@ -155,7 +155,7 @@ public final class ResourceEncodingFieldEditor extends
 		// be careful looking up for our node so not to create any nodes as side effect
 		Preferences node = Platform.getPreferencesService().getRootNode()
 				.node(ProjectScope.SCOPE);
-		String projectName = ((IProject) resource).getName();
+		String projectName = resource.getName();
 		try {
 			//TODO once bug 90500 is fixed, should be as simple as this:
 			//			String path = projectName + IPath.SEPARATOR + ResourcesPlugin.PI_RESOURCES;
