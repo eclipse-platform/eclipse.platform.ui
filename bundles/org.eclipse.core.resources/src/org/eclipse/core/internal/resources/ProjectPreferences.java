@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -405,11 +405,11 @@ public class ProjectPreferences extends EclipsePreferences {
 	protected String internalPut(String key, String newValue) {
 		if ((segmentCount == 3) && PREFS_REGULAR_QUALIFIER.equals(qualifier) && (project != null)) {
 			if (ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS.equals(key)) {
-				Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
+				CharsetManager charsetManager = ((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager();
 				if (Boolean.parseBoolean(newValue))
-					workspace.getCharsetManager().splitEncodingPreferences(project);
+					charsetManager.splitEncodingPreferences(project);
 				else
-					workspace.getCharsetManager().mergeEncodingPreferences(project);
+					charsetManager.mergeEncodingPreferences(project);
 			}
 		}
 		return super.internalPut(key, newValue);
@@ -503,8 +503,11 @@ public class ProjectPreferences extends EclipsePreferences {
 		super.remove(key);
 		if ((segmentCount == 3) && PREFS_REGULAR_QUALIFIER.equals(qualifier) && (project != null)) {
 			if (ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS.equals(key)) {
-				Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
-				workspace.getCharsetManager().mergeEncodingPreferences(project);
+				CharsetManager charsetManager = ((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager();
+				if (ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS)
+					charsetManager.splitEncodingPreferences(project);
+				else
+					charsetManager.mergeEncodingPreferences(project);
 			}
 		}
 	}
