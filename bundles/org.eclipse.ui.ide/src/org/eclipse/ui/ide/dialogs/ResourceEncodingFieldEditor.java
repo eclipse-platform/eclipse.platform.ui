@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Hochstein (Freescale) - Bug 409996 - 'Restore Defaults' does not work properly on Project Properties > Resource tab
  *******************************************************************************/
 package org.eclipse.ui.ide.dialogs;
 
@@ -161,16 +162,17 @@ public final class ResourceEncodingFieldEditor extends
 			//			return node.nodeExists(path) ? node.node(path).getBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, false) : false;
 			// for now, take the long way
 			if (!node.nodeExists(projectName))
-				return false;
+				return ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS;
 			node = node.node(projectName);
 			if (!node.nodeExists(ResourcesPlugin.PI_RESOURCES))
-				return false;
+				return ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS;
 			node = node.node(ResourcesPlugin.PI_RESOURCES);
 			return node.getBoolean(
-					ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, false);
+					ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS,
+					ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS);
 		} catch (BackingStoreException e) {
 			// default value
-			return false;
+			return ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS;
 		}
 	}
 
@@ -253,10 +255,12 @@ public final class ResourceEncodingFieldEditor extends
 					}
 					if (!hasSameSeparateDerivedEncodings) {
 						Preferences prefs = new ProjectScope((IProject) resource).getNode(ResourcesPlugin.PI_RESOURCES);
-						if (getStoredSeparateDerivedEncodingsValue())
+						boolean newValue = !getStoredSeparateDerivedEncodingsValue();
+						// Remove the pref if it's the default, otherwise store it.
+						if (newValue == ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS)
 							prefs.remove(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS);
 						else
-							prefs.putBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, true);
+							prefs.putBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, newValue);
 						prefs.flush();
 					}
 					return Status.OK_STATUS;
@@ -317,8 +321,8 @@ public final class ResourceEncodingFieldEditor extends
 	protected void doLoadDefault() {
 		super.doLoadDefault();
 		if (separateDerivedEncodingsButton != null)
-			separateDerivedEncodingsButton
-					.setSelection(getStoredSeparateDerivedEncodingsValue());
+			separateDerivedEncodingsButton.setSelection(
+					ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS);
 	}
 
 	/*
