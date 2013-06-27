@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add PT_FILTER_PROVIDERS
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] add PT_VARIABLE_PROVIDERS
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Tom Hochstein (Freescale) - Bug 409996 - 'Restore Defaults' does not work properly on Project Properties > Resource tab
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -313,6 +314,13 @@ public final class ResourcesPlugin extends Plugin {
 	 * @since 3.7
 	 */
 	public static final String PREF_SEPARATE_DERIVED_ENCODINGS = "separateDerivedEncodings"; //$NON-NLS-1$
+
+	/**
+	 * Default setting for {@value #PREF_SEPARATE_DERIVED_ENCODINGS}.
+	 * 
+	 * @since 3.9
+	 */
+	public static final boolean DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS = false;
 
 	/**
 	 * The single instance of this plug-in runtime class.

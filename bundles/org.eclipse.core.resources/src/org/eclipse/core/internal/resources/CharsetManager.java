@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Tom Hochstein (Freescale) - Bug 409996 - 'Restore Defaults' does not work properly on Project Properties > Resource tab
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -362,17 +363,17 @@ public class CharsetManager implements IManager {
 			//			return node.nodeExists(path) ? node.node(path).getBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, false) : false;
 			// for now, take the long way
 			if (!node.nodeExists(project.getName()))
-				return false;
+				return ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS;
 			node = node.node(project.getName());
 			if (!node.nodeExists(ResourcesPlugin.PI_RESOURCES))
-				return false;
+				return ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS;
 			node = node.node(ResourcesPlugin.PI_RESOURCES);
-			return node.getBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, false);
+			return node.getBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS);
 		} catch (BackingStoreException e) {
 			// nodeExists failed
 			String message = Messages.resources_readingEncoding;
 			Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
-			return false;
+			return ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS;
 		}
 	}
 
