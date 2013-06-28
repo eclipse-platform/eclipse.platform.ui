@@ -25,6 +25,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 	private boolean tested = false;
 
 	private boolean available = false;
+	private String browserType;
 
 	/**
 	 * Constructor.
@@ -70,7 +71,8 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 			tested = true;
 			Shell sh = new Shell();
 			try {
-				new Browser(sh, SWT.NONE);
+				Browser browser = new Browser(sh, SWT.NONE);
+				browserType = browser.getBrowserType();
 				available = true;
 			} catch (SWTError se) {
 				if (se.code == SWT.ERROR_NO_HANDLES) {
@@ -94,6 +96,6 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 	 * @see IBrowserFactory#createBrowser()
 	 */
 	public IBrowser createBrowser() {
-		return new EmbeddedBrowserAdapter();
+		return new EmbeddedBrowserAdapter(browserType);
 	}
 }

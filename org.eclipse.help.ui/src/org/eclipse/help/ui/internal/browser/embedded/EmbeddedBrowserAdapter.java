@@ -23,6 +23,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 	private EmbeddedBrowser browser;
 	// Thread to use in workbench mode on Windows
 	private UIThread2 secondThread;
+	private String browserType;
 	class UIThread2 extends Thread {
 		
 		Display d;
@@ -60,12 +61,15 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 	/**
 	 * Adapter constructor.
 	 */
-	public EmbeddedBrowserAdapter() {
+	public EmbeddedBrowserAdapter(String browserType) {
+		this.browserType = browserType;
 	}
 	public Display getBrowserDisplay() {
+		/* only attempt to use a second thread if the Browser's native renderer is IE */
 		boolean useUIThread2 = BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH
 				&& Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())
-		        && !Constants.WS_WPF.equalsIgnoreCase(SWT.getPlatform()) ;
+		        && !Constants.WS_WPF.equalsIgnoreCase(SWT.getPlatform())
+		        && "ie".equalsIgnoreCase(browserType); //$NON-NLS-1$
 		if (useUIThread2) {
 			if (secondThread == null) {
 				secondThread = new UIThread2();
