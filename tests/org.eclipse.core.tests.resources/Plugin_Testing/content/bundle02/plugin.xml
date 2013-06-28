@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-  name="org.eclipse.bundle02"
-  id="org.eclipse.bundle02"
-  version="1.0"
-  provider-name="Eclipse.org">
+<plugin>
 	<extension point="org.eclipse.core.runtime.contentTypes">
 		<content-type id="missing-target" name="Missing alias target"
 		file-extensions="missing-target"/>		

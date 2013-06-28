@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-  name="org.eclipse.bundle04"
-  id="org.eclipse.bundle04"
-  version="1.0"
-  provider-name="Eclipse.org">
+<plugin>
 	<extension point="org.eclipse.core.runtime.contentTypes">
 		<content-type id="empty_extension1" name="Empty Extension 1" file-extensions=""/>	
 		<content-type id="empty_extension2" name="Empty Extension 2" file-extensions="foo,"/>
