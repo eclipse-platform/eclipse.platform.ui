@@ -23,35 +23,35 @@ public class PropertyTests extends AbstractAntTest {
 	 * Constructor
 	 */
 	public PropertyTests() {
-		super("Ant property tests");
+		super("Ant property tests"); //$NON-NLS-1$
 	}
 
 	public void testPropertyEqual() throws Exception {
-		Property p1 = new Property("one", "ONE");
-		Property p2 = new Property("one", "ONE");
-		assertTrue("The properties should be equal", p1.equals(p2));
+		Property p1 = new Property("one", "ONE"); //$NON-NLS-1$ //$NON-NLS-2$
+		Property p2 = new Property("one", "ONE"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("The properties should be equal", p1.equals(p2)); //$NON-NLS-1$
 	}
 	
 	public void testPropertyEqualNameOnly() throws Exception {
-		Property p1 = new Property("two", "TWO");
-		Property p2 = new Property("two", "FOUR");
-		assertTrue("The properties should be equal", p1.equals(p2));
+		Property p1 = new Property("two", "TWO"); //$NON-NLS-1$ //$NON-NLS-2$
+		Property p2 = new Property("two", "FOUR"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("The properties should be equal", p1.equals(p2)); //$NON-NLS-1$
 	}
 	
 	public void testPropertyNotEqual() throws Exception {
-		Property p1 = new Property("three", "THREE");
-		Property p2 = new Property("four", "FOUR");
-		assertFalse("The properties should not be equal", p1.equals(p2));
+		Property p1 = new Property("three", "THREE"); //$NON-NLS-1$ //$NON-NLS-2$
+		Property p2 = new Property("four", "FOUR"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse("The properties should not be equal", p1.equals(p2)); //$NON-NLS-1$
 	}
 	
 	public void testPropertyNotEqual2() throws Exception {
-		Property p1 = new Property("five", "FIVE");
-		Property p2 = new Property("six", "FIVE");
-		assertFalse("The properties should not be equal", p1.equals(p2));
+		Property p1 = new Property("five", "FIVE"); //$NON-NLS-1$ //$NON-NLS-2$
+		Property p2 = new Property("six", "FIVE"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse("The properties should not be equal", p1.equals(p2)); //$NON-NLS-1$
 	}
 	
 	public void testPropertyNotEqualNull() throws Exception {
-		Property p1 = new Property("seven", "SEVEN");
-		assertFalse("The properties should not be equal", p1.equals(null));
+		Property p1 = new Property("seven", "SEVEN"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse("The properties should not be equal", p1.equals(null)); //$NON-NLS-1$
 	}
 }

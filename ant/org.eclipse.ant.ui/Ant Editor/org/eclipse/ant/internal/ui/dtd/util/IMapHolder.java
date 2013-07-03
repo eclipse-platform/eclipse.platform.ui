@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 Object Factory Inc.
+ * Copyright (c) 2002, 2013 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,5 +14,5 @@ package org.eclipse.ant.internal.ui.dtd.util;
  * @author Bob Foster
  */
 public interface IMapHolder extends IKeyHolder, IValueHolder {
-
+	// placeholder, could probably be removed in favour of only using IKeyHolder
 }

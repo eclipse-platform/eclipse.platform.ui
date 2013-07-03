@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public abstract class AbstractAntUITest extends TestCase {
     
-    public static String ANT_EDITOR_ID= "org.eclipse.ant.ui.internal.editor.AntEditor";
+    public static String ANT_EDITOR_ID= "org.eclipse.ant.ui.internal.editor.AntEditor"; //$NON-NLS-1$
     private boolean welcomeClosed = false;
     private IDocument currentDocument;
 
@@ -96,7 +96,7 @@ public abstract class AbstractAntUITest extends TestCase {
      * @return the associated {@link IFile} for the given build file name
      */
     protected IFile getIFile(String buildFileName) {
-        return getProject().getFolder("buildfiles").getFile(buildFileName); 
+        return getProject().getFolder("buildfiles").getFile(buildFileName);  //$NON-NLS-1$
     }
     
     /**
@@ -106,7 +106,7 @@ public abstract class AbstractAntUITest extends TestCase {
      */
     protected File getBuildFile(String buildFileName) {
         IFile file = getIFile(buildFileName);
-        assertTrue("Could not find build file named: " + buildFileName, file.exists());
+        assertTrue("Could not find build file named: " + buildFileName, file.exists()); //$NON-NLS-1$
         return file.getLocation().toFile();
     }
     
@@ -129,7 +129,7 @@ public abstract class AbstractAntUITest extends TestCase {
 		if(!welcomeClosed && PlatformUI.isWorkbenchRunning()) {
 			final IWorkbench wb = PlatformUI.getWorkbench();
 			if(wb != null) {
-				UIJob job = new UIJob("close welcome screen for Ant test suite") {
+				UIJob job = new UIJob("close welcome screen for Ant test suite") { //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
 						if(window != null) {
@@ -160,32 +160,32 @@ public abstract class AbstractAntUITest extends TestCase {
 		if (!pro.exists()) {
 			// create project and import build files and support files
 			IProject project = ProjectHelper.createProject(ProjectHelper.PROJECT_NAME);
-			IFolder folder = ProjectHelper.addFolder(project, "buildfiles");
-			ProjectHelper.addFolder(project, "launchConfigurations");
+			IFolder folder = ProjectHelper.addFolder(project, "buildfiles"); //$NON-NLS-1$
+			ProjectHelper.addFolder(project, "launchConfigurations"); //$NON-NLS-1$
 			File root = AntUITestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_BUILDFILES_DIR);
 			ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
 			
-			ProjectHelper.createLaunchConfigurationForBoth("echoing");
-			ProjectHelper.createLaunchConfigurationForBoth("102282");
-			ProjectHelper.createLaunchConfigurationForBoth("74840");
-            ProjectHelper.createLaunchConfigurationForBoth("failingTarget");
-			ProjectHelper.createLaunchConfiguration("build");
-			ProjectHelper.createLaunchConfiguration("bad");
-			ProjectHelper.createLaunchConfiguration("importRequiringUserProp");
-            ProjectHelper.createLaunchConfigurationForSeparateVM("echoPropertiesSepVM", "echoProperties");
-			ProjectHelper.createLaunchConfigurationForSeparateVM("extensionPointSepVM", null);
-			ProjectHelper.createLaunchConfigurationForSeparateVM("extensionPointTaskSepVM", null);
-			ProjectHelper.createLaunchConfigurationForSeparateVM("extensionPointTypeSepVM", null);
-			ProjectHelper.createLaunchConfigurationForSeparateVM("input", null);
-			ProjectHelper.createLaunchConfigurationForSeparateVM("environmentVar", null);
+			ProjectHelper.createLaunchConfigurationForBoth("echoing"); //$NON-NLS-1$
+			ProjectHelper.createLaunchConfigurationForBoth("102282"); //$NON-NLS-1$
+			ProjectHelper.createLaunchConfigurationForBoth("74840"); //$NON-NLS-1$
+            ProjectHelper.createLaunchConfigurationForBoth("failingTarget"); //$NON-NLS-1$
+			ProjectHelper.createLaunchConfiguration("build"); //$NON-NLS-1$
+			ProjectHelper.createLaunchConfiguration("bad"); //$NON-NLS-1$
+			ProjectHelper.createLaunchConfiguration("importRequiringUserProp"); //$NON-NLS-1$
+            ProjectHelper.createLaunchConfigurationForSeparateVM("echoPropertiesSepVM", "echoProperties"); //$NON-NLS-1$ //$NON-NLS-2$
+			ProjectHelper.createLaunchConfigurationForSeparateVM("extensionPointSepVM", null); //$NON-NLS-1$
+			ProjectHelper.createLaunchConfigurationForSeparateVM("extensionPointTaskSepVM", null); //$NON-NLS-1$
+			ProjectHelper.createLaunchConfigurationForSeparateVM("extensionPointTypeSepVM", null); //$NON-NLS-1$
+			ProjectHelper.createLaunchConfigurationForSeparateVM("input", null); //$NON-NLS-1$
+			ProjectHelper.createLaunchConfigurationForSeparateVM("environmentVar", null); //$NON-NLS-1$
             
-            ProjectHelper.createLaunchConfigurationForBoth("breakpoints");
-            ProjectHelper.createLaunchConfigurationForBoth("debugAntCall");
-            ProjectHelper.createLaunchConfigurationForBoth("96022");
-            ProjectHelper.createLaunchConfigurationForBoth("macrodef");
-            ProjectHelper.createLaunchConfigurationForBoth("85769");
+            ProjectHelper.createLaunchConfigurationForBoth("breakpoints"); //$NON-NLS-1$
+            ProjectHelper.createLaunchConfigurationForBoth("debugAntCall"); //$NON-NLS-1$
+            ProjectHelper.createLaunchConfigurationForBoth("96022"); //$NON-NLS-1$
+            ProjectHelper.createLaunchConfigurationForBoth("macrodef"); //$NON-NLS-1$
+            ProjectHelper.createLaunchConfigurationForBoth("85769"); //$NON-NLS-1$
 			
-			ProjectHelper.createLaunchConfiguration("big", ProjectHelper.PROJECT_NAME + "/buildfiles/performance/build.xml");
+			ProjectHelper.createLaunchConfiguration("big", ProjectHelper.PROJECT_NAME + "/buildfiles/performance/build.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			//do not show the Ant build failed error dialog
 			AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, false);
@@ -317,7 +317,7 @@ public abstract class AbstractAntUITest extends TestCase {
      */
     protected void launch(String buildFileName) throws CoreException {
         ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
-        assertNotNull("Could not locate launch configuration for " + buildFileName, config);
+        assertNotNull("Could not locate launch configuration for " + buildFileName, config); //$NON-NLS-1$
         launchAndTerminate(config, 20000);
     }
     
@@ -329,7 +329,7 @@ public abstract class AbstractAntUITest extends TestCase {
      */
     protected void launch(String buildFileName, String arguments) throws CoreException {
         ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
-        assertNotNull("Could not locate launch configuration for " + buildFileName, config);
+        assertNotNull("Could not locate launch configuration for " + buildFileName, config); //$NON-NLS-1$
         ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
         copy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
         launchAndTerminate(copy, 20000);
@@ -343,9 +343,9 @@ public abstract class AbstractAntUITest extends TestCase {
     */
     protected void launchWithDebug(String buildFileName) throws CoreException {
         ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
-        assertNotNull("Could not locate launch configuration for " + buildFileName, config);
+        assertNotNull("Could not locate launch configuration for " + buildFileName, config); //$NON-NLS-1$
         ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
-        copy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "-debug");
+        copy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "-debug"); //$NON-NLS-1$
         launchAndTerminate(copy, 10000);
     }
     
@@ -356,9 +356,9 @@ public abstract class AbstractAntUITest extends TestCase {
      * @see ProjectCreationDecorator
      */
     protected ILaunchConfiguration getLaunchConfiguration(String buildFileName) {
-        IFile file = getJavaProject().getProject().getFolder("launchConfigurations").getFile(buildFileName + ".launch");
+        IFile file = getJavaProject().getProject().getFolder("launchConfigurations").getFile(buildFileName + ".launch"); //$NON-NLS-1$ //$NON-NLS-2$
         ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
-        assertTrue("Could not find launch configuration for " + buildFileName, config.exists());
+        assertTrue("Could not find launch configuration for " + buildFileName, config.exists()); //$NON-NLS-1$
         return config;
     }
 
@@ -395,19 +395,16 @@ public abstract class AbstractAntUITest extends TestCase {
      * @param parser
      * @param handler
      * @param editedFile
+     * @throws IOException 
+     * @throws SAXException 
      */
-    protected void parse(InputStream stream, SAXParser parser, DefaultHandler handler, File editedFile) {
+    protected void parse(InputStream stream, SAXParser parser, DefaultHandler handler, File editedFile) throws SAXException, IOException {
         InputSource inputSource= new InputSource(stream);
         if (editedFile != null) {
             //needed for resolving relative external entities
             inputSource.setSystemId(editedFile.getAbsolutePath());
         }
-
-        try {
-            parser.parse(inputSource, handler);
-        } catch (SAXException e) {
-        } catch (IOException e) {
-        }
+        parser.parse(inputSource, handler);
     }
     
     /**
@@ -440,11 +437,11 @@ public abstract class AbstractAntUITest extends TestCase {
         waiter.setTimeout(timeout);
 
         Object terminatee = launchAndWait(config, waiter);      
-        assertNotNull("Program did not terminate.", terminatee);
-        assertTrue("terminatee is not an IProcess", terminatee instanceof IProcess);
+        assertNotNull("Program did not terminate.", terminatee); //$NON-NLS-1$
+        assertTrue("terminatee is not an IProcess", terminatee instanceof IProcess); //$NON-NLS-1$
         IProcess process = (IProcess) terminatee;
         boolean terminated = process.isTerminated();
-        assertTrue("process is not terminated", terminated);
+        assertTrue("process is not terminated", terminated); //$NON-NLS-1$
     }
     
     /**
@@ -465,16 +462,16 @@ public abstract class AbstractAntUITest extends TestCase {
                 launch.terminate();
             } catch (CoreException e) {
                 e.printStackTrace();
-                fail("Program did not suspend, and unable to terminate launch.");
+                fail("Program did not suspend, and unable to terminate launch."); //$NON-NLS-1$
             }
         }
-        assertNotNull("Program did not suspend, launch terminated.", suspendee);
+        assertNotNull("Program did not suspend, launch terminated.", suspendee); //$NON-NLS-1$
         boolean terminated = launch.isTerminated();
-        assertTrue("launch did not terminate", terminated);
+        assertTrue("launch did not terminate", terminated); //$NON-NLS-1$
         if (terminated && !ConsoleLineTracker.isClosed()) {
             ConsoleLineTracker.waitForConsole();
         }
-        assertTrue("Console is not closed", ConsoleLineTracker.isClosed()); 
+        assertTrue("Console is not closed", ConsoleLineTracker.isClosed());  //$NON-NLS-1$
         return suspendee;       
     }
     
@@ -546,7 +543,7 @@ public abstract class AbstractAntUITest extends TestCase {
 		 * @param types the argument types
 		 * @return the method
 		 */
-		protected Method get(String methodName, Class[] types) {
+		protected Method get(String methodName, Class<?>[] types) {
 			Method method = null;
 			try {
 				method = master.getClass().getDeclaredMethod(methodName, types);

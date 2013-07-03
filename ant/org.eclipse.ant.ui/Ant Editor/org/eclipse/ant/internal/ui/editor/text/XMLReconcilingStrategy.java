@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,24 +25,24 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
 	/**
-	 * How long the reconciler will wait for further text changes before
-	 * reconciling
+	 * How long the reconciler will wait for further text changes before reconciling
 	 */
-	public static final int DELAY= 500;
+	public static final int DELAY = 500;
 
 	private AntEditor fEditor;
 
 	public XMLReconcilingStrategy(AntEditor editor) {
-		fEditor= editor;
+		fEditor = editor;
 	}
 
 	private void internalReconcile() {
 		try {
-            IAntModel model= fEditor.getAntModel();
+			IAntModel model = fEditor.getAntModel();
 			if (model instanceof AntModel) {
-				((AntModel)model).reconcile();
+				((AntModel) model).reconcile();
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			AntUIPlugin.log(e);
 		}
 	}
@@ -52,6 +52,7 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * 
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void reconcile(IRegion partition) {
 		internalReconcile();
 	}
@@ -60,8 +61,9 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion,
-	 *      org.eclipse.jface.text.IRegion)
+	 * org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		internalReconcile();
 	}
@@ -71,7 +73,9 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * 
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void setDocument(IDocument document) {
+		// do nothing
 	}
 
 	/*
@@ -79,7 +83,9 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * 
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
+		// do nothing
 	}
 
 	/*
@@ -87,6 +93,7 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * 
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
 	 */
+	@Override
 	public void initialReconcile() {
 		internalReconcile();
 	}

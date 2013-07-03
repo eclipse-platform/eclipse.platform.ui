@@ -24,7 +24,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 public class PropertyTests extends AbstractAntDebugTest {
 	
-	private static final String ANT_VERSION = "Apache Ant(TM) version 1.8.4 compiled on May 22 2012";
+	private static final String ANT_VERSION = "Apache Ant(TM) version 1.8.4 compiled on May 22 2012"; //$NON-NLS-1$
 
     public PropertyTests(String name) {
 		super(name);
@@ -39,25 +39,25 @@ public class PropertyTests extends AbstractAntDebugTest {
 	}
 
 	private void systemProperties(boolean sepVM) throws Exception, CoreException {
-		String fileName = "breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(30, "breakpoints" + ".xml");
+		String fileName = "breakpoints"; //$NON-NLS-1$
+		ILineBreakpoint bp = createLineBreakpoint(30, "breakpoints" + ".xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		AntThread thread= null;
 		try {
 			if (sepVM) {
-				fileName+= "SepVM";
+				fileName+= "SepVM"; //$NON-NLS-1$
 			}
 			ILaunchConfiguration config= getLaunchConfiguration(fileName);
 			ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
-			copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "properties");
+			copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "properties"); //$NON-NLS-1$
 			thread= launchToLineBreakpoint(copy, bp);
 
 			AntStackFrame frame = (AntStackFrame)thread.getTopStackFrame();
 			IVariable[] vars = frame.getVariables();
-			assertTrue("Should be a bunch of properties", 0 < vars.length);
-			AntProperty property= frame.findProperty("ant.library.dir");
+			assertTrue("Should be a bunch of properties", 0 < vars.length); //$NON-NLS-1$
+			AntProperty property= frame.findProperty("ant.library.dir"); //$NON-NLS-1$
 			assertNotNull(property);
 			
-			assertProperty(thread, "ant.project.name", "debugEcho");
+			assertProperty(thread, "ant.project.name", "debugEcho"); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -73,26 +73,26 @@ public class PropertyTests extends AbstractAntDebugTest {
 	}
 
 	private void userProperties(boolean sepVM) throws Exception{
-		String fileName = "breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(30, "breakpoints" + ".xml");
+		String fileName = "breakpoints"; //$NON-NLS-1$
+		ILineBreakpoint bp = createLineBreakpoint(30, "breakpoints" + ".xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		AntThread thread= null;
 		try {
 			if (sepVM) {
-				fileName+= "SepVM";
+				fileName+= "SepVM"; //$NON-NLS-1$
 			}
 			ILaunchConfiguration config= getLaunchConfiguration(fileName);
 			ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
-			copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "properties");
+			copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "properties"); //$NON-NLS-1$
 			thread= launchToLineBreakpoint(copy, bp);
 
 			AntStackFrame frame = (AntStackFrame)thread.getTopStackFrame();
 			IVariable[] vars = frame.getVariables();
-			assertTrue("Should be a bunch of properties", 0 < vars.length);
-			AntProperty property= frame.findProperty("ant.home");
+			assertTrue("Should be a bunch of properties", 0 < vars.length); //$NON-NLS-1$
+			AntProperty property= frame.findProperty("ant.home"); //$NON-NLS-1$
 			assertNotNull(property);
 			
-			assertProperty(thread, "ant.version", ANT_VERSION);
-			assertProperty(thread, "ant.project.name", "debugEcho");
+			assertProperty(thread, "ant.version", ANT_VERSION); //$NON-NLS-1$
+			assertProperty(thread, "ant.project.name", "debugEcho"); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -109,32 +109,32 @@ public class PropertyTests extends AbstractAntDebugTest {
 //	}
 
 	private void runtimeProperties(boolean sepVM) throws Exception, CoreException {
-		String fileName = "breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(30, fileName + ".xml");
+		String fileName = "breakpoints"; //$NON-NLS-1$
+		ILineBreakpoint bp = createLineBreakpoint(30, fileName + ".xml"); //$NON-NLS-1$
 		AntThread thread= null;
 		try {
 			if (sepVM) {
-				fileName+="SepVM";
+				fileName+="SepVM"; //$NON-NLS-1$
 			}
 			ILaunchConfiguration config= getLaunchConfiguration(fileName);
 			ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
-			copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "properties");
+			copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "properties"); //$NON-NLS-1$
 			thread= launchToLineBreakpoint(copy, bp);
 
 			AntStackFrame frame = (AntStackFrame)thread.getTopStackFrame();
 			IVariable[] vars = frame.getVariables();
-			assertTrue("Should be a bunch of properties", 0 < vars.length);
-			AntProperty property= frame.findProperty("ant.home");
+			assertTrue("Should be a bunch of properties", 0 < vars.length); //$NON-NLS-1$
+			AntProperty property= frame.findProperty("ant.home"); //$NON-NLS-1$
 			assertNotNull(property);
 			
 			stepOver(frame);
-			frame = assertProperty(thread, "AAA", "aaa");
+			frame = assertProperty(thread, "AAA", "aaa"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			stepOver(frame);
-			frame = assertProperty(thread, "BBB", "bbb");
+			frame = assertProperty(thread, "BBB", "bbb"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			stepOver(frame);
-			assertProperty(thread, "CCC", "ccc");
+			assertProperty(thread, "CCC", "ccc"); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -144,9 +144,9 @@ public class PropertyTests extends AbstractAntDebugTest {
 	private AntStackFrame assertProperty(AntThread thread, String propertyName, String propertyValue) throws DebugException {
 		AntStackFrame frame = (AntStackFrame)thread.getTopStackFrame();
 		AntProperty property= frame.findProperty(propertyName);
-		assertNotNull("Did not find property: " + propertyName, property);
+		assertNotNull("Did not find property: " + propertyName, property); //$NON-NLS-1$
 		AntValue value= (AntValue) property.getValue();
-		assertEquals("Value of property "+propertyName+ " incorrect", propertyValue, value.getValueString());
+		assertEquals("Value of property "+propertyName+ " incorrect", propertyValue, value.getValueString()); //$NON-NLS-1$ //$NON-NLS-2$
 		return frame;
 	}
 }

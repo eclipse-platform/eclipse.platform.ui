@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	
 	private Task fStepOverTaskInterrupted;
 	
-	private List fBreakpoints= null;
+	private List<RemoteAntBreakpoint> fBreakpoints= null;
 	
 	/**
 	 * Request port to connect to.
@@ -142,7 +142,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 			readerThread.start();
 			return;
 		} catch(SocketTimeoutException e){
+			//do nothing
 		} catch(IOException e) {
+			//do nothing
 		}
 		shutDown();
 	}
@@ -160,6 +162,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 			try {
 				fRequestReader.close();
 			} catch (IOException e) {
+				//do nothing
 			}
 			fRequestReader= null;
 		}
@@ -168,6 +171,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 			try {
 				fRequestSocket.close();	
 			} catch(IOException e) {
+				//do nothing
 			}
 		}
 		fRequestSocket= null;
@@ -211,7 +215,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 			try {
 				fRequestReader.close();
 			} catch (IOException e) {
-				
+				//do nothing
 			}
 		}
 		if(fRequestWriter != null) {
@@ -289,6 +293,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 				 wait();
                  shouldSuspend= false;
 			 } catch (InterruptedException e) {
+				//do nothing
 			 }
 		}
 	}
@@ -300,7 +305,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		String fileName= fDebugState.getFileName(location);
 		int lineNumber= fDebugState.getLineNumber(location);
 		for (int i = 0; i < fBreakpoints.size(); i++) {
-			RemoteAntBreakpoint breakpoint = (RemoteAntBreakpoint) fBreakpoints.get(i);
+			RemoteAntBreakpoint breakpoint = fBreakpoints.get(i);
 			if (breakpoint.isAt(fileName, lineNumber)) {
 				return breakpoint;
 			}
@@ -330,7 +335,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	
 	protected void addBreakpoint(String breakpointRepresentation) {
 		if (fBreakpoints == null) {
-			fBreakpoints= new ArrayList();
+			fBreakpoints= new ArrayList<RemoteAntBreakpoint>();
 		}
 		RemoteAntBreakpoint newBreakpoint= new RemoteAntBreakpoint(breakpointRepresentation);
 		if (!fBreakpoints.contains(newBreakpoint)) {
@@ -343,8 +348,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 			return;
 		} 
 		RemoteAntBreakpoint equivalentBreakpoint= new RemoteAntBreakpoint(breakpointRepresentation);
-		for (Iterator iter = fBreakpoints.iterator(); iter.hasNext(); ) {
-			RemoteAntBreakpoint breakpoint = (RemoteAntBreakpoint) iter.next();
+		for (Iterator<RemoteAntBreakpoint> iter = fBreakpoints.iterator(); iter.hasNext(); ) {
+			RemoteAntBreakpoint breakpoint = iter.next();
 			if (breakpoint.equals(equivalentBreakpoint)) {
 				iter.remove();
 				return;
@@ -375,9 +380,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#configure(java.util.Map)
      */
-    public synchronized void configure(Map userProperties) {
+    public synchronized void configure(Map<String, String> userProperties) {
        super.configure(userProperties);
-       String requestPortProperty= (String) userProperties.remove("eclipse.connect.request_port"); //$NON-NLS-1$
+       String requestPortProperty= userProperties.remove("eclipse.connect.request_port"); //$NON-NLS-1$
         if (requestPortProperty != null) {
             fRequestPort= Integer.parseInt(requestPortProperty);
         }

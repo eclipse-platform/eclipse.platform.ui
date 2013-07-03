@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 John-Mason P. Shackelford and others.
+ * Copyright (c) 2004, 2013 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.ant.internal.ui.editor.formatter.XmlTagFormatter;
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
+import org.eclipse.ant.internal.ui.editor.formatter.XmlTagFormatter.AttributePair;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 
 public class XmlTagFormatterTest extends AbstractAntUITest {
@@ -36,6 +37,7 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
         }
 
         public static class Tag extends XmlTagFormatter.Tag {
+        	//do nothing
         }
 
         public static class TagFormatter extends XmlTagFormatter.TagFormatter {
@@ -62,7 +64,7 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
                 return super.getElementName(tagText);
             }
 
-            public List getAttibutes(String elementText)
+            public List<AttributePair> getAttibutes(String elementText)
                     throws XmlTagFormatter.ParseException {
                 return super.getAttibutes(elementText);
             }
@@ -158,14 +160,12 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
     }
 
     public void testParserGetAttributes() throws Exception {
-        InnerClassFactory.TagParser tagParser = InnerClassFactory
-                .createTagParser();
+        InnerClassFactory.TagParser tagParser = InnerClassFactory.createTagParser();
 
-        List attributePairs;
+        List<AttributePair> attributePairs;
 
         // test normal situation
-        attributePairs = tagParser
-                .getAttibutes("<myElement attribute1=\"value1\" attribute2=\"value2\" />"); //$NON-NLS-1$
+        attributePairs = tagParser.getAttibutes("<myElement attribute1=\"value1\" attribute2=\"value2\" />"); //$NON-NLS-1$
 
         assertEquals(2, attributePairs.size());
         InnerClassFactory.validateAttributePair(attributePairs.get(0),
@@ -175,8 +175,7 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 
         
         // test with extra whitespace and funny quotes
-        attributePairs = tagParser
-                .getAttibutes("<myElement \nattribute1 =  'value1\"'\nattribute2\t=\"value2'\" />"); //$NON-NLS-1$
+        attributePairs = tagParser.getAttibutes("<myElement \nattribute1 =  'value1\"'\nattribute2\t=\"value2'\" />"); //$NON-NLS-1$
 
         assertEquals(2, attributePairs.size());
         InnerClassFactory.validateAttributePair(attributePairs.get(0),
@@ -202,8 +201,7 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
         // test parse errors - equals in the wrong place
         Exception e2 = null;
         try {
-            attributePairs = tagParser
-                    .getAttibutes("<myElement attribute1=\"value1\" = attribute2=\"value2\" />"); //$NON-NLS-1$
+            attributePairs = tagParser.getAttibutes("<myElement attribute1=\"value1\" = attribute2=\"value2\" />"); //$NON-NLS-1$
         } catch (Exception e) {
             e2 = e;
         }
@@ -225,7 +223,7 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
     }
 
     public void testFormat01() throws Exception {
-    	String lineSep= System.getProperty("line.separator");
+    	String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
         String indent = "\t"; //$NON-NLS-1$
         String source = "<target name=\"myTargetName\" depends=\"a,b,c,d,e,f,g\" description=\"This is a very long element which ought to be wrapped.\">"; //$NON-NLS-1$
         String target = "<target name=\"myTargetName\"" + lineSep //$NON-NLS-1$
@@ -238,7 +236,7 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
     }
 
     public void testFormat02() throws Exception {
-    	String lineSep= System.getProperty("line.separator");
+    	String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
         String indent = "\t"; //$NON-NLS-1$
         String source = "<target name=\"myTargetName\" depends=\"a,b,c,d,e,f,g\" description=\"This is a very long element which ought to be wrapped.\">"; //$NON-NLS-1$
         String target = "<target name=\"myTargetName\"" + lineSep //$NON-NLS-1$
@@ -252,7 +250,7 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
     }
     
     public void testBug73411() throws Exception {
-    	String lineSep= System.getProperty("line.separator");
+    	String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
         String indent = "\t"; //$NON-NLS-1$
         String source = "<target name='myTargetName' depends=\"a,b,c,d,e,f,g\" description=\'This is a very long element which ought to be \"wrapped\".'>"; //$NON-NLS-1$
         String target = "<target name='myTargetName'" + lineSep //$NON-NLS-1$
@@ -340,13 +338,13 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 
         tag.setClosed(true);
 
-        String lineSep= System.getProperty("line.separator");
+        String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
         assertEquals("<myElement attribute1=\"value1\"" + lineSep //$NON-NLS-1$
                 + "\t\t             attribute2=\"value2\" />", tagFormatter //$NON-NLS-1$
                 .wrapTag(tag, dontAlignCloseChar, "\t\t  ", lineSep)); //$NON-NLS-1$
 
         assertEquals("<myElement attribute1=\"value1\"" + lineSep //$NON-NLS-1$
-                + "\t\t             attribute2=\"value2\"" + lineSep + "\t\t  />", //$NON-NLS-1$
+                + "\t\t             attribute2=\"value2\"" + lineSep + "\t\t  />", //$NON-NLS-1$ //$NON-NLS-2$
                 tagFormatter.wrapTag(tag, doAlignCloseChar, "\t\t  ", lineSep)); //$NON-NLS-1$
 
         tag.setClosed(false);
@@ -356,7 +354,7 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
                 .wrapTag(tag, dontAlignCloseChar, "\t\t  ", lineSep)); //$NON-NLS-1$
 
         assertEquals("<myElement attribute1=\"value1\"" + lineSep //$NON-NLS-1$
-                + "\t\t             attribute2=\"value2\"" + lineSep + "\t\t  >", //$NON-NLS-1$
+                + "\t\t             attribute2=\"value2\"" + lineSep + "\t\t  >", //$NON-NLS-1$ //$NON-NLS-2$
                 tagFormatter.wrapTag(tag, doAlignCloseChar, "\t\t  ", lineSep)); //$NON-NLS-1$
 
     }
@@ -366,13 +364,13 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 		// Ordinarily the double space after the element name would be repaired
 		// but if the formatter is working correctly these examples will be
 		// considered malformed and will be passed through untouched.
-    	 String lineSep= System.getProperty("line.separator");
-		String source1 = "<echo  file=\"foo\">" + lineSep + "&lt;html>&lt;body>&lt;pre>" //$NON-NLS-1$
+    	 String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
+		String source1 = "<echo  file=\"foo\">" + lineSep + "&lt;html>&lt;body>&lt;pre>" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "${compilelog}&lt;/pre>&lt;/body>&lt;/html>"; //$NON-NLS-1$
-		FormattingPreferences prefs = getPreferences(true, false, 60); //$NON-NLS-1$
-		simpleTest(source1, source1, prefs, "\t", lineSep);
+		FormattingPreferences prefs = getPreferences(true, false, 60); 
+		simpleTest(source1, source1, prefs, "\t", lineSep); //$NON-NLS-1$
 	
 		String source2 = "<echo  file=\"foo\"/bar/baz></echo>"; //$NON-NLS-1$		
-		simpleTest(source2, source2, prefs, "\t", lineSep);
+		simpleTest(source2, source2, prefs, "\t", lineSep); //$NON-NLS-1$
 	}
 }

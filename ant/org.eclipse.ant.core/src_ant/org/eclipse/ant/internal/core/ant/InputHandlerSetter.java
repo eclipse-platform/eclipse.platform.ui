@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,10 +32,10 @@ class InputHandlerSetter {
 			try {
 				handler = (InputHandler)(Class.forName(inputHandlerClassname).newInstance());
 			} catch (ClassCastException e) {
-				String msg = MessageFormat.format(InternalAntMessages.InternalAntRunner_handler_does_not_implement_InputHandler5, new String[]{inputHandlerClassname});
+				String msg = MessageFormat.format(InternalAntMessages.InternalAntRunner_handler_does_not_implement_InputHandler5, new Object[]{inputHandlerClassname});
 				throw new BuildException(msg, e);
 			} catch (Exception e) {
-				String msg = MessageFormat.format(InternalAntMessages.InternalAntRunner_Unable_to_instantiate_input_handler_class, new String[]{inputHandlerClassname, e.getClass().getName()});
+				String msg = MessageFormat.format(InternalAntMessages.InternalAntRunner_Unable_to_instantiate_input_handler_class, new Object[]{inputHandlerClassname, e.getClass().getName()});
 				throw new BuildException(msg, e);
 			}
 		}

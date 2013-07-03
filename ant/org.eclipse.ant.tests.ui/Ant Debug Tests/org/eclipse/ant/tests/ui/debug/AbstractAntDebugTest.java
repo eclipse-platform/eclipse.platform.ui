@@ -166,12 +166,12 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 				launch.terminate();
 			} catch (CoreException e) {
 				e.printStackTrace();
-				fail("Program did not suspend, and unable to terminate launch.");
+				fail("Program did not suspend, and unable to terminate launch."); //$NON-NLS-1$
 			}
 		}
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - Program did not suspend, launch terminated");
+			throw new TestAgainException("Retest - Program did not suspend, launch terminated"); //$NON-NLS-1$
 		}
 		return suspendee;		
 	}	
@@ -186,7 +186,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 */
 	protected AntThread launchAndSuspend(String buildFileName) throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
-		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
+		assertNotNull("Could not locate launch configuration for " + buildFileName, config); //$NON-NLS-1$
 		return launchAndSuspend(config);
 	}
 
@@ -240,10 +240,10 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 */
 	protected AntThread launchToBreakpoint(String buildFileName, boolean register, boolean sepVM) throws Exception {
 		if (sepVM) {
-			buildFileName+="SepVM";
+			buildFileName+="SepVM"; //$NON-NLS-1$
 		}
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
-		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
+		assertNotNull("Could not locate launch configuration for " + buildFileName, config); //$NON-NLS-1$
 		return launchToBreakpoint(config, register);
 	}	
 
@@ -273,7 +273,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 
 		Object suspendee= launchAndWait(config, waiter, register);
-		assertTrue("suspendee was not an AntThread", suspendee instanceof AntThread);
+		assertTrue("suspendee was not an AntThread", suspendee instanceof AntThread); //$NON-NLS-1$
 		return (AntThread)suspendee;		
 	}	
 	
@@ -291,10 +291,10 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	
 	protected AntDebugTarget launchAndTerminate(String buildFileName, boolean sepVM) throws Exception {
 		if (sepVM) {
-			buildFileName+= "SepVM";
+			buildFileName+= "SepVM"; //$NON-NLS-1$
 		}
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
-		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
+		assertNotNull("Could not locate launch configuration for " + buildFileName, config); //$NON-NLS-1$
 		return debugLaunchAndTerminate(config, DEFAULT_TIMEOUT);
 	}
 
@@ -312,10 +312,10 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		waiter.setTimeout(timeout);
 
 		Object terminatee = launchAndWait(config, waiter);		
-		assertNotNull("Program did not terminate.", terminatee);
-		assertTrue("terminatee is not an AntDebugTarget", terminatee instanceof AntDebugTarget);
+		assertNotNull("Program did not terminate.", terminatee); //$NON-NLS-1$
+		assertTrue("terminatee is not an AntDebugTarget", terminatee instanceof AntDebugTarget); //$NON-NLS-1$
 		AntDebugTarget debugTarget = (AntDebugTarget) terminatee;
-		assertTrue("debug target is not terminated", debugTarget.isTerminated() || debugTarget.isDisconnected());
+		assertTrue("debug target is not terminated", debugTarget.isTerminated() || debugTarget.isDisconnected()); //$NON-NLS-1$
 		return debugTarget;		
 	}
 	
@@ -331,7 +331,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 */
 	protected AntThread launchToLineBreakpoint(String buildFileName, ILineBreakpoint bp) throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
-		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
+		assertNotNull("Could not locate launch configuration for " + buildFileName, config); //$NON-NLS-1$
 		return launchToLineBreakpoint(config, bp);
 	}
 
@@ -350,16 +350,16 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 
 		Object suspendee= launchAndWait(config, waiter);
-		assertTrue("suspendee was not an AntThread", suspendee instanceof AntThread);
+		assertTrue("suspendee was not an AntThread", suspendee instanceof AntThread); //$NON-NLS-1$
 		AntThread thread = (AntThread) suspendee;
 		IBreakpoint hit = getBreakpoint(thread);
-		assertNotNull("suspended, but not by breakpoint", hit);
-		assertTrue("hit un-registered breakpoint", bp.equals(hit));
-		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint);
+		assertNotNull("suspended, but not by breakpoint", hit); //$NON-NLS-1$
+		assertTrue("hit un-registered breakpoint", bp.equals(hit)); //$NON-NLS-1$
+		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint); //$NON-NLS-1$
 		ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 		int lineNumber = breakpoint.getLineNumber();
 		int stackLine = thread.getTopStackFrame().getLineNumber();
-		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine); //$NON-NLS-1$
 		
 		return thread;		
 	}
@@ -392,7 +392,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - Program did not suspend");
+			throw new TestAgainException("Retest - Program did not suspend"); //$NON-NLS-1$
 		}
 		return (AntThread)suspendee;
 	}	
@@ -414,18 +414,18 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - Program did not suspend");
+			throw new TestAgainException("Retest - Program did not suspend"); //$NON-NLS-1$
 		}
-		assertTrue("suspendee was not an AntThread", suspendee instanceof AntThread);
+		assertTrue("suspendee was not an AntThread", suspendee instanceof AntThread); //$NON-NLS-1$
 		AntThread thread = (AntThread) suspendee;
 		IBreakpoint hit = getBreakpoint(thread);
-		assertNotNull("suspended, but not by breakpoint", hit);
-		assertTrue("hit un-registered breakpoint", bp.equals(hit));
-		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint);
+		assertNotNull("suspended, but not by breakpoint", hit); //$NON-NLS-1$
+		assertTrue("hit un-registered breakpoint", bp.equals(hit)); //$NON-NLS-1$
+		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint); //$NON-NLS-1$
 		ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 		int lineNumber = breakpoint.getLineNumber();
 		int stackLine = thread.getTopStackFrame().getLineNumber();
-		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine); //$NON-NLS-1$
 		
 		return (AntThread)suspendee;
 	}	
@@ -444,7 +444,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not terminate.", suspendee);
+		assertNotNull("Program did not terminate.", suspendee); //$NON-NLS-1$
 	}	
 		
 	/**
@@ -463,15 +463,15 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - The program did not terminate");
+			throw new TestAgainException("Retest - The program did not terminate"); //$NON-NLS-1$
 		}
 		AntDebugTarget target = (AntDebugTarget)suspendee;
-		assertTrue("program should have exited", target.isTerminated() || target.isDisconnected());
+		assertTrue("program should have exited", target.isTerminated() || target.isDisconnected()); //$NON-NLS-1$
 		return target;
 	}	
 	
 	protected IResource getBreakpointResource(String typeName) throws Exception {
-		IJavaElement element = getJavaProject().findElement(new Path(typeName + ".java"));
+		IJavaElement element = getJavaProject().findElement(new Path(typeName + ".java")); //$NON-NLS-1$
 		IResource resource = element.getCorrespondingResource();
 		if (resource == null) {
 			resource = getJavaProject().getProject();
@@ -503,7 +503,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	/**
 	 * Terminates the given thread and removes its launch
 	 */
-	protected void terminateAndRemove(AntThread thread) {
+	protected void terminateAndRemove(AntThread thread) throws CoreException {
 		if (thread != null) {
 			terminateAndRemove((AntDebugTarget)thread.getDebugTarget());
 		}
@@ -515,29 +515,27 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * NOTE: all breakpoints are removed, all threads are resumed, and then
 	 * the target is terminated. This avoids defunct processes on linux.
 	 */
-	protected void terminateAndRemove(AntDebugTarget debugTarget) {
+	protected void terminateAndRemove(AntDebugTarget debugTarget) throws CoreException {
 		if (debugTarget != null && !(debugTarget.isTerminated() || debugTarget.isDisconnected())) {
 			DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.TERMINATE, debugTarget);
-			try {
-				removeAllBreakpoints();
-				IThread[] threads = debugTarget.getThreads();
-				for (int i = 0; i < threads.length; i++) {
-					IThread thread = threads[i];
-					try {
-						if (thread.isSuspended()) {
-							thread.resume();
-						}
-					} catch (CoreException e) {
+			removeAllBreakpoints();
+			IThread[] threads = debugTarget.getThreads();
+			for (int i = 0; i < threads.length; i++) {
+				IThread thread = threads[i];
+				try {
+					if (thread.isSuspended()) {
+						thread.resume();
 					}
+				} catch (CoreException e) {
+					//do nothing
 				}
-				debugTarget.terminate();
-				Object event = waiter.waitForEvent();
-				if (event == null) {
-					throw new TestAgainException("Retest - Program did not terminate");
-				}
-                getLaunchManager().removeLaunch(debugTarget.getLaunch());
-			} catch (CoreException e) {
 			}
+			debugTarget.terminate();
+			Object event = waiter.waitForEvent();
+			if (event == null) {
+				throw new TestAgainException("Retest - Program did not terminate"); //$NON-NLS-1$
+			}
+            getLaunchManager().removeLaunch(debugTarget.getLaunch());
 		}
 
         // ensure event queue is flushed
@@ -545,19 +543,16 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
         DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(this, DebugEvent.MODEL_SPECIFIC)});
         Object event = waiter.waitForEvent();
         if (event == null) {
-			throw new TestAgainException("Retest - The model specific event was never recieved");
+			throw new TestAgainException("Retest - The model specific event was never recieved"); //$NON-NLS-1$
 		}
 	}
 	
 	/**
 	 * Deletes all existing breakpoints
 	 */
-	protected void removeAllBreakpoints() {
+	protected void removeAllBreakpoints() throws CoreException {
 		IBreakpoint[] bps = getBreakpointManager().getBreakpoints();
-		try {
-			getBreakpointManager().removeBreakpoints(bps, true);
-		} catch (CoreException e) {
-		}
+		getBreakpointManager().removeBreakpoints(bps, true);
 	}
 	
 	/**
@@ -590,7 +585,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - Program did not suspend");
+			throw new TestAgainException("Retest - Program did not suspend"); //$NON-NLS-1$
 		}
 		return (AntThread) suspendee;
 	}
@@ -611,7 +606,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - Program did not suspend");
+			throw new TestAgainException("Retest - Program did not suspend"); //$NON-NLS-1$
 		}
 		return (AntThread) suspendee;
 	}
@@ -630,7 +625,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - Program did not suspend");
+			throw new TestAgainException("Retest - Program did not suspend"); //$NON-NLS-1$
 		}
 		return (AntThread) suspendee;		
 	}
@@ -649,7 +644,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - Program did not suspend");
+			throw new TestAgainException("Retest - Program did not suspend"); //$NON-NLS-1$
 		}
 		return (AntThread) suspendee;
 	}	
@@ -677,7 +672,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - Program did not suspend");
+			throw new TestAgainException("Retest - Program did not suspend"); //$NON-NLS-1$
 		}
 		return (AntThread) suspendee;		
 	}	
@@ -705,7 +700,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - Program did not suspend");
+			throw new TestAgainException("Retest - Program did not suspend"); //$NON-NLS-1$
 		}
 		return (AntThread) suspendee;		
 	}	
@@ -733,7 +728,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		if (suspendee == null) {
-			throw new TestAgainException("Retest - Program did not suspend");
+			throw new TestAgainException("Retest - Program did not suspend"); //$NON-NLS-1$
 		}
 		return (AntThread) suspendee;		
 	}	
@@ -760,8 +755,8 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 */
 	protected void setPreferences() {
 		 IPreferenceStore debugUIPreferences = DebugUIPlugin.getDefault().getPreferenceStore();
-		 String property = System.getProperty("debug.workbenchActivation");
-		 boolean activate = property != null && property.equals("on"); 
+		 String property = System.getProperty("debug.workbenchActivation"); //$NON-NLS-1$
+		 boolean activate = property != null && property.equals("on");  //$NON-NLS-1$
 		 debugUIPreferences.setValue(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, activate);
          debugUIPreferences.setValue(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, activate);
          debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, activate);
@@ -781,7 +776,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 				super.runBare();
 				tryAgain = false;
 			} catch (TestAgainException e) {
-				System.err.println("Test failed attempt " + attempts + ". Re-testing: " + this.getName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				System.err.println("Test failed attempt " + attempts + ". Re-testing: " + this.getName()); //$NON-NLS-1$ //$NON-NLS-2$ 
 				e.printStackTrace();
 				if (attempts > 5) {
 					tryAgain = false;

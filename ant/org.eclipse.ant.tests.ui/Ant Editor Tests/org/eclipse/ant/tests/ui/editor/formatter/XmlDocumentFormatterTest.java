@@ -32,7 +32,7 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
                 return true;
             }
         };
-        simpleTest("formatTest_source01.xml","formatTest_target01.xml",prefs);        
+        simpleTest("formatTest_source01.xml","formatTest_target01.xml",prefs);         //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -47,7 +47,7 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
                 return true;
             }
         };
-        simpleTest("formatTest_source01.xml","formatTest_target02.xml",prefs);        
+        simpleTest("formatTest_source01.xml","formatTest_target02.xml",prefs);         //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     
@@ -63,7 +63,7 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
                 return false;
             }
         };
-        simpleTest("formatTest_source01.xml","formatTest_target03.xml",prefs);        
+        simpleTest("formatTest_source01.xml","formatTest_target03.xml",prefs);         //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     /**
@@ -75,7 +75,7 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
     private void simpleTest(String sourceFileName, String targetFileName, FormattingPreferences prefs) throws Exception {
         
         XmlDocumentFormatter xmlFormatter = new XmlDocumentFormatter();
-        xmlFormatter.setDefaultLineDelimiter(System.getProperty("line.separator"));
+        xmlFormatter.setDefaultLineDelimiter(System.getProperty("line.separator")); //$NON-NLS-1$
         String result = xmlFormatter.format(getFileContentAsString(getBuildFile(sourceFileName)),prefs);
         String expectedResult = getFileContentAsString(getBuildFile(targetFileName));
         

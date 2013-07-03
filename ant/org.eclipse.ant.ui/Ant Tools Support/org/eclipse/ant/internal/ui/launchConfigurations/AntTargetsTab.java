@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     Martin Karpisek (martin.karpisek@gmail.com) - bug 229474
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
-
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -77,45 +76,46 @@ import org.eclipse.ui.PlatformUI;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Launch configuration tab which allows the user to choose the targets
- * from an Ant buildfile that will be executed when the configuration is
+ * Launch configuration tab which allows the user to choose the targets from an Ant buildfile that will be executed when the configuration is
  * launched.
  */
 public class AntTargetsTab extends AbstractLaunchConfigurationTab {
-	
+
 	private AntTargetNode fDefaultTarget = null;
-	private AntTargetNode[] fAllTargets= null;
-	private List fOrderedTargets = null;
-	
+	private AntTargetNode[] fAllTargets = null;
+	private List<AntTargetNode> fOrderedTargets = null;
+
 	private CheckboxTableViewer fTableViewer = null;
 	private Label fSelectionCountLabel = null;
 	private Text fTargetOrderText = null;
 	private Button fOrderButton = null;
 	private Button fFilterInternalTargets;
-	private InternalTargetFilter fInternalTargetFilter= null;
+	private InternalTargetFilter fInternalTargetFilter = null;
 	private Button fSortButton;
-	
+
 	private ILaunchConfiguration fLaunchConfiguration;
-	private int fSortDirection= 0;
-	private boolean fInitializing= false;
-	
+	private int fSortDirection = 0;
+	private boolean fInitializing = false;
+
 	/**
 	 * Sort direction constants.
 	 */
-	public final static int SORT_NONE= 0;
-	public final static int SORT_NAME= 1;
-	public final static int SORT_NAME_REVERSE= -1;
-	public final static int SORT_DESCRIPTION= 2;
-	public final static int SORT_DESCRIPTION_REVERSE= -2;
-	
+	public final static int SORT_NONE = 0;
+	public final static int SORT_NAME = 1;
+	public final static int SORT_NAME_REVERSE = -1;
+	public final static int SORT_DESCRIPTION = 2;
+	public final static int SORT_DESCRIPTION_REVERSE = -2;
+
 	/**
-	 * A comparator which can sort targets by name or description, in
-	 * forward or reverse order.
+	 * A comparator which can sort targets by name or description, in forward or reverse order.
 	 */
 	private class AntTargetsComparator extends ViewerComparator {
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (!(e1 instanceof AntTargetNode && e2 instanceof AntTargetNode)) {
 				return super.compare(viewer, e1, e2);
@@ -124,69 +124,74 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				return 0;
 			}
 			String string1, string2;
-			int result= 0;
+			int result = 0;
 			if (fSortDirection == SORT_NAME || fSortDirection == SORT_NAME_REVERSE) {
-				string1= ((AntTargetNode) e1).getLabel();
-				string2= ((AntTargetNode) e2).getLabel();
+				string1 = ((AntTargetNode) e1).getLabel();
+				string2 = ((AntTargetNode) e2).getLabel();
 			} else {
-				string1= ((AntTargetNode) e1).getTarget().getDescription();
-				string2= ((AntTargetNode) e2).getTarget().getDescription();
+				string1 = ((AntTargetNode) e1).getTarget().getDescription();
+				string2 = ((AntTargetNode) e2).getTarget().getDescription();
 			}
 			if (string1 != null && string2 != null) {
-				result= getComparator().compare(string1, string2);
+				result = getComparator().compare(string1, string2);
 			} else if (string1 == null) {
-				result= 1;
+				result = 1;
 			} else if (string2 == null) {
-				result= -1;
+				result = -1;
 			}
 			if (fSortDirection < 0) { // reverse sort
 				if (result == 0) {
-					result= -1;
+					result = -1;
 				} else {
-					result= -result;
+					result = -result;
 				}
 			}
 			return result;
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		
+
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_TARGETS_TAB);
 		GridLayout topLayout = new GridLayout();
-		comp.setLayout(topLayout);		
+		comp.setLayout(topLayout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
 		comp.setFont(font);
-		
+
 		createTargetsTable(comp);
 		createSelectionCount(comp);
-		
-		Composite buttonComposite= new Composite(comp, SWT.NONE);
-		GridLayout layout= new GridLayout();
+
+		Composite buttonComposite = new Composite(comp, SWT.NONE);
+		GridLayout layout = new GridLayout();
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		buttonComposite.setLayout(layout);
 		buttonComposite.setFont(font);
-		
+
 		createSortTargets(buttonComposite);
 		createFilterInternalTargets(buttonComposite);
-		
+
 		createVerticalSpacer(comp, 1);
 		createTargetOrder(comp);
 		Dialog.applyDialogFont(parent);
 	}
-	
+
 	/**
 	 * Creates the selection count widget
-	 * @param parent the parent composite
+	 * 
+	 * @param parent
+	 *            the parent composite
 	 */
 	private void createSelectionCount(Composite parent) {
 		fSelectionCountLabel = new Label(parent, SWT.NONE);
@@ -198,15 +203,17 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Creates the widgets that display the target order
-	 * @param parent the parent composite
+	 * 
+	 * @param parent
+	 *            the parent composite
 	 */
 	private void createTargetOrder(Composite parent) {
-		Font font= parent.getFont();
-		
+		Font font = parent.getFont();
+
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(AntLaunchConfigurationMessages.AntTargetsTab_Target_execution_order__3);
 		label.setFont(font);
-		
+
 		Composite orderComposite = new Composite(parent, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		orderComposite.setLayoutData(gd);
@@ -215,7 +222,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		layout.marginWidth = 0;
 		orderComposite.setLayout(layout);
 		orderComposite.setFont(font);
-				
+
 		fTargetOrderText = new Text(orderComposite, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
 		fTargetOrderText.setFont(font);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -224,10 +231,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fTargetOrderText.setLayoutData(gd);
 
 		fOrderButton = createPushButton(orderComposite, AntLaunchConfigurationMessages.AntTargetsTab__Order____4, null);
-		gd = (GridData)fOrderButton.getLayoutData();
+		gd = (GridData) fOrderButton.getLayoutData();
 		gd.verticalAlignment = GridData.BEGINNING;
 		fOrderButton.setFont(font);
 		fOrderButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleOrderPressed();
 			}
@@ -236,75 +244,78 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Creates the toggle to filter internal targets from the table
-	 * @param parent the parent composite
+	 * 
+	 * @param parent
+	 *            the parent composite
 	 */
 	private void createFilterInternalTargets(Composite parent) {
-		fFilterInternalTargets= createCheckButton(parent, AntLaunchConfigurationMessages.AntTargetsTab_12);
+		fFilterInternalTargets = createCheckButton(parent, AntLaunchConfigurationMessages.AntTargetsTab_12);
 		fFilterInternalTargets.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleFilterTargetsSelected();
 			}
 		});
 	}
-	
+
 	/**
 	 * Creates the toggle to sort targets in the table
-	 * @param parent the parent composite
+	 * 
+	 * @param parent
+	 *            the parent composite
 	 */
 	private void createSortTargets(Composite parent) {
-		fSortButton= createCheckButton(parent, AntLaunchConfigurationMessages.AntTargetsTab_14);
+		fSortButton = createCheckButton(parent, AntLaunchConfigurationMessages.AntTargetsTab_14);
 		fSortButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleSortTargetsSelected();
 			}
 		});
 	}
-	
+
 	/**
-	 * The filter targets button has been toggled. If it's been
-	 * turned on, filter out internal targets. Else, restore internal
-	 * targets to the table.
+	 * The filter targets button has been toggled. If it's been turned on, filter out internal targets. Else, restore internal targets to the table.
 	 */
 	private void handleFilterTargetsSelected() {
-		boolean filter= fFilterInternalTargets.getSelection();
+		boolean filter = fFilterInternalTargets.getSelection();
 		if (filter) {
 			fTableViewer.addFilter(getInternalTargetsFilter());
 		} else {
 			fTableViewer.removeFilter(getInternalTargetsFilter());
 		}
-		
+
 		// Must refresh before updating selection count because the selection
 		// count's "hidden" reporting needs the content provider to be queried
 		// first to count how many targets are hidden.
 		updateSelectionCount();
 		if (!fInitializing) {
-		    updateLaunchConfigurationDialog();
+			updateLaunchConfigurationDialog();
 		}
 	}
-	
+
 	private ViewerFilter getInternalTargetsFilter() {
 		if (fInternalTargetFilter == null) {
-			fInternalTargetFilter= new InternalTargetFilter();
+			fInternalTargetFilter = new InternalTargetFilter();
 		}
 		return fInternalTargetFilter;
 	}
-	
+
 	/**
-	 * The button to sort targets has been toggled.
-	 * Set the tab's sorting as appropriate.
+	 * The button to sort targets has been toggled. Set the tab's sorting as appropriate.
 	 */
 	private void handleSortTargetsSelected() {
 		setSort(fSortButton.getSelection() ? SORT_NAME : SORT_NONE);
 	}
-	
+
 	/**
-	 * Sets the sorting of targets in this tab. See the sort constants defined
-	 * above.
+	 * Sets the sorting of targets in this tab. See the sort constants defined above.
 	 * 
-	 * @param column the column which should be sorted on
+	 * @param column
+	 *            the column which should be sorted on
 	 */
 	private void setSort(int column) {
-		fSortDirection= column;
+		fSortDirection = column;
 		fTableViewer.refresh();
 		if (!fInitializing) {
 			updateLaunchConfigurationDialog();
@@ -312,68 +323,69 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/**
-	 * The target order button has been pressed. Prompt the
-	 * user to reorder the selected targets. 
+	 * The target order button has been pressed. Prompt the user to reorder the selected targets.
 	 */
 	private void handleOrderPressed() {
-		TargetOrderDialog dialog = new TargetOrderDialog(getShell(), fOrderedTargets.toArray());
+		TargetOrderDialog dialog = new TargetOrderDialog(getShell(), fOrderedTargets.toArray(new AntTargetNode[fOrderedTargets.size()]));
 		int ok = dialog.open();
 		if (ok == Window.OK) {
 			fOrderedTargets.clear();
 			Object[] targets = dialog.getTargets();
 			for (int i = 0; i < targets.length; i++) {
-				fOrderedTargets.add(targets[i]);
+				fOrderedTargets.add((AntTargetNode) targets[i]);
 				updateSelectionCount();
 				updateLaunchConfigurationDialog();
 			}
 		}
 	}
-	
+
 	/**
 	 * Creates the table which displays the available targets
-	 * @param parent the parent composite
+	 * 
+	 * @param parent
+	 *            the parent composite
 	 */
 	private void createTargetsTable(Composite parent) {
-		Font font= parent.getFont();
+		Font font = parent.getFont();
 		Label label = new Label(parent, SWT.NONE);
 		label.setFont(font);
 		label.setText(AntLaunchConfigurationMessages.AntTargetsTab_Check_targets_to_e_xecute__1);
-				
-		final Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION );
-		
-		GridData data= new GridData(GridData.FILL_BOTH);
-		int availableRows= availableRows(parent);
+
+		final Table table = new Table(parent, SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION);
+
+		GridData data = new GridData(GridData.FILL_BOTH);
+		int availableRows = availableRows(parent);
 		data.heightHint = table.getItemHeight() * (availableRows / 20);
-		data.widthHint= 250;
+		data.widthHint = 250;
 		table.setLayoutData(data);
 		table.setFont(font);
-				
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);		
 
-		TableLayout tableLayout= new TableLayout();
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+
+		TableLayout tableLayout = new TableLayout();
 		ColumnWeightData weightData = new ColumnWeightData(30, true);
 		tableLayout.addColumnData(weightData);
 		weightData = new ColumnWeightData(70, true);
-		tableLayout.addColumnData(weightData);		
+		tableLayout.addColumnData(weightData);
 		table.setLayout(tableLayout);
 
-		final TableColumn column1= new TableColumn(table, SWT.NULL);
+		final TableColumn column1 = new TableColumn(table, SWT.NULL);
 		column1.setText(AntLaunchConfigurationMessages.AntTargetsTab_Name_5);
-			
-		final TableColumn column2= new TableColumn(table, SWT.NULL);
-		column2.setText(AntLaunchConfigurationMessages.AntTargetsTab_Description_6);
-		
 
-		//TableLayout only sizes columns once. If showing the targets
-		//tab as the initial tab, the dialog isn't open when the layout
-		//occurs and the column size isn't computed correctly. Need to
-		//recompute the size of the columns once all the parent controls 
-		//have been created/sized.
-		//HACK Bug 139190 
+		final TableColumn column2 = new TableColumn(table, SWT.NULL);
+		column2.setText(AntLaunchConfigurationMessages.AntTargetsTab_Description_6);
+
+		// TableLayout only sizes columns once. If showing the targets
+		// tab as the initial tab, the dialog isn't open when the layout
+		// occurs and the column size isn't computed correctly. Need to
+		// recompute the size of the columns once all the parent controls
+		// have been created/sized.
+		// HACK Bug 139190
 		getShell().addShellListener(new ShellAdapter() {
+			@Override
 			public void shellActivated(ShellEvent e) {
-				if(!table.isDisposed()) {
+				if (!table.isDisposed()) {
 					int tableWidth = table.getSize().x;
 					if (tableWidth > 0) {
 						int c1 = tableWidth / 3;
@@ -384,42 +396,45 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				}
 			}
 		});
-		
+
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TargetTableLabelProvider());
 		fTableViewer.setContentProvider(new AntModelContentProvider());
 		fTableViewer.setComparator(new AntTargetsComparator());
-		
+
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				ISelection selection= event.getSelection();
+				ISelection selection = event.getSelection();
 				if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-					IStructuredSelection ss= (IStructuredSelection)selection;
-					Object element= ss.getFirstElement();
-					boolean checked= !fTableViewer.getChecked(element);
+					IStructuredSelection ss = (IStructuredSelection) selection;
+					Object element = ss.getFirstElement();
+					boolean checked = !fTableViewer.getChecked(element);
 					fTableViewer.setChecked(element, checked);
 					updateOrderedTargets(element, checked);
 				}
 			}
 		});
-		
+
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateOrderedTargets(event.getElement(), event.getChecked());
 			}
 		});
-		
-		TableColumn[] columns= fTableViewer.getTable().getColumns();
+
+		TableColumn[] columns = fTableViewer.getTable().getColumns();
 		for (int i = 0; i < columns.length; i++) {
-			final int index= i;
+			final int index = i;
 			columns[index].addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (fSortButton.getSelection()) {
 						// index 0 => sort_name (1)
 						// index 1 => sort_description (2)
-						int column= index + 1;
+						int column = index + 1;
 						if (column == fSortDirection) {
-							column= -column; // invert the sort when the same column is selected twice in a row
+							column = -column; // invert the sort when the same column is selected twice in a row
 						}
 						setSort(column);
 					}
@@ -427,11 +442,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			});
 		}
 	}
-	
+
 	/**
-	 * Return the number of rows available in the current display using the
-	 * current font.
-	 * @param parent The Composite whose Font will be queried.
+	 * Return the number of rows available in the current display using the current font.
+	 * 
+	 * @param parent
+	 *            The Composite whose Font will be queried.
 	 * @return int The result of the display size divided by the font size.
 	 */
 	private int availableRows(Composite parent) {
@@ -441,49 +457,51 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
 		return displayHeight / fontHeight;
 	}
-	
+
 	/**
-	 * Updates the ordered targets list in response to an element being checked
-	 * or unchecked. When the element is checked, it's added to the list. When
-	 * unchecked, it's removed.
+	 * Updates the ordered targets list in response to an element being checked or unchecked. When the element is checked, it's added to the list.
+	 * When unchecked, it's removed.
 	 * 
-	 * @param element the element in question
-	 * @param checked whether the element has been checked or unchecked
+	 * @param element
+	 *            the element in question
+	 * @param checked
+	 *            whether the element has been checked or unchecked
 	 */
-	private void updateOrderedTargets(Object element , boolean checked) {
+	private void updateOrderedTargets(Object element, boolean checked) {
 		if (checked) {
-			 fOrderedTargets.add(element);
+			fOrderedTargets.add((AntTargetNode) element);
 		} else {
 			fOrderedTargets.remove(element);
-		}	 
+		}
 		updateSelectionCount();
-		updateLaunchConfigurationDialog();	
+		updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
-	 * Updates the selection count widget to display how many targets are
-	 * selected (example, "1 out of 6 selected") and filtered.
+	 * Updates the selection count widget to display how many targets are selected (example, "1 out of 6 selected") and filtered.
 	 */
 	private void updateSelectionCount() {
 		Object[] checked = fTableViewer.getCheckedElements();
 		String numSelected = Integer.toString(checked.length);
-	
-		int all= fAllTargets == null ? 0 : fAllTargets.length;
-		int visible= fTableViewer.getTable().getItemCount();
+
+		int all = fAllTargets == null ? 0 : fAllTargets.length;
+		int visible = fTableViewer.getTable().getItemCount();
 		String total = Integer.toString(visible);
-		int numHidden= all - visible;
+		int numHidden = all - visible;
 		if (numHidden > 0) {
-			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.AntTargetsTab_13, new String[]{numSelected, String.valueOf(all), String.valueOf(numHidden)}));
+			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.AntTargetsTab_13, new Object[] { numSelected,
+					String.valueOf(all), String.valueOf(numHidden) }));
 		} else {
-			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.AntTargetsTab__0__out_of__1__selected_7, new String[]{numSelected, total}));
+			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.AntTargetsTab__0__out_of__1__selected_7, new Object[] {
+					numSelected, total }));
 		}
-		
+
 		fOrderButton.setEnabled(checked.length > 1);
-		
+
 		StringBuffer buffer = new StringBuffer();
-		Iterator iter = fOrderedTargets.iterator();
+		Iterator<AntTargetNode> iter = fOrderedTargets.iterator();
 		while (iter.hasNext()) {
-			buffer.append(((AntTargetNode)iter.next()).getTargetName());
+			buffer.append(iter.next().getTargetName());
 			buffer.append(", "); //$NON-NLS-1$
 		}
 		if (buffer.length() > 2) {
@@ -492,164 +510,181 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}
 		fTargetOrderText.setText(buffer.toString());
 	}
-	
+
 	/**
 	 * Returns all targets in the buildfile.
+	 * 
 	 * @return all targets in the buildfile
 	 */
 	private AntTargetNode[] getTargets() {
 		if (fAllTargets == null || isDirty()) {
-			fAllTargets= null;
-			fDefaultTarget= null;
+			fAllTargets = null;
+			fDefaultTarget = null;
 			setDirty(false);
 			setErrorMessage(null);
 			setMessage(null);
-			
-			final String expandedLocation= validateLocation();
+
+			final String expandedLocation = validateLocation();
 			if (expandedLocation == null) {
 				return fAllTargets;
 			}
-			final CoreException[] exceptions= new CoreException[1];
+			final CoreException[] exceptions = new CoreException[1];
 			try {
-				IRunnableWithProgress operation= new IRunnableWithProgress() {
-					/* (non-Javadoc)
+				IRunnableWithProgress operation = new IRunnableWithProgress() {
+					/*
+					 * (non-Javadoc)
+					 * 
 					 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 					 */
+					@Override
 					public void run(IProgressMonitor monitor) {
 						try {
 							fAllTargets = AntUtil.getTargets(expandedLocation, fLaunchConfiguration);
-						} catch (CoreException ce) {
-							exceptions[0]= ce;
+						}
+						catch (CoreException ce) {
+							exceptions[0] = ce;
 						}
 					}
 				};
-				
-				IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+
+				IRunnableContext context = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				if (context == null) {
-				    context= getLaunchConfigurationDialog();
+					context = getLaunchConfigurationDialog();
 				}
 
-				ISchedulingRule rule= null;
+				ISchedulingRule rule = null;
 				if (!ResourcesPlugin.getWorkspace().isTreeLocked()) {
-					//only set a scheduling rule if not in a resource change callback
-					rule= AntUtil.getFileForLocation(expandedLocation, null);
+					// only set a scheduling rule if not in a resource change callback
+					rule = AntUtil.getFileForLocation(expandedLocation, null);
 				}
 				PlatformUI.getWorkbench().getProgressService().runInUI(context, operation, rule);
-			} catch (InvocationTargetException e) {
-			    AntUIPlugin.log("Internal error occurred retrieving targets", e.getTargetException()); //$NON-NLS-1$
-			    setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_1);
-			    fAllTargets= null;
-			    return null;
-			} catch (InterruptedException e) {
-			    AntUIPlugin.log("Internal error occurred retrieving targets", e); //$NON-NLS-1$
-			    setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_1);
-			    fAllTargets= null;
-			    return null;
 			}
-			
+			catch (InvocationTargetException e) {
+				AntUIPlugin.log("Internal error occurred retrieving targets", e.getTargetException()); //$NON-NLS-1$
+				setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_1);
+				fAllTargets = null;
+				return null;
+			}
+			catch (InterruptedException e) {
+				AntUIPlugin.log("Internal error occurred retrieving targets", e); //$NON-NLS-1$
+				setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_1);
+				fAllTargets = null;
+				return null;
+			}
+
 			if (exceptions[0] != null) {
-				IStatus exceptionStatus= exceptions[0].getStatus();
-				IStatus[] children= exceptionStatus.getChildren();
-				StringBuffer message= new StringBuffer(exceptions[0].getMessage());
+				IStatus exceptionStatus = exceptions[0].getStatus();
+				IStatus[] children = exceptionStatus.getChildren();
+				StringBuffer message = new StringBuffer(exceptions[0].getMessage());
 				for (int i = 0; i < children.length; i++) {
 					message.append(' ');
 					IStatus childStatus = children[i];
 					message.append(childStatus.getMessage());
 				}
 				setErrorMessage(message.toString());
-				fAllTargets= null;
+				fAllTargets = null;
 				return fAllTargets;
 			}
-			
+
 			if (fAllTargets == null) {
-			    //if an error was not thrown during parsing then having no targets is valid (Ant 1.6.*)
-			    return fAllTargets;
+				// if an error was not thrown during parsing then having no targets is valid (Ant 1.6.*)
+				return fAllTargets;
 			}
-			
-			AntTargetNode target= fAllTargets[0];
-			AntProjectNode projectNode= target.getProjectNode();
+
+			AntTargetNode target = fAllTargets[0];
+			AntProjectNode projectNode = target.getProjectNode();
 			setErrorMessageFromNode(projectNode);
-			for (int i=0; i < fAllTargets.length; i++) {
-			    target= fAllTargets[i];
+			for (int i = 0; i < fAllTargets.length; i++) {
+				target = fAllTargets[i];
 				if (target.isDefaultTarget()) {
-					fDefaultTarget= target;
+					fDefaultTarget = target;
 				}
 				setErrorMessageFromNode(target);
 			}
 		}
-		
+
 		return fAllTargets;
 	}
-	
+
 	private void setErrorMessageFromNode(AntElementNode node) {
 		if (getErrorMessage() != null) {
 			return;
 		}
 		if (node.isErrorNode() || node.isWarningNode()) {
-			String message= node.getProblemMessage();
-		    if (message != null) {
-		        setErrorMessage(message);
-		    } else {
-		        setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_0);
-		    }
+			String message = node.getProblemMessage();
+			if (message != null) {
+				setErrorMessage(message);
+			} else {
+				setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_0);
+			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		// do nothing
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		fInitializing= true;
-		fLaunchConfiguration= configuration;
-		fOrderedTargets = new ArrayList();
+		fInitializing = true;
+		fLaunchConfiguration = configuration;
+		fOrderedTargets = new ArrayList<AntTargetNode>();
 		setErrorMessage(null);
 		setMessage(null);
 		setDirty(true);
-		boolean hideInternal= false;
+		boolean hideInternal = false;
 		try {
 			hideInternal = fLaunchConfiguration.getAttribute(IAntLaunchConstants.ATTR_HIDE_INTERNAL_TARGETS, false);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 			AntUIPlugin.log(e);
 		}
 		fFilterInternalTargets.setSelection(hideInternal);
 		handleFilterTargetsSelected();
-		int sort= SORT_NONE;
+		int sort = SORT_NONE;
 		try {
 			sort = fLaunchConfiguration.getAttribute(IAntLaunchConstants.ATTR_SORT_TARGETS, sort);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 			AntUIPlugin.log(e);
 		}
 		fSortButton.setSelection(sort != SORT_NONE);
 		setSort(sort);
-		String configTargets= null;
-		String newLocation= null;
-		
+		String configTargets = null;
+		String newLocation = null;
+
 		try {
-			configTargets= configuration.getAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String)null);
-			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
-		} catch (CoreException ce) {
+			configTargets = configuration.getAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String) null);
+			newLocation = configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String) null);
+		}
+		catch (CoreException ce) {
 			AntUIPlugin.log(AntLaunchConfigurationMessages.AntTargetsTab_Error_reading_configuration_12, ce);
 		}
-		
+
 		if (newLocation == null) {
-			fAllTargets= null;
+			fAllTargets = null;
 			initializeForNoTargets();
-			return; 
+			return;
 		}
-		
-		AntTargetNode[] allTargetNodes= getTargets();
+
+		AntTargetNode[] allTargetNodes = getTargets();
 		if (allTargetNodes == null) {
 			initializeForNoTargets();
-			return; 
+			return;
 		}
-		
-		String[] targetNames= AntUtil.parseRunTargets(configTargets);
+
+		String[] targetNames = AntUtil.parseRunTargets(configTargets);
 		if (targetNames.length == 0) {
 			fTableViewer.setAllChecked(false);
 			setExecuteInput(allTargetNodes);
@@ -659,10 +694,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				updateSelectionCount();
 				updateLaunchConfigurationDialog();
 			}
-			fInitializing= false;
+			fInitializing = false;
 			return;
 		}
-		
+
 		setExecuteInput(allTargetNodes);
 		fTableViewer.setAllChecked(false);
 		for (int i = 0; i < targetNames.length; i++) {
@@ -674,13 +709,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			}
 		}
 		updateSelectionCount();
-		fInitializing= false;
+		fInitializing = false;
 	}
-	
+
 	private void initializeForNoTargets() {
 		setExecuteInput(new AntTargetNode[0]);
 		fTableViewer.setInput(new AntTargetNode[0]);
-		fInitializing= false;
+		fInitializing = false;
 	}
 
 	/**
@@ -691,122 +726,143 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		updateSelectionCount();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		//	attribute added in 3.0, so null must be used instead of false for backwards compatibility
+		// attribute added in 3.0, so null must be used instead of false for backwards compatibility
 		if (fFilterInternalTargets.getSelection()) {
 			configuration.setAttribute(IAntLaunchConstants.ATTR_HIDE_INTERNAL_TARGETS, true);
 		} else {
-			configuration.setAttribute(IAntLaunchConstants.ATTR_HIDE_INTERNAL_TARGETS, (String)null);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_HIDE_INTERNAL_TARGETS, (String) null);
 		}
-		//attribute added in 3.0, so null must be used instead of 0 for backwards compatibility
+		// attribute added in 3.0, so null must be used instead of 0 for backwards compatibility
 		if (fSortDirection != SORT_NONE) {
 			configuration.setAttribute(IAntLaunchConstants.ATTR_SORT_TARGETS, fSortDirection);
 		} else {
-			configuration.setAttribute(IAntLaunchConstants.ATTR_SORT_TARGETS, (String)null);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_SORT_TARGETS, (String) null);
 		}
-		
+
 		if (fOrderedTargets.size() == 1) {
-			AntTargetNode item = (AntTargetNode)fOrderedTargets.get(0);
+			AntTargetNode item = fOrderedTargets.get(0);
 			if (item.isDefaultTarget()) {
-				configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String)null);
+				configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String) null);
 				return;
 			}
 		} else if (fOrderedTargets.size() == 0) {
-			configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String)null);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String) null);
 			return;
 		}
-		
-		StringBuffer buff= new StringBuffer();
-		Iterator iter = fOrderedTargets.iterator();
+
+		StringBuffer buff = new StringBuffer();
+		Iterator<AntTargetNode> iter = fOrderedTargets.iterator();
 		String targets = null;
 		while (iter.hasNext()) {
-			AntTargetNode item = (AntTargetNode)iter.next();
+			AntTargetNode item = iter.next();
 			buff.append(item.getTargetName());
 			buff.append(',');
 		}
 		if (buff.length() > 0) {
-			targets= buff.toString();
-		}  
+			targets = buff.toString();
+		}
 
 		configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, targets);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return AntLaunchConfigurationMessages.AntTargetsTab_Tar_gets_14;
 	}
-		
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return AntUIImages.getImage(IAntUIConstants.IMG_TAB_ANT_TARGETS);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		if (fAllTargets == null || isDirty()) {
 			if (getErrorMessage() != null && !isDirty()) {
-				//error in parsing;
+				// error in parsing;
 				return false;
-			} 
-			//targets not up to date and no error message...we have not parsed recently
+			}
+			// targets not up to date and no error message...we have not parsed recently
 			initializeFrom(launchConfig);
 			if (getErrorMessage() != null) {
-				//error in parsing;
+				// error in parsing;
 				return false;
 			}
 		}
-		
+
 		setErrorMessage(null);
 		return super.isValid(launchConfig);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setDirty(boolean)
 	 */
+	@Override
 	protected void setDirty(boolean dirty) {
-		//provide package visibility
+		// provide package visibility
 		super.setDirty(dirty);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		if (isDirty()) {
 			super.activated(workingCopy);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		if (fOrderedTargets.size() == 0) {
-			//set the dirty flag so that the state will be reinitialized on activation
+			// set the dirty flag so that the state will be reinitialized on activation
 			setDirty(true);
 		}
 	}
-	
+
 	private String validateLocation() {
-		String expandedLocation= null;
-		String location= null;
+		String expandedLocation = null;
+		String location = null;
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		try {
-			location= fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
+			location = fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String) null);
 			if (location == null) {
 				return null;
 			}
-			
-			expandedLocation= manager.performStringSubstitution(location);
+
+			expandedLocation = manager.performStringSubstitution(location);
 			if (expandedLocation == null) {
 				return null;
 			}
@@ -819,26 +875,28 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				setErrorMessage(AntLaunchConfigurationMessages.AntTargetsTab_16);
 				return null;
 			}
-			
+
 			return expandedLocation;
-			
-		} catch (CoreException e1) {
+
+		}
+		catch (CoreException e1) {
 			if (location != null) {
 				try {
 					manager.validateStringVariables(location);
 					setMessage(AntLaunchConfigurationMessages.AntTargetsTab_17);
 					return null;
-				} catch (CoreException e2) {//invalid variable
+				}
+				catch (CoreException e2) {// invalid variable
 					setErrorMessage(e2.getStatus().getMessage());
 					return null;
 				}
 			}
-			
+
 			setErrorMessage(e1.getStatus().getMessage());
 			return null;
 		}
 	}
-	
+
 	protected boolean isTargetSelected() {
 		return !fOrderedTargets.isEmpty();
 	}

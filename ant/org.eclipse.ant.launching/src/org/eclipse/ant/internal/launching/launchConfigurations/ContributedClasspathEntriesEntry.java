@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,11 +45,12 @@ import org.w3c.dom.Element;
  * 
  * @since 3.0 
  */
+@SuppressWarnings("restriction")
 public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEntry {
 	
 	public static final String TYPE_ID = "org.eclipse.ant.ui.classpathentry.extraClasspathEntries"; //$NON-NLS-1$
     
-    public static List fgSWTEntries= null;
+    public static List<IRuntimeClasspathEntry> fgSWTEntries= null;
 		
 	/**
 	 * Default contructor required to instantiate persisted extensions.
@@ -61,12 +62,14 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 	 * @see org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry#buildMemento(org.w3c.dom.Document, org.w3c.dom.Element)
 	 */
 	protected void buildMemento(Document document, Element memento) throws CoreException {
+		//do nothing
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#initializeFrom(org.w3c.dom.Element)
 	 */
 	public void initializeFrom(Element memento) throws CoreException {
+		//do nothing
 	}
 	
 	/* (non-Javadoc)
@@ -85,7 +88,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		IAntClasspathEntry[] antClasspathEntries = prefs.getContributedClasspathEntries();
 		IAntClasspathEntry[] userEntries = prefs.getAdditionalClasspathEntries();
-		List rtes = new ArrayList(antClasspathEntries.length + userEntries.length);
+		List<IRuntimeClasspathEntry> rtes = new ArrayList<IRuntimeClasspathEntry>(antClasspathEntries.length + userEntries.length);
 		IAntClasspathEntry entry;
 		for (int i = 0; i < antClasspathEntries.length; i++) {
 			 entry= antClasspathEntries[i];
@@ -116,10 +119,10 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 			addSWTJars(rtes);
 		}
 		
-		return (IRuntimeClasspathEntry[]) rtes.toArray(new IRuntimeClasspathEntry[rtes.size()]);
+		return rtes.toArray(new IRuntimeClasspathEntry[rtes.size()]);
 	}
 	
-	private void addToolsJar(ILaunchConfiguration configuration, List rtes, String path) {
+	private void addToolsJar(ILaunchConfiguration configuration, List<IRuntimeClasspathEntry> rtes, String path) {
 		IRuntimeClasspathEntry tools = getToolsJar(configuration);
 		if (tools == null) {
 			if (path != null) {
@@ -140,9 +143,9 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		}
 	}
 	
-	private void addSWTJars(List rtes) {
+	private void addSWTJars(List<IRuntimeClasspathEntry> rtes) {
         if (fgSWTEntries == null) {
-            fgSWTEntries= new ArrayList();
+            fgSWTEntries= new ArrayList<IRuntimeClasspathEntry>();
             Bundle bundle= Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
             BundleDescription description= Platform.getPlatformAdmin().getState(false).getBundle(bundle.getBundleId());
             BundleDescription[] fragments= description.getFragments();

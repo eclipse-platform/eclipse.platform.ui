@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.ant.internal.core.ant;
 
 import java.util.Iterator;
+import java.util.Vector;
 
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Main;
@@ -42,9 +43,10 @@ public class EclipseAntMain extends Main {
 	 * @see org.apache.tools.ant.Main#addBuildListeners(org.apache.tools.ant.Project)
 	 */
 	protected void addBuildListeners(Project project) {
-		Iterator listeners = fEclipseAntProject.getBuildListeners().iterator();
-		while (listeners.hasNext()) {
-			project.addBuildListener((BuildListener) listeners.next());
+		//TODO ANT-1.9.1 API USE
+		Vector<?> list = fEclipseAntProject.getBuildListeners();
+		for (Iterator<?> i = list.iterator(); i.hasNext();) {
+			project.addBuildListener((BuildListener) i.next());
 		}
 	}
 }

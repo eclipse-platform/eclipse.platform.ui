@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,7 +141,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * Collection of <code>IUpdate</code> actions that need to update on
 	 * selection changed in the project viewer.
 	 */
-	private List updateProjectActions;
+	private List<IUpdate> updateProjectActions;
 	// Ant View Actions
 	private AddBuildFilesAction addBuildFileAction;
 	private SearchForBuildFilesAction searchForBuildFilesAction;
@@ -251,7 +251,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * Initialize the actions for this view
 	 */
 	private void initializeActions() {
-		updateProjectActions= new ArrayList(5);
+		updateProjectActions= new ArrayList<IUpdate>(5);
 		
 		addBuildFileAction = new AddBuildFilesAction(this);
 		
@@ -279,9 +279,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * with the project viewer.
 	 */
 	private void updateProjectActions() {
-		Iterator iter = updateProjectActions.iterator();
-		while (iter.hasNext()) {
-			((IUpdate) iter.next()).update();
+		for (IUpdate update : updateProjectActions) {
+			update.update();
 		}
 	}
 
@@ -367,10 +366,10 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	private void handleSelectionChanged(IStructuredSelection selection) {
 		updateProjectActions();
-		Iterator selectionIter = selection.iterator();
+		Iterator<AntElementNode> selectionIter = selection.iterator();
 		AntElementNode selected = null;
 		if (selectionIter.hasNext()) {
-			selected = (AntElementNode) selectionIter.next();
+			selected = selectionIter.next();
 		}
 		String messageString= null;
 		if (!selectionIter.hasNext()) { 
@@ -404,12 +403,12 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		} else if (node instanceof AntTargetNode) {
 			AntTargetNode target = (AntTargetNode) node;
 			StringBuffer message= new StringBuffer();
-			Enumeration depends= target.getTarget().getDependencies();
+			Enumeration<String> depends= target.getTarget().getDependencies();
 			if (depends.hasMoreElements()) {
 				message.append(AntViewMessages.AntView_3);
-				message.append((String)depends.nextElement()); // Unroll the loop to avoid trailing comma
+				message.append(depends.nextElement()); // Unroll the loop to avoid trailing comma
 				while (depends.hasMoreElements()) {
-					String dependancy = (String) depends.nextElement();
+					String dependancy = depends.nextElement();
 					message.append(',').append(dependancy);
 				}
 				message.append('\"');
@@ -492,10 +491,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * @param projectNodes the list of <code>ProjectNode</code> objects to
 	 * remove
 	 */
-	public void removeProjects(List projectNodes) {
-		Iterator iter = projectNodes.iterator();
-		while (iter.hasNext()) {
-			AntProjectNode project = (AntProjectNode) iter.next();
+	public void removeProjects(List<AntProjectNode> projectNodes) {
+		for (AntProjectNode project : projectNodes) {
 			removeProjectFromContentProvider(project);
 		}
 		projectViewer.refresh();
@@ -561,7 +558,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			restoredViewerInput= new Object[0];
 			return;
 		}
-		List projectNodes = new ArrayList(projects.length);
+		List<AntProjectNodeProxy> projectNodes = new ArrayList<AntProjectNodeProxy>(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			IMemento projectMemento = projects[i];
 			String pathString = projectMemento.getString(KEY_PATH);

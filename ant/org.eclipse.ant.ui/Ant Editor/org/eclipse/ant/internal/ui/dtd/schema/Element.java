@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 Object Factory Inc.
+ * Copyright (c) 2002, 2013 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class Element extends Atom implements IElement {
 	private boolean fUndefined = true;
 	private boolean fText;
 	private IModel fModel;
-	private Map fMap = new HashMap(4); 
+	private Map<String, IAttribute> fMap = new HashMap<String, IAttribute>(4); 
 	private Dfm fElementDfm;
 
 	/**
@@ -70,7 +70,7 @@ public class Element extends Atom implements IElement {
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.IElement#getAttributes()
 	 */
-	public Map getAttributes() {
+	public Map<String, IAttribute> getAttributes() {
 		return fMap;
 	}
 

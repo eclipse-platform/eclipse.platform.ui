@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.ant.internal.ui.editor.templates;
 
 import java.util.Iterator;
+
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -26,38 +27,46 @@ public class AntTemplateVariableTextHover implements ITextHover {
 	public AntTemplateVariableTextHover() {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion subject) {
 		try {
-			IDocument doc= textViewer.getDocument();
-			int offset= subject.getOffset();
-			if (offset >= 2 && "${".equals(doc.get(offset-2, 2))) { //$NON-NLS-1$
-				String varName= doc.get(offset, subject.getLength());
-				TemplateContextType contextType= AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(TaskContextType.TASK_CONTEXT_TYPE);
+			IDocument doc = textViewer.getDocument();
+			int offset = subject.getOffset();
+			if (offset >= 2 && "${".equals(doc.get(offset - 2, 2))) { //$NON-NLS-1$
+				String varName = doc.get(offset, subject.getLength());
+				TemplateContextType contextType = AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(TaskContextType.TASK_CONTEXT_TYPE);
 				if (contextType != null) {
-					Iterator iter= contextType.resolvers();
+					Iterator<TemplateVariableResolver> iter = contextType.resolvers();
 					while (iter.hasNext()) {
-						TemplateVariableResolver var= (TemplateVariableResolver) iter.next();
+						TemplateVariableResolver var = iter.next();
 						if (varName.equals(var.getType())) {
 							return var.getDescription();
 						}
 					}
 				}
-			}				
-		} catch (BadLocationException e) {
+			}
+		}
+		catch (BadLocationException e) {
+			// do nothing
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		if (textViewer != null) {
 			return XMLTextHover.getRegion(textViewer, offset);
 		}
-		return null;	
+		return null;
 	}
-} 
+}

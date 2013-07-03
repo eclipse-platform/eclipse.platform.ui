@@ -47,7 +47,7 @@ public class AntUITests extends TestSuite {
     public static Test suite() {
 
         TestSuite suite= new AntUITests();
-        suite.setName("Ant UI Unit Tests");
+        suite.setName("Ant UI Unit Tests"); //$NON-NLS-1$
 		suite.addTest(new TestSuite(BuildTests.class));
 		suite.addTest(new TestSuite(SeparateVMTests.class));
 		suite.addTest(new TestSuite(AntEditorTests.class));

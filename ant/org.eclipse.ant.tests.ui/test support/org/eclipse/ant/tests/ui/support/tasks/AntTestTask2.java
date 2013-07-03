@@ -19,7 +19,7 @@ import org.apache.tools.ant.types.Reference;
 
 public class AntTestTask2 extends Task {
 	
-	String fMessage= "Default";
+	String fMessage= "Default"; //$NON-NLS-1$
 	Reference fRef= null;
 	
 	public AntTestTask2() {
@@ -32,7 +32,7 @@ public class AntTestTask2 extends Task {
 	public void execute() throws BuildException {
 		Echo echo= new Echo();
 		echo.setProject(getProject());
-		echo.setMessage("Testing Ant in Eclipse with a custom task2: " + fMessage);
+		echo.setMessage("Testing Ant in Eclipse with a custom task2: " + fMessage); //$NON-NLS-1$
 		echo.execute();
 	}
 	
@@ -49,7 +49,7 @@ public class AntTestTask2 extends Task {
      */
     public static class Cool extends EnumeratedAttribute {
         public String[] getValues() {
-            return new String[] {"cool", "chillin", "awesome"};
+            return new String[] {"cool", "chillin", "awesome"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
 }

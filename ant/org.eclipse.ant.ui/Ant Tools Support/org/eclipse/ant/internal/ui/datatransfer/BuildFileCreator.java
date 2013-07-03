@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 Richard Hoefter and others.
+ * Copyright (c) 2004, 2013 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -94,9 +93,9 @@ public class BuildFileCreator
     private IJavaProject project;
     private String projectName;
     private String projectRoot;
-    private Map variable2valueMap;
+    private Map<String, String> variable2valueMap;
     private Shell shell;
-    private Set visited = new TreeSet(); // record used subclasspaths
+    private Set<String> visited = new TreeSet<String>(); // record used subclasspaths
     private Node classpathNode;
     
     /**
@@ -111,7 +110,7 @@ public class BuildFileCreator
         this.project = project;
         this.projectName = project.getProject().getName();
         this.projectRoot = ExportUtil.getProjectRoot(project);
-        this.variable2valueMap = new LinkedHashMap();
+        this.variable2valueMap = new LinkedHashMap<String, String>();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         this.doc = dbf.newDocumentBuilder().newDocument();
         this.shell = shell;
@@ -126,12 +125,12 @@ public class BuildFileCreator
      * @return            project names for which buildfiles were created
      * @throws InterruptedException thrown when user cancels task
      */
-    public static List createBuildFiles(Set projects, Shell shell, IProgressMonitor pm)
+    public static List<String> createBuildFiles(Set<IJavaProject> projects, Shell shell, IProgressMonitor pm)
         throws JavaModelException, ParserConfigurationException,
                TransformerConfigurationException, TransformerException,
                IOException, CoreException, InterruptedException
     {
-        List res = new ArrayList();
+        List<String> res = new ArrayList<String>();
         try {
             createBuildFilesLoop(projects, shell, pm, res);
         } finally {
@@ -142,31 +141,28 @@ public class BuildFileCreator
         return res;
     }
 
-    private static void createBuildFilesLoop(Set projects, Shell shell, IProgressMonitor pm, List res) throws CoreException, ParserConfigurationException,
+    private static void createBuildFilesLoop(Set<IJavaProject> projects, Shell shell, IProgressMonitor pm, List<String> res) throws CoreException, ParserConfigurationException,
             JavaModelException, TransformerConfigurationException,
             TransformerFactoryConfigurationError, TransformerException,
             UnsupportedEncodingException {
 
         // determine files to create/change
-        List files = new ArrayList();
-        for (Iterator iter = projects.iterator(); iter.hasNext();)
-        {
-            IJavaProject currentProject = (IJavaProject) iter.next();
+        List<IFile> files = new ArrayList<IFile>();
+        for (Iterator<IJavaProject> iter = projects.iterator(); iter.hasNext();) {
+            IJavaProject currentProject = iter.next();
             IFile file = currentProject.getProject().getFile(BuildFileCreator.BUILD_XML);
             files.add(file);
         }
 
         // trigger checkout
-        Set confirmedFiles = ExportUtil.validateEdit(shell, files);
+        Set<IFile> confirmedFiles = ExportUtil.validateEdit(shell, files);
         SubMonitor localmonitor = SubMonitor.convert(pm, DataTransferMessages.AntBuildfileExportPage_0, confirmedFiles.size());
         try {
-			Iterator iter= projects.iterator();
-			while (iter.hasNext())
-            {
-                IJavaProject currentProject = (IJavaProject) iter.next();
+			Iterator<IJavaProject> iter= projects.iterator();
+			while (iter.hasNext()) {
+                IJavaProject currentProject = iter.next();
                 IFile file = currentProject.getProject().getFile(BuildFileCreator.BUILD_XML);
-                if (! confirmedFiles.contains(file))
-                {
+                if (! confirmedFiles.contains(file)) {
                     continue;
                 }
                 
@@ -230,7 +226,7 @@ public class BuildFileCreator
         boolean lines = JavaCore.GENERATE.equals(project.getOption(JavaCore.COMPILER_LINE_NUMBER_ATTR, true));
         boolean vars = JavaCore.GENERATE.equals(project.getOption(JavaCore.COMPILER_LOCAL_VARIABLE_ATTR, true));
         
-        List debuglevel = new ArrayList();
+        List<String> debuglevel = new ArrayList<String>();
         if (source)
         {
             debuglevel.add("source"); //$NON-NLS-1$
@@ -263,10 +259,10 @@ public class BuildFileCreator
         // <property name="x" value="y"/>
         boolean first = true;
         Node node = root.getFirstChild();
-        for (Iterator iterator = variable2valueMap.keySet().iterator(); iterator.hasNext();)
+        for (Iterator<String> iterator = variable2valueMap.keySet().iterator(); iterator.hasNext();)
         {
-            String key = (String) iterator.next();
-            String value = (String) variable2valueMap.get(key);
+            String key = iterator.next();
+            String value = variable2valueMap.get(key);
             Element prop = doc.createElement("property"); //$NON-NLS-1$
             prop.setAttribute(IAntCoreConstants.NAME, key);
             prop.setAttribute(IAntCoreConstants.VALUE, value);
@@ -387,15 +383,12 @@ public class BuildFileCreator
         element.setAttribute("id", pathid); //$NON-NLS-1$
         visited.add(pathid);
         variable2valueMap.putAll(classpath.variable2valueMap);
-        for (Iterator iter = ExportUtil.removeDuplicates(classpath.rawClassPathEntries).iterator(); iter.hasNext();)
-        {
-            String entry = (String) iter.next(); 
-            if (EclipseClasspath.isProjectReference(entry))
-            {
+        for (Iterator<String> iter = ExportUtil.removeDuplicates(classpath.rawClassPathEntries).iterator(); iter.hasNext();) {
+            String entry = iter.next(); 
+            if (EclipseClasspath.isProjectReference(entry)) {
                 Element pathElement = doc.createElement("path"); //$NON-NLS-1$
                 IJavaProject referencedProject = EclipseClasspath.resolveProjectReference(entry); 
-                if (referencedProject == null)
-                {
+                if (referencedProject == null) {
                     AntUIPlugin.log("project is not loaded in workspace: " + pathid, null); //$NON-NLS-1$
                     continue;
                 }
@@ -526,13 +519,11 @@ public class BuildFileCreator
     }
     
     /**
-     * Add properties of subprojects to internal properties map.
+     * Add properties of sub-projects to internal properties map.
      */
-    public void addSubProperties(IJavaProject subproject, EclipseClasspath classpath) throws JavaModelException
-    { 
-        for (Iterator iterator = ExportUtil.getClasspathProjectsRecursive(subproject).iterator(); iterator.hasNext();)
-        {
-            IJavaProject subProject = (IJavaProject) iterator.next(); 
+    public void addSubProperties(IJavaProject subproject, EclipseClasspath classpath) throws JavaModelException { 
+        for (Iterator<IJavaProject> iterator = ExportUtil.getClasspathProjectsRecursive(subproject).iterator(); iterator.hasNext();) {
+            IJavaProject subProject = iterator.next(); 
             String location = subProject.getProject().getName() + ".location"; //$NON-NLS-1$
             // add subproject properties to variable2valueMap
             String subProjectRoot = ExportUtil.getProjectRoot(subProject);
@@ -548,45 +539,39 @@ public class BuildFileCreator
      * @param srcDirs            source directories to copy resources from
      * @param classDirs          classes directories to copy resources to
      */
-    public void createInit(List srcDirs, List classDirs,
-        List inclusionLists, List exclusionLists)
-    {
+    public void createInit(List<String> srcDirs, List<String> classDirs, List<List<String>> inclusionLists, List<List<String>> exclusionLists) {
         // <target name="init">
         //     <mkdir dir="classes"/>
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute(IAntCoreConstants.NAME, "init"); //$NON-NLS-1$
-        List classDirsUnique = ExportUtil.removeDuplicates(classDirs);        
-        for (Iterator iterator = classDirsUnique.iterator(); iterator.hasNext();)
-        {            
-            String classDir = (String) iterator.next();
-            if (!classDir.equals(".") && //$NON-NLS-1$
-                !EclipseClasspath.isReference(classDir))
-            {
+        List<String> classDirsUnique = ExportUtil.removeDuplicates(classDirs);        
+        for (Iterator<String> iterator = classDirsUnique.iterator(); iterator.hasNext();) {            
+            String classDir = iterator.next();
+            if (!classDir.equals(".") && !EclipseClasspath.isReference(classDir)) { //$NON-NLS-1$
                 Element pathElement = doc.createElement("mkdir"); //$NON-NLS-1$
                 pathElement.setAttribute(IAntCoreConstants.DIR, classDir);
                 element.appendChild(pathElement);
             }
         }
         root.appendChild(element);
-        
-        createCopyResources(srcDirs, classDirs, element, inclusionLists,
-            exclusionLists);
+        createCopyResources(srcDirs, classDirs, element, inclusionLists, exclusionLists);
     }
 
-    private void createCopyResources(List srcDirs, List classDirs, Element element,
-        List inclusionLists, List exclusionLists)
-    {
+    private void createCopyResources(List<String> srcDirs, List<String> classDirs, Element element, List<List<String>> inclusionLists, List<List<String>> exclusionLists) {
         // Check filter for copying resources
         String filter = project.getOption(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, true);
         StringTokenizer tokenizer = new StringTokenizer(filter, ","); //$NON-NLS-1$
-        List filters = Collections.list(tokenizer);
+        ArrayList<String> filters = new ArrayList<String>();
+        while(tokenizer.hasMoreTokens()) {
+        	filters.add(tokenizer.nextToken());
+        }
         filters.add("*.java"); //$NON-NLS-1$
         
         // prefix filters with wildcard
         for (int i = 0; i < filters.size(); i++)
         {
-            String item = ((String) filters.get(i)).trim();
+            String item = filters.get(i).trim();
             if (item.equals("*")) //$NON-NLS-1$
             {
                 // everything is excluded from copying
@@ -600,8 +585,8 @@ public class BuildFileCreator
         // </copy>
         for (int i = 0; i < srcDirs.size(); i++)
         {
-            String srcDir = (String) srcDirs.get(i);
-            String classDir = (String) classDirs.get(i);
+            String srcDir = srcDirs.get(i);
+            String classDir = classDirs.get(i);
             if (! EclipseClasspath.isReference(classDir))
             {
                 Element copyElement = doc.createElement("copy"); //$NON-NLS-1$
@@ -610,30 +595,25 @@ public class BuildFileCreator
                 Element filesetElement = doc.createElement("fileset"); //$NON-NLS-1$
                 filesetElement.setAttribute(IAntCoreConstants.DIR, srcDir);
 
-                List inclusions = (List) inclusionLists.get(i);
-                List exclusions = (List) exclusionLists.get(i);
+                List<String> inclusions = inclusionLists.get(i);
+                List<String> exclusions = exclusionLists.get(i);
 
-                for (Iterator iter = inclusions.iterator(); iter.hasNext();)
-                {
-                    String inclusion = (String) iter.next();
-                    Element includeElement = doc.createElement("include"); //$NON-NLS-1$
+                for (String inclusion : inclusions) {
+                	Element includeElement = doc.createElement("include"); //$NON-NLS-1$
                     includeElement.setAttribute(IAntCoreConstants.NAME, inclusion);
                     filesetElement.appendChild(includeElement);
-                }           
-                for (Iterator iter = filters.iterator(); iter.hasNext();)
-                {
-                    String exclusion = (String) iter.next();
-                    Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
+				}
+                for (String exclusion : filters) {
+                	Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
                     excludeElement.setAttribute(IAntCoreConstants.NAME, exclusion);
                     filesetElement.appendChild(excludeElement);
-                }
-                for (Iterator iter = exclusions.iterator(); iter.hasNext();)
-                {
-                    String exclusion = (String) iter.next();
-                    Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
+				}
+                
+                for (String exclusion : exclusions) {
+                	Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
                     excludeElement.setAttribute(IAntCoreConstants.NAME, exclusion);
                     filesetElement.appendChild(excludeElement);
-                }
+				}
                 
                 copyElement.appendChild(filesetElement);
                 element.appendChild(copyElement);
@@ -645,17 +625,15 @@ public class BuildFileCreator
      * Create clean target.
      * @param classDirs    classes directories to delete
      */
-    public void createClean(List classDirs)
-    {
+    public void createClean(List<String> classDirs) {
         // <target name="clean">
         //     <delete dir="classes"/>
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute(IAntCoreConstants.NAME, "clean"); //$NON-NLS-1$
-        List classDirUnique = ExportUtil.removeDuplicates(classDirs);
-        for (Iterator iterator = classDirUnique.iterator(); iterator.hasNext();)
-        {
-            String classDir = (String) iterator.next();
+        List<String> classDirUnique = ExportUtil.removeDuplicates(classDirs);
+        for (Iterator<String> iterator = classDirUnique.iterator(); iterator.hasNext();) {
+            String classDir = iterator.next();
             if (!classDir.equals(".") && //$NON-NLS-1$
                 !EclipseClasspath.isReference(classDir))
             {
@@ -685,18 +663,16 @@ public class BuildFileCreator
     /**
      * Create cleanall target.
      */
-    public void createCleanAll() throws JavaModelException
-    {
+    public void createCleanAll() throws JavaModelException {
         // <target name="cleanall" depends="clean">
         //     <ant antfile="build.xml" dir="${hello.location}" inheritAll="false" target="clean"/>
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute(IAntCoreConstants.NAME, "cleanall"); //$NON-NLS-1$
         element.setAttribute("depends", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
-        List subProjects = ExportUtil.getClasspathProjectsRecursive(project);
-        for (Iterator iterator = subProjects.iterator(); iterator.hasNext();)
-        {
-            IJavaProject subProject = (IJavaProject) iterator.next();
+        List<IJavaProject> subProjects = ExportUtil.getClasspathProjectsRecursive(project);
+        for (Iterator<IJavaProject> iterator = subProjects.iterator(); iterator.hasNext();) {
+            IJavaProject subProject = iterator.next();
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
             antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
             antElement.setAttribute(IAntCoreConstants.DIR, "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -714,8 +690,7 @@ public class BuildFileCreator
      * @param inclusionLists    inclusion filters of mainproject 
      * @param exclusionLists    exclusion filters of mainproject
      */
-    public void createBuild(List srcDirs, List classDirs, List inclusionLists, List exclusionLists) throws JavaModelException
-    {
+    public void createBuild(List<String> srcDirs, List<String> classDirs, List<List<String>> inclusionLists, List<List<String>> exclusionLists) throws JavaModelException {
         // <target name="build" depends="build-subprojects,build-project"/>
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute(IAntCoreConstants.NAME, "build"); //$NON-NLS-1$
@@ -727,10 +702,9 @@ public class BuildFileCreator
         // </target>
         element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute(IAntCoreConstants.NAME, "build-subprojects"); //$NON-NLS-1$
-        List subProjects = ExportUtil.getClasspathProjectsRecursive(project);
-        for (Iterator iterator = subProjects.iterator(); iterator.hasNext();)
-        {
-            IJavaProject subProject = (IJavaProject) iterator.next();
+        List<IJavaProject> subProjects = ExportUtil.getClasspathProjectsRecursive(project);
+        for (Iterator<IJavaProject> iterator = subProjects.iterator(); iterator.hasNext();) {
+            IJavaProject subProject = iterator.next();
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
             antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
             antElement.setAttribute(IAntCoreConstants.DIR, "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -752,22 +726,22 @@ public class BuildFileCreator
         // Side effect: Eclipse inclusion and exclusion filters apply to the specified source directory.
         //              Ant inclusion and exclusion filters apply to all source directories.
         //              This may lead to unexpected behavior.
-        HashMap class2sources = new HashMap();
-        HashMap class2includes = new HashMap();
-        HashMap class2excludes = new HashMap();
+        HashMap<String, List<String>> class2sources = new HashMap<String, List<String>>();
+        HashMap<String, List<String>> class2includes = new HashMap<String, List<String>>();
+        HashMap<String, List<String>> class2excludes = new HashMap<String, List<String>>();
         for (int i = 0; i < srcDirs.size(); i++) {
-            String srcDir = (String) srcDirs.get(i);
+            String srcDir = srcDirs.get(i);
             if (!EclipseClasspath.isReference(srcDir)) {
-                String classDir = (String) classDirs.get(i);
-                List inclusions = (List) inclusionLists.get(i);
-                List exclusions = (List) exclusionLists.get(i);
-                List list = (List) class2sources.get(classDir);
-                List list2 = (List) class2includes.get(classDir);
-                List list3 = (List) class2excludes.get(classDir);
+                String classDir = classDirs.get(i);
+                List<String> inclusions = inclusionLists.get(i);
+                List<String> exclusions = exclusionLists.get(i);
+                List<String> list = class2sources.get(classDir);
+                List<String> list2 = class2includes.get(classDir);
+                List<String> list3 = class2excludes.get(classDir);
                 if (list == null) {
-                    list = new ArrayList();
-                    list2 = new ArrayList();
-                    list3 = new ArrayList();
+                    list = new ArrayList<String>();
+                    list2 = new ArrayList<String>();
+                    list3 = new ArrayList<String>();
                     class2sources.put(classDir, list);
                     class2includes.put(classDir, list2);
                     class2excludes.put(classDir, list3);
@@ -793,15 +767,13 @@ public class BuildFileCreator
         Element echoElement = doc.createElement("echo"); //$NON-NLS-1$
         echoElement.setAttribute("message", "${ant.project.name}: ${ant.file}"); //$NON-NLS-1$ //$NON-NLS-2$
         element.appendChild(echoElement);           
-        for (int i = 0; i < srcDirs.size(); i++)
-        {
-            String srcDir = (String) srcDirs.get(i);
-            if (!EclipseClasspath.isReference(srcDir))
-            {
-                String classDir = (String) classDirs.get(i);
-                List sources = (List) class2sources.get(classDir);
-                List inclusions = (List) class2includes.get(classDir);
-                List exclusions = (List) class2excludes.get(classDir);
+        for (int i = 0; i < srcDirs.size(); i++) {
+            String srcDir = srcDirs.get(i);
+            if (!EclipseClasspath.isReference(srcDir)) {
+                String classDir = classDirs.get(i);
+                List<String> sources = class2sources.get(classDir);
+                List<String> inclusions = class2includes.get(classDir);
+                List<String> exclusions = class2excludes.get(classDir);
                 if (sources != null && sources.size() > 1) {
                     // remove list to exclude it from the next iteration
                     class2sources.put(classDir, null);
@@ -819,29 +791,21 @@ public class BuildFileCreator
                 javacElement.setAttribute("target", "${target}"); //$NON-NLS-1$ //$NON-NLS-2$
                 
                 // Bug 313386: <javac> tag with several source directories
-                //assert list.size() != 1 || srcDir.equals(list.get(i));
-                for (Iterator iterator = sources.iterator(); iterator.hasNext();) {
-                    String s = (String) iterator.next();
-                    Element srcElement = doc.createElement("src"); //$NON-NLS-1$
+                for (String s : sources) {
+                	Element srcElement = doc.createElement("src"); //$NON-NLS-1$
                     srcElement.setAttribute("path", s); //$NON-NLS-1$
                     javacElement.appendChild(srcElement);
-                }
-
-                for (Iterator iter = inclusions.iterator(); iter.hasNext();)
-                {
-                    String inclusion = (String) iter.next();
-                    Element includeElement = doc.createElement("include"); //$NON-NLS-1$
+				}
+                for (String inclusion : inclusions) {
+                	Element includeElement = doc.createElement("include"); //$NON-NLS-1$
                     includeElement.setAttribute(IAntCoreConstants.NAME, inclusion);
                     javacElement.appendChild(includeElement);
-                }      
-                
-                for (Iterator iter = exclusions.iterator(); iter.hasNext();)
-                {
-                    String exclusion = (String) iter.next();
-                    Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
+				}
+                for (String exclusion : exclusions) {
+                	Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
                     excludeElement.setAttribute(IAntCoreConstants.NAME, exclusion);
                     javacElement.appendChild(excludeElement);
-                }           
+				}
                 Element classpathRefElement = doc.createElement("classpath"); //$NON-NLS-1$
                 classpathRefElement.setAttribute("refid", projectName + ".classpath"); //$NON-NLS-1$ //$NON-NLS-2$
                 javacElement.appendChild(classpathRefElement);
@@ -858,13 +822,12 @@ public class BuildFileCreator
      * current project.
      */
     private void createBuildRef() throws JavaModelException {
-        
-        Set refProjects = new TreeSet(ExportUtil.getJavaProjectComparator());
+        Set<IJavaProject> refProjects = new TreeSet<IJavaProject>(ExportUtil.getJavaProjectComparator());
         IJavaProject[] projects = project.getJavaModel().getJavaProjects();
         for (int i = 0; i < projects.length; i++) {
-            List subProjects = ExportUtil.getClasspathProjects(projects[i]);
-            for (Iterator iter = subProjects.iterator(); iter.hasNext();) {
-                IJavaProject p = (IJavaProject) iter.next();
+            List<IJavaProject> subProjects = ExportUtil.getClasspathProjects(projects[i]);
+            for (Iterator<IJavaProject> iter = subProjects.iterator(); iter.hasNext();) {
+                IJavaProject p = iter.next();
                 if (projectName.equals(p.getProject().getName())) {
                     refProjects.add(projects[i]);
                 }
@@ -879,8 +842,8 @@ public class BuildFileCreator
         element.setAttribute(IAntCoreConstants.NAME, "build-refprojects"); //$NON-NLS-1$
         element.setAttribute(IAntCoreConstants.DESCRIPTION, "Build all projects which " + //$NON-NLS-1$ 
                 "reference this project. Useful to propagate changes."); //$NON-NLS-1$
-        for (Iterator iter = refProjects.iterator(); iter.hasNext();) {
-            IJavaProject p = (IJavaProject) iter.next();
+        for (Iterator<IJavaProject> iter = refProjects.iterator(); iter.hasNext();) {
+            IJavaProject p = iter.next();
             String location = p.getProject().getName() + ".location"; //$NON-NLS-1$
             String refProjectRoot = ExportUtil.getProjectRoot(p);
             String relativePath = ExportUtil.getRelativePath(refProjectRoot,
@@ -978,8 +941,7 @@ public class BuildFileCreator
     /**
      * Add all bootclasspaths in srcDirs to given javacElement.
      */
-    private void addCompilerBootClasspath(List srcDirs, Element javacElement)
-    {
+    private void addCompilerBootClasspath(List<String> srcDirs, Element javacElement) {
         // <bootclasspath>
         //     <path refid="mylib.bootclasspath"/>
         //     <fileset dir="${java.home}/lib" includes="*.jar"/>
@@ -987,11 +949,9 @@ public class BuildFileCreator
         // </bootclasspath>
         Element bootclasspathElement = doc.createElement("bootclasspath"); //$NON-NLS-1$
         boolean bootclasspathUsed = false;
-        for (Iterator iter = srcDirs.iterator(); iter.hasNext();)
-        {
-            String entry = (String) iter.next();
-            if (EclipseClasspath.isUserSystemLibraryReference(entry))
-            {
+        for (Iterator<String> iter = srcDirs.iterator(); iter.hasNext();) {
+            String entry = iter.next();
+            if (EclipseClasspath.isUserSystemLibraryReference(entry)) {
                 Element pathElement = doc.createElement("path"); //$NON-NLS-1$                        
                 pathElement.setAttribute("refid", ExportUtil.removePrefixAndSuffix(entry, "${", "}")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 bootclasspathElement.appendChild(pathElement);
@@ -1000,8 +960,7 @@ public class BuildFileCreator
                 addJre(bootclasspathElement);
             }
         }
-        if (bootclasspathUsed)
-        {
+        if (bootclasspathUsed) {
             javacElement.appendChild(bootclasspathElement);
         }
     }
@@ -1059,8 +1018,7 @@ public class BuildFileCreator
      *                             if run configuration makes use of this feature
      * @param conf                 Java application launch configuration
      */
-    public void addJavaApplication(Map variable2value, ILaunchConfiguration conf) throws CoreException
-    {
+    public void addJavaApplication(Map<String, String> variable2value, ILaunchConfiguration conf) throws CoreException {
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute(IAntCoreConstants.NAME, conf.getName());
         Element javaElement = doc.createElement("java"); //$NON-NLS-1$
@@ -1069,15 +1027,13 @@ public class BuildFileCreator
         javaElement.setAttribute("failonerror", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, IAntCoreConstants.EMPTY_STRING);
         ExportUtil.addVariable(variable2value, dir, projectRoot);                
-        if (!dir.equals(IAntCoreConstants.EMPTY_STRING))
-        {
+        if (!dir.equals(IAntCoreConstants.EMPTY_STRING)) {
             javaElement.setAttribute(IAntCoreConstants.DIR, ExportUtil.getRelativePath(dir, projectRoot));
         }
-        if (!conf.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true))
-        {
+        if (!conf.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true)) {
             javaElement.setAttribute("newenvironment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        Map props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap());
+        Map<String, String> props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap<String, String>());
         addElements(props, doc, javaElement, "env", "key", IAntCoreConstants.VALUE); //$NON-NLS-1$ //$NON-NLS-2$
         addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, javaElement, "jvmarg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$
         addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, javaElement, "arg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1097,21 +1053,17 @@ public class BuildFileCreator
      * @throws TransformerFactoryConfigurationError thrown if applet file could not get created 
      * @throws UnsupportedEncodingException thrown if applet file could not get created
      */
-    public void addApplet(Map variable2value, ILaunchConfiguration conf) throws CoreException, TransformerFactoryConfigurationError, UnsupportedEncodingException
-    {
+    public void addApplet(Map<String, String> variable2value, ILaunchConfiguration conf) throws CoreException, TransformerFactoryConfigurationError, UnsupportedEncodingException {
         String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, IAntCoreConstants.EMPTY_STRING);
-        if (dir.equals(IAntCoreConstants.EMPTY_STRING))
-        {
+        if (dir.equals(IAntCoreConstants.EMPTY_STRING)) {
             dir = projectRoot;
         }
         ExportUtil.addVariable(variable2value, dir, projectRoot);
         String value;
-        try
-        {
+        try {
             value = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(dir);    
         }
-        catch (CoreException e)
-        {
+        catch (CoreException e) {
             // cannot resolve variable
             value = null;
         }
@@ -1164,8 +1116,7 @@ public class BuildFileCreator
      *                             if run configuration makes use of this feature
      * @param conf                 applet configuration
      */
-    public void addJUnit(Map variable2value, ILaunchConfiguration conf) throws CoreException
-    {
+    public void addJUnit(Map<String, String> variable2value, ILaunchConfiguration conf) throws CoreException {
         // <target name="runtest">
         //     <mkdir dir="junit"/>
         //     <junit fork="yes" printsummary="withOutAndErr">
@@ -1213,17 +1164,17 @@ public class BuildFileCreator
             // Case 2: Run all tests in project, package or source folder
             String container = conf.getAttribute("org.eclipse.jdt.junit.CONTAINER" /*JUnitBaseLaunchConfiguration.LAUNCH_CONTAINER_ATTR*/, IAntCoreConstants.EMPTY_STRING); //$NON-NLS-1$
             IType[] types = ExportUtil.findTestsInContainer(container);
-            Set sortedTypes = new TreeSet(ExportUtil.getITypeComparator());
+            Set<IType> sortedTypes = new TreeSet<IType>(ExportUtil.getITypeComparator());
             sortedTypes.addAll(Arrays.asList(types));
-            for (Iterator iter = sortedTypes.iterator(); iter.hasNext();) {
-                IType type = (IType) iter.next();
+            for (Iterator<IType> iter = sortedTypes.iterator(); iter.hasNext();) {
+                IType type = iter.next();
                 Element testElement = doc.createElement("test"); //$NON-NLS-1$
                 testElement.setAttribute(IAntCoreConstants.NAME, type.getFullyQualifiedName());
                 testElement.setAttribute("todir", "${junit.output.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
                 junitElement.appendChild(testElement);                       
             }
         }
-        Map props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap());
+        Map<String, String> props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap<String, String>());
         addElements(props, doc, junitElement, "env", "key", IAntCoreConstants.VALUE); //$NON-NLS-1$ //$NON-NLS-2$
         addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, junitElement, "jvmarg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$
         element.appendChild(junitElement);
@@ -1296,7 +1247,7 @@ public class BuildFileCreator
         // </bootclasspath>
         EclipseClasspath bootClasspath = new EclipseClasspath(project, conf, true);
         if (bootClasspath.rawClassPathEntries.size() == 1
-                && EclipseClasspath.isJreReference((String) bootClasspath.rawClassPathEntries.get(0))) {
+                && EclipseClasspath.isJreReference(bootClasspath.rawClassPathEntries.get(0))) {
             // the default boot classpath contains exactly one element (the JRE)
             return;
         }
@@ -1323,7 +1274,7 @@ public class BuildFileCreator
      */
     private static void addElement(String cmdLineArgs, Document doc,
             Element element, String elementName, String attributeName,
-            Map variable2valueMap, String projectRoot) {
+            Map<String, String> variable2valueMap, String projectRoot) {
 
         if (cmdLineArgs == null || cmdLineArgs.length() == 0) {
             return;
@@ -1345,13 +1296,11 @@ public class BuildFileCreator
      * @param keyAttributeName      name of key attribute
      * @param valueAttributeName    name of value attribute
      */
-    private static void addElements(Map map, Document doc, Element element, String elementName,
-                                    String keyAttributeName, String valueAttributeName)
-    {
-        for (Iterator iter = map.keySet().iterator(); iter.hasNext();)
-        {
-            String key = (String) iter.next();
-            String value = (String) map.get(key);
+    private static void addElements(Map<String, String> map, Document doc, Element element, String elementName,
+                                    String keyAttributeName, String valueAttributeName) {
+        for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
+            String key = iter.next();
+            String value = map.get(key);
             Element itemElement = doc.createElement(elementName);
             itemElement.setAttribute(keyAttributeName, key);
             itemElement.setAttribute(valueAttributeName, value);

@@ -28,50 +28,50 @@ public class ProjectTests extends AbstractAntTest {
 	 * Tests that the three properties that should always be set are correct
 	 */
 	public void testBasePropertiesSet() throws CoreException {
-		String buildFileName="TestForEcho.xml"; 
+		String buildFileName="TestForEcho.xml";  //$NON-NLS-1$
 		run(buildFileName);
 		IFile buildFile= getBuildFile(buildFileName);
 		String fullName= buildFile.getLocation().toFile().getAbsolutePath();
-		assertEquals("eclipse.running should have been set as true", "true", AntTestChecker.getDefault().getUserProperty("eclipse.running"));
-		assertEquals("ant.file should have been set as the build file name", fullName, AntTestChecker.getDefault().getUserProperty("ant.file"));
-		assertNotNull("ant.java.version should have been set", AntTestChecker.getDefault().getUserProperty("ant.java.version"));
-		assertNotNull("ant.version should have been set", AntTestChecker.getDefault().getUserProperty("ant.version"));
-		assertNotNull("eclipse.home should have been set", AntTestChecker.getDefault().getUserProperty("eclipse.home"));
+		assertEquals("eclipse.running should have been set as true", "true", AntTestChecker.getDefault().getUserProperty("eclipse.running")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertEquals("ant.file should have been set as the build file name", fullName, AntTestChecker.getDefault().getUserProperty("ant.file")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull("ant.java.version should have been set", AntTestChecker.getDefault().getUserProperty("ant.java.version")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull("ant.version should have been set", AntTestChecker.getDefault().getUserProperty("ant.version")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull("eclipse.home should have been set", AntTestChecker.getDefault().getUserProperty("eclipse.home")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void testValue() throws CoreException {
-		String buildFileName="TestForEcho.xml"; 
+		String buildFileName="TestForEcho.xml";  //$NON-NLS-1$
 		run(buildFileName);
-		assertEquals("property.testing should have been set as true", "true", AntTestChecker.getDefault().getUserProperty("property.testing"));
+		assertEquals("property.testing should have been set as true", "true", AntTestChecker.getDefault().getUserProperty("property.testing")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public void testValueWithClass() throws CoreException {
 		
-		String buildFileName="TestForEcho.xml"; 
+		String buildFileName="TestForEcho.xml";  //$NON-NLS-1$
 		run(buildFileName);
-		assertEquals("property.testing2 should have been set as hey", "hey", AntTestChecker.getDefault().getUserProperty("property.testing2"));
+		assertEquals("property.testing2 should have been set as hey", "hey", AntTestChecker.getDefault().getUserProperty("property.testing2")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public void testClass() throws CoreException {
-		String buildFileName="TestForEcho.xml"; 
+		String buildFileName="TestForEcho.xml";  //$NON-NLS-1$
 		run(buildFileName);
-		assertEquals("property.testing3 should have been set as AntTestPropertyProvider", "AntTestPropertyValueProvider", AntTestChecker.getDefault().getUserProperty("property.testing3"));
+		assertEquals("property.testing3 should have been set as AntTestPropertyProvider", "AntTestPropertyValueProvider", AntTestChecker.getDefault().getUserProperty("property.testing3")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public void testHeadless() throws CoreException {
 		try {
 			AntCorePlugin.getPlugin().setRunningHeadless(true);
-			String buildFileName="TestForEcho.xml"; 
+			String buildFileName="TestForEcho.xml";  //$NON-NLS-1$
 			run(buildFileName);
-			assertNull("property.headless should not have been set as AntTestPropertyProvider", AntTestChecker.getDefault().getUserProperty("property.headless"));
+			assertNull("property.headless should not have been set as AntTestPropertyProvider", AntTestChecker.getDefault().getUserProperty("property.headless")); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			AntCorePlugin.getPlugin().setRunningHeadless(false);
 		}
 	}
 	
 	public void testNotHeadless() throws CoreException {
-		String buildFileName="TestForEcho.xml"; 
+		String buildFileName="TestForEcho.xml";  //$NON-NLS-1$
 		run(buildFileName);
-		assertEquals("property.headless should have been set as AntTestPropertyProvider", "headless", AntTestChecker.getDefault().getUserProperty("property.headless"));
+		assertEquals("property.headless should have been set as AntTestPropertyProvider", "headless", AntTestChecker.getDefault().getUserProperty("property.headless")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

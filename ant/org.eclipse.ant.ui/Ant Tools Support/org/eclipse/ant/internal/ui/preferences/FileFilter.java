@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,25 +31,23 @@ public class FileFilter extends ViewerFilter {
 	/**
 	 * Objects to filter
 	 */
-	private List fFilter;
-	
+	private List<?> fFilter;
+
 	/**
 	 * Collection of files and containers to display
 	 */
-	private Set fFiles;
-	
+	private Set<IResource> fFiles;
+
 	private String fExtension;
-	
+
 	private Pattern fExtnPattern;
 
-    private boolean fConsiderExtension= true;
+	private boolean fConsiderExtension = true;
 
 	/**
-	 * Creates a new filter that filters the given 
-	 * objects.
-	 * Note: considerExtension must be called to initialize the filter
+	 * Creates a new filter that filters the given objects. Note: considerExtension must be called to initialize the filter
 	 */
-	public FileFilter(List objects, String extension) {
+	public FileFilter(List<?> objects, String extension) {
 		fFilter = objects;
 		fExtension = extension;
 		if (extension.indexOf('|') > 0) { // Shouldn't be the first char!
@@ -60,30 +58,33 @@ public class FileFilter extends ViewerFilter {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		return fFiles.contains(element) && !fFilter.contains(element);
 	}
-	
+
 	/**
 	 * Search for all the matching files in the workspace.
 	 */
 	private void init() {
 		BusyIndicator.showWhile(AntUIPlugin.getStandardDisplay(), new Runnable() {
+			@Override
 			public void run() {
-				fFiles = new HashSet();
+				fFiles = new HashSet<IResource>();
 				traverse(ResourcesPlugin.getWorkspace().getRoot(), fFiles);
 			}
 		});
 	}
 
 	/**
-	 * Traverse the given container, adding files to the given set.
-	 * Returns whether any files were added
+	 * Traverse the given container, adding files to the given set. Returns whether any files were added
 	 */
-	private boolean traverse(IContainer container, Set set) {
+	private boolean traverse(IContainer container, Set<IResource> set) {
 		boolean added = false;
 		try {
 			IResource[] resources = container.members();
@@ -103,7 +104,9 @@ public class FileFilter extends ViewerFilter {
 					}
 				}
 			}
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
+			// do nothing
 		}
 		return added;
 	}
@@ -116,17 +119,19 @@ public class FileFilter extends ViewerFilter {
 			}
 			// Accepting multiple extensions
 			// eg: "xml|ant|ent|macrodef"
-			return fExtnPattern.matcher(ext).matches();		
+			return fExtnPattern.matcher(ext).matches();
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Sets whether this filter will filter based on extension.
-	 * @param considerExtension whether to consider a file's extension when filtering
+	 * 
+	 * @param considerExtension
+	 *            whether to consider a file's extension when filtering
 	 */
 	public void considerExtension(boolean considerExtension) {
-	    fConsiderExtension= considerExtension;
-	    init();
+		fConsiderExtension = considerExtension;
+		init();
 	}
 }

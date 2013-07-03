@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	
 	private AntDebugState fDebugState= null;
 	
-	private List fBreakpoints= null;
+	private List<IBreakpoint> fBreakpoints= null;
     
 	private AntDebugTarget fAntDebugTarget;
 	private boolean fResumed= false;
@@ -115,6 +115,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 					 checkCancelled();
 				 }
 			 } catch (InterruptedException e) {
+				//do nothing
 			 }
 		} else if (fDebugState.getCurrentTask() != null) {
 			int detail= -1;
@@ -140,6 +141,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	            		checkCancelled();
 	            	}
 	            } catch (InterruptedException e) {
+	            	//do nothing
 	            }
 	        }
 	    }
@@ -197,7 +199,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	public void handleBreakpoint(IBreakpoint breakpoint, boolean added) {
 		if (added) {
 			if (fBreakpoints == null) {
-				fBreakpoints= new ArrayList();
+				fBreakpoints= new ArrayList<IBreakpoint>();
 			}
 			if (!fBreakpoints.contains(breakpoint)) {
 				fBreakpoints.add(breakpoint);

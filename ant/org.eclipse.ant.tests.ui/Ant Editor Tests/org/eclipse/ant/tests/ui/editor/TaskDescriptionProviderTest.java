@@ -34,7 +34,7 @@ public class TaskDescriptionProviderTest extends AbstractAntUITest {
      */
     public void testGettingTaskDescription() {
         TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault();
-        String description = provider.getDescriptionForTask("apply");
+        String description = provider.getDescriptionForTask("apply"); //$NON-NLS-1$
         assertNotNull(description);
         assertTrue(description.length() > 0);
     }
@@ -44,7 +44,7 @@ public class TaskDescriptionProviderTest extends AbstractAntUITest {
      */
     public void testGettingAttribute() {
         TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault();
-        String description = provider.getDescriptionForTaskAttribute("apply", "executable");
+        String description = provider.getDescriptionForTaskAttribute("apply", "executable"); //$NON-NLS-1$ //$NON-NLS-2$
         assertNotNull(description);
         assertTrue(description.length() > 0);
     }
@@ -54,9 +54,9 @@ public class TaskDescriptionProviderTest extends AbstractAntUITest {
      */
     public void testGettingRequired() {
         TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault();
-        String required = provider.getRequiredAttributeForTaskAttribute("apply", "executable");
+        String required = provider.getRequiredAttributeForTaskAttribute("apply", "executable"); //$NON-NLS-1$ //$NON-NLS-2$
         assertNotNull(required);
-        assertEquals("yes", required);
+        assertEquals("yes", required); //$NON-NLS-1$
     }
 
     public static Test suite() {

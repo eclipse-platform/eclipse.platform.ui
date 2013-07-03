@@ -31,13 +31,13 @@ public class StackTests extends AbstractAntDebugTest {
     }
     
     private void antCallStack(boolean sepVM) throws CoreException {
-        String fileName = "85769";
-        IFile file= getIFile(fileName + ".xml");
+        String fileName = "85769"; //$NON-NLS-1$
+        IFile file= getIFile(fileName + ".xml"); //$NON-NLS-1$
         ILineBreakpoint bp = createLineBreakpoint(18, file);
         AntThread thread = null;
         try {
             if (sepVM) {
-                fileName+= "SepVM";
+                fileName+= "SepVM"; //$NON-NLS-1$
             }
             thread= launchToLineBreakpoint(fileName, bp);
             
@@ -46,7 +46,7 @@ public class StackTests extends AbstractAntDebugTest {
            
             assertTrue(frames.length == 3);
             IStackFrame frame = frames[0];
-            frame.getName().equals("");
+            frame.getName().equals(""); //$NON-NLS-1$
         } finally {
             terminateAndRemove(thread);
             removeAllBreakpoints();

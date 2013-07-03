@@ -27,7 +27,7 @@ public class AntTestTask extends Task {
 	public void execute() throws BuildException {
 		Echo echo= new Echo();
 		echo.setProject(getProject());
-		echo.setMessage("Testing Ant in Eclipse with a custom task");
+		echo.setMessage("Testing Ant in Eclipse with a custom task"); //$NON-NLS-1$
 		echo.execute();
 	}
 }

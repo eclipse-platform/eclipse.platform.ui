@@ -29,8 +29,8 @@ public class AntTestInputHandler extends DefaultInputHandler {
 	 */
 	public void handleInput(InputRequest request) throws BuildException {
 		if (System.getProperty("eclipse.ant.noInput") != null) { //$NON-NLS-1$
-			throw new BuildException("Unable to respond to input request likely as a result of specifying the -noinput command");
+			throw new BuildException("Unable to respond to input request likely as a result of specifying the -noinput command"); //$NON-NLS-1$
 		}
-		request.setInput("testing handling input requests");
+		request.setInput("testing handling input requests"); //$NON-NLS-1$
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,90 +36,97 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class FileSelectionDialog extends ElementTreeSelectionDialog {
-	
+
 	private FileFilter fFilter;
 	private String fFilterMessage;
-	private boolean fShowAll= false;
-	private final static String DIALOG_SETTING= "AntPropertiesFileSelectionDialog.showAll";  //$NON-NLS-1$
-	private final static String LAST_CONTAINER= "AntPropertiesFileSelectionDialog.lastContainer";  //$NON-NLS-1$
-	
-	public FileSelectionDialog(Shell parent, List files, String title, String message, String filterExtension, String filterMessage) {
+	private boolean fShowAll = false;
+	private final static String DIALOG_SETTING = "AntPropertiesFileSelectionDialog.showAll"; //$NON-NLS-1$
+	private final static String LAST_CONTAINER = "AntPropertiesFileSelectionDialog.lastContainer"; //$NON-NLS-1$
+
+	public FileSelectionDialog(Shell parent, List<IFile> files, String title, String message, String filterExtension, String filterMessage) {
 		super(parent, new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-		
+
 		setTitle(title);
 		setMessage(message);
-		fFilter= new FileFilter(files, filterExtension);
-		fFilterMessage= filterMessage;
-		setInput(ResourcesPlugin.getWorkspace().getRoot());	
-        setComparator(new ResourceComparator(ResourceComparator.NAME));
-		
-		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
+		fFilter = new FileFilter(files, filterExtension);
+		fFilterMessage = filterMessage;
+		setInput(ResourcesPlugin.getWorkspace().getRoot());
+		setComparator(new ResourceComparator(ResourceComparator.NAME));
+
+		ISelectionStatusValidator validator = new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
 				if (selection.length == 0) {
-					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null); 
+					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null);
 				}
-				for (int i= 0; i < selection.length; i++) {
+				for (int i = 0; i < selection.length; i++) {
 					if (!(selection[i] instanceof IFile)) {
-						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null); 
+						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null);
 					}
 				}
-				return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null); 
-			}			
+				return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null);
+			}
 		};
 		setValidator(validator);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
-		
-		Composite result= (Composite)super.createDialogArea(parent);
+
+		Composite result = (Composite) super.createDialogArea(parent);
 		final Button button = new Button(result, SWT.CHECK);
 		button.setText(fFilterMessage);
 		button.setFont(parent.getFont());
-		
-		IDialogSettings settings= AntUIPlugin.getDefault().getDialogSettings();
-		fShowAll= settings.getBoolean(DIALOG_SETTING);
-		
-		String lastPath= settings.get(LAST_CONTAINER);
+
+		IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
+		fShowAll = settings.getBoolean(DIALOG_SETTING);
+
+		String lastPath = settings.get(LAST_CONTAINER);
 		if (lastPath != null) {
-			IPath path= Path.fromPortableString(lastPath);
-			IResource resource= ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			IPath path = Path.fromPortableString(lastPath);
+			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			setInitialSelection(resource);
 		}
-		
+
 		fFilter.considerExtension(!fShowAll);
 		getTreeViewer().addFilter(fFilter);
 		if (!fShowAll) {
 			button.setSelection(true);
 		}
-		
+
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				if (button.getSelection()) {
-					fShowAll= false;
+					fShowAll = false;
 				} else {
-					fShowAll= true;
+					fShowAll = true;
 				}
 				fFilter.considerExtension(!fShowAll);
 				getTreeViewer().refresh();
 			}
 		});
-		applyDialogFont(result);		
+		applyDialogFont(result);
 		return result;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
+	@Override
 	public boolean close() {
-		IDialogSettings settings= AntUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();
 		settings.put(DIALOG_SETTING, fShowAll);
-		
-		Object[] result= getResult();
+
+		Object[] result = getResult();
 		if (result != null && result.length > 0) {
-			settings.put(LAST_CONTAINER, ((IResource)result[0]).getParent().getFullPath().toPortableString());
+			settings.put(LAST_CONTAINER, ((IResource) result[0]).getParent().getFullPath().toPortableString());
 		}
 		return super.close();
 	}

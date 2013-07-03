@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 Object Factory Inc.
+ * Copyright (c) 2002, 2013 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,20 +24,20 @@ import org.eclipse.ant.internal.ui.dtd.ISchema;
  * @author Bob Foster
  */
 public class Schema implements ISchema {
-	private HashMap fElementMap = new HashMap();
+	private HashMap<String, IElement> fElementMap = new HashMap<String, IElement>();
 	private Exception fErrorException;
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.ISchema#getElement(java.lang.String)
 	 */
 	public IElement getElement(String qname) {
-		return (IElement) fElementMap.get(qname);
+		return fElementMap.get(qname);
 	}
 
 	/**
 	 * @see org.eclipse.ant.internal.ui.dtd.ISchema#getElements()
 	 */
 	public IElement[] getElements() {
-		return (IElement[]) fElementMap.entrySet().toArray(new IElement[fElementMap.entrySet().size()]);
+		return fElementMap.entrySet().toArray(new IElement[fElementMap.entrySet().size()]);
 	}
 	
 	/**

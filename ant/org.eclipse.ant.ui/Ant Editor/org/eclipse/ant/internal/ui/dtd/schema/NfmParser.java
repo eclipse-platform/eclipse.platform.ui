@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 Object Factory Inc.
+ * Copyright (c) 2002, 2013 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,12 +55,12 @@ public class NfmParser {
 		
 		// Make list of dfms in graph
 		
-		ArrayList dfms = new ArrayList();
+		ArrayList<Dfm> dfms = new ArrayList<Dfm>();
 		collect(dfm, dfms);
 		
 		// Detect accept conflicts
 		
-		HashMap duplicates = new HashMap();
+		HashMap<Dfm, Dfm> duplicates = new HashMap<Dfm, Dfm>();
 		detect(dfms, duplicates);
 		
 		// Replace duplicate dfms in graph
@@ -76,15 +76,15 @@ public class NfmParser {
 	}
 	
 	private void reportError(String name) throws ParseError {
-		throw new ParseError(MessageFormat.format(AntDTDSchemaMessages.NfmParser_Ambiguous, new String[]{name}));
+		throw new ParseError(MessageFormat.format(AntDTDSchemaMessages.NfmParser_Ambiguous, new Object[]{name}));
 	}
 
-	public static void collect(Dfm dfm, List dfms) {
+	public static void collect(Dfm dfm, List<Dfm> dfms) {
 		dfms.add(dfm);
 		collect1(dfm, dfms);
 	}
 	
-	private static void collect1(Dfm dfm, List dfms) {
+	private static void collect1(Dfm dfm, List<Dfm> dfms) {
 		Object[] follows = dfm.getValues();
 		if (follows != null) {
 			for (int i = 0; i < follows.length; i++) {
@@ -101,24 +101,22 @@ public class NfmParser {
 	/**
 	 * Replace duplicate dfms found during conflict resolution.
 	 */
-	private void replace(ArrayList dfms, HashMap removed) {
-		for (int i = 0; i < dfms.size(); i++) {
-			Dfm dfm = (Dfm) dfms.get(i);
+	private void replace(ArrayList<Dfm> dfms, HashMap<Dfm, Dfm> removed) {
+		for (Dfm dfm : dfms) {
 			Object[] follows = dfm.getValues();
 			if (follows != null) {
 				for (int j = 0; j < follows.length; j++) {
 					Dfm replacement, follow = (Dfm) follows[j];
-					while ((replacement = (Dfm) removed.get(follow)) != null)
+					while ((replacement = removed.get(follow)) != null)
 						follow = replacement;
 					follows[j] = follow;
 				}
 			}
 		}
-		
 		// release dfms so can be re-used
-		Iterator rit = removed.keySet().iterator();
-		while (rit.hasNext())
-			Dfm.free((Dfm)rit.next());
+		for (Dfm dfm : removed.keySet()) {
+			Dfm.free(dfm);
+		}
 	}
 
 
@@ -137,9 +135,9 @@ public class NfmParser {
 	 * can be removed until all have been checked; this might disguise the
 	 * ambiguity in, e.g., ((a|a),b,(a|a))*.
 	 */
-	private void detect(ArrayList dfms, HashMap duplicates) throws ParseError {
-		for (Iterator iter = dfms.iterator(); iter.hasNext();) {
-			Dfm dfm = (Dfm) iter.next();
+	private void detect(ArrayList<Dfm> dfms, HashMap<Dfm, Dfm> duplicates) throws ParseError {
+		for (Iterator<Dfm> iter = dfms.iterator(); iter.hasNext();) {
+			Dfm dfm = iter.next();
 			
 			Object[] accepts = dfm.getKeys();
 			Object[] follows = dfm.getValues();
@@ -163,8 +161,8 @@ public class NfmParser {
 		
 		// once more for removal
 		
-		for (Iterator iter = dfms.iterator(); iter.hasNext();) {
-			Dfm dfm = (Dfm) iter.next();
+		for (Iterator<Dfm> iter = dfms.iterator(); iter.hasNext();) {
+			Dfm dfm = iter.next();
 			
 			// record conflicts
 			Object[] accepts = dfm.getKeys();
@@ -187,7 +185,7 @@ public class NfmParser {
 								dfmhi = dfmlo;
 								dfmlo = tmp;
 							}
-							Dfm dup = (Dfm) duplicates.get(dfmhi);
+							Dfm dup = duplicates.get(dfmhi);
 							if (dup == null || dfmlo.id < dup.id) {
 								duplicates.put(dfmhi, dfmlo);
 							} else {
@@ -204,7 +202,7 @@ public class NfmParser {
 				if (remove) {
 					SortedMap map = dfm.getMap();
 					int i = 0;
-					for (Iterator iterator = map.keyIterator(); iterator.hasNext(); i++) {
+					for (Iterator<?> iterator = map.keyIterator(); iterator.hasNext(); i++) {
 						iterator.next();
 						if (removes[i])
 							iterator.remove();

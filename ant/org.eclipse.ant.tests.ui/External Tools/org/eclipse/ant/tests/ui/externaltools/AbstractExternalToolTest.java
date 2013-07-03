@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.ui.externaltools.internal.model.BuilderUtils;
  */
 public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 
-	static final String EXT_BUILD_FILE_NAME = "ext-builders.xml";
+	static final String EXT_BUILD_FILE_NAME = "ext-builders.xml"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -54,7 +54,7 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	 * @return a new Ant build {@link ILaunchConfiguration} or <code>null</code>
 	 * @throws Exception
 	 */
-	protected ILaunchConfiguration createExternalToolBuilder(IProject project, String name, Map args) throws Exception {
+	protected ILaunchConfiguration createExternalToolBuilder(IProject project, String name, Map<?, ?> args) throws Exception {
 		IFolder dir = getProject().getFolder(BuilderCoreUtils.BUILDER_FOLDER_NAME);
 		if(!dir.exists()) {
 			dir.create(true, true, null);
@@ -76,7 +76,7 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	 * @return
 	 * @throws Exception
 	 */
-	protected ILaunchConfigurationWorkingCopy createExternalToolBuilderWorkingCopy(IProject project, String name, Map args) throws Exception {
+	protected ILaunchConfigurationWorkingCopy createExternalToolBuilderWorkingCopy(IProject project, String name, Map<?, ?> args) throws Exception {
 		IFolder dir = getProject().getFolder(BuilderCoreUtils.BUILDER_FOLDER_NAME);
 		if(!dir.exists()) {
 			dir.create(true, true, null);
@@ -115,18 +115,18 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	 * 
 	 * @return a map of 2.0 arguments for an Ant buildfile.
 	 */
-	protected Map get20AntArgumentMap() {
-		HashMap arguments= new HashMap();
-		arguments.put(ExternalToolMigration.TAG_VERSION, "2.0");
-		arguments.put(ExternalToolMigration.TAG_TOOL_TYPE, "org.eclipse.ui.externaltools.type.ant");
-		arguments.put(ExternalToolMigration.TAG_TOOL_NAME, "ant tool");
-		arguments.put(ExternalToolMigration.TAG_TOOL_LOCATION, "location");
-		arguments.put(ExternalToolMigration.TAG_TOOL_REFRESH, "refresh scope");
-		arguments.put(ExternalToolMigration.TAG_TOOL_ARGUMENTS, "arg ${ant_target:target1} ${ant_target:target2}");
-		arguments.put(ExternalToolMigration.TAG_TOOL_SHOW_LOG, "true");
-		arguments.put(ExternalToolMigration.TAG_TOOL_BLOCK, "false");
-		arguments.put(ExternalToolMigration.TAG_TOOL_BUILD_TYPES, "build kinds");
-		arguments.put(ExternalToolMigration.TAG_TOOL_DIRECTORY, "working dir");
+	protected Map<String, String> get20AntArgumentMap() {
+		HashMap<String, String> arguments= new HashMap<String, String>();
+		arguments.put(ExternalToolMigration.TAG_VERSION, "2.0"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_TYPE, "org.eclipse.ui.externaltools.type.ant"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_NAME, "ant tool"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_LOCATION, "location"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_REFRESH, "refresh scope"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_ARGUMENTS, "arg ${ant_target:target1} ${ant_target:target2}"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_SHOW_LOG, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_BLOCK, "false"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_BUILD_TYPES, "build kinds"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_DIRECTORY, "working dir"); //$NON-NLS-1$
 		return arguments;
 	}
 	
@@ -136,18 +136,18 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	 * 
 	 * @return a map of 2.0 arguments for a program
 	 */
-	protected Map get20ProgramArgumentMap() {
-		HashMap arguments= new HashMap();
-		arguments.put(ExternalToolMigration.TAG_VERSION, "2.0");
-		arguments.put(ExternalToolMigration.TAG_TOOL_TYPE, "org.eclipse.ui.externaltools.type.program");
-		arguments.put(ExternalToolMigration.TAG_TOOL_NAME, "program tool");
-		arguments.put(ExternalToolMigration.TAG_TOOL_LOCATION, "location");
-		arguments.put(ExternalToolMigration.TAG_TOOL_REFRESH, "refresh scope");
-		arguments.put(ExternalToolMigration.TAG_TOOL_ARGUMENTS, "arg ${ant_target:target1} ${ant_target:target2}");
-		arguments.put(ExternalToolMigration.TAG_TOOL_SHOW_LOG, "true");
-		arguments.put(ExternalToolMigration.TAG_TOOL_BLOCK, "false");
-		arguments.put(ExternalToolMigration.TAG_TOOL_BUILD_TYPES, "build kinds");
-		arguments.put(ExternalToolMigration.TAG_TOOL_DIRECTORY, "working dir");
+	protected Map<String, String> get20ProgramArgumentMap() {
+		HashMap<String, String> arguments= new HashMap<String, String>();
+		arguments.put(ExternalToolMigration.TAG_VERSION, "2.0"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_TYPE, "org.eclipse.ui.externaltools.type.program"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_NAME, "program tool"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_LOCATION, "location"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_REFRESH, "refresh scope"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_ARGUMENTS, "arg ${ant_target:target1} ${ant_target:target2}"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_SHOW_LOG, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_BLOCK, "false"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_BUILD_TYPES, "build kinds"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_TOOL_DIRECTORY, "working dir"); //$NON-NLS-1$
 		return arguments;
 	}
 	
@@ -157,23 +157,23 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	 * 
 	 * @return a map of 2.1 arguments for an Ant buildfile
 	 */
-	protected Map get21AntArgumentMap() {
-		HashMap arguments= new HashMap();
-		arguments.put(ExternalToolMigration.TAG_VERSION, "2.1");
-		arguments.put(ExternalToolMigration.TAG_NAME, "ant config");
+	protected Map<String, String> get21AntArgumentMap() {
+		HashMap<String, String> arguments= new HashMap<String, String>();
+		arguments.put(ExternalToolMigration.TAG_VERSION, "2.1"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_NAME, "ant config"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TYPE, ExternalToolMigration.TOOL_TYPE_ANT_BUILD);
-		arguments.put(ExternalToolMigration.TAG_LOCATION, "location");
-		arguments.put(ExternalToolMigration.TAG_WORK_DIR, "working directory");
-		arguments.put(ExternalToolMigration.TAG_CAPTURE_OUTPUT, "true");
-		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true");
-		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true");
-		arguments.put(ExternalToolMigration.TAG_RUN_BKGRND, "true");
-		arguments.put(ExternalToolMigration.TAG_PROMPT_ARGS, "true");
-		arguments.put(ExternalToolMigration.TAG_REFRESH_SCOPE, "refresh scope");
-		arguments.put(ExternalToolMigration.TAG_REFRESH_RECURSIVE, "true");
-		arguments.put(ExternalToolMigration.TAG_RUN_BUILD_KINDS, "build kinds");
-		arguments.put(ExternalToolMigration.TAG_ARGS, "arg1 arg2");
-		arguments.put(ExternalToolMigration.TAG_EXTRA_ATTR, ExternalToolMigration.RUN_TARGETS_ATTRIBUTE + "=target1,target2");
+		arguments.put(ExternalToolMigration.TAG_LOCATION, "location"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_WORK_DIR, "working directory"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_CAPTURE_OUTPUT, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_RUN_BKGRND, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_PROMPT_ARGS, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_REFRESH_SCOPE, "refresh scope"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_REFRESH_RECURSIVE, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_RUN_BUILD_KINDS, "build kinds"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_ARGS, "arg1 arg2"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_EXTRA_ATTR, ExternalToolMigration.RUN_TARGETS_ATTRIBUTE + "=target1,target2"); //$NON-NLS-1$
 		return arguments;
 	}
 	
@@ -183,22 +183,22 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	 * 
 	 * @return a map of 2.1 arguments for a program
 	 */
-	protected Map get21ProgramArgumentMap() {
-		HashMap arguments= new HashMap();
-		arguments.put(ExternalToolMigration.TAG_VERSION, "2.1");
-		arguments.put(ExternalToolMigration.TAG_NAME, "program config");
+	protected Map<String, String> get21ProgramArgumentMap() {
+		HashMap<String, String> arguments= new HashMap<String, String>();
+		arguments.put(ExternalToolMigration.TAG_VERSION, "2.1"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_NAME, "program config"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TYPE, IExternalToolConstants.TOOL_TYPE_PROGRAM);
-		arguments.put(ExternalToolMigration.TAG_LOCATION, "location");
-		arguments.put(ExternalToolMigration.TAG_WORK_DIR, "working directory");
-		arguments.put(ExternalToolMigration.TAG_CAPTURE_OUTPUT, "true");
-		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true");
-		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true");
-		arguments.put(ExternalToolMigration.TAG_RUN_BKGRND, "true");
-		arguments.put(ExternalToolMigration.TAG_PROMPT_ARGS, "true");
-		arguments.put(ExternalToolMigration.TAG_REFRESH_SCOPE, "refresh scope");
-		arguments.put(ExternalToolMigration.TAG_REFRESH_RECURSIVE, "true");
-		arguments.put(ExternalToolMigration.TAG_RUN_BUILD_KINDS, "build kinds");
-		arguments.put(ExternalToolMigration.TAG_ARGS, "arg1 arg2");
+		arguments.put(ExternalToolMigration.TAG_LOCATION, "location"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_WORK_DIR, "working directory"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_CAPTURE_OUTPUT, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_RUN_BKGRND, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_PROMPT_ARGS, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_REFRESH_SCOPE, "refresh scope"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_REFRESH_RECURSIVE, "true"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_RUN_BUILD_KINDS, "build kinds"); //$NON-NLS-1$
+		arguments.put(ExternalToolMigration.TAG_ARGS, "arg1 arg2"); //$NON-NLS-1$
 		return arguments;
 	}
 }

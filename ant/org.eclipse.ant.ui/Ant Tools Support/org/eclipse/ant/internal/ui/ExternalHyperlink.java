@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,59 +29,69 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class ExternalHyperlink implements IHyperlink {
 
-    private File fFile;
-    private int fLineNumber;
+	private File fFile;
+	private int fLineNumber;
 
-    public ExternalHyperlink(File file, int lineNumber) {
-        super();
-        fFile = file;
-        fLineNumber= lineNumber;
-    }
+	public ExternalHyperlink(File file, int lineNumber) {
+		super();
+		fFile = file;
+		fLineNumber = lineNumber;
+	}
 
-    public void linkEntered() {
-    }
+	@Override
+	public void linkEntered() {
+		// do nothing
+	}
 
-    public void linkExited() {
-    }
+	@Override
+	public void linkExited() {
+		// do nothing
+	}
 
-    public void linkActivated() {
-    	IEditorInput input;
-    	IFileStore fileStore;
+	@Override
+	public void linkActivated() {
+		IEditorInput input;
+		IFileStore fileStore;
 		try {
-			fileStore= EFS.getStore(fFile.toURI());
+			fileStore = EFS.getStore(fFile.toURI());
 			input = new FileStoreEditorInput(fileStore);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 			// unable to link
 			AntUIPlugin.log(e);
 			return;
 		}
-    	
-        IWorkbenchPage activePage = AntUIPlugin.getActiveWorkbenchWindow().getActivePage();
-        try {
-            IEditorPart editorPart= activePage.openEditor(input, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
-            if (fLineNumber > 0 && editorPart instanceof ITextEditor) {
-                ITextEditor textEditor = (ITextEditor)editorPart;
-                
-                    IDocumentProvider provider = textEditor.getDocumentProvider();
-                    try {
-                        provider.connect(input);
-                    } catch (CoreException e) {
-                        // unable to link
-                        AntUIPlugin.log(e);
-                        return;
-                    }
-                    IDocument document = provider.getDocument(input);
-                    try {
-                        IRegion lineRegion= document.getLineInformation(fLineNumber);
-                        textEditor.selectAndReveal(lineRegion.getOffset(), lineRegion.getLength());
-                    } catch (BadLocationException e) {
-                        // unable to link
-                        AntUIPlugin.log(e);
-                    }
-                    provider.disconnect(input);
-                }
-            
-        } catch (PartInitException e) {
-        }
-    }
+
+		IWorkbenchPage activePage = AntUIPlugin.getActiveWorkbenchWindow().getActivePage();
+		try {
+			IEditorPart editorPart = activePage.openEditor(input, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
+			if (fLineNumber > 0 && editorPart instanceof ITextEditor) {
+				ITextEditor textEditor = (ITextEditor) editorPart;
+
+				IDocumentProvider provider = textEditor.getDocumentProvider();
+				try {
+					provider.connect(input);
+				}
+				catch (CoreException e) {
+					// unable to link
+					AntUIPlugin.log(e);
+					return;
+				}
+				IDocument document = provider.getDocument(input);
+				try {
+					IRegion lineRegion = document.getLineInformation(fLineNumber);
+					textEditor.selectAndReveal(lineRegion.getOffset(), lineRegion.getLength());
+				}
+				catch (BadLocationException e) {
+					// unable to link
+					AntUIPlugin.log(e);
+				}
+				provider.disconnect(input);
+			}
+
+		}
+		catch (PartInitException e) {
+			// do nothing
+		}
+	}
 }

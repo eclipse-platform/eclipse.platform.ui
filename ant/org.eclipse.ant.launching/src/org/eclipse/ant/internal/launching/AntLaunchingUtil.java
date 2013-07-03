@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,8 @@
 package org.eclipse.ant.internal.launching;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -156,11 +156,9 @@ public final class AntLaunchingUtil {
 	 * @throws CoreException
 	 *             if unable to access the associated attribute
 	 */
-	public static Map getProperties(ILaunchConfiguration configuration)
-			throws CoreException {
-		Map map = configuration.getAttribute(
-				IAntLaunchConstants.ATTR_ANT_PROPERTIES,
-				(Map) null);
+	public static Map<String, String> getProperties(ILaunchConfiguration configuration) throws CoreException {
+		//TODO PLATFORM DEBUG 1.5 API
+		Map<String, String> map = configuration.getAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES,	(Map<String, String>) null);
 		return map;
 	}
 
@@ -239,7 +237,7 @@ public final class AntLaunchingUtil {
 		IRuntimeClasspathEntry[] unresolved = JavaRuntime
 				.computeUnresolvedRuntimeClasspath(config);
 		// don't consider bootpath entries
-		List userEntries = new ArrayList(unresolved.length);
+		List<IRuntimeClasspathEntry> userEntries = new ArrayList<IRuntimeClasspathEntry>(unresolved.length);
 		for (int i = 0; i < unresolved.length; i++) {
 			IRuntimeClasspathEntry entry = unresolved[i];
 			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
@@ -248,9 +246,7 @@ public final class AntLaunchingUtil {
 		}
 		IRuntimeClasspathEntry[] entries = JavaRuntime
 				.resolveRuntimeClasspath(
-						(IRuntimeClasspathEntry[]) userEntries
-								.toArray(new IRuntimeClasspathEntry[userEntries
-										.size()]), config);
+						userEntries.toArray(new IRuntimeClasspathEntry[userEntries.size()]), config);
 		URL[] urls = new URL[entries.length];
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];
@@ -271,12 +267,9 @@ public final class AntLaunchingUtil {
 				.getStringVariableManager().performStringSubstitution(
 						variableString);
 		if (expandedString == null || expandedString.length() == 0) {
-			String msg = MessageFormat.format(invalidMessage,
-					new String[] { variableString });
-			throw new CoreException(new Status(IStatus.ERROR,
-					AntLaunching.PLUGIN_ID, 0, msg, null));
+			String msg = MessageFormat.format(invalidMessage, new Object[] { variableString });
+			throw new CoreException(new Status(IStatus.ERROR, AntLaunching.PLUGIN_ID, 0, msg, null));
 		}
-
 		return expandedString;
 	}
 
@@ -344,8 +337,8 @@ public final class AntLaunchingUtil {
 		}
 		IPath filePath = new Path(path);
 		IFile file = null;
-		IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
-				.findFilesForLocation(filePath);
+		URI location = filePath.makeAbsolute().toFile().toURI();
+		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(location);
 		if (files.length > 0) {
 			file = files[0];
 		}
@@ -357,8 +350,8 @@ public final class AntLaunchingUtil {
 				relativeFile = FileUtils.getFileUtils().resolveFile(
 						buildFileParent, path);
 				filePath = new Path(relativeFile.getAbsolutePath());
-				files = ResourcesPlugin.getWorkspace().getRoot()
-						.findFilesForLocation(filePath);
+				location = filePath.makeAbsolute().toFile().toURI();
+				files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(location);
 				if (files.length > 0) {
 					file = files[0];
 				} else {
@@ -374,14 +367,9 @@ public final class AntLaunchingUtil {
 		}
 		File ioFile = file.getLocation().toFile();
 		if (ioFile.exists()) {// needs to handle case insensitivity on WINOS
-			try {
-				files = ResourcesPlugin.getWorkspace().getRoot()
-						.findFilesForLocation(
-								new Path(ioFile.getCanonicalPath()));
-				if (files.length > 0) {
-					return files[0];
-				}
-			} catch (IOException e) {
+			files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(ioFile.toURI());
+			if (files.length > 0) {
+				return files[0];
 			}
 		}
 
@@ -399,16 +387,11 @@ public final class AntLaunchingUtil {
 	 *             if unable to migrate
 	 * @since 3.0
 	 */
-	public static void migrateToNewClasspathFormat(
-			ILaunchConfiguration configuration) throws CoreException {
-		String oldClasspath = configuration.getAttribute(
-				AntLaunching.ATTR_ANT_CUSTOM_CLASSPATH,
-				(String) null);
-		String oldAntHome = configuration.getAttribute(
-				AntLaunching.ATTR_ANT_HOME, (String) null);
-		String provider = configuration.getAttribute(
-				IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
-				(String) null);
+	@SuppressWarnings({ "restriction", "deprecation" })
+	public static void migrateToNewClasspathFormat(ILaunchConfiguration configuration) throws CoreException {
+		String oldClasspath = configuration.getAttribute(AntLaunching.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
+		String oldAntHome = configuration.getAttribute(AntLaunching.ATTR_ANT_HOME, (String) null);
+		String provider = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, (String) null);
 		if (oldClasspath != null || oldAntHome != null || provider == null) {
 			ILaunchConfigurationWorkingCopy workingCopy = null;
 			if (configuration.isWorkingCopy()) {
@@ -416,24 +399,15 @@ public final class AntLaunchingUtil {
 			} else {
 				workingCopy = configuration.getWorkingCopy();
 			}
-			workingCopy
-					.setAttribute(
-							AntLaunching.ATTR_ANT_CUSTOM_CLASSPATH,
-							(String) null);
-			workingCopy
-					.setAttribute(
-							AntLaunching.ATTR_ANT_HOME,
-							(String) null);
+			workingCopy.setAttribute(AntLaunching.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
+			workingCopy.setAttribute(AntLaunching.ATTR_ANT_HOME, (String) null);
 			workingCopy.setAttribute(
 					IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
 					"org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
-			workingCopy.setAttribute(
-					IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH,
-					true);
+			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 			if (oldAntHome != null) {
-				IRuntimeClasspathEntry[] entries = JavaRuntime
-						.computeUnresolvedRuntimeClasspath(workingCopy);
-				List mementos = new ArrayList(entries.length);
+				IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(workingCopy);
+				List<String> mementos = new ArrayList<String>(entries.length);
 				for (int i = 0; i < entries.length; i++) {
 					IRuntimeClasspathEntry entry = entries[i];
 					if (entry.getType() == IRuntimeClasspathEntry.OTHER) {
@@ -498,9 +472,10 @@ public final class AntLaunchingUtil {
 			try {
 				num = Integer.parseInt(lineNumber);
 			} catch (NumberFormatException e) {
+				//do nothing
 			}
-			IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
-					.findFilesForLocation(new Path(fileName));
+			URI location = new Path(fileName).makeAbsolute().toFile().toURI();
+			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(location);
 			IFile file = null;
 			if (files.length > 0) {
 				file = files[0];

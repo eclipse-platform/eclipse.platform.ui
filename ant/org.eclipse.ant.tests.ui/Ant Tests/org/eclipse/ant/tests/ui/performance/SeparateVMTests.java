@@ -37,7 +37,7 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
      */
 	public void testBuild() throws CoreException {
     	//tagAsSummary("Separate JRE Build", Dimension.ELAPSED_PROCESS);
-    	ILaunchConfiguration config= getLaunchConfiguration("echoingSepVM");
+    	ILaunchConfiguration config= getLaunchConfiguration("echoingSepVM"); //$NON-NLS-1$
     	//possible first time hit of the SWT pieces getting written from the JAR to the 
     	//metadata area
     	launchAndTerminate(config, 20000);
@@ -53,8 +53,8 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
      */
 	public void testBuildNoConsole() throws CoreException {
     	//tagAsSummary("Separate JRE Build; capture output off", Dimension.ELAPSED_PROCESS);
-    	ILaunchConfiguration config = getLaunchConfiguration("echoingSepVM");
-		assertNotNull("Could not locate launch configuration for " + "echoingSepVM", config);
+    	ILaunchConfiguration config = getLaunchConfiguration("echoingSepVM"); //$NON-NLS-1$
+		assertNotNull("Could not locate launch configuration for " + "echoingSepVM", config); //$NON-NLS-1$ //$NON-NLS-2$
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
 		copy.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
 		copy.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
@@ -73,10 +73,10 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
      */
     public void testBuildMinusDebug() throws CoreException {
     	//tagAsSummary("Separate JRE Build; -debug", Dimension.ELAPSED_PROCESS);
-    	ILaunchConfiguration config = getLaunchConfiguration("echoingSepVM");
-		assertNotNull("Could not locate launch configuration for " + "echoingSepVM", config);
+    	ILaunchConfiguration config = getLaunchConfiguration("echoingSepVM"); //$NON-NLS-1$
+		assertNotNull("Could not locate launch configuration for " + "echoingSepVM", config); //$NON-NLS-1$ //$NON-NLS-2$
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
-		copy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "-debug");
+		copy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "-debug"); //$NON-NLS-1$
 		//possible first time hit of the SWT pieces getting written from the JAR to the 
     	//metadata area
 		launchAndTerminate(copy, 20000);
@@ -92,7 +92,7 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
      */
     public void testBuildWithLotsOfLinks() throws CoreException {
         //tagAsSummary("Separate JRE Build; links", Dimension.ELAPSED_PROCESS);
-        ILaunchConfiguration config = getLaunchConfiguration("echoPropertiesSepVM");
+        ILaunchConfiguration config = getLaunchConfiguration("echoPropertiesSepVM"); //$NON-NLS-1$
         //possible first time hit of the SWT pieces getting written from the JAR to the 
         //metadata area
         launchAndTerminate(config, 20000);

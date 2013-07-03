@@ -34,7 +34,7 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
     
     public void testOpenAntLaunchConfigurationDialog1() {
         //cold run
-        ILaunchConfiguration configuration= getLaunchConfiguration("big");
+        ILaunchConfiguration configuration= getLaunchConfiguration("big"); //$NON-NLS-1$
 		IStructuredSelection selection= new StructuredSelection(configuration);
 		for (int i = 0; i < 10; i++) {
 		    openLCD(selection, fgIdentifier, 20); 
@@ -46,9 +46,9 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
     
     public void testOpenAntLaunchConfigurationDialog2() {
         //warm run
-        ILaunchConfiguration configuration= getLaunchConfiguration("big");
+        ILaunchConfiguration configuration= getLaunchConfiguration("big"); //$NON-NLS-1$
 		IStructuredSelection selection= new StructuredSelection(configuration);
-		tagAsSummary("Open LCD on Targets tab", Dimension.ELAPSED_PROCESS);
+		tagAsSummary("Open LCD on Targets tab", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		for (int i = 0; i < 10; i++) {
 		    openLCD(selection, fgIdentifier, 20); 
         }
@@ -58,9 +58,9 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
     }
 
     private ILaunchConfiguration getLaunchConfiguration(String buildFileName) {
-        IFile file = AbstractAntUITest.getJavaProject().getProject().getFolder("launchConfigurations").getFile(buildFileName + ".launch");
+        IFile file = AbstractAntUITest.getJavaProject().getProject().getFolder("launchConfigurations").getFile(buildFileName + ".launch"); //$NON-NLS-1$ //$NON-NLS-2$
 		ILaunchConfiguration config = AbstractAntUITest.getLaunchManager().getLaunchConfiguration(file);
-		assertTrue("Could not find launch configuration for " + buildFileName, config.exists());
+		assertTrue("Could not find launch configuration for " + buildFileName, config.exists()); //$NON-NLS-1$
 		return config;
     }
 

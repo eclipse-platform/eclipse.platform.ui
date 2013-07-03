@@ -34,16 +34,16 @@ public class AntViewTests extends AbstractAntUITest {
 	
 	public void testAddBuildFilesAction() throws CoreException {
 		// Ensure that AddBuildFilesAction is present!
-		String viewId = "org.eclipse.ant.ui.views.AntView";
+		String viewId = "org.eclipse.ant.ui.views.AntView"; //$NON-NLS-1$
 		IViewPart view = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().showView(viewId);
-		assertNotNull("Failed to obtain the AntView", view);
+		assertNotNull("Failed to obtain the AntView", view); //$NON-NLS-1$
 		IViewSite viewSite = view.getViewSite();
-		assertNotNull("Failed to obtain view site", viewSite);
+		assertNotNull("Failed to obtain view site", viewSite); //$NON-NLS-1$
 		IToolBarManager toolBarMgr= viewSite.getActionBars().getToolBarManager();
-		assertNotNull("Failed to obtain the AntView ToolBar", toolBarMgr);
+		assertNotNull("Failed to obtain the AntView ToolBar", toolBarMgr); //$NON-NLS-1$
 		AddBuildFilesAction action = getAddBuildFilesAction(toolBarMgr);
-		assertNotNull("Failed to obtain the AddBuildFilesAction", action);
+		assertNotNull("Failed to obtain the AddBuildFilesAction", action); //$NON-NLS-1$
 	}
 
 	private AddBuildFilesAction getAddBuildFilesAction(IToolBarManager toolBarMgr) {
@@ -66,22 +66,22 @@ public class AntViewTests extends AbstractAntUITest {
 		// Create blocks to scope the vars to catch typos!
 		
 		{// Accept only a single extension
-			String extnFilter1 = "xml";
+			String extnFilter1 = "xml"; //$NON-NLS-1$
 			FileFilterProxy ff1 = new FileFilterProxy(extnFilter1);
-			assertTrue("xml is not accepted as a build file extension", ff1.canAccept("xml"));
-			assertFalse("ent is accepted as a build file extension", ff1.canAccept("ent"));
+			assertTrue("xml is not accepted as a build file extension", ff1.canAccept("xml")); //$NON-NLS-1$ //$NON-NLS-2$
+			assertFalse("ent is accepted as a build file extension", ff1.canAccept("ent")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		{// Accept multiple extensions
 			String extnFilter2 = AntUtil.getKnownBuildFileExtensionsAsPattern();
 			FileFilterProxy ff2 = new FileFilterProxy(extnFilter2);
-			assertTrue("xml is not accepted as a build file extension", ff2.canAccept("xml"));
-			assertTrue("ant is not accepted as a build file extension", ff2.canAccept("ant"));
-			assertTrue("ent is not accepted as a build file extension", ff2.canAccept("ent"));
-			assertFalse("def is accepted as a build file extension", ff2.canAccept("def"));
-			assertTrue("macrodef is not accepted as a build file extension", ff2.canAccept("macrodef"));
-			assertTrue("XML is not accepted as a build file extension", ff2.canAccept("XML"));
-			assertFalse("macro is accepted as a build file extension", ff2.canAccept("macro"));
+			assertTrue("xml is not accepted as a build file extension", ff2.canAccept("xml")); //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue("ant is not accepted as a build file extension", ff2.canAccept("ant")); //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue("ent is not accepted as a build file extension", ff2.canAccept("ent")); //$NON-NLS-1$ //$NON-NLS-2$
+			assertFalse("def is accepted as a build file extension", ff2.canAccept("def")); //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue("macrodef is not accepted as a build file extension", ff2.canAccept("macrodef")); //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue("XML is not accepted as a build file extension", ff2.canAccept("XML")); //$NON-NLS-1$ //$NON-NLS-2$
+			assertFalse("macro is accepted as a build file extension", ff2.canAccept("macro")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -95,10 +95,10 @@ public class AntViewTests extends AbstractAntUITest {
 		
 		boolean canAccept(String extn) {
 			if (canAcceptMethod == null) {
-				canAcceptMethod = get("canAccept", new Class[] { String.class });
+				canAcceptMethod = get("canAccept", new Class[] { String.class }); //$NON-NLS-1$
 			}
 			Object result = invoke(canAcceptMethod, new String[] {extn});			
-			assertNotNull("Failed to invoke 'canAccept()'", result);
+			assertNotNull("Failed to invoke 'canAccept()'", result); //$NON-NLS-1$
 			return ((Boolean)result).booleanValue();
 		}
 	}

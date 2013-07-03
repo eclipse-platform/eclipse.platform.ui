@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,22 +20,25 @@ import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsU
 
 import com.ibm.icu.text.MessageFormat;
 
-
 public class AntWorkingDirectoryBlock extends JavaWorkingDirectoryBlock {
-	
+
 	private String fDefaultWorkingDirPath;
 
 	/**
 	 * Returns the default working directory path
+	 * 
 	 * @return the default working directory path
 	 */
 	public String getDefaultWorkingDirPath() {
 		return fDefaultWorkingDirPath;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock#setDefaultWorkingDir()
 	 */
+	@Override
 	protected void setDefaultWorkingDir() {
 		if (fDefaultWorkingDirPath == null) {
 			super.setDefaultWorkingDir();
@@ -43,28 +46,34 @@ public class AntWorkingDirectoryBlock extends JavaWorkingDirectoryBlock {
 		}
 		setDefaultWorkingDirectoryText(fDefaultWorkingDirPath);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
 		try {
 			try {
-				fDefaultWorkingDirPath= ExternalToolsUtil.getLocation(configuration).removeLastSegments(1).toOSString();
+				fDefaultWorkingDirPath = ExternalToolsUtil.getLocation(configuration).removeLastSegments(1).toOSString();
 			}
-			catch(CoreException ce){}
-			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+			catch (CoreException ce) {
+				// do nothing
+			}
+			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 			setDefaultWorkingDir();
 			if (wd != null || !isSameAsDefault(wd)) {
 				setOtherWorkingDirectoryText(wd);
 			}
-		} catch (CoreException e) {
-			setErrorMessage(MessageFormat.format(AntLaunchConfigurationMessages.AntWorkingDirectoryBlock_0, new String[] {e.getStatus().getMessage()}));
+		}
+		catch (CoreException e) {
+			setErrorMessage(MessageFormat.format(AntLaunchConfigurationMessages.AntWorkingDirectoryBlock_0, new Object[] { e.getStatus().getMessage() }));
 			AntUIPlugin.log(e);
 		}
 	}
-	
+
 	private boolean isSameAsDefault(String workingDir) {
 		return workingDir == null || (workingDir.equals(fDefaultWorkingDirPath) || workingDir.equals(System.getProperty("user.dir"))); //$NON-NLS-1$
 	}

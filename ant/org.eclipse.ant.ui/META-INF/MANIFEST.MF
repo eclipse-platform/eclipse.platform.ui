@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ant.ui; singleton:=true
-Bundle-Version: 3.5.400.qualifier
+Bundle-Version: 3.5.500.qualifier
 Bundle-Activator: org.eclipse.ant.internal.ui.AntUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -21,7 +21,7 @@ Export-Package: org.eclipse.ant.internal.ui;x-internal:=true,
  org.eclipse.ant.internal.ui.editor.text;x-internal:=true,
  org.eclipse.ant.internal.ui.editor.utils;x-internal:=true,
  org.eclipse.ant.internal.ui.launchConfigurations;x-internal:=true,
- org.eclipse.ant.internal.ui.model;x-internal:=true,
+ org.eclipse.ant.internal.ui.model;x-friends:="org.eclipse.ant.tests.ui",
  org.eclipse.ant.internal.ui.preferences;x-internal:=true,
  org.eclipse.ant.internal.ui.refactoring;x-internal:=true,
  org.eclipse.ant.internal.ui.views;x-internal:=true,
@@ -55,4 +55,4 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)";resolution:=op
  org.eclipse.core.externaltools;bundle-version="[1.0.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
 Import-Package: com.ibm.icu.text
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

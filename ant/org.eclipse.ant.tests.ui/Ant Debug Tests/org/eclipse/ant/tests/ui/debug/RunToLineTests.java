@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 		 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 		 */
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
-            if (partRef.getTitle().equals("breakpoints.xml") && changeId == IWorkbenchPage.CHANGE_EDITOR_OPEN) {
+            if (partRef.getTitle().equals("breakpoints.xml") && changeId == IWorkbenchPage.CHANGE_EDITOR_OPEN) { //$NON-NLS-1$
                 synchronized (fLock) {
                     fEditor = (IEditorPart) partRef.getPart(true);
                     fLock.notifyAll();
@@ -63,12 +63,14 @@ public class RunToLineTests extends AbstractAntDebugTest {
 		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 		 */
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+			//do nothing
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
 		 */
-		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {			
+		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+			//do nothing
 		}
 	    
 	}
@@ -97,7 +99,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	 * @throws Exception
 	 */
 	public void testRunToLineSkipBreakpoint() throws Exception {
-	    createLineBreakpoint(6, "breakpoints.xml");
+	    createLineBreakpoint(6, "breakpoints.xml"); //$NON-NLS-1$
 	    runToLine(14, 14, true, false);
 	}	
 	
@@ -108,7 +110,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	 * @throws Exception
 	 */
 	public void testRunToLineSkipBreakpointSepVM() throws Exception {
-	    createLineBreakpoint(6, "breakpoints.xml");
+	    createLineBreakpoint(6, "breakpoints.xml"); //$NON-NLS-1$
 	    runToLine(14, 14, true, true);
 	}	
 
@@ -118,7 +120,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	 * @throws Exception
 	 */
 	public void testRunToLineHitBreakpoint() throws Exception {
-	    createLineBreakpoint(6, "breakpoints.xml");
+	    createLineBreakpoint(6, "breakpoints.xml"); //$NON-NLS-1$
 	    runToLine(14, 6, false, false);
 	}
 	
@@ -128,7 +130,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	 * @throws Exception
 	 */
 	public void testRunToLineHitBreakpointSepVM() throws Exception {
-	    createLineBreakpoint(6, "breakpoints.xml");
+	    createLineBreakpoint(6, "breakpoints.xml"); //$NON-NLS-1$
 	    runToLine(14, 6, false, true);
 	}
 
@@ -143,8 +145,8 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	 * @throws Exception
 	 */
 	public void runToLine(final int lineNumber, int expectedLineNumber, boolean skipBreakpoints, boolean sepVM) throws Exception {
-		String fileName = "breakpoints";
-		AntLineBreakpoint breakpoint = createLineBreakpoint(5, fileName + ".xml");
+		String fileName = "breakpoints"; //$NON-NLS-1$
+		AntLineBreakpoint breakpoint = createLineBreakpoint(5, fileName + ".xml"); //$NON-NLS-1$
 		
 		boolean restore = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
 		DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, skipBreakpoints);
@@ -163,7 +165,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
             display.syncExec(closeAll);
             
 			if (sepVM) {
-				fileName+= "SepVM";
+				fileName+= "SepVM"; //$NON-NLS-1$
 			}
 			thread= launchToLineBreakpoint(fileName, breakpoint);
 			// wait for editor to open
@@ -173,7 +175,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 			    }
             }
 			
-			assertNotNull("Editor did not open", fEditor);
+			assertNotNull("Editor did not open", fEditor); //$NON-NLS-1$
 			
 			final Exception[] exs = new Exception[1];
 			final IThread suspendee = thread;
@@ -181,14 +183,14 @@ public class RunToLineTests extends AbstractAntDebugTest {
                 public void run() {
                     ITextEditor editor = (ITextEditor) fEditor;
                     IRunToLineTarget adapter = (IRunToLineTarget) editor.getAdapter(IRunToLineTarget.class);
-                    assertNotNull("no run to line adapter", adapter);
+                    assertNotNull("no run to line adapter", adapter); //$NON-NLS-1$
                     IDocumentProvider documentProvider = editor.getDocumentProvider();
-                    assertNotNull("The document provider should not be null for: "+editor.getTitle(), documentProvider);
+                    assertNotNull("The document provider should not be null for: "+editor.getTitle(), documentProvider); //$NON-NLS-1$
                     try {
                         // position cursor to line
                         documentProvider.connect(this);
                         IDocument document = documentProvider.getDocument(editor.getEditorInput());
-                        assertNotNull("The document should be available for: "+editor.getTitle(), document);
+                        assertNotNull("The document should be available for: "+editor.getTitle(), document); //$NON-NLS-1$
                         int lineOffset = document.getLineOffset(lineNumber - 1); // document is 0 based!
                         documentProvider.disconnect(this);
                         editor.selectAndReveal(lineOffset, 0);
@@ -205,11 +207,11 @@ public class RunToLineTests extends AbstractAntDebugTest {
             DebugUIPlugin.getStandardDisplay().syncExec(r);
             Object event = waiter.waitForEvent();
             if (event == null) {
-    			throw new TestAgainException("Retest - no suspend event was recieved");
+    			throw new TestAgainException("Retest - no suspend event was recieved"); //$NON-NLS-1$
     		}
             IStackFrame topStackFrame = thread.getTopStackFrame();
-            assertNotNull("There must be a top stack frame", topStackFrame);
-            assertEquals("wrong line", expectedLineNumber, topStackFrame.getLineNumber());
+            assertNotNull("There must be a top stack frame", topStackFrame); //$NON-NLS-1$
+            assertEquals("wrong line", expectedLineNumber, topStackFrame.getLineNumber()); //$NON-NLS-1$
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

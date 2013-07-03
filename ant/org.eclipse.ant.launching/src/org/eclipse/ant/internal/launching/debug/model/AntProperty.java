@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.debug.core.model.IVariable;
 /**
  * A property in an Ant build.
  */
-public class AntProperty extends AntDebugElement implements IVariable, Comparable {
+public class AntProperty extends AntDebugElement implements IVariable, Comparable<AntProperty> {
 
 	private String fName;
 	private AntValue fValue;
@@ -69,12 +69,14 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
 	public void setValue(String expression) {
+		//do nothing
 	}
 	
 	/*
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
 	public void setValue(IValue value) {
+		//do nothing
 	}
 	
 	/*
@@ -111,11 +113,10 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
         return fLabel;
     }
     
-    /*
+    /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object other) {
-    	AntProperty otherProperty = (AntProperty) other;
-    	return fName.compareToIgnoreCase(otherProperty.getName());
+    public int compareTo(AntProperty other) {
+    	return fName.compareToIgnoreCase(other.getName());
     }
 }

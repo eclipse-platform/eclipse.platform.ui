@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,64 +24,71 @@ import org.eclipse.jface.text.source.AnnotationModelEvent;
 
 public class AntExternalAnnotationModel extends AnnotationModel implements IProblemRequestor {
 
-    private List fGeneratedAnnotations= new ArrayList();
-	private List fCollectedProblems= new ArrayList();
+	private List<XMLProblemAnnotation> fGeneratedAnnotations = new ArrayList<XMLProblemAnnotation>();
+	private List<IProblem> fCollectedProblems = new ArrayList<IProblem>();
 
-    /* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
 	 */
+	@Override
 	public void acceptProblem(IProblem problem) {
 		fCollectedProblems.add(problem);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
 	 */
+	@Override
 	public void endReporting() {
-		boolean temporaryProblemsChanged= false;
-			
+		boolean temporaryProblemsChanged = false;
+
 		synchronized (getAnnotationMap()) {
-				
+
 			if (fGeneratedAnnotations.size() > 0) {
-				temporaryProblemsChanged= true;	
+				temporaryProblemsChanged = true;
 				removeAnnotations(fGeneratedAnnotations, false, true);
 				fGeneratedAnnotations.clear();
 			}
-				
+
 			if (fCollectedProblems != null && fCollectedProblems.size() > 0) {
-				Iterator e= fCollectedProblems.iterator();
+				Iterator<IProblem> e = fCollectedProblems.iterator();
 				while (e.hasNext()) {
-						
-					IProblem problem= (IProblem) e.next();
-						
-					Position position= createPositionFromProblem(problem);
+
+					IProblem problem = e.next();
+
+					Position position = createPositionFromProblem(problem);
 					if (position != null) {
-							
-						XMLProblemAnnotation annotation= new XMLProblemAnnotation(problem);
+
+						XMLProblemAnnotation annotation = new XMLProblemAnnotation(problem);
 						fGeneratedAnnotations.add(annotation);
 						try {
 							addAnnotation(annotation, position, false);
-						} catch (BadLocationException ex) {
+						}
+						catch (BadLocationException ex) {
 							AntUIPlugin.log(ex);
 						}
-							
-						temporaryProblemsChanged= true;
+
+						temporaryProblemsChanged = true;
 					}
 				}
-					
+
 				fCollectedProblems.clear();
 			}
 		}
-				
+
 		if (temporaryProblemsChanged)
 			fireModelChanged(new AnnotationModelEvent(this));
 	}
-					
+
 	protected Position createPositionFromProblem(IProblem problem) {
-		int start= problem.getOffset();
+		int start = problem.getOffset();
 		if (start >= 0) {
-			int length= problem.getLength();
-				
+			int length = problem.getLength();
+
 			if (length >= 0)
 				return new Position(start, length);
 		}
@@ -89,9 +96,13 @@ public class AntExternalAnnotationModel extends AnnotationModel implements IProb
 		return null;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ant.internal.ui.model.IProblemRequestor#beginReporting()
-     */
-    public void beginReporting() {
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ant.internal.ui.model.IProblemRequestor#beginReporting()
+	 */
+	@Override
+	public void beginReporting() {
+		// do nothing
+	}
 }

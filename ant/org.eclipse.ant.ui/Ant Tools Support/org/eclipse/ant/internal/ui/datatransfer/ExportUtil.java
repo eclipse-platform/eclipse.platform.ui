@@ -92,9 +92,8 @@ public class ExportUtil {
 	 */
 	public static IResource getResource(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			for (Iterator iter = ((IStructuredSelection) selection).iterator(); iter
-					.hasNext();) {
-				IAdaptable adaptable = (IAdaptable) iter.next();
+			for (Iterator<IAdaptable> iter = ((IStructuredSelection) selection).iterator(); iter.hasNext();) {
+				IAdaptable adaptable = iter.next();
 				return (IResource) adaptable.getAdapter(IResource.class);
 			}
 		}
@@ -106,12 +105,13 @@ public class ExportUtil {
 	 */
 	public static IJavaProject getJavaProjectByName(String name) {
 		try {
-			IProject project = ResourcesPlugin.getWorkspace().getRoot()
-					.getProject(name);
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (project.exists()) {
 				return JavaCore.create(project);
 			}
-		} catch (IllegalArgumentException iae) {
+		}
+		catch (IllegalArgumentException iae) {
+			// do nothing
 		}
 		return null;
 	}
@@ -138,8 +138,7 @@ public class ExportUtil {
 	 * Convert Eclipse path to absolute filename.
 	 * 
 	 * @param file
-	 *            Project root optionally followed by resource name. An absolute
-	 *            path is simply converted to a string.
+	 *            Project root optionally followed by resource name. An absolute path is simply converted to a string.
 	 * @return full qualified path
 	 */
 	public static String resolve(IPath file) {
@@ -150,7 +149,8 @@ public class ExportUtil {
 			IFile f = ResourcesPlugin.getWorkspace().getRoot().getFile(file);
 			URI uri = f.getLocationURI();
 			return (uri != null) ? uri.toString() : f.toString();
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 			// resource is missing
 			String projectName = removePrefix(file.toString(), "/"); //$NON-NLS-1$
 			IJavaProject project = getJavaProjectByName(projectName);
@@ -172,8 +172,7 @@ public class ExportUtil {
 		if (path.segmentCount() == 1) {
 			return getJavaProjectByName(root);
 		}
-		IResource resource = ResourcesPlugin.getWorkspace().getRoot()
-				.findMember(path);
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 		if (resource != null && resource.getType() == IResource.PROJECT) {
 			if (resource.exists()) {
 				return (IJavaProject) JavaCore.create(resource);
@@ -199,8 +198,7 @@ public class ExportUtil {
 	 * @param newProjectRoot
 	 *            replace project root, e.g. with a variable ${project.location}
 	 */
-	public static String replaceProjectRoot(String file, IProject project,
-			String newProjectRoot) {
+	public static String replaceProjectRoot(String file, IProject project, String newProjectRoot) {
 		String res = removeProjectRoot(file, project);
 		if (res.equals(".")) //$NON-NLS-1$
 		{
@@ -220,20 +218,17 @@ public class ExportUtil {
 	 * 
 	 * @return set of IJavaProject objects
 	 */
-	public static List getClasspathProjects(IJavaProject project)
-			throws JavaModelException {
-		List projects = new ArrayList();
+	public static List<IJavaProject> getClasspathProjects(IJavaProject project) throws JavaModelException {
+		List<IJavaProject> projects = new ArrayList<IJavaProject>();
 		IClasspathEntry entries[] = project.getRawClasspath();
 		addClasspathProjects(projects, entries);
 		return sortProjectsUsingBuildOrder(projects);
 	}
 
-	private static void addClasspathProjects(List projects,
-			IClasspathEntry[] entries) {
+	private static void addClasspathProjects(List<IJavaProject> projects, IClasspathEntry[] entries) {
 		for (int i = 0; i < entries.length; i++) {
 			IClasspathEntry classpathEntry = entries[i];
-			if (classpathEntry.getContentKind() == IPackageFragmentRoot.K_SOURCE
-					&& classpathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+			if (classpathEntry.getContentKind() == IPackageFragmentRoot.K_SOURCE && classpathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 				// found required project on build path
 				String subProjectRoot = classpathEntry.getPath().toString();
 				IJavaProject subProject = getJavaProject(subProjectRoot);
@@ -250,18 +245,16 @@ public class ExportUtil {
 	 * 
 	 * @return set of IJavaProject objects
 	 */
-	public static List getClasspathProjectsRecursive(IJavaProject project)
-			throws JavaModelException {
-		LinkedList result = new LinkedList();
+	public static List<IJavaProject> getClasspathProjectsRecursive(IJavaProject project) throws JavaModelException {
+		LinkedList<IJavaProject> result = new LinkedList<IJavaProject>();
 		getClasspathProjectsRecursive(project, result);
 		return sortProjectsUsingBuildOrder(result);
 	}
 
-	private static void getClasspathProjectsRecursive(IJavaProject project,
-			LinkedList result) throws JavaModelException {
-		List projects = getClasspathProjects(project);
-		for (Iterator iter = projects.iterator(); iter.hasNext();) {
-			IJavaProject javaProject = (IJavaProject) iter.next();
+	private static void getClasspathProjectsRecursive(IJavaProject project, LinkedList<IJavaProject> result) throws JavaModelException {
+		List<IJavaProject> projects = getClasspathProjects(project);
+		for (Iterator<IJavaProject> iter = projects.iterator(); iter.hasNext();) {
+			IJavaProject javaProject = iter.next();
 			if (!result.contains(javaProject)) {
 				result.addFirst(javaProject);
 				getClasspathProjectsRecursive(javaProject, result); // recursion
@@ -276,22 +269,21 @@ public class ExportUtil {
 	 *            list of IJavaProject objects
 	 * @return list of IJavaProject objects with new order
 	 */
-	private static List sortProjectsUsingBuildOrder(List javaProjects) {
+	private static List<IJavaProject> sortProjectsUsingBuildOrder(List<IJavaProject> javaProjects) {
 		if (javaProjects.isEmpty()) {
 			return javaProjects;
 		}
-		List result = new ArrayList(javaProjects.size());
+		List<IJavaProject> result = new ArrayList<IJavaProject>(javaProjects.size());
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		String[] buildOrder = workspace.getDescription().getBuildOrder();
 		if (buildOrder == null) {// default build order
 			IProject[] projects = new IProject[javaProjects.size()];
 			int i = 0;
-			for (Iterator iter = javaProjects.iterator(); iter.hasNext(); i++) {
-				IJavaProject javaProject = (IJavaProject) iter.next();
+			for (Iterator<IJavaProject> iter = javaProjects.iterator(); iter.hasNext(); i++) {
+				IJavaProject javaProject = iter.next();
 				projects[i] = javaProject.getProject();
 			}
-			IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace()
-					.computeProjectOrder(projects);
+			IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
 			projects = po.projects;
 			buildOrder = new String[projects.length];
 			for (i = 0; i < projects.length; i++) {
@@ -301,8 +293,8 @@ public class ExportUtil {
 
 		for (int i = 0; i < buildOrder.length && !javaProjects.isEmpty(); i++) {
 			String projectName = buildOrder[i];
-			for (Iterator iter = javaProjects.iterator(); iter.hasNext();) {
-				IJavaProject javaProject = (IJavaProject) iter.next();
+			for (Iterator<IJavaProject> iter = javaProjects.iterator(); iter.hasNext();) {
+				IJavaProject javaProject = iter.next();
 				if (javaProject.getProject().getName().equals(projectName)) {
 					result.add(javaProject);
 					iter.remove();
@@ -322,19 +314,14 @@ public class ExportUtil {
 	 * 
 	 * @param javaProject
 	 *            project for which cyclic dependency marker should be found
-	 * @return cyclic dependency marker for a given project or <code>null</code>
-	 *         if there is no such marker
+	 * @return cyclic dependency marker for a given project or <code>null</code> if there is no such marker
 	 * @throws CoreException
 	 */
-	public static IMarker getCyclicDependencyMarker(IJavaProject javaProject)
-			throws CoreException {
-		IMarker[] markers = javaProject.getProject().findMarkers(
-				IJavaModelMarker.BUILDPATH_PROBLEM_MARKER, false,
-				IResource.DEPTH_ONE);
+	public static IMarker getCyclicDependencyMarker(IJavaProject javaProject) throws CoreException {
+		IMarker[] markers = javaProject.getProject().findMarkers(IJavaModelMarker.BUILDPATH_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker = markers[i];
-			String cycleAttr = (String) marker
-					.getAttribute(IJavaModelMarker.CYCLE_DETECTED);
+			String cycleAttr = (String) marker.getAttribute(IJavaModelMarker.CYCLE_DETECTED);
 			if (cycleAttr != null && cycleAttr.equals("true")) //$NON-NLS-1$
 			{
 				return marker;
@@ -344,8 +331,7 @@ public class ExportUtil {
 	}
 
 	/**
-	 * Find JUnit tests. Same tests are also returned by Eclipse run
-	 * configuration wizard.
+	 * Find JUnit tests. Same tests are also returned by Eclipse run configuration wizard.
 	 * 
 	 * @param containerHandle
 	 *            project, package or source folder
@@ -356,11 +342,12 @@ public class ExportUtil {
 			return new IType[0];
 		}
 		try {
-			return JUnitCore
-					.findTestTypes(container, new NullProgressMonitor());
-		} catch (OperationCanceledException e) {
+			return JUnitCore.findTestTypes(container, new NullProgressMonitor());
+		}
+		catch (OperationCanceledException e) {
 			AntUIPlugin.log(e);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 			AntUIPlugin.log(e);
 		}
 		return new IType[0];
@@ -369,58 +356,41 @@ public class ExportUtil {
 	/**
 	 * Compares projects by project name.
 	 */
-	public static synchronized Comparator getJavaProjectComparator() {
+	public static synchronized Comparator<IJavaProject> getJavaProjectComparator() {
 		if (javaProjectComparator == null) {
 			javaProjectComparator = new JavaProjectComparator();
 		}
 		return javaProjectComparator;
 	}
 
-	private static Comparator javaProjectComparator;
+	private static Comparator<IJavaProject> javaProjectComparator;
 
-	private static class JavaProjectComparator implements Comparator {
-		public int compare(Object o1, Object o2) {
-			IJavaProject j1 = (IJavaProject) o1;
-			IJavaProject j2 = (IJavaProject) o2;
-			return j1.getProject().getName().compareTo(
-					j2.getProject().getName());
-		}
-	}
-
-	/**
-	 * Compares objects by class name.
-	 */
-	public static synchronized Comparator getClassnameComparator() {
-		if (classnameComparator == null) {
-			classnameComparator = new ClassnameComparator();
-		}
-		return classnameComparator;
-	}
-
-	private static Comparator classnameComparator;
-
-	private static class ClassnameComparator implements Comparator {
-		public int compare(Object o1, Object o2) {
-			return o1.getClass().getName().compareTo(o2.getClass().getName());
+	private static class JavaProjectComparator implements Comparator<IJavaProject> {
+		@Override
+		public int compare(IJavaProject o1, IJavaProject o2) {
+			IJavaProject j1 = o1;
+			IJavaProject j2 = o2;
+			return j1.getProject().getName().compareTo(j2.getProject().getName());
 		}
 	}
 
 	/**
 	 * Compares IFile objects.
 	 */
-	public static synchronized Comparator getIFileComparator() {
+	public static synchronized Comparator<IFile> getIFileComparator() {
 		if (fileComparator == null) {
 			fileComparator = new IFileComparator();
 		}
 		return fileComparator;
 	}
 
-	private static Comparator fileComparator;
+	private static Comparator<IFile> fileComparator;
 
-	private static class IFileComparator implements Comparator {
-		public int compare(Object o1, Object o2) {
-			IFile f1 = (IFile) o1;
-			IFile f2 = (IFile) o2;
+	private static class IFileComparator implements Comparator<IFile> {
+		@Override
+		public int compare(IFile o1, IFile o2) {
+			IFile f1 = o1;
+			IFile f2 = o2;
 			return f1.toString().compareTo(f2.toString());
 		}
 	}
@@ -428,21 +398,21 @@ public class ExportUtil {
 	/**
 	 * Compares IType objects.
 	 */
-	public static synchronized Comparator getITypeComparator() {
+	public static synchronized Comparator<IType> getITypeComparator() {
 		if (typeComparator == null) {
 			typeComparator = new TypeComparator();
 		}
 		return typeComparator;
 	}
 
-	private static Comparator typeComparator;
+	private static Comparator<IType> typeComparator;
 
-	private static class TypeComparator implements Comparator {
-		public int compare(Object o1, Object o2) {
-			IType t1 = (IType) o1;
-			IType t2 = (IType) o2;
-			return t1.getFullyQualifiedName().compareTo(
-					t2.getFullyQualifiedName());
+	private static class TypeComparator implements Comparator<IType> {
+		@Override
+		public int compare(IType o1, IType o2) {
+			IType t1 = o1;
+			IType t2 = o2;
+			return t1.getFullyQualifiedName().compareTo(t2.getFullyQualifiedName());
 		}
 	}
 
@@ -477,17 +447,14 @@ public class ExportUtil {
 	/**
 	 * Remove prefix and suffix from given string.
 	 */
-	public static String removePrefixAndSuffix(String s, String prefix,
-			String suffix) {
+	public static String removePrefixAndSuffix(String s, String prefix, String suffix) {
 		return removePrefix(removeSuffix(s, suffix), prefix);
 	}
 
 	/**
 	 * Convert document to formatted XML string.
 	 */
-	public static String toString(Document doc)
-			throws TransformerConfigurationException,
-			TransformerFactoryConfigurationError, TransformerException {
+	public static String toString(Document doc) throws TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
 		// NOTE: There are different transformer implementations in the wild,
 		// which are configured differently
 		// regarding the indent size:
@@ -503,7 +470,8 @@ public class ExportUtil {
 		try {
 			// indent using TransformerImpl
 			factory.setAttribute("indent-number", "4"); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 			// option not supported, set indent size below
 			indentFallback = true;
 		}
@@ -511,8 +479,7 @@ public class ExportUtil {
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 		if (indentFallback) {
 			// indent using TransformerIdentityImpl
-			transformer.setOutputProperty(
-					"{http://xml.apache.org/xslt}indent-amount", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		transformer.transform(source, result);
 		return writer.toString();
@@ -521,8 +488,7 @@ public class ExportUtil {
 	/**
 	 * Read XML file.
 	 */
-	public static Document parseXmlFile(File file) throws SAXException,
-			IOException, ParserConfigurationException {
+	public static Document parseXmlFile(File file) throws SAXException, IOException, ParserConfigurationException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(false);
 		Document doc = factory.newDocumentBuilder().parse(file);
@@ -532,12 +498,10 @@ public class ExportUtil {
 	/**
 	 * Read XML string.
 	 */
-	public static Document parseXmlString(String s) throws SAXException,
-			IOException, ParserConfigurationException {
+	public static Document parseXmlString(String s) throws SAXException, IOException, ParserConfigurationException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(false);
-		Document doc = factory.newDocumentBuilder().parse(
-				new ByteArrayInputStream(s.getBytes()));
+		Document doc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(s.getBytes()));
 		return doc;
 	}
 
@@ -550,10 +514,10 @@ public class ExportUtil {
 	 *            string to separate items
 	 * @return collection items separated with given separator
 	 */
-	public static String toString(Collection c, String separator) {
+	public static String toString(Collection<String> c, String separator) {
 		StringBuffer b = new StringBuffer();
-		for (Iterator iter = c.iterator(); iter.hasNext();) {
-			b.append((String) iter.next());
+		for (Iterator<String> iter = c.iterator(); iter.hasNext();) {
+			b.append(iter.next());
 			b.append(separator);
 		}
 		if (c.size() > 0) {
@@ -569,10 +533,10 @@ public class ExportUtil {
 	 *            list to remove duplicates from
 	 * @return new list without duplicates
 	 */
-	public static List removeDuplicates(List l) {
-		List res = new ArrayList();
-		for (Iterator iter = l.iterator(); iter.hasNext();) {
-			Object element = iter.next();
+	public static List<String> removeDuplicates(List<String> l) {
+		List<String> res = new ArrayList<String>();
+		for (Iterator<String> iter = l.iterator(); iter.hasNext();) {
+			String element = iter.next();
 			if (!res.contains(element)) {
 				res.add(element);
 			}
@@ -598,16 +562,20 @@ public class ExportUtil {
 					}
 				}
 				return true;
-			} catch (FileNotFoundException e) {
+			}
+			catch (FileNotFoundException e) {
 				return false;
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				return false;
-			} finally {
+			}
+			finally {
 				try {
 					if (in != null) {
 						in.close();
 					}
-				} catch (IOException e) {
+				}
+				catch (IOException e) {
 					// ignore
 				}
 			}
@@ -616,8 +584,7 @@ public class ExportUtil {
 	}
 
 	/**
-	 * Request write access to given file. Depending on the version control
-	 * plug-in opens a confirm checkout dialog.
+	 * Request write access to given file. Depending on the version control plug-in opens a confirm checkout dialog.
 	 * 
 	 * @param shell
 	 *            parent instance for dialogs
@@ -626,13 +593,11 @@ public class ExportUtil {
 	 * @return <code>true</code> if user confirmed checkout
 	 */
 	public static boolean validateEdit(Shell shell, IFile file) {
-		return file.getWorkspace().validateEdit(new IFile[] { file }, shell)
-				.isOK();
+		return file.getWorkspace().validateEdit(new IFile[] { file }, shell).isOK();
 	}
 
 	/**
-	 * Request write access to given files. Depending on the version control
-	 * plug-in opens a confirm checkout dialog.
+	 * Request write access to given files. Depending on the version control plug-in opens a confirm checkout dialog.
 	 * 
 	 * @param shell
 	 *            parent instance for dialogs
@@ -640,14 +605,12 @@ public class ExportUtil {
 	 * @throws CoreException
 	 *             thrown if project is under version control, but not connected
 	 */
-	public static Set validateEdit(Shell shell, List files)
-			throws CoreException {
-		Set confirmedFiles = new TreeSet(getIFileComparator());
+	public static Set<IFile> validateEdit(Shell shell, List<IFile> files) throws CoreException {
+		Set<IFile> confirmedFiles = new TreeSet<IFile>(getIFileComparator());
 		if (files.size() == 0) {
-		    return confirmedFiles;
+			return confirmedFiles;
 		}
-		IStatus status = ((IFile) files.get(0)).getWorkspace().validateEdit(
-				(IFile[]) files.toArray(new IFile[files.size()]), shell);
+		IStatus status = files.get(0).getWorkspace().validateEdit(files.toArray(new IFile[files.size()]), shell);
 		if (status.isMultiStatus() && status.getChildren().length > 0) {
 			for (int i = 0; i < status.getChildren().length; i++) {
 				IStatus statusChild = status.getChildren()[i];
@@ -656,8 +619,8 @@ public class ExportUtil {
 				}
 			}
 		} else if (status.isOK()) {
-			for (Iterator iterator = files.iterator(); iterator.hasNext();) {
-				IFile file = (IFile) iterator.next();
+			for (Iterator<IFile> iterator = files.iterator(); iterator.hasNext();) {
+				IFile file = iterator.next();
 				confirmedFiles.add(file);
 			}
 		}
@@ -673,37 +636,32 @@ public class ExportUtil {
 					message.append(statusChild.getMessage() + NEWLINE);
 				}
 			}
-			throw new CoreException(new Status(IStatus.ERROR,
-					AntUIPlugin.PI_ANTUI, 0, message.toString(), null));
+			throw new CoreException(new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, 0, message.toString(), null));
 		}
 
 		return confirmedFiles;
 	}
 
 	/**
-	 * Check if given classpath is a reference to the default classpath of the
-	 * project. Ideal for testing if runtime classpath was customized.
+	 * Check if given classpath is a reference to the default classpath of the project. Ideal for testing if runtime classpath was customized.
 	 */
-	public static boolean isDefaultClasspath(IJavaProject project,
-			EclipseClasspath classpath) {
+	public static boolean isDefaultClasspath(IJavaProject project, EclipseClasspath classpath) {
 		// default classpath contains exactly the JRE and the project reference
-		List list = removeDuplicates(classpath.rawClassPathEntries);
+		List<String> list = removeDuplicates(classpath.rawClassPathEntries);
 		if (list.size() != 2) {
 			return false;
 		}
-		String entry1 = (String) list.get(0);
-		String entry2 = (String) list.get(1);
+		String entry1 = list.get(0);
+		String entry2 = list.get(1);
 		if (!EclipseClasspath.isJreReference(entry1)) {
 			return false;
 		}
 		if (EclipseClasspath.isProjectReference(entry2)) {
-			IJavaProject referencedProject = EclipseClasspath
-					.resolveProjectReference(entry2);
+			IJavaProject referencedProject = EclipseClasspath.resolveProjectReference(entry2);
 			if (referencedProject == null) {
 				// project was not loaded in workspace
 				return false;
-			} else if (referencedProject.getProject().getName().equals(
-					project.getProject().getName())) {
+			} else if (referencedProject.getProject().getName().equals(project.getProject().getName())) {
 				return true;
 			}
 		}
@@ -712,19 +670,15 @@ public class ExportUtil {
 	}
 
 	/**
-	 * Add variable/value for Eclipse variable. If given string is no variable,
-	 * nothing is added.
+	 * Add variable/value for Eclipse variable. If given string is no variable, nothing is added.
 	 * 
 	 * @param variable2valueMap
 	 *            property map to add variable/value
 	 * @param s
-	 *            String which may contain Eclipse variables, e.g.
-	 *            ${project_name}
+	 *            String which may contain Eclipse variables, e.g. ${project_name}
 	 */
-	public static void addVariable(Map variable2valueMap, String s,
-			String projectRoot) {
-		if (s == null || s.equals(IAntCoreConstants.EMPTY_STRING))
-		{
+	public static void addVariable(Map<String, String> variable2valueMap, String s, String projectRoot) {
+		if (s == null || s.equals(IAntCoreConstants.EMPTY_STRING)) {
 			return;
 		}
 		Pattern pattern = Pattern.compile("\\$\\{.*?\\}"); // ${var} //$NON-NLS-1$
@@ -733,9 +687,9 @@ public class ExportUtil {
 			String variable = matcher.group();
 			String value;
 			try {
-				value = VariablesPlugin.getDefault().getStringVariableManager()
-						.performStringSubstitution(variable);
-			} catch (CoreException e) {
+				value = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(variable);
+			}
+			catch (CoreException e) {
 				// cannot resolve variable
 				value = variable;
 			}
@@ -755,16 +709,13 @@ public class ExportUtil {
 	}
 
 	/**
-	 * Returns a path which is equivalent to the given location relative to the
-	 * specified base path.
+	 * Returns a path which is equivalent to the given location relative to the specified base path.
 	 */
 	public static String getRelativePath(String otherLocation, String basePath) {
 
 		IPath location = new Path(otherLocation);
 		IPath base = new Path(basePath);
-		if ((location.getDevice() != null && !location.getDevice()
-				.equalsIgnoreCase(base.getDevice()))
-				|| !location.isAbsolute()) {
+		if ((location.getDevice() != null && !location.getDevice().equalsIgnoreCase(base.getDevice())) || !location.isAbsolute()) {
 			return otherLocation;
 		}
 		int baseCount = base.segmentCount();
@@ -773,8 +724,7 @@ public class ExportUtil {
 		for (int j = 0; j < baseCount - count; j++) {
 			temp += "../"; //$NON-NLS-1$
 		}
-		String relative = new Path(temp).append(
-				location.removeFirstSegments(count)).toString();
+		String relative = new Path(temp).append(location.removeFirstSegments(count)).toString();
 		if (relative.length() == 0) {
 			relative = "."; //$NON-NLS-1$
 		}

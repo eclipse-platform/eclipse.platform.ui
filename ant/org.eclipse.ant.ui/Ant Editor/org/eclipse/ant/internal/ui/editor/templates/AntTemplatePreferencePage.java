@@ -37,80 +37,96 @@ import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
  */
 public class AntTemplatePreferencePage extends TemplatePreferencePage {
 
-	private FormattingPreferences fFormattingPreferences= new FormattingPreferences();
-	
-    public AntTemplatePreferencePage() {
-        setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
-        setTemplateStore(AntTemplateAccess.getDefault().getTemplateStore());
-        setContextTypeRegistry(AntTemplateAccess.getDefault().getContextTypeRegistry());
-    }
+	private FormattingPreferences fFormattingPreferences = new FormattingPreferences();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-     */
-    public boolean performOk() {
-    	  boolean ok = super.performOk();
-    	  AntUIPlugin.getDefault().savePluginPreferences();
-    	  return ok;
-    }
+	public AntTemplatePreferencePage() {
+		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
+		setTemplateStore(AntTemplateAccess.getDefault().getTemplateStore());
+		setContextTypeRegistry(AntTemplateAccess.getDefault().getContextTypeRegistry());
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createViewer(org.eclipse.swt.widgets.Composite)
-     */
-    protected SourceViewer createViewer(Composite parent) {
-    	SourceViewer viewer = new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-          
-		SourceViewerConfiguration configuration = new AntTemplateViewerConfiguration();        
-		IDocument document = new Document();       
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 */
+	@Override
+	@SuppressWarnings("deprecation")
+	public boolean performOk() {
+		boolean ok = super.performOk();
+		AntUIPlugin.getDefault().savePluginPreferences();
+		return ok;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createViewer(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
+	protected SourceViewer createViewer(Composite parent) {
+		SourceViewer viewer = new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+
+		SourceViewerConfiguration configuration = new AntTemplateViewerConfiguration();
+		IDocument document = new Document();
 		new AntDocumentSetupParticipant().setup(document);
 		viewer.configure(configuration);
 		viewer.setDocument(document);
-		viewer.setEditable(false);	
-		Font font= JFaceResources.getFont(JFaceResources.TEXT_FONT);
-		viewer.getTextWidget().setFont(font);    
-		        
-		return viewer;
-    }
+		viewer.setEditable(false);
+		Font font = JFaceResources.getFont(JFaceResources.TEXT_FONT);
+		viewer.getTextWidget().setFont(font);
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#getFormatterPreferenceKey()
-     */
-    protected String getFormatterPreferenceKey() {
+		return viewer;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#getFormatterPreferenceKey()
+	 */
+	@Override
+	protected String getFormatterPreferenceKey() {
 		return AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#updateViewerInput()
 	 */
+	@Override
 	protected void updateViewerInput() {
-		IStructuredSelection selection= (IStructuredSelection) getTableViewer().getSelection();
-		SourceViewer viewer= getViewer();
-		
+		IStructuredSelection selection = (IStructuredSelection) getTableViewer().getSelection();
+		SourceViewer viewer = getViewer();
+
 		if (selection.size() == 1 && selection.getFirstElement() instanceof TemplatePersistenceData) {
-			TemplatePersistenceData data= (TemplatePersistenceData) selection.getFirstElement();
-			Template template= data.getTemplate();
+			TemplatePersistenceData data = (TemplatePersistenceData) selection.getFirstElement();
+			Template template = data.getTemplate();
 			if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(getFormatterPreferenceKey())) {
-				String formatted= XmlFormatter.format(template.getPattern(), fFormattingPreferences);
+				String formatted = XmlFormatter.format(template.getPattern(), fFormattingPreferences);
 				viewer.getDocument().set(formatted);
 			} else {
 				viewer.getDocument().set(template.getPattern());
 			}
 		} else {
 			viewer.getDocument().set(IAntCoreConstants.EMPTY_STRING);
-		}		
+		}
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#isShowFormatterSetting()
 	 */
+	@Override
 	protected boolean isShowFormatterSetting() {
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_EDITOR_TEMPLATE_PREFERENCE_PAGE);

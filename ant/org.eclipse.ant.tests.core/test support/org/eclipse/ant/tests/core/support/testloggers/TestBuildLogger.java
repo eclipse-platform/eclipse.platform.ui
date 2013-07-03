@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public class TestBuildLogger implements BuildLogger {
 	 * @see org.apache.tools.ant.BuildLogger#setEmacsMode(boolean)
 	 */
 	public void setEmacsMode(boolean emacsMode) {
+		//do nothing
 	}
 
 	/**
@@ -76,6 +77,7 @@ public class TestBuildLogger implements BuildLogger {
 		AntTestChecker.getDefault().targetStarted(event.getTarget().getName());
         if (fSetProperties) {
             fSetProperties= false;
+            //TODO ANT-1.9.1 API USE
             AntTestChecker.getDefault().setUserProperties(event.getProject().getProperties());
         }
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,11 +31,10 @@ import org.eclipse.ui.PlatformUI;
  */
 public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider {
 
-
 	private AntClasspathBlock fBlock;
-	
+
 	public AntClasspathLabelProvider(AntClasspathBlock block) {
-		fBlock= block;
+		fBlock = block;
 	}
 
 	private Image getFolderImage() {
@@ -49,69 +48,82 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 	public Image getClasspathImage() {
 		return AntUIImages.getImage(IAntUIConstants.IMG_TAB_CLASSPATH);
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		String file;
 		if (element instanceof ClasspathEntry) {
 			ClasspathEntry entry = (ClasspathEntry) element;
-            if (entry.isEclipseRuntimeRequired()) {
-                return AntUIImages.getImage(IAntUIConstants.IMG_ANT_ECLIPSE_RUNTIME_OBJECT);
-            }
-			file= entry.toString();
+			if (entry.isEclipseRuntimeRequired()) {
+				return AntUIImages.getImage(IAntUIConstants.IMG_ANT_ECLIPSE_RUNTIME_OBJECT);
+			}
+			file = entry.toString();
 			if (file.endsWith("/")) { //$NON-NLS-1$
 				return getFolderImage();
-			} 
+			}
 			return getJarImage();
 		}
-		
+
 		return getClasspathImage();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof IAntClasspathEntry) {
-            IAntClasspathEntry entry= (IAntClasspathEntry)element;
-			StringBuffer label= new StringBuffer(entry.getLabel());
+			IAntClasspathEntry entry = (IAntClasspathEntry) element;
+			StringBuffer label = new StringBuffer(entry.getLabel());
 			if (element instanceof GlobalClasspathEntries) {
-                if (((GlobalClasspathEntries)element).getType() == ClasspathModel.ANT_HOME) {
-    				AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-    				String defaultAntHome= prefs.getDefaultAntHome();
-    				String currentAntHome= fBlock.getAntHome();
-    				label.append(" ("); //$NON-NLS-1$
-    				if (defaultAntHome == null || defaultAntHome.equals(currentAntHome)) {
-    					label.append(AntPreferencesMessages.AntClasspathLabelProvider_0);
-    				} else {
-    					label.append(fBlock.getAntHome());	
-    				}
-    				label.append(')');
-                }
-			} 
+				if (((GlobalClasspathEntries) element).getType() == ClasspathModel.ANT_HOME) {
+					AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+					String defaultAntHome = prefs.getDefaultAntHome();
+					String currentAntHome = fBlock.getAntHome();
+					label.append(" ("); //$NON-NLS-1$
+					if (defaultAntHome == null || defaultAntHome.equals(currentAntHome)) {
+						label.append(AntPreferencesMessages.AntClasspathLabelProvider_0);
+					} else {
+						label.append(fBlock.getAntHome());
+					}
+					label.append(')');
+				}
+			}
 			return label.toString();
 		}
 		return element.toString();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
+	@Override
 	public Color getBackground(Object element) {
 		if (isUnmodifiable(element)) {
-            Display display= Display.getCurrent();
-            return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			Display display = Display.getCurrent();
+			return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
+	@Override
 	public Color getForeground(Object element) {
 		if (isUnmodifiable(element)) {
-			Display display= Display.getCurrent();
+			Display display = Display.getCurrent();
 			return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		}
 		return null;
@@ -119,7 +131,7 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 
 	private boolean isUnmodifiable(Object element) {
 		if (element instanceof GlobalClasspathEntries) {
-			int type= ((GlobalClasspathEntries) element).getType();
+			int type = ((GlobalClasspathEntries) element).getType();
 			if (type == ClasspathModel.CONTRIBUTED) {
 				return true;
 			}
@@ -128,29 +140,44 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
+		// do nothing
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
+		// do nothing
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
+		// do nothing
 	}
 }

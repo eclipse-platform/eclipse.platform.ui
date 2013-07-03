@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,25 +31,25 @@ public class OpenAntEditorTest extends AbstractAntPerformanceTest {
 		EditorTestHelper.runEventQueue();
 	}
 
-	public void testOpenAntEditor1() throws PartInitException {
+	public void testOpenAntEditor1() throws Exception {
 		// cold run
-		IFile file= getIFile("build.xml");
+		IFile file= getIFile("build.xml"); //$NON-NLS-1$
 		measureOpenInEditor(file);
 	}
 	
-	public void testOpenAntEditor2() throws PartInitException {
+	public void testOpenAntEditor2() throws Exception {
 		// warm run
-		IFile file= getIFile("build.xml");
-		tagAsGlobalSummary("Open Ant Editor", Dimension.ELAPSED_PROCESS);
+		IFile file= getIFile("build.xml"); //$NON-NLS-1$
+		tagAsGlobalSummary("Open Ant Editor", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		measureOpenInEditor(file);
 	}
 	
-	public void testOpenAntEditorNoFolding() throws PartInitException {
+	public void testOpenAntEditorNoFolding() throws Exception {
 	    IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 	    try {
-		IFile file= getIFile("build.xml");
+		IFile file= getIFile("build.xml"); //$NON-NLS-1$
 		store.setValue(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
-		tagAsSummary("Open Ant Editor; No folding", Dimension.ELAPSED_PROCESS);
+		tagAsSummary("Open Ant Editor; No folding", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		measureOpenInEditor(file);
 	    } finally {
 	        store.setToDefault(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
@@ -57,12 +57,12 @@ public class OpenAntEditorTest extends AbstractAntPerformanceTest {
 	}
 	
 	protected IFile getIFile(String buildFileName) {
-		return getProject().getFolder("buildfiles").getFolder("performance").getFile(buildFileName);	
+		return getProject().getFolder("buildfiles").getFolder("performance").getFile(buildFileName);	 //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	protected File getBuildFile(String buildFileName) {
 		IFile file = getIFile(buildFileName);
-		assertTrue("Could not find build file named: " + buildFileName, file.exists());
+		assertTrue("Could not find build file named: " + buildFileName, file.exists()); //$NON-NLS-1$
 		return file.getLocation().toFile();
 	}
 	
@@ -75,26 +75,19 @@ public class OpenAntEditorTest extends AbstractAntPerformanceTest {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectHelper.PROJECT_NAME);
 	}
 	
-	protected void measureOpenInEditor(IFile file) throws PartInitException {
+	protected void measureOpenInEditor(IFile file) throws PartInitException, InterruptedException {
 		try {
 			for (int i= 0; i < 15; i++) {
 				startMeasuring();
 				EditorTestHelper.openInEditor(file, true);
 				stopMeasuring();
 				EditorTestHelper.closeAllEditors();
-				sleep(2000); // NOTE: runnables posted from other threads, while the main thread waits here, are executed and measured only in the next iteration
+				wait(2000); // NOTE: runnables posted from other threads, while the main thread waits here, are executed and measured only in the next iteration
 			}
 			 commitMeasurements();
 	 		 assertPerformance();
 		} finally {
 			EditorTestHelper.closeAllEditors();
-		}
-	}
-	
-	private synchronized void sleep(int time) {
-		try {
-			wait(time);
-		} catch (InterruptedException e) {
 		}
 	}
 }

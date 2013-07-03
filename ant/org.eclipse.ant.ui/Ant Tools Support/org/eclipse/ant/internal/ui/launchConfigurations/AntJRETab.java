@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,121 +41,146 @@ import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsU
 
 public class AntJRETab extends JavaJRETab {
 
-	private static final String MAIN_TYPE_NAME= "org.eclipse.ant.internal.launching.remote.InternalAntRunner"; //$NON-NLS-1$
-	
-	private VMArgumentsBlock fVMArgumentsBlock=  new VMArgumentsBlock();
-	private AntWorkingDirectoryBlock fWorkingDirectoryBlock= new AntWorkingDirectoryBlock();
+	private static final String MAIN_TYPE_NAME = "org.eclipse.ant.internal.launching.remote.InternalAntRunner"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
+	private VMArgumentsBlock fVMArgumentsBlock = new VMArgumentsBlock();
+	private AntWorkingDirectoryBlock fWorkingDirectoryBlock = new AntWorkingDirectoryBlock();
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		Composite comp= (Composite)fJREBlock.getControl();
-		((GridData)comp.getLayoutData()).grabExcessVerticalSpace= true;
-		((GridData)comp.getLayoutData()).verticalAlignment= SWT.FILL;
-		
+		Composite comp = (Composite) fJREBlock.getControl();
+		((GridData) comp.getLayoutData()).grabExcessVerticalSpace = true;
+		((GridData) comp.getLayoutData()).verticalAlignment = SWT.FILL;
+
 		fVMArgumentsBlock.createControl(comp);
-		((GridData)fVMArgumentsBlock.getControl().getLayoutData()).horizontalSpan= 2;
-						
-		fWorkingDirectoryBlock.createControl(comp);		
-		((GridData)fWorkingDirectoryBlock.getControl().getLayoutData()).horizontalSpan= 2;
+		((GridData) fVMArgumentsBlock.getControl().getLayoutData()).horizontalSpan = 2;
+
+		fWorkingDirectoryBlock.createControl(comp);
+		((GridData) fWorkingDirectoryBlock.getControl().getLayoutData()).horizontalSpan = 2;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab#getDefaultJREDescriptor()
 	 */
+	@Override
 	protected JREDescriptor getDefaultJREDescriptor() {
 		return new JREDescriptor() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor#getDescription()
 			 */
+			@Override
 			public String getDescription() {
 				return AntLaunchConfigurationMessages.AntJRETab_2;
 			}
 		};
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab#getSpecificJREDescriptor()
 	 */
+	@Override
 	protected JREDescriptor getSpecificJREDescriptor() {
 		return new JREDescriptor() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor#getDescription()
 			 */
+			@Override
 			public String getDescription() {
 				return AntLaunchConfigurationMessages.AntJRETab_3;
 			}
 		};
 	}
-		
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
+	@SuppressWarnings("deprecation")
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		boolean isDefaultJRE = fJREBlock.isDefaultJRE();
-        fWorkingDirectoryBlock.setEnabled(!isDefaultJRE);
+		fWorkingDirectoryBlock.setEnabled(!isDefaultJRE);
 		fVMArgumentsBlock.setEnabled(!isDefaultJRE);
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String) null);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String) null);
 		if (isDefaultJRE) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String) null);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 			configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
 		} else {
 			super.performApply(configuration);
 			IVMInstall vm = fJREBlock.getJRE();
 			IPath path = fJREBlock.getPath();
 			String id = JavaRuntime.getExecutionEnvironmentId(path);
-			configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, ((vm == null || id != null) ? false : vm.equals(getDefaultVMInstall(configuration))));
+			configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, ((vm == null || id != null) ? false
+					: vm.equals(getDefaultVMInstall(configuration))));
 			applySeparateVMAttributes(configuration);
 			fVMArgumentsBlock.performApply(configuration);
 			fWorkingDirectoryBlock.performApply(configuration);
 		}
 		setLaunchConfigurationWorkingCopy(configuration);
 	}
-	
+
 	private void applySeparateVMAttributes(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, MAIN_TYPE_NAME);
-		//only set to use the remote ant process factory if the user
-		//has not set to use a logger...bug 84608
-        boolean userLogger= false;
-        try {
-    		String args = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null);
-    		if (args != null) {
-    			Pattern pattern = Pattern.compile("\\$\\{.*_prompt.*\\}"); //$NON-NLS-1$
-    			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-    			String[] arguments = ExternalToolsUtil.parseStringIntoList(args);
-    			if (arguments != null) {
-                    for (int i = 0; i < arguments.length; i++) {
-                        String arg = arguments[i];
-                        if (arg.equals("-logger")) { //$NON-NLS-1$
-                            userLogger= true;
-                            break;
-                        } else if (!pattern.matcher(arg).find()) {
-    						String resolved = manager.performStringSubstitution(arg, false);
-    						if (resolved.equals("-logger")) { //$NON-NLS-1$
-                                userLogger= true;
-                                break;
-                            }
-    					}
-                    }
-                }
-    		}
-        } catch (CoreException e) {
-        }
-        if (userLogger) {
-            configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, (String) null);
-        } else {
-            configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
-        }
+		// only set to use the remote ant process factory if the user
+		// has not set to use a logger...bug 84608
+		boolean userLogger = false;
+		try {
+			String args = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null);
+			if (args != null) {
+				Pattern pattern = Pattern.compile("\\$\\{.*_prompt.*\\}"); //$NON-NLS-1$
+				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+				String[] arguments = ExternalToolsUtil.parseStringIntoList(args);
+				if (arguments != null) {
+					for (int i = 0; i < arguments.length; i++) {
+						String arg = arguments[i];
+						if (arg.equals("-logger")) { //$NON-NLS-1$
+							userLogger = true;
+							break;
+						} else if (!pattern.matcher(arg).find()) {
+							String resolved = manager.performStringSubstitution(arg, false);
+							if (resolved.equals("-logger")) { //$NON-NLS-1$
+								userLogger = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		catch (CoreException e) {
+			// do nothing
+		}
+		if (userLogger) {
+			configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, (String) null);
+		} else {
+			configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		super.initializeFrom(configuration);
 		fVMArgumentsBlock.initializeFrom(configuration);
@@ -164,26 +189,35 @@ public class AntJRETab extends JavaJRETab {
 		fWorkingDirectoryBlock.setEnabled(separateVM);
 		fVMArgumentsBlock.setEnabled(separateVM);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		return super.isValid(config) && fWorkingDirectoryBlock.isValid(config);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setLaunchConfigurationDialog(org.eclipse.debug.ui.ILaunchConfigurationDialog)
 	 */
+	@Override
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		super.setLaunchConfigurationDialog(dialog);
 		fWorkingDirectoryBlock.setLaunchConfigurationDialog(dialog);
 		fVMArgumentsBlock.setLaunchConfigurationDialog(dialog);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		String m = super.getErrorMessage();
 		if (m == null) {
@@ -192,9 +226,12 @@ public class AntJRETab extends JavaJRETab {
 		return m;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		String m = super.getMessage();
 		if (m == null) {
@@ -203,23 +240,29 @@ public class AntJRETab extends JavaJRETab {
 		return m;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		setLaunchConfigurationWorkingCopy(workingCopy);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		boolean usedefault = InstanceScope.INSTANCE.getNode(AntUIPlugin.PI_ANTUI).getBoolean(IAntUIPreferenceConstants.USE_WORKSPACE_JRE, false);
 		if (!usedefault) {
 			IVMInstall defaultVMInstall = getDefaultVMInstall(config);
-			if(defaultVMInstall != null) {
+			if (defaultVMInstall != null) {
 				config.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
 				setDefaultVMInstallAttributes(defaultVMInstall, config);
 				applySeparateVMAttributes(config);
@@ -228,9 +271,8 @@ public class AntJRETab extends JavaJRETab {
 	}
 
 	/**
-	 * Returns the default {@link IVMInstall} for the given {@link ILaunchConfiguration}, which resolves
-	 * to the {@link IVMInstall} for the backing {@link IJavaProject} as specified by the project
-	 * attribute in the configuration. If there is no project attribute the workspace default
+	 * Returns the default {@link IVMInstall} for the given {@link ILaunchConfiguration}, which resolves to the {@link IVMInstall} for the backing
+	 * {@link IJavaProject} as specified by the project attribute in the configuration. If there is no project attribute the workspace default
 	 * {@link IVMInstall} is returned.
 	 * 
 	 * @param config
@@ -239,30 +281,37 @@ public class AntJRETab extends JavaJRETab {
 	private IVMInstall getDefaultVMInstall(ILaunchConfiguration config) {
 		try {
 			IJavaProject project = JavaRuntime.getJavaProject(config);
-			if(project != null) {
+			if (project != null) {
 				IVMInstall vm = JavaRuntime.getVMInstall(project);
-				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=335860
-				//if the project does not have a JRE on the build path, return the workspace default JRE
-				if(vm != null) {
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=335860
+				// if the project does not have a JRE on the build path, return the workspace default JRE
+				if (vm != null) {
 					return vm;
 				}
 			}
 			return JavaRuntime.getDefaultVMInstall();
-		} catch (CoreException e) {
-			//core exception thrown for non-Java project
+		}
+		catch (CoreException e) {
+			// core exception thrown for non-Java project
 			return JavaRuntime.getDefaultVMInstall();
 		}
 	}
-	
+
+	@SuppressWarnings("deprecation")
 	private void setDefaultVMInstallAttributes(IVMInstall defaultVMInstall, ILaunchConfigurationWorkingCopy config) {
 		String vmName = defaultVMInstall.getName();
 		String vmTypeID = defaultVMInstall.getVMInstallType().getId();
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {}
+	@Override
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
+		// do nothing
+	}
 }

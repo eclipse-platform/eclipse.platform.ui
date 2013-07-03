@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,136 +46,161 @@ import com.ibm.icu.text.MessageFormat;
  * Renders Ant debug elements
  */
 public class AntDebugModelPresentation extends LabelProvider implements IDebugModelPresentationExtension {
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#setAttribute(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setAttribute(String attribute, Object value) {
+		// do nothing
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof AntProperty) {
 			return AntObjectLabelProvider.getPropertyImage();
 		} else if (element instanceof AntProperties) {
 			return AntObjectLabelProvider.getPropertyImage();
-        }
+		}
 		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof AntStackFrame) {
-			AntStackFrame frame= (AntStackFrame) element;
+			AntStackFrame frame = (AntStackFrame) element;
 			return getStackFrameText(frame);
 		} else if (element instanceof AntThread) {
-			AntThread thread= (AntThread) element;
+			AntThread thread = (AntThread) element;
 			return getThreadText(thread);
 		} else if (element instanceof AntProperty) {
-		    AntProperty property= (AntProperty) element;
-		    return property.getText();  
-        } else if (element instanceof AntProperties) {
-		   return ((AntProperties)element).getName();
-        }
-		
+			AntProperty property = (AntProperty) element;
+			return property.getText();
+		} else if (element instanceof AntProperties) {
+			return ((AntProperties) element).getName();
+		}
+
 		return null;
 	}
 
-    private String getThreadText(AntThread thread) {
-        String name= thread.getName();
-        if (name != null) {
-            StringBuffer text= new StringBuffer(name);
-            if (thread.isSuspended()) {
-                IBreakpoint[] breakpoints= thread.getBreakpoints();
-                if (breakpoints.length > 0) {
-                    AntLineBreakpoint breakpoint= (AntLineBreakpoint) breakpoints[0];
-                    IMarker marker= breakpoint.getMarker();
-                    String fileName= marker.getResource().getFullPath().lastSegment();
-                    String lineNumber= Integer.toString(marker.getAttribute(IMarker.LINE_NUMBER, -1));
-                    String breakpointString= null;
-                    if (breakpoint.isRunToLine()) {
-                        breakpointString= MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_5, new String[] {lineNumber, fileName});
-                    } else {
-                        breakpointString= MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_2, new String[]{lineNumber, fileName});                            
-                    }
-                    text.append(MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_3, new String[]{breakpointString}));
-                } else {
-                    text.append(DebugModelMessages.AntDebugModelPresentation_4);
-                }
-            }
-            
-            return text.toString();
-        }
-        return null;
-    }
+	private String getThreadText(AntThread thread) {
+		String name = thread.getName();
+		if (name != null) {
+			StringBuffer text = new StringBuffer(name);
+			if (thread.isSuspended()) {
+				IBreakpoint[] breakpoints = thread.getBreakpoints();
+				if (breakpoints.length > 0) {
+					AntLineBreakpoint breakpoint = (AntLineBreakpoint) breakpoints[0];
+					IMarker marker = breakpoint.getMarker();
+					String fileName = marker.getResource().getFullPath().lastSegment();
+					String lineNumber = Integer.toString(marker.getAttribute(IMarker.LINE_NUMBER, -1));
+					String breakpointString = null;
+					if (breakpoint.isRunToLine()) {
+						breakpointString = MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_5, new Object[] { lineNumber, fileName });
+					} else {
+						breakpointString = MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_2, new Object[] { lineNumber, fileName });
+					}
+					text.append(MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_3, new Object[] { breakpointString }));
+				} else {
+					text.append(DebugModelMessages.AntDebugModelPresentation_4);
+				}
+			}
 
-    private String getStackFrameText(AntStackFrame frame) {
-        String name= frame.getName();
-        if (name != null) {
-            StringBuffer text= new StringBuffer(name);
-            int lineNumber= frame.getLineNumber();
-            String lineNumberString= null;
-            if (lineNumber == 0) {
-                lineNumberString= DebugModelMessages.AntDebugModelPresentation_0;
-            } else {
-                lineNumberString= Integer.toString(lineNumber);
-            }
-            text.append(MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_1, new String[]{lineNumberString}));
-            return text.toString();
-        }
-        return null;
-    }
+			return text.toString();
+		}
+		return null;
+	}
 
-    /* (non-Javadoc)
+	private String getStackFrameText(AntStackFrame frame) {
+		String name = frame.getName();
+		if (name != null) {
+			StringBuffer text = new StringBuffer(name);
+			int lineNumber = frame.getLineNumber();
+			String lineNumberString = null;
+			if (lineNumber == 0) {
+				lineNumberString = DebugModelMessages.AntDebugModelPresentation_0;
+			} else {
+				lineNumberString = Integer.toString(lineNumber);
+			}
+			text.append(MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_1, new Object[] { lineNumberString }));
+			return text.toString();
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
 	 */
+	@Override
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		String detail = IAntCoreConstants.EMPTY_STRING;
 		try {
 			detail = value.getValueString();
-		} catch (DebugException e) {
+		}
+		catch (DebugException e) {
+			// do nothing
 		}
 		listener.detailComputed(value, detail);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorInput(java.lang.Object)
 	 */
+	@Override
 	public IEditorInput getEditorInput(Object element) {
 		if (element instanceof IFile) {
-			return new FileEditorInput((IFile)element);
+			return new FileEditorInput((IFile) element);
 		}
 		if (element instanceof ILineBreakpoint) {
-			return new FileEditorInput((IFile)((ILineBreakpoint)element).getMarker().getResource());
+			return new FileEditorInput((IFile) ((ILineBreakpoint) element).getMarker().getResource());
 		}
-        if (element instanceof LocalFileStorage) {
-        	File file= ((LocalFileStorage)element).getFile();
-        	IFileStore fileStore;
+		if (element instanceof LocalFileStorage) {
+			File file = ((LocalFileStorage) element).getFile();
+			IFileStore fileStore;
 			try {
 				fileStore = EFS.getStore(file.toURI());
 				return new FileStoreEditorInput(fileStore);
-			} catch (CoreException e) {
+			}
+			catch (CoreException e) {
 				AntUIPlugin.log(e);
 				return null;
 			}
-        }
+		}
 		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
 	 */
+	@Override
 	public String getEditorId(IEditorInput input, Object element) {
 		return "org.eclipse.ant.ui.internal.editor.AntEditor"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.IDebugModelPresentationExtension#requiresUIThread(java.lang.Object)
 	 */
+	@Override
 	public boolean requiresUIThread(Object element) {
 		return !AntUIImages.isInitialized();
 	}

@@ -53,7 +53,7 @@ public class AntTestPlugin extends AbstractUIPlugin {
 	public File getFileInPlugin(IPath path) {
 		try {
 			Bundle bundle = getDefault().getBundle();
-			URL installURL= new URL(bundle.getEntry("/"), path.toString());
+			URL installURL= new URL(bundle.getEntry("/"), path.toString()); //$NON-NLS-1$
 			URL localURL= FileLocator.toFileURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 
 public class AntClassLoader extends URLClassLoader {
 
@@ -39,8 +38,8 @@ public class AntClassLoader extends URLClassLoader {
     /*
      * @see java.net.URLClassLoader#findClass(java.lang.String)
      */
-    protected Class findClass(String name) throws ClassNotFoundException {
-        Class result = null;
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        Class<?> result = null;
         //check whether to load the Apache Ant classes from the plug-in class loaders 
         //or to only load from the URLs specified from the Ant runtime classpath preferences setting
         if (fAllowPluginLoading || !(name.startsWith(ANT_PACKAGES_PREFIX))) {
@@ -54,7 +53,7 @@ public class AntClassLoader extends URLClassLoader {
         return super.findClass(name);
     }
 
-    protected Class loadClassPlugins(String name) {
+    protected Class<?> loadClassPlugins(String name) {
         //remove this class loader as the context class loader
         //when loading classes from plug-ins...see bug 94471
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -62,7 +61,7 @@ public class AntClassLoader extends URLClassLoader {
             Thread.currentThread().setContextClassLoader(fContextClassloader);
         }
         try {
-            Class result = null;
+            Class<?> result = null;
             if (fPluginLoaders != null) {
                 for (int i = 0; (i < fPluginLoaders.length) && (result == null); i++) {
                     try {
@@ -119,16 +118,16 @@ public class AntClassLoader extends URLClassLoader {
     /*
      * @see java.net.URLClassLoader#findResources(java.lang.String)
      */
-    public Enumeration findResources(String name) throws IOException {
+    public Enumeration<URL> findResources(String name) throws IOException {
     	ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
     	if (fContextClassloader != null) {
     		Thread.currentThread().setContextClassLoader(fContextClassloader);
     	}
-    	List all = new ArrayList();
+    	ArrayList<URL> all = new ArrayList<URL>();
     	try {
     		if (fAllowPluginLoading || !(name.startsWith(ANT_URL_PREFIX) || name.startsWith(ANT_URL_PREFIX, 1))) {
     			if (fPluginLoaders != null) {
-    				Enumeration result = null;
+    				Enumeration<URL> result = null;
     				for (int i = 0; i < fPluginLoaders.length; i++) {
     					result = fPluginLoaders[i].getResources(name);
     					while (result.hasMoreElements()) {
@@ -138,7 +137,7 @@ public class AntClassLoader extends URLClassLoader {
     			}
     		}
 
-    		Enumeration superResources = super.findResources(name);
+    		Enumeration<URL> superResources = super.findResources(name);
     		if (all.isEmpty()) {
     			return superResources;
     		}

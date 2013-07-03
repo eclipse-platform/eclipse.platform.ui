@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eclipse.jface.text.IRegion;
 public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	
 	private static IConsole console;
-	private static List lines= new ArrayList(); 
+	private static List<IRegion> lines= new ArrayList<IRegion>(); 
 	
 	private static boolean consoleClosed= true;
 
@@ -34,6 +34,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
 	public void dispose() {
+		//do nothing
 	}
 
 	/**
@@ -42,7 +43,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	public void init(IConsole c) {
 	    synchronized(lines) {
 	        ConsoleLineTracker.console= c;
-	        lines= new ArrayList();
+	        lines= new ArrayList<IRegion>();
 	        consoleClosed= false;
 	    }
 	}
@@ -60,7 +61,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	
 	public static String getMessage(int index) {
 		if (index < lines.size()){
-			IRegion lineRegion= (IRegion)lines.get(index);
+			IRegion lineRegion= lines.get(index);
 			try {
 				return console.getDocument().get(lineRegion.getOffset(), lineRegion.getLength());
 			} catch (BadLocationException e) {
@@ -70,10 +71,10 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 		return null;
 	}
 	
-	public static List getAllMessages() {
-		List all= new ArrayList(lines.size());
+	public static List<String> getAllMessages() {
+		List<String> all= new ArrayList<String>(lines.size());
 		for (int i = 0; i < lines.size(); i++) {
-			IRegion lineRegion= (IRegion)lines.get(i);
+			IRegion lineRegion= lines.get(i);
 			try {
 				all.add(console.getDocument().get(lineRegion.getOffset(), lineRegion.getLength()));
 			} catch (BadLocationException e) {
@@ -95,6 +96,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 			try {
 				lines.wait(20000);
 			} catch (InterruptedException ie) {
+				//do nothing
 			}
 		}
 	}

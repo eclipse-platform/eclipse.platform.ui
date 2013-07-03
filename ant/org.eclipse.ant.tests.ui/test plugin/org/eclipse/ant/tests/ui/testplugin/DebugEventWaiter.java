@@ -81,15 +81,15 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	public String getEventName(int flag) {
 		switch (flag) {
 			case DebugEvent.CREATE :
-				return "Create";
+				return "Create"; //$NON-NLS-1$
 			case DebugEvent.TERMINATE :
-				return "Terminate";
+				return "Terminate"; //$NON-NLS-1$
 			case DebugEvent.RESUME :
-				return "Resume";
+				return "Resume"; //$NON-NLS-1$
 			case DebugEvent.SUSPEND :
-				return "Suspend";
+				return "Suspend"; //$NON-NLS-1$
 			default :
-				return "UNKNOWN";
+				return "UNKNOWN"; //$NON-NLS-1$
 		}
 	}
 
@@ -117,7 +117,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 */
 	protected void printReceived(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
-			System.out.println(this +" got " + events[i]);
+			System.out.println(this +" got " + events[i]); //$NON-NLS-1$
 		}
 	}
 
@@ -144,7 +144,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 			try {
 				wait(fTimeout);
 			} catch (InterruptedException ie) {
-				System.err.println("Interrupted waiting for event");
+				System.err.println("Interrupted waiting for event"); //$NON-NLS-1$
 			}
 		}
 		unregister();

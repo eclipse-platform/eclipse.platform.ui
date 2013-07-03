@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
+import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -40,43 +41,46 @@ import org.eclipse.ui.PlatformUI;
  * Dialog to specify target execution order
  */
 public class TargetOrderDialog extends Dialog implements ISelectionChangedListener {
-	
+
 	private Button fUp;
 	private Button fDown;
 	private TableViewer fViewer;
-	private Object[] fTargets;
+	private AntTargetNode[] fTargets;
 
 	/**
 	 * Constructs the dialog.
 	 * 
 	 * @param parentShell
 	 */
-	public TargetOrderDialog(Shell parentShell, Object[] targets) {
+	public TargetOrderDialog(Shell parentShell, AntTargetNode[] targets) {
 		super(parentShell);
 		fTargets = targets;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		getShell().setText(AntLaunchConfigurationMessages.TargetOrderDialog_Order_Targets_1);
-		
-		Composite comp = (Composite)super.createDialogArea(parent);
-		((GridLayout)comp.getLayout()).numColumns= 2;
+
+		Composite comp = (Composite) super.createDialogArea(parent);
+		((GridLayout) comp.getLayout()).numColumns = 2;
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(AntLaunchConfigurationMessages.TargetOrderDialog__Specify_target_execution_order__2);
 		label.setFont(comp.getFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);		
-		
+		label.setLayoutData(gd);
+
 		createTargetList(comp);
-		
+
 		createButtons(comp);
-		
+
 		updateButtons();
-		
+
 		return comp;
 	}
 
@@ -88,28 +92,30 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	private void createButtons(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.verticalAlignment = GridData.BEGINNING;
 		comp.setLayout(layout);
 		comp.setLayoutData(gd);
-		
+
 		fUp = new Button(comp, SWT.PUSH);
 		fUp.setFont(parent.getFont());
 		fUp.setText(AntLaunchConfigurationMessages.TargetOrderDialog__Up_3);
 		setButtonLayoutData(fUp);
 		fUp.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleUpPressed();
 			}
 		});
-		
+
 		fDown = new Button(comp, SWT.PUSH);
 		fDown.setFont(parent.getFont());
 		fDown.setText(AntLaunchConfigurationMessages.TargetOrderDialog__Down_4);
 		setButtonLayoutData(fDown);
 		fDown.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleDownPressed();
 			}
@@ -117,77 +123,75 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	}
 
 	private void handleDownPressed() {
-		List targets = getOrderedSelection();
+		List<AntTargetNode> targets = getOrderedSelection();
 		if (targets.isEmpty()) {
 			return;
 		}
-		List list= new ArrayList(Arrays.asList(fTargets));
+		List<AntTargetNode> list = new ArrayList<AntTargetNode>(Arrays.asList(fTargets));
 		int bottom = list.size() - 1;
 		int index = 0;
 		for (int i = targets.size() - 1; i >= 0; i--) {
-			Object target = targets.get(i);
+			AntTargetNode target = targets.get(i);
 			index = list.indexOf(target);
 			if (index < bottom) {
 				bottom = index + 1;
-				Object temp = list.get(bottom);
+				AntTargetNode temp = list.get(bottom);
 				list.set(bottom, target);
 				list.set(index, temp);
 			}
 			bottom = index;
-		} 
+		}
 		setEntries(list);
 	}
 
 	private void handleUpPressed() {
-		List targets = getOrderedSelection();
+		List<AntTargetNode> targets = getOrderedSelection();
 		if (targets.isEmpty()) {
 			return;
 		}
 		int top = 0;
 		int index = 0;
-		List list= new ArrayList(Arrays.asList(fTargets));
-		Iterator entries = targets.iterator();
+		List<AntTargetNode> list = new ArrayList<AntTargetNode>(Arrays.asList(fTargets));
+		Iterator<AntTargetNode> entries = targets.iterator();
 		while (entries.hasNext()) {
-			Object target = entries.next();
+			AntTargetNode target = entries.next();
 			index = list.indexOf(target);
 			if (index > top) {
 				top = index - 1;
-				Object temp = list.get(top);
+				AntTargetNode temp = list.get(top);
 				list.set(top, target);
 				list.set(index, temp);
 			}
 			top = index;
-		} 
+		}
 		setEntries(list);
 	}
-	
+
 	/**
 	 * Updates the entries to the entries in the given list
 	 */
-	private void setEntries(List list) {
-		fTargets= list.toArray();
+	private void setEntries(List<AntTargetNode> list) {
+		fTargets = list.toArray(new AntTargetNode[list.size()]);
 		fViewer.setInput(fTargets);
 		// update all selection listeners
 		fViewer.setSelection(fViewer.getSelection());
 	}
-	
+
 	/**
-	 * Returns the selected items in the list, in the order they are
-	 * displayed (not in the order they were selected).
+	 * Returns the selected items in the list, in the order they are displayed (not in the order they were selected).
 	 * 
 	 * @return targets for an action
 	 */
-	private List getOrderedSelection() {
-		List targets = new ArrayList();
-		List selection = ((IStructuredSelection)fViewer.getSelection()).toList();
-		Object[] entries = fTargets;
-		for (int i = 0; i < entries.length; i++) {
-			Object target = entries[i];
+	private List<AntTargetNode> getOrderedSelection() {
+		List<AntTargetNode> targets = new ArrayList<AntTargetNode>();
+		List<?> selection = ((IStructuredSelection) fViewer.getSelection()).toList();
+		for (int i = 0; i < fTargets.length; i++) {
+			AntTargetNode target = fTargets[i];
 			if (selection.contains(target)) {
 				targets.add(target);
 			}
 		}
-		return targets;		
+		return targets;
 	}
 
 	/**
@@ -198,25 +202,25 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	private void createTargetList(Composite comp) {
 		fViewer = new TableViewer(comp, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		fViewer.setLabelProvider(new AntModelLabelProvider());
-	
+
 		fViewer.setContentProvider(new AntModelContentProvider());
 		fViewer.setInput(fTargets);
 		fViewer.addSelectionChangedListener(this);
 		Table table = fViewer.getTable();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 200;
-		gd.widthHint = 250;		
+		gd.widthHint = 250;
 		table.setLayoutData(gd);
 		table.setFont(comp.getFont());
 	}
-	
+
 	/**
 	 * Returns the ordered targets
 	 */
 	public Object[] getTargets() {
 		return fTargets;
 	}
-	
+
 	/**
 	 * Update button enablement
 	 * 
@@ -225,7 +229,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateButtons();
 	}
-	
+
 	private void updateButtons() {
 		int[] selections = fViewer.getTable().getSelectionIndices();
 		int last = fTargets.length - 1;
@@ -240,12 +244,15 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 			}
 		}
 		fUp.setEnabled(up);
-		fDown.setEnabled(down);		
+		fDown.setEnabled(down);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAntUIHelpContextIds.TARGET_ORDER_DIALOG);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.ant.internal.ui.console;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -38,8 +37,8 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
 
     protected TextConsole fConsole;
     private static Pattern fgLineNumberPattern = Pattern.compile("\\d+"); //$NON-NLS-1$
-	private static List fgPatternMatchers= new ArrayList();
-    private Map fFileNameToIFile= new HashMap();
+	private static List<AbstractJavacPatternMatcher> fgPatternMatchers= new ArrayList<AbstractJavacPatternMatcher>();
+    private Map<String, IFile> fFileNameToIFile= new HashMap<String, IFile>();
     
 	private JavacMarkerCreator fMarkerCreator;
 	protected static final Integer fgWarningType= new Integer(IMarker.SEVERITY_WARNING);
@@ -69,9 +68,9 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
         if (filePath == null) {
             return null; 
         }
-        IFile file= (IFile) fFileNameToIFile.get(filePath);
+        IFile file= fFileNameToIFile.get(filePath);
         if (file == null) {
-            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(filePath));
+            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(new Path(filePath).toFile().toURI());
             if (files.length > 0) {
                 file = files[0];
                 fFileNameToIFile.put(filePath, file);
@@ -147,9 +146,7 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
     }
 
 	public static void consoleClosed(IProcess process) {
-		Iterator iter= new ArrayList(fgPatternMatchers).iterator();
-		while (iter.hasNext()) {
-			AbstractJavacPatternMatcher matcher = (AbstractJavacPatternMatcher) iter.next();
+		for (AbstractJavacPatternMatcher matcher : fgPatternMatchers) {
 			matcher.finished(process);
 		}
 	}

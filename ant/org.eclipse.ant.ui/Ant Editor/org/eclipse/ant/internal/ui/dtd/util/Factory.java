@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 Object Factory Inc.
+ * Copyright (c) 2002, 2013 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class Factory {
 	}
 	
 	private Head getHead() {
-		Head head = (Head) free.get();
+		Head head = free.get();
 		if (head == null) {
 			// head is needed because you can't change
 			// the referent of a SoftReference.
@@ -56,7 +56,7 @@ public class Factory {
 			// a free object only causes memory allocation
 			// when the list has been previously collected.
 			head = new Head();
-			free = new SoftReference(head);
+			free = new SoftReference<Head>(head);
 		}
 		return head;
 	}
@@ -64,5 +64,5 @@ public class Factory {
 	private static class Head {
 		public FactoryObject next;
 	}
-	private SoftReference free = new SoftReference(new Head());
+	private SoftReference<Head> free = new SoftReference<Head>(new Head());
 }

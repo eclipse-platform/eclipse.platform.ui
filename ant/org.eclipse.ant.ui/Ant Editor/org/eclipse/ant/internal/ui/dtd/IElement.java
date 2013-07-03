@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 Object Factory Inc.
+ * Copyright (c) 2002, 2013 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,5 +60,5 @@ public interface IElement extends IAtom {
 	 * Map must not be modified by caller; for performance reasons,
 	 * it is not a copy.
 	 */
-	public Map getAttributes();
+	public Map<String, IAttribute> getAttributes();
 }

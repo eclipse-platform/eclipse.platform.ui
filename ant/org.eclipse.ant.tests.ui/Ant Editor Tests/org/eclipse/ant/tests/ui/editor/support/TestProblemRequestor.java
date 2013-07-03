@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ public class TestProblemRequestor implements IProblemRequestor {
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
 	 */
 	public void acceptProblem(IProblem problem) {
+		//do nothing
 
 	}
 
@@ -27,6 +28,7 @@ public class TestProblemRequestor implements IProblemRequestor {
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#beginReporting()
 	 */
 	public void beginReporting() {
+		//do nothing
 
 	}
 
@@ -34,6 +36,6 @@ public class TestProblemRequestor implements IProblemRequestor {
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#endReporting()
 	 */
 	public void endReporting() {
-
+		//do nothing
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 John-Mason P. Shackelford and others.
+ * Copyright (c) 2004, 2013 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,86 +26,88 @@ import org.eclipse.jface.text.formatter.IFormattingContext;
 
 public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy {
 
-    /** access to the preferences store * */
-    private final FormattingPreferences prefs;
-    
-    /** Documents to be formatted by this strategy */
-	private final LinkedList fDocuments= new LinkedList();
+	/** access to the preferences store * */
+	private final FormattingPreferences prefs;
+
+	/** Documents to be formatted by this strategy */
+	private final LinkedList<IDocument> fDocuments = new LinkedList<IDocument>();
 	/** Partitions to be formatted by this strategy */
-	private final LinkedList fPartitions= new LinkedList();
+	private final LinkedList<TypedPosition> fPartitions = new LinkedList<TypedPosition>();
 
-    public XmlElementFormattingStrategy() {
-        this.prefs = new FormattingPreferences();
-    }
+	public XmlElementFormattingStrategy() {
+		this.prefs = new FormattingPreferences();
+	}
 
-    public XmlElementFormattingStrategy(FormattingPreferences prefs) {
-        Assert.isNotNull(prefs);
-        this.prefs=prefs;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#format()
-     */
-    public void format() {
+	public XmlElementFormattingStrategy(FormattingPreferences prefs) {
+		Assert.isNotNull(prefs);
+		this.prefs = prefs;
+	}
 
-        super.format();
-                
-    	final IDocument document= (IDocument)fDocuments.removeFirst();
-		final TypedPosition partition= (TypedPosition)fPartitions.removeFirst();
-		
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#format()
+	 */
+	@Override
+	public void format() {
+
+		super.format();
+
+		final IDocument document = fDocuments.removeFirst();
+		final TypedPosition partition = fPartitions.removeFirst();
+
 		if (document == null || partition == null) {
 			return;
 		}
 
-        try {
-            String formatted = formatElement(document, partition);
-            String partitionText = document.get(partition.getOffset(),
-                    partition.getLength());
+		try {
+			String formatted = formatElement(document, partition);
+			String partitionText = document.get(partition.getOffset(), partition.getLength());
 
-            if (formatted != null && !formatted.equals(partitionText)) {
-                document.replace(partition.getOffset(), partition.getLength(),
-                        formatted);
-            }
+			if (formatted != null && !formatted.equals(partitionText)) {
+				document.replace(partition.getOffset(), partition.getLength(), formatted);
+			}
 
-        } catch (BadLocationException e) {
-        }
-    }
+		}
+		catch (BadLocationException e) {
+			// do nothing
+		}
+	}
 
-    private String formatElement(IDocument document, TypedPosition partition)
-            throws BadLocationException {
+	private String formatElement(IDocument document, TypedPosition partition) throws BadLocationException {
 
-        String partitionText = document.get(partition.getOffset(), partition.getLength());
+		String partitionText = document.get(partition.getOffset(), partition.getLength());
 
-        IRegion line = document.getLineInformationOfOffset(partition.getOffset());
+		IRegion line = document.getLineInformationOfOffset(partition.getOffset());
 
-        int indentLength = partition.getOffset() - line.getOffset();
-        String lineDelimiter= document.getLineDelimiter(document.getLineOfOffset(line.getOffset()));
-        if (lineDelimiter == null) {
-            lineDelimiter= TextUtilities.getDefaultLineDelimiter(document);
-        }
-        return XmlTagFormatter.format(partitionText, prefs, document.get(line.getOffset(), indentLength), lineDelimiter);
+		int indentLength = partition.getOffset() - line.getOffset();
+		String lineDelimiter = document.getLineDelimiter(document.getLineOfOffset(line.getOffset()));
+		if (lineDelimiter == null) {
+			lineDelimiter = TextUtilities.getDefaultLineDelimiter(document);
+		}
+		return XmlTagFormatter.format(partitionText, prefs, document.get(line.getOffset(), indentLength), lineDelimiter);
 
-    }
+	}
 
-    /*
- 	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
- 	 */
- 	public void formatterStarts(final IFormattingContext context) {
- 		super.formatterStarts(context);
- 		
- 		fPartitions.addLast(context.getProperty(FormattingContextProperties.CONTEXT_PARTITION));
- 		fDocuments.addLast(context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM));
- 	}
+	/*
+	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
+	 */
+	@Override
+	public void formatterStarts(final IFormattingContext context) {
+		super.formatterStarts(context);
 
- 	/*
- 	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStops()
- 	 */
- 	public void formatterStops() {
- 		super.formatterStops();
+		fPartitions.addLast((TypedPosition) context.getProperty(FormattingContextProperties.CONTEXT_PARTITION));
+		fDocuments.addLast((IDocument) context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM));
+	}
 
- 		fPartitions.clear();
- 		fDocuments.clear();
- 	}
+	/*
+	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStops()
+	 */
+	@Override
+	public void formatterStops() {
+		super.formatterStops();
+
+		fPartitions.clear();
+		fDocuments.clear();
+	}
 }

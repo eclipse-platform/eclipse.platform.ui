@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,16 +12,19 @@ package org.eclipse.ant.internal.launching.launchConfigurations;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.launching.AntLaunching;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.w3c.dom.Document;
@@ -35,6 +38,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 3.0 
  */
+@SuppressWarnings("restriction")
 public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	
 	public static final String TYPE_ID = "org.eclipse.ant.ui.classpathentry.antHome"; //$NON-NLS-1$
@@ -94,7 +98,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
-		List libs = new ArrayList(40);
+		ArrayList<IRuntimeClasspathEntry> libs = new ArrayList<IRuntimeClasspathEntry>(40);
 		AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
 		if (antHomeLocation == null) {
 			IAntClasspathEntry[] entries = preferences.getAntHomeClasspathEntries();
@@ -115,7 +119,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 				}
 			}
 		}
-		return (IRuntimeClasspathEntry[]) libs.toArray(new IRuntimeClasspathEntry[libs.size()]);
+		return libs.toArray(new IRuntimeClasspathEntry[libs.size()]);
 	}
 	
 	public File resolveAntHome() throws CoreException {
@@ -126,12 +130,18 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 		File lib= libDir.toFile();
 		File parentDir= lib.getParentFile();
 		if (parentDir == null || !parentDir.exists()) {
-			abort(MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_10, new String[] {antHomeLocation}), null);
+			abort(MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_10, new Object[] {antHomeLocation}), null);
 		}
 		if (!lib.exists() || !lib.isDirectory()) {
-			abort(MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_11, new String[] {antHomeLocation}), null);
+			abort(MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_11, new Object[] {antHomeLocation}), null);
 		}
 		return lib;
+	}
+	
+	@Override
+	protected void abort(String message, Throwable exception) throws CoreException {
+		IStatus status = new Status(IStatus.ERROR, AntLaunching.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, exception);
+		throw new CoreException(status);
 	}
 	
 	/* (non-Javadoc)
@@ -141,7 +151,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 		if (antHomeLocation == null) {
 			return AntLaunchConfigurationMessages.AntHomeClasspathEntry_8;
 		}
-		return MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_9, new String[]{antHomeLocation});
+		return MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_9, new Object[]{antHomeLocation});
 	}
 	
 	/* (non-Javadoc)

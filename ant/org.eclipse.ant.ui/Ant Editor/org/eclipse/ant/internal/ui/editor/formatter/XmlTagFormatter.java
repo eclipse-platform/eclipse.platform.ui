@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 John-Mason P. Shackelford and others.
+ * Copyright (c) 2004, 2013 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     John-Mason P. Shackelford - initial API and implementation
- *     IBM Corporation - Bug 73411, 84342
+ *     IBM Corporation - Bug 73411, 84342, on-going bug fixing
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.formatter;
 
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class XmlTagFormatter {
 
-    protected static class AttributePair {
+    public static class AttributePair {
 
         private String fAttribute;
         private String fValue;
@@ -55,7 +55,7 @@ public class XmlTagFormatter {
 
     protected static class Tag {
 
-        private List fAttributes = new ArrayList();
+        private List<AttributePair> fAttributes = new ArrayList<AttributePair>();
 
         private boolean fClosed;
 
@@ -70,7 +70,7 @@ public class XmlTagFormatter {
         }
 
         public AttributePair getAttributePair(int i) {
-            return (AttributePair) fAttributes.get(i);
+            return fAttributes.get(i);
         }
 
         public String getElementName() {
@@ -96,7 +96,7 @@ public class XmlTagFormatter {
             return length;
         }
 
-        public void setAttributes(List attributePair) {
+        public void setAttributes(List<AttributePair> attributePair) {
             fAttributes.clear();
             fAttributes.addAll(attributePair);
         }
@@ -223,7 +223,7 @@ public class XmlTagFormatter {
 
         private String fParseText;
 
-        protected List getAttibutes(String elementText)
+        protected List<AttributePair> getAttibutes(String elementText)
                 throws ParseException {
 
             class Mode {
@@ -240,7 +240,7 @@ public class XmlTagFormatter {
                 public boolean isFinished() {return mode == 4;}
             }
 
-            List attributePairs = new ArrayList();
+            List<AttributePair> attributePairs = new ArrayList<AttributePair>();
 
             CharacterIterator iter = new StringCharacterIterator(elementText
                     .substring(getElementName(elementText).length() + 2));

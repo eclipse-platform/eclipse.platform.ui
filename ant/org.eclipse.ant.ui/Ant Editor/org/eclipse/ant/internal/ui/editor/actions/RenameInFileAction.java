@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class RenameInFileAction extends SelectionDispatchAction {
 		int offset= ((ITextSelection)getSelection()).getOffset();
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		OccurrencesFinder finder= new OccurrencesFinder(fEditor, fEditor.getAntModel(), document, offset);
-		List positions= finder.perform();
+		List<Position> positions= finder.perform();
 		if (positions == null) {
 			return;
 		}
@@ -79,14 +79,14 @@ public class RenameInFileAction extends SelectionDispatchAction {
 	}
 	
     
-    private void addPositionsToGroup(int offset, List positions, IDocument document, LinkedPositionGroup group) {
-        Iterator iter= positions.iterator();
+    private void addPositionsToGroup(int offset, List<Position> positions, IDocument document, LinkedPositionGroup group) {
+        Iterator<Position> iter= positions.iterator();
         int i= 0;
         int j= 0;
         int firstPosition= -1;
         try {
             while (iter.hasNext()) {
-                Position position = (Position) iter.next();
+                Position position = iter.next();
                 if (firstPosition == -1) {
                     if (position.overlapsWith(offset, 0)) {
                         firstPosition= i;
@@ -99,7 +99,7 @@ public class RenameInFileAction extends SelectionDispatchAction {
             }
             
             for (i = 0; i < firstPosition; i++) {
-                Position position= (Position) positions.get(i);
+                Position position= positions.get(i);
                 group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), j++));
             }
         } catch (BadLocationException be) {

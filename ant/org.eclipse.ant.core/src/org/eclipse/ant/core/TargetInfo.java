@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,10 +36,10 @@ public class TargetInfo {
 	 * 		or <code>null</code> if not specified
 	 * @param project enclosing project
 	 * @param dependencies names of prerequisite projects 
-	 * @param isDefault whether this is the build file default target
+	 * @param isDefault whether this is the build file default target 
+	 * @since 3.3
 	 */
-	/*package*/
-	TargetInfo(ProjectInfo project, String name, String description, String[] dependencies, boolean isDefault) {
+	public TargetInfo(ProjectInfo project, String name, String description, String[] dependencies, boolean isDefault) {
 		this.name = name == null ? IAntCoreConstants.EMPTY_STRING : name;
 		this.description = description;
 		this.project = project;

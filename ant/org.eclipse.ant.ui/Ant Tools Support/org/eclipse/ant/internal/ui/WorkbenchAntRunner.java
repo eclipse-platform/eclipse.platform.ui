@@ -18,40 +18,45 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Application to run an Ant script after starting the workbench. Shuts down the
- * workbench after the script runs.
+ * Application to run an Ant script after starting the workbench. Shuts down the workbench after the script runs.
  * 
  * @since 3.4
  */
 public class WorkbenchAntRunner implements IApplication {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		Display display = PlatformUI.createDisplay();
-        try {
-            Shell shell = new Shell(display, SWT.ON_TOP);
+		try {
+			Shell shell = new Shell(display, SWT.ON_TOP);
 			shell.dispose();
-            // create the workbench with this advisor and run it until it exits
-            // N.B. createWorkbench remembers the advisor, and also registers
-            // the workbench globally so that all UI plug-ins can find it using
-            // PlatformUI.getWorkbench() or AbstractUIPlugin.getWorkbench()
-            PlatformUI.createAndRunWorkbench(display,
-                    new AntRunnerWorkbenchAdvisor(
-                    		context.getArguments().get(IApplicationContext.APPLICATION_ARGS)));
-            return EXIT_OK;
-        } finally {
-            if (display != null) {
+			// create the workbench with this advisor and run it until it exits
+			// N.B. createWorkbench remembers the advisor, and also registers
+			// the workbench globally so that all UI plug-ins can find it using
+			// PlatformUI.getWorkbench() or AbstractUIPlugin.getWorkbench()
+			PlatformUI.createAndRunWorkbench(display, new AntRunnerWorkbenchAdvisor(context.getArguments().get(IApplicationContext.APPLICATION_ARGS)));
+			return EXIT_OK;
+		}
+		finally {
+			if (display != null) {
 				display.dispose();
 			}
-        }
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
+	@Override
 	public void stop() {
+		// do nothing
 	}
 
 }

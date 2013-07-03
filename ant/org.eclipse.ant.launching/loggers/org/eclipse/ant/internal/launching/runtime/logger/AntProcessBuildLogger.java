@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,6 +160,8 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			case Project.MSG_VERBOSE:
 				monitor = (AntStreamMonitor)proxy.getVerboseStreamMonitor();
 				break;
+			default:
+				break;
 		}
 		return monitor;
 	}
@@ -220,6 +222,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
     			}
     			logMessage(IAntCoreConstants.EMPTY_STRING, event, Project.MSG_ERR);
     		} catch (IOException e) {
+    			//do nothing 
     		}
         }
 		fHandledException= null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class RemoteAntProcessFactory implements IProcessFactory {
 	 */
 	public IProcess newProcess(ILaunch launch, Process process, String label, Map attributes) {
 		if (attributes == null) {
-			attributes= new HashMap(1);
+			attributes= new HashMap<String, String>(1);
 		}
 		attributes.put(IProcess.ATTR_PROCESS_TYPE, IAntLaunchConstants.ID_ANT_PROCESS_TYPE);
 		return new RemoteAntRuntimeProcess(launch, process, label, attributes);

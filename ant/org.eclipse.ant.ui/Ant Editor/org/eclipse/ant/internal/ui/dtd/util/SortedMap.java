@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 Object Factory Inc.
+ * Copyright (c) 2002, 2013 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,12 +23,12 @@ public class SortedMap implements FactoryObject {
 	private IMapHolder fHolder;
 	private SortedMap fNext;
 	
-	public SortedMap(IMapHolder holder, Comparator comp) {
+	public SortedMap(IMapHolder holder, Comparator<Object> comp) {
 		fHolder = holder;
 		fSet = new SortedSet(holder, comp);
 	}
 	
-	public SortedMap(Comparator comp) {
+	public SortedMap(Comparator<Object> comp) {
 		fSet = new SortedSet(comp);
 	}
 	
@@ -46,7 +46,7 @@ public class SortedMap implements FactoryObject {
 		fSet.setKeyHolder(holder);
 	}
 	
-	public void setComparator(Comparator comp) {
+	public void setComparator(Comparator<Object> comp) {
 		fSet.setComparator(comp);
 	}
 	
@@ -128,15 +128,15 @@ public class SortedMap implements FactoryObject {
 		return values;
 	}
 	
-	public Iterator keyIterator() {
+	public Iterator<?> keyIterator() {
 		return new ArrayIterator();
 	}
 
-	public Iterator valueIterator() {
+	public Iterator<?> valueIterator() {
 		return new ArrayIterator();
 	}
 	
-	private class ArrayIterator implements Iterator {
+	private class ArrayIterator implements Iterator<Object> {
 		private int fIndex;
 		
 		public ArrayIterator() {
@@ -175,7 +175,7 @@ public class SortedMap implements FactoryObject {
 	public void remove(int i) {
 		Object[] values = fHolder.getValues();
 		if (values == null) {
-			throw new IllegalArgumentException(MessageFormat.format(AntDTDUtilMessages.SortedMap_remove__0___in_empty_map_2, new String[]{Integer.toString(i)}));
+			throw new IllegalArgumentException(MessageFormat.format(AntDTDUtilMessages.SortedMap_remove__0___in_empty_map_2, new Object[]{Integer.toString(i)}));
 		}
 		fSet.remove(i);
 		Object[] tmp = new Object[values.length-1];

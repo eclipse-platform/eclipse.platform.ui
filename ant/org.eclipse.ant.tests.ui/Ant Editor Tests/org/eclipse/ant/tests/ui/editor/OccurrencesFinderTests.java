@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.ui.editor;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.editor.AntEditor;
@@ -31,8 +30,8 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
       
     public void testFromPropertyName() throws PartInitException, BadLocationException {
         try {
-            IFile file= getIFile("occurrencesTest.xml");
-            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            IFile file= getIFile("occurrencesTest.xml"); //$NON-NLS-1$
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
             int offset = getOffsetWithinLine(editor, 4, 18);
             editor.selectAndReveal(offset, 0);
             
@@ -44,9 +43,9 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
 
 	private void propertyOccurences(AntEditor editor, int offset) throws BadLocationException {
 		OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
-		List positions= finder.perform();
-		assertNotNull("Expecting a position listing", positions);
-		assertTrue("7 positions should have been found; found: " + positions.size(), positions.size() == 7);
+		List<Position> positions= finder.perform();
+		assertNotNull("Expecting a position listing", positions); //$NON-NLS-1$
+		assertTrue("7 positions should have been found; found: " + positions.size(), positions.size() == 7); //$NON-NLS-1$
 		assertContainsPosition(positions, offset, 8);
 		int newoffset = getOffsetWithinLine(editor, 34, 21);
 		assertContainsPosition(positions, newoffset, 8);
@@ -54,8 +53,8 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
     
     public void testFromPropertyLocation() throws PartInitException, BadLocationException {
         try {
-            IFile file= getIFile("occurrencesTest.xml");
-            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            IFile file= getIFile("occurrencesTest.xml"); //$NON-NLS-1$
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
             int offset = getOffsetWithinLine(editor, 6, 55);
             editor.selectAndReveal(offset, 0);
             
@@ -67,8 +66,8 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
     
     public void testFromPropertyValue() throws PartInitException, BadLocationException {
         try {
-            IFile file= getIFile("occurrencesTest.xml");
-            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            IFile file= getIFile("occurrencesTest.xml"); //$NON-NLS-1$
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
             int offset = getOffsetWithinLine(editor, 39, 44);
             editor.selectAndReveal(offset, 0);
             
@@ -80,15 +79,15 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
     
      public void testPropertyRefFromTaskText() throws PartInitException, BadLocationException {
         try {
-            IFile file= getIFile("occurrencesTest.xml");
-            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            IFile file= getIFile("occurrencesTest.xml"); //$NON-NLS-1$
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
             //from property name
             int offset = getOffsetWithinLine(editor, 39, 20);
             editor.selectAndReveal(offset, 50);
             OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
-     		List positions= finder.perform();
-     		assertNotNull("Expecting a position listing", positions);
-     		assertTrue("3 positions should have been found; found: " + positions.size(), positions.size() == 3);
+     		List<Position> positions= finder.perform();
+     		assertNotNull("Expecting a position listing", positions); //$NON-NLS-1$
+     		assertTrue("3 positions should have been found; found: " + positions.size(), positions.size() == 3); //$NON-NLS-1$
      		assertContainsPosition(positions, offset, 15);
      		offset = getOffsetWithinLine(editor, 40, 20);
      		assertContainsPosition(positions, offset, 15);
@@ -98,8 +97,8 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
      		editor.selectAndReveal(offset, 10);
             finder= getOccurrencesFinder(editor, offset);
      		positions= finder.perform();
-     		assertNotNull("Expecting a position listing", positions);
-     		assertTrue("3 positions should have been found; found: " + positions.size(), positions.size() == 3);
+     		assertNotNull("Expecting a position listing", positions); //$NON-NLS-1$
+     		assertTrue("3 positions should have been found; found: " + positions.size(), positions.size() == 3); //$NON-NLS-1$
      		assertContainsPosition(positions, offset, 15);
      		offset = getOffsetWithinLine(editor, 39, 20);
      		assertContainsPosition(positions, offset, 15);
@@ -110,8 +109,8 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
     
     public void testFromMacrodefAttributeDecl() throws PartInitException, BadLocationException {
         try {
-            IFile file= getIFile("occurrencesTest.xml");
-            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            IFile file= getIFile("occurrencesTest.xml"); //$NON-NLS-1$
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
             int offset = getOffsetWithinLine(editor, 13, 25);
             editor.selectAndReveal(offset, 0);
             
@@ -124,8 +123,8 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
 
 	private void macrodefAttributeOccurences(AntEditor editor, int offset) throws BadLocationException {
 		OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
-		List positions= finder.perform();
-		assertTrue("6 positions should have been found; found: " + positions.size(), positions.size() == 6);
+		List<Position> positions= finder.perform();
+		assertTrue("6 positions should have been found; found: " + positions.size(), positions.size() == 6); //$NON-NLS-1$
 		assertContainsPosition(positions, offset, 7);
 		int newoffset = getOffsetWithinLine(editor, 19, 32);
 		assertContainsPosition(positions, newoffset, 7);
@@ -133,8 +132,8 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
     
     public void testFromMacrodefAttributeRef() throws PartInitException, BadLocationException {
         try {
-            IFile file= getIFile("occurrencesTest.xml");
-            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            IFile file= getIFile("occurrencesTest.xml"); //$NON-NLS-1$
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
             int offset = getOffsetWithinLine(editor, 17, 23);
             editor.selectAndReveal(offset, 0);
             
@@ -146,14 +145,14 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
     
     public void testTargetFromAnt() throws PartInitException, BadLocationException {
         try {
-            IFile file= getIFile("occurrencesTest.xml");
-            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            IFile file= getIFile("occurrencesTest.xml"); //$NON-NLS-1$
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
             int offset = getOffsetWithinLine(editor, 42, 16);
             editor.selectAndReveal(offset, 0);
             
         	OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
-    		List positions= finder.perform();
-    		assertTrue("4 positions should have been found; found: " + positions.size(), positions.size() == 4);
+    		List<Position> positions= finder.perform();
+    		assertTrue("4 positions should have been found; found: " + positions.size(), positions.size() == 4); //$NON-NLS-1$
     		assertContainsPosition(positions, offset, 7);
     		offset = getOffsetWithinLine(editor, 10, 16);
     		assertContainsPosition(positions, offset, 7);
@@ -166,14 +165,14 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
     
     public void testTargetFromAntCall() throws PartInitException, BadLocationException {
     	 try {
-             IFile file= getIFile("occurrencesTest.xml");
-             AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+             IFile file= getIFile("occurrencesTest.xml"); //$NON-NLS-1$
+             AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
              int offset = getOffsetWithinLine(editor, 43, 19);
              editor.selectAndReveal(offset, 0);
              
          	OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
-     		List positions= finder.perform();
-     		assertTrue("4 positions should have been found; found: " + positions.size(), positions.size() == 4);
+     		List<Position> positions= finder.perform();
+     		assertTrue("4 positions should have been found; found: " + positions.size(), positions.size() == 4); //$NON-NLS-1$
      		assertContainsPosition(positions, offset, 7);
      		offset = getOffsetWithinLine(editor, 10, 16);
      		assertContainsPosition(positions, offset, 7);
@@ -189,14 +188,14 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
      */
     public void testTargetFromProjectDefault() throws PartInitException, BadLocationException {
     	 try {
-             IFile file= getIFile("89115.xml");
-             AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+             IFile file= getIFile("89115.xml"); //$NON-NLS-1$
+             AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
              int offset = getOffsetWithinLine(editor, 0, 40);
              editor.selectAndReveal(offset, 0);
              
          	OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
-     		List positions= finder.perform();
-     		assertTrue("2 positions should have been found; found: " + positions.size(), positions.size() == 2);
+     		List<Position> positions= finder.perform();
+     		assertTrue("2 positions should have been found; found: " + positions.size(), positions.size() == 2); //$NON-NLS-1$
      		assertContainsPosition(positions, offset, 7);
      		offset = getOffsetWithinLine(editor, 1, 45);
      		assertContainsPosition(positions, offset, 7);
@@ -212,15 +211,15 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
      */
     public void testTargetFromTargetDepends() throws PartInitException, BadLocationException {
     	 try {
-             IFile file= getIFile("89115.xml");
-             AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+             IFile file= getIFile("89115.xml"); //$NON-NLS-1$
+             AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
              int offset = getOffsetWithinLine(editor, 1, 61);
              editor.selectAndReveal(offset, 0);
              
          	OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
          	//from the declaration
-     		List positions= finder.perform();
-     		assertTrue("2 positions should have been found; found: " + positions.size(), positions.size() == 2);
+     		List<Position> positions= finder.perform();
+     		assertTrue("2 positions should have been found; found: " + positions.size(), positions.size() == 2); //$NON-NLS-1$
      		assertContainsPosition(positions, offset, 7);
      		offset = getOffsetWithinLine(editor, 5, 20);
      		assertContainsPosition(positions, offset, 7);
@@ -229,14 +228,14 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
      		offset = getOffsetWithinLine(editor, 5, 20);
      		finder= getOccurrencesFinder(editor, offset);
      		positions= finder.perform();
-     		assertTrue("2 positions should have been found; found: " + positions.size(), positions.size() == 2);
+     		assertTrue("2 positions should have been found; found: " + positions.size(), positions.size() == 2); //$NON-NLS-1$
      		
      		//from the description
      		offset = getOffsetWithinLine(editor, 1, 30);
             editor.selectAndReveal(offset, 0);
         	finder= getOccurrencesFinder(editor, offset);
     		positions= finder.perform();
-    		assertTrue("No positions should have been found", positions == null);
+    		assertTrue("No positions should have been found", positions == null); //$NON-NLS-1$
          } finally {
              EditorTestHelper.closeAllEditors();    
          }
@@ -249,8 +248,8 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
      */
     public void testTargetFromTargetIf() throws PartInitException, BadLocationException {
     	try {
-    		IFile file= getIFile("occurrencesTest.xml");
-    		AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+    		IFile file= getIFile("occurrencesTest.xml"); //$NON-NLS-1$
+    		AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
     		int offset = getOffsetWithinLine(editor, 46, 65);
     		editor.selectAndReveal(offset, 0);
     		
@@ -262,14 +261,14 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
     
     public void testNoRefFromProjectDefault() throws PartInitException, BadLocationException {
    	 try {
-            IFile file= getIFile("89115.xml");
-            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            IFile file= getIFile("89115.xml"); //$NON-NLS-1$
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
             int offset = getOffsetWithinLine(editor, 0, 30);
             editor.selectAndReveal(offset, 0);
             
         	OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
-    		List positions= finder.perform();
-    		assertTrue("No positions should have been found", positions == null);
+    		List<Position> positions= finder.perform();
+    		assertTrue("No positions should have been found", positions == null); //$NON-NLS-1$
         } finally {
             EditorTestHelper.closeAllEditors();    
         }
@@ -304,16 +303,16 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
      */
     public void testPropertyAndTargetWithSameName() throws PartInitException, BadLocationException {
     	 try {
-             IFile file= getIFile("89901.xml");
+             IFile file= getIFile("89901.xml"); //$NON-NLS-1$
              
              //from the test target
-             AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+             AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
              int offset = getOffsetWithinLine(editor, 2, 38);
              editor.selectAndReveal(offset, 0);
              
          	OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
-     		List positions= finder.perform();
-     		assertTrue("2 positions should have been found; found: " + positions.size(), positions.size() == 2);
+     		List<Position> positions= finder.perform();
+     		assertTrue("2 positions should have been found; found: " + positions.size(), positions.size() == 2); //$NON-NLS-1$
      		assertContainsPosition(positions, offset, 4);
      		offset = getOffsetWithinLine(editor, 6, 17);
      		assertContainsPosition(positions, offset, 4);
@@ -323,7 +322,7 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
             editor.selectAndReveal(offset, 0);
         	finder= getOccurrencesFinder(editor, offset);
     		positions= finder.perform();
-    		assertTrue("2 positions should have been found; found: " + positions.size(), positions.size() == 2);
+    		assertTrue("2 positions should have been found; found: " + positions.size(), positions.size() == 2); //$NON-NLS-1$
     		assertContainsPosition(positions, offset, 4);
      		offset = getOffsetWithinLine(editor, 7, 12);
      		assertContainsPosition(positions, offset, 4);
@@ -332,16 +331,15 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
          }
     }
     
-	private void assertContainsPosition(List positions, int offset, int length) {
-		Iterator itr= positions.iterator();
+	private void assertContainsPosition(List<Position> positions, int offset, int length) {
 		boolean found= false;
-		while (itr.hasNext()) {
-			Position position = (Position) itr.next();
+		for (Position position : positions) {
 			if (position.getLength() == length && position.getOffset() <= offset && (position.getOffset() + length) > offset) {
 				found= true;
+				break;
 			}
 		}
-		   assertTrue("Did not find position at offset: " + offset + " length: " + length, found);
+		assertTrue("Did not find position at offset: " + offset + " length: " + length, found); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private OccurrencesFinder getOccurrencesFinder(AntEditor editor, int offset) {

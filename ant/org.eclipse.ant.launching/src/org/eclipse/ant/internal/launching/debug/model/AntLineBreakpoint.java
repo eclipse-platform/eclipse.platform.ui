@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.launching.debug.model;
 
 import com.ibm.icu.text.MessageFormat;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class AntLineBreakpoint extends LineBreakpoint {
 	 * @throws CoreException if unable to create the breakpoint
 	 */
 	public AntLineBreakpoint(IResource resource, int lineNumber) throws CoreException {
-	    this(resource, lineNumber, new HashMap(), true);
+	    this(resource, lineNumber, new HashMap<String, Object>(), true);
 	}
 	
 	/**
@@ -63,7 +64,7 @@ public class AntLineBreakpoint extends LineBreakpoint {
 	 * @param register whether to add this breakpoint to the breakpoint manager
 	 * @throws CoreException if unable to create the breakpoint
 	 */
-	public AntLineBreakpoint(final IResource resource, final int lineNumber, final Map attributes, final boolean register) throws CoreException {
+	public AntLineBreakpoint(final IResource resource, final int lineNumber, final Map<String, Object> attributes, final boolean register) throws CoreException {
 	    IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 			    IMarker marker = resource.createMarker(IAntDebugConstants.ID_ANT_LINE_BREAKPOINT_MARKER);
@@ -71,7 +72,7 @@ public class AntLineBreakpoint extends LineBreakpoint {
 			    attributes.put(IBreakpoint.ENABLED, Boolean.TRUE);
 			    attributes.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
 			    attributes.put(IBreakpoint.ID, IAntDebugConstants.ID_ANT_DEBUG_MODEL);
-                attributes.put(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new String[] {Integer.toString(lineNumber)}));
+                attributes.put(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new Object[] {Integer.toString(lineNumber)}));
 			    ensureMarker().setAttributes(attributes);
                 
                 register(register);

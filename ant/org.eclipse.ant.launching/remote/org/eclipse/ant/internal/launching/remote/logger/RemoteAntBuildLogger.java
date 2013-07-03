@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
     
     protected boolean fSentProcessId= false;
     
-    private List fEventQueue;
+    private List<BuildEvent> fEventQueue;
     
     private String fLastFileName= null;
     private String fLastTaskName= null;
@@ -97,10 +97,12 @@ public class RemoteAntBuildLogger extends DefaultLogger {
                 fWriter= new PrintWriter(fEventSocket.getOutputStream(), true);
                 return;
             } catch(IOException e){
+            	//do nothing
             }
             try {
                 Thread.sleep(500);
             } catch(InterruptedException e) {
+            	//do nothing
             }
         }
         shutDown();
@@ -124,6 +126,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
                 fEventSocket= null;
             }
         } catch(IOException e) {
+        	//do nothing
         }
     }
 
@@ -230,8 +233,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
         message.append(fProcessId);
         sendMessage(message.toString());
         if (fEventQueue != null) {
-            for (Iterator iter = fEventQueue.iterator(); iter.hasNext();) {
-                processEvent((BuildEvent)iter.next());
+            for (Iterator<BuildEvent> iter = fEventQueue.iterator(); iter.hasNext();) {
+                processEvent(iter.next());
             }
             fEventQueue= null;
         }
@@ -255,7 +258,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
                 return;
             }
             if (fEventQueue == null){
-                fEventQueue= new ArrayList(10);
+                fEventQueue= new ArrayList<BuildEvent>(10);
             }
             fEventQueue.add(event);
             return;
@@ -269,6 +272,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
             try {
                 marshalTaskMessage(event);
             } catch (IOException e) {
+            	//do nothing
             }
         } else {
             marshalMessage(event);
@@ -299,6 +303,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
                 line = r.readLine();
             }
         } catch (IOException e) {
+        	//do nothing
         }
     }
 
@@ -385,13 +390,13 @@ public class RemoteAntBuildLogger extends DefaultLogger {
         super.buildStarted(event);
     }
     
-    public void configure(Map userProperties) {
-        String portProperty= (String) userProperties.remove("eclipse.connect.port"); //$NON-NLS-1$
+    public void configure(Map<String, String> userProperties) {
+        String portProperty= userProperties.remove("eclipse.connect.port"); //$NON-NLS-1$
         
         if (portProperty != null) {
             fEventPort= Integer.parseInt(portProperty);
         }
         
-        fProcessId= (String) userProperties.remove("org.eclipse.ant.core.ANT_PROCESS_ID"); //$NON-NLS-1$
+        fProcessId= userProperties.remove("org.eclipse.ant.core.ANT_PROCESS_ID"); //$NON-NLS-1$
     } 
 }

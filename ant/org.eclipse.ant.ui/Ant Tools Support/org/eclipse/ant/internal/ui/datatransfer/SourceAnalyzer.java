@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Richard Hoefter and others.
+ * Copyright (c) 2005, 2013 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,20 +56,15 @@ public class SourceAnalyzer {
      * cycles or classpath order problems. This is because this class analyzes
      * the bytecode and indeed the compiler throws unused references away.
      */
-    public static void checkCycles(IJavaProject currentProject,
-            EclipseClasspath classpath, Shell shell) {
-
+    public static void checkCycles(IJavaProject currentProject, EclipseClasspath classpath, Shell shell) {
         StringBuffer message = new StringBuffer();
-        Map src2dir = new TreeMap(); // map string to string
-        Map srcdir2classes = new TreeMap(); // map string to Set of strings
-
+        Map<String, String> src2dir = new TreeMap<String, String>(); // map string to string
+        Map<String, Set<String>> srcdir2classes = new TreeMap<String, Set<String>>(); // map string to Set of strings
         determineSources(currentProject, classpath, src2dir, srcdir2classes);
-
-        Map srcdir2sourcedirs = determineRequiredSrcDirs(src2dir,
-                srcdir2classes);
+        Map<String, Set<String>> srcdir2sourcedirs = determineRequiredSrcDirs(src2dir, srcdir2classes);
         String projectName = currentProject.getProject().getName();
 
-        List cycle = new ArrayList();
+        List<String> cycle = new ArrayList<String>();
         if (isCyclic(srcdir2sourcedirs, cycle)) {
             showCycleWarning(projectName, shell, cycle, message);
             return;
@@ -81,12 +76,10 @@ public class SourceAnalyzer {
     /**
      * Determine all sources belonging to a source directory.
      */
-    private static void determineSources(IJavaProject currentProject,
-            EclipseClasspath classpath, Map src2dir, Map srcdir2classes) {
-
+    private static void determineSources(IJavaProject currentProject, EclipseClasspath classpath, Map<String, String> src2dir, Map<String, Set<String>> srcdir2classes) {
         for (int i = 0; i < classpath.srcDirs.size(); i++) {
-            String srcDir = (String) classpath.srcDirs.get(i);
-            String classDir = (String) classpath.classDirs.get(i);
+            String srcDir = classpath.srcDirs.get(i);
+            String classDir = classpath.classDirs.get(i);
             if (EclipseClasspath.isReference(srcDir)) {
                 continue;
             }
@@ -105,11 +98,11 @@ public class SourceAnalyzer {
                     dir = new File(ExportUtil.getProjectRoot(currentProject), link);
                 }
             }
-            Set sources = findFiles(dir, ".java"); //$NON-NLS-1$
+            Set<String> sources = findFiles(dir, ".java"); //$NON-NLS-1$
 
             // find all required classfiles for each source directory
-            for (Iterator iter = sources.iterator(); iter.hasNext();) {
-                String srcFile = (String) iter.next();
+            for (Iterator<String> iter = sources.iterator(); iter.hasNext();) {
+                String srcFile = iter.next();
                 src2dir.put(srcFile, srcDir);
                 IFile classFile = currentProject.getProject().getFile(
                         classDir + '/' + srcFile + ".class"); //$NON-NLS-1$
@@ -117,9 +110,9 @@ public class SourceAnalyzer {
                     // project was not compiled, check not possible
                     continue;
                 }
-                Set classes = (Set) srcdir2classes.get(srcDir);
+                Set<String> classes = srcdir2classes.get(srcDir);
                 if (classes == null) {
-                    classes = new TreeSet();
+                    classes = new TreeSet<String>();
                 }
                 classes.addAll(getRequiredClasses(classFile));
                 srcdir2classes.put(srcDir, classes);
@@ -134,20 +127,19 @@ public class SourceAnalyzer {
      * @return Map string to Set of strings. (Maps source dir to Set of required
      *         source dirs.)
      */
-    private static Map determineRequiredSrcDirs(Map src2dir, Map srcdir2classes) {
-
-        Map srcdir2sourcedirs = new TreeMap(); // map string to Set of strings
-        for (Iterator iter = srcdir2classes.keySet().iterator(); iter.hasNext();) {
-            String srcDir = (String) iter.next();
-            Set classes = (Set) srcdir2classes.get(srcDir);
-            for (Iterator iterator = classes.iterator(); iterator.hasNext();) {
-                String classname = (String) iterator.next();
-                String classsrc = (String) src2dir.get(classname);
+    private static Map<String, Set<String>> determineRequiredSrcDirs(Map<String, String> src2dir, Map<String, Set<String>> srcdir2classes) {
+        Map<String, Set<String>> srcdir2sourcedirs = new TreeMap<String, Set<String>>(); // map string to Set of strings
+        for (Iterator<String> iter = srcdir2classes.keySet().iterator(); iter.hasNext();) {
+            String srcDir = iter.next();
+            Set<String> classes = srcdir2classes.get(srcDir);
+            for (Iterator<String> iterator = classes.iterator(); iterator.hasNext();) {
+                String classname = iterator.next();
+                String classsrc = src2dir.get(classname);
                 // don't add reference to itself
                 if (classsrc != null && !classsrc.equals(srcDir)) {
-                    Set sourcedirs = (Set) srcdir2sourcedirs.get(srcDir);
+                    Set<String> sourcedirs = srcdir2sourcedirs.get(srcDir);
                     if (sourcedirs == null) {
-                        sourcedirs = new TreeSet();
+                        sourcedirs = new TreeSet<String>();
                     }
                     sourcedirs.add(classsrc);
                     srcdir2sourcedirs.put(srcDir, sourcedirs);
@@ -157,48 +149,36 @@ public class SourceAnalyzer {
         return srcdir2sourcedirs;
     }
 
-    private static void showCycleWarning(String projectName, Shell shell,
-            List cycle, StringBuffer message) {
+    private static void showCycleWarning(String projectName, Shell shell, List<String> cycle, StringBuffer message) {
 
         String m = MessageFormat.format(DataTransferMessages.SourceAnalyzer_0,
-                new String[] { projectName });
+                new Object[] { projectName });
         message.append(m);
         message.append(ExportUtil.NEWLINE);
 
         // print cycle path
-        for (Iterator iter = cycle.iterator(); iter.hasNext();) {
-            String s = (String) iter.next();
-            s = EclipseClasspath.getLinkedResourceName(s);
-            message.append(s);
-            message.append(" -> "); //$NON-NLS-1$
-        }
-        message.append(EclipseClasspath.getLinkedResourceName((String) cycle
-                .get(0)));
-
-        MessageDialog.openWarning(shell, DataTransferMessages.SourceAnalyzer_1,
-                message.toString());
+        for (String s : cycle) {
+        	 s = EclipseClasspath.getLinkedResourceName(s);
+             message.append(s);
+             message.append(" -> "); //$NON-NLS-1$
+		}
+        message.append(EclipseClasspath.getLinkedResourceName(cycle.get(0)));
+        MessageDialog.openWarning(shell, DataTransferMessages.SourceAnalyzer_1, message.toString());
     }
 
     /**
      * Check if build order is correct.
      */
-    private static void checkBuildOrder(EclipseClasspath classpath,
-            String projectName, Shell shell, Map srcdir2sourcedirs) {
-
-        for (Iterator iter = srcdir2sourcedirs.keySet().iterator(); iter
-                .hasNext();) {
-            String srcdir = (String) iter.next();
-            Set sourcedirs = (Set) srcdir2sourcedirs.get(srcdir);
+    private static void checkBuildOrder(EclipseClasspath classpath, String projectName, Shell shell, Map<String, Set<String>> srcdir2sourcedirs) {
+        for (Iterator<String> iter = srcdir2sourcedirs.keySet().iterator(); iter.hasNext();) {
+            String srcdir = iter.next();
+            Set<String> sourcedirs = srcdir2sourcedirs.get(srcdir);
             int classpathIndex = classpath.srcDirs.indexOf(srcdir);
-            for (Iterator iterator = sourcedirs.iterator(); iterator.hasNext();) {
-                String requiredSrc = (String) iterator.next();
+            for (Iterator<String> iterator = sourcedirs.iterator(); iterator.hasNext();) {
+                String requiredSrc = iterator.next();
                 int i = classpath.srcDirs.indexOf(requiredSrc);
-                if (i > classpathIndex) // wrong order
-                {
-                    String s = MessageFormat.format(
-                            DataTransferMessages.SourceAnalyzer_3,
-                            new String[] { projectName });
-
+                if (i > classpathIndex)  {
+                    String s = MessageFormat.format(DataTransferMessages.SourceAnalyzer_3, new Object[] { projectName });
                     MessageDialog.openWarning(shell,
                             DataTransferMessages.SourceAnalyzer_2, s
                                     + ExportUtil.NEWLINE + requiredSrc
@@ -215,15 +195,13 @@ public class SourceAnalyzer {
      * 
      * @param file
      *            a ".class" file
-     * @return set of strings, each contains a full qualified classname (forward
+     * @return set of strings, each contains a full qualified class name (forward
      *         slash as package separator)
      */
-    public static Set getRequiredClasses(IFile file) {
-
-        Set classes = new TreeSet();
+    public static Set<String> getRequiredClasses(IFile file) {
+        Set<String> classes = new TreeSet<String>();
         IClassFile classFile = JavaCore.createClassFileFrom(file);
-        IClassFileReader reader = ToolFactory.createDefaultClassFileReader(
-                classFile, IClassFileReader.CONSTANT_POOL);
+        IClassFileReader reader = ToolFactory.createDefaultClassFileReader(classFile, IClassFileReader.CONSTANT_POOL);
         if (reader == null) {
             // class not compiled
             return classes;
@@ -251,19 +229,16 @@ public class SourceAnalyzer {
      *            directory to start search
      * @param extension
      *            extension to search
-     * @return filenames relative to dir (without extension and with forward
+     * @return filenames relative to directory (without extension and with forward
      *         slashes)
      */
-    public static Set findFiles(File dir, String extension) {
-
-        Set visited = new TreeSet();
+    public static Set<String> findFiles(File dir, String extension) {
+        Set<String> visited = new TreeSet<String>();
         findFiles(dir, dir, extension, visited);
         return visited;
     }
 
-    private static void findFiles(File base, File dir, String extension,
-            Set visited) {
-
+    private static void findFiles(File base, File dir, String extension, Set<String> visited) {
         if (dir.isDirectory()) {
             File[] children = dir.listFiles();
             for (int i = 0; i < children.length; i++) {
@@ -283,27 +258,23 @@ public class SourceAnalyzer {
      * 
      * @param srcdir2sourcedirs
      *            Maps string to set of strings. The keys are the graph nodes
-     *            which are mapped to its neighbours.
+     *            which are mapped to its neighbors.
      * @param cycle
      *            filled with name of nodes which cause cycle
      */
-    private static boolean isCyclic(Map srcdir2sourcedirs, List cycle) {
-
+    private static boolean isCyclic(Map<String, Set<String>> srcdir2sourcedirs, List<String> cycle) {
         return !isAcyclic(srcdir2sourcedirs, cycle);
     }
 
-    private static boolean isAcyclic(Map srcdir2sourcedirs, List cycle) {
-
+    private static boolean isAcyclic(Map<String, Set<String>> srcdir2sourcedirs, List<String> cycle) {
         // standard graph theory
-        List visited = new ArrayList();
-        List exited = new ArrayList();
+        List<String> visited = new ArrayList<String>();
+        List<String> exited = new ArrayList<String>();
 
-        for (Iterator iter = srcdir2sourcedirs.keySet().iterator(); iter
-                .hasNext();) {
-            String srcdir = (String) iter.next();
+        for (Iterator<String> iter = srcdir2sourcedirs.keySet().iterator(); iter.hasNext();) {
+            String srcdir = iter.next();
             if (!visited.contains(srcdir)) {
-                if (circleSearch(srcdir, srcdir2sourcedirs, visited, exited,
-                        cycle)) {
+                if (circleSearch(srcdir, srcdir2sourcedirs, visited, exited, cycle)) {
                     return false;
                 }
             }
@@ -311,20 +282,16 @@ public class SourceAnalyzer {
         return true;
     }
 
-    private static boolean circleSearch(String srcdir, Map srcdir2sourcedirs,
-            List visited, List exited, List cycle) {
-
+    private static boolean circleSearch(String srcdir, Map<String, Set<String>> srcdir2sourcedirs, List<String> visited, List<String> exited, List<String> cycle) {
         boolean res = false;
         visited.add(srcdir);
         cycle.add(srcdir);
-
-        Set sourcedirs = (Set) srcdir2sourcedirs.get(srcdir); // neighbours
+        Set<String> sourcedirs = srcdir2sourcedirs.get(srcdir);
         if (sourcedirs != null) {
-            for (Iterator iter = sourcedirs.iterator(); iter.hasNext();) {
-                String src = (String) iter.next();
+            for (Iterator<String> iter = sourcedirs.iterator(); iter.hasNext();) {
+                String src = iter.next();
                 if (!visited.contains(src)) {
-                    res = circleSearch(src, srcdir2sourcedirs, visited, exited,
-                            cycle);
+                    res = circleSearch(src, srcdir2sourcedirs, visited, exited, cycle);
                 } else if (!exited.contains(src)) {
                     res = true;
                 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2011 IBM Corporation and others.
+ *  Copyright (c) 2003, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -56,7 +56,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	private BufferedReader fBufferedReader;
 	private IProcess fProcess;
 	private String fProcessId;
-	private List fMessageQueue;
+	private List<String> fMessageQueue;
 	protected ILaunch fLaunch;
 	private String fLastFileName = null;
 	private String fLastTaskName = null;
@@ -80,7 +80,6 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		}
 
 		public void run() {
-			Exception exception = null;
 			try {
 				fServerSocket = new ServerSocket(fServerPort);
 				int socketTimeout = Platform.getPreferencesService().getInt(
@@ -95,14 +94,11 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 					receiveMessage(message);
 				}
 			} catch (SocketException e) {
+				AntLaunching.log(e);
 			} catch (SocketTimeoutException e) {
-				exception = e;
+				AntLaunching.log(e);
 			} catch (IOException e) {
-				// fall through
-				exception = e;
-			}
-			if (exception != null) {
-				AntLaunching.log(exception);
+				AntLaunching.log(e);
 			}
 			shutDown();
 		}
@@ -154,6 +150,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 				fBufferedReader = null;
 			}
 		} catch (IOException e) {
+			//do nothing
 		}
 		try {
 			if (fSocket != null) {
@@ -161,6 +158,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 				fSocket = null;
 			}
 		} catch (IOException e) {
+			//do nothing
 		}
 		try {
 			if (fServerSocket != null) {
@@ -168,6 +166,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 				fServerSocket = null;
 			}
 		} catch (IOException e) {
+			//do nothing
 		}
 	}
 
@@ -314,6 +313,8 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		case Project.MSG_VERBOSE:
 			monitor = (AntStreamMonitor) proxy.getVerboseStreamMonitor();
 			break;
+		default:
+			break;
 		}
 		return monitor;
 	}
@@ -344,14 +345,14 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		AntStreamMonitor monitor = getMonitor(priority);
 		if (monitor == null) {
 			if (fMessageQueue == null) {
-				fMessageQueue = new ArrayList();
+				fMessageQueue = new ArrayList<String>();
 			}
 			fMessageQueue.add(message);
 			return;
 		}
 		if (fMessageQueue != null) {
-			for (Iterator iter = fMessageQueue.iterator(); iter.hasNext();) {
-				String oldMessage = (String) iter.next();
+			for (Iterator<String> iter = fMessageQueue.iterator(); iter.hasNext();) {
+				String oldMessage = iter.next();
 				monitor.append(oldMessage);
 			}
 			fMessageQueue = null;
@@ -367,6 +368,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	 * .core.ILaunch[])
 	 */
 	public void launchesAdded(ILaunch[] launches) {
+		//do nothing
 	}
 
 	/*
@@ -377,6 +379,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	 * debug.core.ILaunch[])
 	 */
 	public void launchesChanged(ILaunch[] launches) {
+		//do nothing
 	}
 
 	/*

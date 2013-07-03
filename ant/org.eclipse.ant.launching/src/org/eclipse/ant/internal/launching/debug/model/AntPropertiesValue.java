@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 public class AntPropertiesValue extends AntDebugElement implements IValue {
 	
-	private List fProperties= new ArrayList();
+	private List<AntProperty> fProperties= new ArrayList<AntProperty>();
 	
 	public AntPropertiesValue(AntDebugTarget target) {
 		super(target);
@@ -51,7 +51,7 @@ public class AntPropertiesValue extends AntDebugElement implements IValue {
 	 */
 	public IVariable[] getVariables() {
 		Collections.sort(fProperties);
-		return (IVariable[])fProperties.toArray(new IVariable[fProperties.size()]);
+		return fProperties.toArray(new IVariable[fProperties.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -61,11 +61,11 @@ public class AntPropertiesValue extends AntDebugElement implements IValue {
 		return true;
 	}
 	
-	protected void addProperties(List properties) {
+	protected void addProperties(List<AntProperty> properties) {
 		fProperties.addAll(properties);
 	}
 
-	public List getProperties() {
+	public List<AntProperty> getProperties() {
 		return fProperties;
 	}
 }

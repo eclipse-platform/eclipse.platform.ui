@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	
 	private IAntDebugController fController;
     
-    private List fRunToLineBreakpoints;
+    private List<IBreakpoint> fRunToLineBreakpoints;
 
 	/**
 	 * Constructs a new debug target in the given launch for the 
@@ -228,7 +228,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	        if (breakpoint instanceof AntLineBreakpoint) {
 	            if (((AntLineBreakpoint) breakpoint).isRunToLine()) {
 	                if (fRunToLineBreakpoints == null) {
-	                    fRunToLineBreakpoints= new ArrayList();
+	                    fRunToLineBreakpoints= new ArrayList<IBreakpoint>();
 	                }
 	                fRunToLineBreakpoints.add(breakpoint);
 	            }
@@ -262,6 +262,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 					breakpointRemoved(breakpoint, null);
 				}
 			} catch (CoreException e) {
+				//do nothing
 			}
 		}
 	}
@@ -277,6 +278,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
 	 */
 	public void disconnect() throws DebugException {
+		//do nothing
 	}
 	
 	/* (non-Javadoc)
@@ -310,6 +312,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		try {
 			resume();
 		} catch (DebugException e) {
+			//do nothing
 		}
 	}
 	
@@ -330,6 +333,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
                     breakpointAdded(breakpoints[i]);
                 }
             } catch (CoreException e) {
+            	//do nothing
             }
 		}
 	}
@@ -351,7 +355,8 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 			if (!getProcess().isTerminated()) {
 			    try {
 	                fProcess.terminate();
-			    } catch (DebugException e) {       
+			    } catch (DebugException e) {
+			    	//do nothing
 			    }
 			}
 			if (DebugPlugin.getDefault() != null) {
@@ -362,8 +367,6 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	
 	/**
 	 * Single step the Ant build.
-	 * 
-	 * @throws DebugException if the request fails
 	 */
 	public void stepOver() {
 	    fSuspended= false;
@@ -373,8 +376,6 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	
 	/**
 	 * Step-into the Ant build.
-	 * 
-	 * @throws DebugException if the request fails
 	 */
 	public void stepInto() {
 	    fSuspended= false;
@@ -403,7 +404,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
            }
 		}
         if (!found && fRunToLineBreakpoints != null) {
-            Iterator iter= fRunToLineBreakpoints.iterator();
+            Iterator<IBreakpoint> iter= fRunToLineBreakpoints.iterator();
             while (iter.hasNext()) {
                 ILineBreakpoint lineBreakpoint = (ILineBreakpoint) iter.next();
                 if (setThreadBreakpoint(lineBreakpoint, lineNumber, fileName)) {
@@ -422,6 +423,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
                 return true;
             }
         } catch (CoreException e) {
+        	//do nothing
         }
         return false;
     }

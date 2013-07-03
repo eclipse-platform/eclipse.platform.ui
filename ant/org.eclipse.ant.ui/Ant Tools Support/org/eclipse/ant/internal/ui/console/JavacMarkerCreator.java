@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.ant.internal.ui.console;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +38,8 @@ public class JavacMarkerCreator {
 
 	private final TextConsole fConsole;
 	private IProcess fProcess;
-	private static List fgFilesToBeCleaned= new ArrayList();
-	private Map fFileToMarkerInfo= new HashMap();
+	private static List<IFile> fgFilesToBeCleaned= new ArrayList<IFile>();
+	private Map<IFile, List<MarkerInfo>> fFileToMarkerInfo= new HashMap<IFile, List<MarkerInfo>>();
 	private final boolean fUseCustomMessage;
 
 	private class MarkerInfo {
@@ -94,23 +93,22 @@ public class JavacMarkerCreator {
 		info.setLineNumber(lineNumber);
 		info.setOffset(offset);
 		info.setType(type);
-		List infos= (List) fFileToMarkerInfo.get(file);
+		List<MarkerInfo> infos= fFileToMarkerInfo.get(file);
 		if (infos == null) {
-			infos= new ArrayList();
+			infos= new ArrayList<MarkerInfo>();
 			fFileToMarkerInfo.put(file, infos);
 		}
 		infos.add(info);
 	}
 	
-	private void createMarkers(final IFile file, final List infos) {
+	private void createMarkers(final IFile file, final List<MarkerInfo>infos) {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				
 				try {
-					for (Iterator iter = infos.iterator(); iter.hasNext();) {
-						MarkerInfo info = (MarkerInfo) iter.next();
+					for (MarkerInfo info : infos) {
 						IMarker marker= file.createMarker(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER);
-						Map attributes= new HashMap(3);
+						Map<String, Object> attributes= new HashMap<String, Object>(3);
 						attributes.put(IMarker.LINE_NUMBER, new Integer(info.fLineNumber));
 						String message= getMessage(info);
 						attributes.put(IMarker.MESSAGE, message);
@@ -150,27 +148,16 @@ public class JavacMarkerCreator {
 
 	protected void finished(IProcess process) {
 		if (process.equals(fProcess)) {
-			if (!fgFilesToBeCleaned.isEmpty()) {
-				Iterator itr= fgFilesToBeCleaned.iterator();
-				while (itr.hasNext()) {
-					IFile file = (IFile) itr.next();
-					try {
-						file.deleteMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-					} catch (CoreException e) {
-						AntUIPlugin.log(e.getStatus());
-					}					
+			for (IFile file : fgFilesToBeCleaned) {
+				try {
+					file.deleteMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+				} catch (CoreException e) {
+					AntUIPlugin.log(e.getStatus());
 				}
 			}
-			if (!fFileToMarkerInfo.isEmpty()) {
-				//generate markers for all the warnings and errors
-				Iterator files= fFileToMarkerInfo.keySet().iterator();
-				while (files.hasNext()) {
-					IFile file = (IFile) files.next();
-					List infos= (List) fFileToMarkerInfo.get(file);
-					createMarkers(file, infos);	
-				}	
+			for (IFile file : fFileToMarkerInfo.keySet()) {
+				createMarkers(file, fFileToMarkerInfo.get(file));	
 			}
-			
 			fFileToMarkerInfo.clear();
 			fgFilesToBeCleaned.clear();
 		}

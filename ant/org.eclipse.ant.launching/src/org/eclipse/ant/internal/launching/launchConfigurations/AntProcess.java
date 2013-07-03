@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,17 +27,17 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	private AntStreamsProxy fProxy;
 	private String fLabel = null;
 	private ILaunch fLaunch = null;
-	private Map fAttributes = null;
+	private Map<String, String> fAttributes = null;
 	private boolean fTerminated = false;
 	private boolean fCancelled = false;
 	// progress monitor to delegate or null if none
 	private IProgressMonitor fMonitor;
 	
-	public AntProcess(String label, ILaunch launch, Map attributes) {
+	public AntProcess(String label, ILaunch launch, Map<String, String> attributes) {
 		fLabel = label;
 		fLaunch = launch;
 		if (attributes == null) {
-			fAttributes = new HashMap();
+			fAttributes = new HashMap<String, String>();
 		} else {
 			fAttributes = attributes;
 		}
@@ -80,7 +80,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 	 * @see org.eclipse.debug.core.model.IProcess#getAttribute(java.lang.String)
 	 */
 	public String getAttribute(String key) {
-		return (String)fAttributes.get(key);
+		return fAttributes.get(key);
 	}
 
 	/**

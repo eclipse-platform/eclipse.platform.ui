@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ant.core" version="2">
+    <resource path="src/org/eclipse/ant/core/Task.java" type="org.eclipse.ant.core.Task">
+        <filter comment="Expected leak" id="576720909">
+            <message_arguments>
+                <message_argument value="AntObject"/>
+                <message_argument value="Task"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ant/core/Type.java" type="org.eclipse.ant.core.Type">
+        <filter comment="Expected leak" id="576720909">
+            <message_arguments>
+                <message_argument value="AntObject"/>
+                <message_argument value="Type"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

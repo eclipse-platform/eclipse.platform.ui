@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ant.internal.launching.debug.model.AntDebugTarget;
+import org.eclipse.ant.internal.launching.debug.model.AntLineBreakpoint;
 import org.eclipse.ant.internal.launching.debug.model.AntThread;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.resources.IFile;
@@ -42,24 +43,24 @@ public class BreakpointTests extends AbstractAntDebugTest {
 	}
 
 	private void deferredBreakpoints(boolean sepVM) throws Exception, CoreException, DebugException {
-		String fileName = "breakpoints";
-		IFile file= getIFile(fileName + ".xml");
-		List bps = new ArrayList();
+		String fileName = "breakpoints"; //$NON-NLS-1$
+		IFile file= getIFile(fileName + ".xml"); //$NON-NLS-1$
+		List<AntLineBreakpoint> bps = new ArrayList<AntLineBreakpoint>();
 		bps.add(createLineBreakpoint(5, file));
 		bps.add(createLineBreakpoint(14, file));
 		AntThread thread= null;
 		try {
 			thread= launchToBreakpoint(fileName, true, sepVM);
-			assertNotNull("Breakpoint not hit within timeout period", thread);
+			assertNotNull("Breakpoint not hit within timeout period", thread); //$NON-NLS-1$
 			while (!bps.isEmpty()) {
 				IBreakpoint hit = getBreakpoint(thread);
-				assertNotNull("suspended, but not by breakpoint", hit);
-				assertTrue("hit un-registered breakpoint", bps.contains(hit));
-				assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint);
+				assertNotNull("suspended, but not by breakpoint", hit); //$NON-NLS-1$
+				assertTrue("hit un-registered breakpoint", bps.contains(hit)); //$NON-NLS-1$
+				assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint); //$NON-NLS-1$
 				ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 				int lineNumber = breakpoint.getLineNumber();
 				int stackLine = thread.getTopStackFrame().getLineNumber();
-				assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine);
+				assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine); //$NON-NLS-1$
 				bps.remove(breakpoint);
 				breakpoint.delete();
 				if (!bps.isEmpty()) {
@@ -84,8 +85,8 @@ public class BreakpointTests extends AbstractAntDebugTest {
 	}
 
 	private void disabledBreakpoint(boolean separateVM) throws Exception, CoreException {
-		String fileName = "breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(5, fileName + ".xml");
+		String fileName = "breakpoints"; //$NON-NLS-1$
+		ILineBreakpoint bp = createLineBreakpoint(5, fileName + ".xml"); //$NON-NLS-1$
 		bp.setEnabled(false);
 		AntDebugTarget debugTarget = null;
 		try {
@@ -106,17 +107,17 @@ public class BreakpointTests extends AbstractAntDebugTest {
 
 	private void enableDisableBreapoint(boolean sepVM) throws Exception, CoreException {
 		
-		String fileName = "breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(5, fileName + ".xml");
+		String fileName = "breakpoints"; //$NON-NLS-1$
+		ILineBreakpoint bp = createLineBreakpoint(5, fileName + ".xml"); //$NON-NLS-1$
 		bp.setEnabled(true);
 		AntThread thread = null;
 		try {
 			if (sepVM) {
-				fileName+= "SepVM";
+				fileName+= "SepVM"; //$NON-NLS-1$
 			}
             ILaunchConfiguration config= getLaunchConfiguration(fileName);
             ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
-            copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "entry1,entry2");
+            copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "entry1,entry2"); //$NON-NLS-1$
 			thread= launchToLineBreakpoint(copy, bp);
 			bp.setEnabled(false);
             if (sepVM) {
@@ -129,12 +130,9 @@ public class BreakpointTests extends AbstractAntDebugTest {
 		}
 	}
 
-    private synchronized void waitForTarget() {
-        try {
-            //wait for the target to get updated for the new breakpoint state 
-            wait(1000);
-        } catch (InterruptedException ie) {
-        }
+    private synchronized void waitForTarget() throws InterruptedException {
+        //wait for the target to get updated for the new breakpoint state 
+        wait(1000);
     }
 	
 	public void testSkipLineBreakpoint() throws Exception {
@@ -146,14 +144,14 @@ public class BreakpointTests extends AbstractAntDebugTest {
 	}
 
 	private void skipLineBreakpoint(boolean sepVM) throws Exception {
-		String fileName = "breakpoints";
-		IFile file= getIFile(fileName + ".xml");
+		String fileName = "breakpoints"; //$NON-NLS-1$
+		IFile file= getIFile(fileName + ".xml"); //$NON-NLS-1$
 		ILineBreakpoint bp = createLineBreakpoint(5, file);
 		createLineBreakpoint(15, file);
 		AntThread thread = null;
 		try {
 			if (sepVM) {
-				fileName+= "SepVM";
+				fileName+= "SepVM"; //$NON-NLS-1$
 			}
 		    thread= launchToLineBreakpoint(fileName, bp);
 		    getBreakpointManager().setEnabled(false);
@@ -166,37 +164,37 @@ public class BreakpointTests extends AbstractAntDebugTest {
 	}
 	
 	public void testBreakpoint() throws Exception {
-		breakpoints(false, "default", 5, 15);
+		breakpoints(false, "default", 5, 15); //$NON-NLS-1$
 	}
 	
 	public void testBreakpointSepVM() throws Exception {
-		breakpoints(true, "default", 5, 15);
+		breakpoints(true, "default", 5, 15); //$NON-NLS-1$
 	}
 
 	public void testTargetBreakpoint() throws Exception {
-		breakpoints(false, "entry2", 4, 24);
+		breakpoints(false, "entry2", 4, 24); //$NON-NLS-1$
 	}
     
     public void testTaskOutOfTargetBreakpoint() throws Exception {
-        breakpoints(false, "entry2", 36, 5);
+        breakpoints(false, "entry2", 36, 5); //$NON-NLS-1$
     }
     
     public void testTaskOutOfTargetBreakpointSepVm() throws Exception {
-        breakpoints(true, "entry2", 36, 5);
+        breakpoints(true, "entry2", 36, 5); //$NON-NLS-1$
     }
 	
 	public void testTargetBreakpointSepVM() throws Exception {
-		breakpoints(true, "entry2", 4, 24);
+		breakpoints(true, "entry2", 4, 24); //$NON-NLS-1$
 	}
 	
-	private void breakpoints(boolean sepVM, String defaultTargetName, int firstLineNumber, int secondLineNumber) throws CoreException {
-		String fileName = "breakpoints";
-		IFile file= getIFile(fileName + ".xml");
+	private void breakpoints(boolean sepVM, String defaultTargetName, int firstLineNumber, int secondLineNumber) throws CoreException, InterruptedException {
+		String fileName = "breakpoints"; //$NON-NLS-1$
+		IFile file= getIFile(fileName + ".xml"); //$NON-NLS-1$
 		ILineBreakpoint bp = createLineBreakpoint(firstLineNumber, file);
 		AntThread thread = null;
 		try {
 			if (sepVM) {
-				fileName+= "SepVM";
+				fileName+= "SepVM"; //$NON-NLS-1$
 			}
 			ILaunchConfiguration config= getLaunchConfiguration(fileName);
 			ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
@@ -207,9 +205,7 @@ public class BreakpointTests extends AbstractAntDebugTest {
 		    thread= launchToLineBreakpoint(copy, bp);
 			bp= createLineBreakpoint(secondLineNumber, file);
 		    resumeToLineBreakpoint(thread, bp);
-		} catch (InterruptedException e) {
-           
-        } finally {
+		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}

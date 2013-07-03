@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -50,11 +50,11 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  */
 public class ProjectHelper {
 	
-	public static final IPath TEST_BUILDFILES_DIR= new Path("testbuildfiles");
-	public static final IPath TEST_RESOURCES_DIR= new Path("testresources");	
-	public static final IPath TEST_LIB_DIR= new Path("testlib");
+	public static final IPath TEST_BUILDFILES_DIR= new Path("testbuildfiles"); //$NON-NLS-1$
+	public static final IPath TEST_RESOURCES_DIR= new Path("testresources");	 //$NON-NLS-1$
+	public static final IPath TEST_LIB_DIR= new Path("testlib"); //$NON-NLS-1$
 	
-	public static final String PROJECT_NAME= "Ant UI Tests";
+	public static final String PROJECT_NAME= "Ant UI Tests"; //$NON-NLS-1$
 	
 	/**
 	 * Creates a IProject.
@@ -113,7 +113,7 @@ public class ProjectHelper {
 	
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List files = new ArrayList(100);
+		List<File> files = new ArrayList<File>(100);
 		addFiles(rootDir, files);
 		try {
 			ImportOperation op= new ImportOperation(destPath, rootDir, structureProvider, new ImportOverwriteQuery(), files);
@@ -124,9 +124,9 @@ public class ProjectHelper {
 		}
 	}	
 	
-	private static void addFiles(File dir, List collection) throws IOException {
+	private static void addFiles(File dir, List<File> collection) throws IOException {
 		File[] files = dir.listFiles();
-		List subDirs = new ArrayList(2);
+		List<File> subDirs = new ArrayList<File>(2);
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isFile()) {
 				collection.add(files[i]);
@@ -134,9 +134,9 @@ public class ProjectHelper {
 				subDirs.add(files[i]);
 			}
 		}
-		Iterator iter = subDirs.iterator();
+		Iterator<File> iter = subDirs.iterator();
 		while (iter.hasNext()) {
-			File subDir = (File)iter.next();
+			File subDir = iter.next();
 			addFiles(subDir, collection);
 		}
 	}
@@ -156,7 +156,7 @@ public class ProjectHelper {
 	 */
 	public static void createLaunchConfigurationForBoth(String launchConfigName) throws Exception {
 		ProjectHelper.createLaunchConfiguration(launchConfigName);
-		ProjectHelper.createLaunchConfigurationForSeparateVM(launchConfigName + "SepVM", launchConfigName);
+		ProjectHelper.createLaunchConfigurationForSeparateVM(launchConfigName + "SepVM", launchConfigName); //$NON-NLS-1$
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class ProjectHelper {
 	public static void createLaunchConfigurationForSeparateVM(String launchConfigName, String buildFileName) throws Exception {
 		String bf = buildFileName;
 		ILaunchConfigurationType type = AbstractAntUITest.getLaunchManager().getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
-		ILaunchConfigurationWorkingCopy config = type.newInstance(AbstractAntUITest.getJavaProject().getProject().getFolder("launchConfigurations"), launchConfigName);
+		ILaunchConfigurationWorkingCopy config = type.newInstance(AbstractAntUITest.getJavaProject().getProject().getFolder("launchConfigurations"), launchConfigName); //$NON-NLS-1$
 		
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.ant.internal.launching.remote.InternalAntRunner"); //$NON-NLS-1$
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
@@ -176,7 +176,7 @@ public class ProjectHelper {
 		if (bf == null) {
 			bf= launchConfigName;
 		} 
-		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/" + PROJECT_NAME + "/buildfiles/" + bf + ".xml}");
+		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/" + PROJECT_NAME + "/buildfiles/" + bf + ".xml}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 		config.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
@@ -192,6 +192,7 @@ public class ProjectHelper {
 	 * 
 	 * @since 3.5
 	 */
+	@SuppressWarnings("deprecation")
 	public static void setVM(ILaunchConfigurationWorkingCopy config) {
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		String vmName= vm.getName();
@@ -205,7 +206,7 @@ public class ProjectHelper {
 	 * name.
 	 */
 	public static void createLaunchConfiguration(String launchConfigName) throws Exception {
-	    ProjectHelper.createLaunchConfiguration(launchConfigName, PROJECT_NAME + "/buildfiles/" + launchConfigName + ".xml");
+	    ProjectHelper.createLaunchConfiguration(launchConfigName, PROJECT_NAME + "/buildfiles/" + launchConfigName + ".xml"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -217,10 +218,10 @@ public class ProjectHelper {
 	 */
 	public static ILaunchConfiguration createLaunchConfiguration(String launchConfigName, String path) throws CoreException {
 	    ILaunchConfigurationType type = AbstractAntUITest.getLaunchManager().getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
-		ILaunchConfigurationWorkingCopy config = type.newInstance(AbstractAntUITest.getJavaProject().getProject().getFolder("launchConfigurations"), launchConfigName);
+		ILaunchConfigurationWorkingCopy config = type.newInstance(AbstractAntUITest.getJavaProject().getProject().getFolder("launchConfigurations"), launchConfigName); //$NON-NLS-1$
 	
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, AbstractAntUITest.getJavaProject().getElementName());
-		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/" + path + "}");
+		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/" + path + "}"); //$NON-NLS-1$ //$NON-NLS-2$
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 			
 		config.doSave();

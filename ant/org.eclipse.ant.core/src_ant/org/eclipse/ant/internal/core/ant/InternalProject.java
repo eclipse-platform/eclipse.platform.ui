@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ import org.apache.tools.ant.ProjectComponent;
  */
 public class InternalProject extends Project {
 
-	private Hashtable typeNameToClass = null;
+	private Hashtable<String, Class<?>> typeNameToClass = null;
 	
 	public InternalProject() {
 		super();
@@ -51,7 +51,7 @@ public class InternalProject extends Project {
 		setJavaVersionProperty();
 
 		try {
-			Class taskClass = Class.forName("org.apache.tools.ant.taskdefs.Property"); //$NON-NLS-1$
+			Class<?> taskClass = Class.forName("org.apache.tools.ant.taskdefs.Property"); //$NON-NLS-1$
 			addTaskDefinition("property", taskClass); //$NON-NLS-1$
 			taskClass = Class.forName("org.apache.tools.ant.taskdefs.Typedef"); //$NON-NLS-1$
 			addTaskDefinition("typedef", taskClass); //$NON-NLS-1$
@@ -73,7 +73,7 @@ public class InternalProject extends Project {
 		if (typeNameToClass == null) {
 			initializeTypes();
 		}
-		Class typeClass = (Class) typeNameToClass.get(typeName);
+		Class<?> typeClass = typeNameToClass.get(typeName);
 
 		if (typeClass == null) {
 			return null;
@@ -81,7 +81,7 @@ public class InternalProject extends Project {
 
 		Throwable thrown = null;
 		try {
-			Constructor ctor = null;
+			Constructor<?> ctor = null;
 			boolean noArg = false;
 			// DataType can have a "no arg" constructor or take a single
 			// Project argument.
@@ -117,7 +117,7 @@ public class InternalProject extends Project {
 			thrown = ncdfe;
 		}
 		if (thrown != null) {
-			String message= MessageFormat.format(InternalAntMessages.InternalProject_could_not_create_type, new String[]{typeName, thrown.toString()});
+			String message= MessageFormat.format(InternalAntMessages.InternalProject_could_not_create_type, new Object[]{typeName, thrown.toString()});
 			throw new BuildException(message, thrown);
 		}
 		// this line is actually unreachable
@@ -128,7 +128,7 @@ public class InternalProject extends Project {
 	 * Initialize the mapping of data type name to data type classname
 	 */
 	private void initializeTypes() {
-		typeNameToClass = new Hashtable(18);
+		typeNameToClass = new Hashtable<String, Class<?>>(18);
 		String dataDefs = "/org/apache/tools/ant/types/defaults.properties"; //$NON-NLS-1$
 		try {
 			Properties props = new Properties();
@@ -139,12 +139,12 @@ public class InternalProject extends Project {
 			props.load(in);
 			in.close();
 
-			Enumeration enumeration = props.propertyNames();
+			Enumeration<?> enumeration = props.propertyNames();
 			while (enumeration.hasMoreElements()) {
 				String typeName = (String) enumeration.nextElement();
 				String className = props.getProperty(typeName);
 				try {
-					Class typeClass= Class.forName(className);
+					Class<?> typeClass= Class.forName(className);
 					typeNameToClass.put(typeName, typeClass);
 				} catch (NoClassDefFoundError e) {
 					//ignore
@@ -161,7 +161,8 @@ public class InternalProject extends Project {
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Project#getDataTypeDefinitions()
 	 */
-	public Hashtable getDataTypeDefinitions() {
+	@Override
+	public Hashtable<String, Class<?>> getDataTypeDefinitions() {
 		if (typeNameToClass == null) {
 			initializeTypes();
 		}
@@ -171,7 +172,9 @@ public class InternalProject extends Project {
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Project#addDataTypeDefinition(java.lang.String, java.lang.Class)
 	 */
+	@Override
 	public void addDataTypeDefinition(String typeName, Class typeClass) {
+		//TODO ANT-1.9.1 API USE
 		getDataTypeDefinitions();
 		typeNameToClass.put(typeName, typeClass);
 	}

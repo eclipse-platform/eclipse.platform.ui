@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class EclipseDefaultExecutor extends DefaultExecutor {
      * @see org.apache.tools.ant.Executor#executeTargets(org.apache.tools.ant.Project, java.lang.String[])
      */
     public void executeTargets(Project project, String[] targetNames) throws BuildException {
-        Vector v= new Vector();
+        Vector<String> v= new Vector<String>();
         v.addAll(Arrays.asList(targetNames));
         project.addReference("eclipse.ant.targetVector", v); //$NON-NLS-1$
         super.executeTargets(project, targetNames);

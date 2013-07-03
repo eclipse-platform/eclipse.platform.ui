@@ -19,6 +19,6 @@
   </parent>
   <groupId>org.eclipse.ant</groupId>
   <artifactId>org.eclipse.ant.tests.core</artifactId>
-  <version>3.3.100-SNAPSHOT</version>
+  <version>3.3.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

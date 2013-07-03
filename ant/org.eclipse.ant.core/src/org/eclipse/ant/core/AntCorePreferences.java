@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -52,8 +57,8 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.service.packageadmin.ExportedPackage;
 import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.util.tracker.ServiceTracker;
-
 
 /**
  * Represents the Ant Core plug-in's preferences providing utilities for
@@ -63,45 +68,8 @@ import org.osgi.util.tracker.ServiceTracker;
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener {
-
-	private List defaultTasks;
-	private List defaultTypes;
-	private List extraClasspathURLs;
-	private List defaultProperties;
-	private IAntClasspathEntry[] defaultAntHomeEntries;
-	
-	private Task[] customTasks;
-	private Task[] oldCustomTasks;
-	private Type[] customTypes;
-	private Type[] oldCustomTypes;
-	private IAntClasspathEntry[] antHomeEntries;
-	private IAntClasspathEntry[] additionalEntries;
-	private Property[] customProperties;
-	private Property[] oldCustomProperties;
-	private String[] customPropertyFiles;
-	
-	private List pluginClassLoaders;
-	
-	private ClassLoader[] orderedPluginClassLoaders;
-	
-	private String antHome;
-	
-	private boolean runningHeadless= false;
-
-	static private class Relation {
-		Object from;
-		Object to;
-
-		Relation(Object from, Object to) {
-			this.from = from;
-			this.to = to;
-		}
-
-		public String toString() {
-			return from.toString() + "->" + (to == null ? IAntCoreConstants.EMPTY_STRING : to.toString()); //$NON-NLS-1$
-		}
-	}
+@SuppressWarnings("deprecation")
+public class AntCorePreferences implements IPropertyChangeListener {
 
 	class WrappedClassLoader extends ClassLoader {
 		private Bundle bundle;
@@ -112,7 +80,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		/* (non-Javadoc)
 		 * @see java.lang.ClassLoader#findClass(java.lang.String)
 		 */
-		public Class findClass(String name) throws ClassNotFoundException {
+		public Class<?> findClass(String name) throws ClassNotFoundException {
 			return bundle.loadClass(name);
 		}
 		/* (non-Javadoc)
@@ -125,7 +93,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		/* (non-Javadoc)
 		 * @see java.lang.ClassLoader#findResources(java.lang.String)
 		 */
-		protected Enumeration findResources(String name) throws IOException {
+		protected Enumeration<URL> findResources(String name) throws IOException {
 			return bundle.getResources(name);
 		}
 		/* (non-Javadoc)
@@ -148,14 +116,80 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 	}
 	
-	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes, boolean headless) {
-		this(defaultTasks, defaultExtraClasspath, defaultTypes, Collections.EMPTY_LIST, headless);
+	static private class Relation {
+		Object from;
+		Object to;
+
+		Relation(Object from, Object to) {
+			this.from = from;
+			this.to = to;
+		}
+
+		public String toString() {
+			return from.toString() + "->" + (to == null ? IAntCoreConstants.EMPTY_STRING : to.toString()); //$NON-NLS-1$
+		}
 	}
 	
-	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes, List defaultProperties, boolean headless) {
+	private IPreferenceChangeListener prefListener = new IPreferenceChangeListener() {
+		public void preferenceChange(PreferenceChangeEvent event) {
+			String property = event.getKey();
+			if (property.equals(IAntCoreConstants.PREFERENCE_TASKS) || property.startsWith(IAntCoreConstants.PREFIX_TASK)) {
+				restoreTasks();
+			} else if (property.equals(IAntCoreConstants.PREFERENCE_TYPES) || property.startsWith(IAntCoreConstants.PREFIX_TYPE)) {
+				restoreTypes();
+			} else if (property.equals(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES)) {
+				restoreAntHomeEntries();
+			} else if (property.equals(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES)) {
+				restoreAdditionalEntries();
+			} else if (property.equals(IAntCoreConstants.PREFERENCE_ANT_HOME)) {
+				restoreAntHome();
+			} else if (property.equals(IAntCoreConstants.PREFERENCE_PROPERTIES) || property.startsWith(IAntCoreConstants.PREFIX_PROPERTY)) {
+				restoreCustomProperties();
+			} else if (property.equals(IAntCoreConstants.PREFERENCE_PROPERTY_FILES)) {
+				restoreCustomPropertyFiles();
+			}
+		}
+	};
+	
+	private List<Task> defaultTasks;
+	private List<Type> defaultTypes;
+	private List<AntClasspathEntry> extraClasspathURLs;
+	private List<Property> defaultProperties;
+	private IAntClasspathEntry[] defaultAntHomeEntries;
+	
+	private Task[] customTasks;
+	private Task[] oldCustomTasks;
+	private Type[] customTypes;
+	private Type[] oldCustomTypes;
+	private IAntClasspathEntry[] antHomeEntries;
+	private IAntClasspathEntry[] additionalEntries;
+	private Property[] customProperties;
+	private Property[] oldCustomProperties;
+	private String[] customPropertyFiles;
+	
+	private List<WrappedClassLoader> pluginClassLoaders;
+	
+	private ClassLoader[] orderedPluginClassLoaders;
+	
+	private String antHome;
+	
+	private boolean runningHeadless= false;
+
+	protected AntCorePreferences(List<IConfigurationElement> defaultTasks, 
+			List<IConfigurationElement> defaultExtraClasspath, 
+			List<IConfigurationElement> defaultTypes, 
+			boolean headless) {
+		this(defaultTasks, defaultExtraClasspath, defaultTypes, Collections.<IConfigurationElement> emptyList(), headless);
+	}
+	
+	protected AntCorePreferences(List<IConfigurationElement> defaultTasks, 
+			List<IConfigurationElement> defaultExtraClasspath, 
+			List<IConfigurationElement> defaultTypes, 
+			List<IConfigurationElement> defaultProperties, 
+			boolean headless) {
 		runningHeadless= headless;
 		initializePluginClassLoaders();
-		extraClasspathURLs = new ArrayList(20);
+		extraClasspathURLs = new ArrayList<AntClasspathEntry>(20);
 		this.defaultTasks = computeDefaultTasks(defaultTasks);
 		this.defaultTypes = computeDefaultTypes(defaultTypes);
 		computeDefaultExtraClasspathEntries(defaultExtraClasspath);
@@ -170,110 +204,137 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
 	public void propertyChange(Preferences.PropertyChangeEvent event) {
-		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
-		String property= event.getProperty();
-		if (property.equals(IAntCoreConstants.PREFERENCE_TASKS) || property.startsWith(IAntCoreConstants.PREFIX_TASK)) {
-			restoreTasks(prefs);
-		} else if (property.equals(IAntCoreConstants.PREFERENCE_TYPES) || property.startsWith(IAntCoreConstants.PREFIX_TYPE)) {
-			restoreTypes(prefs);
-		} else if (property.equals(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES)) {
-			restoreAntHomeEntries(prefs);
-		} else if (property.equals(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES)) {
-			restoreAdditionalEntries(prefs);
-		} else if (property.equals(IAntCoreConstants.PREFERENCE_ANT_HOME)) {
-			restoreAntHome(prefs);
-		} else if (property.equals(IAntCoreConstants.PREFERENCE_PROPERTIES) || property.startsWith(IAntCoreConstants.PREFIX_PROPERTY)) {
-			restoreCustomProperties(prefs);
-		} else if (property.equals(IAntCoreConstants.PREFERENCE_PROPERTY_FILES)) {
-			restoreCustomPropertyFiles(prefs);
-		}
+		//does nothing any longer, see the IPreferenceChangedListener field 
 	}
 
 	/**
 	 * Restores the in-memory model of the preferences from the preference store
 	 */
 	private void restoreCustomObjects() {
-		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
-		restoreAntHome(prefs);
-		restoreTasks(prefs);
-		restoreTypes(prefs);
-		restoreAntHomeEntries(prefs);
-		restoreAdditionalEntries(prefs);
-		restoreCustomProperties(prefs);
-		restoreCustomPropertyFiles(prefs);
-		prefs.addPropertyChangeListener(this);
+		restoreAntHome();
+		restoreTasks();
+		restoreTypes();
+		restoreAntHomeEntries();
+		restoreAdditionalEntries();
+		restoreCustomProperties();
+		restoreCustomPropertyFiles();
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(AntCorePlugin.PI_ANTCORE);
+		if(node != null) {
+			node.addPreferenceChangeListener(prefListener);
+		}
 	}
 	
-	private void restoreTasks(Preferences prefs) {
-		 String tasks = prefs.getString(IAntCoreConstants.PREFERENCE_TASKS);
-		 if (tasks.equals(IAntCoreConstants.EMPTY_STRING)) {
+	private void restoreTasks() {
+		 String tasks = Platform.getPreferencesService().getString(
+				 AntCorePlugin.PI_ANTCORE,
+				 IAntCoreConstants.PREFERENCE_TASKS,
+				 null,
+				 null);
+		 if (tasks == null || IAntCoreConstants.EMPTY_STRING.equals(tasks)) {
 			 customTasks = new Task[0];
 		 } else {
-			 customTasks = extractTasks(prefs, getArrayFromString(tasks));
+			 customTasks = extractTasks(AntCorePlugin.getPlugin().getPluginPreferences(), getArrayFromString(tasks));
 		 }
 	}
 	
-	private void restoreTypes(Preferences prefs) {
-		String types = prefs.getString(IAntCoreConstants.PREFERENCE_TYPES);
-		if (types.equals(IAntCoreConstants.EMPTY_STRING)) {
+	private void restoreTypes() {
+		String types = Platform.getPreferencesService().getString(
+				AntCorePlugin.PI_ANTCORE,
+				IAntCoreConstants.PREFERENCE_TYPES,
+				null,
+				null);
+		if (types == null || IAntCoreConstants.EMPTY_STRING.equals(types)) {
 			customTypes = new Type[0];
 		} else {
-			customTypes = extractTypes(prefs, getArrayFromString(types));
+			customTypes = extractTypes(AntCorePlugin.getPlugin().getPluginPreferences(), getArrayFromString(types));
 		}
 	}
 	
-	private void restoreAntHomeEntries(Preferences prefs) {
-		String entries = prefs.getString("ant_urls"); //old constant //$NON-NLS-1$
-		if (entries.equals(IAntCoreConstants.EMPTY_STRING)) {
-			entries= prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES);
+	private void restoreAntHomeEntries() {
+		String entries = Platform.getPreferencesService().getString(
+				AntCorePlugin.PI_ANTCORE,
+				"ant_urls", //$NON-NLS-1$
+				null,
+				null); //old constant
+		if (entries == null || IAntCoreConstants.EMPTY_STRING.equals(entries)) {
+			entries = Platform.getPreferencesService().getString(
+					AntCorePlugin.PI_ANTCORE, 
+					IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES,
+					null,
+					null);
 		} else {
-			prefs.setToDefault("ant_urls"); //$NON-NLS-1$
-			antHomeEntries= migrateURLEntries(getArrayFromString(entries));
+			//torch the old pref
+			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(AntCorePlugin.PI_ANTCORE);
+			if(node != null) {
+				node.remove("ant_urls"); //$NON-NLS-1$
+				try {
+					node.flush();
+				} catch (BackingStoreException e) {
+					//do nothing
+				}
+			}
+			antHomeEntries = migrateURLEntries(getArrayFromString(entries));
 			return;
 		}
-		if (entries.equals(IAntCoreConstants.EMPTY_STRING)) {
-			antHomeEntries= getDefaultAntHomeEntries();
+		if (entries == null || IAntCoreConstants.EMPTY_STRING.equals(entries)) {
+			antHomeEntries = getDefaultAntHomeEntries();
 		} else {
-			antHomeEntries= extractEntries(getArrayFromString(entries));
+			antHomeEntries = extractEntries(getArrayFromString(entries));
 		}
 	}
 	
-	private void restoreAdditionalEntries(Preferences prefs) {
-		String entries = prefs.getString("urls"); //old constant //$NON-NLS-1$
-		if (entries.equals(IAntCoreConstants.EMPTY_STRING)) {
-			entries = prefs.getString(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES);
+	private void restoreAdditionalEntries() {
+		String entries = Platform.getPreferencesService().getString(
+				AntCorePlugin.PI_ANTCORE, 
+				"urls", //$NON-NLS-1$
+				null,
+				null); //old constant
+		if (entries == null || IAntCoreConstants.EMPTY_STRING.equals(entries)) {
+			entries = Platform.getPreferencesService().getString(
+					AntCorePlugin.PI_ANTCORE,
+					IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES,
+					null,
+					null);
 		} else {
-			prefs.setToDefault("urls"); //$NON-NLS-1$
-			additionalEntries= migrateURLEntries(getArrayFromString(entries));
+			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(AntCorePlugin.PI_ANTCORE);
+			if(node != null) {
+				node.remove("urls"); //$NON-NLS-1$
+				try {
+					node.flush();
+				} catch (BackingStoreException e) {
+					//do nothing
+				}
+			}
+			additionalEntries = migrateURLEntries(getArrayFromString(entries));
 			return;
 		}
-		if (entries.equals(IAntCoreConstants.EMPTY_STRING)) {
-			IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
-			List userLibs= getUserLibraries();
+		if (entries == null || IAntCoreConstants.EMPTY_STRING.equals(entries)) {
+			IAntClasspathEntry toolsJarEntry = getToolsJarEntry();
+			List<IAntClasspathEntry> userLibs = getUserLibraries();
 			if (toolsJarEntry == null) {
 				if (userLibs == null) {
-					additionalEntries= new IAntClasspathEntry[0];
+					additionalEntries = new IAntClasspathEntry[0];
 				} else {
-				    additionalEntries= (IAntClasspathEntry[]) userLibs.toArray(new IAntClasspathEntry[userLibs.size()]);
+				    additionalEntries = userLibs.toArray(new IAntClasspathEntry[userLibs.size()]);
 				}
 			} else {
 				if (userLibs == null) {
-					additionalEntries= new IAntClasspathEntry[] {toolsJarEntry};
+					additionalEntries = new IAntClasspathEntry[] {toolsJarEntry};
 				} else {
 					userLibs.add(toolsJarEntry);
-					additionalEntries= (IAntClasspathEntry[]) userLibs.toArray(new IAntClasspathEntry[userLibs.size()]);
+					additionalEntries = userLibs.toArray(new IAntClasspathEntry[userLibs.size()]);
 				}
 			}
 		} else {
-			additionalEntries= extractEntries(getArrayFromString(entries));
+			additionalEntries = extractEntries(getArrayFromString(entries));
 		}
 	}
 	
 	/*
-	 * Migrates the persisted url entries restored from a workspace older than 3.0
+	 * Migrates the persisted URL entries restored from a workspace older than 3.0
 	 */
 	private IAntClasspathEntry[] migrateURLEntries(String[] urlEntries) {
-		List result = new ArrayList(urlEntries.length);
+		List<AntClasspathEntry> result = new ArrayList<AntClasspathEntry>(urlEntries.length);
 		for (int i = 0; i < urlEntries.length; i++) {
 			URL url;
 			try {
@@ -283,13 +344,17 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			}
 			result.add(new AntClasspathEntry(url));
 		}
-		return (IAntClasspathEntry[])result.toArray(new IAntClasspathEntry[result.size()]);
+		return result.toArray(new IAntClasspathEntry[result.size()]);
 	}
 
-	private void restoreAntHome(Preferences prefs) {
-		antHome= prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME);
-		if (antHome == null || antHome.length() == 0) {
-			antHome= getDefaultAntHome();
+	private void restoreAntHome() {
+		antHome = Platform.getPreferencesService().getString(
+				AntCorePlugin.PI_ANTCORE, 
+				IAntCoreConstants.PREFERENCE_ANT_HOME, 
+				null, 
+				null);
+		if (antHome == null || IAntCoreConstants.EMPTY_STRING.equals(antHome)) {
+			antHome = getDefaultAntHome();
 		}
 	}
 	
@@ -312,26 +377,34 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return null;
 	}
 	
-	private void restoreCustomProperties(Preferences prefs) {
-		String properties = prefs.getString(IAntCoreConstants.PREFERENCE_PROPERTIES);
-		if (properties.equals(IAntCoreConstants.EMPTY_STRING)) {
+	private void restoreCustomProperties() {
+		String properties = Platform.getPreferencesService().getString(
+				AntCorePlugin.PI_ANTCORE, 
+				IAntCoreConstants.PREFERENCE_PROPERTIES,
+				null,
+				null);
+		if (properties == null || IAntCoreConstants.EMPTY_STRING.equals(properties)) {
 			customProperties = new Property[0];
 		} else {
-			customProperties = extractProperties(prefs, getArrayFromString(properties));
+			customProperties = extractProperties(AntCorePlugin.getPlugin().getPluginPreferences(), getArrayFromString(properties));
 		}
 	}
 	
-	private void restoreCustomPropertyFiles(Preferences prefs) {
-		String propertyFiles= prefs.getString(IAntCoreConstants.PREFERENCE_PROPERTY_FILES);
-		if (propertyFiles.equals(IAntCoreConstants.EMPTY_STRING)) {
-			customPropertyFiles= new String[0];
+	private void restoreCustomPropertyFiles() {
+		String propertyFiles = Platform.getPreferencesService().getString(
+				AntCorePlugin.PI_ANTCORE, 
+				IAntCoreConstants.PREFERENCE_PROPERTY_FILES,
+				null,
+				null);
+		if (propertyFiles == null || IAntCoreConstants.EMPTY_STRING.equals(propertyFiles)) {
+			customPropertyFiles = new String[0];
 		} else {
-			customPropertyFiles= getArrayFromString(propertyFiles);
+			customPropertyFiles = getArrayFromString(propertyFiles);
 		}
 	}
 
 	protected Task[] extractTasks(Preferences prefs, String[] tasks) {
-		List result = new ArrayList(tasks.length);
+		List<Task> result = new ArrayList<Task>(tasks.length);
 		for (int i = 0; i < tasks.length; i++) {
 			String taskName = tasks[i];
 			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TASK + taskName));
@@ -349,11 +422,11 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			task.setLibraryEntry(new AntClasspathEntry(library));
 			result.add(task);
 		}
-		return (Task[]) result.toArray(new Task[result.size()]);
+		return result.toArray(new Task[result.size()]);
 	}
 
 	protected Type[] extractTypes(Preferences prefs, String[] types) {
-		List result = new ArrayList(types.length);
+		List<Type> result = new ArrayList<Type>(types.length);
 		for (int i = 0; i < types.length; i++) {
 			String typeName = types[i];
 			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TYPE + typeName));
@@ -371,7 +444,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			type.setLibraryEntry(new AntClasspathEntry(library));
 			result.add(type);
 		}
-		return (Type[]) result.toArray(new Type[result.size()]);
+		return result.toArray(new Type[result.size()]);
 	}
 	
 	protected Property[] extractProperties(Preferences prefs, String[] properties) {
@@ -403,11 +476,11 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * user. Try emulating the same behavior here.
 	 *
 	 * @return the default set of URLs defining the Ant classpath
-	 * @deprecated
+	 * @deprecated use {@link #getDefaultAntHomeEntries()} instead
 	 */
 	public URL[] getDefaultAntURLs() {
 		IAntClasspathEntry[] entries= getDefaultAntHomeEntries();
-		List result= new ArrayList(3);
+		List<URL> result= new ArrayList<URL>(3);
 		for (int i = 0; i < entries.length; i++) {
 			IAntClasspathEntry entry = entries[i];
 			result.add(entry.getEntryURL());
@@ -416,7 +489,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		if (toolsURL != null) {
 			result.add(toolsURL);
 		}
-		return (URL[]) result.toArray(new URL[result.size()]);
+		return result.toArray(new URL[result.size()]);
 	}
 	
 	/**
@@ -427,10 +500,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 */
 	public synchronized IAntClasspathEntry[] getDefaultAntHomeEntries() {
 		if (defaultAntHomeEntries == null) {
-			ServiceTracker tracker = new ServiceTracker(AntCorePlugin.getPlugin().getBundle().getBundleContext(), PackageAdmin.class.getName(), null);
+			ServiceTracker<?, ?> tracker = new ServiceTracker<Object, Object>(AntCorePlugin.getPlugin().getBundle().getBundleContext(), PackageAdmin.class.getName(), null);
 			tracker.open();
 			try {
-				List result = new ArrayList(29);
+				List<AntClasspathEntry> result = new ArrayList<AntClasspathEntry>(29);
 				PackageAdmin packageAdmin = (PackageAdmin) tracker.getService();
 				if (packageAdmin != null) {
 					ExportedPackage[] packages = packageAdmin.getExportedPackages("org.apache.tools.ant"); //$NON-NLS-1$
@@ -462,7 +535,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 						}
 					}
 				}
-				defaultAntHomeEntries = (IAntClasspathEntry[]) result.toArray(new IAntClasspathEntry[result.size()]);
+				defaultAntHomeEntries = result.toArray(new IAntClasspathEntry[result.size()]);
 			} finally {
 				tracker.close();
 			}
@@ -487,7 +560,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 */
 	Bundle findHighestAntVersion(ExportedPackage[] packages) {
 		Bundle bundle = null;
-		HashSet bundles = new HashSet();
+		HashSet<Bundle> bundles = new HashSet<Bundle>();
 		for (int i = 0; i < packages.length; i++) {
 			bundle = packages[i].getExportingBundle();
 			if(bundle == null) {
@@ -499,8 +572,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		Bundle highest = null;
 		Bundle temp = null;
-		for (Iterator iter = bundles.iterator(); iter.hasNext();) {
-			temp = (Bundle)iter.next();
+		for (Iterator<Bundle> iter = bundles.iterator(); iter.hasNext();) {
+			temp = iter.next();
 			if(highest == null) {
 				highest = temp;
 			}
@@ -541,10 +614,16 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		
 	}
 
-	protected List computeDefaultTasks(List tasks) {
-		List result = new ArrayList(tasks.size());
-		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
-			IConfigurationElement element = (IConfigurationElement) iterator.next();
+	/**
+	 * Returns the complete list of pre-configured {@link Task}s
+	 * 
+	 * @param tasks the {@link IConfigurationElement} handles for contributed {@link Task}s
+	 * @return the list of {@link Task}s
+	 */
+	protected List<Task> computeDefaultTasks(List<IConfigurationElement> tasks) {
+		List<Task> result = new ArrayList<Task>(tasks.size());
+		for (Iterator<IConfigurationElement> iterator = tasks.iterator(); iterator.hasNext();) {
+			IConfigurationElement element = iterator.next();
 			if (!relevantRunningHeadless(element)) {
 				continue;
 			}
@@ -552,7 +631,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			task.setTaskName(element.getAttribute(IAntCoreConstants.NAME));
 			task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			
-			configureAntObject(result, element, task, task.getTaskName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_task);
+			if(configureAntObject(element, task, task.getTaskName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_task)) {
+				result.add(task);
+			}
 		}
 		return result;
 	}
@@ -563,9 +644,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		if (eclipseRuntime != null) {
 			eclipseRuntimeRequired= Boolean.valueOf(eclipseRuntime).booleanValue();
 		}
-		Iterator itr= extraClasspathURLs.iterator();
+		Iterator<AntClasspathEntry> itr= extraClasspathURLs.iterator();
 		while (itr.hasNext()) {
-			IAntClasspathEntry entry = (IAntClasspathEntry) itr.next();
+			IAntClasspathEntry entry = itr.next();
 			if (entry.getEntryURL().equals(url)) {
 				return;
 			}
@@ -576,10 +657,16 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		extraClasspathURLs.add(entry);
 	}
 
-	protected List computeDefaultTypes(List types) {
-		List result = new ArrayList(types.size());
-		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
-			IConfigurationElement element = (IConfigurationElement) iterator.next();
+	/**
+	 * Returns the complete listing of pre-configured {@link Type}s
+	 * 
+	 * @param types the list of {@link IConfigurationElement} handles to contributed {@link Type}s
+	 * @return the list of {@link Type}s
+	 */
+	protected List<Type> computeDefaultTypes(List<IConfigurationElement> types) {
+		List<Type> result = new ArrayList<Type>(types.size());
+		for (Iterator<IConfigurationElement> iterator = types.iterator(); iterator.hasNext();) {
+			IConfigurationElement element = iterator.next();
 			if (!relevantRunningHeadless(element)) {
 				continue;
 			}
@@ -587,7 +674,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			type.setTypeName(element.getAttribute(IAntCoreConstants.NAME));
 			type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			
-			configureAntObject(result, element, type, type.getTypeName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_type);
+			if(configureAntObject(element, type, type.getTypeName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_type)) {
+				result.add(type);
+			}
 		}
 		return result;
 	}
@@ -608,7 +697,15 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	    return new URL(IAntCoreConstants.FILE_PROTOCOL + (urlFile.isDirectory() ? path + "/" : path));  //$NON-NLS-1$
 	}
 
-	private void configureAntObject(List result, IConfigurationElement element, AntObject antObject, String objectName, String errorMessage) {
+	/**
+	 * Configures the given {@link AntObject} and returns if it should be retained
+	 * @param element
+	 * @param antObject
+	 * @param objectName
+	 * @param errorMessage
+	 * @return <code>true</code> if the object configured and should be retained, <code>false</code> otherwise
+	 */
+	private boolean configureAntObject(IConfigurationElement element, AntObject antObject, String objectName, String errorMessage) {
 		String runtime = element.getAttribute(AntCorePlugin.ECLIPSE_RUNTIME);
 		if (runtime != null) {
 			antObject.setEclipseRuntimeRequired(Boolean.valueOf(runtime).booleanValue());
@@ -623,7 +720,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		if (library == null) {
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_Library_not_specified_for___0__4, new String[]{objectName}), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
-			return;
+			return false;
 		}
 		
 		try {
@@ -633,35 +730,33 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			URL url = getClasspathEntryURL(bundle, library);
 			if (url != null) {
 				addURLToExtraClasspathEntries(url, element);
-				result.add(antObject);
 				addPluginClassLoader(bundle);
 				antObject.setLibraryEntry(new AntClasspathEntry(url));
-				return;
+				return true;
 			} 
 
 			//type specifies a library that does not exist
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(errorMessage, new String[]{library, element.getContributor().getName()}), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
-			return;
+			return false;
 		} catch (MalformedURLException e) {
 			// if the URL does not have a valid format, just log and ignore the exception
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e);
 			AntCorePlugin.getPlugin().getLog().log(status);
-			return;
 		} catch (Exception e) {
 			//likely extra classpath entry library that does not exist
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_8, new String[]{library,  element.getContributor().getName()}), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
-			return;
 		}
+		return false;
 	}
 
 	/*
 	 * Computes the extra classpath entries defined plug-ins and fragments.
 	 */
-	protected void computeDefaultExtraClasspathEntries(List entries) {
-		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
-			IConfigurationElement element = (IConfigurationElement) iterator.next();
+	protected void computeDefaultExtraClasspathEntries(List<IConfigurationElement> entries) {
+		for (Iterator<IConfigurationElement> iterator = entries.iterator(); iterator.hasNext();) {
+			IConfigurationElement element = iterator.next();
 			if (!relevantRunningHeadless(element)) {
 				continue;
 			}
@@ -710,10 +805,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * 
 	 * @since 3.0
 	 */
-	private void computeDefaultProperties(List properties) {
-		defaultProperties = new ArrayList(properties.size());
-		for (Iterator iterator = properties.iterator(); iterator.hasNext();) {
-			IConfigurationElement element = (IConfigurationElement) iterator.next();
+	private void computeDefaultProperties(List<IConfigurationElement> properties) {
+		defaultProperties = new ArrayList<Property>(properties.size());
+		for (Iterator<IConfigurationElement> iterator = properties.iterator(); iterator.hasNext();) {
+			IConfigurationElement element = iterator.next();
 			if (!relevantRunningHeadless(element)) {
 				continue;
 			}
@@ -798,6 +893,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					entry= getToolsJarEntry(path);
 				}
 			} catch (CoreException e) {
+				AntCorePlugin.log(e);
 			}
 		}
 		if (entry != null) {
@@ -830,6 +926,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					entry= getToolsJarEntry(path);
 				}
 			} catch (CoreException e) {
+				AntCorePlugin.log(e);
 			}
 		}
 		return entry;
@@ -844,18 +941,19 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @return the collection of <code>IAntClasspathEntry</code> found at ${user.home}/.ant/lib or
 	 * <code>null</code> if none found of location does not exist
 	 */
-	private List getUserLibraries() {
+	private List<IAntClasspathEntry> getUserLibraries() {
 		File libDir= new File(System.getProperty("user.home"), ".ant" + File.separatorChar + "lib"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		URL[] urls= null;
 		try {
 			urls = getLocationURLs(libDir);
 		} catch (MalformedURLException e) {
+			AntCorePlugin.log(e);
 		}
 		if (urls == null) {
 			return null;
 		}
 		
-		List entries= new ArrayList(urls.length);
+		List<IAntClasspathEntry> entries= new ArrayList<IAntClasspathEntry>(urls.length);
 		for (int i = 0; i < urls.length; i++) {
 			AntClasspathEntry entry= new AntClasspathEntry(urls[i]);
 			entries.add(entry);
@@ -873,7 +971,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			 urls = new URL[1];
 			 String path= location.getPath();
 			 if (path.toLowerCase().endsWith(extension)) {
-				 urls[0]= location.toURL();
+				 //make sure the URL is properly escaped
+				 urls[0] = location.toURI().toURL();
 			 }
 			 return urls;
 		 }
@@ -887,7 +986,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		 
 		 urls= new URL[matches.length];
 		 for (int i = 0; i < matches.length; ++i) {
-			 urls[i] = matches[i].toURL();
+			 //make sure the URL is properly escaped
+			 urls[i] = matches[i].toURI().toURL();
 		 }
 		 return urls;
 	 }
@@ -899,10 +999,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @throws IOException 
 	 * @throws MalformedURLException
 	 */
-	private void addLibraries(Bundle source, List destination) throws IOException, MalformedURLException {
+	private void addLibraries(Bundle source, List<AntClasspathEntry> destination) throws IOException, MalformedURLException {
 		ManifestElement[] libraries = null;
 		try {
-			libraries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) source.getHeaders(IAntCoreConstants.EMPTY_STRING).get(Constants.BUNDLE_CLASSPATH));
+			libraries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, source.getHeaders(IAntCoreConstants.EMPTY_STRING).get(Constants.BUNDLE_CLASSPATH));
 		} catch (BundleException e) {
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_0, e);
 			AntCorePlugin.getPlugin().getLog().log(status);
@@ -937,7 +1037,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		URL[] urls= new URL[extraClasspathURLs.size()];
 		
 		for (int i = 0; i < extraClasspathURLs.size(); i++) {
-				IAntClasspathEntry entry = (IAntClasspathEntry) extraClasspathURLs.get(i);
+				IAntClasspathEntry entry = extraClasspathURLs.get(i);
 				urls[i]= entry.getEntryURL();	
 		}
 		return urls;
@@ -951,15 +1051,15 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @since 3.0
 	 */
 	public URL[] getRemoteExtraClasspathURLs() {
-		List urls= new ArrayList(extraClasspathURLs.size());
+		List<URL> urls= new ArrayList<URL>(extraClasspathURLs.size());
 		
 		for (int i = 0; i < extraClasspathURLs.size(); i++) {
-				IAntClasspathEntry entry = (IAntClasspathEntry) extraClasspathURLs.get(i);
+				IAntClasspathEntry entry = extraClasspathURLs.get(i);
 				if (!entry.isEclipseRuntimeRequired()) {
 					urls.add(entry.getEntryURL());
 				}
 		}
-		return (URL[])urls.toArray(new URL[urls.size()]);
+		return urls.toArray(new URL[urls.size()]);
 	}
 	
 	/**
@@ -969,7 +1069,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @return the entire runtime classpath of URLs
 	 */
 	public URL[] getURLs() {
-		List result = new ArrayList(60);
+		List<URL> result = new ArrayList<URL>(60);
 		if (antHomeEntries != null) {
 			addEntryURLs(result, antHomeEntries);
 		}
@@ -978,17 +1078,17 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		
 		for (int i = 0; i < extraClasspathURLs.size(); i++) {
-			IAntClasspathEntry entry = (IAntClasspathEntry) extraClasspathURLs.get(i);
+			IAntClasspathEntry entry = extraClasspathURLs.get(i);
 			URL url= entry.getEntryURL();
 			if (url != null) {
 				result.add(url);
 			}	
 		}
 		
-		return (URL[]) result.toArray(new URL[result.size()]);
+		return result.toArray(new URL[result.size()]);
 	}
 
-	private void addEntryURLs(List result, IAntClasspathEntry[] entries) {
+	private void addEntryURLs(List<URL> result, IAntClasspathEntry[] entries) {
 		for (int i = 0; i < entries.length; i++) {
 			IAntClasspathEntry entry = entries[i];
 			URL url= entry.getEntryURL();
@@ -1000,21 +1100,21 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 
 	protected ClassLoader[] getPluginClassLoaders() {
 		if (orderedPluginClassLoaders == null) {
-			Iterator classLoaders= pluginClassLoaders.iterator();
-			Map idToLoader= new HashMap(pluginClassLoaders.size());
-			List bundles = new ArrayList(pluginClassLoaders.size());
+			Iterator<WrappedClassLoader> classLoaders= pluginClassLoaders.iterator();
+			Map<String, WrappedClassLoader> idToLoader= new HashMap<String, WrappedClassLoader>(pluginClassLoaders.size());
+			List<BundleDescription> bundles = new ArrayList<BundleDescription>(pluginClassLoaders.size());
 			while (classLoaders.hasNext()) {
-				WrappedClassLoader loader = (WrappedClassLoader) classLoaders.next();
+				WrappedClassLoader loader = classLoaders.next();
 				idToLoader.put(loader.bundle.getSymbolicName(), loader);
 				bundles.add(Platform.getPlatformAdmin().getState(false).getBundle(loader.bundle.getBundleId()));
 			}
-			List descriptions = computePrerequisiteOrder(bundles);
-			List loaders = new ArrayList(descriptions.size());
-			for (Iterator iter = descriptions.iterator(); iter.hasNext(); ) {
+			List<Object> descriptions = computePrerequisiteOrder(bundles);
+			List<WrappedClassLoader> loaders = new ArrayList<WrappedClassLoader>(descriptions.size());
+			for (Iterator<Object> iter = descriptions.iterator(); iter.hasNext(); ) {
 				String id =((BundleDescription) iter.next()).getSymbolicName();
 				loaders.add(idToLoader.get(id));
 			}
-			orderedPluginClassLoaders = (WrappedClassLoader[]) loaders.toArray(new WrappedClassLoader[loaders.size()]);
+			orderedPluginClassLoaders = loaders.toArray(new WrappedClassLoader[loaders.size()]);
 		}
 		return orderedPluginClassLoaders;
 	}
@@ -1022,13 +1122,13 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private List computePrerequisiteOrder(List plugins) {
-		List prereqs = new ArrayList(plugins.size());
-		List fragments = new ArrayList();
+	private List<Object> computePrerequisiteOrder(List<BundleDescription> plugins) {
+		List<Relation> prereqs = new ArrayList<Relation>(plugins.size());
+		List<BundleDescription> fragments = new ArrayList<BundleDescription>();
 
 		// create a collection of directed edges from plugin to prereq
-		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
-			BundleDescription current = (BundleDescription) iter.next();
+		for (Iterator<BundleDescription> iter = plugins.iterator(); iter.hasNext();) {
+			BundleDescription current = iter.next();
 			if (current.getHost() != null) {
 				fragments.add(current);
 				continue;
@@ -1053,8 +1153,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 
 		//The fragments needs to added relatively to their host and to their
 		// own prerequisite (bug #43244)
-		for (Iterator iter = fragments.iterator(); iter.hasNext();) {
-			BundleDescription current = (BundleDescription) iter.next();
+		for (Iterator<BundleDescription> iter = fragments.iterator(); iter.hasNext();) {
+			BundleDescription current = iter.next();
 
 			if (plugins.contains(current.getHost().getBundle())) {
 				prereqs.add(new Relation(current, current.getHost().getSupplier()));
@@ -1105,25 +1205,25 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			return new BundleDescription[0];
 		}
 		ExportPackageDescription[] packages = root.getResolvedImports();
-		ArrayList resolvedImports = new ArrayList(packages.length);
+		ArrayList<BundleDescription> resolvedImports = new ArrayList<BundleDescription>(packages.length);
 		for (int i = 0; i < packages.length; i++) {
 			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter())) {
 				resolvedImports.add(packages[i].getExporter());
 			}
 		}
-		return (BundleDescription[]) resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
+		return resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
 	}
 
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private void removeArcs(List edges, List roots, Map counts) {
-		for (Iterator j = roots.iterator(); j.hasNext();) {
+	private void removeArcs(List<Relation> edges, List<Object> roots, Map<Object, Integer> counts) {
+		for (Iterator<Object> j = roots.iterator(); j.hasNext();) {
 			Object root = j.next();
 			for (int i = 0; i < edges.size(); i++) {
-				if (root.equals(((Relation) edges.get(i)).to)) {
-					Object input = ((Relation) edges.get(i)).from;
-					Integer count = (Integer) counts.get(input);
+				if (root.equals(edges.get(i).to)) {
+					Object input = edges.get(i).from;
+					Integer count = counts.get(input);
 					if (count != null) {
 						counts.put(input, new Integer(count.intValue() - 1));
 					}
@@ -1135,15 +1235,15 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private List computeNodeOrder(List edges) {
-		Map counts = computeCounts(edges);
-		List nodes = new ArrayList(counts.size());
+	private List<Object> computeNodeOrder(List<Relation> edges) {
+		Map<Object, Integer> counts = computeCounts(edges);
+		List<Object> nodes = new ArrayList<Object>(counts.size());
 		while (!counts.isEmpty()) {
-			List roots = findRootNodes(counts);
+			List<Object> roots = findRootNodes(counts);
 			if (roots.isEmpty()) {
 				break;
 			}
-			for (Iterator i = roots.iterator(); i.hasNext();) {
+			for (Iterator<Object> i = roots.iterator(); i.hasNext();) {
 				counts.remove(i.next());
 			}
 			nodes.addAll(roots);
@@ -1155,16 +1255,16 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private Map computeCounts(List mappings) {
-		Map counts = new HashMap(5);
+	private Map<Object, Integer> computeCounts(List<Relation> mappings) {
+		Map<Object, Integer> counts = new HashMap<Object, Integer>(5);
 		for (int i = 0; i < mappings.size(); i++) {
-			Object from = ((Relation) mappings.get(i)).from;
-			Integer fromCount = (Integer) counts.get(from);
-			Object to = ((Relation) mappings.get(i)).to;
+			Object from = mappings.get(i).from;
+			Integer fromCount = counts.get(from);
+			Object to = mappings.get(i).to;
 			if (to == null)
 				counts.put(from, new Integer(0));
 			else {
-				if (((Integer) counts.get(to)) == null)
+				if (counts.get(to) == null)
 					counts.put(to, new Integer(0));
 				fromCount = fromCount == null ? new Integer(1) : new Integer(fromCount.intValue() + 1);
 				counts.put(from, fromCount);
@@ -1176,11 +1276,11 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private List findRootNodes(Map counts) {
-		List result = new ArrayList(5);
-		for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
+	private List<Object> findRootNodes(Map<Object, Integer> counts) {
+		List<Object> result = new ArrayList<Object>(5);
+		for (Iterator<Object> i = counts.keySet().iterator(); i.hasNext();) {
 			Object node = i.next();
-			int count = ((Integer) counts.get(node)).intValue();
+			int count = counts.get(node).intValue();
 			if (count == 0) {
 				result.add(node);
 			}
@@ -1189,7 +1289,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	private void initializePluginClassLoaders() {
-		pluginClassLoaders = new ArrayList(10);
+		pluginClassLoaders = new ArrayList<WrappedClassLoader>(10);
 		// ant.core should always be present
 		pluginClassLoaders.add(new WrappedClassLoader(AntCorePlugin.getPlugin().getBundle()));
 	}
@@ -1199,8 +1299,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * 
 	 * @return the list of default and custom tasks.
 	 */
-	public List getTasks() {
-		List result = new ArrayList(10);
+	public List<Task> getTasks() {
+		List<Task> result = new ArrayList<Task>(10);
 		if (defaultTasks != null && !defaultTasks.isEmpty()) {
 			result.addAll(defaultTasks);
 		}
@@ -1216,12 +1316,12 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * 
 	 * @return the list of default and custom tasks.
 	 */
-	public List getRemoteTasks() {
-		List result = new ArrayList(10);
+	public List<Task> getRemoteTasks() {
+		List<Task> result = new ArrayList<Task>(10);
 		if (defaultTasks != null && !defaultTasks.isEmpty()) {
-			Iterator iter= defaultTasks.iterator();
+			Iterator<Task> iter= defaultTasks.iterator();
 			while (iter.hasNext()) {
-				Task task = (Task) iter.next();
+				Task task = iter.next();
 				if (!task.isEclipseRuntimeRequired()) {
 					result.add(task);
 				}
@@ -1264,8 +1364,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @return the list of default and custom properties.
 	 * @since 3.0
 	 */
-	public List getProperties() {
-		List result = new ArrayList(10);
+	public List<Property> getProperties() {
+		List<Property> result = new ArrayList<Property>(10);
 		if (defaultProperties != null && !defaultProperties.isEmpty()) {
 			result.addAll(defaultProperties);
 		}
@@ -1282,12 +1382,12 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @return the list of default and custom properties.
 	 * @since 3.0
 	 */
-	public List getRemoteAntProperties() {
-		List result = new ArrayList(10);
+	public List<Property> getRemoteAntProperties() {
+		List<Property> result = new ArrayList<Property>(10);
 		if (defaultProperties != null && !defaultProperties.isEmpty()) {
-			Iterator iter= defaultProperties.iterator();
+			Iterator<Property> iter= defaultProperties.iterator();
 			while (iter.hasNext()) {
-				Property property = (Property) iter.next();
+				Property property = iter.next();
 				if (!property.isEclipseRuntimeRequired()) {
 					result.add(property);
 				}
@@ -1311,7 +1411,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		if (!performStringSubstition || customPropertyFiles == null || customPropertyFiles.length == 0) {
 			return customPropertyFiles;
 		}
-		List files= new ArrayList(customPropertyFiles.length);
+		List<String> files= new ArrayList<String>(customPropertyFiles.length);
 		for (int i = 0; i < customPropertyFiles.length; i++) {
 			String filename= customPropertyFiles[i];
 			 try {
@@ -1322,7 +1422,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				files.add(filename);
 			}
 		}
-		return (String[])files.toArray(new String[files.size()]);
+		return files.toArray(new String[files.size()]);
 	}
 	
 	/**
@@ -1434,8 +1534,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * 
 	 * @return all of the defined types
 	 */
-	public List getTypes() {
-		List result = new ArrayList(10);
+	public List<Type> getTypes() {
+		List<Type> result = new ArrayList<Type>(10);
 		if (defaultTypes != null && !defaultTypes.isEmpty()) {
 			result.addAll(defaultTypes);
 		}
@@ -1451,12 +1551,12 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * 
 	 * @return the list of default and custom types.
 	 */
-	public List getRemoteTypes() {
-		List result = new ArrayList(10);
+	public List<Type> getRemoteTypes() {
+		List<Type> result = new ArrayList<Type>(10);
 		if (defaultTypes != null && !defaultTypes.isEmpty()) {
-			Iterator iter= defaultTypes.iterator();
+			Iterator<Type> iter= defaultTypes.iterator();
 			while (iter.hasNext()) {
-				Type type = (Type) iter.next();
+				Type type = iter.next();
 				if (!type.isEclipseRuntimeRequired()) {
 					result.add(type);
 				}
@@ -1473,8 +1573,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * 
 	 * @return all of the default types
 	 */
-	public List getDefaultTypes() {
-		List result = new ArrayList(10);
+	public List<Type> getDefaultTypes() {
+		List<Type> result = new ArrayList<Type>(10);
 		if (defaultTypes != null && !defaultTypes.isEmpty()) {
 			result.addAll(defaultTypes);
 		}
@@ -1486,8 +1586,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * 
 	 * @return all of the default tasks
 	 */
-	public List getDefaultTasks() {
-		List result = new ArrayList(10);
+	public List<Task> getDefaultTasks() {
+		List<Task> result = new ArrayList<Task>(10);
 		if (defaultTasks != null && !defaultTasks.isEmpty()) {
 			result.addAll(defaultTasks);
 		}
@@ -1500,8 +1600,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @return all of the default properties
 	 * @since 3.0
 	 */
-	public List getDefaultProperties() {
-		List result = new ArrayList(10);
+	public List<Property> getDefaultProperties() {
+		List<Property> result = new ArrayList<Property>(10);
 		if (defaultProperties != null && !defaultProperties.isEmpty()) {
 			result.addAll(defaultProperties);
 		}
@@ -1516,35 +1616,39 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		if (list == null || list.trim().equals(IAntCoreConstants.EMPTY_STRING)) {
 			return new String[0];
 		}
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 		for (StringTokenizer tokens = new StringTokenizer(list, separator); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			if (!token.equals(IAntCoreConstants.EMPTY_STRING)) {
 				result.add(token);
 			}
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
 	 * Updates the underlying plug-in preferences to the current state.
 	 */
 	public void updatePluginPreferences() {
-		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
-		prefs.removePropertyChangeListener(this);
-		updateTasks(prefs);
-		updateTypes(prefs);
-		updateAntHomeEntries(prefs);
-		updateAdditionalEntries(prefs);
-		updateProperties(prefs);
-		updatePropertyFiles(prefs);
-		boolean classpathChanged= AntCorePlugin.getPlugin().getPluginPreferences().needsSaving();
-		AntCorePlugin.getPlugin().savePluginPreferences();
-		if (classpathChanged) {
-			prefs.setValue(IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED, true);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(AntCorePlugin.PI_ANTCORE);
+		if(node != null) {
+			node.removePreferenceChangeListener(prefListener);
+			Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
+			updateTasks(prefs);
+			updateTypes(prefs);
+			updateAntHomeEntries(prefs);
+			updateAdditionalEntries(prefs);
+			updateProperties(prefs);
+			updatePropertyFiles(prefs);
+			boolean classpathChanged= AntCorePlugin.getPlugin().getPluginPreferences().needsSaving();
+			AntCorePlugin.getPlugin().savePluginPreferences();
+			if (classpathChanged) {
+				prefs.setValue(IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED, true);
+			}
+			prefs.setValue(IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED, false);
+			node.addPreferenceChangeListener(prefListener);
 		}
-		prefs.setValue(IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED, false);
-		prefs.addPropertyChangeListener(this);
+		
 	}
 
 	protected void updateTasks(Preferences prefs) {
@@ -1617,9 +1721,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		prefs.setValue("urls", IAntCoreConstants.EMPTY_STRING); //old constant removed  //$NON-NLS-1$
 		String serialized= IAntCoreConstants.EMPTY_STRING;
 		IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
-		List userLibs= getUserLibraries();
+		List<IAntClasspathEntry> userLibs= getUserLibraries();
 		if (userLibs == null) {
-			userLibs= new ArrayList();
+			userLibs= new ArrayList<IAntClasspathEntry>();
 		} 
 		if (toolsJarEntry != null) {
 			userLibs.add(toolsJarEntry);
@@ -1765,7 +1869,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @since 3.0
 	 */
 	public URL[] getRemoteAntURLs() {
-		List result = new ArrayList(40);
+		List<URL> result = new ArrayList<URL>(40);
 		if (antHomeEntries != null) {
 			for (int i = 0; i < antHomeEntries.length; i++) {
 				IAntClasspathEntry entry = antHomeEntries[i];
@@ -1780,14 +1884,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		if (extraClasspathURLs != null) {
 			for (int i = 0; i < extraClasspathURLs.size(); i++) {
-				IAntClasspathEntry entry = (IAntClasspathEntry) extraClasspathURLs.get(i);
+				IAntClasspathEntry entry = extraClasspathURLs.get(i);
 				if (!entry.isEclipseRuntimeRequired()) {
 					result.add(entry.getEntryURL());
 				}
 			}
 		}
 		
-		return (URL[]) result.toArray(new URL[result.size()]);
+		return result.toArray(new URL[result.size()]);
 	}
 	
 	/**
@@ -1799,6 +1903,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @since 3.0
 	 */
 	public IAntClasspathEntry[]getContributedClasspathEntries() {
-		return (IAntClasspathEntry[]) extraClasspathURLs.toArray(new IAntClasspathEntry[extraClasspathURLs.size()]);
+		return extraClasspathURLs.toArray(new IAntClasspathEntry[extraClasspathURLs.size()]);
 	}
 }

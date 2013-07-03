@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2013 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH,
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials
@@ -32,6 +32,7 @@ import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -234,7 +235,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getIndentPrefixes(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
-		List list= new ArrayList();
+		List<String> list= new ArrayList<String>();
 
 		// prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
 				
@@ -265,7 +266,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 
 		list.add(IAntCoreConstants.EMPTY_STRING);
 		
-		return (String[]) list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 	
 	/*
@@ -285,7 +286,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
     * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getHyperlinkDetectorTargets(org.eclipse.jface.text.source.ISourceViewer)
     */
 	protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
-		Map targets = super.getHyperlinkDetectorTargets(sourceViewer);
+		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets(sourceViewer);
 		targets.put("org.eclipse.ant.ui.buildFiles", fEditor); //$NON-NLS-1$
 		return targets;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,14 +29,14 @@ public class SteppingTests extends AbstractAntDebugTest {
      * bug 84400
      */
     public void testStepBackFromAntCall() throws Exception {
-		antCallStack(false, 12, DebugEvent.STEP_OVER, "default: echo", 7);
+		antCallStack(false, 12, DebugEvent.STEP_OVER, "default: echo", 7); //$NON-NLS-1$
     }
     
     /**
      * bug 84400
      */
     public void testStepBackFromAntCallSepVM() throws Exception {
-		antCallStack(true, 12, DebugEvent.STEP_OVER, "default: echo", 7);
+		antCallStack(true, 12, DebugEvent.STEP_OVER, "default: echo", 7); //$NON-NLS-1$
     }
 	
 	 /**
@@ -45,9 +45,9 @@ public class SteppingTests extends AbstractAntDebugTest {
     public void testStepIntoAntCall() throws Exception {
         AntThread thread= null;
         try {
-            thread= antCallStack(false, 5, DebugEvent.STEP_INTO, "pre-call: echo", 16, false);
+            thread= antCallStack(false, 5, DebugEvent.STEP_INTO, "pre-call: echo", 16, false); //$NON-NLS-1$
             IStackFrame[] frames= thread.getStackFrames();
-            assertFrame("call", 10, (AntStackFrame)frames[1]);
+            assertFrame("call", 10, (AntStackFrame)frames[1]); //$NON-NLS-1$
         } finally {
             terminateAndRemove(thread);
             removeAllBreakpoints();
@@ -60,9 +60,9 @@ public class SteppingTests extends AbstractAntDebugTest {
     public void testStepIntoAntCallSepVM() throws Exception {
         AntThread thread= null;
         try {
-            thread= antCallStack(true, 5, DebugEvent.STEP_INTO, "pre-call: echo", 16, false);
+            thread= antCallStack(true, 5, DebugEvent.STEP_INTO, "pre-call: echo", 16, false); //$NON-NLS-1$
             IStackFrame[] frames= thread.getStackFrames();
-            assertFrame("call", 10, (AntStackFrame)frames[1]);
+            assertFrame("call", 10, (AntStackFrame)frames[1]); //$NON-NLS-1$
         } finally {
             terminateAndRemove(thread);
             removeAllBreakpoints();
@@ -70,36 +70,36 @@ public class SteppingTests extends AbstractAntDebugTest {
     }
 	
 	 public void testStepOverAntCall() throws Exception {
-		 antCallStack(false, 5, DebugEvent.STEP_OVER, "default: echo", 7);
+		 antCallStack(false, 5, DebugEvent.STEP_OVER, "default: echo", 7); //$NON-NLS-1$
 	 }
 	 
 	 public void testStepOverAntCallSepVM() throws Exception {
-		 antCallStack(true, 5, DebugEvent.STEP_OVER, "default: echo", 7);
+		 antCallStack(true, 5, DebugEvent.STEP_OVER, "default: echo", 7); //$NON-NLS-1$
 	 }
      
      /**
       * bug 96022
       */
      public void testStepOverAntCallPastOtherAntCalls() throws Exception {
-         debugStack(false, 7, DebugEvent.STEP_OVER, "default: echo", 9, "96022", true);
+         debugStack(false, 7, DebugEvent.STEP_OVER, "default: echo", 9, "96022", true); //$NON-NLS-1$ //$NON-NLS-2$
      }
      /**
       * bug 96022
       */
      public void testStepOverAntCallPastOtherAntCallsSepVm() throws Exception {
-        debugStack(true, 7, DebugEvent.STEP_OVER, "default: echo", 9, "96022", true);
+        debugStack(true, 7, DebugEvent.STEP_OVER, "default: echo", 9, "96022", true); //$NON-NLS-1$ //$NON-NLS-2$
      }
 	 
 	 public void testStepOverAntCallHitBreakpoint() throws Exception {
-		 String fileName = "debugAntCall";
-		 createLineBreakpoint(12, fileName + ".xml");
-		 antCallStack(false, 5, DebugEvent.BREAKPOINT, "call: sleep", 12);
+		 String fileName = "debugAntCall"; //$NON-NLS-1$
+		 createLineBreakpoint(12, fileName + ".xml"); //$NON-NLS-1$
+		 antCallStack(false, 5, DebugEvent.BREAKPOINT, "call: sleep", 12); //$NON-NLS-1$
 	 }
 	 
 	 public void testStepOverAntCallHitBreakpointSepVM() throws Exception {
-		 String fileName = "debugAntCall";
-		 createLineBreakpoint(12, fileName + ".xml");
-		 antCallStack(true, 5, DebugEvent.BREAKPOINT, "call: sleep", 12);
+		 String fileName = "debugAntCall"; //$NON-NLS-1$
+		 createLineBreakpoint(12, fileName + ".xml"); //$NON-NLS-1$
+		 antCallStack(true, 5, DebugEvent.BREAKPOINT, "call: sleep", 12); //$NON-NLS-1$
 	 }
     
 	private AntThread antCallStack(boolean sepVM, int lineNumber, int kind, String frameName, int frameLineNumber) throws CoreException {
@@ -107,16 +107,16 @@ public class SteppingTests extends AbstractAntDebugTest {
 	}
     
 	private AntThread antCallStack(boolean sepVM, int lineNumber, int kind, String frameName, int frameLineNumber, boolean terminate) throws CoreException {
-        String fileName = "debugAntCall";
+        String fileName = "debugAntCall"; //$NON-NLS-1$
         return debugStack(sepVM, lineNumber, kind, frameName, frameLineNumber, fileName, terminate);
     }
 
 	private AntThread debugStack(boolean sepVM, int lineNumber, int kind, String frameName, int frameLineNumber, String fileName, boolean terminate) throws CoreException, DebugException {
-		ILineBreakpoint bp = createLineBreakpoint(lineNumber, fileName + ".xml");
+		ILineBreakpoint bp = createLineBreakpoint(lineNumber, fileName + ".xml"); //$NON-NLS-1$
 		AntThread thread= null;
 		try {
 			if (sepVM) {
-				fileName+="SepVM";
+				fileName+="SepVM"; //$NON-NLS-1$
 			}
 			ILaunchConfiguration config= getLaunchConfiguration(fileName);
 			thread= launchToLineBreakpoint(config, bp); 
@@ -143,6 +143,8 @@ public class SteppingTests extends AbstractAntDebugTest {
 			case DebugEvent.STEP_INTO:
 				stepInto(frame);
 				break;
+			default:
+				break;
 		}
 		assertFrame(thread, frameName, frameLineNumber);
 	}
@@ -155,8 +157,8 @@ public class SteppingTests extends AbstractAntDebugTest {
     private AntStackFrame assertFrame(String frameName, int lineNumber, AntStackFrame frame) {
         String actualFrameName= frame.getName();
         int actualLineNumber= frame.getLineNumber();
-        assertTrue("Name of stack frame incorrect. Expected " + frameName + " was: " + actualFrameName, frameName.equals(actualFrameName));
-        assertTrue("Line number of stack frame incorrect. Expected " + lineNumber + " was: " + actualLineNumber, lineNumber == actualLineNumber);
+        assertTrue("Name of stack frame incorrect. Expected " + frameName + " was: " + actualFrameName, frameName.equals(actualFrameName)); //$NON-NLS-1$ //$NON-NLS-2$
+        assertTrue("Line number of stack frame incorrect. Expected " + lineNumber + " was: " + actualLineNumber, lineNumber == actualLineNumber); //$NON-NLS-1$ //$NON-NLS-2$
         return frame;
     }
     
@@ -165,8 +167,8 @@ public class SteppingTests extends AbstractAntDebugTest {
      * @throws CoreException
      */
     public void testStepOutOfMacrodef() throws CoreException {
-    	String fileName = "macrodef";
-		debugStack(false, 8 , DebugEvent.STEP_OVER, "type: eclipseMacro", 16, fileName, true);
+    	String fileName = "macrodef"; //$NON-NLS-1$
+		debugStack(false, 8 , DebugEvent.STEP_OVER, "type: eclipseMacro", 16, fileName, true); //$NON-NLS-1$
     }
     
     /**
@@ -174,8 +176,8 @@ public class SteppingTests extends AbstractAntDebugTest {
      * @throws CoreException
      */
     public void testStepOutOfMacrodefSepVM() throws CoreException {
-    	String fileName = "macrodef";
-		debugStack(true, 8 , DebugEvent.STEP_OVER, "type: eclipseMacro", 16, fileName, true);
+    	String fileName = "macrodef"; //$NON-NLS-1$
+		debugStack(true, 8 , DebugEvent.STEP_OVER, "type: eclipseMacro", 16, fileName, true); //$NON-NLS-1$
     }
     
     /**
@@ -197,10 +199,10 @@ public class SteppingTests extends AbstractAntDebugTest {
     private void testMacroDef(boolean sepVM) throws CoreException, DebugException {
     	AntThread thread= null;
     	try {
-    		String fileName = "macrodef";
-    		thread= debugStack(sepVM, 16 , DebugEvent.STEP_INTO, "type: sequential", 0, fileName, false);
-    		debugFrame(DebugEvent.STEP_INTO, "type: echo", 8, thread);
-    		debugFrame(DebugEvent.STEP_OVER, "type: eclipseMacro", 17, thread);
+    		String fileName = "macrodef"; //$NON-NLS-1$
+    		thread= debugStack(sepVM, 16 , DebugEvent.STEP_INTO, "type: sequential", 0, fileName, false); //$NON-NLS-1$
+    		debugFrame(DebugEvent.STEP_INTO, "type: echo", 8, thread); //$NON-NLS-1$
+    		debugFrame(DebugEvent.STEP_OVER, "type: eclipseMacro", 17, thread); //$NON-NLS-1$
     	} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

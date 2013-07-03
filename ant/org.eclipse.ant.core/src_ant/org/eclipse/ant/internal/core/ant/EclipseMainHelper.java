@@ -15,11 +15,11 @@ import org.apache.tools.ant.Project;
 
 public class EclipseMainHelper {
 
-	protected void runProjectHelp(String buildFileLocation, Project eclipseAntProject) {
+	public void runProjectHelp(String buildFileLocation, Project eclipseAntProject) {
 		EclipseAntMain.run(new String[]{"-f", buildFileLocation, "-p"}, eclipseAntProject); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	protected void runUsage(String buildFileLocation, Project eclipseAntProject) {
+	public void runUsage(String buildFileLocation, Project eclipseAntProject) {
 		EclipseAntMain.run(new String[]{"-f", buildFileLocation, "-h"}, eclipseAntProject); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

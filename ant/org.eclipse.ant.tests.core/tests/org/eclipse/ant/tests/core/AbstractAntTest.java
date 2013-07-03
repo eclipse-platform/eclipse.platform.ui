@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,9 +52,9 @@ import org.eclipse.ui.progress.UIJob;
  */
 public abstract class AbstractAntTest extends TestCase {
 	
-	protected static final String BUILD_SUCCESSFUL= "BUILD SUCCESSFUL";
+	protected static final String BUILD_SUCCESSFUL= "BUILD SUCCESSFUL"; //$NON-NLS-1$
 	public static final String ANT_TEST_BUILD_LOGGER = "org.eclipse.ant.tests.core.support.testloggers.TestBuildLogger"; //$NON-NLS-1$
-	public static final String ANT_TEST_BUILD_LISTENER= "org.eclipse.ant.tests.core.support.testloggers.TestBuildListener";
+	public static final String ANT_TEST_BUILD_LISTENER= "org.eclipse.ant.tests.core.support.testloggers.TestBuildListener"; //$NON-NLS-1$
 	private static boolean welcomeClosed = false;
 	
 	/* (non-Javadoc)
@@ -76,7 +76,7 @@ public abstract class AbstractAntTest extends TestCase {
 		if(!welcomeClosed && PlatformUI.isWorkbenchRunning()) {
 			final IWorkbench wb = PlatformUI.getWorkbench();
 			if(wb != null) {
-				UIJob job = new UIJob("close welcome screen for Ant test suite") {
+				UIJob job = new UIJob("close welcome screen for Ant test suite") { //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
 						if(window != null) {
@@ -137,20 +137,20 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	protected IFile getBuildFile(String buildFileName) {
 		IFile file = getProject().getFolder(ProjectHelper.BUILDFILES_FOLDER).getFile(buildFileName);
-		assertTrue("Could not find build file named: " + buildFileName, file.exists());
+		assertTrue("Could not find build file named: " + buildFileName, file.exists()); //$NON-NLS-1$
 		return file;
 	}
 	
 	protected IFolder getWorkingDirectory(String workingDirectoryName) {
 		IFolder folder = getProject().getFolder(workingDirectoryName);
-		assertTrue("Could not find the working directory named: " + workingDirectoryName, folder.exists());
+		assertTrue("Could not find the working directory named: " + workingDirectoryName, folder.exists()); //$NON-NLS-1$
 		return folder;
 	}
 	
 	protected IFile checkFileExists(String fileName) throws CoreException {
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 		IFile file = getProject().getFolder(ProjectHelper.BUILDFILES_FOLDER).getFile(fileName);
-		assertTrue("Could not find file named: " + fileName, file.exists());
+		assertTrue("Could not find file named: " + fileName, file.exists()); //$NON-NLS-1$
 		return file;
 	}
 	
@@ -163,7 +163,7 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	public void run(String buildFileName, String[] args, boolean retrieveTargets) throws CoreException {
-		run(buildFileName, args, retrieveTargets, "");
+		run(buildFileName, args, retrieveTargets, ""); //$NON-NLS-1$
 	}
 	
 	public void run(String buildFileName, String[] args, boolean retrieveTargets, String workingDir) throws CoreException {
@@ -178,10 +178,12 @@ public abstract class AbstractAntTest extends TestCase {
 			targets= getTargetNames(buildFileName);
 		}
 		if (workingDir.length() > 0) {
-			workingDir= getWorkingDirectory(workingDir).getLocation().toFile().getAbsolutePath();
+			runner.run(buildFile, targets, args, getWorkingDirectory(workingDir).getLocation().toFile().getAbsolutePath(), true);
 		} 
-		runner.run(buildFile, targets, args, workingDir, true);
-		assertTrue("Build starts did not equal build finishes", AntTestChecker.getDefault().getBuildsStartedCount() == AntTestChecker.getDefault().getBuildsFinishedCount());
+		else {
+			runner.run(buildFile, targets, args, workingDir, true);
+		}
+		assertTrue("Build starts did not equal build finishes", AntTestChecker.getDefault().getBuildsStartedCount() == AntTestChecker.getDefault().getBuildsFinishedCount()); //$NON-NLS-1$
 	}
 	
 	protected TargetInfo[] getTargets(String buildFileName) throws CoreException {
@@ -266,13 +268,13 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	protected void assertSuccessful() {
-		List messages= AntTestChecker.getDefault().getMessages();
-		String success= (String)messages.get(messages.size() - 1);
-		assertEquals("Build was not flagged as successful: " + success, BUILD_SUCCESSFUL, success);
+		List<String> messages= AntTestChecker.getDefault().getMessages();
+		String success= messages.get(messages.size() - 1);
+		assertEquals("Build was not flagged as successful: " + success, BUILD_SUCCESSFUL, success); //$NON-NLS-1$
 	}
 	
 	protected String getPropertyFileName() {
-		return getProject().getFolder(ProjectHelper.RESOURCES_FOLDER).getFile("test.properties").getLocation().toFile().getAbsolutePath();
+		return getProject().getFolder(ProjectHelper.RESOURCES_FOLDER).getFile("test.properties").getLocation().toFile().getAbsolutePath(); //$NON-NLS-1$
 	}
 	
 	protected void restorePreferenceDefaults() {

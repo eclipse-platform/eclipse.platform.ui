@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ package org.eclipse.ant.tests.ui.editor.support;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
-
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
 import org.eclipse.ant.internal.ui.model.AntModel;
@@ -25,6 +23,7 @@ import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistantExtension2;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.junit.Assert;
 import org.w3c.dom.Element;
 
 public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
@@ -47,25 +46,31 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 		super(model);
         fContentAssistant= new IContentAssistantExtension2() {
             public void setEmptyMessage(String message) {
+            	//do nothing
             }
         
             public void setStatusMessage(String message) {
+            	//do nothing
             }
         
             public void setStatusLineVisible(boolean show) {
+            	//do nothing
             }
         
             public void setShowEmptyList(boolean showEmpty) {
+            	//do nothing
             }
         
             public void setRepeatedInvocationMode(boolean cycling) {
+            	//do nothing
             }
         
             public void removeCompletionListener(ICompletionListener listener) {
+            	//do nothing
             }
         
             public void addCompletionListener(ICompletionListener listener) {
-        
+            	//do nothing
             }        
         };
 	}
@@ -134,7 +139,7 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 		}
 		File tempFile = null;
         try {
-            tempFile = File.createTempFile("test", null);
+            tempFile = File.createTempFile("test", null); //$NON-NLS-1$
         } catch (IOException e) {
             Assert.fail(e.getMessage());
         }

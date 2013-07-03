@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,12 +124,12 @@ public class AntProjectNode extends AntElementNode {
 		return identifier.equals(getDefaultTargetName());
 	}
     
-    public List computeIdentifierOffsets(String identifier) {
+    public List<Integer> computeIdentifierOffsets(String identifier) {
         String textToSearch= getAntModel().getText(getOffset(), getLength());
         if (textToSearch == null || textToSearch.length() == 0 || identifier.length() == 0) {
         	return null;
         }
-        List results= new ArrayList(1);
+        List<Integer> results= new ArrayList<Integer>(1);
     	String newidentifier= new StringBuffer("\"").append(identifier).append('"').toString(); //$NON-NLS-1$
     	int defaultTargetNameOffset= textToSearch.indexOf(IAntCoreConstants.DEFAULT);
     	defaultTargetNameOffset= textToSearch.indexOf(newidentifier, defaultTargetNameOffset);

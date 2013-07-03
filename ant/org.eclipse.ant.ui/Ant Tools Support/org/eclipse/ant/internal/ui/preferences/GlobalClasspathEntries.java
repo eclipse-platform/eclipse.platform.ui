@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import java.util.List;
+
+import org.eclipse.ant.core.IAntClasspathEntry;
 
 public class GlobalClasspathEntries extends AbstractClasspathEntry {
 	private String fName;
@@ -53,7 +55,7 @@ public class GlobalClasspathEntries extends AbstractClasspathEntry {
      * Set the child entries of this classpath entry.
 	 * @param entries The child entries.
 	 */
-	public void setEntries(List entries) {
+	public void setEntries(List<IAntClasspathEntry> entries) {
 		fChildEntries= entries;
 	}
 	/**

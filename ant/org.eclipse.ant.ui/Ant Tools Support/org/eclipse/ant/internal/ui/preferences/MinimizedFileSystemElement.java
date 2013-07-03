@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,8 @@ import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 
 class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	private boolean populated = false;
-	private List folders = null;
-	private List files = null;
+	private List<MinimizedFileSystemElement> folders = null;
+	private List<MinimizedFileSystemElement> files = null;
 	private String name;
 	private boolean isDirectory = false;
 	private MinimizedFileSystemElement parent;
@@ -75,12 +75,12 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	private void addChild(MinimizedFileSystemElement child) {
 		if (child.isDirectory()) {
 			if (folders == null) {
-				 folders = new ArrayList(1);
+				 folders = new ArrayList<MinimizedFileSystemElement>(1);
 			}
 			folders.add(child);
 		} else {
 			if (files == null) {
-				 files = new ArrayList(1);
+				 files = new ArrayList<MinimizedFileSystemElement>(1);
 			}
 			files.add(child);
 		}
@@ -89,7 +89,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	 * Returns a list of the files that are immediate children. Use the supplied provider
 	 * if it needs to be populated.
 	 */
-	protected List getFiles(IImportStructureProvider provider) {
+	protected List<MinimizedFileSystemElement> getFiles(IImportStructureProvider provider) {
 		if (!populated) {
 			populate(provider);
 		}
@@ -104,7 +104,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	 * Returns a list of the folders that are immediate children. Use the supplied provider
 	 * if it needs to be populated.
 	 */
-	protected List getFolders(IImportStructureProvider provider) {
+	protected List<MinimizedFileSystemElement> getFolders(IImportStructureProvider provider) {
 		if (!populated) {
 			populate(provider);
 		}
@@ -113,7 +113,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 
 	}
 
-	protected List getFolders() {
+	protected List<MinimizedFileSystemElement> getFolders() {
 		if (folders == null){
 			 return Collections.EMPTY_LIST;
 		}
@@ -138,11 +138,11 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	 */
 	private void populate(IImportStructureProvider provider) {
 
-		List children = provider.getChildren(fileSystemObject);
+		List<Object> children = provider.getChildren(fileSystemObject);
 		if (children == null) {
-			children = new ArrayList(1);
+			children = new ArrayList<Object>(1);
 		}
-		Iterator childrenEnum = children.iterator();
+		Iterator<Object> childrenEnum = children.iterator();
 		while (childrenEnum.hasNext()) {
 			Object child = childrenEnum.next();
 

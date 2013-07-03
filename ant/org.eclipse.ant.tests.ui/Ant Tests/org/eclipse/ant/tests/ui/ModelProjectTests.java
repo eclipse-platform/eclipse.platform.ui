@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,10 +37,10 @@ public class ModelProjectTests extends TestCase {
 	 */
 	public void testsetNewProperty1() throws Exception {
 		AntModelProject p = new AntModelProject();
-		p.setNewProperty("p1", "p1_value");
-		assertTrue("the property map must have key 'p1'", p.getProperties().containsKey("p1"));
-		assertNotNull("getProperty() did not return 'p1'", p.getProperty("p1"));
-		assertNotNull("the property help must have 'p1'", PropertyHelper.getProperty(p, "p1"));
+		p.setNewProperty("p1", "p1_value"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("the property map must have key 'p1'", p.getProperties().containsKey("p1")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull("getProperty() did not return 'p1'", p.getProperty("p1")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull("the property help must have 'p1'", PropertyHelper.getProperty(p, "p1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -50,15 +50,15 @@ public class ModelProjectTests extends TestCase {
 	 */
 	public void testReset1() throws Exception {
 		AntModelProject p = new AntModelProject();
-		p.setDefault("foo");
-		p.addTarget("t1", new Target());
-		p.setName("project1");
-		p.setDescription("A test project with one target");
+		p.setDefault("foo"); //$NON-NLS-1$
+		p.addTarget("t1", new Target()); //$NON-NLS-1$
+		p.setName("project1"); //$NON-NLS-1$
+		p.setDescription("A test project with one target"); //$NON-NLS-1$
 		p.reset();
-		assertEquals("the name must be the empty string", p.getName(), IAntCoreConstants.EMPTY_STRING);
-		assertNull("the default target must be null", p.getDefaultTarget());
-		assertNull("the description must be null", p.getDescription());
-		assertEquals("The target list must be of size zero", p.getTargets().size(), 0);
+		assertEquals("the name must be the empty string", p.getName(), IAntCoreConstants.EMPTY_STRING); //$NON-NLS-1$
+		assertNull("the default target must be null", p.getDefaultTarget()); //$NON-NLS-1$
+		assertNull("the description must be null", p.getDescription()); //$NON-NLS-1$
+		assertEquals("The target list must be of size zero", p.getTargets().size(), 0); //$NON-NLS-1$
 	}
 	
 	/**
@@ -69,8 +69,8 @@ public class ModelProjectTests extends TestCase {
 	 */
 	public void testGetProprty1() throws Exception {
 		AntModelProject p = new AntModelProject();
-		p.setNewProperty("testGetProprty1", "p1_value");
-		assertNotNull("getProperty() did not return 'testGetProprty1'", p.getProperty("testGetProprty1"));
+		p.setNewProperty("testGetProprty1", "p1_value"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull("getProperty() did not return 'testGetProprty1'", p.getProperty("testGetProprty1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -80,8 +80,8 @@ public class ModelProjectTests extends TestCase {
 	 */
 	public void testGetProprty2() throws Exception {
 		AntModelProject p = new AntModelProject();
-		p.setUserProperty("testGetProprty2", "p2_value");
-		assertNotNull("getProperty() did not return 'testGetProprty2'", p.getProperty("testGetProprty2"));
+		p.setUserProperty("testGetProprty2", "p2_value"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull("getProperty() did not return 'testGetProprty2'", p.getProperty("testGetProprty2")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -92,8 +92,8 @@ public class ModelProjectTests extends TestCase {
 	 */
 	public void testGetReference1() throws Exception {
 		AntModelProject p = new AntModelProject();
-		p.addReference("testGetReference1", new Object());
-		assertNotNull("The reference 'testGetReference1' must exist", p.getReference("testGetReference1"));
+		p.addReference("testGetReference1", new Object()); //$NON-NLS-1$
+		assertNotNull("The reference 'testGetReference1' must exist", p.getReference("testGetReference1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -104,8 +104,8 @@ public class ModelProjectTests extends TestCase {
 	 */
 	public void testGetReference2() throws Exception {
 		AntModelProject p = new AntModelProject();
-		p.addIdReference("testGetReference2", new Object());
-		assertNotNull("the reference 'testGetReference2' must exist", p.getReference("testGetReference2"));
+		p.addIdReference("testGetReference2", new Object()); //$NON-NLS-1$
+		assertNotNull("the reference 'testGetReference2' must exist", p.getReference("testGetReference2")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -116,14 +116,14 @@ public class ModelProjectTests extends TestCase {
 	 */
 	public void testGetReference3() throws Exception {
 		AntModelProject p = new AntModelProject();
-		String obj = new String("hello");
-		UnknownElement ue = new UnknownElement("ue");
+		String obj = new String("hello"); //$NON-NLS-1$
+		UnknownElement ue = new UnknownElement("ue"); //$NON-NLS-1$
 		ue.setProject(p);
 		ue.setRealThing(obj);
-		p.addIdReference("testGetReference3", ue);
-		Object ref = p.getReference("testGetReference3");
-		assertNotNull("the reference 'testGetReference3' must exist", ref);
-		assertTrue("the reference must be a String", ref instanceof String);
+		p.addIdReference("testGetReference3", ue); //$NON-NLS-1$
+		Object ref = p.getReference("testGetReference3"); //$NON-NLS-1$
+		assertNotNull("the reference 'testGetReference3' must exist", ref); //$NON-NLS-1$
+		assertTrue("the reference must be a String", ref instanceof String); //$NON-NLS-1$
 	}
 	
 	/**
@@ -134,11 +134,11 @@ public class ModelProjectTests extends TestCase {
 	 */
 	public void testGetProperties1() throws Exception {
 		AntModelProject p = new AntModelProject();
-		p.setProperty("p1", "p1v");
-		p.setProperty("p2", "p2v");
-		p.setUserProperty("p3", "p3v");
+		p.setProperty("p1", "p1v"); //$NON-NLS-1$ //$NON-NLS-2$
+		p.setProperty("p2", "p2v"); //$NON-NLS-1$ //$NON-NLS-2$
+		p.setUserProperty("p3", "p3v"); //$NON-NLS-1$ //$NON-NLS-2$
 		//3 above and 'basedir'
-		assertEquals("there must be 4 properties returned", p.getProperties().size(), 4);
+		assertEquals("there must be 4 properties returned", p.getProperties().size(), 4); //$NON-NLS-1$
 	}
 	
 	/**
@@ -151,12 +151,12 @@ public class ModelProjectTests extends TestCase {
 		AntModelProject p = new AntModelProject();
 		Path path = new Path(p);
 		AntClassLoader loader = p.createClassLoader(path);
-		assertNotNull("A classloader should have been created", loader);
+		assertNotNull("A classloader should have been created", loader); //$NON-NLS-1$
 		//create a 'new' one, where passing null causes the classloader for the project path to be returned
 		AntClassLoader loader2 = p.createClassLoader(null);
-		assertNotNull("A classloader for a null path should return the project classloader", loader2);
+		assertNotNull("A classloader for a null path should return the project classloader", loader2); //$NON-NLS-1$
 		//pointer compare, they should reference the same class loader
-		assertTrue("The class loaders should be the same object", loader == loader2);
+		assertTrue("The class loaders should be the same object", loader == loader2); //$NON-NLS-1$
 	}
 	
 	/**
@@ -166,12 +166,13 @@ public class ModelProjectTests extends TestCase {
 	 */
 	public void testGetReferences1() throws Exception { 
 		AntModelProject p = new AntModelProject();
-		p.addReference("testGetReferences1", new Object());
+		p.addReference("testGetReferences1", new Object()); //$NON-NLS-1$
 		//2 refs, ant.propertyHelper is auto-added
-		assertEquals("there should be one reference", p.getReferences().size(), 2);
-		Hashtable ht = p.getReferences();
+		assertEquals("there should be one reference", p.getReferences().size(), 2); //$NON-NLS-1$
+		//TODO ANT-1.9.1 API USE
+		Hashtable<String, Object> ht = p.getReferences();
 		ht.clear();
-		assertEquals("The references table should be empty", p.getReferences().size(), 0);
+		assertEquals("The references table should be empty", p.getReferences().size(), 0); //$NON-NLS-1$
 	}
 	
 	/**
@@ -181,10 +182,11 @@ public class ModelProjectTests extends TestCase {
 	public void testGetCopyOfReferences1() throws Exception {
 		AntModelProject p = new AntModelProject();
 		//2 refs, ant.propertyHelper is auto-added
-		p.addReference("testGetCopyOfReferences1", new Object());
-		assertEquals("there should be one reference", p.getReferences().size(), 2);
-		Map ht = p.getCopyOfReferences();
+		p.addReference("testGetCopyOfReferences1", new Object()); //$NON-NLS-1$
+		assertEquals("there should be one reference", p.getReferences().size(), 2); //$NON-NLS-1$
+		//TODO ANT-1.9.1 API USE
+		Map<String, Object> ht = p.getCopyOfReferences();
 		ht.clear();
-		assertEquals("There should be one reference", p.getReferences().size(), 2);
+		assertEquals("There should be one reference", p.getReferences().size(), 2); //$NON-NLS-1$
 	}
 }

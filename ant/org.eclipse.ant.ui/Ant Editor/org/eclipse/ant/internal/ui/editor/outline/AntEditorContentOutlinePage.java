@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2013 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -497,7 +497,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			ISelection s= getTreeViewer().getSelection();
 			if (s instanceof IStructuredSelection) {
 				IStructuredSelection ss= (IStructuredSelection) s;
-				List nodes= ss.toList();
+				List<?> nodes= ss.toList();
 				if (!nodes.contains(node)) {
 					s= (node == null ? StructuredSelection.EMPTY : new StructuredSelection(node));
 					getTreeViewer().setSelection(s, true);

@@ -18,7 +18,7 @@ public class AntTestPropertyValueProvider implements IAntPropertyValueProvider {
 	 * @see org.eclipse.ant.core.IAntPropertyValueProvider#getAntPropertyValue(java.lang.String)
 	 */
 	public String getAntPropertyValue(String antPropertyName) {
-		return "AntTestPropertyValueProvider";
+		return "AntTestPropertyValueProvider"; //$NON-NLS-1$
 	}
 
 }

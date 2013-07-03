@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 Object Factory Inc.
+ * Copyright (c) 2002, 2013 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import java.util.Comparator;
  */
 public class SortedMapFactory {
 
-	private static class IndirectStringComparator implements Comparator {
+	private static class IndirectStringComparator implements Comparator<Object> {
 		/**
 		 * @see java.util.Comparator#compare(Object, Object)
 		 */
@@ -31,7 +31,7 @@ public class SortedMapFactory {
 	private static final IndirectStringComparator fIndirectStringComp = new IndirectStringComparator();
 	private static final Factory fFactory = new Factory();
 
-	public static SortedMap getMap(IMapHolder holder, Comparator comp) {
+	public static SortedMap getMap(IMapHolder holder, Comparator<Object> comp) {
 		SortedMap map = (SortedMap) fFactory.getFree();
 		if (map == null)
 			map = new SortedMap();

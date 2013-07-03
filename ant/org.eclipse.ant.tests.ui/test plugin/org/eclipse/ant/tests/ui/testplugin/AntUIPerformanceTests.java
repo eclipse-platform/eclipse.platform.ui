@@ -28,7 +28,7 @@ public class AntUIPerformanceTests extends TestSuite {
     public static Test suite() {
 
         TestSuite suite = new AntUIPerformanceTests();
-        suite.setName("Ant UI Performance Unit Tests");
+        suite.setName("Ant UI Performance Unit Tests"); //$NON-NLS-1$
 		suite.addTest(new TestSuite(OpenAntEditorTest.class));
 		suite.addTest(new TestSuite(SeparateVMTests.class));
 		//suite.addTest(new TestSuite(NonInitialTypingTest.class));

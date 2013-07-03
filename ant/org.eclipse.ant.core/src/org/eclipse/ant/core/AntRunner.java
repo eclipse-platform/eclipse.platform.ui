@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -58,9 +57,9 @@ public class AntRunner implements IApplication {
 
 	private static boolean buildRunning= false;
 	protected String buildFileLocation = IAntCoreConstants.DEFAULT_BUILD_FILENAME;
-	protected List buildListeners;
+	protected List<String> buildListeners;
 	protected String[] targets;
-	protected Map userProperties;
+	protected Map<String, String> userProperties;
 	protected int messageOutputLevel = 2; // Project.MSG_INFO
 	protected String buildLoggerClassName;
 	protected String inputHandlerClassName;
@@ -117,7 +116,7 @@ public class AntRunner implements IApplication {
 	private String[] getArray(String args) {
 		StringBuffer sb = new StringBuffer();
 		boolean waitingForQuote = false;
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 		for (StringTokenizer tokens = new StringTokenizer(args, ", \"", true); tokens.hasMoreTokens();) { //$NON-NLS-1$
 			String token = tokens.nextToken();
 			if (waitingForQuote) {
@@ -133,7 +132,7 @@ public class AntRunner implements IApplication {
 					// test if we have something like -Dproperty="value"
 					if (result.size() > 0) {
 						int index = result.size() - 1;
-						String last = (String) result.get(index);
+						String last = result.get(index);
 						if (last.charAt(last.length() - 1) == '=') {
 							result.remove(index);
 							sb.append(last);
@@ -146,7 +145,7 @@ public class AntRunner implements IApplication {
 				}
 			}
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
@@ -184,7 +183,7 @@ public class AntRunner implements IApplication {
 			return;
 		}
 		if (buildListeners == null) {
-			buildListeners = new ArrayList(5);
+			buildListeners = new ArrayList<String>(5);
 		}
 		buildListeners.add(className);
 	}
@@ -210,9 +209,9 @@ public class AntRunner implements IApplication {
 	 * 
 	 * @param properties a Map of user-defined properties
 	 */
-	public void addUserProperties(Map properties) {
+	public void addUserProperties(Map<String, String> properties) {
 		if (userProperties == null) {
-			userProperties= new HashMap(properties);
+			userProperties = new HashMap<String, String>(properties);
 		} else {
 			userProperties.putAll(properties);
 		}
@@ -228,32 +227,23 @@ public class AntRunner implements IApplication {
 	 * @throws CoreException Thrown if problem is encountered determining the targets
 	 */
 	public synchronized TargetInfo[] getAvailableTargets() throws CoreException {
-		Class classInternalAntRunner= null;
+		Class<?> classInternalAntRunner= null;
 		Object runner= null;
 		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
 		try {
 			classInternalAntRunner = getInternalAntRunner();
 			runner = classInternalAntRunner.newInstance();
-			
 			basicConfigure(classInternalAntRunner, runner);
 					
 			// get the info for each targets
-			Method getTargets = classInternalAntRunner.getMethod("getTargets", null); //$NON-NLS-1$
-			Object results = getTargets.invoke(runner, null);
-			// get the default target
-			Method getDefault= classInternalAntRunner.getMethod("getDefaultTarget", null); //$NON-NLS-1$
-			String defaultName= (String)getDefault.invoke(runner, null);
+			Method getTargets = classInternalAntRunner.getMethod("getTargets", (Class[])null); //$NON-NLS-1$
+			Object results = getTargets.invoke(runner, (Object[])null);
 			// collect the info into target objects
-			List infos = (List) results;
-			
-			ProjectInfo project= new ProjectInfo((String)infos.remove(0), (String)infos.remove(0));
-			int i= 0;
-			Iterator iter= infos.iterator();
+			List<?> infos = (List<?>)results;
 			TargetInfo[] targetInfo= new TargetInfo[infos.size()];
-			List info;
-			while (iter.hasNext()) {
-				info= (List)iter.next();
-				targetInfo[i++] = new TargetInfo(project, (String)info.get(0), (String)info.get(1), (String[])info.get(2), info.get(0).equals(defaultName));
+			int i = 0;
+			for (Object target : infos) {
+				targetInfo[i++] = (TargetInfo) target;
 			}
 			return targetInfo;
 		} catch (NoClassDefFoundError e) {
@@ -276,7 +266,7 @@ public class AntRunner implements IApplication {
 		}
 	}
 
-	private void basicConfigure(Class classInternalAntRunner, Object runner) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	private void basicConfigure(Class<?> classInternalAntRunner, Object runner) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
 		setBuildFileLocation.invoke(runner, new Object[] { buildFileLocation });
 		
@@ -317,7 +307,7 @@ public class AntRunner implements IApplication {
 		}
 		buildRunning= true;
 		Object runner= null;
-		Class classInternalAntRunner= null;
+		Class<?> classInternalAntRunner= null;
 		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
 		try {
 			classInternalAntRunner = getInternalAntRunner();
@@ -374,8 +364,8 @@ public class AntRunner implements IApplication {
 			} 
 
 			// run
-			Method run = classInternalAntRunner.getMethod("run", null); //$NON-NLS-1$
-			run.invoke(runner, null);
+			Method run = classInternalAntRunner.getMethod("run", (Class[])null); //$NON-NLS-1$
+			run.invoke(runner, (Object[])null);
 		} catch (NoClassDefFoundError e) {
 			problemLoadingClass(e);
 		} catch (ClassNotFoundException e) {
@@ -392,13 +382,13 @@ public class AntRunner implements IApplication {
 		}
 	}
 
-	private Class getInternalAntRunner() throws ClassNotFoundException {
+	private Class<?> getInternalAntRunner() throws ClassNotFoundException {
 		ClassLoader loader = getClassLoader();
 		Thread.currentThread().setContextClassLoader(loader);
 		return loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 	}
 
-	private void setProperties(Object runner, Class classInternalAntRunner)
+	private void setProperties(Object runner, Class<?> classInternalAntRunner)
 		throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		// add properties
 		if (userProperties != null) {
@@ -420,7 +410,7 @@ public class AntRunner implements IApplication {
 	 * Handles OperationCanceledExceptions, nested NoClassDefFoundError and
 	 * nested ClassNotFoundException
 	 */
-	protected void handleInvocationTargetException(Object runner, Class classInternalAntRunner, InvocationTargetException e) throws CoreException {
+	protected void handleInvocationTargetException(Object runner, Class<?> classInternalAntRunner, InvocationTargetException e) throws CoreException {
 		Throwable realException = e.getTargetException();
 		if (realException instanceof OperationCanceledException) {
 			return;
@@ -507,7 +497,7 @@ public class AntRunner implements IApplication {
 			}
 			ClassLoader loader = getClassLoader();
 			Thread.currentThread().setContextClassLoader(loader);
-			Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
+			Class<?> classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 			Object runner = classInternalAntRunner.newInstance();
 			Method run = classInternalAntRunner.getMethod("run", new Class[] { Object.class }); //$NON-NLS-1$
 			run.invoke(runner, new Object[] { argArray });
@@ -523,10 +513,10 @@ public class AntRunner implements IApplication {
 			return AntCorePlugin.getPlugin().getNewClassLoader();
 		} 
 		AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
-		List fullClasspath= new ArrayList();
+		ArrayList<URL> fullClasspath= new ArrayList<URL>();
 		fullClasspath.addAll(Arrays.asList(customClasspath));
 		fullClasspath.addAll(Arrays.asList(preferences.getExtraClasspathURLs()));
-		return new AntClassLoader((URL[])fullClasspath.toArray(new URL[fullClasspath.size()]), preferences.getPluginClassLoaders());
+		return new AntClassLoader(fullClasspath.toArray(new URL[fullClasspath.size()]), preferences.getPluginClassLoaders());
 	}
 	
 	/**
@@ -596,7 +586,7 @@ public class AntRunner implements IApplication {
 	 * @see org.eclipse.equinox.app.IApplication#start(IApplicationContext)
 	 */
 	public Object start(IApplicationContext context) throws Exception {
-		Map contextArguments = context.getArguments();
+		Map<String, Object> contextArguments = context.getArguments();
 		return run(contextArguments.get(IApplicationContext.APPLICATION_ARGS));
 	}
 

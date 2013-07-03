@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,9 +104,9 @@ public class AntClasspathPage implements IAntBlockContainer {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		fModel= new ClasspathModel();
 		fModel.setAntHomeEntries(prefs.getDefaultAntHomeEntries());
-		List additionalEntries= getDefaultAdditionalEntries();
+		List<IAntClasspathEntry> additionalEntries= getDefaultAdditionalEntries();
 		if (additionalEntries != null) {
-			fModel.setGlobalEntries((IAntClasspathEntry[]) additionalEntries.toArray(new IAntClasspathEntry[additionalEntries.size()]));
+			fModel.setGlobalEntries(additionalEntries.toArray(new IAntClasspathEntry[additionalEntries.size()]));
 		} else {
 			fModel.setGlobalEntries(new IAntClasspathEntry[0]);
 		}
@@ -116,7 +116,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 		update();
 	}
 	
-	private List getDefaultAdditionalEntries() {
+	private List<IAntClasspathEntry> getDefaultAdditionalEntries() {
 		IAntClasspathEntry toolsJarEntry= AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry();
 		//TODO should use AntCorePreferences.getUserLibraries when promoted to API post 3.1
 		File libDir= new File(System.getProperty("user.home"), ".ant" + File.separatorChar + "lib"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -125,10 +125,10 @@ public class AntClasspathPage implements IAntBlockContainer {
 			urls= getLocationURLs(libDir);
 		} catch (MalformedURLException e) {
             AntUIPlugin.log(e);
-            return new ArrayList(0);
+            return new ArrayList<IAntClasspathEntry>(0);
 		}
 		
-		List entries= new ArrayList(urls.length);
+		List<IAntClasspathEntry> entries= new ArrayList<IAntClasspathEntry>(urls.length);
 		for (int i = 0; i < urls.length; i++) {
 			AntClasspathEntry entry= new AntClasspathEntry(urls[i]);
 			entries.add(entry);
@@ -151,7 +151,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 			 urls = new URL[1];
 			 String path = location.getPath();
 			 if (path.toLowerCase().endsWith(extension)) {
-				 urls[0] = location.toURL();
+				 urls[0] = location.toURI().toURL();
 			 }
 			 return urls;
 		 }
@@ -165,7 +165,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 		 
 		 urls = new URL[matches.length];
 		 for (int i = 0; i < matches.length; ++i) {
-			 urls[i] = matches[i].toURL();
+			 urls[i] = matches[i].toURI().toURL();
 		 }
 		 return urls;
 	 }

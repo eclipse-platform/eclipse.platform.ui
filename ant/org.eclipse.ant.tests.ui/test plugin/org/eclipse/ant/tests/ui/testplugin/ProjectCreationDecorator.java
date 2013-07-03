@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,9 @@ public class ProjectCreationDecorator {
 	private static boolean fgIsJ2SE15Compatible = false ;
 	
 	static {
-		String version = System.getProperty("java.specification.version");
+		String version = System.getProperty("java.specification.version"); //$NON-NLS-1$
 		if (version != null) {
-			String[] nums = version.split("\\.");
+			String[] nums = version.split("\\."); //$NON-NLS-1$
 			if (nums.length == 2) {
 				try {
 					int major = Integer.parseInt(nums[0]);
@@ -33,10 +33,11 @@ public class ProjectCreationDecorator {
 						}
 					}
 				} catch (NumberFormatException e) {
+					//do nothing
 				}
 			}
 		}
-	};
+	}
 	
 	/**
 	 * @return if the system property "java.specification.version" is 1.5 or greater

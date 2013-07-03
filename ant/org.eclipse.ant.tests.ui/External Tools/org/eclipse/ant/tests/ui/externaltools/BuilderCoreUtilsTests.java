@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * Constructor
 	 */
 	public BuilderCoreUtilsTests() {
-		super("BuilderCoreUtils Tests");
+		super("BuilderCoreUtils Tests"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -55,8 +55,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigFromBuildCommandArgs1() throws Exception {
-		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), new HashMap(), new String[] {BuilderCoreUtils.VERSION_1_0});
-		assertNull("There should be no configuration returned without the config handle and arguments", config);
+		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), new HashMap<String, String>(), new String[] {BuilderCoreUtils.VERSION_1_0});
+		assertNull("There should be no configuration returned without the config handle and arguments", config); //$NON-NLS-1$
 	}
 	
 	/**
@@ -67,9 +67,9 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigFromBuildCommandArgs2() throws Exception {
-		Map args = get20AntArgumentMap();
+		Map<String, String> args = get20AntArgumentMap();
 		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), args, new String[] {BuilderCoreUtils.VERSION_2_1});
-		assertNotNull("There should be a migrated configuration returned", config);
+		assertNotNull("There should be a migrated configuration returned", config); //$NON-NLS-1$
 	}
 	
 	/**
@@ -80,10 +80,10 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigFromBuildCommandArgs3() throws Exception {
-		Map args = new HashMap();
-		args.put(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE, "foo");
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE, "foo"); //$NON-NLS-1$
 		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), args, new String[] {BuilderCoreUtils.VERSION_2_1});
-		assertNull("There should be no configuration returned", config);
+		assertNull("There should be no configuration returned", config); //$NON-NLS-1$
 	}
 	
 	/**
@@ -95,11 +95,11 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigFromBuildCommandArgs4() throws Exception {
-		createExternalToolBuilder(getProject(), "testConfigFromBuildCommandArgs4", null);
-		Map args = new HashMap();
-		args.put(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE, "/.externalToolBuilders/testConfigFromBuildCommandArgs4.launch");
+		createExternalToolBuilder(getProject(), "testConfigFromBuildCommandArgs4", null); //$NON-NLS-1$
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE, "/.externalToolBuilders/testConfigFromBuildCommandArgs4.launch"); //$NON-NLS-1$
 		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), args, new String[] {BuilderCoreUtils.VERSION_2_1});
-		assertNull("There should be no configuration returned", config);
+		assertNull("There should be no configuration returned", config); //$NON-NLS-1$
 	}
 	
 	/**
@@ -111,11 +111,11 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigFromBuildCommandArgs5() throws Exception {
-		createExternalToolBuilder(getProject(), "testConfigFromBuildCommandArgs5", null);
-		Map args = new HashMap();
-		args.put(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE, "testConfigFromBuildCommandArgs5.launch");
+		createExternalToolBuilder(getProject(), "testConfigFromBuildCommandArgs5", null); //$NON-NLS-1$
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE, "testConfigFromBuildCommandArgs5.launch"); //$NON-NLS-1$
 		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), args, new String[] {BuilderCoreUtils.VERSION_2_1});
-		assertNotNull("There should be a configuration returned", config);
+		assertNotNull("There should be a configuration returned", config); //$NON-NLS-1$
 	}
 	
 	/**
@@ -127,11 +127,11 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigFromBuildCommandArgs6() throws Exception {
-		createExternalToolBuilder(getProject(), "testConfigFromBuildCommandArgs6", null);
-		Map args = new HashMap();
-		args.put(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE, "<project>/testConfigFromBuildCommandArgs6.launch");
+		createExternalToolBuilder(getProject(), "testConfigFromBuildCommandArgs6", null); //$NON-NLS-1$
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE, "<project>/testConfigFromBuildCommandArgs6.launch"); //$NON-NLS-1$
 		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), args, new String[] {BuilderCoreUtils.VERSION_2_1});
-		assertNull("There should be no configuration returned", config);
+		assertNull("There should be no configuration returned", config); //$NON-NLS-1$
 	}
 	
 	/**
@@ -143,11 +143,11 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigFromBuildCommandArgs7() throws Exception {
-		createExternalToolBuilder(getProject(), "testConfigFromBuildCommandArgs7", null);
-		Map args = new HashMap();
-		args.put(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE, "<project>/.externalToolBuilders/testConfigFromBuildCommandArgs7.launch");
+		createExternalToolBuilder(getProject(), "testConfigFromBuildCommandArgs7", null); //$NON-NLS-1$
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(BuilderCoreUtils.LAUNCH_CONFIG_HANDLE, "<project>/.externalToolBuilders/testConfigFromBuildCommandArgs7.launch"); //$NON-NLS-1$
 		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), args, new String[] {BuilderCoreUtils.VERSION_2_1});
-		assertNotNull("There should be a configuration returned", config);
+		assertNotNull("There should be a configuration returned", config); //$NON-NLS-1$
 	}
 	
 	/**
@@ -158,17 +158,17 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigureTriggers1() throws Exception {
-		Map args = new HashMap();
+		Map<String, String> args = new HashMap<String, String>();
 		args.put(IAntLaunchConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, null);
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
 		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_FULL);
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers1", args);
-		assertNotNull("the test builder must not be null", config);
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers1", args); //$NON-NLS-1$
+		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
-		assertNotNull("the test build command must not be null", command);
-		assertTrue("the command must be building FULL builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD));
+		assertNotNull("the test build command must not be null", command); //$NON-NLS-1$
+		assertTrue("the command must be building FULL builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD)); //$NON-NLS-1$
 		String[] names = AntLaunchingUtil.getTargetNames(config);
-		assertNull("should be no target names resolved from the config - null given for target names", names);
+		assertNull("should be no target names resolved from the config - null given for target names", names); //$NON-NLS-1$
 	}
 	
 	/**
@@ -179,17 +179,17 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigureTriggers2() throws Exception {
-		Map args = new HashMap();
-		args.put(IAntLaunchConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, "def,clean");
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(IAntLaunchConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, "def,clean"); //$NON-NLS-1$
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
 		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_FULL);
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers2", args);
-		assertNotNull("the test builder must not be null", config);
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers2", args); //$NON-NLS-1$
+		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
-		assertNotNull("the test build command must not be null", command);
-		assertTrue("the command must be building FULL builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD));
+		assertNotNull("the test build command must not be null", command); //$NON-NLS-1$
+		assertTrue("the command must be building FULL builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD)); //$NON-NLS-1$
 		String[] names = AntLaunchingUtil.getTargetNames(config);
-		assertNull("should be no target names resolved from the config - only available during a build", names);
+		assertNull("should be no target names resolved from the config - only available during a build", names); //$NON-NLS-1$
 	}
 	
 	/**
@@ -202,18 +202,18 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigureTriggers3() throws Exception {
-		Map args = new HashMap();
+		Map<String, String> args = new HashMap<String, String>();
 		args.put(IAntLaunchConstants.ATTR_ANT_MANUAL_TARGETS, null);
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
 		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers3", args);
-		assertNotNull("the test builder must not be null", config);
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers3", args); //$NON-NLS-1$
+		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
-		assertNotNull("the test build command must not be null", command);
-		assertTrue("the command must be building INCREMENTAL builds", command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD));
-		assertTrue("the command must be building FULL builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD));
+		assertNotNull("the test build command must not be null", command); //$NON-NLS-1$
+		assertTrue("the command must be building INCREMENTAL builds", command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD)); //$NON-NLS-1$
+		assertTrue("the command must be building FULL builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD)); //$NON-NLS-1$
 		String[] names = AntLaunchingUtil.getTargetNames(config);
-		assertNull("should be no target names resolved from the config - null given for target names", names);
+		assertNull("should be no target names resolved from the config - null given for target names", names); //$NON-NLS-1$
 	}
 	
 	/**
@@ -226,18 +226,18 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigureTriggers4() throws Exception {
-		Map args = new HashMap();
-		args.put(IAntLaunchConstants.ATTR_ANT_MANUAL_TARGETS, "def,inc");
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(IAntLaunchConstants.ATTR_ANT_MANUAL_TARGETS, "def,inc"); //$NON-NLS-1$
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
 		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers4", args);
-		assertNotNull("the test builder must not be null", config);
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers4", args); //$NON-NLS-1$
+		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
-		assertNotNull("the test build command must not be null", command);
-		assertTrue("the command must be building INCREMENTAL builds", command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD));
-		assertTrue("the command must be building FULL builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD));
+		assertNotNull("the test build command must not be null", command); //$NON-NLS-1$
+		assertTrue("the command must be building INCREMENTAL builds", command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD)); //$NON-NLS-1$
+		assertTrue("the command must be building FULL builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD)); //$NON-NLS-1$
 		String[] names = AntLaunchingUtil.getTargetNames(config);
-		assertNull("should be no target names resolved from the config - only available during a build", names);
+		assertNull("should be no target names resolved from the config - only available during a build", names); //$NON-NLS-1$
 	}
 	
 	/**
@@ -248,17 +248,17 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigureTriggers5() throws Exception {
-		Map args = new HashMap();
+		Map<String, String> args = new HashMap<String, String>();
 		args.put(IAntLaunchConstants.ATTR_ANT_AUTO_TARGETS, null);
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
 		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_AUTO);
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers5", args);
-		assertNotNull("the test builder must not be null", config);
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers5", args); //$NON-NLS-1$
+		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
-		assertNotNull("the test build command must not be null", command);
-		assertTrue("the command must be building AUTO builds", command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD));
+		assertNotNull("the test build command must not be null", command); //$NON-NLS-1$
+		assertTrue("the command must be building AUTO builds", command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD)); //$NON-NLS-1$
 		String[] names = AntLaunchingUtil.getTargetNames(config);
-		assertNull("should be no target names resolved from the config - null given for target names", names);
+		assertNull("should be no target names resolved from the config - null given for target names", names); //$NON-NLS-1$
 	}
 	
 	/**
@@ -269,17 +269,17 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigureTriggers6() throws Exception {
-		Map args = new HashMap();
-		args.put(IAntLaunchConstants.ATTR_ANT_AUTO_TARGETS, "def,auto");
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(IAntLaunchConstants.ATTR_ANT_AUTO_TARGETS, "def,auto"); //$NON-NLS-1$
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
 		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_AUTO);
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers6", args);
-		assertNotNull("the test builder must not be null", config);
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers6", args); //$NON-NLS-1$
+		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
-		assertNotNull("the test build command must not be null", command);
-		assertTrue("the command must be building AUTO builds", command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD));
+		assertNotNull("the test build command must not be null", command); //$NON-NLS-1$
+		assertTrue("the command must be building AUTO builds", command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD)); //$NON-NLS-1$
 		String[] names = AntLaunchingUtil.getTargetNames(config);
-		assertNull("should be no target names resolved from the config - only available during a build", names);
+		assertNull("should be no target names resolved from the config - only available during a build", names); //$NON-NLS-1$
 	}
 	
 	/**
@@ -290,17 +290,17 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigureTriggers7() throws Exception {
-		Map args = new HashMap();
+		Map<String, String> args = new HashMap<String, String>();
 		args.put(IAntLaunchConstants.ATTR_ANT_CLEAN_TARGETS, null);
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
 		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_CLEAN);
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers7", args);
-		assertNotNull("the test builder must not be null", config);
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers7", args); //$NON-NLS-1$
+		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
-		assertNotNull("the test build command must not be null", command);
-		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD));
+		assertNotNull("the test build command must not be null", command); //$NON-NLS-1$
+		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD)); //$NON-NLS-1$
 		String[] names = AntLaunchingUtil.getTargetNames(config);
-		assertNull("should be no target names resolved from the config - null given for target names", names);
+		assertNull("should be no target names resolved from the config - null given for target names", names); //$NON-NLS-1$
 	}
 	
 	/**
@@ -311,17 +311,17 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigureTriggers8() throws Exception {
-		Map args = new HashMap();
-		args.put(IAntLaunchConstants.ATTR_ANT_CLEAN_TARGETS, "def,clean");
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(IAntLaunchConstants.ATTR_ANT_CLEAN_TARGETS, "def,clean"); //$NON-NLS-1$
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
 		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_CLEAN);
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers6", args);
-		assertNotNull("the test builder must not be null", config);
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers6", args); //$NON-NLS-1$
+		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
-		assertNotNull("the test build command must not be null", command);
-		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD));
+		assertNotNull("the test build command must not be null", command); //$NON-NLS-1$
+		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD)); //$NON-NLS-1$
 		String[] names = AntLaunchingUtil.getTargetNames(config);
-		assertNull("should be no target names resolved from the config - only available during a build", names);
+		assertNull("should be no target names resolved from the config - only available during a build", names); //$NON-NLS-1$
 	}
 	
 	/**
@@ -333,19 +333,19 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigureTriggers9() throws Exception {
-		Map args = new HashMap();
-		args.put(IAntLaunchConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, "def");
-		args.put(IAntLaunchConstants.ATTR_ANT_MANUAL_TARGETS, "inc");
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(IAntLaunchConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, "def"); //$NON-NLS-1$
+		args.put(IAntLaunchConstants.ATTR_ANT_MANUAL_TARGETS, "inc"); //$NON-NLS-1$
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
-		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_CLEAN+","+IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers9", args);
-		assertNotNull("the test builder must not be null", config);
+		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_CLEAN+","+IExternalToolConstants.BUILD_TYPE_INCREMENTAL); //$NON-NLS-1$
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers9", args); //$NON-NLS-1$
+		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
-		assertNotNull("the test build command must not be null", command);
-		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD));
-		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD));
+		assertNotNull("the test build command must not be null", command); //$NON-NLS-1$
+		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD)); //$NON-NLS-1$
+		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD)); //$NON-NLS-1$
 		String[] names = AntLaunchingUtil.getTargetNames(config);
-		assertNull("should be no target names resolved from the config - only available during a build", names);
+		assertNull("should be no target names resolved from the config - only available during a build", names); //$NON-NLS-1$
 	}
 	
 	/**
@@ -357,27 +357,27 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigureTriggers10() throws Exception {
-		Map args = new HashMap();
-		args.put(IAntLaunchConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, "def");
-		args.put(IAntLaunchConstants.ATTR_ANT_MANUAL_TARGETS, "inc");
-		args.put(IAntLaunchConstants.ATTR_ANT_AUTO_TARGETS, "auto");
-		args.put(IAntLaunchConstants.ATTR_ANT_CLEAN_TARGETS, "clean");
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(IAntLaunchConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, "def"); //$NON-NLS-1$
+		args.put(IAntLaunchConstants.ATTR_ANT_MANUAL_TARGETS, "inc"); //$NON-NLS-1$
+		args.put(IAntLaunchConstants.ATTR_ANT_AUTO_TARGETS, "auto"); //$NON-NLS-1$
+		args.put(IAntLaunchConstants.ATTR_ANT_CLEAN_TARGETS, "clean"); //$NON-NLS-1$
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
-		String kinds = IExternalToolConstants.BUILD_TYPE_CLEAN+","+
-				IExternalToolConstants.BUILD_TYPE_INCREMENTAL+","+
-				IExternalToolConstants.BUILD_TYPE_AUTO+","+
+		String kinds = IExternalToolConstants.BUILD_TYPE_CLEAN+","+ //$NON-NLS-1$
+				IExternalToolConstants.BUILD_TYPE_INCREMENTAL+","+ //$NON-NLS-1$
+				IExternalToolConstants.BUILD_TYPE_AUTO+","+ //$NON-NLS-1$
 				IExternalToolConstants.BUILD_TYPE_FULL;
 		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, kinds);
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers10", args);
-		assertNotNull("the test builder must not be null", config);
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers10", args); //$NON-NLS-1$
+		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
-		assertNotNull("the test build command must not be null", command);
-		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD));
-		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD));
-		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD));
-		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD));
+		assertNotNull("the test build command must not be null", command); //$NON-NLS-1$
+		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD)); //$NON-NLS-1$
+		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD)); //$NON-NLS-1$
+		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD)); //$NON-NLS-1$
+		assertTrue("the command must be building CLEAN builds", command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD)); //$NON-NLS-1$
 		String[] names = AntLaunchingUtil.getTargetNames(config);
-		assertNull("should be no target names resolved from the config - only available during a build", names);
+		assertNull("should be no target names resolved from the config - only available during a build", names); //$NON-NLS-1$
 	}
 	
 	/**
@@ -387,11 +387,11 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	public void testIsUnmigratedConfig1() throws Exception {
 		ILaunchConfigurationType type = AbstractAntUITest.getLaunchManager().getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE);
 		if(type != null) {
-			ILaunchConfigurationWorkingCopy config = type.newInstance(BuilderCoreUtils.getBuilderFolder(getProject(), true), "testIsUnmigratedConfig1");
-			assertTrue("should be considered 'unmigrated'", BuilderCoreUtils.isUnmigratedConfig(config));
+			ILaunchConfigurationWorkingCopy config = type.newInstance(BuilderCoreUtils.getBuilderFolder(getProject(), true), "testIsUnmigratedConfig1"); //$NON-NLS-1$
+			assertTrue("should be considered 'unmigrated'", BuilderCoreUtils.isUnmigratedConfig(config)); //$NON-NLS-1$
 		}
 		else {
-			fail("could not find the Ant builder launch configuration type");
+			fail("could not find the Ant builder launch configuration type"); //$NON-NLS-1$
 		}
 	}
 	
@@ -400,8 +400,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testIsUnmigratedConfig2() throws Exception {
-		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testIsUnmigratedConfig2", null);
-		assertFalse("Shoudl not be considered 'unmigrated'", BuilderCoreUtils.isUnmigratedConfig(config));
+		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testIsUnmigratedConfig2", null); //$NON-NLS-1$
+		assertFalse("Shoudl not be considered 'unmigrated'", BuilderCoreUtils.isUnmigratedConfig(config)); //$NON-NLS-1$
 	}
 	
 	/**
@@ -412,9 +412,9 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testToBuildCommand1() throws Exception {
-		ILaunchConfigurationWorkingCopy copy = createExternalToolBuilderWorkingCopy(getProject(), "testToBuildCommand1", null);
+		ILaunchConfigurationWorkingCopy copy = createExternalToolBuilderWorkingCopy(getProject(), "testToBuildCommand1", null); //$NON-NLS-1$
 		ICommand command = BuilderCoreUtils.toBuildCommand(getProject(), copy, getProject().getDescription().newCommand());
-		assertNotNull("There should have been a new build command created", command);
+		assertNotNull("There should have been a new build command created", command); //$NON-NLS-1$
 	}
 	
 	/**
@@ -425,10 +425,10 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testToBuildCommand2() throws Exception {
-		Map args = new HashMap();
-		ILaunchConfiguration copy = createExternalToolBuilder(getProject(), "testToBuildCommand2", args);
+		Map<String, String> args = new HashMap<String, String>();
+		ILaunchConfiguration copy = createExternalToolBuilder(getProject(), "testToBuildCommand2", args); //$NON-NLS-1$
 		ICommand command = BuilderCoreUtils.toBuildCommand(getProject(), copy, getProject().getDescription().newCommand());
-		assertNotNull("There should have been a new build command created", command);
+		assertNotNull("There should have been a new build command created", command); //$NON-NLS-1$
 	}
 	
 	/**
@@ -439,10 +439,10 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testToBuildCommand3() throws Exception {
-		Map args = new HashMap();
-		ILaunchConfiguration copy = createExternalToolBuilder(getProject(), "testToBuildCommand3", args);
+		Map<String, String> args = new HashMap<String, String>();
+		ILaunchConfiguration copy = createExternalToolBuilder(getProject(), "testToBuildCommand3", args); //$NON-NLS-1$
 		ICommand command = BuilderCoreUtils.toBuildCommand(getProject(), copy.getWorkingCopy(), getProject().getDescription().newCommand());
-		assertNotNull("There should have been a new build command created", command);
+		assertNotNull("There should have been a new build command created", command); //$NON-NLS-1$
 	}
 	
 	/**
@@ -451,10 +451,10 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testMigrateBuilderConfiguration1() throws Exception {
-		ILaunchConfigurationWorkingCopy copy = createExternalToolBuilderWorkingCopy(getProject(), "testMigrateBuilderConfiguration1", null);
+		ILaunchConfigurationWorkingCopy copy = createExternalToolBuilderWorkingCopy(getProject(), "testMigrateBuilderConfiguration1", null); //$NON-NLS-1$
 		ILaunchConfiguration config = BuilderCoreUtils.migrateBuilderConfiguration(getProject(), copy);
-		assertNotNull("The un-saved working copy should have been migrated", config);
-		assertTrue("The name of the migrated configuration should be testMigrateBuilderConfiguration1", config.getName().equals("testMigrateBuilderConfiguration1"));
+		assertNotNull("The un-saved working copy should have been migrated", config); //$NON-NLS-1$
+		assertTrue("The name of the migrated configuration should be testMigrateBuilderConfiguration1", config.getName().equals("testMigrateBuilderConfiguration1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -463,10 +463,10 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testMigrateBuilderConfiguration2() throws Exception {
-		ILaunchConfigurationWorkingCopy copy = createExternalToolBuilderWorkingCopy(getProject(), "testMigra/teBuilderConfi/guration2", null);
+		ILaunchConfigurationWorkingCopy copy = createExternalToolBuilderWorkingCopy(getProject(), "testMigra/teBuilderConfi/guration2", null); //$NON-NLS-1$
 		ILaunchConfiguration config = BuilderCoreUtils.migrateBuilderConfiguration(getProject(), copy);
-		assertNotNull("The un-saved working copy should have been migrated", config);
-		assertTrue("The name of the migrated configuration should be testMigra.teBuilderConfi.guration2", config.getName().equals("testMigra.teBuilderConfi.guration2"));
+		assertNotNull("The un-saved working copy should have been migrated", config); //$NON-NLS-1$
+		assertTrue("The name of the migrated configuration should be testMigra.teBuilderConfi.guration2", config.getName().equals("testMigra.teBuilderConfi.guration2")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -474,12 +474,12 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testBuildTypesToArray1() throws Exception {
-		String kinds = IExternalToolConstants.BUILD_TYPE_CLEAN+","+
-				IExternalToolConstants.BUILD_TYPE_INCREMENTAL+","+
-				IExternalToolConstants.BUILD_TYPE_AUTO+","+
+		String kinds = IExternalToolConstants.BUILD_TYPE_CLEAN+","+ //$NON-NLS-1$
+				IExternalToolConstants.BUILD_TYPE_INCREMENTAL+","+ //$NON-NLS-1$
+				IExternalToolConstants.BUILD_TYPE_AUTO+","+ //$NON-NLS-1$
 				IExternalToolConstants.BUILD_TYPE_FULL;
 		int[] array = BuilderCoreUtils.buildTypesToArray(kinds);
-		assertNotNull("The build kinds array cannot be null", array);
+		assertNotNull("The build kinds array cannot be null", array); //$NON-NLS-1$
 		boolean contains = true;
 		for (int i = 0; i < array.length; i++) {
 			contains &= (array[i] == IncrementalProjectBuilder.AUTO_BUILD) |
@@ -490,6 +490,6 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 				break;
 			}
 		}
-		assertTrue("All of the build kinds should have been found", contains);
+		assertTrue("All of the build kinds should have been found", contains); //$NON-NLS-1$
 	}
 }

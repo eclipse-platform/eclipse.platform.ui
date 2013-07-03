@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,12 +36,12 @@ public class AntThread extends AntDebugElement implements IThread {
 	/**
 	 * The stackframes associated with this thread
 	 */
-	private List fFrames= new ArrayList(1);
+	private List<AntStackFrame> fFrames= new ArrayList<AntStackFrame>(1);
 	
 	/**
 	 * The stackframes to be reused on suspension
 	 */
-	private List fOldFrames;
+	private List<AntStackFrame> fOldFrames;
 	
 	/**
 	 * Whether this thread is stepping
@@ -86,7 +86,7 @@ public class AntThread extends AntDebugElement implements IThread {
 			}
 		} 
 		
-		return (IStackFrame[]) fFrames.toArray(new IStackFrame[fFrames.size()]);
+		return fFrames.toArray(new IStackFrame[fFrames.size()]);
 	}
 	
 	/**
@@ -111,6 +111,7 @@ public class AntThread extends AntDebugElement implements IThread {
                     attempts++;
                 }
     		} catch (InterruptedException e) {
+    			//do nothing
     		}
         }
 	}
@@ -138,7 +139,7 @@ public class AntThread extends AntDebugElement implements IThread {
 				getStackFrames0();
 			}
 			if (fFrames.size() > 0) {
-				return (IStackFrame)fFrames.get(0);
+				return fFrames.get(0);
 			}
 		} 
 		return null;
@@ -254,7 +255,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	
 	private void aboutToResume(int detail, boolean stepping) {
 	    fRefreshProperties= true;
-	    fOldFrames= new ArrayList(fFrames);
+	    fOldFrames= new ArrayList<AntStackFrame>(fFrames);
         fFrames.clear();
         setPropertiesValid(false);
 	    setStepping(stepping);
@@ -282,6 +283,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
 	public synchronized void stepReturn() throws DebugException {
+		//do nothing
 	}
 	
 	/* (non-Javadoc)
@@ -370,7 +372,7 @@ public class AntThread extends AntDebugElement implements IThread {
     	if (fOldFrames == null) {
     		return null;
     	}
-    	AntStackFrame frame= (AntStackFrame) fOldFrames.remove(0);
+    	AntStackFrame frame= fOldFrames.remove(0);
     	if (fOldFrames.isEmpty()) {
     		fOldFrames= null;
     	}
@@ -385,9 +387,9 @@ public class AntThread extends AntDebugElement implements IThread {
                     initializePropertyGroups();
                 }
 
-                List userProperties= ((AntPropertiesValue)fUserProperties.getLastValue()).getProperties();
-                List systemProperties= ((AntPropertiesValue)fSystemProperties.getLastValue()).getProperties();
-                List runtimeProperties= ((AntPropertiesValue)fRuntimeProperties.getLastValue()).getProperties();
+                List<AntProperty> userProperties= ((AntPropertiesValue)fUserProperties.getLastValue()).getProperties();
+                List<AntProperty> systemProperties= ((AntPropertiesValue)fSystemProperties.getLastValue()).getProperties();
+                List<AntProperty> runtimeProperties= ((AntPropertiesValue)fRuntimeProperties.getLastValue()).getProperties();
                 //0 PROPERTIES message
                 //1 propertyName length
                 //2 propertyName
@@ -436,7 +438,7 @@ public class AntThread extends AntDebugElement implements IThread {
         }
 	}
 
-	private void addProperty(List userProperties, List systemProperties, List runtimeProperties, String propertyName, String propertyValue, int propertyType) {
+	private void addProperty(List<AntProperty> userProperties, List<AntProperty> systemProperties, List<AntProperty> runtimeProperties, String propertyName, String propertyValue, int propertyType) {
 		AntProperty property= new AntProperty((AntDebugTarget) getDebugTarget(), propertyName, propertyValue);
 		switch (propertyType) {
 			case DebugMessageIds.PROPERTY_SYSTEM:
@@ -447,6 +449,8 @@ public class AntThread extends AntDebugElement implements IThread {
 				break;
 			case DebugMessageIds.PROPERTY_RUNTIME:
 				runtimeProperties.add(property);
+				break;
+			default:
 				break;
 		}
 	}
@@ -477,6 +481,7 @@ public class AntThread extends AntDebugElement implements IThread {
                             attempts++;
                         }
                     } catch (InterruptedException ie) {
+                    	//do nothing
                     }
                 }
             }

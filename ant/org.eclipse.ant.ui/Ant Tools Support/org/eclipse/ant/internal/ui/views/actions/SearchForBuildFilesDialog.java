@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	/**
 	 * List of <code>IFile</code> objects that were found
 	 */
-	private List results = new ArrayList();
+	private List<IResource> results = new ArrayList<IResource>();
 	/**
 	 * List of <code>IResource</code> objects in which to search.
 	 * 
@@ -67,7 +67,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * the workspace. If the searchScopes are empty, the user has asked to
 	 * search a working set that has no resources.
 	 */
-	private List searchScopes = null;
+	private List<IResource> searchScopes = null;
 	/**
 	 * The working set scope radio button.
 	 */
@@ -310,7 +310,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 			return;
 		}
 		IAdaptable[] elements= set.getElements();
-		searchScopes= new ArrayList();
+		searchScopes= new ArrayList<IResource>();
 		for (int i = 0; i < elements.length; i++) {
 			// Try to get an IResource object from each element
 			IResource resource= null;
@@ -341,7 +341,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * Returns the search results
 	 */
 	public IFile[] getResults() {
-		return (IFile[]) results.toArray(new IFile[results.size()]);
+		return results.toArray(new IFile[results.size()]);
 	}
 	
 	/**
@@ -362,7 +362,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		settings.put(IAntUIPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS, includeErrorResultButton.getSelection());
 		settings.put(IAntUIPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, getWorkingSetName());
 		settings.put(IAntUIPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE, workingSetScopeButton.getSelection());
-		results = new ArrayList(); // Clear previous results
+		results = new ArrayList<IResource>(); // Clear previous results
 		ResourceProxyVisitor visitor= new ResourceProxyVisitor();
 		if (searchScopes == null || searchScopes.isEmpty()) {
 			try {
@@ -371,10 +371,10 @@ public class SearchForBuildFilesDialog extends InputDialog {
 				//Closed project...don't want build files from there
 			}
 		} else {
-			Iterator iter= searchScopes.iterator();
+			Iterator<IResource> iter= searchScopes.iterator();
 			while(iter.hasNext()) {
 				try {
-					((IResource) iter.next()).accept(visitor, IResource.NONE);
+					iter.next().accept(visitor, IResource.NONE);
 				} catch (CoreException ce) {
 					//Closed project...don't want build files from there
 				}

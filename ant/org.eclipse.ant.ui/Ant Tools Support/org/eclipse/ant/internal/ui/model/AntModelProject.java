@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * Portions Copyright  2000-2004 The Apache Software Foundation
  * All rights reserved. This program and the accompanying materials are made 
  * available under the terms of the Apache Software License v2.0 which 
@@ -31,21 +31,19 @@ import org.apache.tools.ant.types.Path;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 
 /**
- * Derived from the original Ant Project class
- * This class allows property values to be written multiple times.
- * This facilitates incremental parsing of the Ant build file
- * It also attempts to ensure that we clean up after ourselves and allows
- * more manipulation of properties resulting from incremental parsing.
- * Also allows the Eclipse additions to the Ant runtime classpath.
+ * Derived from the original Ant Project class This class allows property values to be written multiple times. This facilitates incremental parsing of
+ * the Ant build file It also attempts to ensure that we clean up after ourselves and allows more manipulation of properties resulting from
+ * incremental parsing. Also allows the Eclipse additions to the Ant runtime classpath.
  */
 public class AntModelProject extends Project {
-	
+
 	/**
-	 * Delegate to maintain property chaining - to make sure our project is alerted 
-	 * to new properties being set
+	 * Delegate to maintain property chaining - to make sure our project is alerted to new properties being set
 	 */
 	class AntPropertyHelper implements PropertyHelper.PropertySetter {
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.apache.tools.ant.PropertyHelper.PropertySetter#setNew(java.lang.String, java.lang.Object, org.apache.tools.ant.PropertyHelper)
 		 */
 		public boolean setNew(String property, Object value, PropertyHelper propertyHelper) {
@@ -53,58 +51,67 @@ public class AntModelProject extends Project {
 			return false;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.apache.tools.ant.PropertyHelper.PropertySetter#set(java.lang.String, java.lang.Object, org.apache.tools.ant.PropertyHelper)
 		 */
 		public boolean set(String property, Object value, PropertyHelper propertyHelper) {
 			return false;
 		}
 	}
-	
+
 	private AntPropertyNode fCurrentConfiguringPropertyNode;
-	private Map idrefs = Collections.synchronizedMap(new HashMap());
+	private Map<String, Object> idrefs = Collections.synchronizedMap(new HashMap<String, Object>());
 	private static Object loaderLock = new Object();
-	private Hashtable loaders = null;
-	
+	private Hashtable<String, AntClassLoader> loaders = null;
+
 	/**
 	 * Constructor
 	 * <p>
 	 * Allows us to register a {@link PropertyHelper.PropertySetter} delegate for this project
 	 * </p>
+	 * 
 	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
 	public AntModelProject() {
 		PropertyHelper.getPropertyHelper(this).add(new AntPropertyHelper());
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.Project#setNewProperty(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void setNewProperty(String name, String value) {
-		if(PropertyHelper.getPropertyHelper(this).getProperty(name) != null) {
+		if (PropertyHelper.getPropertyHelper(this).getProperty(name) != null) {
 			return;
 		}
-		//allows property values to be over-written for this parse session
-		//there is currently no way to remove properties from the Apache Ant project
-		//the project resets it properties for each parse...see reset()
+		// allows property values to be over-written for this parse session
+		// there is currently no way to remove properties from the Apache Ant project
+		// the project resets it properties for each parse...see reset()
 		if (fCurrentConfiguringPropertyNode != null) {
 			fCurrentConfiguringPropertyNode.addProperty(name, value);
 		}
 		super.setProperty(name, value);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.Project#fireBuildFinished(java.lang.Throwable)
 	 */
+	@Override
 	public void fireBuildFinished(Throwable exception) {
 		super.fireBuildFinished(exception);
-		Enumeration e= getBuildListeners().elements();
+		Enumeration<BuildListener> e = getBuildListeners().elements();
 		while (e.hasMoreElements()) {
-			BuildListener listener = (BuildListener) e.nextElement();
+			BuildListener listener = e.nextElement();
 			removeBuildListener(listener);
 		}
 	}
-	
+
 	/**
 	 * Reset the project
 	 */
@@ -114,48 +121,57 @@ public class AntModelProject extends Project {
 		setDescription(null);
 		setName(IAntCoreConstants.EMPTY_STRING);
 		synchronized (loaderLock) {
-			if(loaders != null) {
-				Iterator i = loaders.entrySet().iterator();
-				Entry e = null;
-				while(i.hasNext()) {
-					e = (Entry) i.next();
-					AntClassLoader acl = (AntClassLoader) e.getValue();
+			if (loaders != null) {
+				Iterator<Entry<String, AntClassLoader>> i = loaders.entrySet().iterator();
+				Entry<String, AntClassLoader> e = null;
+				while (i.hasNext()) {
+					e = i.next();
+					AntClassLoader acl = e.getValue();
 					acl.cleanup();
 					acl.clearAssertionStatus();
 				}
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.Project#getProperty(java.lang.String)
 	 */
+	@Override
 	public String getProperty(String name) {
-		//override as we cannot remove properties from the Apache Ant project
-		String result= super.getProperty(name);
+		// override as we cannot remove properties from the Apache Ant project
+		String result = super.getProperty(name);
 		if (result == null) {
 			return getUserProperty(name);
 		}
 		return result;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.Project#addIdReference(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void addIdReference(String id, Object value) {
-		//XXX hack because we cannot look up references by id in Ant 1.8.x
-		//see https://issues.apache.org/bugzilla/show_bug.cgi?id=49659
+		// XXX hack because we cannot look up references by id in Ant 1.8.x
+		// see https://issues.apache.org/bugzilla/show_bug.cgi?id=49659
 		idrefs.put(id, value);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.Project#getReference(java.lang.String)
 	 */
+	@Override
 	public Object getReference(String key) {
-		Object ref = super.getReference(key);/*references.get(key);*/
-		if(ref == null) {
+		Object ref = super.getReference(key);/* references.get(key); */
+		if (ref == null) {
 			ref = idrefs.get(key);
-			if(ref instanceof UnknownElement) {
+			if (ref instanceof UnknownElement) {
 				UnknownElement ue = (UnknownElement) ref;
 				ue.maybeConfigure();
 				return ue.getRealThing();
@@ -163,56 +179,66 @@ public class AntModelProject extends Project {
 		}
 		return ref;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.Project#getProperties()
 	 */
+	@Override
 	public Hashtable getProperties() {
-		//override as we cannot remove properties from the Apache Ant project
-		Hashtable allProps = super.getProperties();
+		// override as we cannot remove properties from the Apache Ant project
+		Hashtable<String, String> allProps = super.getProperties();
 		allProps.putAll(getUserProperties());
 		allProps.put("basedir", getBaseDir().getPath()); //$NON-NLS-1$
 		return allProps;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apache.tools.ant.Project#setBaseDir(java.io.File)
 	 */
+	@Override
 	public void setBaseDir(File baseDir) throws BuildException {
 		super.setBaseDir(baseDir);
 		setNewProperty("basedir", getBaseDir().getPath()); //$NON-NLS-1$
 	}
 
 	/**
-	 * @param node the property node that is currently being configured
+	 * @param node
+	 *            the property node that is currently being configured
 	 */
 	public void setCurrentConfiguringProperty(AntPropertyNode node) {
-		fCurrentConfiguringPropertyNode= node;
+		fCurrentConfiguringPropertyNode = node;
 	}
-	
-	 /* (non-Javadoc)
-     * @see org.apache.tools.ant.Project#createClassLoader(org.apache.tools.ant.types.Path)
-     */
-    public AntClassLoader createClassLoader(Path path) {
-    	synchronized (loaderLock) {
-    		if(loaders == null) {
-    			loaders = new Hashtable(8);
-    		}
-    		Path p = path;
-    		if(p == null) {
-    			p = new Path(this);
-    		}
-    		String pstr = p.toString();
-    		AntClassLoader loader = (AntClassLoader) loaders.get(pstr);
-    		if(loader == null) {
-    			loader = super.createClassLoader(path);
-    	    	if (path == null) {
-    	    		//use the "fake" Eclipse runtime classpath for Ant
-    	    		loader.setClassPath(Path.systemClasspath);
-    	    	}
-    	    	loaders.put(pstr, loader);
-    		}
-    		return loader;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.tools.ant.Project#createClassLoader(org.apache.tools.ant.types.Path)
+	 */
+	@Override
+	public AntClassLoader createClassLoader(Path path) {
+		synchronized (loaderLock) {
+			if (loaders == null) {
+				loaders = new Hashtable<String, AntClassLoader>(8);
+			}
+			Path p = path;
+			if (p == null) {
+				p = new Path(this);
+			}
+			String pstr = p.toString();
+			AntClassLoader loader = loaders.get(pstr);
+			if (loader == null) {
+				loader = super.createClassLoader(path);
+				if (path == null) {
+					// use the "fake" Eclipse runtime classpath for Ant
+					loader.setClassPath(Path.systemClasspath);
+				}
+				loaders.put(pstr, loader);
+			}
+			return loader;
 		}
-    }
+	}
 }

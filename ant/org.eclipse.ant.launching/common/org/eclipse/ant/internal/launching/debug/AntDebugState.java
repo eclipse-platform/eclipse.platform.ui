@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,21 +33,22 @@ public class AntDebugState {
     private static final String fgAntCallTaskName= "antcall"; //$NON-NLS-1$
     
 	private IDebugBuildLogger fLogger;
-	private Stack fTasks= new Stack();
-	private Map fTaskToProxies= new HashMap();
+	private Stack<Task> fTasks= new Stack<Task>();
+	private Map<Task, Object> fTaskToProxies= new HashMap<Task, Object>();
 	private Task fCurrentTask;
 	private Task fStepOverTask;
 	private Task fStepIntoTask;
 	private Task fLastTaskFinished;
     
 	//properties set before execution
-    private Map fInitialProperties= null;
-	private Map fProperties= null;
+	//TODO ANT-1.9.1 API USE
+    private Map<?, ?> fInitialProperties= null;
+	private Map<?, ?> fProperties= null;
     
-    private Map fProjectToTargetNames= null;
-    private Map fProjectToMapOfTargetToBuildSequence= null;
-    private Stack fTargetsToExecute= new Stack();
-    private Stack fTargetsExecuting= new Stack();
+    private Map<Project, Vector<?>> fProjectToTargetNames= null;
+    private Map<Project, Map<Target, Vector<?>>> fProjectToMapOfTargetToBuildSequence= null;
+    private Stack<Target> fTargetsToExecute= new Stack<Target>();
+    private Stack<Target> fTargetsExecuting= new Stack<Target>();
 	
 	private boolean fConsiderTargetBreakpoints= false;
 	private boolean fShouldSuspend;
@@ -61,8 +62,8 @@ public class AntDebugState {
 	}
 
 	public void buildStarted() {
-        fProjectToTargetNames= new HashMap();
-        fProjectToMapOfTargetToBuildSequence= new HashMap();
+        fProjectToTargetNames= new HashMap<Project, Vector<?>>();
+        fProjectToMapOfTargetToBuildSequence= new HashMap<Project, Map<Target, Vector<?>>>();
     }
     
     /**
@@ -115,7 +116,7 @@ public class AntDebugState {
 
 	}
 
-	private Map getInitialProperties() {
+	private Map<?, ?> getInitialProperties() {
 		return fInitialProperties;
 	}
 
@@ -136,7 +137,7 @@ public class AntDebugState {
 		fConsiderTargetBreakpoints= considerTargetBreakpoints;
 	}
 
-	private Stack getTasks() {
+	private Stack<Task> getTasks() {
 		return fTasks;
 	}
 	
@@ -148,8 +149,8 @@ public class AntDebugState {
 		return fShouldSuspend;
 	}
 
-	private Map getTargetToBuildSequence(Project project) {
-		return (Map) fProjectToMapOfTargetToBuildSequence.get(project);
+	private Map<Target, Vector<?>> getTargetToBuildSequence(Project project) {
+		return fProjectToMapOfTargetToBuildSequence.get(project);
 	}
 
 	public void setTargetToExecute(Target target) {
@@ -174,14 +175,14 @@ public class AntDebugState {
 	    if (fTargetsToExecute.isEmpty()) {
             return null;
         }
-		return (Target) fTargetsToExecute.peek();
+		return fTargetsToExecute.peek();
 	}
 	
 	private Target getTargetExecuting() {
         if (fTargetsExecuting.isEmpty()) {
             return null;
         }
-		return (Target) fTargetsExecuting.peek();
+		return fTargetsExecuting.peek();
 	}
 
 	public boolean isStepIntoSuspend() {
@@ -212,7 +213,7 @@ public class AntDebugState {
 		fLogger.notifyAll();
 	}
 
-	public Map getProperties() {
+	public Map<?, ?> getProperties() {
 		return fProperties;
 	}
 	
@@ -245,11 +246,11 @@ public class AntDebugState {
 		
 		setCurrentTask(event.getTask());
 		setConsiderTargetBreakpoints(false);
-		Stack tasks = getTasks();
+		Stack<Task> tasks = getTasks();
 		if (!tasks.isEmpty()) {
 			//cache the parent task proxy as when that task is started or finished the
 			//proxy is not yet available or is nulled out
-			Task parentTask = (Task) tasks.peek();
+			Task parentTask = tasks.peek();
 			Object proxy = parentTask.getRuntimeConfigurableWrapper().getProxy();
 			if (proxy != null) {
 				fTaskToProxies.put(parentTask, proxy);
@@ -261,9 +262,9 @@ public class AntDebugState {
 	
 
     public void taskFinished() {
-    	Stack tasks = getTasks();
+    	Stack<Task> tasks = getTasks();
     	if(!tasks.empty()) {
-	    	Task lastTask= (Task)tasks.pop();
+	    	Task lastTask= tasks.pop();
 	        setLastTaskFinished(lastTask);
 	        setCurrentTask(null);
 	        String taskName= lastTask.getTaskName();
@@ -297,8 +298,8 @@ public class AntDebugState {
         if (fProjectToTargetNames.get(eventProject) == null) {
             Object ref= eventProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
             if (ref != null) {
-                fProjectToTargetNames.put(eventProject, ref);
-                Map targetToBuildSequence= new HashMap();
+                fProjectToTargetNames.put(eventProject, (Vector<?>) ref);
+                HashMap<Target, Vector<?>> targetToBuildSequence = new HashMap<Target, Vector<?>>();
                 setTargetToExecute(initializeBuildSequenceInformation(event, targetToBuildSequence));
                 fProjectToMapOfTargetToBuildSequence.put(eventProject, targetToBuildSequence);
             }
@@ -308,7 +309,7 @@ public class AntDebugState {
         if (event.getTarget().equals(getTargetToExecute())) {
             //the dependencies of the target to execute have been met
             //prepare for the next target
-            Vector targets= (Vector) fProjectToTargetNames.get(eventProject);
+            Vector<?> targets= fProjectToTargetNames.get(eventProject);
             if (!targets.isEmpty()) {
                 setTargetToExecute((Target) eventProject.getTargets().get(targets.remove(0)));
             } else {
@@ -389,7 +390,7 @@ public class AntDebugState {
 	}
 
 	public void marshalStack(StringBuffer stackRepresentation) {
-		Stack tasks= getTasks();
+		Stack<Task> tasks= getTasks();
 		
 	    stackRepresentation.append(DebugMessageIds.STACK);
 	    stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
@@ -401,7 +402,7 @@ public class AntDebugState {
         if (targetExecuting != null) {
             projectExecuting= targetExecuting.getProject();
         } else if(!tasks.empty()) { //no target...must be a task
-            Task task= (Task) tasks.peek();
+            Task task= tasks.peek();
             projectExecuting= task.getProject();
         }
         
@@ -409,16 +410,16 @@ public class AntDebugState {
 			appendToStack(stackRepresentation, targetExecuting.getName(), IAntCoreConstants.EMPTY_STRING, getLocation(targetExecuting));
 		}
 		for (int i = tasks.size() - 1; i >= 0 ; i--) {
-			Task task= (Task) tasks.get(i);
+			Task task= tasks.get(i);
             if (task.getProject() == projectExecuting) {
                 appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation());
             } else {
                 //sub build target dependencies
                 String targetName= task.getOwningTarget().getName();
                 if (targetName != null && targetName.length() != 0) { //skip for implicit target
-                    Iterator itr= fTargetsToExecute.iterator();
+                    Iterator<Target> itr= fTargetsToExecute.iterator();
                     while (itr.hasNext()) {
-                        Target target= (Target) itr.next();
+                        Target target= itr.next();
                         if (target.getProject() != projectExecuting) {
                         	targetToExecute= target;
                             continue;
@@ -438,7 +439,7 @@ public class AntDebugState {
 
     private void marshalTargetDependancyStack(StringBuffer stackRepresentation, Target targetToExecute, Target targetExecuting) {
         if (targetToExecute != null) {
-	     	Vector buildSequence= (Vector) getTargetToBuildSequence(targetToExecute.getProject()).get(targetToExecute);
+	     	Vector<?> buildSequence= getTargetToBuildSequence(targetToExecute.getProject()).get(targetToExecute);
 	     	int startIndex= buildSequence.indexOf(targetExecuting) + 1;
 	     	int dependancyStackDepth= buildSequence.indexOf(targetToExecute);
 	     	
@@ -453,25 +454,26 @@ public class AntDebugState {
     }
 
 	public void marshallProperties(StringBuffer propertiesRepresentation, boolean escapeLineSep) {
-		Stack tasks = getTasks();
+		Stack<Task> tasks = getTasks();
 		if (tasks.isEmpty()) {
 			return;
 		}
 	    propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
 	    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 		
-		Project project= ((Task)tasks.peek()).getProject();
-		Map lastProperties= getProperties(); 
+		Project project= tasks.peek().getProject();
+		Map<?, ?> lastProperties= getProperties(); 
 		
-	    Map currentProperties= project.getProperties();
+		//TODO ANT-1.9.1 API USE
+	    Map<?, ?> currentProperties= project.getProperties();
 	    if (lastProperties != null && currentProperties.size() == lastProperties.size()) {
 	        //no new properties
 	        return;
 	    }
 	    
-		Map initialProperties= getInitialProperties();
-	    Map currentUserProperties= project.getUserProperties();
-	    Iterator iter= currentProperties.keySet().iterator();
+		Map<?, ?> initialProperties= getInitialProperties();
+	    Map<?, ?> currentUserProperties= project.getUserProperties();
+	    Iterator<?> iter= currentProperties.keySet().iterator();
 	    String propertyName;
 		String originalPropertyName;
 	    String propertyValue;
@@ -503,7 +505,7 @@ public class AntDebugState {
 		fProperties= currentProperties;
 	}
 
-	private int getPropertyType(Map initialProperties, Map currentUserProperties, String propertyName) {
+	private int getPropertyType(Map<?, ?> initialProperties, Map<?, ?> currentUserProperties, String propertyName) {
 		if (initialProperties.get(propertyName) != null) { //properties set before the start of the build
 		    if (currentUserProperties.get(propertyName) == null) {
 		        return DebugMessageIds.PROPERTY_SYSTEM;
@@ -545,20 +547,21 @@ public class AntDebugState {
 		return escapedValue.toString();
 	}
 
-	private Target initializeBuildSequenceInformation(BuildEvent event, Map targetToBuildSequence) {
+	private Target initializeBuildSequenceInformation(BuildEvent event, Map<Target, Vector<?>> targetToBuildSequence) {
 	    Project antProject= event.getProject();
-	    Vector targets= (Vector) antProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
+	    Vector<?> targets= (Vector<?>) antProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
         if (targets == null) {
             return null;
         }
-	    Iterator itr= targets.iterator();
-	    Hashtable allTargets= antProject.getTargets();
+	    Iterator<?> itr= targets.iterator();
+	    //TODO ANT-1.9.1 API USE
+	    Hashtable<?, ?> allTargets = antProject.getTargets();
 	    String targetName;
-	    Vector sortedTargets;
+	    Vector<?> sortedTargets;
 	    while (itr.hasNext()) {
 	        targetName= (String) itr.next();
 	        sortedTargets= antProject.topoSort(targetName, allTargets);
-	        targetToBuildSequence.put(allTargets.get(targetName), sortedTargets);
+	        targetToBuildSequence.put((Target) allTargets.get(targetName), sortedTargets);
 	    }
 	    //the target to execute
 	    return (Target) allTargets.get(targets.remove(0));

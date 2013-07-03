@@ -32,7 +32,7 @@ public class FormattingPreferencesTest extends AbstractAntUITest {
                 return true;
             }
         };        
-        assertEquals("   ",prefs.getCanonicalIndent());
+        assertEquals("   ",prefs.getCanonicalIndent()); //$NON-NLS-1$
         
         // ensure the value is not hard coded
         prefs = new FormattingPreferences(){
@@ -43,7 +43,7 @@ public class FormattingPreferencesTest extends AbstractAntUITest {
                 return true;
             }
         };        
-        assertEquals("       ",prefs.getCanonicalIndent());
+        assertEquals("       ",prefs.getCanonicalIndent()); //$NON-NLS-1$
         
         // use tab character
         prefs = new FormattingPreferences(){
@@ -54,6 +54,6 @@ public class FormattingPreferencesTest extends AbstractAntUITest {
                 return false;
             }
         };        
-        assertEquals("\t",prefs.getCanonicalIndent());
+        assertEquals("\t",prefs.getCanonicalIndent()); //$NON-NLS-1$
     }
 }

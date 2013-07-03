@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -42,14 +43,14 @@ public class AntCoreUtil {
     /*
 	 * Helper method to ensure an array is converted into an ArrayList.
 	 */
-	public static ArrayList getArrayList(String[] args) {
+	public static ArrayList<String> getArrayList(String[] args) {
 		if (args == null) {
 			return null;
 		}
 		// We could be using Arrays.asList() here, but it does not specify
 		// what kind of list it will return. We need a list that
 		// implements the method List.remove(Object) and ArrayList does.
-		ArrayList result = new ArrayList(args.length);
+		ArrayList<String> result = new ArrayList<String>(args.length);
 		for (int i = 0; i < args.length; i++) {
 			result.add(args[i]);
 		}
@@ -63,7 +64,7 @@ public class AntCoreUtil {
 	 * @return <code>null</code> if the parameter is not found 
 	 * 			or an empty String if no arguments are found
 	 */
-	public static String getArgument(List commands, String param) {
+	public static String getArgument(List<String> commands, String param) {
 		if (commands == null) {
 			return null;
 		}
@@ -76,7 +77,7 @@ public class AntCoreUtil {
 			return IAntCoreConstants.EMPTY_STRING;
 		}
 		
-		String command = (String) commands.get(index);
+		String command = commands.get(index);
 		if (command.startsWith("-")) { //new parameter //$NON-NLS-1$
 			return IAntCoreConstants.EMPTY_STRING;
 		}
@@ -84,10 +85,10 @@ public class AntCoreUtil {
 		return command;
 	}
 	
-	public static void processMinusDProperties(List commands, Map userProperties) {
-	    Iterator iter= commands.iterator();
+	public static void processMinusDProperties(List<String> commands, Map<String, String> userProperties) {
+	    Iterator<String> iter= commands.iterator();
 	    while (iter.hasNext()) {
-            String arg = (String) iter.next();
+            String arg = iter.next();
 			if (arg.startsWith("-D")) { //$NON-NLS-1$
 				String name = arg.substring(2, arg.length());
 				String value = null;
@@ -132,12 +133,17 @@ public class AntCoreUtil {
 	
 	/**
 	 * Returns a list of Properties contained in the list of fileNames.
+	 * @param fileNames the names of the properties files to load from
+	 * @param base the base directory name
+	 * @param buildFileLocation 
+	 * @return a list of {@link Properties} objects for each filename 
+	 * @throws IOException 
 	 */
-	public static List loadPropertyFiles(List fileNames, String base, String buildFileLocation) throws IOException {
-	    List allProperties= new ArrayList(fileNames.size());
+	public static List<Properties> loadPropertyFiles(List<String> fileNames, String base, String buildFileLocation) throws IOException {
+	    ArrayList<Properties> allProperties= new ArrayList<Properties>(fileNames.size());
 		for (int i = 0; i < fileNames.size(); i++) {
-			String filename = (String) fileNames.get(i);
-           	File file= getFileRelativeToBaseDir(filename, base, buildFileLocation);
+			String filename = fileNames.get(i);
+           	File file = getFileRelativeToBaseDir(filename, base, buildFileLocation);
             Properties props = new Properties();
             FileInputStream fis = null;
             try {
@@ -148,20 +154,21 @@ public class AntCoreUtil {
                     try {
                         fis.close();
                     } catch (IOException e){
+                    	//do nothing
                     }
                 }
             }
-            Enumeration propertyNames = props.propertyNames();
+            Enumeration<?> propertyNames = props.propertyNames();
             while (propertyNames.hasMoreElements()) {
                 String name = (String) propertyNames.nextElement();
-                
-                String value= props.getProperty(name);
+                String value = props.getProperty(name);
                 props.remove(name);
                 IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
 				try {
-					name= stringVariableManager.performStringSubstitution(name);
-					value= stringVariableManager.performStringSubstitution(value);
+					name = stringVariableManager.performStringSubstitution(name);
+					value = stringVariableManager.performStringSubstitution(value);
 				} catch (CoreException e) {
+					AntCorePlugin.log(e);
 				}
                 props.setProperty(name, value);
             }

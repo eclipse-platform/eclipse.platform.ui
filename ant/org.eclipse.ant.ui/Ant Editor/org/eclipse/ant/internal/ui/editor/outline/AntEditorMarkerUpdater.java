@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,9 @@ public class AntEditorMarkerUpdater {
 	
 	class AntEditorMarkerUpdaterJob extends WorkspaceJob {
 		
-		private final List fProblems;
+		private final List<IProblem> fProblems;
 
-		public AntEditorMarkerUpdaterJob (List problems) {
+		public AntEditorMarkerUpdaterJob (List<IProblem> problems) {
 			super("Ant editor marker updater job"); //$NON-NLS-1$
 			fProblems= problems;
 			setSystem(true);
@@ -57,7 +57,7 @@ public class AntEditorMarkerUpdater {
 	}
 	
 	private IAntModel fModel= null;
-	private List fCollectedProblems= new ArrayList();
+	private List<IProblem> fCollectedProblems= new ArrayList<IProblem>();
 	public static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".buildFileProblem"; //$NON-NLS-1$
 	private IFile fFile= null;
 	
@@ -89,7 +89,7 @@ public class AntEditorMarkerUpdater {
 	
 	private void createMarker(IProblem problem) {
 		IFile file = getFile();
-		Map attributes= getMarkerAttributes(problem);
+		Map<String, Integer> attributes= getMarkerAttributes(problem);
 		try {
 			MarkerUtilities.createMarker(file, attributes, BUILDFILE_PROBLEM_MARKER);
 		} catch (CoreException e) {
@@ -104,8 +104,8 @@ public class AntEditorMarkerUpdater {
 	public synchronized void updateMarkers() {
 		IFile file = getFile();
 		if (file != null) {
-			List problems = new ArrayList(fCollectedProblems.size());
-			Iterator e= fCollectedProblems.iterator();
+			List<IProblem> problems = new ArrayList<IProblem>(fCollectedProblems.size());
+			Iterator<IProblem> e= fCollectedProblems.iterator();
 			while (e.hasNext()) {
 				problems.add(e.next());
 			}
@@ -116,16 +116,16 @@ public class AntEditorMarkerUpdater {
 		}
 	}
 	
-	private void updateMarkers0(List problems) {
+	private void updateMarkers0(List<IProblem> problems) {
 		removeProblems();
 		if (!shouldAddMarkers()) {
 			return;
 		}
 
 		if (problems.size() > 0) {
-			Iterator e= problems.iterator();
+			Iterator<IProblem> e= problems.iterator();
 			while (e.hasNext()) {
-				IProblem problem= (IProblem) e.next();
+				IProblem problem= e.next();
 				createMarker(problem);
 			}
 		}
@@ -144,9 +144,9 @@ public class AntEditorMarkerUpdater {
 	 *
 	 * @return the initial marker attributes
 	 */
-	private Map getMarkerAttributes(IProblem problem) {
+	private Map<String, Integer> getMarkerAttributes(IProblem problem) {
 		
-		Map attributes= new HashMap(11);
+		Map<String, Integer> attributes= new HashMap<String, Integer>(11);
 		int severity= IMarker.SEVERITY_ERROR;
 		if (problem.isWarning()) {
 			severity= IMarker.SEVERITY_WARNING;

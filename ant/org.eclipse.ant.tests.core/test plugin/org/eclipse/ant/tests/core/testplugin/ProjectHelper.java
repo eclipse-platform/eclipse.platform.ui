@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,9 @@ import org.eclipse.ui.wizards.datatransfer.*;
  */
 public class ProjectHelper {
 	
-	public static final IPath TEST_BUILDFILES_DIR= new Path("testbuildfiles");
-	public static final IPath TEST_RESOURCES_DIR= new Path("testresources");	
-	public static final IPath TEST_LIB_DIR= new Path("testlib");
+	public static final IPath TEST_BUILDFILES_DIR= new Path("testbuildfiles"); //$NON-NLS-1$
+	public static final IPath TEST_RESOURCES_DIR= new Path("testresources");	 //$NON-NLS-1$
+	public static final IPath TEST_LIB_DIR= new Path("testlib"); //$NON-NLS-1$
 	
 	/**
 	 * Creates a IProject.
@@ -73,7 +73,7 @@ public class ProjectHelper {
 	
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		
 		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List files = new ArrayList(100);
+		List<File> files = new ArrayList<File>(100);
 		addFiles(rootDir, files);
 		try {
 			ImportOperation op= new ImportOperation(destPath, rootDir, structureProvider, new ImportOverwriteQuery(), files);
@@ -84,9 +84,9 @@ public class ProjectHelper {
 		}
 	}	
 	
-	private static void addFiles(File dir, List collection) throws IOException {
+	private static void addFiles(File dir, List<File> collection) throws IOException {
 		File[] files = dir.listFiles();
-		List subDirs = new ArrayList(2);
+		List<File> subDirs = new ArrayList<File>(2);
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isFile()) {
 				collection.add(files[i]);
@@ -94,9 +94,9 @@ public class ProjectHelper {
 				subDirs.add(files[i]);
 			}
 		}
-		Iterator iter = subDirs.iterator();
+		Iterator<File> iter = subDirs.iterator();
 		while (iter.hasNext()) {
-			File subDir = (File)iter.next();
+			File subDir = iter.next();
 			addFiles(subDir, collection);
 		}
 	}
@@ -107,8 +107,8 @@ public class ProjectHelper {
 		}	
 	}
 
-	public static final String PROJECT_NAME = "AntTests";
-	public static final String BUILDFILES_FOLDER = "buildfiles";
-	public static final String RESOURCES_FOLDER = "resources";
-	public static final String LIB_FOLDER = "lib";			
+	public static final String PROJECT_NAME = "AntTests"; //$NON-NLS-1$
+	public static final String BUILDFILES_FOLDER = "buildfiles"; //$NON-NLS-1$
+	public static final String RESOURCES_FOLDER = "resources"; //$NON-NLS-1$
+	public static final String LIB_FOLDER = "lib";			 //$NON-NLS-1$
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ant.internal.ui;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.jface.text.source.ISharedTextColors;
@@ -36,10 +35,10 @@ public class ColorManager implements ISharedTextColors {
 		return fgColorManager;
 	}
 	
-	protected Map fColorTable= new HashMap(10);
+	protected Map<RGB, Color> fColorTable= new HashMap<RGB, Color>(10);
 	
 	public Color getColor(RGB rgb) {
-		Color color= (Color) fColorTable.get(rgb);
+		Color color= fColorTable.get(rgb);
 		if (color == null) {
 			color= new Color(Display.getCurrent(), rgb);
 			fColorTable.put(rgb, color);
@@ -48,11 +47,8 @@ public class ColorManager implements ISharedTextColors {
 	}
 	
 	public void dispose() {
-		Iterator e= fColorTable.values().iterator();
-		while (e.hasNext()) {
-			((Color) e.next()).dispose();
+		for (Color color : fColorTable.values()) {
+			color.dispose();
 		}
 	}
 }
-
-

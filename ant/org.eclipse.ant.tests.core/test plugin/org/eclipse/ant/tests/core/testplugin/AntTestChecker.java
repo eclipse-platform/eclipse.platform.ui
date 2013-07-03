@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,17 +31,17 @@ public class AntTestChecker {
 	
 	private int buildsFinishedCount;
 	
-	private List messages= new ArrayList();
+	private List<String> messages= new ArrayList<String>();
 	
-	private List targets= new ArrayList();
+	private List<String> targets= new ArrayList<String>();
 	
-	private List tasks= new ArrayList();
+	private List<String> tasks= new ArrayList<String>();
 	
-	private List projects= new ArrayList();
+	private List<String> projects= new ArrayList<String>();
 	
-	private Hashtable userProperties;
+	private Hashtable<String, String> userProperties;
 	
-	private List nameOfListeners= new ArrayList();
+	private List<String> nameOfListeners= new ArrayList<String>();
 	
 	private AntTestChecker()  {
 	}
@@ -175,12 +175,12 @@ public class AntTestChecker {
 		targetsFinishedCount= 0;
 		buildsStartedCount= 0;
 		buildsFinishedCount= 0;
-		messages= new ArrayList();
-		tasks= new ArrayList();
-		targets= new ArrayList();
-		projects= new ArrayList();
+		messages= new ArrayList<String>();
+		tasks= new ArrayList<String>();
+		targets= new ArrayList<String>();
+		projects= new ArrayList<String>();
 		userProperties= null;
-		nameOfListeners= new ArrayList();
+		nameOfListeners= new ArrayList<String>();
 	}
 	
 	/**
@@ -191,35 +191,35 @@ public class AntTestChecker {
 	 * @return the nth last message
 	 */
     public String getLoggedMessage(int n) {
-        n = messages.size() - (n + 1);
-        if ((n < 0) || (n >= messages.size())) {
+        int idx = messages.size() - (n + 1);
+        if ((idx < 0) || (idx >= messages.size())) {
             return null;
         }
-        return (String) messages.get(n);
+        return messages.get(idx);
     }
 
     public String getLastMessageLogged() {
         return getLoggedMessage(0);
     }
 	
-	public void setUserProperties(Hashtable userProperties) {
+	public void setUserProperties(Hashtable<String, String> userProperties) {
 		this.userProperties= userProperties;
 	}
 
 	public String getUserProperty(String name) {
-		return (String)userProperties.get(name);
+		return userProperties.get(name);
 	}
 	
-	public List getMessages() {
+	public List<String> getMessages() {
 		return messages;
 	}
 	
-	public List getListeners() {
+	public List<String> getListeners() {
 		return nameOfListeners;
 	}
 	
 	public String getLastListener() {
-		return (String)nameOfListeners.get(nameOfListeners.size() - 1);
+		return nameOfListeners.get(nameOfListeners.size() - 1);
 	}
 
 

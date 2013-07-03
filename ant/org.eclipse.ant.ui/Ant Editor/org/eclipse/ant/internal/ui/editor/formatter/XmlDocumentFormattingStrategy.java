@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 John-Mason P. Shackelford and others.
+ * Copyright (c) 2004, 2013 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.jface.text.formatter.IFormattingContext;
 public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrategy {
  
 	/** Documents to be formatted by this strategy */
-	private final LinkedList fDocuments= new LinkedList();
+	private final LinkedList<IDocument> fDocuments= new LinkedList<IDocument>();
     
 	/** access to the preferences store * */
 	private FormattingPreferences prefs; 
@@ -47,7 +47,7 @@ public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrateg
 	public void format() {
  
         super.format();
-     	final IDocument document= (IDocument)fDocuments.removeFirst();
+     	final IDocument document= fDocuments.removeFirst();
 		if (document != null) {
 	        // TODO allow formatting of regions, not just the entire document; bug 75611
 	        String documentText = document.get();
@@ -68,8 +68,7 @@ public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrateg
  	 */
  	public void formatterStarts(final IFormattingContext context) {
  		super.formatterStarts(context);
- 		
- 		fDocuments.addLast(context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM));
+ 		fDocuments.addLast((IDocument) context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM));
  	}
 
  	/*

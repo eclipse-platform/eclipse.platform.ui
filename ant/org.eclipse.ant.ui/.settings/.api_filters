@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ant.ui" version="2">
+    <resource path="Ant Editor/org/eclipse/ant/internal/ui/editor/AntEditor.java" type="org.eclipse.ant.internal.ui.editor.AntEditor$StatusLineSourceViewer">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="ProjectionViewer"/>
+                <message_argument value="StatusLineSourceViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Ant Editor/org/eclipse/ant/internal/ui/editor/actions/RenameInFileAction.java" type="org.eclipse.ant.internal.ui.editor.actions.RenameInFileAction">
+        <filter comment="Known illegal use" id="571473929">
+            <message_arguments>
+                <message_argument value="SelectionDispatchAction"/>
+                <message_argument value="RenameInFileAction"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Ant Editor/org/eclipse/ant/internal/ui/editor/text/AntAnnotationModel.java" type="org.eclipse.ant.internal.ui.editor.text.AntAnnotationModel">
+        <filter comment="Known illegal use" id="571473929">
+            <message_arguments>
+                <message_argument value="ResourceMarkerAnnotationModel"/>
+                <message_argument value="AntAnnotationModel"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Ant Tools Support/org/eclipse/ant/internal/ui/launchConfigurations/AntClasspathTab.java" type="org.eclipse.ant.internal.ui.launchConfigurations.AntClasspathTab">
+        <filter comment="Known illegal use" id="571473929">
+            <message_arguments>
+                <message_argument value="JavaClasspathTab"/>
+                <message_argument value="AntClasspathTab"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Ant Tools Support/org/eclipse/ant/internal/ui/launchConfigurations/AntEnvironmentTab.java" type="org.eclipse.ant.internal.ui.launchConfigurations.AntEnvironmentTab">
+        <filter comment="Known illegal use" id="571473929">
+            <message_arguments>
+                <message_argument value="EnvironmentTab"/>
+                <message_argument value="AntEnvironmentTab"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="Ant Tools Support/org/eclipse/ant/internal/ui/launchConfigurations/AntJRETab.java" type="org.eclipse.ant.internal.ui.launchConfigurations.AntJRETab">
+        <filter comment="Known illegal use" id="571473929">
+            <message_arguments>
+                <message_argument value="JavaJRETab"/>
+                <message_argument value="AntJRETab"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

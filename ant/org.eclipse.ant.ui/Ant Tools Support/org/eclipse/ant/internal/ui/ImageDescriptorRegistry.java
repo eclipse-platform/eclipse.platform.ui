@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.ant.internal.ui;
 
  
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -24,7 +23,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ImageDescriptorRegistry {
 
-	private HashMap fRegistry= new HashMap(10);
+	private HashMap<ImageDescriptor, Image> fRegistry= new HashMap<ImageDescriptor, Image>(10);
 	private Display fDisplay;
 	
 	/**
@@ -58,7 +57,7 @@ public class ImageDescriptorRegistry {
 		if (descriptor == null)
 			descriptor= ImageDescriptor.getMissingImageDescriptor();
 			
-		Image result= (Image)fRegistry.get(descriptor);
+		Image result= fRegistry.get(descriptor);
 		if (result != null)
 			return result;
 	
@@ -73,8 +72,7 @@ public class ImageDescriptorRegistry {
 	 * Disposes all images managed by this registry.
 	 */	
 	public void dispose() {
-		for (Iterator iter= fRegistry.values().iterator(); iter.hasNext(); ) {
-			Image image= (Image)iter.next();
+		for (Image image : fRegistry.values()) {
 			image.dispose();
 		}
 		fRegistry.clear();

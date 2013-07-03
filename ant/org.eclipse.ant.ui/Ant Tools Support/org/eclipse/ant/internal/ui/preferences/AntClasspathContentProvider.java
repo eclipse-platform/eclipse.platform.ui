@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -22,36 +22,35 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * Content provider that maintains a list of classpath entries which are shown in a tree
- * viewer.
+ * Content provider that maintains a list of classpath entries which are shown in a tree viewer.
  */
 public class AntClasspathContentProvider implements ITreeContentProvider {
 	private TreeViewer treeViewer;
-	private ClasspathModel model= null;
-	private boolean refreshEnabled= false;
-	private boolean refreshRequested= false;
-		
+	private ClasspathModel model = null;
+	private boolean refreshEnabled = false;
+	private boolean refreshRequested = false;
+
 	public void add(IClasspathEntry parent, Object child) {
-		Object newEntry= null;
-		boolean added= false;
+		Object newEntry = null;
+		boolean added = false;
 		if (parent == null || parent == model) {
-			added= true;
-			newEntry= model.addEntry(child);
+			added = true;
+			newEntry = model.addEntry(child);
 			if (newEntry == null) {
-				//entry already exists
-				newEntry= model.createEntry(child, model);
-				added= false;
+				// entry already exists
+				newEntry = model.createEntry(child, model);
+				added = false;
 			}
-			parent= model;
+			parent = model;
 		} else if (parent instanceof GlobalClasspathEntries) {
-			GlobalClasspathEntries globalParent= (GlobalClasspathEntries) parent;
-			newEntry= model.createEntry(child, globalParent);
-			ClasspathEntry newClasspathEntry= (ClasspathEntry) newEntry;
+			GlobalClasspathEntries globalParent = (GlobalClasspathEntries) parent;
+			newEntry = model.createEntry(child, globalParent);
+			ClasspathEntry newClasspathEntry = (ClasspathEntry) newEntry;
 			if (!globalParent.contains(newClasspathEntry)) {
-				added= true;
+				added = true;
 				globalParent.addEntry(newClasspathEntry);
 			}
-		} 
+		}
 		if (newEntry != null) {
 			if (added) {
 				treeViewer.add(parent, newEntry);
@@ -61,9 +60,9 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 			refresh();
 		}
 	}
-	
+
 	public void add(int entryType, Object child) {
-		Object newEntry= model.addEntry(entryType, child);
+		Object newEntry = model.addEntry(entryType, child);
 		if (newEntry != null) {
 			treeViewer.add(getParent(newEntry), newEntry);
 			refresh();
@@ -74,16 +73,16 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 		model.removeAll();
 		refresh();
 	}
-	
+
 	private void refresh() {
 		if (refreshEnabled) {
 			treeViewer.refresh();
-			refreshRequested= false;
+			refreshRequested = false;
 		} else {
-			refreshRequested= true;
+			refreshRequested = true;
 		}
 	}
-	
+
 	public void removeAllGlobalAntClasspathEntries() {
 		model.removeAll(ClasspathModel.ANT_HOME);
 		refresh();
@@ -92,95 +91,109 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 	/**
 	 * @see ITreeContentProvider#getParent(Object)
 	 */
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof ClasspathEntry) {
-			return ((ClasspathEntry)element).getParent();
+			return ((ClasspathEntry) element).getParent();
 		}
 		if (element instanceof GlobalClasspathEntries) {
 			return model;
 		}
-		
+
 		return null;
 	}
 
 	/**
 	 * @see ITreeContentProvider#hasChildren(Object)
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof ClasspathEntry) {
 			return false;
 		}
 		if (element instanceof GlobalClasspathEntries) {
-			return ((GlobalClasspathEntries)element).hasEntries();
-			
-		} 
-		
+			return ((GlobalClasspathEntries) element).hasEntries();
+
+		}
+
 		if (element instanceof ClasspathModel) {
 			return ((ClasspathModel) element).hasEntries();
 		}
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
+		// do nothing
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		treeViewer = (TreeViewer) viewer;
-		
+
 		if (newInput != null) {
-			model= (ClasspathModel)newInput;
+			model = (ClasspathModel) newInput;
 		} else {
 			if (model != null) {
 				model.removeAll();
 			}
-			model= null;
+			model = null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof GlobalClasspathEntries) {
-			return ((GlobalClasspathEntries)parentElement).getEntries();
+			return ((GlobalClasspathEntries) parentElement).getEntries();
 		}
 		if (parentElement instanceof ClasspathModel) {
-			return ((ClasspathModel)parentElement).getEntries();
+			return ((ClasspathModel) parentElement).getEntries();
 		}
 		if (parentElement == null) {
-			List all= new ArrayList();
-			Object[] topEntries= model.getEntries();
+			List<Object> all = new ArrayList<Object>();
+			Object[] topEntries = model.getEntries();
 			for (int i = 0; i < topEntries.length; i++) {
 				Object object = topEntries[i];
 				if (object instanceof ClasspathEntry) {
 					all.add(object);
 				} else if (object instanceof GlobalClasspathEntries) {
-					all.addAll(Arrays.asList(((GlobalClasspathEntries)object).getEntries()));
+					all.addAll(Arrays.asList(((GlobalClasspathEntries) object).getEntries()));
 				}
 			}
 			return all.toArray();
 		}
-		
+
 		return null;
 	}
 
 	public void remove(IStructuredSelection selection) {
-		Object[] array= selection.toArray();
+		Object[] array = selection.toArray();
 		model.removeAll(array);
 		treeViewer.remove(array);
 		refresh();
@@ -201,11 +214,11 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 	/**
 	 * @param currentParent
 	 */
-	public void setEntries(IClasspathEntry currentParent, List entries) {
+	public void setEntries(IClasspathEntry currentParent, List<IAntClasspathEntry> entries) {
 		if (currentParent instanceof GlobalClasspathEntries) {
-			GlobalClasspathEntries group= (GlobalClasspathEntries) currentParent;
+			GlobalClasspathEntries group = (GlobalClasspathEntries) currentParent;
 			group.setEntries(entries);
 		}
-		
+
 	}
 }

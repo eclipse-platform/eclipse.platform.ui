@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,6 +179,7 @@ public class AntCorePlugin extends Plugin {
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 * @since 3.1
 	 */
+	@SuppressWarnings("deprecation")
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
         AntCoreUtil.setBundleContext(null);
@@ -202,7 +203,7 @@ public class AntCorePlugin extends Plugin {
 	 * @param pointName The name of the extension point
 	 * @return The list of the extensions
 	 */
-	private List extractExtensions(String pointName) {
+	private List<IConfigurationElement> extractExtensions(String pointName) {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(AntCorePlugin.PI_ANTCORE, pointName);
 		if (extensionPoint == null) {
 			return null;

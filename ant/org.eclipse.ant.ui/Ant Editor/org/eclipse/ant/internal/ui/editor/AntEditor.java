@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2013 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH,
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials
@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
@@ -43,6 +44,7 @@ import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntModelChangeEvent;
 import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.model.IAntElement;
 import org.eclipse.ant.internal.ui.model.IAntModelListener;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
@@ -125,13 +127,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 * 
 	 * @since 3.0
 	 */
-	private class EditorSelectionChangedListener implements ISelectionChangedListener  {
-		
+	private class EditorSelectionChangedListener implements ISelectionChangedListener {
+
 		/**
-		 * Installs this selection changed listener with the given selection provider. If
-		 * the selection provider is a post selection provider, post selection changed
-		 * events are the preferred choice, otherwise normal selection changed events
-		 * are requested.
+		 * Installs this selection changed listener with the given selection provider. If the selection provider is a post selection provider, post
+		 * selection changed events are the preferred choice, otherwise normal selection changed events are requested.
 		 * 
 		 * @param selectionProvider
 		 */
@@ -139,11 +139,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			if (selectionProvider == null || getAntModel() == null) {
 				return;
 			}
-				
-			if (selectionProvider instanceof IPostSelectionProvider)  {
-				IPostSelectionProvider provider= (IPostSelectionProvider) selectionProvider;
+
+			if (selectionProvider instanceof IPostSelectionProvider) {
+				IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
 				provider.addPostSelectionChangedListener(this);
-			} else  {
+			} else {
 				selectionProvider.addSelectionChangedListener(this);
 			}
 		}
@@ -157,45 +157,49 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			if (selectionProvider == null || getAntModel() == null) {
 				return;
 			}
-			
-			if (selectionProvider instanceof IPostSelectionProvider)  {
-				IPostSelectionProvider provider= (IPostSelectionProvider) selectionProvider;
+
+			if (selectionProvider instanceof IPostSelectionProvider) {
+				IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
 				provider.removePostSelectionChangedListener(this);
-			} else  {
+			} else {
 				selectionProvider.removeSelectionChangedListener(this);
 			}
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
-			AntModel model= getAntModel();
-			ISelection selection= event.getSelection();
-			AntElementNode node= null;
+			AntModel model = getAntModel();
+			ISelection selection = event.getSelection();
+			AntElementNode node = null;
 			if (selection instanceof ITextSelection) {
-				ITextSelection textSelection= (ITextSelection)selection;
-				int offset= textSelection.getOffset();
-				node= model.getNode(offset, false);
+				ITextSelection textSelection = (ITextSelection) selection;
+				int offset = textSelection.getOffset();
+				node = model.getNode(offset, false);
 				updateOccurrenceAnnotations(textSelection, model);
 			}
-		
+
 			if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR)) {
 				synchronizeOutlinePage(node, true);
 			}
 			setSelection(node, false);
 		}
 	}
-	
-	class StatusLineSourceViewer extends ProjectionViewer{
-		
+
+	class StatusLineSourceViewer extends ProjectionViewer {
+
 		public StatusLineSourceViewer(Composite composite, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler, int styles) {
 			super(composite, verticalRuler, overviewRuler, isOverviewRulerVisible(), styles);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
 		 */
+		@Override
 		public void doOperation(int operation) {
 			if (getTextWidget() == null || !redraws()) {
 				return;
@@ -203,132 +207,134 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 
 			switch (operation) {
 				case CONTENTASSIST_PROPOSALS:
-					String msg= fContentAssistant.showPossibleCompletions();
+					String msg = fContentAssistant.showPossibleCompletions();
 					setStatusLineErrorMessage(msg);
 					return;
+				default:
+					break;
 			}
-			
+
 			super.doOperation(operation);
 		}
 	}
-		
-	
+
 	/**
 	 * Finds and marks occurrence annotations.
 	 * 
 	 * @since 3.1
 	 */
 	class OccurrencesFinderJob extends Job {
-		
+
 		private IDocument fDocument;
 		private ISelection fSelection;
 		private ISelectionValidator fPostSelectionValidator;
-		private boolean fCanceled= false;
+		private boolean fCanceled = false;
 		private IProgressMonitor fProgressMonitor;
-		private List fPositions;
-		
-		public OccurrencesFinderJob(IDocument document, List positions, ISelection selection) {
+		private List<Position> fPositions;
+
+		public OccurrencesFinderJob(IDocument document, List<Position> positions, ISelection selection) {
 			super("Occurrences Marker"); //$NON-NLS-1$
-			fDocument= document;
-			fSelection= selection;
-			fPositions= positions;
-			
+			fDocument = document;
+			fSelection = selection;
+			fPositions = positions;
+
 			if (getSelectionProvider() instanceof ISelectionValidator)
-				fPostSelectionValidator= (ISelectionValidator)getSelectionProvider();
+				fPostSelectionValidator = (ISelectionValidator) getSelectionProvider();
 		}
-		
+
 		// cannot use cancel() because it is declared final
 		void doCancel() {
-			fCanceled= true;
+			fCanceled = true;
 			cancel();
 		}
-		
+
 		private boolean isCanceled() {
-			return fCanceled || fProgressMonitor.isCanceled()
-				||  fPostSelectionValidator != null && !(fPostSelectionValidator.isValid(fSelection) || fForcedMarkOccurrencesSelection == fSelection)
-				|| LinkedModeModel.hasInstalledModel(fDocument);
+			return fCanceled || fProgressMonitor.isCanceled() || fPostSelectionValidator != null
+					&& !(fPostSelectionValidator.isValid(fSelection) || fForcedMarkOccurrencesSelection == fSelection)
+					|| LinkedModeModel.hasInstalledModel(fDocument);
 		}
-		
+
 		/*
 		 * @see Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public IStatus run(IProgressMonitor progressMonitor) {
-			
-			fProgressMonitor= progressMonitor;
-			
+
+			fProgressMonitor = progressMonitor;
+
 			if (isCanceled())
 				return Status.CANCEL_STATUS;
-			
-			ITextViewer textViewer= getViewer();
+
+			ITextViewer textViewer = getViewer();
 			if (textViewer == null)
 				return Status.CANCEL_STATUS;
-			
-			IDocument document= textViewer.getDocument();
+
+			IDocument document = textViewer.getDocument();
 			if (document == null)
 				return Status.CANCEL_STATUS;
-			
-			IDocumentProvider documentProvider= getDocumentProvider();
+
+			IDocumentProvider documentProvider = getDocumentProvider();
 			if (documentProvider == null)
 				return Status.CANCEL_STATUS;
-		
-			IAnnotationModel annotationModel= documentProvider.getAnnotationModel(getEditorInput());
+
+			IAnnotationModel annotationModel = documentProvider.getAnnotationModel(getEditorInput());
 			if (annotationModel == null)
 				return Status.CANCEL_STATUS;
-			
+
 			// Add occurrence annotations
-			int length= fPositions.size();
-			Map annotationMap= new HashMap(length);
-			for (int i= 0; i < length; i++) {
-				
+			int length = fPositions.size();
+			Map<Annotation, Position> annotationMap = new HashMap<Annotation, Position>(length);
+			for (int i = 0; i < length; i++) {
+
 				if (isCanceled())
 					return Status.CANCEL_STATUS;
-				
+
 				String message;
-				Position position= (Position) fPositions.get(i);
-				
+				Position position = fPositions.get(i);
+
 				// Create & add annotation
 				try {
-					message= document.get(position.offset, position.length);
-				} catch (BadLocationException ex) {
+					message = document.get(position.offset, position.length);
+				}
+				catch (BadLocationException ex) {
 					// Skip this match
 					continue;
 				}
-				annotationMap.put(
-						new Annotation("org.eclipse.jdt.ui.occurrences", false, message), //$NON-NLS-1$
+				annotationMap.put(new Annotation("org.eclipse.jdt.ui.occurrences", false, message), //$NON-NLS-1$
 						position);
 			}
-			
+
 			if (isCanceled()) {
 				return Status.CANCEL_STATUS;
-            }
-			
-            Object lock= getLockObject(document);
-            if (lock == null) {
-                updateAnnotations(annotationModel, annotationMap);
-            } else {
-                synchronized (lock) {
-                    updateAnnotations(annotationModel, annotationMap);
-                }
-            }
+			}
+
+			Object lock = getLockObject(document);
+			if (lock == null) {
+				updateAnnotations(annotationModel, annotationMap);
+			} else {
+				synchronized (lock) {
+					updateAnnotations(annotationModel, annotationMap);
+				}
+			}
 
 			return Status.OK_STATUS;
 		}
 
-        private void updateAnnotations(IAnnotationModel annotationModel, Map annotationMap) {
-            if (annotationModel instanceof IAnnotationModelExtension) {
-            	((IAnnotationModelExtension)annotationModel).replaceAnnotations(fOccurrenceAnnotations, annotationMap);
-            } else {
-            	removeOccurrenceAnnotations();
-            	Iterator iter= annotationMap.entrySet().iterator();
-            	while (iter.hasNext()) {
-            		Map.Entry mapEntry= (Map.Entry)iter.next();
-            		annotationModel.addAnnotation((Annotation)mapEntry.getKey(), (Position)mapEntry.getValue());
-            	}
-            }
-            fOccurrenceAnnotations= (Annotation[])annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
-        }
+		private void updateAnnotations(IAnnotationModel annotationModel, Map<Annotation, Position> annotationMap) {
+			if (annotationModel instanceof IAnnotationModelExtension) {
+				((IAnnotationModelExtension) annotationModel).replaceAnnotations(fOccurrenceAnnotations, annotationMap);
+			} else {
+				removeOccurrenceAnnotations();
+				Iterator<Map.Entry<Annotation, Position>> iter = annotationMap.entrySet().iterator();
+				while (iter.hasNext()) {
+					Entry<Annotation, Position> mapEntry = iter.next();
+					annotationModel.addAnnotation(mapEntry.getKey(), mapEntry.getValue());
+				}
+			}
+			fOccurrenceAnnotations = annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
+		}
 	}
-	
+
 	/**
 	 * Cancels the occurrences finder job upon document changes.
 	 * 
@@ -337,38 +343,38 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	class OccurrencesFinderJobCanceler implements IDocumentListener, ITextInputListener {
 
 		public void install() {
-			ISourceViewer sourceViewer= getSourceViewer();
+			ISourceViewer sourceViewer = getSourceViewer();
 			if (sourceViewer == null)
 				return;
-				
-			StyledText text= sourceViewer.getTextWidget();
+
+			StyledText text = sourceViewer.getTextWidget();
 			if (text == null || text.isDisposed())
 				return;
 
 			sourceViewer.addTextInputListener(this);
-			
-			IDocument document= sourceViewer.getDocument();
+
+			IDocument document = sourceViewer.getDocument();
 			if (document != null)
 				document.addDocumentListener(this);
 		}
-		
+
 		public void uninstall() {
-			ISourceViewer sourceViewer= getSourceViewer();
+			ISourceViewer sourceViewer = getSourceViewer();
 			if (sourceViewer != null)
 				sourceViewer.removeTextInputListener(this);
 
-			IDocumentProvider documentProvider= getDocumentProvider();
+			IDocumentProvider documentProvider = getDocumentProvider();
 			if (documentProvider != null) {
-				IDocument document= documentProvider.getDocument(getEditorInput());
+				IDocument document = documentProvider.getDocument(getEditorInput());
 				if (document != null)
 					document.removeDocumentListener(this);
 			}
 		}
-				
 
 		/*
 		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			if (fOccurrencesFinderJob != null)
 				fOccurrencesFinderJob.doCancel();
@@ -377,12 +383,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		/*
 		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
+		@Override
 		public void documentChanged(DocumentEvent event) {
+			// do nothing
 		}
 
 		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument,
+		 * org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 			if (oldInput == null)
 				return;
@@ -393,34 +403,38 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		/*
 		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 			if (newInput == null)
 				return;
 			newInput.addDocumentListener(this);
 		}
 	}
-	
+
 	/**
 	 * Internal activation listener.
+	 * 
 	 * @since 3.1
 	 */
 	private class ActivationListener extends ShellAdapter {
 		/*
 		 * @see org.eclipse.swt.events.ShellAdapter#shellActivated(org.eclipse.swt.events.ShellEvent)
 		 */
+		@Override
 		public void shellActivated(ShellEvent e) {
 			if (fMarkOccurrenceAnnotations && isActivePart()) {
-				ISelection selection= getSelectionProvider().getSelection();
+				ISelection selection = getSelectionProvider().getSelection();
 				if (selection instanceof ITextSelection) {
-					fForcedMarkOccurrencesSelection= (ITextSelection) selection;
+					fForcedMarkOccurrencesSelection = (ITextSelection) selection;
 					updateOccurrenceAnnotations(fForcedMarkOccurrencesSelection, getAntModel());
 				}
 			}
 		}
-		
+
 		/*
 		 * @see org.eclipse.swt.events.ShellAdapter#shellDeactivated(org.eclipse.swt.events.ShellEvent)
 		 */
+		@Override
 		public void shellDeactivated(ShellEvent e) {
 			if (fMarkOccurrenceAnnotations && isActivePart())
 				removeOccurrenceAnnotations();
@@ -430,24 +444,24 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	/**
 	 * Selection changed listener for the outline view.
 	 */
-    protected ISelectionChangedListener fSelectionChangedListener = new ISelectionChangedListener(){
-        public void selectionChanged(SelectionChangedEvent event) {
-        	fSelectionSetFromOutline= false;
-            doSelectionChanged(event);
-            fSelectionSetFromOutline= true;
-        }
-    };
-    
-    private IAntModelListener fAntModelListener;
-    
-    /**
-     * The page that shows the outline.
-     */
-    protected AntEditorContentOutlinePage fOutlinePage;
-    
-	
-	private boolean fInitialReconcile= true;
-	
+	protected ISelectionChangedListener fSelectionChangedListener = new ISelectionChangedListener() {
+		@Override
+		public void selectionChanged(SelectionChangedEvent event) {
+			fSelectionSetFromOutline = false;
+			doSelectionChanged(event);
+			fSelectionSetFromOutline = true;
+		}
+	};
+
+	private IAntModelListener fAntModelListener;
+
+	/**
+	 * The page that shows the outline.
+	 */
+	protected AntEditorContentOutlinePage fOutlinePage;
+
+	private boolean fInitialReconcile = true;
+
 	/**
 	 * The editor selection changed listener.
 	 * 
@@ -456,87 +470,96 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	private EditorSelectionChangedListener fEditorSelectionChangedListener;
 
 	private ProjectionSupport fProjectionSupport;
-	
-	private AntFoldingStructureProvider fFoldingStructureProvider;
-	
-	private boolean fSelectionSetFromOutline= false;
 
-    private FoldingActionGroup fFoldingGroup;
-	
+	private AntFoldingStructureProvider fFoldingStructureProvider;
+
+	private boolean fSelectionSetFromOutline = false;
+
+	private FoldingActionGroup fFoldingGroup;
+
 	/**
 	 * Holds the current occurrence annotations.
+	 * 
 	 * @since 3.1
 	 */
-	private Annotation[] fOccurrenceAnnotations= null;
+	private Annotation[] fOccurrenceAnnotations = null;
 
 	private OccurrencesFinderJob fOccurrencesFinderJob;
 	private OccurrencesFinderJobCanceler fOccurrencesFinderJobCanceler;
-	
+
 	private ITextSelection fForcedMarkOccurrencesSelection;
 	/**
 	 * The internal shell activation listener for updating occurrences.
+	 * 
 	 * @since 3.1
 	 */
-	private ActivationListener fActivationListener= new ActivationListener();
-	
+	private ActivationListener fActivationListener = new ActivationListener();
+
 	private boolean fMarkOccurrenceAnnotations;
 	private boolean fStickyOccurrenceAnnotations;
-    
-    private AntModel fAntModel;
-    
-    /**
-     * Default no-argument constructor
-     */
-    public AntEditor() {
-    	setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);
+
+	private AntModel fAntModel;
+
+	/**
+	 * Default no-argument constructor
+	 */
+	public AntEditor() {
+		setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);
 		setRulerContextMenuId("#AntEditorRulerContext"); //$NON-NLS-1$
-        setEditorContextMenuId("#AntEditorContext"); //$NON-NLS-1$
+		setEditorContextMenuId("#AntEditorContext"); //$NON-NLS-1$
 		configureInsertMode(SMART_INSERT, false);
 		setInsertMode(INSERT);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
-     */
-    protected void createActions() {
-        super.createActions();
-
-        ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"); //$NON-NLS-1$
-        
-		IAction action= new TextOperationAction(bundle, "ContentFormat.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
-        action.setActionDefinitionId(IJavaEditorActionDefinitionIds.FORMAT);
-        setAction("ContentFormat", action); //$NON-NLS-1$
-        
-        fFoldingGroup= new FoldingActionGroup(this, getViewer());
-        
-		action= new RenameInFileAction(this);
-		action.setActionDefinitionId("org.eclipse.ant.ui.renameInFile"); //$NON-NLS-1$
-		setAction("renameInFile", action); //$NON-NLS-1$
-    }
+	}
 
 	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.editors.text.TextEditor#initializeEditor()
-	 * Called from TextEditor.<init>
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
 	 */
-    protected void initializeEditor() {
+	@Override
+	protected void createActions() {
+		super.createActions();
+
+		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"); //$NON-NLS-1$
+
+		IAction action = new TextOperationAction(bundle, "ContentFormat.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
+		action.setActionDefinitionId(IJavaEditorActionDefinitionIds.FORMAT);
+		setAction("ContentFormat", action); //$NON-NLS-1$
+
+		fFoldingGroup = new FoldingActionGroup(this, getViewer());
+
+		action = new RenameInFileAction(this);
+		action.setActionDefinitionId("org.eclipse.ant.ui.renameInFile"); //$NON-NLS-1$
+		setAction("renameInFile", action); //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.editors.text.TextEditor#initializeEditor() Called from TextEditor.<init>
+	 */
+	@Override
+	protected void initializeEditor() {
 		setPreferenceStore(AntUIPlugin.getDefault().getCombinedPreferenceStore());
 		setCompatibilityMode(false);
-		
-		
-		fMarkOccurrenceAnnotations= getPreferenceStore().getBoolean(AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES);
-		fStickyOccurrenceAnnotations= getPreferenceStore().getBoolean(AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES);
-		
+
+		fMarkOccurrenceAnnotations = getPreferenceStore().getBoolean(AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES);
+		fStickyOccurrenceAnnotations = getPreferenceStore().getBoolean(AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES);
+
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
 		setDocumentProvider(AntUIPlugin.getDefault().getDocumentProvider());
-		
-		fAntModelListener= new IAntModelListener() {
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.ant.internal.ui.editor.outline.IDocumentModelListener#documentModelChanged(org.eclipse.ant.internal.ui.editor.outline.DocumentModelChangeEvent)
+		fAntModelListener = new IAntModelListener() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ant.internal.ui.editor.outline.IDocumentModelListener#documentModelChanged(org.eclipse.ant.internal.ui.editor.outline.
+			 * DocumentModelChangeEvent)
 			 */
+			@Override
 			public void antModelChanged(AntModelChangeEvent event) {
-				AntModel model= getAntModel();
+				AntModel model = getAntModel();
 				if (event.getModel() == model) {
 					if (event.isPreferenceChange()) {
 						updateEditorImage(model);
@@ -548,166 +571,178 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			}
 		};
 		AntModelCore.getDefault().addAntModelListener(fAntModelListener);
-    }
-   
-	/* (non-Javadoc)
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-    public Object getAdapter(Class key) {
-        if (key.equals(IContentOutlinePage.class)) {
+	@Override
+	public Object getAdapter(Class key) {
+		if (key.equals(IContentOutlinePage.class)) {
 			return getOutlinePage();
-        }
-        
-        if (fProjectionSupport != null) {
-        	Object adapter= fProjectionSupport.getAdapter(getSourceViewer(), key);
-        	if (adapter != null) {
-            	return adapter;
-            }
-        }
+		}
 
-        if (key == IShowInTargetList.class) {
+		if (fProjectionSupport != null) {
+			Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), key);
+			if (adapter != null) {
+				return adapter;
+			}
+		}
+
+		if (key == IShowInTargetList.class) {
 			return new IShowInTargetList() {
+				@Override
 				public String[] getShowInTargetIds() {
-					return new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };
+					return new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER };
 				}
 			};
 		}
-        
-        if (key == IToggleBreakpointsTarget.class) {
+
+		if (key == IToggleBreakpointsTarget.class) {
 			return new ToggleLineBreakpointAction();
 		}
-        
-        if (key == IRunToLineTarget.class) {
+
+		if (key == IRunToLineTarget.class) {
 			return new RunToLineAdapter();
 		}
-        
-        return super.getAdapter(key);
-    }
+
+		return super.getAdapter(key);
+	}
 
 	private AntEditorContentOutlinePage getOutlinePage() {
 		if (fOutlinePage == null) {
-			fOutlinePage= new AntEditorContentOutlinePage(AntModelCore.getDefault(), this);
+			fOutlinePage = new AntEditorContentOutlinePage(AntModelCore.getDefault(), this);
 			fOutlinePage.addPostSelectionChangedListener(fSelectionChangedListener);
 			setOutlinePageInput();
 		}
 		return fOutlinePage;
 	}
 
-    private void doSelectionChanged(SelectionChangedEvent selectionChangedEvent) {
-        IStructuredSelection selection= (IStructuredSelection)selectionChangedEvent.getSelection();
+	private void doSelectionChanged(SelectionChangedEvent selectionChangedEvent) {
+		IStructuredSelection selection = (IStructuredSelection) selectionChangedEvent.getSelection();
 
-        if (!isActivePart() && AntUIPlugin.getActivePage() != null) {
+		if (!isActivePart() && AntUIPlugin.getActivePage() != null) {
 			AntUIPlugin.getActivePage().bringToTop(this);
-        }
-        
-        AntElementNode selectedXmlElement = (AntElementNode)selection.getFirstElement();
-        if(selectedXmlElement != null) {
-			setSelection(selectedXmlElement, !isActivePart());
-        }
-    }
+		}
 
-    private boolean isActivePart() {
-        IWorkbenchPart part= getActivePart();
-        return part != null && part.equals(this);
-    }
-    
-    public void setSelection(AntElementNode reference, boolean moveCursor) {
-    	if (fSelectionSetFromOutline) {
-    		//the work has all just been done via a selection setting in the outline
-    		fSelectionSetFromOutline= false;
-    		return;
-    	}
-        if (reference == null) {
-        	if (moveCursor) {
-        		 resetHighlightRange();
-                 markInNavigationHistory();
-        	}
-        	return;
-        }
-		
+		AntElementNode selectedXmlElement = (AntElementNode) selection.getFirstElement();
+		if (selectedXmlElement != null) {
+			setSelection(selectedXmlElement, !isActivePart());
+		}
+	}
+
+	private boolean isActivePart() {
+		IWorkbenchPart part = getActivePart();
+		return part != null && part.equals(this);
+	}
+
+	public void setSelection(AntElementNode reference, boolean moveCursor) {
+		if (fSelectionSetFromOutline) {
+			// the work has all just been done via a selection setting in the outline
+			fSelectionSetFromOutline = false;
+			return;
+		}
+		if (reference == null) {
+			if (moveCursor) {
+				resetHighlightRange();
+				markInNavigationHistory();
+			}
+			return;
+		}
+
 		if (moveCursor) {
 			markInNavigationHistory();
 		}
-		
-    	while (reference.getImportNode() != null) {
-    		reference= reference.getImportNode();
-    	}
-    	if (reference.isExternal()) {
-    		return;
-    	}
-        
-        ISourceViewer sourceViewer= getSourceViewer();
-        if (sourceViewer == null) {
-            return;
-        }
-        StyledText textWidget= sourceViewer.getTextWidget();
-        if (textWidget == null) {
-            return;
-        }
-            
-        try {
-            int offset= reference.getOffset();
-            if (offset < 0) {
-                return;
-            }
-            int length= reference.getSelectionLength();
-            int highLightLength= reference.getLength();
-               
-            textWidget.setRedraw(false);
-            
-            if (highLightLength > 0) {
-                setHighlightRange(offset, highLightLength, moveCursor);
-            }
-            
-            if (!moveCursor) {
-                return;
-            }
-                                        
-            if (offset > -1 && length > 0) {
-                sourceViewer.revealRange(offset, length);
-                // Selected region begins one index after offset
-                sourceViewer.setSelectedRange(offset, length);
-                markInNavigationHistory();
-            }
-        } catch (IllegalArgumentException x) {
-        	AntUIPlugin.log(x);
-        } finally {
-            textWidget.setRedraw(true);
-        }
-    }
 
-	/* (non-Javadoc)
+		while (reference.getImportNode() != null) {
+			reference = reference.getImportNode();
+		}
+		if (reference.isExternal()) {
+			return;
+		}
+
+		ISourceViewer sourceViewer = getSourceViewer();
+		if (sourceViewer == null) {
+			return;
+		}
+		StyledText textWidget = sourceViewer.getTextWidget();
+		if (textWidget == null) {
+			return;
+		}
+
+		try {
+			int offset = reference.getOffset();
+			if (offset < 0) {
+				return;
+			}
+			int length = reference.getSelectionLength();
+			int highLightLength = reference.getLength();
+
+			textWidget.setRedraw(false);
+
+			if (highLightLength > 0) {
+				setHighlightRange(offset, highLightLength, moveCursor);
+			}
+
+			if (!moveCursor) {
+				return;
+			}
+
+			if (offset > -1 && length > 0) {
+				sourceViewer.revealRange(offset, length);
+				// Selected region begins one index after offset
+				sourceViewer.setSelectedRange(offset, length);
+				markInNavigationHistory();
+			}
+		}
+		catch (IllegalArgumentException x) {
+			AntUIPlugin.log(x);
+		}
+		finally {
+			textWidget.setRedraw(true);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		return ((AntEditorSourceViewerConfiguration)getSourceViewerConfiguration()).affectsTextPresentation(event);
+		return ((AntEditorSourceViewerConfiguration) getSourceViewerConfiguration()).affectsTextPresentation(event);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		String property= event.getProperty();
-		
+		String property = event.getProperty();
+
 		if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
-			Object value= event.getNewValue();
-			StatusLineSourceViewer viewer= (StatusLineSourceViewer) getSourceViewer();
-			int newValue= -1;
+			Object value = event.getNewValue();
+			StatusLineSourceViewer viewer = (StatusLineSourceViewer) getSourceViewer();
+			int newValue = -1;
 			if (value instanceof Integer) {
-				newValue=((Integer) value).intValue();
+				newValue = ((Integer) value).intValue();
 			} else if (value instanceof String) {
-				newValue= Integer.parseInt((String) value);
+				newValue = Integer.parseInt((String) value);
 			}
 			if (newValue != -1) {
 				viewer.getTextWidget().setTabs(newValue);
 			}
 			return;
 		}
-		
+
 		if (AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES.equals(property)) {
-			boolean newBooleanValue= Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+			boolean newBooleanValue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
 			if (newBooleanValue != fMarkOccurrenceAnnotations) {
-				fMarkOccurrenceAnnotations= newBooleanValue;
+				fMarkOccurrenceAnnotations = newBooleanValue;
 				if (fMarkOccurrenceAnnotations) {
 					installOccurrencesFinder();
 				} else {
@@ -717,15 +752,15 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			return;
 		}
 		if (AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES.equals(property)) {
-			boolean newBooleanValue= Boolean.valueOf(event.getNewValue().toString()).booleanValue();
-			fStickyOccurrenceAnnotations= newBooleanValue;
+			boolean newBooleanValue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+			fStickyOccurrenceAnnotations = newBooleanValue;
 			return;
 		}
-		
+
 		if (AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
-			ISourceViewer sourceViewer= getSourceViewer();
+			ISourceViewer sourceViewer = getSourceViewer();
 			if (sourceViewer instanceof ProjectionViewer) {
-				ProjectionViewer pv= (ProjectionViewer) sourceViewer;
+				ProjectionViewer pv = (ProjectionViewer) sourceViewer;
 				if (pv.isProjectionMode() != isFoldingEnabled()) {
 					if (pv.canDoOperation(ProjectionViewer.TOGGLE)) {
 						pv.doOperation(ProjectionViewer.TOGGLE);
@@ -735,22 +770,23 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			return;
 		}
 
-		AntEditorSourceViewerConfiguration sourceViewerConfiguration= (AntEditorSourceViewerConfiguration)getSourceViewerConfiguration();
-        if (sourceViewerConfiguration != null) {
-            if (affectsTextPresentation(event)) {
-                sourceViewerConfiguration.adaptToPreferenceChange(event);
-            }
+		AntEditorSourceViewerConfiguration sourceViewerConfiguration = (AntEditorSourceViewerConfiguration) getSourceViewerConfiguration();
+		if (sourceViewerConfiguration != null) {
+			if (affectsTextPresentation(event)) {
+				sourceViewerConfiguration.adaptToPreferenceChange(event);
+			}
 
-            sourceViewerConfiguration.changeConfiguration(event);
-        }
+			sourceViewerConfiguration.changeConfiguration(event);
+		}
 		super.handlePreferenceStoreChanged(event);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditor#doSetInput(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	protected void doSetInput(IEditorInput input) throws CoreException {
-		fAntModel= null;
+		fAntModel = null;
 		super.doSetInput(input);
 		setOutlinePageInput();
 		if (fFoldingStructureProvider != null) {
@@ -763,329 +799,355 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			fOutlinePage.setPageInput(getAntModel());
 		}
 	}
-	
+
 	/**
 	 * Returns the Ant model for the current editor input of this editor.
+	 * 
 	 * @return the Ant model for this editor or <code>null</code>
 	 */
 	public AntModel getAntModel() {
-        if (fAntModel == null) {
-            IDocumentProvider provider= getDocumentProvider();
-            if (provider instanceof AntEditorDocumentProvider) {
-                AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
-                fAntModel= documentProvider.getAntModel(getEditorInput());
-            }
-        }
+		if (fAntModel == null) {
+			IDocumentProvider provider = getDocumentProvider();
+			if (provider instanceof AntEditorDocumentProvider) {
+				AntEditorDocumentProvider documentProvider = (AntEditorDocumentProvider) provider;
+				fAntModel = documentProvider.getAntModel(getEditorInput());
+			}
+		}
 		return fAntModel;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite,
+	 * org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
+	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		fOverviewRuler= createOverviewRuler(getSharedColors());
-		ISourceViewer viewer= new StatusLineSourceViewer(parent, ruler, getOverviewRuler(), styles);
-		//ensure decoration support has been created and configured.
+		fOverviewRuler = createOverviewRuler(getSharedColors());
+		ISourceViewer viewer = new StatusLineSourceViewer(parent, ruler, getOverviewRuler(), styles);
+		// ensure decoration support has been created and configured.
 		getSourceViewerDecorationSupport(viewer);
 		return viewer;
 	}
-	
+
 	/**
 	 * Set the given message as error message to this editor's status line.
-	 * @param msg message to be set
+	 * 
+	 * @param msg
+	 *            message to be set
 	 */
+	@Override
 	protected void setStatusLineErrorMessage(String msg) {
-		IEditorStatusLine statusLine= (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
+		IEditorStatusLine statusLine = (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
 		if (statusLine != null)
 			statusLine.setMessage(true, msg, null);
 	}
 
 	public void openReferenceElement() {
-		ISelection selection= getSelectionProvider().getSelection();
-		Object target= null;
+		ISelection selection = getSelectionProvider().getSelection();
+		Object target = null;
 		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection= (ITextSelection)selection;
-			ISourceViewer viewer= getSourceViewer();
-			int textOffset= textSelection.getOffset();
-			IRegion region= XMLTextHover.getRegion(viewer, textOffset);
-			target= findTarget(region);
+			ITextSelection textSelection = (ITextSelection) selection;
+			ISourceViewer viewer = getSourceViewer();
+			int textOffset = textSelection.getOffset();
+			IRegion region = XMLTextHover.getRegion(viewer, textOffset);
+			target = findTarget(region);
 		}
-		
+
 		openTarget(target);
 	}
-	
+
 	protected void openTarget(Object node) {
-		String errorMessage= null;
+		String errorMessage = null;
 		if (node instanceof AntElementNode) {
-			errorMessage= openNode((AntElementNode) node);
+			errorMessage = openNode((AntElementNode) node);
 			if (errorMessage == null) {
 				return;
 			}
-		} else if (node instanceof String){
-			errorMessage= openInEditor((String) node, getAntModel().getEditedFile());
+		} else if (node instanceof String) {
+			errorMessage = openInEditor((String) node, getAntModel().getEditedFile());
 			if (errorMessage == null) {
 				return;
 			}
 		}
 		if (errorMessage == null || errorMessage.length() == 0) {
-			errorMessage= AntEditorMessages.getString("AntEditor.3"); //$NON-NLS-1$
+			errorMessage = AntEditorMessages.getString("AntEditor.3"); //$NON-NLS-1$
 		}
 		setStatusLineErrorMessage(errorMessage);
 		getSite().getShell().getDisplay().beep();
 	}
 
 	/**
-     * @param region The region to find the navigation target
-     * @return the navigation target at the specified region
-     */
-    public Object findTarget(IRegion region) {
-        ISourceViewer viewer = getSourceViewer();
-        AntElementNode node= null;
-       
+	 * @param region
+	 *            The region to find the navigation target
+	 * @return the navigation target at the specified region
+	 */
+	public Object findTarget(IRegion region) {
+		ISourceViewer viewer = getSourceViewer();
+		IAntElement node = null;
+
 		if (region != null) {
-			IDocument document= viewer.getDocument();
-			String text= null;
+			IDocument document = viewer.getDocument();
+			String text = null;
 			try {
-				text= document.get(region.getOffset(), region.getLength());
-			} catch (BadLocationException e) {
+				text = document.get(region.getOffset(), region.getLength());
+			}
+			catch (BadLocationException e) {
+				// do nothing
 			}
 			if (text != null && text.length() > 0) {
-				AntModel model= getAntModel();
+				AntModel model = getAntModel();
 				if (model == null) {
 					return null;
 				}
-				node= model.getReferenceNode(text);
+				node = model.getReferenceNode(text);
 				if (node == null) {
-					node= model.getTargetNode(text);
+					node = model.getTargetNode(text);
 					if (node == null) {
-						node= model.getPropertyNode(text);
+						node = model.getPropertyNode(text);
 						if (node == null) {
-							String path= model.getPath(text, region.getOffset());
+							String path = model.getPath(text, region.getOffset());
 							if (path != null) {
 								path = model.getProjectNode().getProject().replaceProperties(path);
 								return path;
 							}
-                            
-                            node= model.getDefininingTaskNode(text);
-                            if (node == null) {
-                                node= model.getMacroDefAttributeNode(text);
-                            }
+
+							node = model.getDefininingTaskNode(text);
+							if (node == null) {
+								node = model.getMacroDefAttributeNode(text);
+							}
 						}
 					}
 				}
 			}
 		}
 		return node;
-    }
+	}
 
-
-    private String openNode(AntElementNode node) {
-		String errorMessage= null;
+	private String openNode(AntElementNode node) {
+		String errorMessage = null;
 		if (node.isExternal()) {
-			String path= node.getFilePath();
-			errorMessage= openInEditor(path, null);
+			String path = node.getFilePath();
+			errorMessage = openInEditor(path, null);
 		} else {
 			setSelection(node, true);
 		}
 		return errorMessage;
 	}
-	
+
 	private String openInEditor(String path, File buildFile) {
-		File buildFileParent= null;
+		File buildFileParent = null;
 		if (buildFile != null) {
-			buildFileParent= buildFile.getParentFile();
+			buildFileParent = buildFile.getParentFile();
 		}
-		IFile file= AntUtil.getFileForLocation(path, buildFileParent);
+		IFile file = AntUtil.getFileForLocation(path, buildFileParent);
 		if (file != null && file.exists()) {
 			try {
-				IWorkbenchPage p= getEditorSite().getPage();
+				IWorkbenchPage p = getEditorSite().getPage();
 				if (p != null) {
 					IDE.openEditor(p, file, isActivePart());
 				}
 				return null;
-			} catch (PartInitException e) {
+			}
+			catch (PartInitException e) {
 				return e.getLocalizedMessage();
 			}
 		}
-        File externalFile= new File(path);
-        if (externalFile.exists()) {
-            new ExternalHyperlink(externalFile, -1).linkActivated();
-            return null;
-        }
-        
+		File externalFile = new File(path);
+		if (externalFile.exists()) {
+			new ExternalHyperlink(externalFile, -1).linkActivated();
+			return null;
+		}
+
 		return IAntCoreConstants.EMPTY_STRING;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
-		
+
 		if (getAntModel() != null) {
-			IAction action= getAction("renameInFile"); //$NON-NLS-1$
-		    menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, new Separator(ITextEditorActionConstants.GROUP_EDIT));
+			IAction action = getAction("renameInFile"); //$NON-NLS-1$
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, new Separator(ITextEditorActionConstants.GROUP_EDIT));
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, action);
-			
-			action= getAction("ContentFormat"); //$NON-NLS-1$
+
+			action = getAction("ContentFormat"); //$NON-NLS-1$
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, action);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		
-		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
-        createFoldingSupport(projectionViewer);
-        if (isFoldingEnabled()) {
-        	projectionViewer.doOperation(ProjectionViewer.TOGGLE);
-        }
-        
+
+		ProjectionViewer projectionViewer = (ProjectionViewer) getSourceViewer();
+		createFoldingSupport(projectionViewer);
+		if (isFoldingEnabled()) {
+			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
+		}
+
 		if (fMarkOccurrenceAnnotations) {
 			installOccurrencesFinder();
 		}
 		getEditorSite().getShell().addShellListener(fActivationListener);
-		
-		fEditorSelectionChangedListener= new EditorSelectionChangedListener();
+
+		fEditorSelectionChangedListener = new EditorSelectionChangedListener();
 		fEditorSelectionChangedListener.install(getSelectionProvider());
 	}
-	
+
 	private void createFoldingSupport(ProjectionViewer projectionViewer) {
-		fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
-    	fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+		fProjectionSupport = new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
+		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell shell) {
 				return new AntSourceViewerInformationControl(shell);
 			}
 		});
-        fProjectionSupport.install();
-		((ProjectionViewer)getViewer()).addProjectionListener(this);
-        
+		fProjectionSupport.install();
+		((ProjectionViewer) getViewer()).addProjectionListener(this);
+
 	}
 
-
 	private boolean isFoldingEnabled() {
-		IPreferenceStore store= getPreferenceStore();
+		IPreferenceStore store = getPreferenceStore();
 		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
 
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#isTabsToSpacesConversionEnabled()
+	 * 
 	 * @since 3.3
 	 */
+	@Override
 	protected boolean isTabsToSpacesConversionEnabled() {
-		return super.isTabsToSpacesConversionEnabled(); //provide package visibility
+		return super.isTabsToSpacesConversionEnabled(); // provide package visibility
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
-		if (fEditorSelectionChangedListener != null)  {
+		if (fEditorSelectionChangedListener != null) {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
-			fEditorSelectionChangedListener= null;
+			fEditorSelectionChangedListener = null;
 		}
-		
-		((ProjectionViewer)getViewer()).removeProjectionListener(this);
+
+		((ProjectionViewer) getViewer()).removeProjectionListener(this);
 		if (fProjectionSupport != null) {
 			fProjectionSupport.dispose();
-			fProjectionSupport= null;
+			fProjectionSupport = null;
 		}
-		
+
 		uninstallOccurrencesFinder();
-		
+
 		if (fActivationListener != null) {
-			Shell shell= getEditorSite().getShell();
+			Shell shell = getEditorSite().getShell();
 			if (shell != null && !shell.isDisposed()) {
 				shell.removeShellListener(fActivationListener);
 			}
-			fActivationListener= null;
+			fActivationListener = null;
 		}
-		
+
 		AntModelCore.getDefault().removeAntModelListener(fAntModelListener);
-		fAntModel= null;
+		fAntModel = null;
 
 		super.dispose();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
-		AntModel model= getAntModel();
+		AntModel model = getAntModel();
 		model.updateMarkers();
 		updateEditorImage(model);
 	}
-	
+
 	private void updateEditorImage(AntModel model) {
-		Image titleImage= getTitleImage();
+		Image titleImage = getTitleImage();
 		if (titleImage == null) {
 			return;
 		}
-		AntProjectNode node= model.getProjectNode();
+		AntProjectNode node = model.getProjectNode();
 		if (node != null) {
 			postImageChange(node);
 		}
 	}
-	
+
 	private void updateForInitialReconcile() {
-		IDocumentProvider provider=  getDocumentProvider();
-		if (provider == null) {//disposed
+		IDocumentProvider provider = getDocumentProvider();
+		if (provider == null) {// disposed
 			return;
 		}
 		if (getAntModel() == null) {
 			return;
 		}
-        IDocument doc= provider.getDocument(getEditorInput());
-        if (doc == null) {
-            return; //disposed
-        }
-        Object lock= getLockObject(doc);
-		//ensure to synchronize so that the AntModel is not nulled out underneath in the AntEditorDocumentProvider
-		//when the editor/doc provider are disposed
-        if (lock == null) {
-            updateModelForInitialReconcile();
-        } else {
-            synchronized (lock) {
-                updateModelForInitialReconcile();
-            }
-        }
+		IDocument doc = provider.getDocument(getEditorInput());
+		if (doc == null) {
+			return; // disposed
+		}
+		Object lock = getLockObject(doc);
+		// ensure to synchronize so that the AntModel is not nulled out underneath in the AntEditorDocumentProvider
+		// when the editor/doc provider are disposed
+		if (lock == null) {
+			updateModelForInitialReconcile();
+		} else {
+			synchronized (lock) {
+				updateModelForInitialReconcile();
+			}
+		}
 	}
-    
-    private void updateModelForInitialReconcile() {
-        AntModel model= getAntModel();
-        if (model == null) {
-            return;
-        }
 
-        fInitialReconcile= false;
-        updateEditorImage(model);
-        model.updateForInitialReconcile();
-    }
-    
-    private Object getLockObject(IDocument doc) {
-        Object lock= null;
-        if (doc instanceof ISynchronizable) {
-            lock= ((ISynchronizable) doc).getLockObject();
-        } else {
-            lock= getAntModel();
-        }
-        return lock;
-    }
-	
+	private void updateModelForInitialReconcile() {
+		AntModel model = getAntModel();
+		if (model == null) {
+			return;
+		}
+
+		fInitialReconcile = false;
+		updateEditorImage(model);
+		model.updateForInitialReconcile();
+	}
+
+	private Object getLockObject(IDocument doc) {
+		Object lock = null;
+		if (doc instanceof ISynchronizable) {
+			lock = ((ISynchronizable) doc).getLockObject();
+		} else {
+			lock = getAntModel();
+		}
+		return lock;
+	}
+
 	private void postImageChange(final AntElementNode node) {
-		Shell shell= getSite().getShell();
+		Shell shell = getSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
 			shell.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (getSite().getShell() == null || getSite().getShell().isDisposed()) {
 						return;
 					}
-					Image titleImage= getTitleImage();
-					Image newImage= node.getImage();
+					Image titleImage = getTitleImage();
+					Image newImage = node.getImage();
 					if (titleImage != newImage) {
 						setTitleImage(newImage);
 					}
@@ -1098,38 +1160,38 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (getSelectionProvider() == null) {
 			return;
 		}
-		AntElementNode node= getNode();
+		AntElementNode node = getNode();
 		synchronizeOutlinePage(node, checkIfOutlinePageActive);
-		
+
 	}
-	
+
 	protected void synchronize(boolean checkIfOutlinePageActive) {
 		if (getSelectionProvider() == null) {
 			return;
 		}
-		AntElementNode node= getNode();
+		AntElementNode node = getNode();
 		if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR)) {
 			synchronizeOutlinePage(node, checkIfOutlinePageActive);
 		}
 		setSelection(node, false);
-		
+
 	}
-	
+
 	private AntElementNode getNode() {
-		AntModel model= getAntModel();
+		AntModel model = getAntModel();
 		if (model == null) {
 			return null;
 		}
-		AntElementNode node= null;
-		ISelection selection= getSelectionProvider().getSelection();
+		AntElementNode node = null;
+		ISelection selection = getSelectionProvider().getSelection();
 		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection= (ITextSelection)selection;
-			int offset= textSelection.getOffset();
-			node= model.getNode(offset, false);
+			ITextSelection textSelection = (ITextSelection) selection;
+			int offset = textSelection.getOffset();
+			node = model.getNode(offset, false);
 		}
 		return node;
 	}
-	
+
 	protected void synchronizeOutlinePage(AntElementNode node, boolean checkIfOutlinePageActive) {
 		if (fOutlinePage != null && !(checkIfOutlinePageActive && isAntOutlinePageActive())) {
 			fOutlinePage.removePostSelectionChangedListener(fSelectionChangedListener);
@@ -1137,30 +1199,34 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			fOutlinePage.addPostSelectionChangedListener(fSelectionChangedListener);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant#reconciled()
 	 */
+	@Override
 	public void reconciled() {
 		if (fInitialReconcile) {
 			updateForInitialReconcile();
 		}
-		
-		SourceViewerConfiguration config= getSourceViewerConfiguration();
+
+		SourceViewerConfiguration config = getSourceViewerConfiguration();
 		if (config == null) {
-			return; //editor has been disposed.
+			return; // editor has been disposed.
 		}
-		IAutoEditStrategy[] strategies= config.getAutoEditStrategies(getViewer(), null);
+		IAutoEditStrategy[] strategies = config.getAutoEditStrategies(getViewer(), null);
 		for (int i = 0; i < strategies.length; i++) {
 			IAutoEditStrategy strategy = strategies[i];
 			if (strategy instanceof AntAutoEditStrategy) {
-				((AntAutoEditStrategy)strategy).reconciled();
+				((AntAutoEditStrategy) strategy).reconciled();
 			}
 		}
-		
-		Shell shell= getSite().getShell();
+
+		Shell shell = getSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
 			shell.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (getSite().getShell() == null || getSite().getShell().isDisposed()) {
 						return;
@@ -1170,92 +1236,110 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			});
 		}
 	}
-	
+
 	private boolean isAntOutlinePageActive() {
-		IWorkbenchPart part= getActivePart();
-		return part instanceof ContentOutline && ((ContentOutline)part).getCurrentPage() == fOutlinePage;
+		IWorkbenchPart part = getActivePart();
+		return part instanceof ContentOutline && ((ContentOutline) part).getCurrentPage() == fOutlinePage;
 	}
 
 	private IWorkbenchPart getActivePart() {
-		IWorkbenchWindow window= getSite().getWorkbenchWindow();
-		IPartService service= window.getPartService();
+		IWorkbenchWindow window = getSite().getWorkbenchWindow();
+		IPartService service = window.getPartService();
 		return service.getActivePart();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	protected void doSetSelection(ISelection selection) {
 		super.doSetSelection(selection);
 		synchronizeOutlinePage(true);
 	}
 
-    /**
-     * Returns the viewer associated with this editor
-     * @return The viewer associated with this editor
-     */
-    public ISourceViewer getViewer() {
-        return getSourceViewer();
-    }
+	/**
+	 * Returns the viewer associated with this editor
+	 * 
+	 * @return The viewer associated with this editor
+	 */
+	public ISourceViewer getViewer() {
+		return getSourceViewer();
+	}
 
-    protected FoldingActionGroup getFoldingActionGroup() {
-        return fFoldingGroup;
-    }
+	protected FoldingActionGroup getFoldingActionGroup() {
+		return fFoldingGroup;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
-     */
-    public void projectionEnabled() {
-    	fFoldingStructureProvider= new AntFoldingStructureProvider(this);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
+	 */
+	@Override
+	public void projectionEnabled() {
+		fFoldingStructureProvider = new AntFoldingStructureProvider(this);
 		fFoldingStructureProvider.setDocument(getDocumentProvider().getDocument(getEditorInput()));
 		fFoldingStructureProvider.updateFoldingRegions(getAntModel());
 		IPreferenceStore preferenceStore = AntUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.setValue(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, true);
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
-     */
-    public void projectionDisabled() {
-    	fFoldingStructureProvider= null;
-    	IPreferenceStore preferenceStore = AntUIPlugin.getDefault().getPreferenceStore();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
+	 */
+	@Override
+	public void projectionDisabled() {
+		fFoldingStructureProvider = null;
+		IPreferenceStore preferenceStore = AntUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.setValue(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
-    }
-    
-    /* (non-Javadoc)
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeKeyBindingScopes()
 	 */
+	@Override
 	protected void initializeKeyBindingScopes() {
-		setKeyBindingScopes(new String[] { "org.eclipse.ant.ui.AntEditorScope" });  //$NON-NLS-1$
+		setKeyBindingScopes(new String[] { "org.eclipse.ant.ui.AntEditorScope" }); //$NON-NLS-1$
 	}
-	
+
 	protected IPreferenceStore getEditorPreferenceStore() {
 		return getPreferenceStore();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
+	 * 
 	 * @since 3.1
 	 */
+	@Override
 	protected String[] collectContextMenuPreferencePages() {
-		String[] ids= super.collectContextMenuPreferencePages();
-		String[] more= new String[ids.length + 6];
-		more[0]= "org.eclipse.ant.ui.AntEditorPreferencePage"; //$NON-NLS-1$
-		more[1]= "org.eclipse.ant.ui.AntCodeFormatterPreferencePage"; //$NON-NLS-1$
-		more[2]= "org.eclipse.ant.ui.AntCodeAssistPreferencePage"; //$NON-NLS-1$
-		more[3]= "org.eclipse.ant.ui.TemplatesPreferencePage"; //$NON-NLS-1$
-		more[4]= "org.eclipse.ant.ui.AntPreferencePage"; //$NON-NLS-1$
-		more[5]= "org.eclipse.ant.ui.AntRuntimePreferencePage"; //$NON-NLS-1$
+		String[] ids = super.collectContextMenuPreferencePages();
+		String[] more = new String[ids.length + 6];
+		more[0] = "org.eclipse.ant.ui.AntEditorPreferencePage"; //$NON-NLS-1$
+		more[1] = "org.eclipse.ant.ui.AntCodeFormatterPreferencePage"; //$NON-NLS-1$
+		more[2] = "org.eclipse.ant.ui.AntCodeAssistPreferencePage"; //$NON-NLS-1$
+		more[3] = "org.eclipse.ant.ui.TemplatesPreferencePage"; //$NON-NLS-1$
+		more[4] = "org.eclipse.ant.ui.AntPreferencePage"; //$NON-NLS-1$
+		more[5] = "org.eclipse.ant.ui.AntRuntimePreferencePage"; //$NON-NLS-1$
 		System.arraycopy(ids, 0, more, 6, ids.length);
 		return more;
 	}
-	
+
 	/**
-	 * Updates the occurrences annotations based
-	 * on the current selection.
+	 * Updates the occurrences annotations based on the current selection.
 	 * 
-	 * @param selection the text selection
-	 * @param antModel the model for the buildfile
+	 * @param selection
+	 *            the text selection
+	 * @param antModel
+	 *            the model for the buildfile
 	 * @since 3.1
 	 */
 	protected void updateOccurrenceAnnotations(ITextSelection selection, AntModel antModel) {
@@ -1266,107 +1350,108 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (!fMarkOccurrenceAnnotations) {
 			return;
 		}
-		
+
 		if (selection == null || antModel == null) {
 			return;
 		}
-		
-		IDocument document= getSourceViewer().getDocument();
+
+		IDocument document = getSourceViewer().getDocument();
 		if (document == null) {
 			return;
 		}
-		
-		List positions= null;
-		
-		OccurrencesFinder finder= new OccurrencesFinder(this, antModel, document, selection.getOffset());
-		positions= finder.perform();
-		
+
+		List<Position> positions = null;
+
+		OccurrencesFinder finder = new OccurrencesFinder(this, antModel, document, selection.getOffset());
+		positions = finder.perform();
+
 		if (positions == null || positions.size() == 0) {
 			if (!fStickyOccurrenceAnnotations) {
 				removeOccurrenceAnnotations();
 			}
 			return;
 		}
-			
-		fOccurrencesFinderJob= new OccurrencesFinderJob(document, positions, selection);
+
+		fOccurrencesFinderJob = new OccurrencesFinderJob(document, positions, selection);
 		fOccurrencesFinderJob.run(new NullProgressMonitor());
 	}
-	
+
 	private void removeOccurrenceAnnotations() {
-		IDocumentProvider documentProvider= getDocumentProvider();
+		IDocumentProvider documentProvider = getDocumentProvider();
 		if (documentProvider == null) {
 			return;
 		}
-		
-		IAnnotationModel annotationModel= documentProvider.getAnnotationModel(getEditorInput());
+
+		IAnnotationModel annotationModel = documentProvider.getAnnotationModel(getEditorInput());
 		if (annotationModel == null || fOccurrenceAnnotations == null) {
 			return;
 		}
 
-		IDocument document= documentProvider.getDocument(getEditorInput());
-        Object lock= getLockObject(document);
-        if (lock == null) {
-            updateAnnotationModelForRemoves(annotationModel);
-        } else {
-            synchronized (lock) {
-                updateAnnotationModelForRemoves(annotationModel);
-            }
-        }
+		IDocument document = documentProvider.getDocument(getEditorInput());
+		Object lock = getLockObject(document);
+		if (lock == null) {
+			updateAnnotationModelForRemoves(annotationModel);
+		} else {
+			synchronized (lock) {
+				updateAnnotationModelForRemoves(annotationModel);
+			}
+		}
 	}
 
-
-    private void updateAnnotationModelForRemoves(IAnnotationModel annotationModel) {
-        if (annotationModel instanceof IAnnotationModelExtension) {
-        	((IAnnotationModelExtension)annotationModel).replaceAnnotations(fOccurrenceAnnotations, null);
-        } else {
-        	for (int i= 0, length= fOccurrenceAnnotations.length; i < length; i++) {
-        		annotationModel.removeAnnotation(fOccurrenceAnnotations[i]);
-        	}
-        }
-        fOccurrenceAnnotations= null;
-    }
+	private void updateAnnotationModelForRemoves(IAnnotationModel annotationModel) {
+		if (annotationModel instanceof IAnnotationModelExtension) {
+			((IAnnotationModelExtension) annotationModel).replaceAnnotations(fOccurrenceAnnotations, null);
+		} else {
+			for (int i = 0, length = fOccurrenceAnnotations.length; i < length; i++) {
+				annotationModel.removeAnnotation(fOccurrenceAnnotations[i]);
+			}
+		}
+		fOccurrenceAnnotations = null;
+	}
 
 	protected void installOccurrencesFinder() {
-		fMarkOccurrenceAnnotations= true;
-		
+		fMarkOccurrenceAnnotations = true;
+
 		if (getSelectionProvider() != null) {
-			ISelection selection= getSelectionProvider().getSelection();
+			ISelection selection = getSelectionProvider().getSelection();
 			if (selection instanceof ITextSelection) {
-				fForcedMarkOccurrencesSelection= (ITextSelection) selection;
+				fForcedMarkOccurrencesSelection = (ITextSelection) selection;
 				updateOccurrenceAnnotations(fForcedMarkOccurrencesSelection, getAntModel());
 			}
 		}
 		if (fOccurrencesFinderJobCanceler == null) {
-			fOccurrencesFinderJobCanceler= new OccurrencesFinderJobCanceler();
+			fOccurrencesFinderJobCanceler = new OccurrencesFinderJobCanceler();
 			fOccurrencesFinderJobCanceler.install();
 		}
 	}
-	
+
 	protected void uninstallOccurrencesFinder() {
-		fMarkOccurrenceAnnotations= false;
-		
+		fMarkOccurrenceAnnotations = false;
+
 		if (fOccurrencesFinderJob != null) {
 			fOccurrencesFinderJob.cancel();
-			fOccurrencesFinderJob= null;
+			fOccurrencesFinderJob = null;
 		}
 
 		if (fOccurrencesFinderJobCanceler != null) {
 			fOccurrencesFinderJobCanceler.uninstall();
-			fOccurrencesFinderJobCanceler= null;
+			fOccurrencesFinderJobCanceler = null;
 		}
-		
+
 		removeOccurrenceAnnotations();
 	}
-	
+
 	public boolean isMarkingOccurrences() {
 		return fMarkOccurrenceAnnotations;
 	}
 
-
 	/**
 	 * The editor has entered or exited linked mode.
-	 * @param inLinkedMode whether an enter or exit has occurred
-	 * @param affectsOccurrences whether to change the state of the occurrences finder
+	 * 
+	 * @param inLinkedMode
+	 *            whether an enter or exit has occurred
+	 * @param affectsOccurrences
+	 *            whether to change the state of the occurrences finder
 	 */
 	public void setInLinkedMode(boolean inLinkedMode, boolean affectsOccurrences) {
 		if (inLinkedMode) {

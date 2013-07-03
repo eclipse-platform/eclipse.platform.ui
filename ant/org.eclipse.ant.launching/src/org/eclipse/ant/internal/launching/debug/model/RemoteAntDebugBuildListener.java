@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,7 +89,9 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		} else if (message.startsWith(DebugMessageIds.TERMINATED)){
 			try {
 				fTarget.terminate();
-			} catch (DebugException e) {}
+			} catch (DebugException e) {
+				//do nothing
+			}
 		} else if (message.startsWith(DebugMessageIds.STACK)){
 			AntThread thread= (AntThread) fTarget.getThreads()[0];
 			thread.buildStack(message);
@@ -120,6 +122,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
         		}
         		process= getProcess();
         	} catch (InterruptedException ie) {
+        		//do nothing
         	}
         }
         fTarget= new AntDebugTarget(fLaunch, process, this);
@@ -153,6 +156,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
     		try {
 				Thread.sleep(500);
 			} catch(InterruptedException e) {
+				//do nothing
 			}
     	}
     	AntLaunching.log("Internal error attempting to connect to debug target", exception); //$NON-NLS-1$
@@ -190,7 +194,9 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
             try {
 				fTarget.terminate();
 				fTarget= null;
-			} catch (DebugException e) {}
+			} catch (DebugException e) {
+				//do nothing
+			}
         }
 		fLaunch= null;
 		if (DebugPlugin.getDefault() != null) {
@@ -208,6 +214,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 				fResponseReader= null;
 			}
 		} catch(IOException e) {
+			//do nothing
 		}	
 		if (fRequestWriter != null) {
 			fRequestWriter.close();
@@ -219,6 +226,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 				fRequestSocket= null;
 			}
 		} catch(IOException e) {
+			//do nothing
 		}
 		super.shutDown();
 	}
@@ -234,6 +242,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 	 * @see org.eclipse.ant.internal.launching.debug.IAntDebugController#terminate()
 	 */
 	public void terminate() {
+		//do nothing
 	}
 	
 	/* (non-Javadoc)

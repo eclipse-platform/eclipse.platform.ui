@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				int lineNumber = textSelection.getStartLine() + 1;
 				
 				IBreakpoint breakpoint= null;
-				Map attributes = getRunToLineAttributes();
+				Map<String, Object> attributes = getRunToLineAttributes();
 				IFile file = (IFile)input.getAdapter(IFile.class);
 				if (file == null) {
 				    errorMessage= AntEditorActionMessages.getString("RunToLineAdapter.2"); //$NON-NLS-1$
@@ -88,8 +88,8 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				errorMessage, null));
 	}
 
-    private Map getRunToLineAttributes() {
-        Map attributes = new HashMap();
+    private Map<String, Object> getRunToLineAttributes() {
+        Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put(IMarker.TRANSIENT, Boolean.TRUE);
         attributes.put(IAntDebugConstants.ANT_RUN_TO_LINE, Boolean.TRUE);
         return attributes;

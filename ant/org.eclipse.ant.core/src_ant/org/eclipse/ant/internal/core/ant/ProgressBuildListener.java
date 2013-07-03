@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class ProgressBuildListener implements BuildListener {
 
-	protected Map projects;
+	protected Map<Project, ProjectMonitors> projects;
 	protected Project mainProject;
 	protected Project parentProject;
 	private Thread currentTaskThread;
@@ -91,8 +91,8 @@ public class ProgressBuildListener implements BuildListener {
 
 	}
 
-	public ProgressBuildListener(Project project, List targetNames, IProgressMonitor monitor) {
-		projects = new HashMap();
+	public ProgressBuildListener(Project project, List<String> targetNames, IProgressMonitor monitor) {
+		projects = new HashMap<Project, ProjectMonitors>();
 		mainProject = project;
 		ProjectMonitors monitors = new ProjectMonitors();
 		IProgressMonitor localmonitor = monitor;
@@ -101,10 +101,9 @@ public class ProgressBuildListener implements BuildListener {
 		}
 		monitors.setMainMonitor(localmonitor);
 		projects.put(mainProject, monitors);
-		List targets= new ArrayList(targetNames.size());
-		for (int i = 0; i < targetNames.size(); i++) {
-			String targetName = (String) targetNames.get(i);
-			Target target= (Target) mainProject.getTargets().get(targetName);
+		ArrayList<Target> targets= new ArrayList<Target>(targetNames.size());
+		for (String targetName : targetNames) {
+			Target target = (Target) mainProject.getTargets().get(targetName);
 			if (target != null) {
 				targets.add(target);
 			}
@@ -120,27 +119,28 @@ public class ProgressBuildListener implements BuildListener {
 		checkCanceled();
 	}
 
-	protected int computeWork(List targets) {
+	protected int computeWork(List<Target> targets) {
 		int result = 0;
 		for (int i = 0; i < targets.size(); i++) {
-			result = result + countTarget((Target)targets.get(i), new ArrayList());
+			result = result + countTarget(targets.get(i), new ArrayList<String>());
 		}
 		return result;
 	}
 
-	protected int countTarget(Target target, List alreadySeen) {
+	protected int countTarget(Target target, List<String> alreadySeen) {
 		int result = 1;
 		Project project = target.getProject();
-		Hashtable targets= project.getTargets();
+		//TODO ANT-1.9.1 API USE
+		Hashtable<?, ?> targets = project.getTargets();
         String targetName;
         Target dependency;
-		for (Enumeration dependencies = target.getDependencies(); dependencies.hasMoreElements();) {
+		for (Enumeration<?> dependencies = target.getDependencies(); dependencies.hasMoreElements();) {
 			targetName = (String) dependencies.nextElement();
-            if (alreadySeen.contains(targetName)) { //circular dependency or common dependancy
+            if (alreadySeen.contains(targetName)) { //circular dependency or common dependency
 				return result;
             }
             alreadySeen.add(targetName);
-			dependency = (Target)targets.get(targetName);
+			dependency = (Target) targets.get(targetName);
 			if (dependency != null) {
 				result = result + countTarget(dependency, alreadySeen);
 			}
@@ -162,12 +162,12 @@ public class ProgressBuildListener implements BuildListener {
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildFinished(BuildEvent event) {
-		ProjectMonitors monitors = (ProjectMonitors) projects.get(mainProject);
+		ProjectMonitors monitors = projects.get(mainProject);
 		monitors.getMainMonitor().done();
-		Set keys= projects.keySet();
-		Iterator itr= keys.iterator();
+		Set<Project> keys= projects.keySet();
+		Iterator<Project> itr= keys.iterator();
 		while (itr.hasNext()) {
-			Project project = (Project) itr.next();
+			Project project = itr.next();
 			project.removeBuildListener(this);
 			project.getReferences().remove(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
 		}
@@ -183,7 +183,7 @@ public class ProgressBuildListener implements BuildListener {
 			return;
 		}
 		Target target = event.getTarget();
-		ProjectMonitors monitors = (ProjectMonitors) projects.get(currentProject);
+		ProjectMonitors monitors = projects.get(currentProject);
 
 		// if monitors is null we are in a new script
 		if (monitors == null) {
@@ -199,15 +199,15 @@ public class ProgressBuildListener implements BuildListener {
 		ProjectMonitors monitors = new ProjectMonitors();
 		// remember the target so we can remove this monitors object later
 		monitors.setMainTarget(target);
-		List targets= new ArrayList(1);
+		ArrayList<Target> targets= new ArrayList<Target>(1);
 		targets.add(target);
 		int work = computeWork(targets);
 		ProjectMonitors parentMonitors = null;
 		if (parentProject == null) {
-			parentMonitors = (ProjectMonitors) projects.get(mainProject);
+			parentMonitors = projects.get(mainProject);
 			monitors.setMainMonitor(subMonitorFor(parentMonitors.getMainMonitor(), 1));
 		} else {
-			parentMonitors = (ProjectMonitors) projects.get(parentProject);
+			parentMonitors = projects.get(parentProject);
 			parentProject = null;
 			monitors.setMainMonitor(subMonitorFor(parentMonitors.getTaskMonitor(), 1));
 		}
@@ -225,7 +225,7 @@ public class ProgressBuildListener implements BuildListener {
 		if (currentProject == null) {
 			return;
 		}
-		ProjectMonitors monitors = (ProjectMonitors) projects.get(currentProject);
+		ProjectMonitors monitors = projects.get(currentProject);
 		if (monitors == null) {
 			return;
 		}
@@ -247,7 +247,7 @@ public class ProgressBuildListener implements BuildListener {
 			return;
 		}
 		currentProject.getReferences().remove(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
-		ProjectMonitors monitors = (ProjectMonitors) projects.get(currentProject);
+		ProjectMonitors monitors = projects.get(currentProject);
 		if (monitors == null) {
 			return;
 		}
@@ -276,7 +276,7 @@ public class ProgressBuildListener implements BuildListener {
 			return;
 		}
 		project.getReferences().remove(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
-		ProjectMonitors monitors = (ProjectMonitors) projects.get(project);
+		ProjectMonitors monitors = projects.get(project);
 		if (monitors == null) {
 			return;
 		}
@@ -298,7 +298,7 @@ public class ProgressBuildListener implements BuildListener {
 		if (currentTaskThread != null && currentTaskThread != Thread.currentThread()) {
 			return;
 		}
-		ProjectMonitors monitors = (ProjectMonitors) projects.get(mainProject);
+		ProjectMonitors monitors = projects.get(mainProject);
 		if (monitors.getMainMonitor().isCanceled()) {
 			currentTaskThread= null;
 			throw new OperationCanceledException(InternalAntMessages.ProgressBuildListener_Build_cancelled);

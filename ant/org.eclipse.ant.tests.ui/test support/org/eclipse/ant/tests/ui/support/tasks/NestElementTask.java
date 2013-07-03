@@ -17,7 +17,7 @@ import org.apache.tools.ant.taskdefs.Echo;
 
 public class NestElementTask extends Task {  
 	
-	String message= "bar";
+	String message= "bar"; //$NON-NLS-1$
 	NestedElement e;
     public static class NestedElement{
     	Boolean works= Boolean.FALSE;
@@ -45,7 +45,7 @@ public class NestElementTask extends Task {
 		if (e.works()) {
 			echo.setMessage(message);
 		} else {
-			echo.setMessage("ack");
+			echo.setMessage("ack"); //$NON-NLS-1$
 		}
 		echo.execute();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,13 +82,13 @@ public class AntDefiningTaskNode extends AntTaskNode {
 			try {
                 ComponentHelper helper= ComponentHelper.getComponentHelper(getProjectNode().getProject());
                 ((AntModel) getAntModel()).removeDefinerTasks(getIdentifier(), helper.getAntTypeTable());
-                Hashtable old= new Hashtable(helper.getAntTypeTable());
+                Hashtable<String, Class<?>> old= new Hashtable<String, Class<?>>(helper.getAntTypeTable());
 				getTask().maybeConfigure();
 				getTask().execute();
-                Iterator newNames= helper.getAntTypeTable().keySet().iterator();
-                List defined= new ArrayList();
+                Iterator<String> newNames= helper.getAntTypeTable().keySet().iterator();
+                List<String> defined= new ArrayList<String>();
                 while (newNames.hasNext()) {
-                    String name = (String) newNames.next();
+                    String name = newNames.next();
                     if (old.get(name) == null) {
                         defined.add(name);
                     }    

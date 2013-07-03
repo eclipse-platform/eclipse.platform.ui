@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 Object Factory Inc.
+ * Copyright (c) 2002, 2013 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Object Factory Inc. - Initial implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 
 package org.eclipse.ant.tests.ui.dtd;
@@ -16,7 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.ant.internal.ui.dtd.IDfm;
 import org.eclipse.ant.internal.ui.dtd.IElement;
@@ -35,7 +36,7 @@ public class dumper {
 	public static int main(String[] args) {
 
 		if (args.length <= 0) {
-			System.out.println("Usage: java DTDMerger URL");
+			System.out.println("Usage: java DTDMerger URL"); //$NON-NLS-1$
 			return 0;
 		}
 		String document = args[0];
@@ -53,7 +54,7 @@ public class dumper {
 			e.printStackTrace();
 			return 1;
 		}
-		System.out.println("DTD successfully parsed");
+		System.out.println("DTD successfully parsed"); //$NON-NLS-1$
 		dumpSchema(schema);
 		return 0;
 	}
@@ -63,11 +64,11 @@ public class dumper {
 	 */
 	private static void dumpSchema(ISchema schema) {
 		IElement[] elements = schema.getElements();
-		System.out.println(""+elements.length+" elements defined");
+		System.out.println(""+elements.length+" elements defined"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < elements.length; i++) {
 			IElement element = elements[i];
 			IModel model = element.getContentModel();
-			System.out.println("ELEMENT "+element.getName()
+			System.out.println("ELEMENT "+element.getName() //$NON-NLS-1$
 				+'"'+model.stringRep()+'"');
 			dumpDfm(element.getDfm());
 		}
@@ -84,35 +85,35 @@ public class dumper {
 	 * @param dfm to dump
 	 */
 	private static void dumpDfm(IDfm dfm) {
-		HashMap map = new HashMap();
+		HashMap<IDfm, Integer> map = new HashMap<IDfm, Integer>();
 		dumpDfm(dfm, map, 0);
-		LinkedList list = new LinkedList();
-		Iterator it = map.entrySet().iterator();
+		LinkedList<State> list = new LinkedList<State>();
+		Iterator<Entry<IDfm, Integer>> it = map.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			list.add(new State((IDfm)entry.getKey(), (Integer)entry.getValue()));
+			Entry<IDfm, Integer> entry = it.next();
+			list.add(new State(entry.getKey(), entry.getValue()));
 		}
-		State[] states = (State[]) list.toArray(new State[list.size()]);
+		State[] states = list.toArray(new State[list.size()]);
 		Arrays.sort(states);
 		for (int i = 0; i < states.length; i++) {
 			print(states[i], map);
 		}
 	}
 
-	private static void print(State state, HashMap map) {
-		System.out.print("  S"+state.n.intValue()
-			+(state.dfm.isAccepting() ? "*  " : "  "));
+	private static void print(State state, HashMap<IDfm, Integer> map) {
+		System.out.print("  S"+state.n.intValue() //$NON-NLS-1$
+			+(state.dfm.isAccepting() ? "*  " : "  ")); //$NON-NLS-1$ //$NON-NLS-2$
 		String[] accepts = state.dfm.getAccepts();
 		for (int i = 0; i < accepts.length; i++) {
 			String accept = accepts[i];
 			IDfm next = state.dfm.advance(accept);
-			int n = ((Integer)map.get(next)).intValue();
-			System.out.print(" "+accept+"=>S"+n);
+			int n = map.get(next).intValue();
+			System.out.print(" "+accept+"=>S"+n); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		System.out.println();
 	}
 	
-	private static int dumpDfm(IDfm dfm, HashMap map, int num) {
+	private static int dumpDfm(IDfm dfm, HashMap<IDfm, Integer> map, int num) {
 		if (!map.containsKey(dfm)) {
 			map.put(dfm, new Integer(num++));
 			String[] accepts = dfm.getAccepts();
@@ -124,7 +125,7 @@ public class dumper {
 		return num;
 	}
 	
-	private static class State implements Comparable {
+	private static class State implements Comparable<State> {
 		public IDfm dfm;
 		public Integer n;
 		public State(IDfm dfm, Integer n) {
@@ -134,8 +135,7 @@ public class dumper {
 		/**
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
-		public int compareTo(Object o) {
-			State other = (State) o;
+		public int compareTo(State other) {
 			return n.intValue() < other.n.intValue()
 				? -1 
 				: (n.intValue() == other.n.intValue() 
