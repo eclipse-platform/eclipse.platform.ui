@@ -284,7 +284,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			String cssValue = map
 					.get(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY);
 			if (cssValue != null) {
-				cssValue = "platform:/plugin/" + productName + "/" + cssValue;
+				cssValue = "platform:/plugin/" + fPluginData.getId() + "/" + cssValue;
 				map.put(NewApplicationWizardPage.APPLICATION_CSS_PROPERTY,
 						cssValue);
 			}
@@ -357,7 +357,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 		// If the project has invalid characters, the plug-in name would replace
 		// them with underscores, product name does the same
-		String pluginName = map.get(NewApplicationWizardPage.PRODUCT_NAME);
+		String pluginName = fPluginData.getId();
 
 		// If there's no Activator created we create default package
 		if (!fPluginData.doGenerateClass()) {
@@ -412,6 +412,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 		Map<String, String> keys = new HashMap<String, String>();
 		keys.put("projectName", pluginName);
+		keys.put("productFileName", map.get(NewApplicationWizardPage.PRODUCT_NAME));
 		String elementName = fragment.getElementName();
 		keys.put("packageName", (elementName.equals("") ? "" : elementName
 				+ ".")
