@@ -14,7 +14,7 @@
 
 	<target name="build" description="Cleans, builds and refreshes" depends="clean, lib/remoteAntLib.jar"/>
 	
-	<target name="init" depends="properties">
+	<target name="init">
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
 		<property name="version.suffix" value="_3.1.0"/>
@@ -28,32 +28,13 @@
 		<available file="${osx.jar}" property="swt.jar" value="${osx.jar}"/>
 	</target>
 
-	<target name="properties" if="eclipse.running">
-		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-	</target>
-	
 	<target name="lib/remoteAntLib.jar" description= "Creates the remoteAnt.jar" depends="init">
 		<property name="destdir" value="${temp.folder}/lib/remoteAnt.jar.bin"/>
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
-		<!-- compile the source code -->
-		<javac target="1.6" source="1.6" destdir="${destdir}" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes">
-			<classpath>
-				<dirset dir="${basedir}/..">
-					<include name="org.eclipse.swt*/bin"/>
-					<include name="org.eclipse.ant.launching/common_bin"/>
-				</dirset>
-				<fileset dir="${eclipse.home}">
-					<include name="plugins/org.eclipse.swt*.jar"/>
-					<include name="plugins/org.eclipse.osgi*.jar"/>
-					<include name="plugins/org.eclipse.ant.launching*.jar"/>
-				</fileset>
-			</classpath>
-			<src path="Remote Ant Support/"/>
-		</javac>
 		<!-- copy necessary resources -->
 		<copy todir="${destdir}">
-			<fileset dir="Remote Ant Support/" excludes="**/*.java"/>
+			<fileset dir="${basedir}/remote_support_bin/"/>
 		</copy>
 		<mkdir dir="${build.result.folder}/lib"/>
 		<jar destfile="${build.result.folder}/lib/remoteAnt.jar" basedir="${destdir}"/>
