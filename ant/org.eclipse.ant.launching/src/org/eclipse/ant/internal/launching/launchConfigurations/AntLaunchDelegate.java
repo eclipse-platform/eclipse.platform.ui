@@ -547,22 +547,18 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 			vars.put("ANT_HOME", antHome); //$NON-NLS-1$
 			copy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, vars);
 		}
-		ILaunchConfiguration config = copy;
-		if (copy.isDirty()) {
-			config = copy.doSave();
-		}
 		// copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
 		// "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000");
 		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
 		AntJavaLaunchDelegate delegate = new AntJavaLaunchDelegate();
-		delegate.preLaunchCheck(config, ILaunchManager.RUN_MODE, subMonitor);
-		delegate.launch(config, ILaunchManager.RUN_MODE, launch, subMonitor);
+		delegate.preLaunchCheck(copy, ILaunchManager.RUN_MODE, subMonitor);
+		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, subMonitor);
 		final IProcess[] processes = launch.getProcesses();
 		for (int i = 0; i < processes.length; i++) {
 			setProcessAttributes(processes[i], idStamp, null);
 		}
 
-		if (AntLaunchingUtil.isLaunchInBackground(config)) {
+		if (AntLaunchingUtil.isLaunchInBackground(copy)) {
 			// refresh resources after process finishes
 			if (configuration.getAttribute(RefreshUtil.ATTR_REFRESH_SCOPE, (String) null) != null) {
 				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, processes[0]);
