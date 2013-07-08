@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tools.runtime;
 
-import org.eclipse.core.runtime.internal.stats.ClassStats;
+//import org.eclipse.core.runtime.internal.stats.ClassStats;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -26,29 +26,29 @@ public class LoadedClassesViewLabelProvider extends LabelProvider implements ITa
 	}
 
 	public String getColumnText(Object element, int columnIndex) {
-		if (!(element instanceof ClassStats))
+//		if (!(element instanceof ClassStats))
 			return "not a class info"; //$NON-NLS-1$
-		ClassStats clazz = (ClassStats) element;
-		VMClassloaderInfo loader = VMClassloaderInfo.getClassloader(clazz.getClassloader().getId());
-		VMClassInfo classInfo = loader.getClass(clazz.getClassName());
-
-		switch (columnIndex) {
-			case 0 : //"Class name"
-				return clazz.getClassName() + (clazz.isStartupClass() ? "*" : ""); //$NON-NLS-1$ //$NON-NLS-2$
-			case 1 : //		"Loading order",
-				return clazz.getLoadOrder() == -2 ? "<boot>" : "" + clazz.getLoadOrder(); //$NON-NLS-1$ //$NON-NLS-2$
-			case 2 : //		"Memory",
-				return classInfo == null ? "" : "" + (classInfo.getRAMSize() + classInfo.getROMSize()); //$NON-NLS-1$ //$NON-NLS-2$
-			case 3 : //		"Plug-in Id", 
-				return clazz.getClassloader().getId();
-			case 4 : //		"Activation time",
-				return "" + clazz.getTimestamp(); //$NON-NLS-1$
-			case 5 : //		"RAM",
-				return classInfo == null ? "" : "" + classInfo.getRAMSize(); //$NON-NLS-1$ //$NON-NLS-2$
-			case 6 : //		"ROM"
-				return classInfo == null ? "" : "" + classInfo.getROMSize(); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return ""; //$NON-NLS-1$
+//		ClassStats clazz = (ClassStats) element;
+//		VMClassloaderInfo loader = VMClassloaderInfo.getClassloader(clazz.getClassloader().getId());
+//		VMClassInfo classInfo = loader.getClass(clazz.getClassName());
+//
+//		switch (columnIndex) {
+//			case 0 : //"Class name"
+//				return clazz.getClassName() + (clazz.isStartupClass() ? "*" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+//			case 1 : //		"Loading order",
+//				return clazz.getLoadOrder() == -2 ? "<boot>" : "" + clazz.getLoadOrder(); //$NON-NLS-1$ //$NON-NLS-2$
+//			case 2 : //		"Memory",
+//				return classInfo == null ? "" : "" + (classInfo.getRAMSize() + classInfo.getROMSize()); //$NON-NLS-1$ //$NON-NLS-2$
+//			case 3 : //		"Plug-in Id", 
+//				return clazz.getClassloader().getId();
+//			case 4 : //		"Activation time",
+//				return "" + clazz.getTimestamp(); //$NON-NLS-1$
+//			case 5 : //		"RAM",
+//				return classInfo == null ? "" : "" + classInfo.getRAMSize(); //$NON-NLS-1$ //$NON-NLS-2$
+//			case 6 : //		"ROM"
+//				return classInfo == null ? "" : "" + classInfo.getROMSize(); //$NON-NLS-1$ //$NON-NLS-2$
+//		}
+//		return ""; //$NON-NLS-1$
 	}
 
 }

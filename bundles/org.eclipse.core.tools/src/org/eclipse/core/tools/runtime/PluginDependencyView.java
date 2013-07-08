@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.core.tools.runtime;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.internal.stats.BundleStats;
+//import org.eclipse.core.runtime.internal.stats.BundleStats;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.Document;
@@ -145,10 +145,10 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 			id = ((BundleDescription) element).getBundleId();
 			name = ((BundleDescription) element).getSymbolicName();
 		}
-		if (element instanceof BundleStats) {
-			id = ((BundleStats) element).getId();
-			name = ((BundleStats) element).getSymbolicName();
-		}
+//		if (element instanceof BundleStats) {
+//			id = ((BundleStats) element).getId();
+//			name = ((BundleStats) element).getSymbolicName();
+//		}
 		if (id == -1)
 			return;
 		PluginDependencyGraphNode node = (PluginDependencyGraphNode) getDependencyGraph().get(new Long(id));

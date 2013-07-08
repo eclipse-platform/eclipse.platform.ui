@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import org.eclipse.core.runtime.internal.stats.BundleStats;
-import org.eclipse.core.runtime.internal.stats.StatsManager;
+//import org.eclipse.core.runtime.internal.stats.BundleStats;
+//import org.eclipse.core.runtime.internal.stats.StatsManager;
 import org.eclipse.core.tools.CoreToolsPlugin;
 import org.eclipse.core.tools.TableWithTotalView;
 import org.eclipse.jface.action.*;
@@ -86,7 +86,7 @@ public class ActivePluginsView extends TableWithTotalView {
 		int sumOfMemoryUsed = 0;
 		int sumOfMemoryAlloc = 0;
 		long sumOfStartupTime = 0;
-		long sumOfClassloadtime = 0;
+//		long sumOfClassloadtime = 0;
 		int sumOfRAMAlloc = 0;
 		int sumOfRAMUsed = 0;
 		long sumOfStartupMethodTime = 0;
@@ -98,21 +98,21 @@ public class ActivePluginsView extends TableWithTotalView {
 			iterator = Arrays.asList(elements).iterator();
 		}
 		for (; iterator.hasNext();) {
-			BundleStats element = (BundleStats) iterator.next();
-			if (element != null) {
-				VMClassloaderInfo vmInfo = VMClassloaderInfo.getClassloader(element.getSymbolicName());
-				sumOfClasses += element.getClassLoadCount();
-				sumOfMemoryUsed += (vmInfo.getUsedRAM() + vmInfo.getUsedROM());
-				sumOfMemoryAlloc += (vmInfo.getAllocRAM() + vmInfo.getAllocROM());
-				sumOfStartupTime = sumOfStartupTime + element.getStartupTime();
-				sumOfClassloadtime = sumOfClassloadtime + element.getClassLoadTime();
-				sumOfStartupMethodTime = sumOfStartupMethodTime + element.getStartupMethodTime();
-				sumOfRAMAlloc += vmInfo.getAllocRAM();
-				sumOfRAMUsed += vmInfo.getUsedRAM();
-				sumOfROMAlloc += vmInfo.getAllocROM();
-				sumOfROMUsed += vmInfo.getUsedROM();
-				count++;
-			}
+//			BundleStats element = (BundleStats) iterator.next();
+//			if (element != null) {
+//				VMClassloaderInfo vmInfo = VMClassloaderInfo.getClassloader(element.getSymbolicName());
+//				sumOfClasses += element.getClassLoadCount();
+//				sumOfMemoryUsed += (vmInfo.getUsedRAM() + vmInfo.getUsedROM());
+//				sumOfMemoryAlloc += (vmInfo.getAllocRAM() + vmInfo.getAllocROM());
+//				sumOfStartupTime = sumOfStartupTime + element.getStartupTime();
+//				sumOfClassloadtime = sumOfClassloadtime + element.getClassLoadTime();
+//				sumOfStartupMethodTime = sumOfStartupMethodTime + element.getStartupMethodTime();
+//				sumOfRAMAlloc += vmInfo.getAllocRAM();
+//				sumOfRAMUsed += vmInfo.getUsedRAM();
+//				sumOfROMAlloc += vmInfo.getAllocROM();
+//				sumOfROMUsed += vmInfo.getUsedROM();
+//				count++;
+//			}
 		}
 		String[] totalLine = new String[getColumnHeaders().length];
 		totalLine[0] = "Total: " + count; //$NON-NLS-1$
@@ -129,15 +129,15 @@ public class ActivePluginsView extends TableWithTotalView {
 	}
 
 	public void createPartControl(Composite parent) {
-		if (!StatsManager.MONITOR_ACTIVATION) {
+//		if (!StatsManager.MONITOR_ACTIVATION) {
 			Text text = new Text(parent, 0);
 			text.setText("Plug-in monitoring is not enabled"); //$NON-NLS-1$
 			return;
-		}
-		super.createPartControl(parent);
-		viewer.setInput(BundleStats.class);
-		getSite().setSelectionProvider(viewer);
-		viewer.setSelection(StructuredSelection.EMPTY);
+//		}
+//		super.createPartControl(parent);
+//		viewer.setInput(BundleStats.class);
+//		getSite().setSelectionProvider(viewer);
+//		viewer.setSelection(StructuredSelection.EMPTY);
 	}
 
 	protected void createActions() {
@@ -172,15 +172,15 @@ public class ActivePluginsView extends TableWithTotalView {
 
 		displayStackAction = new Action("Stack &Trace") { //$NON-NLS-1$
 			public void run() {
-				try {
-					StackTraceView view = (StackTraceView) getSite().getPage().showView(StackTraceView.VIEW_ID);
-					BundleStats info = (BundleStats) ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
-					if (info == null)
-						return;
-					view.setInput(StatsManager.TRACE_FILENAME, info.getTraceStart(), info.getTraceEnd());
-				} catch (PartInitException e) {
-					e.printStackTrace();
-				}
+//				try {
+//					StackTraceView view = (StackTraceView) getSite().getPage().showView(StackTraceView.VIEW_ID);
+//					BundleStats info = (BundleStats) ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
+//					if (info == null)
+//						return;
+//					view.setInput(StatsManager.TRACE_FILENAME, info.getTraceStart(), info.getTraceEnd());
+//				} catch (PartInitException e) {
+//					e.printStackTrace();
+//				}
 			}
 		};
 		displayStackAction.setToolTipText("Display the plug-in activation stack trace"); //$NON-NLS-1$

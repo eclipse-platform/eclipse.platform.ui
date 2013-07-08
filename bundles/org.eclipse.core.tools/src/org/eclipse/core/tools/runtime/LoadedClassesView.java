@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import org.eclipse.core.runtime.internal.stats.ClassStats;
-import org.eclipse.core.runtime.internal.stats.StatsManager;
+//import org.eclipse.core.runtime.internal.stats.ClassStats;
+//import org.eclipse.core.runtime.internal.stats.StatsManager;
 import org.eclipse.core.tools.CoreToolsPlugin;
 import org.eclipse.core.tools.TableWithTotalView;
 import org.eclipse.jface.action.*;
@@ -41,13 +41,13 @@ public class LoadedClassesView extends TableWithTotalView {
 	}
 
 	public void createPartControl(Composite parent) {
-		if (!StatsManager.MONITOR_CLASSES) {
+//		if (!StatsManager.MONITOR_CLASSES) {
 			Text text = new Text(parent, 0);
 			text.setText("Class monitoring is not enabled."); //$NON-NLS-1$
-			return;
-		}
-		super.createPartControl(parent);
-		viewer.setSelection(StructuredSelection.EMPTY);
+//			return;
+//		}
+//		super.createPartControl(parent);
+//		viewer.setSelection(StructuredSelection.EMPTY);
 	}
 
 	protected ITreeContentProvider getContentProvider() {
@@ -76,15 +76,15 @@ public class LoadedClassesView extends TableWithTotalView {
 	protected void createActions() {
 		displayStackAction = new Action("Stack &Trace") { //$NON-NLS-1$
 			public void run() {
-				try {
-					StackTraceView view = (StackTraceView) getSite().getPage().showView(StackTraceView.VIEW_ID);
-					ClassStats clazz = (ClassStats) ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
-					if (clazz == null)
-						return;
-					view.setInput(StatsManager.TRACE_FILENAME, clazz.getTraceStart(), clazz.getTraceEnd());
-				} catch (PartInitException e) {
-					e.printStackTrace();
-				}
+//				try {
+//					StackTraceView view = (StackTraceView) getSite().getPage().showView(StackTraceView.VIEW_ID);
+//					ClassStats clazz = (ClassStats) ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
+//					if (clazz == null)
+//						return;
+//					view.setInput(StatsManager.TRACE_FILENAME, clazz.getTraceStart(), clazz.getTraceEnd());
+//				} catch (PartInitException e) {
+//					e.printStackTrace();
+//				}
 			}
 		};
 		displayStackAction.setToolTipText("Display the class activation stack trace"); //$NON-NLS-1$
@@ -110,14 +110,14 @@ public class LoadedClassesView extends TableWithTotalView {
 			Object[] elements = ((ITreeContentProvider) viewer.getContentProvider()).getElements(viewer.getInput());
 			iterator = Arrays.asList(elements == null ? new Object[0] : elements).iterator();
 		}
-		while (iterator.hasNext()) {
-			ClassStats clazz = (ClassStats) iterator.next();
-			VMClassloaderInfo loader = VMClassloaderInfo.getClassloader(clazz.getClassloader().getId());
-			VMClassInfo classInfo = loader.getClass(clazz.getClassName());
-			ramTotal += classInfo.getRAMSize();
-			romTotal += classInfo.getROMSize();
-			count++;
-		}
+//		while (iterator.hasNext()) {
+//			ClassStats clazz = (ClassStats) iterator.next();
+//			VMClassloaderInfo loader = VMClassloaderInfo.getClassloader(clazz.getClassloader().getId());
+//			VMClassInfo classInfo = loader.getClass(clazz.getClassName());
+//			ramTotal += classInfo.getRAMSize();
+//			romTotal += classInfo.getROMSize();
+//			count++;
+//		}
 		totals[0] = "Total: " + count; //$NON-NLS-1$
 		totals[2] = Integer.toString(ramTotal + romTotal);
 		totals[5] = Integer.toString(ramTotal);

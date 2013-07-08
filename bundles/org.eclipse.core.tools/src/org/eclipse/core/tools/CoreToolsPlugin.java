@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,10 @@ package org.eclipse.core.tools;
 import java.net.URL;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.internal.stats.ClassloaderStats;
-import org.eclipse.core.runtime.internal.stats.StatsManager;
-import org.eclipse.core.tools.runtime.VMClassInfo;
-import org.eclipse.core.tools.runtime.VMClassloaderInfo;
+//import org.eclipse.core.runtime.internal.stats.ClassloaderStats;
+//import org.eclipse.core.runtime.internal.stats.StatsManager;
+//import org.eclipse.core.tools.runtime.VMClassInfo;
+//import org.eclipse.core.tools.runtime.VMClassloaderInfo;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -27,27 +27,27 @@ public class CoreToolsPlugin extends AbstractUIPlugin {
 	private BundleContext context;
 
 	static {
-		if (StatsManager.MONITOR_ACTIVATION)
-			initializeBootClasses();
+//		if (StatsManager.MONITOR_ACTIVATION)
+//			initializeBootClasses();
 	}
 
 	public static CoreToolsPlugin getDefault() {
 		return instance;
 	}
 
-	private static void initializeBootClasses() {
-		if (!VMClassloaderInfo.hasNatives)
-			return;
-		ClassloaderStats loader = ClassloaderStats.getLoader("org.eclipse.osgi"); //$NON-NLS-1$
-		//class loading trace option not enabled
-		if (loader == null)
-			return;
-		VMClassInfo[] classes = VMClassloaderInfo.getBaseClasses();
-		String[] names = new String[classes.length];
-		for (int i = 0; i < classes.length; i++)
-			names[i] = classes[i].getName();
-		loader.addBaseClasses(names);
-	}
+//	private static void initializeBootClasses() {
+//		if (!VMClassloaderInfo.hasNatives)
+//			return;
+//		ClassloaderStats loader = ClassloaderStats.getLoader("org.eclipse.osgi"); //$NON-NLS-1$
+//		//class loading trace option not enabled
+//		if (loader == null)
+//			return;
+//		VMClassInfo[] classes = VMClassloaderInfo.getBaseClasses();
+//		String[] names = new String[classes.length];
+//		for (int i = 0; i < classes.length; i++)
+//			names[i] = classes[i].getName();
+//		loader.addBaseClasses(names);
+//	}
 
 	/**
 	 * find an icon - caller must dispose of it
