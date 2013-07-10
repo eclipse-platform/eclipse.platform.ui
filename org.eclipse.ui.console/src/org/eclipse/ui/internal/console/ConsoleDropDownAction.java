@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,17 @@
 package org.eclipse.ui.internal.console;
 
 
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -117,16 +117,40 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	public void run() {
         ConsoleView consoleView = (ConsoleView) fView;
         boolean pinned = consoleView.isPinned();
-        if (pinned) {
-            consoleView.setPinned(false);
+        try {
+	        if (pinned) {
+	            consoleView.setPinned(false);
+	        }
+	        //we should be switching over the console views as ordered in the drop down
+	        //not based on the internal view stack, which changes as new console are opened / brought to top
+	        int size = fMenu.getItemCount();
+	        if(fMenu != null && size > 1) {
+	        	int idx = 0;
+	        	MenuItem[] items = fMenu.getItems();
+	        	for (int i = 0; i < items.length; i++) {
+	        		idx = i;
+	        		if(items[i].getSelection()) {
+	        			break;
+	        		}
+				}
+	        	int next = idx+1;
+	        	if(next >= size) {
+	        		next = 0;
+	        	}
+	        	Object data = items[next].getData();
+	        	if(data instanceof ActionContributionItem) {
+	        		//we have to set the selection because unless the sub-menu is shown it does not update
+	        		items[idx].setSelection(false);
+	        		items[next].setSelection(true);
+	        		IAction action = ((ActionContributionItem)data).getAction();
+	        		action.run();
+	        	}
+	        }	
         }
-		List stack = consoleView.getConsoleStack();
-		if (stack.size() > 1) {
-			IConsole console = (IConsole) stack.get(1);
-			fView.display(console);
-		}
-        if (pinned) {
-            consoleView.setPinned(true);
+        finally {
+	        if (pinned) {
+	            consoleView.setPinned(true);
+	        }
         }
 	}
 	
