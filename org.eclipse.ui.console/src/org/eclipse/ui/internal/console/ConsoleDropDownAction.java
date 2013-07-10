@@ -17,11 +17,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -121,31 +119,20 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	        if (pinned) {
 	            consoleView.setPinned(false);
 	        }
-	        //we should be switching over the console views as ordered in the drop down
-	        //not based on the internal view stack, which changes as new console are opened / brought to top
-	        int size = fMenu.getItemCount();
-	        if(fMenu != null && size > 1) {
-	        	int idx = 0;
-	        	MenuItem[] items = fMenu.getItems();
-	        	for (int i = 0; i < items.length; i++) {
-	        		idx = i;
-	        		if(items[i].getSelection()) {
-	        			break;
-	        		}
+	        IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
+			IConsole current = fView.getConsole();
+			int idx = 0;
+			for (int i = 0; i < consoles.length; i++) {
+				idx = i;
+				if(consoles[i] == current) {
+					break;
 				}
-	        	int next = idx+1;
-	        	if(next >= size) {
-	        		next = 0;
-	        	}
-	        	Object data = items[next].getData();
-	        	if(data instanceof ActionContributionItem) {
-	        		//we have to set the selection because unless the sub-menu is shown it does not update
-	        		items[idx].setSelection(false);
-	        		items[next].setSelection(true);
-	        		IAction action = ((ActionContributionItem)data).getAction();
-	        		action.run();
-	        	}
-	        }	
+			}
+			int next = idx+1;
+        	if(next >= consoles.length) {
+        		next = 0;
+        	}
+        	fView.display(consoles[next]);
         }
         finally {
 	        if (pinned) {
