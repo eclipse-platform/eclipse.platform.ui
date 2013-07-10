@@ -512,26 +512,26 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			mainWindow.setWidth(500);
 			mainWindow.setHeight(400);
 			resource.getContents().add((EObject) application);
+			MBindingContext rootContext = MCommandsFactory.INSTANCE
+					.createBindingContext();
+			rootContext
+			.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
+			rootContext.setName("In Dialog and Windows");
+			
+			MBindingContext childContext = MCommandsFactory.INSTANCE
+					.createBindingContext();
+			childContext.setElementId("org.eclipse.ui.contexts.window");
+			childContext.setName("In Windows");
+			rootContext.getChildren().add(childContext);
+			
+			childContext = MCommandsFactory.INSTANCE.createBindingContext();
+			childContext.setElementId("org.eclipse.ui.contexts.dialog");
+			childContext.setName("In Dialogs");
+			rootContext.getChildren().add(childContext);
+			
+			application.getRootContext().add(rootContext);
+			application.getBindingContexts().add(rootContext);
 			if (!isMinimalist) {
-				MBindingContext rootContext = MCommandsFactory.INSTANCE
-						.createBindingContext();
-				rootContext
-						.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
-				rootContext.setName("In Dialog and Windows");
-
-				MBindingContext childContext = MCommandsFactory.INSTANCE
-						.createBindingContext();
-				childContext.setElementId("org.eclipse.ui.contexts.window");
-				childContext.setName("In Windows");
-				rootContext.getChildren().add(childContext);
-
-				childContext = MCommandsFactory.INSTANCE.createBindingContext();
-				childContext.setElementId("org.eclipse.ui.contexts.dialog");
-				childContext.setName("In Dialogs");
-				rootContext.getChildren().add(childContext);
-
-				application.getRootContext().add(rootContext);
-				application.getBindingContexts().add(rootContext);
 
 				// Create Quit command
 				MCommand quitCommand = createCommand(
