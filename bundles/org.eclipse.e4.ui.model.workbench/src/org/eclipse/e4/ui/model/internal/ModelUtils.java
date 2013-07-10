@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.model.internal;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -25,7 +24,10 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.ETypeParameter;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.EcoreUtil.UsageCrossReferencer;
 
 public class ModelUtils {
 	//public static final String CONTAINING_CONTEXT = "ModelUtils.containingContext";
@@ -162,7 +164,14 @@ public class ModelUtils {
 						found = true; // skip 
 						break;
 					} else { // replace
+						EObject root = EcoreUtil.getRootContainer((EObject) existingEObject);
+						// Replacing the object in the container
 						EcoreUtil.replace((EObject)existingEObject, (EObject)element);
+						// Replacing the object in other references than the container.
+						Collection<Setting> settings = UsageCrossReferencer.find((EObject) existingEObject, root);
+						for (Setting setting : settings) {
+							setting.set(element);
+						}
 						found = true; 
 					}
 				}
