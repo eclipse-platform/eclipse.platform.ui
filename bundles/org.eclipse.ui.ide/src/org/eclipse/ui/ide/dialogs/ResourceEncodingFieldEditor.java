@@ -58,7 +58,7 @@ import org.osgi.service.prefs.Preferences;
 public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 
 
-	private static boolean DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS = false; // TODO: Change once we have an I-build. ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS
+	private static boolean DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS = ResourcesPlugin.DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS;
 
 
 	/**
