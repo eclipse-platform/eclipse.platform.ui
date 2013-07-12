@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Adds generic type arguments https://bugs.eclipse.org/412836
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
@@ -104,13 +105,14 @@ public class PerformanceStats {
 	/**
 	 * All known event statistics.
 	 */
-	private final static Map statMap = Collections.synchronizedMap(new HashMap());
+	private final static Map<PerformanceStats, PerformanceStats> statMap = 
+				Collections.synchronizedMap(new HashMap<PerformanceStats,PerformanceStats>());
 
 	/**
 	 * Maximum allowed durations for each event.
 	 * Maps String (event name) -> Long (threshold)
 	 */
-	private final static Map thresholdMap = Collections.synchronizedMap(new HashMap());
+	private final static Map<String, Long> thresholdMap = Collections.synchronizedMap(new HashMap<String, Long>());
 
 	/**
 	 * Whether non-failure statistics should be retained.
@@ -195,7 +197,7 @@ public class PerformanceStats {
 	 * will be empty if there are no recorded statistics.
 	 */
 	public static PerformanceStats[] getAllStats() {
-		return (PerformanceStats[]) statMap.values().toArray(new PerformanceStats[statMap.values().size()]);
+		return statMap.values().toArray(new PerformanceStats[statMap.values().size()]);
 	}
 
 	/**
@@ -218,7 +220,7 @@ public class PerformanceStats {
 		if (!TRACE_SUCCESS)
 			return newStats;
 		//use existing stats object if available
-		PerformanceStats oldStats = (PerformanceStats) statMap.get(newStats);
+		PerformanceStats oldStats = statMap.get(newStats);
 		if (oldStats != null)
 			return oldStats;
 		statMap.put(newStats, newStats);
@@ -287,8 +289,8 @@ public class PerformanceStats {
 	 */
 	public static void removeStats(String eventName, Object blameObject) {
 		synchronized (statMap) {
-			for (Iterator it = statMap.keySet().iterator(); it.hasNext();) {
-				PerformanceStats stats = (PerformanceStats) it.next();
+			for (Iterator<PerformanceStats> it = statMap.keySet().iterator(); it.hasNext();) {
+				PerformanceStats stats = it.next();
 				if (stats.getEvent().equals(eventName) && stats.getBlame().equals(blameObject))
 					it.remove();
 			}
@@ -342,7 +344,7 @@ public class PerformanceStats {
 	 */
 	private PerformanceStats createFailureStats(String contextName, long elapsed) {
 		PerformanceStats failedStat = new PerformanceStats(event, blame, contextName);
-		PerformanceStats old = (PerformanceStats) statMap.get(failedStat);
+		PerformanceStats old = statMap.get(failedStat);
 		if (old == null)
 			statMap.put(failedStat, failedStat);
 		else
@@ -448,7 +450,7 @@ public class PerformanceStats {
 	 * Returns the performance threshold for this event.
 	 */
 	private long getThreshold(String eventName) {
-		Long value = (Long) thresholdMap.get(eventName);
+		Long value = thresholdMap.get(eventName);
 		if (value == null) {
 			String option = InternalPlatform.getDefault().getOption(eventName);
 			if (option != null) {
