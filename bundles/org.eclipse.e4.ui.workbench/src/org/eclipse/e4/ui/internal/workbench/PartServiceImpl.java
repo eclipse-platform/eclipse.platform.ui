@@ -676,6 +676,7 @@ public class PartServiceImpl implements EPartService {
 		part.setTooltip(descriptor.getTooltip());
 		part.getHandlers().addAll(EcoreUtil.copyAll(descriptor.getHandlers()));
 		part.getTags().addAll(descriptor.getTags());
+		part.getPersistedState().putAll(descriptor.getPersistedState());
 		part.getBindingContexts().addAll(descriptor.getBindingContexts());
 		return part;
 	}
