@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Hochstein (Freescale) - Bug 407522 - Perspective reset not working correctly 
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -3182,7 +3183,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					toolbarEntry.setActionSet((ActionSet) idToActionSet
 							.get(getActionSetID(contributionItem)));
 					if (toolbarEntry.getChildren().isEmpty()) {
-						toolbarEntry.setCheckState(contributionItem.isVisible());
+						toolbarEntry.setCheckState(getToolbarItemIsVisible(toolbarEntry));
 					}
 					parent.addChild(toolbarEntry);
 				}
