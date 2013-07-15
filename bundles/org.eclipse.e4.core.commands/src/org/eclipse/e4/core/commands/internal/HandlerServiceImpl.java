@@ -26,6 +26,7 @@ import org.eclipse.core.commands.ParameterValueConversionException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -170,7 +171,7 @@ public class HandlerServiceImpl implements EHandlerService {
 		push(executionContext, staticContext);
 		try {
 			Command cmd = command.getCommand();
-			cmd.setEnabled(peek());
+			cmd.setEnabled(new ExpressionContext(peek().context));
 			return cmd.isEnabled();
 		} finally {
 			pop();
@@ -210,7 +211,7 @@ public class HandlerServiceImpl implements EHandlerService {
 		push(executionContext, staticContext);
 		try {
 			// Command cmd = command.getCommand();
-			return command.executeWithChecks(null, peek());
+			return command.executeWithChecks(null, new ExpressionContext(peek().context));
 		} catch (ExecutionException e) {
 			staticContext.set(HANDLER_EXCEPTION, e);
 		} catch (NotDefinedException e) {
