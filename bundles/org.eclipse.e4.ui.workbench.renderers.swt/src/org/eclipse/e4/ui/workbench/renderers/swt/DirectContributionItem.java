@@ -19,7 +19,9 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.Policy;
@@ -89,6 +91,10 @@ public class DirectContributionItem extends ContributionItem {
 	void setResourceUtils(IResourceUtilities utils) {
 		resUtils = (ISWTResourceUtilities) utils;
 	}
+
+	@Inject
+	@Optional
+	private Logger logger;
 
 	private IMenuListener menuListener = new IMenuListener() {
 		public void menuAboutToShow(IMenuManager manager) {
@@ -442,6 +448,17 @@ public class DirectContributionItem extends ContributionItem {
 					menu.setData(AbstractPartRenderer.OWNING_ME, menu);
 					return menu;
 				}
+			}
+		} else {
+			final IEclipseContext lclContext = getContext(model);
+			IPresentationEngine engine = lclContext
+					.get(IPresentationEngine.class);
+			obj = engine.createGui(mmenu, toolItem.getParent(), lclContext);
+			if (obj instanceof Menu) {
+				return (Menu) obj;
+			}
+			if (logger != null) {
+				logger.debug("Rendering returned " + obj); //$NON-NLS-1$
 			}
 		}
 		return null;

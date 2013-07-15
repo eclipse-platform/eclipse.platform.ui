@@ -817,8 +817,9 @@ public class HandledContributionItem extends ContributionItem {
 				Menu menu = (Menu) obj;
 				// menu.setData(AbstractPartRenderer.OWNING_ME, menu);
 				return menu;
-			} else {
-				System.err.println("Rendering returned " + obj); //$NON-NLS-1$
+			}
+			if (logger != null) {
+				logger.debug("Rendering returned " + obj); //$NON-NLS-1$
 			}
 		}
 		return null;
