@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
  ******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,7 +33,6 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -61,10 +60,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.swt.IFocusService;
+
 
 public class SearchField {
 
@@ -131,7 +129,8 @@ public class SearchField {
 		hookUpSelectAll();
 
 		final CommandProvider commandProvider = new CommandProvider();
-		QuickAccessProvider[] providers = new QuickAccessProvider[] { new PreviousPicksProvider(),
+		QuickAccessProvider[] providers = new QuickAccessProvider[] {
+				new PreviousPicksProvider(previousPicksList),
 				new EditorProvider(), new ViewProvider(application, window),
 				new PerspectiveProvider(), commandProvider, new ActionProvider(),
 				new WizardProvider(), new PreferenceProvider(), new PropertiesProvider() };
@@ -556,41 +555,6 @@ public class SearchField {
 					}
 				}
 			}
-		}
-	}
-
-	private class PreviousPicksProvider extends QuickAccessProvider {
-
-		public QuickAccessElement getElementForId(String id) {
-			return null;
-		}
-
-		public QuickAccessElement[] getElements() {
-			return previousPicksList.toArray(new QuickAccessElement[previousPicksList.size()]);
-		}
-
-		public QuickAccessElement[] getElementsSorted() {
-			return getElements();
-		}
-
-		public String getId() {
-			return "org.eclipse.ui.previousPicks"; //$NON-NLS-1$
-		}
-
-		public ImageDescriptor getImageDescriptor() {
-			return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
-		}
-
-		public String getName() {
-			return QuickAccessMessages.QuickAccess_Previous;
-		}
-
-		protected void doReset() {
-			// operation not applicable for this provider
-		}
-
-		public boolean isAlwaysPresent() {
-			return true;
 		}
 	}
 

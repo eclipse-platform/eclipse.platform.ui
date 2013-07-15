@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
@@ -349,7 +350,7 @@ public abstract class QuickAccessContents {
 							}
 
 						}
-						if (entry != null) {
+						if (entryEnabled(provider, entry)) {
 							entries[i].add(entry);
 							count++;
 							countTotal++;
@@ -387,7 +388,7 @@ public abstract class QuickAccessContents {
 		} while ((showAllMatches || countTotal < maxCount) && !done);
 		if (!perfectMatchAdded) {
 			QuickAccessEntry entry = perfectMatch.match(filter, providers[0]);
-			if (entry != null) {
+			if (entryEnabled(providers[0], entry)) {
 				if (entries[0] == null) {
 					entries[0] = new ArrayList<QuickAccessEntry>();
 					indexPerProvider[0] = 0;
@@ -396,6 +397,28 @@ public abstract class QuickAccessContents {
 			}
 		}
 		return entries;
+	}
+
+	/**
+	 * @param provider
+	 * @param entry
+	 * @return <code>true</code> if the entry is enabled
+	 */
+	private boolean entryEnabled(QuickAccessProvider provider, QuickAccessEntry entry) {
+		if (entry == null) {
+			return false;
+		}
+
+		// For a previous pick provider, check that the original provider does
+		// also provide the element
+		if (provider instanceof PreviousPicksProvider) {
+			QuickAccessElement element = entry.element;
+			final QuickAccessProvider originalProvider = element.getProvider();
+			QuickAccessElement match = originalProvider.getElementForId(element.getId());
+			return match != null;
+		}
+
+		return true;
 	}
 
 	private void doDispose() {
