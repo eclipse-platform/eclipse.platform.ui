@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -89,6 +89,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			}
 			return null;
 		}
+
+		String getName() {
+			return name;
+		}
+
 	}
 
 	private static final int TOTAL_BUILD_WORK = Policy.totalWork * 1000;
@@ -849,7 +854,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), NLS.bind(Messages.events_instantiate_1, builderName), e));
 			status.add(e.getStatus());
 		}
-		if (builder == null) {
+		if (builder != null) {
 			//unable to create the builder, so create a placeholder to fill in for it
 			builder = new MissingBuilder(builderName);
 		}
@@ -1059,6 +1064,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	private String toString(InternalBuilder builder) {
 		String name = builder.getClass().getName();
 		name = name.substring(name.lastIndexOf('.') + 1);
+		if (builder instanceof MissingBuilder)
+			name = name + ": '" + ((MissingBuilder) builder).getName() + "'"; //$NON-NLS-1$ //$NON-NLS-2$
 		return name + "(" + builder.getBuildConfig() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
