@@ -76,14 +76,18 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fShell.isDisposed()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     }
 
     protected void runTest() throws Throwable {
         try {
             super.runTest();
         } catch (Throwable t) {
-            throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t);
+			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -104,7 +108,11 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         fViewer.setInput(model.getRootElement());
         
         // Wait for the updates to complete.
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         model.validateData(fViewer, TreePath.EMPTY);
         
@@ -121,7 +129,11 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         model.validateData(fViewer, TreePath.EMPTY);
         
@@ -183,27 +195,31 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureLabelUpdates = true;
         
-        model.setRoot( new TestElement(model, "root", new TestElement[] {
-            new TestElement(model, "1", new TestElement[0]),
-            new TestElement(model, "2", new TestElement[0]),
+		model.setRoot(new TestElement(model, "root", new TestElement[] { //$NON-NLS-1$
+		new TestElement(model, "1", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "2", new TestElement[0]), //$NON-NLS-1$
         }) );
 
         // Set input into the view to update it, but block children updates.
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
         while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
         }
         List firstUpdates = model.fCapturedUpdates;
         model.fCapturedUpdates = new ArrayList(2);
         
 //      // Change the model and run another update set. 
-        model.getElement(model.findElement("1")).setLabelAppendix(" - changed");
-        model.getElement(model.findElement("2")).setLabelAppendix(" - changed");
+		model.getElement(model.findElement("1")).setLabelAppendix(" - changed"); //$NON-NLS-1$ //$NON-NLS-2$
+		model.getElement(model.findElement("2")).setLabelAppendix(" - changed"); //$NON-NLS-1$ //$NON-NLS-2$
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
         }
         
         // Complete the second set of children updates
@@ -218,7 +234,11 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
             capturedUpdate.done();
         }
 
-        while (!fListener.isFinished(CHILDREN_UPDATES)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CHILDREN_UPDATES)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);
@@ -236,29 +256,33 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureLabelUpdates = true;
         
-        model.setRoot( new TestElement(model, "root", new TestElement[] {
-            new TestElement(model, "1", new TestElement[0]),
-            new TestElement(model, "2", new TestElement[0]),
+		model.setRoot(new TestElement(model, "root", new TestElement[] { //$NON-NLS-1$
+		new TestElement(model, "1", new TestElement[0]), //$NON-NLS-1$
+				new TestElement(model, "2", new TestElement[0]), //$NON-NLS-1$
         }) );
 
         // Set input into the view to update it, but block children updates.
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
         while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
         }
         List firstUpdates = model.fCapturedUpdates;
         model.fCapturedUpdates = new ArrayList(2);
         
         // Change the model and run another update set. 
-        model.setElementChildren(TreePath.EMPTY, new TestElement[] {
-            new TestElement(model, "1-new", new TestElement[0]),
-            new TestElement(model, "2-new", new TestElement[0]),
+		model.setElementChildren(TreePath.EMPTY, new TestElement[] {
+				new TestElement(model, "1-new", new TestElement[0]), //$NON-NLS-1$
+				new TestElement(model, "2-new", new TestElement[0]), //$NON-NLS-1$
         });
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
         }
         
         // Complete the second set of children updates
@@ -273,7 +297,11 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
             capturedUpdate.done();
         }
 
-        while (!fListener.isFinished(CHILDREN_UPDATES)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CHILDREN_UPDATES)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);
@@ -292,29 +320,33 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureChildrenUpdates = true;
         
-        model.setRoot( new TestElement(model, "root", new TestElement[] {
-            new TestElement(model, "1", new TestElement[0]),
-            new TestElement(model, "2", new TestElement[0]),
+		model.setRoot(new TestElement(model, "root", new TestElement[] { //$NON-NLS-1$
+		new TestElement(model, "1", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "2", new TestElement[0]), //$NON-NLS-1$
         }) );
 
         // Set input into the view to update it, but block children updates.
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
         while (!areCapturedChildrenUpdatesComplete(model.fCapturedUpdates, model.getRootElement().fChildren.length)) {
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
         }
         IChildrenUpdate[] firstUpdates = (IChildrenUpdate[])model.fCapturedUpdates.toArray(new IChildrenUpdate[0]);
         model.fCapturedUpdates.clear();
         
         // Change the model and run another update set. 
         model.setElementChildren(TreePath.EMPTY, new TestElement[] {
-            new TestElement(model, "1-new", new TestElement[0]),
-            new TestElement(model, "2-new", new TestElement[0]),
+ new TestElement(model, "1-new", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "2-new", new TestElement[0]), //$NON-NLS-1$
         });
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (!areCapturedChildrenUpdatesComplete(model.fCapturedUpdates, model.getRootElement().fChildren.length)) {
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
         }
         
         // Complete the second set of children updates
@@ -327,7 +359,11 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
             firstUpdates[i].done();
         }
 
-        while (!fListener.isFinished(CHILDREN_UPDATES)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CHILDREN_UPDATES)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);

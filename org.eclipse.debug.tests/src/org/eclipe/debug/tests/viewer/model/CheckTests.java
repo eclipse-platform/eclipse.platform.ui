@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
@@ -68,14 +69,18 @@ abstract public class CheckTests extends TestCase {
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fShell.isDisposed()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     }
 
     protected void runTest() throws Throwable {
         try {
             super.runTest();
         } catch (Throwable t) {
-            throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t);
+			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -96,7 +101,11 @@ abstract public class CheckTests extends TestCase {
         fViewer.setInput(model.getRootElement());
         
         // Wait for the updates to complete.
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         model.validateData(fViewer, TreePath.EMPTY);
     }
@@ -111,7 +120,11 @@ abstract public class CheckTests extends TestCase {
         
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         model.validateData(fViewer, TreePath.EMPTY);
     }
@@ -157,7 +170,11 @@ abstract public class CheckTests extends TestCase {
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
@@ -168,8 +185,11 @@ abstract public class CheckTests extends TestCase {
         
         fListener.reset(elementPath, element, -1, true, false); 
         model.postDelta(delta);
-        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.LABEL_COMPLETE | ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.LABEL_COMPLETE | ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
     }
 

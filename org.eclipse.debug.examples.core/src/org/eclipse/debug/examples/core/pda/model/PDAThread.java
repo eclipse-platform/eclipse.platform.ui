@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -149,7 +149,7 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	 * @see org.eclipse.debug.core.model.IThread#getName()
 	 */
 	public String getName() {
-		return "Main thread";
+		return "Main thread"; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -329,21 +329,21 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
     		// handle events
     		if (event instanceof PDAResumedEvent || event instanceof PDAVMResumedEvent) {
     			setSuspended(false);
-    			if ("step".equals(event.fReason)) {
+    			if ("step".equals(event.fReason)) { //$NON-NLS-1$
     				setStepping(true);
     				resumed(DebugEvent.STEP_OVER);
     			//#ifdef ex2
     //#			}
     //#			// TODO: Exercise 2 - handle/fire "client" resume event
     			//#else	
-    			} else if ("client".equals(event.fReason)) {
+    			} else if ("client".equals(event.fReason)) { //$NON-NLS-1$
     				resumed(DebugEvent.CLIENT_REQUEST);
     			}
     			//#endif
     			//#ifdef ex5
     //#			// TODO: Exercise 5 - handle start of drop event
     			//#else
-    			else if ("drop".equals(event.fReason)) {
+    			else if ("drop".equals(event.fReason)) { //$NON-NLS-1$
     				resumed(DebugEvent.STEP_RETURN);
     			}
     			//#endif
@@ -357,18 +357,18 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
     //#				exceptionHit();
     //#			}
     			//#else
-    			if ("client".equals(event.fReason)) {
+    			if ("client".equals(event.fReason)) { //$NON-NLS-1$
     				suspended(DebugEvent.CLIENT_REQUEST);
-    			} else if ("step".equals(event.fReason)) {
+    			} else if ("step".equals(event.fReason)) { //$NON-NLS-1$
     				suspended(DebugEvent.STEP_END);
-    			} else if ("event".equals(event.fReason) && getError() != null) {
+    			} else if ("event".equals(event.fReason) && getError() != null) { //$NON-NLS-1$
     				exceptionHit();
     			} 
     			//#endif
     			//#ifdef ex5
     //#			// TODO: Exercise 5 - handle end of drop event
     			//#else
-    			else if ("drop".equals(event.fReason)) {
+    			else if ("drop".equals(event.fReason)) { //$NON-NLS-1$
     				suspended(DebugEvent.STEP_END);
     			}
     			//#endif
@@ -523,7 +523,7 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
             sendCommand(new PDAPopDataCommand(fThreadId));
             return dataStack[0];
         }
-        requestFailed("Empty stack", null);
+        requestFailed("Empty stack", null); //$NON-NLS-1$
         return null;
     }
     

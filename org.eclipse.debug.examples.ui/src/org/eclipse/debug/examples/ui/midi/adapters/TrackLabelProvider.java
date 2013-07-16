@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,11 +39,11 @@ public class TrackLabelProvider extends ElementLabelProvider {
 			}
 		}
 		StringBuffer buf = new StringBuffer();
-		buf.append("Track ");
+		buf.append("Track "); //$NON-NLS-1$
 		buf.append(i);
-		buf.append(" [");
+		buf.append(" ["); //$NON-NLS-1$
 		buf.append(track.size());
-		buf.append(" events]");
+		buf.append(" events]"); //$NON-NLS-1$
 		return buf.toString();
 	}
 

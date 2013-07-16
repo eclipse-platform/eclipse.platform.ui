@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems and others.
+ * Copyright (c) 2008, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,10 @@ public class PDARegisterData {
     final public PDABitFieldData[] fBitFields;
     
     PDARegisterData(String regString) {
-        StringTokenizer st = new StringTokenizer(regString, "|");
+        StringTokenizer st = new StringTokenizer(regString, "|"); //$NON-NLS-1$
         
         String regInfo = st.nextToken();
-        StringTokenizer regSt = new StringTokenizer(regInfo, " ");
+        StringTokenizer regSt = new StringTokenizer(regInfo, " "); //$NON-NLS-1$
         fName = regSt.nextToken();
         fWritable = Boolean.getBoolean(regSt.nextToken());
         

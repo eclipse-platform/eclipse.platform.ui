@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	class EventDispatchJob extends Job {
 		
 		public EventDispatchJob() {
-			super("PDA Event Dispatch");
+			super("PDA Event Dispatch"); //$NON-NLS-1$
 			setSystem(true);
 		}
 
@@ -111,7 +111,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
-			String message = "";
+			String message = ""; //$NON-NLS-1$
 			while (!isTerminated() && message != null) {
 				try {
 					message = fEventReader.readLine();
@@ -122,7 +122,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 					    }
 					    catch (IllegalArgumentException e) {
 					        DebugCorePlugin.getDefault().getLog().log(
-					            new Status (IStatus.ERROR, "org.eclipse.debug.examples.core", "Error parsing PDA event", e));
+					            new Status (IStatus.ERROR, "org.eclipse.debug.examples.core", "Error parsing PDA event", e)); //$NON-NLS-1$ //$NON-NLS-2$
 					        continue;
 					    }
 						Object[] listeners = fEventListeners.toArray();
@@ -185,7 +185,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			}
-			fRequestSocket = new Socket("localhost", requestPort);
+			fRequestSocket = new Socket("localhost", requestPort); //$NON-NLS-1$
 			fRequestWriter = new PrintWriter(fRequestSocket.getOutputStream());
 			fRequestReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream()));
 			// give interpreter a chance to open next socket
@@ -193,12 +193,12 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			}
-			fEventSocket = new Socket("localhost", eventPort);
+			fEventSocket = new Socket("localhost", eventPort); //$NON-NLS-1$
 			fEventReader = new BufferedReader(new InputStreamReader(fEventSocket.getInputStream()));
 		} catch (UnknownHostException e) {
-			requestFailed("Unable to connect to PDA VM", e);
+			requestFailed("Unable to connect to PDA VM", e); //$NON-NLS-1$
 		} catch (IOException e) {
-			requestFailed("Unable to connect to PDA VM", e);
+			requestFailed("Unable to connect to PDA VM", e); //$NON-NLS-1$
 		}
 		fEventDispatch = new EventDispatchJob();
 		fEventDispatch.schedule();
@@ -235,7 +235,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 * @see org.eclipse.debug.core.model.IDebugTarget#getName()
 	 */
 	public String getName() throws DebugException {
-		return "PDA";
+		return "PDA"; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugTarget#supportsBreakpoint(org.eclipse.debug.core.model.IBreakpoint)
@@ -406,6 +406,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	/**
 	 * Notification we have connected to the VM and it has started.
 	 * Resume the VM.
+	 * @param event
 	 */
 	private void vmStarted(PDAVMStartedEvent event) {
 		fireCreationEvent();
@@ -451,15 +452,15 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	}
 	
 	private int calcDetail(String reason) {
-        if (reason.equals("breakpoint") || reason.equals("watch")) {
+        if (reason.equals("breakpoint") || reason.equals("watch")) { //$NON-NLS-1$ //$NON-NLS-2$
             return DebugEvent.BREAKPOINT;
-        } else if (reason.equals("step")) {
+        } else if (reason.equals("step")) { //$NON-NLS-1$
             return DebugEvent.STEP_OVER;
-        } else if (reason.equals("drop")) {
+        } else if (reason.equals("drop")) { //$NON-NLS-1$
             return DebugEvent.STEP_RETURN;
-        } else if (reason.equals("client")) {
+        } else if (reason.equals("client")) { //$NON-NLS-1$
             return DebugEvent.CLIENT_REQUEST;
-        } else if (reason.equals("event")) {
+        } else if (reason.equals("event")) { //$NON-NLS-1$
             return DebugEvent.BREAKPOINT;
         } else {
             return DebugEvent.UNSPECIFIED;
@@ -498,11 +499,11 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 				// wait for reply
 				String retVal = fRequestReader.readLine();
 				if (retVal == null) {
-	                requestFailed("Request failed: " + request + ".  Debugger connection closed.", null);				    
+	                requestFailed("Request failed: " + request + ".  Debugger connection closed.", null);				     //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return retVal;
 			} catch (IOException e) {
-				requestFailed("Request failed: " + request, e);
+				requestFailed("Request failed: " + request, e); //$NON-NLS-1$
 			}
 		}
 		// Should never reach this satement.

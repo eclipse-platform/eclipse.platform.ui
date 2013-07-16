@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -51,17 +51,17 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 */
 	protected void setSelection(IResource resource) {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		assertNotNull("The active workbench page should not be null", page);
+		assertNotNull("The active workbench page should not be null", page); //$NON-NLS-1$
 		IViewPart part;
 		try {
-			part = page.showView("org.eclipse.ui.views.ResourceNavigator"); 
+			part = page.showView("org.eclipse.ui.views.ResourceNavigator"); //$NON-NLS-1$
 			IWorkbenchPartSite site = part.getSite();
-			assertNotNull("The part site for org.eclipse.ui.views.ResourceNavigator should not be null ", site);
+			assertNotNull("The part site for org.eclipse.ui.views.ResourceNavigator should not be null ", site); //$NON-NLS-1$
 			ISelectionProvider provider = site.getSelectionProvider();
-			assertNotNull("the selection provider should not be null for org.eclipse.ui.views.ResourceNavigator", provider);
+			assertNotNull("the selection provider should not be null for org.eclipse.ui.views.ResourceNavigator", provider); //$NON-NLS-1$
 			provider.setSelection(new StructuredSelection(resource));
 		} catch (PartInitException e) {
-			assertNotNull("Failed to open navigator view", null); 
+			assertNotNull("Failed to open navigator view", null); //$NON-NLS-1$
 		}
 	}
 	
@@ -70,8 +70,8 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 * @throws CoreException
 	 */
 	public void testSelectedResource() throws CoreException {
-		String scope = "${resource}";
-		IResource resource = getProject().getFolder("src"); 
+		String scope = "${resource}"; //$NON-NLS-1$
+		IResource resource = getProject().getFolder("src"); //$NON-NLS-1$
 		setSelection(resource);
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
@@ -84,8 +84,8 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 * @throws CoreException
 	 */
 	public void testSelectionsFolder() throws CoreException {
-		String scope = "${container}"; 
-		IResource resource = getProject().getFolder("src");
+		String scope = "${container}"; //$NON-NLS-1$
+		IResource resource = getProject().getFolder("src"); //$NON-NLS-1$
 		setSelection(resource);
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
@@ -98,8 +98,8 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 * @throws CoreException
 	 */
 	public void testSelectionsProject() throws CoreException {
-		String scope = "${project}";
-		IResource resource = getProject().getFolder("src");
+		String scope = "${project}"; //$NON-NLS-1$
+		IResource resource = getProject().getFolder("src"); //$NON-NLS-1$
 		setSelection(resource);
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
@@ -112,7 +112,7 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 * @throws CoreException
 	 */
 	public void testWorkspaceScope() throws CoreException {
-		String scope = "${workspace}";
+		String scope = "${workspace}"; //$NON-NLS-1$
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
@@ -124,8 +124,8 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 * @throws CoreException
 	 */
 	public void testSpecificResource() throws CoreException {
-		String scope = "${resource:/RefreshTabTests/some.file}";
-		IResource resource = getProject().getFile("some.file");
+		String scope = "${resource:/RefreshTabTests/some.file}"; //$NON-NLS-1$
+		IResource resource = getProject().getFile("some.file"); //$NON-NLS-1$
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
@@ -138,7 +138,7 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 */
 	public void testWorkingSet() throws CoreException {
 		String scope= "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/RefreshTabTests/some.file\" type=\"1\"/>\n</launchConfigurationWorkingSet>}"; //$NON-NLS-1$
-		IResource resource = getProject().getFile("some.file"); 
+		IResource resource = getProject().getFile("some.file"); //$NON-NLS-1$
 		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
@@ -152,13 +152,13 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 */
 	protected IProject getProject() throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IProject project= root.getProject("RefreshTabTests");
+		IProject project = root.getProject("RefreshTabTests"); //$NON-NLS-1$
 		if (!project.exists()) {
-			project = TestsPlugin.createProject("RefreshTabTests");
-			IFolder folder = project.getFolder("src");
+			project = TestsPlugin.createProject("RefreshTabTests"); //$NON-NLS-1$
+			IFolder folder = project.getFolder("src"); //$NON-NLS-1$
 			folder.create(false, true, null);
-			IFile file = project.getFile("some.file");
-			file.create(new ByteArrayInputStream("test file".getBytes()), false, null);
+			IFile file = project.getFile("some.file"); //$NON-NLS-1$
+			file.create(new ByteArrayInputStream("test file".getBytes()), false, null); //$NON-NLS-1$
 		}
 		return project;
 	}
@@ -171,8 +171,8 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 */
 	public void testRefreshScopeComparator() throws CoreException {
 		String oldStyle = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/RefreshTabTests/some.file\" type=\"1\"/>\n</launchConfigurationWorkingSet>}"; //$NON-NLS-1$
-		String newStyle = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<resources>\n<item path=\"/RefreshTabTests/some.file\" type=\"1\"/>\n</resources>}";
-		assertEquals("Comparator should return 0", 0, new RefreshScopeComparator().compare(oldStyle, newStyle));
+		String newStyle = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<resources>\n<item path=\"/RefreshTabTests/some.file\" type=\"1\"/>\n</resources>}"; //$NON-NLS-1$
+		assertEquals("Comparator should return 0", 0, new RefreshScopeComparator().compare(oldStyle, newStyle)); //$NON-NLS-1$
 	}
 	
 	/**
@@ -181,7 +181,7 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 * @throws CoreException
 	 */
 	public void testResourceMemento() throws CoreException {
-		IResource[] resources = new IResource[]{getProject(), getProject().getFile("not.exist"), getProject().getFile("some.file")};
+		IResource[] resources = new IResource[] { getProject(), getProject().getFile("not.exist"), getProject().getFile("some.file") }; //$NON-NLS-1$ //$NON-NLS-2$
 		String memento = RefreshUtil.toMemento(resources);
 		IResource[] restore = RefreshUtil.toResources(memento);
 		assertEquals(resources.length, restore.length);
@@ -199,6 +199,6 @@ public class RefreshTabTests extends AbstractLaunchTest {
 		String memento = RefreshUtil.toMemento(new IResource[]{});
 		IResource[] resources = RefreshUtil.toResources(memento);
 		assertNotNull(resources);
-		assertEquals("Should be empty", 0, resources.length);
+		assertEquals("Should be empty", 0, resources.length); //$NON-NLS-1$
 	}
 }

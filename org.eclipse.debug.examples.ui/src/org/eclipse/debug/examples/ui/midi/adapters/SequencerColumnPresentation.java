@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,8 @@ public class SequencerColumnPresentation extends AbstractColumnPresentation {
 	/**
 	 * Column identifiers
 	 */
-	public static final String COL_NAME = "NAME";
-	public static final String COL_VALUE = "VALUE";
+	public static final String COL_NAME = "NAME"; //$NON-NLS-1$
+	public static final String COL_VALUE = "VALUE"; //$NON-NLS-1$
 
 	/**
 	 * All columns
@@ -33,7 +33,7 @@ public class SequencerColumnPresentation extends AbstractColumnPresentation {
 	/**
 	 * Column presentation ID.
 	 */
-	public static final String ID = "org.eclipse.debug.examples.ui.midi.columnPresentation";
+	public static final String ID = "org.eclipse.debug.examples.ui.midi.columnPresentation"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getAvailableColumns()
@@ -47,12 +47,12 @@ public class SequencerColumnPresentation extends AbstractColumnPresentation {
 	 */
 	public String getHeader(String id) {
 		if (COL_NAME.equals(id)) {
-			return "Control";
+			return "Control"; //$NON-NLS-1$
 		}
 		if (COL_VALUE.equals(id)) {
-			return "Value";
+			return "Value"; //$NON-NLS-1$
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -69,14 +69,18 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fShell.isDisposed()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     }
 
     protected void runTest() throws Throwable {
         try {
             super.runTest();
         } catch (Throwable t) {
-            throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t);
+			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -95,10 +99,10 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         TestModel model = new TestModel();
         TestElement[] children = new TestElement[size];
         for (int i = 0; i < size; i++) {
-            children[i] = new TestElement(model, "1." + i, new TestElement[0]);
+			children[i] = new TestElement(model, "1." + i, new TestElement[0]); //$NON-NLS-1$
         }
-        TestElement element = new TestElement(model, "1", children);
-        model.setRoot(new TestElement(model, "root", new TestElement[] { element }));
+		TestElement element = new TestElement(model, "1", children); //$NON-NLS-1$
+		model.setRoot(new TestElement(model, "root", new TestElement[] { element })); //$NON-NLS-1$
         
         return model;
     }
@@ -117,7 +121,11 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         // Populate initial view content
         fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, true); 
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Create delta to expand the "1" element.
         TestElement rootElement = model.getRootElement();
@@ -129,7 +137,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         // Add first 250 elements as acceptable to materialize
         fListener.reset(); 
         fListener.setFailOnRedundantUpdates(true);
-        TreePath expandElementPath = model.findElement("1");
+		TreePath expandElementPath = model.findElement("1"); //$NON-NLS-1$
         fListener.addChildreCountUpdate(expandElementPath);
         fListener.addLabelUpdate(expandElementPath); // TODO: not sure why label is updated upon expand?
         for (int i = 0; i < 250; i++) {
@@ -140,8 +148,11 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         }
         model.postDelta(rootDelta);
 
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE | LABEL_SEQUENCE_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE | LABEL_SEQUENCE_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     }
 
     /**
@@ -164,11 +175,15 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         fListener.setFailOnMultipleModelUpdateSequences(true); 
         fListener.setFailOnRedundantUpdates(false);
         fViewer.setInput(model.getRootElement());
-        fListener.addLabelUpdate(model.findElement("1.0"));
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+		fListener.addLabelUpdate(model.findElement("1.0")); //$NON-NLS-1$
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Set selection so that the initial selection is not empty
-        fViewer.setSelection(new TreeSelection(new TreePath[] { model.findElement("1.0")} ));
+		fViewer.setSelection(new TreeSelection(new TreePath[] { model.findElement("1.0") })); //$NON-NLS-1$
         
         // Create delta to select the "1" element.
         TestElement rootElement = model.getRootElement();
@@ -178,20 +193,23 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         ModelDelta _1Delta = baseDelta.addNode(_1Element, 0, IModelDelta.NO_CHANGE, _1Element.getChildren().length);
 
         // Add the delta to select the "1.1" element.
-        TestElement _1_0_newElement = new TestElement(model, "1.0 - new", new TestElement[0]);
-        TreePath _1ElementPath = model.findElement("1");
+		TestElement _1_0_newElement = new TestElement(model, "1.0 - new", new TestElement[0]); //$NON-NLS-1$
+		TreePath _1ElementPath = model.findElement("1"); //$NON-NLS-1$
         model.replaceElementChild(_1ElementPath, 0, _1_0_newElement);
         _1Delta.addNode(_1_0_newElement, 0, IModelDelta.SELECT);
 
         // Add element label update and post the delta
         fListener.reset(); 
         fListener.setFailOnRedundantUpdates(true);
-        TreePath _1_0_newElementPath = model.findElement("1.0 - new");
+		TreePath _1_0_newElementPath = model.findElement("1.0 - new"); //$NON-NLS-1$
         fListener.addLabelUpdate(_1_0_newElementPath);
         model.postDelta(rootDelta);
 
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE |  LABEL_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE |  LABEL_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
 
         assertEquals(((IStructuredSelection)fViewer.getSelection()).getFirstElement(), _1_0_newElement);
@@ -209,7 +227,11 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         // Populate initial view content
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true); 
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_SEQUENCE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | LABEL_SEQUENCE_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Turn off autoexpand
         fViewer.setAutoExpandLevel(0);
@@ -217,8 +239,12 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         // Reposition the viewer to middle of list
         fListener.reset();
         fListener.setFailOnRedundantUpdates(false);
-        fViewer.reveal(model.findElement("1"), 500);
-        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+		fViewer.reveal(model.findElement("1"), 500); //$NON-NLS-1$
+        while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         // Create delta to refresh the "1" element.
         TestElement rootElement = model.getRootElement();
@@ -233,7 +259,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
             // Add first 250 elements (after element 500) as acceptable to materialize
             fListener.reset(); 
             fListener.setFailOnRedundantUpdates(true);
-            TreePath refreshElementPath = model.findElement("1");
+			TreePath refreshElementPath = model.findElement("1"); //$NON-NLS-1$
             fListener.addRedundantExceptionChildCount(refreshElementPath);
             fListener.addRedundantExceptionLabel(refreshElementPath);
             fListener.addChildreUpdate(TreePath.EMPTY, 0);
@@ -248,8 +274,11 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
             }
             model.postDelta(rootDelta);
     
-            while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-                if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            while (!fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE)) {
+				if (!fDisplay.readAndDispatch ()) {
+					Thread.sleep(0);
+				}
+			}
         }
     }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.Map.Entry;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -47,24 +47,24 @@ public class DebugUIPlugin extends AbstractUIPlugin {
     /**
      *  Toolbar action to pop data stack
      */
-    public final static String IMG_ELCL_POP = "IMG_ELCL_POP";
-    public final static String IMG_DLCL_POP = "IMG_DLCL_POP";
+	public final static String IMG_ELCL_POP = "IMG_ELCL_POP"; //$NON-NLS-1$
+	public final static String IMG_DLCL_POP = "IMG_DLCL_POP"; //$NON-NLS-1$
     
     /**
      * Toolbar action to push onto data stack
      */
-    public final static String IMG_ELCL_PUSH = "IMG_ELCL_PUSH";
-    public final static String IMG_DLCL_PUSH = "IMG_DLCL_PUSH";
+	public final static String IMG_ELCL_PUSH = "IMG_ELCL_PUSH"; //$NON-NLS-1$
+	public final static String IMG_DLCL_PUSH = "IMG_DLCL_PUSH"; //$NON-NLS-1$
     
     /**
      * PDA program image
      */
-    public final static String IMG_OBJ_PDA = "IMB_OBJ_PDA";
+	public final static String IMG_OBJ_PDA = "IMB_OBJ_PDA"; //$NON-NLS-1$
     
     /**
      * MIDI file image
      */
-    public final static String IMG_OBJ_MIDI = "IMB_OBJ_MIDI";    
+	public final static String IMG_OBJ_MIDI = "IMB_OBJ_MIDI"; //$NON-NLS-1$
     
     /**
      * Keyword color
@@ -75,7 +75,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
     /**
      * Managed colors
      */
-    private Map fColors = new HashMap();
+    private final Map fColors = new HashMap();
     	
 	/**
 	 * The constructor.
@@ -136,7 +136,9 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.debug.examples.ui.pda.DebugUIPluginResources");
+			 {
+				resourceBundle = ResourceBundle.getBundle("org.eclipse.debug.examples.ui.pda.DebugUIPluginResources"); //$NON-NLS-1$
+			}
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -148,12 +150,12 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
 	 */
 	protected void initializeImageRegistry(ImageRegistry reg) {
-		declareImage(IMG_OBJ_PDA, PATH_OBJECT + "pda.gif");
-		declareImage(IMG_OBJ_MIDI, PATH_OBJECT + "note.gif");
-	    declareImage(IMG_ELCL_POP, PATH_ELOCALTOOL + "pop.gif");
-	    declareImage(IMG_DLCL_POP, PATH_DLOCALTOOL + "pop.gif");
-	    declareImage(IMG_ELCL_PUSH, PATH_ELOCALTOOL + "push.gif");
-	    declareImage(IMG_DLCL_PUSH, PATH_DLOCALTOOL + "push.gif");
+		declareImage(IMG_OBJ_PDA, PATH_OBJECT + "pda.gif"); //$NON-NLS-1$
+		declareImage(IMG_OBJ_MIDI, PATH_OBJECT + "note.gif"); //$NON-NLS-1$
+		declareImage(IMG_ELCL_POP, PATH_ELOCALTOOL + "pop.gif"); //$NON-NLS-1$
+		declareImage(IMG_DLCL_POP, PATH_DLOCALTOOL + "pop.gif"); //$NON-NLS-1$
+		declareImage(IMG_ELCL_PUSH, PATH_ELOCALTOOL + "push.gif"); //$NON-NLS-1$
+		declareImage(IMG_DLCL_PUSH, PATH_DLOCALTOOL + "push.gif"); //$NON-NLS-1$
 	}
 	
     /**
@@ -167,7 +169,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
      * <code>false</code> if this is not a shared image
      */
     private void declareImage(String key, String path) {
-        URL url = BundleUtility.find("org.eclipse.debug.examples.ui", path);
+		URL url = BundleUtility.find("org.eclipse.debug.examples.ui", path); //$NON-NLS-1$
         ImageDescriptor desc = ImageDescriptor.createFromURL(url);
         getImageRegistry().put(key, desc);
     }

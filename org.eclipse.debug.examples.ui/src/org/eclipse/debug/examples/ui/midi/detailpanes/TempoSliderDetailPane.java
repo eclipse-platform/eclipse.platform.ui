@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class TempoSliderDetailPane implements IDetailPane {
 	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
 	 */
 	public String getDescription() {
-		return "Tempo (beats per minute)";
+		return "Tempo (beats per minute)"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -88,7 +88,7 @@ public class TempoSliderDetailPane implements IDetailPane {
 	 * @see org.eclipse.debug.ui.IDetailPane#getName()
 	 */
 	public String getName() {
-		return "Tempo Slider (BPM)";
+		return "Tempo Slider (BPM)"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,15 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.debug.ui.IDetailPaneFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Organizes the detail factories contributed through the extension point and keeps
@@ -499,7 +502,15 @@ public class DetailPaneManager {
             buffer.append(entry.getValue());
             buffer.append('|');
         }
-        DebugUIPlugin.getDefault().getPluginPreferences().setValue(PREF_DETAIL_AREAS, buffer.toString());
+        IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+        if(node != null) {
+        	node.put(PREF_DETAIL_AREAS, buffer.toString());
+        	try {
+				node.flush();
+			} catch (BackingStoreException e) {
+				DebugUIPlugin.log(e);
+			}
+        }
     }
     
     /**
@@ -509,7 +520,10 @@ public class DetailPaneManager {
      */
     private void loadPreferredDetailsAreas() {
     	fPreferredDetailPanes = new HashMap();
-    	String preferenceValue = DebugUIPlugin.getDefault().getPluginPreferences().getString(PREF_DETAIL_AREAS);
+    	String preferenceValue = Platform.getPreferencesService().getString(DebugUIPlugin.getUniqueIdentifier(), 
+    			PREF_DETAIL_AREAS,
+    			"",  //$NON-NLS-1$
+    			null);
     	StringTokenizer entryTokenizer = new StringTokenizer(preferenceValue,"|"); //$NON-NLS-1$
     	while (entryTokenizer.hasMoreTokens()){
     		String token = entryTokenizer.nextToken();

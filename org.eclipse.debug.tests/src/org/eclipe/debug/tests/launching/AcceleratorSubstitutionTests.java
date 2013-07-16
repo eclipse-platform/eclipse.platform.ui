@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,26 +34,26 @@ public class AcceleratorSubstitutionTests extends TestCase {
 	 * tests a string with "..."
 	 */
 	public void testWithEllipses() {
-		assertEquals("incorrect DBCS accelerator substitution",
-				"Open Run Dialog(&R)...",
-				DebugUIPlugin.adjustDBCSAccelerator("Open Run(&R) Dialog..."));
+		assertEquals("incorrect DBCS accelerator substitution", //$NON-NLS-1$
+				"Open Run Dialog(&R)...", //$NON-NLS-1$
+				DebugUIPlugin.adjustDBCSAccelerator("Open Run(&R) Dialog...")); //$NON-NLS-1$
 	}
 	
 	/**
 	 * tests a string without "..."
 	 */
 	public void testWithoutEllipses() {
-		assertEquals("incorrect DBCS accelerator substitution",
-				"Open Run Dialog(&R)",
-				DebugUIPlugin.adjustDBCSAccelerator("Open Run(&R) Dialog"));
+		assertEquals("incorrect DBCS accelerator substitution", //$NON-NLS-1$
+				"Open Run Dialog(&R)", //$NON-NLS-1$
+				DebugUIPlugin.adjustDBCSAccelerator("Open Run(&R) Dialog")); //$NON-NLS-1$
 	}	
 	
 	/**
 	 * tests a string that should not change (no DBCS style accelerator).
 	 */
 	public void testWithoutDBCSAcclerator() {
-		assertEquals("incorrect DBCS accelerator substitution",
-				"Open &Run Dialog...",
-				DebugUIPlugin.adjustDBCSAccelerator("Open &Run Dialog..."));
+		assertEquals("incorrect DBCS accelerator substitution", //$NON-NLS-1$
+				"Open &Run Dialog...", //$NON-NLS-1$
+				DebugUIPlugin.adjustDBCSAccelerator("Open &Run Dialog...")); //$NON-NLS-1$
 	}		
 }

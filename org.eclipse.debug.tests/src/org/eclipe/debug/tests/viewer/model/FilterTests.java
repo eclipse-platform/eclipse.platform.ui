@@ -76,14 +76,18 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fShell.isDisposed()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     }
 
     protected void runTest() throws Throwable {
         try {
             super.runTest();
         } catch (Throwable t) {
-            throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t);
+			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -138,32 +142,32 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
     
     public void testSimpleSingleLevel() throws InterruptedException {
         TestModel model = TestModel.simpleSingleLevel();
-        doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter("2") });        
+		doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
     }
     
     public void testSimpleSingleLevelWithTMVFilter() throws InterruptedException {
         TestModel model = TestModel.simpleSingleLevel();
-        doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter("2", model.getRootElement()) });        
+		doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter("2", model.getRootElement()) }); //$NON-NLS-1$
     }
     
     public void testSimpleSingleLevelWithMixedFilters() throws InterruptedException {
         TestModel model = TestModel.simpleSingleLevel();
-        doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter("2", model.getRootElement()), new TestViewerFilter("1") });        
+		doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter("2", model.getRootElement()), new TestViewerFilter("1") }); //$NON-NLS-1$ //$NON-NLS-2$
     }    
 
     public void testSimpleMultiLevel() throws InterruptedException {
         TestModel model = TestModel.simpleMultiLevel();
-        doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter(".1"), new TestViewerFilter(".2") });        
+		doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter(".1"), new TestViewerFilter(".2") }); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     public void testSimpleMultiLevelWithTMVFilter() throws InterruptedException {
         TestModel model = TestModel.simpleMultiLevel();
-        doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter(".1", null), new TestTMVFilter(".2", null) });        
+		doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter(".1", null), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public void testSimpleMultiLevelWithMixedFilters() throws InterruptedException {
         TestModel model = TestModel.simpleMultiLevel();
-        doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter(".1"), new TestTMVFilter(".2", null) });        
+		doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter(".1"), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void doTestSimpleLevel(TestModel model, ViewerFilter[] filters) throws InterruptedException {
@@ -181,23 +185,27 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
         fViewer.setInput(model.getRootElement());
         
         // Wait for the updates to complete.
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         model.validateData(fViewer, TreePath.EMPTY, false, filters);
     }
     
     public void testLargeSingleLevel() throws InterruptedException {
-        doTestLargeSingleLevel(new ViewerFilter[] { new TestViewerFilter("2") });
+		doTestLargeSingleLevel(new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
     }
 
     public void testLargeSingleLevelWithTMVFilter() throws InterruptedException {
-        doTestLargeSingleLevel(new ViewerFilter[] { new TestTMVFilter("2", null) });
+		doTestLargeSingleLevel(new ViewerFilter[] { new TestTMVFilter("2", null) }); //$NON-NLS-1$
     }
     
     private void doTestLargeSingleLevel(ViewerFilter[] filters) throws InterruptedException {
         TestModel model = new TestModel();
-        model.setRoot( new TestElement(model, "root", new TestElement[0] ) ); 
-        model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, 3000, "model."));
+		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
+		model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, 3000, "model.")); //$NON-NLS-1$
 
         // Set filters
         fViewer.setFilters(filters);
@@ -208,7 +216,11 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
         
         fViewer.setInput(model.getRootElement());
         
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     }
     
     
@@ -217,7 +229,7 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
      * Fire REPLACE delta.
      */
     public void testReplacedUnrealizedFilteredElement() throws InterruptedException {
-        doTestReplacedUnrealizedFilteredElement(new ViewerFilter[] { new TestViewerFilter("2") });
+		doTestReplacedUnrealizedFilteredElement(new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
     }
     
 
@@ -226,15 +238,15 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
      * Fire REPLACE delta.
      */
     public void testReplacedUnrealizedFilteredElementWithTMVFilter() throws InterruptedException {
-        doTestReplacedUnrealizedFilteredElement(new ViewerFilter[] { new TestTMVFilter("2", null) });
+		doTestReplacedUnrealizedFilteredElement(new ViewerFilter[] { new TestTMVFilter("2", null) }); //$NON-NLS-1$
     }
     
     private void doTestReplacedUnrealizedFilteredElement(ViewerFilter[] filters) throws InterruptedException {
         
         // Populate a view with a large model (only first 100 elements will be visible in virtual viewer).
         TestModel model = new TestModel();
-        model.setRoot( new TestElement(model, "root", new TestElement[0] ) ); 
-        model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, 300, "model."));
+		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
+		model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, 300, "model.")); //$NON-NLS-1$
 
         fViewer.setFilters(filters);
 
@@ -244,20 +256,32 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
         // Populate the view (all elements containing a "2" will be filtered out.
         fViewer.setInput(model.getRootElement());
         
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         // Switch out element "201" which is filtered out, with a "replaced element" which should NOT be 
         // filtered out.
-        TestElement replacedElement = new TestElement(model, "replaced element", new TestElement[0]);
+		TestElement replacedElement = new TestElement(model, "replaced element", new TestElement[0]); //$NON-NLS-1$
         IModelDelta replaceDelta = model.replaceElementChild(TreePath.EMPTY, 200, replacedElement);
         fListener.reset();
         model.postDelta(replaceDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Reposition the viewer to make element 100 the top element, making the replaced element visible.
         fListener.reset();        
         ((IInternalTreeModelViewer) fViewer).reveal(TreePath.EMPTY, 150);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Verify that the replaced element is in viewer now (i.e. it's not filtered out.
         TreePath[] replacedElementPaths = fViewer.getElementPaths(replacedElement);
@@ -266,11 +290,11 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
 
 
     public void testRefreshUnrealizedFilteredElement() throws InterruptedException {
-        doTestRefreshUnrealizedFilteredElement(new ViewerFilter[] { new TestViewerFilter("2") });
+		doTestRefreshUnrealizedFilteredElement(new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
     }
 
     public void testRefreshUnrealizedFilteredElementWithTMVFilter() throws InterruptedException {
-        doTestRefreshUnrealizedFilteredElement(new ViewerFilter[] { new TestTMVFilter("2", null) });
+		doTestRefreshUnrealizedFilteredElement(new ViewerFilter[] { new TestTMVFilter("2", null) }); //$NON-NLS-1$
     }
 
     /**
@@ -280,8 +304,8 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
     private void doTestRefreshUnrealizedFilteredElement(ViewerFilter[] filters) throws InterruptedException {
         // Populate a view with a large model (only first 100 elements will be visible in virtual viewer).
         TestModel model = new TestModel();
-        model.setRoot( new TestElement(model, "root", new TestElement[0] ) ); 
-        model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, 300, "model."));
+		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
+		model.setElementChildren(TreePath.EMPTY, TestModel.makeSingleLevelModelElements(model, 300, "model.")); //$NON-NLS-1$
 
         fViewer.setFilters(filters);
 
@@ -291,20 +315,32 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
         // Populate the view (all elements containing a "2" will be filtered out.
         fViewer.setInput(model.getRootElement());
         
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         // Switch out element "201" which is filtered out, with a "replaced element" which should NOT be 
         // filtered out.
-        TestElement replacedElement = new TestElement(model, "replaced element", new TestElement[0]);
+		TestElement replacedElement = new TestElement(model, "replaced element", new TestElement[0]); //$NON-NLS-1$
         model.replaceElementChild(TreePath.EMPTY, 200, replacedElement);
         fListener.reset();
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Reposition the viewer to make element 100 the top element, making the replaced element visible.
         fListener.reset();        
         ((IInternalTreeModelViewer) fViewer).reveal(TreePath.EMPTY, 150);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Verify that the replaced element is in viewer now (i.e. it's not filtered out.
         TreePath[] replacedElementPaths = fViewer.getElementPaths(replacedElement);
@@ -312,15 +348,15 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
     }    
 
     public void testRefreshToUnfilterElements() throws InterruptedException {
-        doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestViewerFilter(".1"), new TestViewerFilter(".2") });        
+		doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestViewerFilter(".1"), new TestViewerFilter(".2") }); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     public void testRefreshToUnfilterElementsWithTMVFilter() throws InterruptedException {
-        doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestTMVFilter(".1", null), new TestTMVFilter(".2", null) });        
+		doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestTMVFilter(".1", null), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public void testRefreshToUnfilterElementsWithMixedFilters() throws InterruptedException {
-        doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestViewerFilter(".1"), new TestTMVFilter(".2", null) });        
+		doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestViewerFilter(".1"), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     /**
@@ -342,14 +378,22 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
         // Populate the view (all elements containing a "2" will be filtered out.
         fViewer.setInput(model.getRootElement());
         
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Turn off filters and refresh.
         filters = new ViewerFilter[0];
         fViewer.setFilters(filters);
         fListener.reset();
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         model.validateData(fViewer, TreePath.EMPTY, false, filters);
     }    
@@ -365,7 +409,11 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         StateTests.expandAlternateElements(fListener, model, true);
@@ -373,12 +421,12 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
         // Set a selection in view
         // Set a selection in view
         TreeSelection originalSelection = new TreeSelection(
-            new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findElement("6") });
+new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findElement("6") }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         fViewer.setSelection(originalSelection);
         assertTrue( StateTests.areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
 
         // Set a filter to remove element "1"
-        ViewerFilter[] filters = new ViewerFilter[] { new TestViewerFilter("^1$") };
+		ViewerFilter[] filters = new ViewerFilter[] { new TestViewerFilter("^1$") }; //$NON-NLS-1$
         fViewer.setFilters(filters);
         
         // Note: Re-expanding nodes causes redundant updates.
@@ -387,18 +435,21 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
         
         // Post the refresh delta
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true, filters);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false); //$NON-NLS-1$
         assertTrue( StateTests.areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
         
         // Note: in past it was observed sub-optimal coalescing in this test due 
@@ -413,18 +464,21 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
         fListener.reset();
         fListener.addUpdates(getInternalViewer(), TreePath.EMPTY, model.getRootElement(), filters, -1, ALL_UPDATES_COMPLETE);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true, filters);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true);
-        assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false);
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("2")) == false); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("3")) == true); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("4")) == false); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("5")) == true); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("5.1")) == true); //$NON-NLS-1$
+		assertTrue(getInternalViewer().getExpandedState(model.findElement("6")) == false); //$NON-NLS-1$
         assertTrue( StateTests.areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
         
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class DebugFileStore extends FileStore {
 		
 	}
 	
-	private URI uri;
+	private final URI uri;
 	
 	public DebugFileStore(URI id) {
 		uri = id;
@@ -118,7 +118,7 @@ public class DebugFileStore extends FileStore {
 		if (path.segmentCount() > 0) {
 			return path.lastSegment();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -152,8 +152,8 @@ public class DebugFileStore extends FileStore {
 		if (contents != null) {
 			return new ByteArrayInputStream(contents);
 		}
-		throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", 
-				"File does not exist: " + toURI()));
+		throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", //$NON-NLS-1$
+		"File does not exist: " + toURI())); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -170,8 +170,8 @@ public class DebugFileStore extends FileStore {
 		IFileInfo info = fetchInfo();
 		if (info.exists()) {
 			if (!info.isDirectory()) {
-				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", 
-						"mkdir failed - file already exists with name: " + toURI()));
+				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", //$NON-NLS-1$
+				"mkdir failed - file already exists with name: " + toURI())); //$NON-NLS-1$
 			}
 		} else {
 			IFileStore parent = getParent();
@@ -179,8 +179,8 @@ public class DebugFileStore extends FileStore {
 				DebugFileSystem.getDefault().setContents(toURI(), DebugFileSystem.DIRECTORY_BYTES);
 			} else {
 				if ((options & EFS.SHALLOW) > 0) {
-					throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", 
-							"mkdir failed - parent does not exist: " + toURI()));
+					throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests", //$NON-NLS-1$
+					"mkdir failed - parent does not exist: " + toURI())); //$NON-NLS-1$
 				} else {
 					parent.mkdir(EFS.NONE, null);
 				}

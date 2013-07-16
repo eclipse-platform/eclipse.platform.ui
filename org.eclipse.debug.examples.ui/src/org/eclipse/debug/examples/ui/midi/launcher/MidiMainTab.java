@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		createVerticalSpacer(comp, 3);
 		
 		Label programLabel = new Label(comp, SWT.NONE);
-		programLabel.setText("&Midi File:");
+		programLabel.setText("&Midi File:"); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.BEGINNING);
 		programLabel.setLayoutData(gd);
 		programLabel.setFont(font);
@@ -98,13 +98,13 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 3;
 		
 		Group test = new Group(comp, SWT.NONE);
-		test.setText("Exceptions");
+		test.setText("Exceptions"); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		test.setLayoutData(gd);
 		test.setLayout(new GridLayout());
 		fExceptions = new Button(test, SWT.CHECK);
-		fExceptions.setText("&Throw an exception during launch for testing purposes");
+		fExceptions.setText("&Throw an exception during launch for testing purposes"); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		fExceptions.setLayoutData(gd);
@@ -116,7 +116,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		fHandled = new Button(test, SWT.RADIO);
-		fHandled.setText("Throw a handled e&xception during launch to re-open launch dialog");
+		fHandled.setText("Throw a handled e&xception during launch to re-open launch dialog"); //$NON-NLS-1$
 		SelectionAdapter sa = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -124,7 +124,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		};
 		fHandled.addSelectionListener(sa);
 		fUnhandled = new Button(test, SWT.RADIO);
-		fUnhandled.setText("Throw an &unhandled exception during launch to open error dialog");
+		fUnhandled.setText("Throw an &unhandled exception during launch to open error dialog"); //$NON-NLS-1$
 		fUnhandled.addSelectionListener(sa);
 	}
 	
@@ -133,8 +133,8 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	protected void browseMidiFiles() {
 		ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), IResource.FILE);
-		dialog.setTitle("MIDI File");
-		dialog.setMessage("Select MIDI File");
+		dialog.setTitle("MIDI File"); //$NON-NLS-1$
+		dialog.setMessage("Select MIDI File"); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
 			Object[] files = dialog.getResult();
 			IFile file = (IFile) files[0];
@@ -206,7 +206,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Main";
+		return "Main"; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -219,11 +219,11 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		if (text.length() > 0) {
 			IPath path = new Path(text);
 			if (ResourcesPlugin.getWorkspace().getRoot().findMember(path) == null) {
-				setErrorMessage("File does not exist");
+				setErrorMessage("File does not exist"); //$NON-NLS-1$
 				return false;
 			}
 		} else {
-			setMessage("Select a MIDI file");
+			setMessage("Select a MIDI file"); //$NON-NLS-1$
 		}
 		return true;
 	}

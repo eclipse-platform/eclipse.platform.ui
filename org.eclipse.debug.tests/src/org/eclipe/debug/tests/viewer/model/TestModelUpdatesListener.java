@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Dorin Ciuca - Top index fix (Bug 324100)
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
@@ -18,8 +19,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import junit.framework.Assert;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.core.runtime.IStatus;
@@ -42,6 +41,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.junit.Assert;
 
 public class TestModelUpdatesListener 
     implements IViewerUpdateListener, ILabelUpdateListener, IModelChangedListener, ITestModelUpdatesListenerConstants,
@@ -432,7 +432,7 @@ public class TestModelUpdatesListener
     
     public boolean isFinished(int flags) {
         if (isTimedOut()) {
-           throw new RuntimeException("Timed Out: " + toString(flags));
+           throw new RuntimeException("Timed Out: " + toString(flags)); //$NON-NLS-1$
         }
         
         if (fFailExpectation != null) {
@@ -440,20 +440,20 @@ public class TestModelUpdatesListener
         }
         
         if (fJobError != null) {
-            throw new RuntimeException("Job Error: " + fJobError);
+            throw new RuntimeException("Job Error: " + fJobError); //$NON-NLS-1$
         }
 
         if (fFailOnRedundantUpdates && !fRedundantUpdates.isEmpty()) {
-            Assert.fail("Redundant Updates: " + fRedundantUpdates.toString());
+            Assert.fail("Redundant Updates: " + fRedundantUpdates.toString()); //$NON-NLS-1$
         }
         if (fFailOnRedundantLabelUpdates && !fRedundantLabelUpdates.isEmpty()) {
-            Assert.fail("Redundant Label Updates: " + fRedundantLabelUpdates.toString());
+            Assert.fail("Redundant Label Updates: " + fRedundantLabelUpdates.toString()); //$NON-NLS-1$
         }        
         if (fFailOnMultipleLabelUpdateSequences && fLabelUpdatesComplete > (fLabelUpdatesCompleteAtReset + 1)) {
-            Assert.fail("Multiple label update sequences detected");
+            Assert.fail("Multiple label update sequences detected"); //$NON-NLS-1$
         }
         if (fFailOnMultipleModelUpdateSequences && fViewerUpdatesComplete > (fViewerUpdatesCompleteAtReset + 1)) {
-            Assert.fail("Multiple viewer update sequences detected");
+            Assert.fail("Multiple viewer update sequences detected"); //$NON-NLS-1$
         }
 
         if ( (flags & LABEL_SEQUENCE_COMPLETE) != 0) {
@@ -626,14 +626,14 @@ public class TestModelUpdatesListener
     
     public void viewerUpdatesBegin() {
         if (fViewerUpdatesStarted > fViewerUpdatesComplete) {
-            fFailExpectation = new RuntimeException("Unmatched updatesStarted/updateCompleted notifications observed.");
+            fFailExpectation = new RuntimeException("Unmatched updatesStarted/updateCompleted notifications observed."); //$NON-NLS-1$
         }
         fViewerUpdatesStarted++;
     }
     
     public void viewerUpdatesComplete() {
         if (fViewerUpdatesStarted <= fViewerUpdatesComplete) {
-            fFailExpectation = new RuntimeException("Unmatched updatesStarted/updateCompleted notifications observed.");
+            fFailExpectation = new RuntimeException("Unmatched updatesStarted/updateCompleted notifications observed."); //$NON-NLS-1$
         }
         fViewerUpdatesComplete++;
     }
@@ -647,7 +647,7 @@ public class TestModelUpdatesListener
             !fRedundantLabelUpdateExceptions.contains(update.getElementPath())) 
         {
         	fRedundantLabelUpdates.add(update);
-            Assert.fail("Redundant update: " + update);
+            Assert.fail("Redundant update: " + update); //$NON-NLS-1$
         }
     }
 
@@ -658,14 +658,14 @@ public class TestModelUpdatesListener
 
     public void labelUpdatesBegin() {
         if (fLabelUpdatesStarted > fLabelUpdatesComplete) {
-            fFailExpectation = new RuntimeException("Unmatched labelUpdatesStarted/labelUpdateCompleted notifications observed.");
+            fFailExpectation = new RuntimeException("Unmatched labelUpdatesStarted/labelUpdateCompleted notifications observed."); //$NON-NLS-1$
         }
         fLabelUpdatesStarted++;
     }
 
     public void labelUpdatesComplete() {
         if (fLabelUpdatesStarted <= fLabelUpdatesComplete) {
-            fFailExpectation = new RuntimeException("Unmatched labelUpdatesStarted/labelUpdateCompleted notifications observed.");
+            fFailExpectation = new RuntimeException("Unmatched labelUpdatesStarted/labelUpdateCompleted notifications observed."); //$NON-NLS-1$
         }
         fLabelUpdatesComplete++;
     }
@@ -684,13 +684,13 @@ public class TestModelUpdatesListener
     
     public void stateRestoreUpdatesBegin(Object input) {
     	if (fExpectRestoreAfterSaveComplete && !fStateSaveComplete) {
-    		fFailExpectation = new RuntimeException("RESTORE should begin after SAVE completed!");
+    		fFailExpectation = new RuntimeException("RESTORE should begin after SAVE completed!"); //$NON-NLS-1$
     	}
         fStateRestoreStarted = true;
     }
     
     public void stateRestoreUpdatesComplete(Object input) {
-    	Assert.assertFalse("RESTORE STATE already complete!", fStateRestoreComplete);
+    	Assert.assertFalse("RESTORE STATE already complete!", fStateRestoreComplete); //$NON-NLS-1$
         fStateRestoreComplete = true;
     }
     
@@ -712,133 +712,133 @@ public class TestModelUpdatesListener
     }
     
     private String toString(int flags) {
-        StringBuffer buf = new StringBuffer("Viewer Update Listener");
+        StringBuffer buf = new StringBuffer("Viewer Update Listener"); //$NON-NLS-1$
 
         if (fJobError != null) {
-            buf.append("\n\t");
-            buf.append("fJobError = " + fJobError);
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fJobError = " + fJobError); //$NON-NLS-1$
             if (fJobError.getException() != null) {
                 StackTraceElement[] trace = fJobError.getException().getStackTrace();
                 for (int i = 0; i < trace.length; i++) {
-                    buf.append("\n\t\t");    
+                    buf.append("\n\t\t");     //$NON-NLS-1$
                     buf.append(trace[i]);
                 }
             }
         }
        
         if (fFailOnRedundantUpdates) {
-            buf.append("\n\t");
-            buf.append("fRedundantUpdates = " + fRedundantUpdates);
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fRedundantUpdates = " + fRedundantUpdates); //$NON-NLS-1$
         }
         if ( (flags & LABEL_SEQUENCE_COMPLETE) != 0) {
-            buf.append("\n\t");
-            buf.append("fLabelUpdatesComplete = " + fLabelUpdatesComplete);
-            buf.append("\n\t");
-            buf.append("fLabelUpdatesCompleteAtReset = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fLabelUpdatesComplete = " + fLabelUpdatesComplete); //$NON-NLS-1$
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fLabelUpdatesCompleteAtReset = "); //$NON-NLS-1$
             buf.append( fLabelUpdatesCompleteAtReset );
         }
         if ( (flags & LABEL_UPDATES_RUNNING) != 0) {
-            buf.append("\n\t");
-            buf.append("fLabelUpdatesRunning = " + fLabelUpdatesCounter);
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fLabelUpdatesRunning = " + fLabelUpdatesCounter); //$NON-NLS-1$
         }
         if ( (flags & LABEL_SEQUENCE_STARTED) != 0) {
-            buf.append("\n\t");
-            buf.append("fLabelUpdatesStarted = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fLabelUpdatesStarted = "); //$NON-NLS-1$
             buf.append( fLabelUpdatesStarted );
-            buf.append("\n\t");
-            buf.append("fLabelUpdatesCompleted = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fLabelUpdatesCompleted = "); //$NON-NLS-1$
             buf.append( fLabelUpdatesCompleted );
         }
         if ( (flags & LABEL_UPDATES) != 0) {
-            buf.append("\n\t");
-            buf.append("fLabelUpdates = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fLabelUpdates = "); //$NON-NLS-1$
             buf.append( toString(fLabelUpdates) );
         }
         if ( (flags & VIEWER_UPDATES_RUNNING) != 0) {
-            buf.append("\n\t");
-            buf.append("fViewerUpdatesStarted = " + fViewerUpdatesStarted);
-            buf.append("\n\t");
-            buf.append("fViewerUpdatesRunning = " + fViewerUpdatesCounter);
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fViewerUpdatesStarted = " + fViewerUpdatesStarted); //$NON-NLS-1$
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fViewerUpdatesRunning = " + fViewerUpdatesCounter); //$NON-NLS-1$
         }
         if ( (flags & CONTENT_SEQUENCE_COMPLETE) != 0) {
-            buf.append("\n\t");
-            buf.append("fViewerUpdatesComplete = " + fViewerUpdatesComplete);
-            buf.append("\n\t");
-            buf.append("fViewerUpdatesCompleteAtReset = " + fViewerUpdatesCompleteAtReset);
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fViewerUpdatesComplete = " + fViewerUpdatesComplete); //$NON-NLS-1$
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fViewerUpdatesCompleteAtReset = " + fViewerUpdatesCompleteAtReset); //$NON-NLS-1$
         }
         if ( (flags & HAS_CHILDREN_UPDATES_STARTED) != 0) {
-            buf.append("\n\t");
-            buf.append("fHasChildrenUpdatesRunning = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fHasChildrenUpdatesRunning = "); //$NON-NLS-1$
             buf.append( fHasChildrenUpdatesRunning );
-            buf.append("\n\t");
-            buf.append("fHasChildrenUpdatesCompleted = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fHasChildrenUpdatesCompleted = "); //$NON-NLS-1$
             buf.append( fHasChildrenUpdatesCompleted );
         }
         if ( (flags & HAS_CHILDREN_UPDATES) != 0) {
-            buf.append("\n\t");
-            buf.append("fHasChildrenUpdates = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fHasChildrenUpdates = "); //$NON-NLS-1$
             buf.append( toString(fHasChildrenUpdatesScheduled) );
         }
         if ( (flags & CHILD_COUNT_UPDATES_STARTED) != 0) {
-            buf.append("\n\t");
-            buf.append("fChildCountUpdatesRunning = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fChildCountUpdatesRunning = "); //$NON-NLS-1$
             buf.append( fChildCountUpdatesRunning );
-            buf.append("\n\t");
-            buf.append("fChildCountUpdatesCompleted = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fChildCountUpdatesCompleted = "); //$NON-NLS-1$
             buf.append( fChildCountUpdatesCompleted );
         }
         if ( (flags & CHILD_COUNT_UPDATES) != 0) {
-            buf.append("\n\t");
-            buf.append("fChildCountUpdates = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fChildCountUpdates = "); //$NON-NLS-1$
             buf.append( toString(fChildCountUpdatesScheduled) );
         }
         if ( (flags & CHILDREN_UPDATES_STARTED) != 0) {
-            buf.append("\n\t");
-            buf.append("fChildrenUpdatesRunning = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fChildrenUpdatesRunning = "); //$NON-NLS-1$
             buf.append( fChildrenUpdatesRunning );
-            buf.append("\n\t");
-            buf.append("fChildrenUpdatesCompleted = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fChildrenUpdatesCompleted = "); //$NON-NLS-1$
             buf.append( fChildrenUpdatesCompleted );
         }
         if ( (flags & CHILDREN_UPDATES) != 0) {
-            buf.append("\n\t");
-            buf.append("fChildrenUpdates = ");
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fChildrenUpdates = "); //$NON-NLS-1$
             buf.append( toString(fChildrenUpdatesScheduled) );
         }
         if ( (flags & MODEL_CHANGED_COMPLETE) != 0) {
-            buf.append("\n\t");
-            buf.append("fModelChangedComplete = " + fModelChangedComplete);
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fModelChangedComplete = " + fModelChangedComplete); //$NON-NLS-1$
         }
         if ( (flags & STATE_SAVE_COMPLETE) != 0) {
-            buf.append("\n\t");
-            buf.append("fStateSaveComplete = " + fStateSaveComplete);
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fStateSaveComplete = " + fStateSaveComplete); //$NON-NLS-1$
         }
         if ( (flags & STATE_RESTORE_COMPLETE) != 0) {
-            buf.append("\n\t");
-            buf.append("fStateRestoreComplete = " + fStateRestoreComplete);
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fStateRestoreComplete = " + fStateRestoreComplete); //$NON-NLS-1$
         }
         if ( (flags & MODEL_PROXIES_INSTALLED) != 0) {
-            buf.append("\n\t");
-            buf.append("fProxyModels = " + fProxyModels);
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fProxyModels = " + fProxyModels); //$NON-NLS-1$
         }
         if ( (flags & STATE_UPDATES) != 0) {
-        	buf.append("\n\t");
-        	buf.append("fStateUpdates = " + toString(fStateUpdates));
+        	buf.append("\n\t"); //$NON-NLS-1$
+        	buf.append("fStateUpdates = " + toString(fStateUpdates)); //$NON-NLS-1$
         }
         if (fTimeoutInterval > 0) {
-            buf.append("\n\t");
-            buf.append("fTimeoutInterval = " + fTimeoutInterval);
+            buf.append("\n\t"); //$NON-NLS-1$
+            buf.append("fTimeoutInterval = " + fTimeoutInterval); //$NON-NLS-1$
         }
         return buf.toString();
     }
 
     private String toString(Set set) {
         if (set.isEmpty()) {
-            return "(EMPTY)";
+            return "(EMPTY)"; //$NON-NLS-1$
         }
         StringBuffer buf = new StringBuffer();
         for (Iterator itr = set.iterator(); itr.hasNext(); ) {
-            buf.append("\n\t\t");
+            buf.append("\n\t\t"); //$NON-NLS-1$
             buf.append(toString((TreePath)itr.next()));
         }
         return buf.toString();
@@ -846,15 +846,15 @@ public class TestModelUpdatesListener
     
     private String toString(Map map) {
         if (map.isEmpty()) {
-            return "(EMPTY)";
+            return "(EMPTY)"; //$NON-NLS-1$
         }
         StringBuffer buf = new StringBuffer();
         for (Iterator itr = map.keySet().iterator(); itr.hasNext(); ) {
-            buf.append("\n\t\t");
+            buf.append("\n\t\t"); //$NON-NLS-1$
             TreePath path = (TreePath)itr.next();
             buf.append(toString(path));
             Set updates = (Set)map.get(path);
-            buf.append(" = ");
+            buf.append(" = "); //$NON-NLS-1$
             buf.append(updates.toString());
         }
         return buf.toString();
@@ -862,11 +862,11 @@ public class TestModelUpdatesListener
     
     private String toString(TreePath path) {
         if (path.getSegmentCount() == 0) {
-            return "/";
+            return "/"; //$NON-NLS-1$
         }
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < path.getSegmentCount(); i++) {
-            buf.append("/");
+            buf.append("/"); //$NON-NLS-1$
             buf.append(path.getSegment(i));
         }
         return buf.toString();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,14 +48,14 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
             for (int i = 0; i < keywords.length; i++) {
                 String keyword = keywords[i];
                 if (keyword.startsWith(word) && word.length() < keyword.length()) {
-                    proposals.add(new CompletionProposal(keyword + " ", index + 1, offset - (index + 1), keyword.length() + 1));
+					proposals.add(new CompletionProposal(keyword + " ", index + 1, offset - (index + 1), keyword.length() + 1)); //$NON-NLS-1$
                 }
             }
         } else {
             // propose all keywords
             for (int i = 0; i < keywords.length; i++) {
                 String keyword = keywords[i];
-                proposals.add(new CompletionProposal(keyword + " ", offset, 0, keyword.length() + 1));
+				proposals.add(new CompletionProposal(keyword + " ", offset, 0, keyword.length() + 1)); //$NON-NLS-1$
             }
         }
         if (!proposals.isEmpty()) {

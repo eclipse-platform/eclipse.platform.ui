@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.commands.IStepFiltersHandler;
 import org.eclipse.debug.internal.core.StepFilterManager;
@@ -30,7 +32,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 /**
  * This class provides the action for toggling step filters on or off for the debug view
  */
-public class ToggleStepFiltersAction extends DebugCommandAction implements IPropertyChangeListener {
+public class ToggleStepFiltersAction extends DebugCommandAction implements IPreferenceChangeListener {
 	
 	private boolean fInitialized = !DebugUITools.isUseStepFilters();
 	
@@ -150,7 +152,10 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IProp
      * Initializes the state, by adding this action as a property listener 
      */
     protected void initState() {
-    	DebugPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugPlugin.getUniqueIdentifier());
+		if (node != null) {
+			node.addPreferenceChangeListener(this);
+		}
     }
 
 	/**
@@ -158,22 +163,20 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IProp
 	 */
 	public void dispose() {
 		super.dispose();
-		DebugPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugPlugin.getUniqueIdentifier());
+		if (node != null) {
+			node.removePreferenceChangeListener(this);
+		}
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(StepFilterManager.PREF_USE_STEP_FILTERS)) {
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (event.getKey().equals(StepFilterManager.PREF_USE_STEP_FILTERS)) {
 			boolean checked = DebugUITools.isUseStepFilters();
 			setChecked(checked);
 			IAction action = getActionProxy();
 			if (action != null) {
 				action.setChecked(checked);
 			}
-		}		
+		}
 	}
-    
-    
 }

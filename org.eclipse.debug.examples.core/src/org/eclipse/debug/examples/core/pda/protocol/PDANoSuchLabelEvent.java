@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.protocol;
 
@@ -28,13 +29,13 @@ public class PDANoSuchLabelEvent extends PDAEvent {
     }
     
     public static boolean isEventMessage(String message) {
-        return message.startsWith("no such label");
+        return message.startsWith("no such label"); //$NON-NLS-1$
     }
     
     protected String getName(String message) {
         if (isEventMessage(message)) {
-            return "no such label";
+            return "no such label"; //$NON-NLS-1$
         }
-        throw new IllegalArgumentException("Invalid event: " + message);
+        throw new IllegalArgumentException("Invalid event: " + message); //$NON-NLS-1$
     }
 }

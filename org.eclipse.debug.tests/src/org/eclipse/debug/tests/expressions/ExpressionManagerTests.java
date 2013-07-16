@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,12 +181,12 @@ public class ExpressionManagerTests extends TestCase {
 		manager.addExpressionListener(single);
 		manager.addExpressionListener(multi);
 		try {
-			IWatchExpression exp1 = manager.newWatchExpression("exp1");
-			IWatchExpression exp2 = manager.newWatchExpression("exp2");
-			IWatchExpression exp3 = manager.newWatchExpression("exp3");
+			IWatchExpression exp1 = manager.newWatchExpression("exp1"); //$NON-NLS-1$
+			IWatchExpression exp2 = manager.newWatchExpression("exp2"); //$NON-NLS-1$
+			IWatchExpression exp3 = manager.newWatchExpression("exp3"); //$NON-NLS-1$
 			manager.addExpressions(new IExpression[]{exp1, exp2, exp3});
 			IExpression[] expressions = manager.getExpressions();
-			assertEquals("Wrong number of expressions", 3, expressions.length);
+			assertEquals("Wrong number of expressions", 3, expressions.length); //$NON-NLS-1$
 			assertEquals(single.addedCallbacks, 3);
 			assertEquals(3, single.added.size());
 			assertEquals(0, single.added.indexOf(exp1));
@@ -216,13 +216,13 @@ public class ExpressionManagerTests extends TestCase {
 		manager.addExpressionListener(single);
 		manager.addExpressionListener(multi);
 		try {
-			IWatchExpression exp1 = manager.newWatchExpression("exp1");
-			IWatchExpression exp2 = manager.newWatchExpression("exp2");
-			IWatchExpression exp3 = manager.newWatchExpression("exp3");
+			IWatchExpression exp1 = manager.newWatchExpression("exp1"); //$NON-NLS-1$
+			IWatchExpression exp2 = manager.newWatchExpression("exp2"); //$NON-NLS-1$
+			IWatchExpression exp3 = manager.newWatchExpression("exp3"); //$NON-NLS-1$
 			manager.addExpressions(new IExpression[]{exp1, exp2, exp3});
 			manager.removeExpressions(new IExpression[]{exp1, exp3});
 			IExpression[] expressions = manager.getExpressions();
-			assertEquals("Wrong number of expressions", 1, expressions.length);
+			assertEquals("Wrong number of expressions", 1, expressions.length); //$NON-NLS-1$
 			assertEquals(single.addedCallbacks, 3);
 			assertEquals(3, single.added.size());
 			assertEquals(0, single.added.indexOf(exp1));
@@ -256,14 +256,14 @@ public class ExpressionManagerTests extends TestCase {
 		manager.addExpressionListener(single);
 		manager.addExpressionListener(multi);
 		try {
-			IWatchExpression exp1 = manager.newWatchExpression("exp1");
-			IWatchExpression exp2 = manager.newWatchExpression("exp2");
-			IWatchExpression exp3 = manager.newWatchExpression("exp3");
+			IWatchExpression exp1 = manager.newWatchExpression("exp1"); //$NON-NLS-1$
+			IWatchExpression exp2 = manager.newWatchExpression("exp2"); //$NON-NLS-1$
+			IWatchExpression exp3 = manager.newWatchExpression("exp3"); //$NON-NLS-1$
 			manager.addExpressions(new IExpression[]{exp1, exp2, exp3});
 			IExpression[] expressions = manager.getExpressions();
 			exp1.setEnabled(false);
-			exp2.setExpressionText("exp2changed");
-			assertEquals("Wrong number of expressions", 3, expressions.length);
+			exp2.setExpressionText("exp2changed"); //$NON-NLS-1$
+			assertEquals("Wrong number of expressions", 3, expressions.length); //$NON-NLS-1$
 			assertEquals(single.addedCallbacks, 3);
 			assertEquals(3, single.added.size());
 			assertEquals(0, single.added.indexOf(exp1));
@@ -296,14 +296,14 @@ public class ExpressionManagerTests extends TestCase {
 		MultiListener multi = new MultiListener();
 		InsertMoveListener insert = new InsertMoveListener();
 		try {
-			IWatchExpression exp1 = manager.newWatchExpression("exp1");
-			IWatchExpression exp2 = manager.newWatchExpression("exp2");
-			IWatchExpression exp3 = manager.newWatchExpression("exp3");
-			IWatchExpression exp4 = manager.newWatchExpression("exp4");
-			IWatchExpression exp5 = manager.newWatchExpression("exp5");
+			IWatchExpression exp1 = manager.newWatchExpression("exp1"); //$NON-NLS-1$
+			IWatchExpression exp2 = manager.newWatchExpression("exp2"); //$NON-NLS-1$
+			IWatchExpression exp3 = manager.newWatchExpression("exp3"); //$NON-NLS-1$
+			IWatchExpression exp4 = manager.newWatchExpression("exp4"); //$NON-NLS-1$
+			IWatchExpression exp5 = manager.newWatchExpression("exp5"); //$NON-NLS-1$
 			manager.addExpressions(new IExpression[]{exp1, exp2, exp3});
 			IExpression[] expressions = manager.getExpressions();
-			assertEquals("Wrong number of expressions", 3, expressions.length);
+			assertEquals("Wrong number of expressions", 3, expressions.length); //$NON-NLS-1$
 			assertEquals(0, indexOf(exp1, expressions));
 			assertEquals(1, indexOf(exp2, expressions));
 			assertEquals(2, indexOf(exp3, expressions));
@@ -330,7 +330,7 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(1, insert.inserted.indexOf(exp5));
 			
 			expressions = manager.getExpressions();
-			assertEquals("Wrong number of expressions", 5, expressions.length);
+			assertEquals("Wrong number of expressions", 5, expressions.length); //$NON-NLS-1$
 			assertEquals(0, indexOf(exp1, expressions));
 			assertEquals(1, indexOf(exp4, expressions));
 			assertEquals(2, indexOf(exp5, expressions));
@@ -353,14 +353,14 @@ public class ExpressionManagerTests extends TestCase {
 		MultiListener multi = new MultiListener();
 		InsertMoveListener insert = new InsertMoveListener();
 		try {
-			IWatchExpression exp1 = manager.newWatchExpression("exp1");
-			IWatchExpression exp2 = manager.newWatchExpression("exp2");
-			IWatchExpression exp3 = manager.newWatchExpression("exp3");
-			IWatchExpression exp4 = manager.newWatchExpression("exp4");
-			IWatchExpression exp5 = manager.newWatchExpression("exp5");
+			IWatchExpression exp1 = manager.newWatchExpression("exp1"); //$NON-NLS-1$
+			IWatchExpression exp2 = manager.newWatchExpression("exp2"); //$NON-NLS-1$
+			IWatchExpression exp3 = manager.newWatchExpression("exp3"); //$NON-NLS-1$
+			IWatchExpression exp4 = manager.newWatchExpression("exp4"); //$NON-NLS-1$
+			IWatchExpression exp5 = manager.newWatchExpression("exp5"); //$NON-NLS-1$
 			manager.addExpressions(new IExpression[]{exp1, exp2, exp3});
 			IExpression[] expressions = manager.getExpressions();
-			assertEquals("Wrong number of expressions", 3, expressions.length);
+			assertEquals("Wrong number of expressions", 3, expressions.length); //$NON-NLS-1$
 			assertEquals(0, indexOf(exp1, expressions));
 			assertEquals(1, indexOf(exp2, expressions));
 			assertEquals(2, indexOf(exp3, expressions));
@@ -387,7 +387,7 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(1, insert.inserted.indexOf(exp5));
 			
 			expressions = manager.getExpressions();
-			assertEquals("Wrong number of expressions", 5, expressions.length);
+			assertEquals("Wrong number of expressions", 5, expressions.length); //$NON-NLS-1$
 			assertEquals(0, indexOf(exp1, expressions));
 			assertEquals(1, indexOf(exp2, expressions));
 			assertEquals(2, indexOf(exp4, expressions));
@@ -410,11 +410,11 @@ public class ExpressionManagerTests extends TestCase {
 		MultiListener multi = new MultiListener();
 		InsertMoveListener insert = new InsertMoveListener();
 		try {
-			IWatchExpression exp1 = manager.newWatchExpression("exp1");
-			IWatchExpression exp2 = manager.newWatchExpression("exp2");
-			IWatchExpression exp3 = manager.newWatchExpression("exp3");
-			IWatchExpression exp4 = manager.newWatchExpression("exp4");
-			IWatchExpression exp5 = manager.newWatchExpression("exp5");
+			IWatchExpression exp1 = manager.newWatchExpression("exp1"); //$NON-NLS-1$
+			IWatchExpression exp2 = manager.newWatchExpression("exp2"); //$NON-NLS-1$
+			IWatchExpression exp3 = manager.newWatchExpression("exp3"); //$NON-NLS-1$
+			IWatchExpression exp4 = manager.newWatchExpression("exp4"); //$NON-NLS-1$
+			IWatchExpression exp5 = manager.newWatchExpression("exp5"); //$NON-NLS-1$
 			manager.addExpressions(new IExpression[]{exp1, exp2, exp3, exp4, exp5});
 			// add listeners
 			manager.addExpressionListener(single);
@@ -437,7 +437,7 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(2, insert.insertIndex);
 			
 			IExpression[] expressions = manager.getExpressions();
-			assertEquals("Wrong number of expressions", 5, expressions.length);
+			assertEquals("Wrong number of expressions", 5, expressions.length); //$NON-NLS-1$
 			assertEquals(0, indexOf(exp3, expressions));
 			assertEquals(1, indexOf(exp4, expressions));
 			assertEquals(2, indexOf(exp1, expressions));
@@ -460,11 +460,11 @@ public class ExpressionManagerTests extends TestCase {
 		MultiListener multi = new MultiListener();
 		InsertMoveListener insert = new InsertMoveListener();
 		try {
-			IWatchExpression exp1 = manager.newWatchExpression("exp1");
-			IWatchExpression exp2 = manager.newWatchExpression("exp2");
-			IWatchExpression exp3 = manager.newWatchExpression("exp3");
-			IWatchExpression exp4 = manager.newWatchExpression("exp4");
-			IWatchExpression exp5 = manager.newWatchExpression("exp5");
+			IWatchExpression exp1 = manager.newWatchExpression("exp1"); //$NON-NLS-1$
+			IWatchExpression exp2 = manager.newWatchExpression("exp2"); //$NON-NLS-1$
+			IWatchExpression exp3 = manager.newWatchExpression("exp3"); //$NON-NLS-1$
+			IWatchExpression exp4 = manager.newWatchExpression("exp4"); //$NON-NLS-1$
+			IWatchExpression exp5 = manager.newWatchExpression("exp5"); //$NON-NLS-1$
 			manager.addExpressions(new IExpression[]{exp1, exp2, exp3, exp4, exp5});
 			// add listeners
 			manager.addExpressionListener(single);
@@ -487,7 +487,7 @@ public class ExpressionManagerTests extends TestCase {
 			assertEquals(1, insert.insertIndex);
 			
 			IExpression[] expressions = manager.getExpressions();
-			assertEquals("Wrong number of expressions", 5, expressions.length);
+			assertEquals("Wrong number of expressions", 5, expressions.length); //$NON-NLS-1$
 			assertEquals(0, indexOf(exp3, expressions));
 			assertEquals(1, indexOf(exp1, expressions));
 			assertEquals(2, indexOf(exp2, expressions));
@@ -506,23 +506,23 @@ public class ExpressionManagerTests extends TestCase {
 	 */
 	public void testPersistExpressions() {
 		ExpressionManager manager = (ExpressionManager) getManager();
-		IWatchExpression exp1 = manager.newWatchExpression("exp1");
-		IWatchExpression exp2 = manager.newWatchExpression("exp2");
-		IWatchExpression exp3 = manager.newWatchExpression("exp3");
-		IWatchExpression exp4 = manager.newWatchExpression("exp4");
-		IWatchExpression exp5 = manager.newWatchExpression("exp5");
+		IWatchExpression exp1 = manager.newWatchExpression("exp1"); //$NON-NLS-1$
+		IWatchExpression exp2 = manager.newWatchExpression("exp2"); //$NON-NLS-1$
+		IWatchExpression exp3 = manager.newWatchExpression("exp3"); //$NON-NLS-1$
+		IWatchExpression exp4 = manager.newWatchExpression("exp4"); //$NON-NLS-1$
+		IWatchExpression exp5 = manager.newWatchExpression("exp5"); //$NON-NLS-1$
 		manager.addExpressions(new IExpression[]{exp1, exp2, exp3, exp4, exp5});
 		manager.storeWatchExpressions();
 		
 		// create a new manager that will restore the expressions
 		ExpressionManager manager2 = new ExpressionManager();
 		IExpression[] expressions = manager2.getExpressions();
-		assertEquals("Wrong number of expressions", 5, expressions.length);
-		assertEquals("exp1", expressions[0].getExpressionText());
-		assertEquals("exp2", expressions[1].getExpressionText());
-		assertEquals("exp3", expressions[2].getExpressionText());
-		assertEquals("exp4", expressions[3].getExpressionText());
-		assertEquals("exp5", expressions[4].getExpressionText());
+		assertEquals("Wrong number of expressions", 5, expressions.length); //$NON-NLS-1$
+		assertEquals("exp1", expressions[0].getExpressionText()); //$NON-NLS-1$
+		assertEquals("exp2", expressions[1].getExpressionText()); //$NON-NLS-1$
+		assertEquals("exp3", expressions[2].getExpressionText()); //$NON-NLS-1$
+		assertEquals("exp4", expressions[3].getExpressionText()); //$NON-NLS-1$
+		assertEquals("exp5", expressions[4].getExpressionText()); //$NON-NLS-1$
 	}
 	
 	/**

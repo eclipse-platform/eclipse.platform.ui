@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,15 +29,15 @@ public class StatusHandlerTests extends TestCase {
 	/**
 	 * Status for which a handler is registered.
 	 */
-	public static final IStatus STATUS = new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 333,"", null);
+	public static final IStatus STATUS = new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, 333, "", null); //$NON-NLS-1$
 	
 	/**
 	 * Tests that a status handler extension exists
 	 */
 	public void testStatusHandlerExtension() {
 		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(STATUS);
-		assertNotNull("missing status handler extension", handler);
-		assertTrue("Unexpected handler", handler instanceof StatusHandler);
+		assertNotNull("missing status handler extension", handler); //$NON-NLS-1$
+		assertTrue("Unexpected handler", handler instanceof StatusHandler); //$NON-NLS-1$
 	}
 	
 	/**
@@ -47,7 +47,7 @@ public class StatusHandlerTests extends TestCase {
 		try {
 			Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, false, InstanceScope.INSTANCE);
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(STATUS);
-			assertNull("status handler extension should be disabled", handler);
+			assertNull("status handler extension should be disabled", handler); //$NON-NLS-1$
 		} finally {
 			Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, true, InstanceScope.INSTANCE);
 		}

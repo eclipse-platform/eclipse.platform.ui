@@ -72,14 +72,18 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fShell.isDisposed()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     }
 
     protected void runTest() throws Throwable {
         try {
             super.runTest();
         } catch (Throwable t) {
-            throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t);
+			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -94,18 +98,25 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
         TestElement element = model.getRootElement().getChildren()[0];
         TreePath elementPath = new TreePath(new Object[] { element });
-        ModelDelta delta = model.appendElementLabel(elementPath, "-modified");
+		ModelDelta delta = model.appendElementLabel(elementPath, "-modified"); //$NON-NLS-1$
         
         fListener.reset(elementPath, element, -1, true, false); 
         model.postDelta(delta);
-        while (!fListener.isFinished(LABEL_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(LABEL_COMPLETE | MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
@@ -120,22 +131,30 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
         TestElement element = model.getRootElement().getChildren()[0];
         TreePath elementPath = new TreePath(new Object[] { element });
         TestElement[] newChildren = new TestElement[] {
-            new TestElement(model, "1.1 - new", new TestElement[0]),
-            new TestElement(model, "1.2 - new", new TestElement[0]),
-            new TestElement(model, "1.3 - new", new TestElement[0]),
+ new TestElement(model, "1.1 - new", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "1.2 - new", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "1.3 - new", new TestElement[0]), //$NON-NLS-1$
         };
         ModelDelta delta = model.setElementChildren(elementPath, newChildren);
         
         fListener.reset(elementPath, element, -1, true, false); 
         model.postDelta(delta);
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
@@ -150,32 +169,36 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
 
-        String prefix = "new - ";
+		String prefix = "new - "; //$NON-NLS-1$
         model.setElementChildren(TreePath.EMPTY, new TestElement[] {
-            new TestElement(model, prefix + "1", new TestElement[0]),
-            new TestElement(model, prefix + "2", true, false, new TestElement[] {
-                new TestElement(model, prefix + "2.1", true, true, new TestElement[0]),
-                new TestElement(model, prefix + "2.2", false, true, new TestElement[0]),
-                new TestElement(model, prefix + "2.3", true, false, new TestElement[0]),
+ new TestElement(model, prefix + "1", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, prefix + "2", true, false, new TestElement[] { //$NON-NLS-1$
+		new TestElement(model, prefix + "2.1", true, true, new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, prefix + "2.2", false, true, new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, prefix + "2.3", true, false, new TestElement[0]), //$NON-NLS-1$
             }),
-            new TestElement(model, prefix + "3", new TestElement[] {
-                new TestElement(model, prefix + "3.1", new TestElement[] {
-                    new TestElement(model, prefix + "3.1.1", new TestElement[0]),
-                    new TestElement(model, prefix + "3.1.2", new TestElement[0]),
-                    new TestElement(model, prefix + "3.1.3", new TestElement[0]),
+ new TestElement(model, prefix + "3", new TestElement[] { //$NON-NLS-1$
+		new TestElement(model, prefix + "3.1", new TestElement[] { //$NON-NLS-1$
+		new TestElement(model, prefix + "3.1.1", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, prefix + "3.1.2", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, prefix + "3.1.3", new TestElement[0]), //$NON-NLS-1$
                 }),
-                new TestElement(model, prefix + "3.2", new TestElement[] {
-                    new TestElement(model, prefix + "3.2.1", new TestElement[0]),
-                    new TestElement(model, prefix + "3.2.2", new TestElement[0]),
-                    new TestElement(model, prefix + "3.2.3", new TestElement[0]),
+ new TestElement(model, prefix + "3.2", new TestElement[] { //$NON-NLS-1$
+		new TestElement(model, prefix + "3.2.1", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, prefix + "3.2.2", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, prefix + "3.2.3", new TestElement[0]), //$NON-NLS-1$
                 }),
-                new TestElement(model, prefix + "3.3", new TestElement[] {
-                    new TestElement(model, prefix + "3.3.1", new TestElement[0]),
-                    new TestElement(model, prefix + "3.3.2", new TestElement[0]),
-                    new TestElement(model, prefix + "3.3.3", new TestElement[0]),
+ new TestElement(model, prefix + "3.3", new TestElement[] { //$NON-NLS-1$
+		new TestElement(model, prefix + "3.3.1", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, prefix + "3.3.2", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, prefix + "3.3.3", new TestElement[0]), //$NON-NLS-1$
                 }),
             })
         });
@@ -184,8 +207,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         fListener.reset(TreePath.EMPTY, element, -1, false, false);
         
         model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
@@ -198,7 +224,7 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         for (int i = 0; i < rootChildren.length; i++) {
             model.setElementChildren(
                 new TreePath(new Object[] { rootChildren[i]} ), 
-                new TestElement[] { new TestElement(model, i + ".1", new TestElement[0]) });
+ new TestElement[] { new TestElement(model, i + ".1", new TestElement[0]) }); //$NON-NLS-1$
         }
         
         fViewer.setAutoExpandLevel(-1);
@@ -208,13 +234,20 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
         
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         model.validateData(fViewer, TreePath.EMPTY);
         assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
@@ -233,11 +266,15 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
         
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
-        TestElement element = new TestElement(model, "7", new TestElement[0]);
+		TestElement element = new TestElement(model, "7", new TestElement[0]); //$NON-NLS-1$
         TreePath elementPath = new TreePath(new Object[] { element });
         ModelDelta delta = model.insertElementChild(TreePath.EMPTY, 6, element);
         
@@ -251,8 +288,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         // TODO: redundant label updates on insert!
         fListener.setFailOnRedundantUpdates(false);
         model.postDelta(delta);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
     }
     
@@ -272,15 +312,18 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 	    // Set the input into the view and update the view.
 	    fViewer.setInput(model.getRootElement());
 	      
-	    while (!fListener.isFinished())
-	        if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+	    while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 	
 	    model.validateData(fViewer, TreePath.EMPTY);        
         
         // Update the model
         // Insert two new elements at once
-        TestElement element0 = new TestElement(model, "00", new TestElement[] {});
-        TestElement element1 = new TestElement(model, "01", new TestElement[] {});
+		TestElement element0 = new TestElement(model, "00", new TestElement[] {}); //$NON-NLS-1$
+		TestElement element1 = new TestElement(model, "01", new TestElement[] {}); //$NON-NLS-1$
         TreePath elementPath0 = new TreePath(new Object[] { element0 });
         TreePath elementPath1 = new TreePath(new Object[] { element1 });
         ModelDelta rootDelta = model.insertElementChild(TreePath.EMPTY, 0, element0);
@@ -300,8 +343,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         fListener.setFailOnRedundantUpdates(false);
 
         model.postDelta(rootDelta);
-        while (!fListener.isFinished()) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         model.validateData(fViewer, TreePath.EMPTY);
     }
@@ -318,8 +364,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
         fViewer.setInput(model.getRootElement());
           
-        while (!fListener.isFinished())
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     
         model.validateData(fViewer, TreePath.EMPTY);        
         
@@ -328,7 +377,7 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         IModelDelta removeDelta = model.removeElementChild(TreePath.EMPTY, 3).getChildDeltas()[0];
         
         // Insert new elements at once
-        TestElement element = new TestElement(model, "00", new TestElement[] {});
+		TestElement element = new TestElement(model, "00", new TestElement[] {}); //$NON-NLS-1$
         TreePath elementPath = new TreePath(new Object[] { element });
         IModelDelta insertDelta = model.insertElementChild(TreePath.EMPTY, 1, element).getChildDeltas()[0];
 
@@ -346,8 +395,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         fListener.setFailOnRedundantUpdates(false);
 
         model.postDelta(combinedDelta);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         model.validateData(fViewer, TreePath.EMPTY);
     }
@@ -364,11 +416,15 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
-        TestElement element = new TestElement(model, "7", new TestElement[0]);
+		TestElement element = new TestElement(model, "7", new TestElement[0]); //$NON-NLS-1$
         TreePath elementPath = new TreePath(new Object[] { element });
         ModelDelta delta = model.addElementChild(TreePath.EMPTY, null, 6, element);
         
@@ -378,8 +434,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         // TODO: redundant updates on add!
         fListener.setFailOnRedundantUpdates(false);
         model.postDelta(delta);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
@@ -397,40 +456,53 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Update the model
-        TreePath parentPath = model.findElement("1");
-        ModelDelta rootDelta = model.addElementChild(parentPath, null, 0, new TestElement(model, "1.1", new TestElement[0]));
-        model.addElementChild(parentPath, rootDelta, 1, new TestElement(model, "1.2", new TestElement[0]));
-        model.addElementChild(parentPath, rootDelta, 2, new TestElement(model, "1.3", new TestElement[0]));
-        model.addElementChild(parentPath, rootDelta, 3, new TestElement(model, "1.4", new TestElement[0]));
+		TreePath parentPath = model.findElement("1"); //$NON-NLS-1$
+		ModelDelta rootDelta = model.addElementChild(parentPath, null, 0, new TestElement(model, "1.1", new TestElement[0])); //$NON-NLS-1$
+		model.addElementChild(parentPath, rootDelta, 1, new TestElement(model, "1.2", new TestElement[0])); //$NON-NLS-1$
+		model.addElementChild(parentPath, rootDelta, 2, new TestElement(model, "1.3", new TestElement[0])); //$NON-NLS-1$
+		model.addElementChild(parentPath, rootDelta, 3, new TestElement(model, "1.4", new TestElement[0])); //$NON-NLS-1$
         
         // Add causes the update of parent child count and element's children.
         fListener.reset();
         fListener.setFailOnRedundantUpdates(false);
         model.postDelta(rootDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_SEQUENCE_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_SEQUENCE_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Update the elements that were added.
         fListener.reset();
         fListener.addUpdates((IInternalTreeModelViewer)fViewer, TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
         rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.CONTENT);
-        model.getElementDelta(rootDelta, model.findElement("1.1"), true).setFlags(IModelDelta.CONTENT);
-        model.getElementDelta(rootDelta, model.findElement("1.2"), true).setFlags(IModelDelta.CONTENT);
-        model.getElementDelta(rootDelta, model.findElement("1.3"), true).setFlags(IModelDelta.CONTENT);
-        model.getElementDelta(rootDelta, model.findElement("1.4"), true).setFlags(IModelDelta.CONTENT);
+		model.getElementDelta(rootDelta, model.findElement("1.1"), true).setFlags(IModelDelta.CONTENT); //$NON-NLS-1$
+		model.getElementDelta(rootDelta, model.findElement("1.2"), true).setFlags(IModelDelta.CONTENT); //$NON-NLS-1$
+		model.getElementDelta(rootDelta, model.findElement("1.3"), true).setFlags(IModelDelta.CONTENT); //$NON-NLS-1$
+		model.getElementDelta(rootDelta, model.findElement("1.4"), true).setFlags(IModelDelta.CONTENT); //$NON-NLS-1$
         
         model.postDelta(rootDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | ALL_UPDATES_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         fListener.reset(parentPath, model.getElement(parentPath), 1, false, true);
         ((IInternalTreeModelViewer)fViewer).expandToLevel(parentPath, 1);
 
-        while (fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         model.validateData(fViewer, parentPath);
     }
@@ -448,15 +520,22 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Expand elment "2"
-        TreePath parentPath = model.findElement("2");
+		TreePath parentPath = model.findElement("2"); //$NON-NLS-1$
         fListener.reset(parentPath, model.getElement(parentPath), 1, false, true);
         ((IInternalTreeModelViewer)fViewer).expandToLevel(parentPath, 1);
 
-        while (fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Collapse back element "2"
         ((IInternalTreeModelViewer)fViewer).setExpandedState(parentPath, false);
@@ -465,20 +544,26 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         fListener.reset();
         fListener.addUpdates((IInternalTreeModelViewer)fViewer, TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
         ModelDelta rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.CONTENT);
-        model.getElementDelta(rootDelta, model.findElement("2.1"), true).setFlags(IModelDelta.CONTENT);
-        model.getElementDelta(rootDelta, model.findElement("2.2"), true).setFlags(IModelDelta.CONTENT);
-        model.getElementDelta(rootDelta, model.findElement("2.3"), true).setFlags(IModelDelta.CONTENT);
+		model.getElementDelta(rootDelta, model.findElement("2.1"), true).setFlags(IModelDelta.CONTENT); //$NON-NLS-1$
+		model.getElementDelta(rootDelta, model.findElement("2.2"), true).setFlags(IModelDelta.CONTENT); //$NON-NLS-1$
+		model.getElementDelta(rootDelta, model.findElement("2.3"), true).setFlags(IModelDelta.CONTENT); //$NON-NLS-1$
         
         model.postDelta(rootDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | ALL_UPDATES_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Expand back element "2"
         fListener.reset(parentPath, model.getElement(parentPath), 1, false, true);
         ((IInternalTreeModelViewer)fViewer).expandToLevel(parentPath, 1);
 
-        while (fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (fListener.isFinished(CONTENT_SEQUENCE_STARTED) && !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         model.validateData(fViewer, parentPath, true);
     }
@@ -495,7 +580,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
@@ -505,8 +594,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         // be processed.
         fListener.reset(); 
         model.postDelta(delta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
     }
     
@@ -518,7 +610,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Create the delta
@@ -571,8 +667,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         assertFalse(contentProviderViewer.getExpandedState(path_root_3_2_2));
         
         model.postDelta(deltaRoot);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Validate the expansion state AFTER posting the delta.
@@ -586,7 +685,7 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
             List selectionPathsList = Arrays.asList( ((ITreeSelection)selection).getPaths() );
             assertTrue(selectionPathsList.contains(path_root_3_2_2));
         } else {
-            fail("Not a tree selection");
+			fail("Not a tree selection"); //$NON-NLS-1$
         }
     }
 
@@ -601,7 +700,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Create the delta
@@ -630,7 +733,9 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
                     break;
                 }
             }
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
         }
         model.validateData(fViewer, TreePath.EMPTY, true);
 
@@ -643,7 +748,7 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
             List selectionPathsList = Arrays.asList( ((ITreeSelection)selection).getPaths() );
             assertTrue(selectionPathsList.contains(path_root_3));
         } else {
-            fail("Not a tree selection");
+			fail("Not a tree selection"); //$NON-NLS-1$
         }
     }
 
@@ -659,24 +764,32 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Update the model
-        TreePath m4_2_1Path = model.findElement("m4.2.1");
+		TreePath m4_2_1Path = model.findElement("m4.2.1"); //$NON-NLS-1$
         TestElement m4_2_1 = model.getElement(m4_2_1Path);
         TestModel m4 = m4_2_1.getModel();
         TestElement[] newChildren = new TestElement[] {
-            new TestElement(m4, "4.2.1.new-1", new TestElement[0]),
-            new TestElement(m4, "4.2.1.new-2", new TestElement[0]),
-            new TestElement(m4, "4.2.1.new-3", new TestElement[0]),
+ new TestElement(m4, "4.2.1.new-1", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(m4, "4.2.1.new-2", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(m4, "4.2.1.new-3", new TestElement[0]), //$NON-NLS-1$
         };
 
         ModelDelta delta = m4.setElementChildren(m4_2_1Path, newChildren);
         
         fListener.reset(m4_2_1Path, m4_2_1, -1, true, false); 
         model.postDelta(delta);
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
@@ -690,13 +803,17 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY, true);
         
-        TreePath m3_1Path = model.findElement("m3.1");
+		TreePath m3_1Path = model.findElement("m3.1"); //$NON-NLS-1$
         TestElement m3_1 = model.getElement(m3_1Path);
         TestModel m3 = m3_1.getModel();
-        TestElement m3_1_new = new TestElement(m3, "m3.1-new", new TestElement[0]);
+		TestElement m3_1_new = new TestElement(m3, "m3.1-new", new TestElement[0]); //$NON-NLS-1$
         TreePath m3_1_newPath = m3_1Path.createChildPath(m3_1_new);
         ModelDelta delta = m3.addElementChild(m3_1Path, null, 0, m3_1_new);
         
@@ -705,8 +822,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         fListener.setFailOnRedundantUpdates(false);
         
         m3.postDelta(delta);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         
         model.validateData(fViewer, TreePath.EMPTY);
     }
@@ -718,12 +838,16 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY, true);
         
         // Update the model: remove one child of an un-expanded element, then
         // make sure that the number of children is correct.
-        TreePath parentPath = model.findElement("2");
+		TreePath parentPath = model.findElement("2"); //$NON-NLS-1$
         TestElement parentElement = model.getElement(parentPath);
         ModelDelta delta = model.removeElementChild(parentPath, 0);
         
@@ -731,8 +855,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         fListener.reset(parentPath, parentElement, 0, false, false);
         //fListener.addChildreCountUpdate(parentPath);
         model.postDelta(delta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Validate the viewer data.
         model.validateData(fViewer, TreePath.EMPTY, true);
@@ -744,8 +871,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         // Update the viewer
         fListener.reset(parentPath, parentElement, 0, false, false);
         model.postDelta(delta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Validate the viewer data.
         model.validateData(fViewer, TreePath.EMPTY, true);
@@ -757,8 +887,11 @@ abstract public class DeltaTests extends TestCase implements ITestModelUpdatesLi
         // Update the viewer
         fListener.reset(parentPath, parentElement, 0, false, false);
         model.postDelta(delta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Validate the viewer data.
         model.validateData(fViewer, TreePath.EMPTY, true);

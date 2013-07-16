@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class PDAEditorAdapterFactory implements IAdapterFactory {
 			IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
 			if (resource != null) {
 				String extension = resource.getFileExtension();
-				if (extension != null && extension.equals("pda")) {
+				if (extension != null && extension.equals("pda")) { //$NON-NLS-1$
 				    if (adapterType.equals(IToggleBreakpointsTarget.class)) {
 				        return new PDABreakpointAdapter();
 				    }

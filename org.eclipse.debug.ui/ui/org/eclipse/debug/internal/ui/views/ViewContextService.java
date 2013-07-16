@@ -30,8 +30,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -68,17 +70,17 @@ import org.w3c.dom.NodeList;
  * 
  * @since 3.2
  */
-public class ViewContextService implements IDebugContextListener, IPerspectiveListener4, IPropertyChangeListener, IContextManagerListener {
+public class ViewContextService implements IDebugContextListener, IPerspectiveListener4, IPreferenceChangeListener, IContextManagerListener {
 	
 	/**
 	 * Maps the perspectives in this window to its last activated workbench context
 	 */
-	private Map fPerspectiveToActiveContext = new HashMap();
+	private final Map fPerspectiveToActiveContext = new HashMap();
 	
 	/**
 	 * Map of the perspectives to all workbench contexts activated in that perspective 
 	 */
-	private Map fPerspectiveToActivatedContexts = new HashMap();
+	private final Map fPerspectiveToActivatedContexts = new HashMap();
 	
 	/**
 	 * Map of context id's to context view bindings
@@ -101,9 +103,9 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 */
 	private IWorkbenchWindow fWindow;
 	
-	private IContextService fContextService;
+	private final IContextService fContextService;
 	
-	private IDebugContextService fDebugContextService;
+	private final IDebugContextService fDebugContextService;
 	
 	/**
 	 * Perspective that is currently being de-activated.  Used to determine
@@ -156,7 +158,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     private class DebugContextViewBindings {
     	
     	// context id
-    	private String fId;
+    	private final String fId;
     	
     	// list of view bindings id's specific to this context
     	private String[] fViewBindingIds = EMPTY_IDS;
@@ -164,7 +166,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	// all bindings including inherited bindings, top down in activation order
     	private String[] fAllViewBindingIds = null;
     	// associated binding to activate
-    	private Map fAllViewIdToBindings = new HashMap();
+    	private final Map fAllViewIdToBindings = new HashMap();
     	// all context id's in this context hierarchy (top down order)
     	private String[] fAllConetxtIds = null;
 
@@ -367,19 +369,19 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
      * Information for a view
      */
     private class ViewBinding {
-        private IConfigurationElement fElement;
+        private final IConfigurationElement fElement;
         /**
          * Set of perspectives this view was opened in by the user
          */
-        private Set fUserOpened = new HashSet();
+        private final Set fUserOpened = new HashSet();
         /**
          * Set of perspectives this view was closed in by the user
          */
-        private Set fUserClosed = new HashSet();
+        private final Set fUserClosed = new HashSet();
         /**
          * Set of perspectives this view was auto-opened by view management.
          */
-        private Set fAutoOpened = new HashSet();
+        private final Set fAutoOpened = new HashSet();
         
         public ViewBinding(IConfigurationElement element) {
             fElement = element;
@@ -623,7 +625,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		loadPerspectives();
 		window.addPerspectiveListener(this);
 		getDebugContextService().addDebugContextListener(this);
-		DebugUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+		if (node != null) {
+			node.addPreferenceChangeListener(this);
+		}
 		fContextService.addContextManagerListener(this);
 		if (fWindow != null) {
 		    IWorkbenchPage page = fWindow.getActivePage();
@@ -637,7 +642,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		fWindow.removePerspectiveListener(this);
 		fWindow = null;  // avoid leaking a window reference (bug 321658).
 		getDebugContextService().removeDebugContextListener(this);
-		DebugUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+		if (node != null) {
+			node.removePreferenceChangeListener(this);
+		}
 		fContextService.removeContextManagerListener(this);
         fActivePerspective = null;
 	}
@@ -712,24 +720,6 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
             fEnabledPerspectives = parseList(preference);
 	    }
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-        if (!fIgnoreChanges) {
-    		if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES.equals(event.getProperty())) { 
-    			loadPerspectives();
-    		} else if (IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS.equals(event.getProperty())) {
-    		    loadContextToViewExtensions();
-                applyUserViewBindings();
-                // clear activations to re-enable activation based on new settings
-                fPerspectiveToActivatedContexts.clear();
-                ISelection selection = getDebugContextService().getActiveContext();
-                contextActivated(selection);
-            }
-        }
-	}	
 	
 	/**
 	 * Returns whether this service's window's active perspective supports view management.
@@ -1002,7 +992,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * @param perspective the perspective description
 	 */
 	private void activateChain(String contextId, IPerspectiveDescriptor perspective, Set allViewIds) {
-	    if (fWindow == null) return; // disposed
+	    if (fWindow == null)
+		 {
+			return; // disposed
+		}
 	    
 		IWorkbenchPage page = fWindow.getActivePage();
 		if (page != null) {
@@ -1014,7 +1007,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	}
 	
 	private Set getAllContextsViewIDs(List contextsIds) {
-        if (fWindow == null) return Collections.EMPTY_SET; // disposed
+        if (fWindow == null)
+		 {
+			return Collections.EMPTY_SET; // disposed
+		}
         
         TreeSet viewIds = new TreeSet();
         for (int i = 0; i < contextsIds.size(); i++) {
@@ -1087,7 +1083,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	}
 	
 	private void deactivate(String contextId, IPerspectiveDescriptor perspective) {
-	    if (fWindow == null) return;  // disposed
+	    if (fWindow == null)
+		 {
+			return;  // disposed
+		}
 	    
 		IWorkbenchPage page = fWindow.getActivePage();
 		if (page != null) {
@@ -1166,7 +1165,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
      * @param viewId the id of the view to show
      */
     public void showViewQuiet(String viewId) {
-        if (fWindow == null) return;  // disposed;
+        if (fWindow == null)
+		 {
+			return;  // disposed;
+		}
         
 		IWorkbenchPage page = fWindow.getActivePage();
 		if (page != null) {
@@ -1191,6 +1193,22 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		if (page.getWorkbenchWindow().equals(fWindow)) {
             fActivePerspective = null;
 			clean(perspective);
+		}
+	}
+
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (!fIgnoreChanges) {
+			if (IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES.equals(event.getKey())) {
+				loadPerspectives();
+			} else if (IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS.equals(event.getKey())) {
+				loadContextToViewExtensions();
+				applyUserViewBindings();
+				// clear activations to re-enable activation based on new
+				// settings
+				fPerspectiveToActivatedContexts.clear();
+				ISelection selection = getDebugContextService().getActiveContext();
+				contextActivated(selection);
+			}
 		}
 	}
 }

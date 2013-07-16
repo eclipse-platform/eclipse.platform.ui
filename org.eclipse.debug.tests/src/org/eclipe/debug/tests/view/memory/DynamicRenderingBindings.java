@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ public class DynamicRenderingBindings extends AbstractMemoryRenderingBindingsPro
 	private static DynamicRenderingBindings fgSingleton = null;
 	
 	// id of rendering type bound by this provider
-	private String fId = "rendering_type_1";
+	private String fId = "rendering_type_1"; //$NON-NLS-1$
 
 	/**
 	 * Constructor

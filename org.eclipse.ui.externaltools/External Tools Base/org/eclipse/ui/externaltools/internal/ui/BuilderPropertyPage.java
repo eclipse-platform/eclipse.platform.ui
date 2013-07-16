@@ -979,6 +979,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				if (commandsToBeDeleted != null && commandsToBeDeleted.contains(data)) {
 					//command specified to be removed
 					data= null;
+					continue;
 				}
 				ICommand command= (ICommand)data;
 				Map/*<String, String>*/ args = command.getArguments();

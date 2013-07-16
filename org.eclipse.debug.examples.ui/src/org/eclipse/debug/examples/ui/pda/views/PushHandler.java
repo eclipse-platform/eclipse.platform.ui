@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems and others.
+ * Copyright (c) 2008, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.pda.views;
 
@@ -23,12 +24,12 @@ import org.eclipse.jface.window.Window;
 public class PushHandler extends AbstractDataStackViewHandler {
 
    protected void doExecute(DataStackView view, PDAThread thread, ISelection selection) throws ExecutionException {
-       InputDialog dialog = new InputDialog(view.getSite().getShell(), "Specify Value", "Enter value to push", null, null);
+		InputDialog dialog = new InputDialog(view.getSite().getShell(), "Specify Value", "Enter value to push", null, null); //$NON-NLS-1$ //$NON-NLS-2$
        if (dialog.open() == Window.OK) {
            try {
                thread.pushData(dialog.getValue());
            } catch (DebugException e) {
-               throw new ExecutionException("Failed to execute push command", e);
+				throw new ExecutionException("Failed to execute push command", e); //$NON-NLS-1$
            }
        }
        view.getViewer().refresh();

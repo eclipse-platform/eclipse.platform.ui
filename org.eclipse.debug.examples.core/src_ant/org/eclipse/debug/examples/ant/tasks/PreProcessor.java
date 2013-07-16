@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,10 +59,10 @@ public class PreProcessor extends Task {
 	private static final int STATE_POST_TRUE_CONDITION = 3;
 	
 	// matchers
-	private Matcher IF_DEF_MATCHER = Pattern.compile("#ifdef\\s+\\w+").matcher("");
-	private Matcher ELSE_IF_MATCHER = Pattern.compile("#elseif\\s+\\w+").matcher("");
-	private Matcher ELSE_MATCHER = Pattern.compile("#else$|#else\\W+").matcher("");
-	private Matcher END_MATCHER = Pattern.compile("#endif").matcher("");
+	private Matcher IF_DEF_MATCHER = Pattern.compile("#ifdef\\s+\\w+").matcher(""); //$NON-NLS-1$ //$NON-NLS-2$
+	private Matcher ELSE_IF_MATCHER = Pattern.compile("#elseif\\s+\\w+").matcher(""); //$NON-NLS-1$ //$NON-NLS-2$
+	private Matcher ELSE_MATCHER = Pattern.compile("#else$|#else\\W+").matcher(""); //$NON-NLS-1$ //$NON-NLS-2$
+	private Matcher END_MATCHER = Pattern.compile("#endif").matcher(""); //$NON-NLS-1$ //$NON-NLS-2$
 
 	
 	/**
@@ -95,7 +95,7 @@ public class PreProcessor extends Task {
 	 * @param symbols symbols that are "on" for the preprocessing
 	 */
 	public void setSymbols(String symbols) {
-		String[] strings = symbols.split(",");
+		String[] strings = symbols.split(","); //$NON-NLS-1$
 		for (int i = 0; i < strings.length; i++) {
 			String string = strings[i].trim();
 			if (string.length() > 0) {
@@ -106,21 +106,21 @@ public class PreProcessor extends Task {
 
 	public void execute() throws BuildException {
 		if (fSymbols.size() == 0) {
-			throw new BuildException("No symbols specified for preprocessor");
+			throw new BuildException("No symbols specified for preprocessor"); //$NON-NLS-1$
 		}
 		if (fFileSets.isEmpty()) {
-			throw new BuildException("No filesets specified for processing");
+			throw new BuildException("No filesets specified for processing"); //$NON-NLS-1$
 		}
 		if (!fDestDir.exists()) {
-			throw new BuildException("destdir does not exist: " + fDestDir.getAbsolutePath());
+			throw new BuildException("destdir does not exist: " + fDestDir.getAbsolutePath()); //$NON-NLS-1$
 		}
-		StringBuffer buf = new StringBuffer("Symbols: ");
+		StringBuffer buf = new StringBuffer("Symbols: "); //$NON-NLS-1$
 		String[] symbols = (String[]) fSymbols.toArray(new String[fSymbols.size()]);
 		for (int i = 0; i < symbols.length; i++) {
 			String symbol = symbols[i];
 			buf.append(symbol);
 			if(i < (symbols.length -1)) {
-				buf.append(", ");
+				buf.append(", "); //$NON-NLS-1$
 			}
 		}
 		log(buf.toString());
@@ -153,9 +153,9 @@ public class PreProcessor extends Task {
 			dir.mkdirs();
 		}
 		String contents = null;
-		if (fileName.endsWith(".java")) {
-			contents = preProcessFile(srcFile, "//#");
-		} else if (fileName.equals("plugin.xml")) {
+		if (fileName.endsWith(".java")) { //$NON-NLS-1$
+			contents = preProcessFile(srcFile, "//#"); //$NON-NLS-1$
+		} else if (fileName.equals("plugin.xml")) { //$NON-NLS-1$
 			contents = preProcessFile(srcFile, null);
 		}
 		if (contents == null) {
@@ -180,101 +180,106 @@ public class PreProcessor extends Task {
 	}
 
 	/**
-	 * Preprocesses a file
+	 * Pre-processes a file
 	 * 
 	 * @param srcFile the file to process
-	 * @param strip chars to stip off lines in a true condition, or <code>null</code>
+	 * @param strip chars to strip off lines in a true condition, or <code>null</code>
 	 * @return
 	 */
 	public String preProcessFile(File srcFile, String strip) {
 		try {
 			FileReader fileReader = new FileReader(srcFile);
 			BufferedReader reader = new BufferedReader(fileReader);
-			StringBuffer buffer = new StringBuffer();
-			String line = reader.readLine();
-			String activeSymbol = null;
-			int state = STATE_OUTSIDE_CONDITION;
 			boolean changed = false;
-			while (line != null) {
-				boolean ifdef = IF_DEF_MATCHER.reset(line).find();
-				boolean elseif = ELSE_IF_MATCHER.reset(line).find();
-				boolean elze = ELSE_MATCHER.reset(line).find();
-				boolean endif = END_MATCHER.reset(line).find();
-				boolean commandLine = ifdef || elseif || elze || endif;
-				boolean written = false;
-				switch (state) {
-					case STATE_OUTSIDE_CONDITION:
-						if (ifdef) {
-							String condition = line.substring(IF_DEF_MATCHER.start(), IF_DEF_MATCHER.end());
-							String[] strings = condition.split("\\s+");
-							activeSymbol = strings[1].trim();
-							if (fSymbols.contains(activeSymbol)) {
-								state = STATE_TRUE_CONDITION;
-							} else {
-								state = STATE_FALSE_CONDITION;
-							}							
-						} else if (elseif) {
-							throw new BuildException("#elseif encountered without corresponding #ifdef");
-						} else if (elze) {
-							throw new BuildException("#else encountered without corresponding #ifdef (" + srcFile.getPath() + ")");
-						} else if (endif) {
-							throw new BuildException("#endif encountered without corresponding #ifdef");
-						}
-						break;
-					case STATE_TRUE_CONDITION:
-						if (elze || elseif) {
-							state = STATE_POST_TRUE_CONDITION;
-							break;
-						} else if (endif) {
-							state = STATE_OUTSIDE_CONDITION;
-							break;
-						} else if (ifdef) {
-							throw new BuildException("illegal nested #ifdef");
-						}
-						break;
-					case STATE_FALSE_CONDITION:
-						if (elseif) {
-							String condition = line.substring(ELSE_IF_MATCHER.start(), ELSE_IF_MATCHER.end());
-							String[] strings = condition.split("\\s+");
-							activeSymbol = strings[1].trim();
-							if (fSymbols.contains(activeSymbol)) {
-								state = STATE_TRUE_CONDITION;
-							} else {
-								state = STATE_FALSE_CONDITION;
+			StringBuffer buffer = new StringBuffer();
+			try {
+				String line = reader.readLine();
+				String activeSymbol = null;
+				int state = STATE_OUTSIDE_CONDITION;
+				while (line != null) {
+					boolean ifdef = IF_DEF_MATCHER.reset(line).find();
+					boolean elseif = ELSE_IF_MATCHER.reset(line).find();
+					boolean elze = ELSE_MATCHER.reset(line).find();
+					boolean endif = END_MATCHER.reset(line).find();
+					boolean commandLine = ifdef || elseif || elze || endif;
+					boolean written = false;
+					switch (state) {
+						case STATE_OUTSIDE_CONDITION:
+							if (ifdef) {
+								String condition = line.substring(IF_DEF_MATCHER.start(), IF_DEF_MATCHER.end());
+								String[] strings = condition.split("\\s+"); //$NON-NLS-1$
+								activeSymbol = strings[1].trim();
+								if (fSymbols.contains(activeSymbol)) {
+									state = STATE_TRUE_CONDITION;
+								} else {
+									state = STATE_FALSE_CONDITION;
+								}							
+							} else if (elseif) {
+								throw new BuildException("#elseif encountered without corresponding #ifdef"); //$NON-NLS-1$
+							} else if (elze) {
+								throw new BuildException("#else encountered without corresponding #ifdef (" + srcFile.getPath() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+							} else if (endif) {
+								throw new BuildException("#endif encountered without corresponding #ifdef"); //$NON-NLS-1$
 							}
-						} else if (elze) {
-							state = STATE_TRUE_CONDITION;
 							break;
-						} else if (endif) {
-							state = STATE_OUTSIDE_CONDITION;
-							break;
-						} else if (ifdef) {
-							throw new BuildException("illegal nested #ifdef");
-						}
-						break;
-					case STATE_POST_TRUE_CONDITION:
-						if (endif) {
-							state = STATE_OUTSIDE_CONDITION;
-							break;
-						} else if (ifdef) {
-							throw new BuildException("illegal nested #ifdef");
-						}
-						break;
-				}
-				if (!commandLine) {
-					if (state == STATE_OUTSIDE_CONDITION || state == STATE_TRUE_CONDITION) {
-						if (state == STATE_TRUE_CONDITION && strip != null) {
-							if (line.startsWith(strip)) {
-								line = line.substring(strip.length());
+						case STATE_TRUE_CONDITION:
+							if (elze || elseif) {
+								state = STATE_POST_TRUE_CONDITION;
+								break;
+							} else if (endif) {
+								state = STATE_OUTSIDE_CONDITION;
+								break;
+							} else if (ifdef) {
+								throw new BuildException("illegal nested #ifdef"); //$NON-NLS-1$
 							}
-						}
-						buffer.append(line);
-						buffer.append("\n");
-						written = true;
+							break;
+						case STATE_FALSE_CONDITION:
+							if (elseif) {
+								String condition = line.substring(ELSE_IF_MATCHER.start(), ELSE_IF_MATCHER.end());
+								String[] strings = condition.split("\\s+"); //$NON-NLS-1$
+								activeSymbol = strings[1].trim();
+								if (fSymbols.contains(activeSymbol)) {
+									state = STATE_TRUE_CONDITION;
+								} else {
+									state = STATE_FALSE_CONDITION;
+								}
+							} else if (elze) {
+								state = STATE_TRUE_CONDITION;
+								break;
+							} else if (endif) {
+								state = STATE_OUTSIDE_CONDITION;
+								break;
+							} else if (ifdef) {
+								throw new BuildException("illegal nested #ifdef"); //$NON-NLS-1$
+							}
+							break;
+						case STATE_POST_TRUE_CONDITION:
+							if (endif) {
+								state = STATE_OUTSIDE_CONDITION;
+								break;
+							} else if (ifdef) {
+								throw new BuildException("illegal nested #ifdef"); //$NON-NLS-1$
+							}
+							break;
 					}
-				} 
-				changed = changed || !written;								
-				line = reader.readLine();
+					if (!commandLine) {
+						if (state == STATE_OUTSIDE_CONDITION || state == STATE_TRUE_CONDITION) {
+							if (state == STATE_TRUE_CONDITION && strip != null) {
+								if (line.startsWith(strip)) {
+									line = line.substring(strip.length());
+								}
+							}
+							buffer.append(line);
+							buffer.append("\n"); //$NON-NLS-1$
+							written = true;
+						}
+					} 
+					changed = changed || !written;								
+					line = reader.readLine();
+				}
+			}
+			finally {
+				reader.close();
 			}
 			if (!changed) {
 				return null;
@@ -287,8 +292,8 @@ public class PreProcessor extends Task {
 
     public static void main(String[] args) {
 		PreProcessor processor = new PreProcessor();
-		processor.setSymbols("ex2");
-		String string = processor.preProcessFile(new File("c:\\eclipse3.1\\dev\\example.debug.core\\src\\example\\debug\\core\\launcher\\PDALaunchDelegate.java"), "//#");
+		processor.setSymbols("ex2"); //$NON-NLS-1$
+		String string = processor.preProcessFile(new File("c:\\eclipse3.1\\dev\\example.debug.core\\src\\example\\debug\\core\\launcher\\PDALaunchDelegate.java"), "//#"); //$NON-NLS-1$ //$NON-NLS-2$
 		//String string = processor.preProcessFile(new File("c:\\eclipse3.1\\dev\\example.debug.core\\plugin.xml"), null);
 		System.out.println(string);
 	}

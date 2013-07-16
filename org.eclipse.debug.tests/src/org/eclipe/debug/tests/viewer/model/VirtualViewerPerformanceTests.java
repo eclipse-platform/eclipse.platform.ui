@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
@@ -27,7 +28,7 @@ public class VirtualViewerPerformanceTests extends PerformanceTests {
     }
 
     protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
-        return new VirtualTreeModelViewer(fDisplay, SWT.VIRTUAL, new PresentationContext("TestViewer"), fVirtualItemValidator);
+		return new VirtualTreeModelViewer(fDisplay, SWT.VIRTUAL, new PresentationContext("TestViewer"), fVirtualItemValidator); //$NON-NLS-1$
     }
     
     protected int getTestModelDepth() {

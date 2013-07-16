@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		createVerticalSpacer(comp, 3);
 		
 		Label programLabel = new Label(comp, SWT.NONE);
-		programLabel.setText("&Program:");
+		programLabel.setText("&Program:"); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.BEGINNING);
 		programLabel.setLayoutData(gd);
 		programLabel.setFont(font);
@@ -94,8 +94,8 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	protected void browsePDAFiles() {
 		ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), IResource.FILE);
-		dialog.setTitle("PDA Program");
-		dialog.setMessage("Select PDA Program");
+		dialog.setTitle("PDA Program"); //$NON-NLS-1$
+		dialog.setMessage("Select PDA Program"); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
 			Object[] files = dialog.getResult();
 			IFile file = (IFile) files[0];
@@ -161,7 +161,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Main";
+		return "Main"; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -180,15 +180,15 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 			IPath path = new Path(text);
 			IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (member == null) {
-				setErrorMessage("Specified program does not exist");
+				setErrorMessage("Specified program does not exist"); //$NON-NLS-1$
 				return false;
 			} else {
 				if (member.getType() != IResource.FILE) {
-					setWarningMessage("Specified program is not a file.");
+					setWarningMessage("Specified program is not a file."); //$NON-NLS-1$
 				}
 			}
 		} else {
-			setMessage("Specify a program");
+			setMessage("Specify a program"); //$NON-NLS-1$
 		}
 		//#endif
 		return true;

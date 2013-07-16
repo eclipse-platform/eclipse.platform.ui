@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables.details;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -18,6 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * An check box action that allows the word wrap property to be set, determining if the detail pane
@@ -38,8 +41,6 @@ public class DetailPaneWordWrapAction extends Action {
 		boolean prefSetting = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP);
 		fTextViewer.getTextWidget().setWordWrap(prefSetting);
 		setChecked(prefSetting);
-		
-
 	}
 		
 	/* (non-Javadoc)
@@ -47,8 +48,14 @@ public class DetailPaneWordWrapAction extends Action {
 	 */
 	public void run() {
 		fTextViewer.getTextWidget().setWordWrap(isChecked());
-		DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP,isChecked());
-		DebugUIPlugin.getDefault().savePluginPreferences();
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+		if(node != null) {
+			try {
+				node.putBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP, isChecked());
+				node.flush();
+			} catch (BackingStoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
 	}
-	
 }

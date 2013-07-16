@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,12 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	/**
 	 * Identifier for the tempo slider detail pane
 	 */
-	public static final String ID_TEMPO_SLIDER = "TEMPO_SLIDER";
+	public static final String ID_TEMPO_SLIDER = "TEMPO_SLIDER"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for the clock slider detail pane
 	 */
-	public static final String ID_CLOCK_SLIDER = "CLOCK_SLIDER";	
+	public static final String ID_CLOCK_SLIDER = "CLOCK_SLIDER"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#createDetailPane(java.lang.String)
@@ -70,10 +70,10 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	 */
 	public String getDetailPaneDescription(String paneID) {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
-			return "Tempo Slider";
+			return "Tempo Slider"; //$NON-NLS-1$
 		}
 		if (ID_CLOCK_SLIDER.equals(paneID)) {
-			return "Clock Slider";
+			return "Clock Slider"; //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -83,10 +83,10 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	 */
 	public String getDetailPaneName(String paneID) {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
-			return "Tempo Slider";
+			return "Tempo Slider"; //$NON-NLS-1$
 		}
 		if (ID_CLOCK_SLIDER.equals(paneID)) {
-			return "Clock Slider";
+			return "Clock Slider"; //$NON-NLS-1$
 		}
 		return null;
 	}

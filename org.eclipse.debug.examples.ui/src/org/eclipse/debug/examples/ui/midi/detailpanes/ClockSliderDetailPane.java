@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ public class ClockSliderDetailPane implements IDetailPane {
 	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
 	 */
 	public String getDescription() {
-		return "Location (seconds)";
+		return "Location (seconds)"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -91,7 +91,7 @@ public class ClockSliderDetailPane implements IDetailPane {
 	 * @see org.eclipse.debug.ui.IDetailPane#getName()
 	 */
 	public String getName() {
-		return "Clock Slider (seconds)";
+		return "Clock Slider (seconds)"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

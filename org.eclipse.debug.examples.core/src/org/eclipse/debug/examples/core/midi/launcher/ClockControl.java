@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class ClockControl extends TimeControl {
 	 * @param launch
 	 */
 	public ClockControl(MidiLaunch launch) {
-		super("Time" , launch);
+		super("Time" , launch); //$NON-NLS-1$
 	}
 		
 	/* (non-Javadoc)
@@ -84,7 +84,7 @@ public class ClockControl extends TimeControl {
 				return secs * 1000000;
 			}
 		} catch (NumberFormatException e) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, "Time must be an integer (seconds) or 00:00 (minutes:seconds) format", e));
+			throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, "Time must be an integer (seconds) or 00:00 (minutes:seconds) format", e)); //$NON-NLS-1$
 		}
 		return 0L;
 	}

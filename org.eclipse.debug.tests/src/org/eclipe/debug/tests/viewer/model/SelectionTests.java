@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
@@ -70,11 +71,15 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fShell.isDisposed()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     }
 
     private static class SelectionListener implements ISelectionChangedListener {
-        private List fEvents = new ArrayList(1);
+        private final List fEvents = new ArrayList(1);
         
         public void selectionChanged(SelectionChangedEvent event) {
             fEvents.add(event);
@@ -86,7 +91,11 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         fViewer.setAutoExpandLevel(-1);
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
         return model;
     }
@@ -106,7 +115,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         fViewer.addSelectionChangedListener(listener);
 
         // Set the selection and verify that the listener is called.
-        TreeSelection selection = new TreeSelection(model.findElement("3.3.3"));
+		TreeSelection selection = new TreeSelection(model.findElement("3.3.3")); //$NON-NLS-1$
         fViewer.setSelection(selection, true, false);
         assertTrue(listener.fEvents.size() == 1);
 
@@ -125,7 +134,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         final TestModel model = makeMultiLevelModel();
         
         // Set the selection and verify it.
-        TreeSelection selection_3_3_3 = new TreeSelection(model.findElement("3.3.3"));
+		TreeSelection selection_3_3_3 = new TreeSelection(model.findElement("3.3.3")); //$NON-NLS-1$
         fViewer.setSelection(selection_3_3_3, true, false);
         assertEquals(selection_3_3_3, fViewer.getSelection());
 
@@ -149,7 +158,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         });
 
         // Attempt to change selection and verify that old selection is still valid.
-        TreeSelection selection_3_3_1 = new TreeSelection(model.findElement("3.3.1"));
+		TreeSelection selection_3_3_1 = new TreeSelection(model.findElement("3.3.1")); //$NON-NLS-1$
         fViewer.setSelection(selection_3_3_1, true, false);
         assertEquals(selection_3_3_3, fViewer.getSelection());
 
@@ -159,21 +168,27 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         
         // Create the an update delta to attempt to change selection back to 
         // 3.3.3 and verify that selection did not get overriden.
-        TreePath path_3_3_3 = model.findElement("3.3.3");
+		TreePath path_3_3_3 = model.findElement("3.3.3"); //$NON-NLS-1$
         ModelDelta baseDelta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
         ModelDelta delta_3_3_3 = model.getElementDelta(baseDelta, path_3_3_3, false);
         delta_3_3_3.setFlags(IModelDelta.SELECT);
         fViewer.updateViewer(baseDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         assertEquals(selection_3_3_1, fViewer.getSelection());
 
         // Add the *force* flag to the selection delta and update viewer again.
         // Verify that selection did change.
         delta_3_3_3.setFlags(IModelDelta.SELECT | IModelDelta.FORCE);
         fViewer.updateViewer(baseDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         assertEquals(selection_3_3_3, fViewer.getSelection());
     }
 
@@ -192,14 +207,14 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         TestModel model = makeMultiLevelModel();
         
         // Create a selection object to the deepest part of the tree.
-        TreePath elementPath = model.findElement("3.3.3");
+		TreePath elementPath = model.findElement("3.3.3"); //$NON-NLS-1$
         TreeSelection selection = new TreeSelection(elementPath);
 
         // Set the selection.
         fViewer.setSelection(selection, true, false);
 
         // Remove the element
-        TreePath removePath = model.findElement("3");
+		TreePath removePath = model.findElement("3"); //$NON-NLS-1$
         TreePath parentPath = removePath.getParentPath();
         int removeIndex = model.getElement(parentPath).indexOf( model.getElement(removePath) );
         ModelDelta delta = model.removeElementChild(removePath.getParentPath(), removeIndex);
@@ -212,8 +227,11 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         // delta only wait for the delta to be processed.
         fListener.reset(); 
         model.postDelta(delta);
-        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.MODEL_CHANGED_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Check to make sure the selection was made
         //assertTrue(listener.fEvents.size() == 1);
@@ -238,14 +256,14 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         TestModel model = makeMultiLevelModel();
         
         // Create a selection object to the deepest part of the tree.
-        TreePath elementPath = model.findElement("3.3.3");
+		TreePath elementPath = model.findElement("3.3.3"); //$NON-NLS-1$
         TreeSelection selection = new TreeSelection(elementPath);
 
         // Set the selection.
         fViewer.setSelection(selection, true, false);
 
         // Remove the element
-        TreePath removePath = model.findElement("3");
+		TreePath removePath = model.findElement("3"); //$NON-NLS-1$
         TreePath parentPath = removePath.getParentPath();
         int removeIndex = model.getElement(parentPath).indexOf( model.getElement(removePath) );
         model.removeElementChild(removePath.getParentPath(), removeIndex);
@@ -260,8 +278,11 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
 
         // Refresh the viewer
         model.postDelta( new ModelDelta(model.getRootElement(), IModelDelta.CONTENT) );
-        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.ALL_UPDATES_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ITestModelUpdatesListenerConstants.ALL_UPDATES_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Check to make sure the selection was made
         // Commented out until JFace bug 219887 is fixed.

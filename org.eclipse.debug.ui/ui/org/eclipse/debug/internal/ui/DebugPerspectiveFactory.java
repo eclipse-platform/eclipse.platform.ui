@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 		
 		IFolderLayout navFolder= layout.createFolder(IInternalDebugUIConstants.ID_NAVIGATOR_FOLDER_VIEW, IPageLayout.TOP, (float) 0.45, layout.getEditorArea());
 		navFolder.addView(IDebugUIConstants.ID_DEBUG_VIEW);
-		navFolder.addPlaceholder(IPageLayout.ID_RES_NAV);
+		navFolder.addPlaceholder(IPageLayout.ID_PROJECT_EXPLORER);
 		
 		IFolderLayout toolsFolder= layout.createFolder(IInternalDebugUIConstants.ID_TOOLS_FOLDER_VIEW, IPageLayout.RIGHT, (float) 0.50, IInternalDebugUIConstants.ID_NAVIGATOR_FOLDER_VIEW);
 		toolsFolder.addView(IDebugUIConstants.ID_VARIABLE_VIEW);

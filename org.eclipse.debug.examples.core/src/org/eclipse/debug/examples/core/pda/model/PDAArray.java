@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class PDAArray extends PDAValue {
 	 */
 	public IVariable[] getVariables() throws DebugException {
 		String string = getValueString();
-		String[] words = string.split("\\W+");
+		String[] words = string.split("\\W+"); //$NON-NLS-1$
 		IVariable[] variables = new IVariable[words.length];
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];

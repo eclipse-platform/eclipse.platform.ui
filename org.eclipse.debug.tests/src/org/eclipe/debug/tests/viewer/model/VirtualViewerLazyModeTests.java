@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
@@ -60,7 +61,7 @@ public class VirtualViewerLazyModeTests extends TestCase {
      * @return the viewer
      */
     protected ITreeModelViewer createViewer(Display display, Shell shell) {
-        return new VirtualTreeModelViewer(display, SWT.VIRTUAL, new PresentationContext("TestViewer"));
+		return new VirtualTreeModelViewer(display, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
     }
     
     /**
@@ -72,7 +73,11 @@ public class VirtualViewerLazyModeTests extends TestCase {
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fShell.isDisposed()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     }
 
     public void test() {

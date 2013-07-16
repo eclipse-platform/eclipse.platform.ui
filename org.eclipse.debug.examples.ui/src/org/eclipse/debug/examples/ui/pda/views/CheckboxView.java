@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009 Texas Instruments and others
+ * Copyright (c) 2009, 2013 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.swt.SWT;
 
 public class CheckboxView extends VariablesView {
-	public static String ID = "CHECKBOX_VIEW_ID";
+	public static String ID = "CHECKBOX_VIEW_ID"; //$NON-NLS-1$
 	
 	protected int getViewerStyle() {
 		return SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION | SWT.CHECK;

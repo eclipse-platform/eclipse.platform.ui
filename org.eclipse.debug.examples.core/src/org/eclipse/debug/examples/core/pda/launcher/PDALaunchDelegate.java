@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,31 +55,31 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 		List commandList = new ArrayList();
 		
         // Get Java VM path
-        String javaVMHome = System.getProperty("java.home");
-        String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java";
+        String javaVMHome = System.getProperty("java.home"); //$NON-NLS-1$
+        String javaVMExec = javaVMHome + File.separatorChar + "bin" + File.separatorChar + "java"; //$NON-NLS-1$ //$NON-NLS-2$
         if (File.separatorChar == '\\') {
-            javaVMExec += ".exe";
+            javaVMExec += ".exe"; //$NON-NLS-1$
         }   
         File exe = new File(javaVMExec);
         if (!exe.exists()) {
-            abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null);
+            abort(MessageFormat.format("Specified java VM executable {0} does not exist.", new Object[]{javaVMExec}), null); //$NON-NLS-1$
         }
         commandList.add(javaVMExec);
 
-        commandList.add("-cp");
-        commandList.add(File.pathSeparator + DebugCorePlugin.getFileInPlugin(new Path("bin")));
+        commandList.add("-cp"); //$NON-NLS-1$
+        commandList.add(File.pathSeparator + DebugCorePlugin.getFileInPlugin(new Path("bin"))); //$NON-NLS-1$
         
-        commandList.add("org.eclipse.debug.examples.pdavm.PDAVirtualMachine");
+        commandList.add("org.eclipse.debug.examples.pdavm.PDAVirtualMachine"); //$NON-NLS-1$
 
 		// program name
 		String program = configuration.getAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, (String)null);
 		if (program == null) {
-			abort("Perl program unspecified.", null);
+			abort("Perl program unspecified.", null); //$NON-NLS-1$
 		}
 		
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(program));
 		if (!file.exists()) {
-			abort(MessageFormat.format("Perl program {0} does not exist.", new String[] {file.getFullPath().toString()}), null);
+			abort(MessageFormat.format("Perl program {0} does not exist.", new String[] {file.getFullPath().toString()}), null); //$NON-NLS-1$
 		}
 		
 		commandList.add(file.getLocation().toOSString());
@@ -91,11 +91,11 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 			requestPort = findFreePort();
 			eventPort = findFreePort();
 			if (requestPort == -1 || eventPort == -1) {
-				abort("Unable to find free port", null);
+				abort("Unable to find free port", null); //$NON-NLS-1$
 			}
-			commandList.add("-debug");
-			commandList.add("" + requestPort);
-			commandList.add("" + eventPort);
+			commandList.add("-debug"); //$NON-NLS-1$
+			commandList.add("" + requestPort); //$NON-NLS-1$
+			commandList.add("" + eventPort); //$NON-NLS-1$
 		}
 		
 		String[] commandLine = (String[]) commandList.toArray(new String[commandList.size()]);

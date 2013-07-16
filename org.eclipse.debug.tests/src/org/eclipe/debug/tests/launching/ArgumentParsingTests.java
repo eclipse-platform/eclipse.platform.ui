@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2012, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class ArgumentParsingTests extends TestCase {
 	}
 	
 	private void execute1Arg(String cmdLine, String argParsed, String rendered) throws Exception {
-		execute("a " + cmdLine + " b", new String[] { "a", argParsed, "b" }, "a " + rendered + " b");
+		execute("a " + cmdLine + " b", new String[] { "a", argParsed, "b" }, "a " + rendered + " b"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
 	
 	private static void execute(String commandLine, String[] expectedArgs) throws Exception {
@@ -54,18 +54,18 @@ public class ArgumentParsingTests extends TestCase {
 	
 	private static void execute(String commandLine, String[] expectedArgs, String expectedRendered) throws Exception {
 		String[] arguments = DebugPlugin.parseArguments(commandLine);
-		assertEquals("unexpected parseArguments result;",
+		assertEquals("unexpected parseArguments result;", //$NON-NLS-1$
 				Arrays.asList(expectedArgs).toString(),
 				Arrays.asList(arguments).toString());
 		
 		runCommandLine(commandLine, arguments);
 		
 		String rendered = DebugPlugin.renderArguments(arguments, null);
-		assertEquals("unexpected renderArguments result;", expectedRendered, rendered);
+		assertEquals("unexpected renderArguments result;", expectedRendered, rendered); //$NON-NLS-1$
 		
 		if (!commandLine.equals(rendered)) {
 			String[] arguments2 = DebugPlugin.parseArguments(rendered);
-			assertEquals("parsing rendered command line doesn't yield original arguments;",
+			assertEquals("parsing rendered command line doesn't yield original arguments;", //$NON-NLS-1$
 					Arrays.asList(expectedArgs).toString(),
 					Arrays.asList(arguments2).toString());
 		}
@@ -74,7 +74,7 @@ public class ArgumentParsingTests extends TestCase {
 
 	private static void runCommandLine(String commandLine, String[] arguments) throws IOException,
 			URISyntaxException, CoreException {
-		URL classPathUrl = FileLocator.find(TestsPlugin.getDefault().getBundle(), new Path("bin/"), null);
+		URL classPathUrl = FileLocator.find(TestsPlugin.getDefault().getBundle(), new Path("bin/"), null); //$NON-NLS-1$
 		if (classPathUrl == null) { // not running from the workspace, but from the built bundle
 			classPathUrl = FileLocator.find(TestsPlugin.getDefault().getBundle(), Path.ROOT, null);
 		}
@@ -82,22 +82,22 @@ public class ArgumentParsingTests extends TestCase {
 		File classPathFile = URIUtil.toFile(URIUtil.toURI(classPathUrl));
 		
 		String[] execArgs= new String[arguments.length + 4];
-		execArgs[0]= new Path(System.getProperty("java.home")).append("bin/java").toOSString();
-		execArgs[1]= "-cp";
+		execArgs[0] = new Path(System.getProperty("java.home")).append("bin/java").toOSString(); //$NON-NLS-1$ //$NON-NLS-2$
+		execArgs[1] = "-cp"; //$NON-NLS-1$
 		execArgs[2]= classPathFile.getAbsolutePath();
 		execArgs[3]= ArgumentsPrinter.class.getName();
 		System.arraycopy(arguments, 0, execArgs, 4, arguments.length);
 		
 		ArrayList resultArgs = runCommandLine(execArgs);
 		
-		assertEquals("unexpected exec result;",
+		assertEquals("unexpected exec result;", //$NON-NLS-1$
 				Arrays.asList(arguments).toString(),
 				resultArgs.toString());
 		
 		if (! Platform.getOS().equals(Constants.OS_WIN32)) {
-			execArgs = new String[] { "sh", "-c", execArgs[0] + " " + execArgs[1] + " " + execArgs[2] + " " + execArgs[3] + " " + commandLine };
+			execArgs = new String[] { "sh", "-c", execArgs[0] + " " + execArgs[1] + " " + execArgs[2] + " " + execArgs[3] + " " + commandLine }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			resultArgs = runCommandLine(execArgs);
-			assertEquals("unexpected sh exec result;",
+			assertEquals("unexpected sh exec result;", //$NON-NLS-1$
 					Arrays.asList(arguments).toString(),
 					resultArgs.toString());
 		}
@@ -132,8 +132,9 @@ public class ArgumentParsingTests extends TestCase {
 	
 	private static boolean needsQuoting(String s) {
 		int len = s.length();
-		if (len == 0) // empty string has to be quoted
+		if (len == 0) {
 			return true;
+		}
 		for (int i = 0; i < len; i++) {
 			switch (s.charAt(i)) {
 				case ' ': case '\t': case '\\': case '"':
@@ -144,8 +145,9 @@ public class ArgumentParsingTests extends TestCase {
 	}
 
 	private static String winQuote(String s) {
-		if (! needsQuoting(s))
+		if (! needsQuoting(s)) {
 			return s;
+		}
 		s = s.replaceAll("([\\\\]*)\"", "$1$1\\\\\""); //$NON-NLS-1$ //$NON-NLS-2$
 		s = s.replaceAll("([\\\\]*)\\z", "$1$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		return "\"" + s + "\""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -154,140 +156,142 @@ public class ArgumentParsingTests extends TestCase {
 	// -- tests:
 
 	public void testEmpty() throws Exception {
-		execute("", new String[0]);
+		execute("", new String[0]); //$NON-NLS-1$
 	}
 
 	public void test1arg() throws Exception {
-		execute("a", new String[] { "a" });
+		execute("a", new String[] { "a" }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void test2arg() throws Exception {
-		execute("a b", new String[] { "a", "b" });
+		execute("a b", new String[] { "a", "b" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public void test100arg() throws Exception {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < 100; i++)
-			buf.append("a ");
+		 {
+			buf.append("a "); //$NON-NLS-1$
+		}
 		String[] args = new String[100];
-		Arrays.fill(args, "a");
+		Arrays.fill(args, "a"); //$NON-NLS-1$
 		execute(buf.toString(), args, buf.toString().trim());
 	}
 	
 	public void testEscape() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
-			execute1Arg("\\1");
+			execute1Arg("\\1"); //$NON-NLS-1$
 		} else {
-			execute1Arg("\\1", "1", "1");
+			execute1Arg("\\1", "1", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
 	public void testEscapeDoubleQuote1() throws Exception {
-		execute1Arg("\\\"", "\"", "\\\"");
+		execute1Arg("\\\"", "\"", "\\\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public void testEscapeDoubleQuote2() throws Exception {
-		execute1Arg("arg=\\\"bla\\\"", "arg=\"bla\"", "arg=\\\"bla\\\"");
+		execute1Arg("arg=\\\"bla\\\"", "arg=\"bla\"", "arg=\\\"bla\\\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public void testDoubleQuoted1() throws Exception {
-		execute1Arg("\"1 2\"", "1 2");
+		execute1Arg("\"1 2\"", "1 2"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void testDoubleQuoted2() throws Exception {
-		execute1Arg("\"1\"", "1", "1");
+		execute1Arg("\"1\"", "1", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public void testDoubleQuoted3() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 //			execute1Arg("\"\"", "", "\"\""); // would be correct, but ProcessImpl is buggy on Windows JDKs
-			execute1Arg("\"\"");
+			execute1Arg("\"\""); //$NON-NLS-1$
 		} else {
-			execute1Arg("\"\"", "", "\"\"");
+			execute1Arg("\"\"", "", "\"\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
 	public void testDoubleQuoted4() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
-			execute1Arg("\"\"\"\"", "\"", "\\\"");
+			execute1Arg("\"\"\"\"", "\"", "\\\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			execute1Arg("\"\"\"\"", "", "\"\"");
+			execute1Arg("\"\"\"\"", "", "\"\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
 	public void testDoubleQuoted5() throws Exception {
-		execute1Arg("ab\"cd\"ef\"gh\"", "abcdefgh", "abcdefgh");
+		execute1Arg("ab\"cd\"ef\"gh\"", "abcdefgh", "abcdefgh"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public void testDoubleQuotedWithSpace1() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
-			execute1Arg("\"\"\"1\"\" 2\"", "\"1\" 2", "\"\\\"1\\\" 2\"");
+			execute1Arg("\"\"\"1\"\" 2\"", "\"1\" 2", "\"\\\"1\\\" 2\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			execute1Arg("\"\"\"1\"\" 2\"", "1 2", "\"1 2\"");
+			execute1Arg("\"\"\"1\"\" 2\"", "1 2", "\"1 2\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
 	public void testDoubleQuotedWithSpace2() throws Exception {
-		execute1Arg("\"\\\"1\\\" 2\"", "\"1\" 2");
+		execute1Arg("\"\\\"1\\\" 2\"", "\"1\" 2"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public void testSingleQuoted1() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
-			execute("'1 2'", new String[] { "'1", "2'" });
+			execute("'1 2'", new String[] { "'1", "2'" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			execute("'1 2'", new String[] { "1 2" }, "\"1 2\"");
+			execute("'1 2'", new String[] { "1 2" }, "\"1 2\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
 	public void testSingleQuoted2() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
-			execute1Arg("'1'", "'1'", "'1'");
+			execute1Arg("'1'", "'1'", "'1'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			execute1Arg("'1'", "1", "1");
+			execute1Arg("'1'", "1", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
 	public void testWindows1() throws Exception {
-		execute("\"a b c\" d e", new String[] { "a b c", "d", "e" });
+		execute("\"a b c\" d e", new String[] { "a b c", "d", "e" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
 	public void testWindows2() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
-			execute("\"ab\\\"c\" \"\\\\\" d", new String[] { "ab\"c", "\\", "d" }, "ab\\\"c \\ d");
+			execute("\"ab\\\"c\" \"\\\\\" d", new String[] { "ab\"c", "\\", "d" }, "ab\\\"c \\ d"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		} else {
-			execute("\"ab\\\"c\" \"\\\\\" d", new String[] { "ab\"c", "\\", "d" }, "ab\\\"c \\\\ d");
+			execute("\"ab\\\"c\" \"\\\\\" d", new String[] { "ab\"c", "\\", "d" }, "ab\\\"c \\\\ d"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 	}
 	
 	public void testWindows3() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
-			execute("a\\\\\\b d\"e f\"g h", new String[] { "a\\\\\\b", "de fg", "h" }, "a\\\\\\b \"de fg\" h");
+			execute("a\\\\\\b d\"e f\"g h", new String[] { "a\\\\\\b", "de fg", "h" }, "a\\\\\\b \"de fg\" h"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		} else {
-			execute("a\\\\\\b d\"e f\"g h", new String[] { "a\\b", "de fg", "h" }, "a\\\\b \"de fg\" h");
+			execute("a\\\\\\b d\"e f\"g h", new String[] { "a\\b", "de fg", "h" }, "a\\\\b \"de fg\" h"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 	}
 	
 	public void testWindows4() throws Exception {
-		execute("a\\\\\\\"b c d", new String[] { "a\\\"b", "c", "d" });
+		execute("a\\\\\\\"b c d", new String[] { "a\\\"b", "c", "d" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
 	public void testWindows5() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
-			execute("a\\\\\\\\\"b c\" d e", new String[] { "a\\\\b c", "d", "e" }, "\"a\\\\b c\" d e");
+			execute("a\\\\\\\\\"b c\" d e", new String[] { "a\\\\b c", "d", "e" }, "\"a\\\\b c\" d e"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		} else {
-			execute("a\\\\\\\\\"b c\" d e", new String[] { "a\\\\b c", "d", "e" }, "\"a\\\\\\\\b c\" d e");
+			execute("a\\\\\\\\\"b c\" d e", new String[] { "a\\\\b c", "d", "e" }, "\"a\\\\\\\\b c\" d e"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 	}
 	
 	public void testAllInOne() throws Exception {
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
-			execute("1 \"\" 2 \" \" 3 \\\" 4 \"a b\" 5 \\\"bla\\\" 6 \"ab\"cd 7 ef\"gh\" 8 i\"\"j 9 \"x\\\"y\\\\\" 10 z\\\\z 11 \"two-quotes:\"\"\"\"\" 12 \"g\"\"h\" 13 \"\"\"a\"\" b\"",
-					new String[] { "1", "\"\"", "2", " ", "3", "\"", "4", "a b", "5", "\"bla\"", "6", "abcd", "7", "efgh", "8", "ij", "9", "x\"y\\", "10", "z\\\\z", "11", "two-quotes:\"\"", "12", "g\"h", "13", "\"a\" b" },
-					"1 \"\" 2 \" \" 3 \\\" 4 \"a b\" 5 \\\"bla\\\" 6 abcd 7 efgh 8 ij 9 x\\\"y\\ 10 z\\\\z 11 two-quotes:\\\"\\\" 12 g\\\"h 13 \"\\\"a\\\" b\"");
+			execute("1 \"\" 2 \" \" 3 \\\" 4 \"a b\" 5 \\\"bla\\\" 6 \"ab\"cd 7 ef\"gh\" 8 i\"\"j 9 \"x\\\"y\\\\\" 10 z\\\\z 11 \"two-quotes:\"\"\"\"\" 12 \"g\"\"h\" 13 \"\"\"a\"\" b\"", //$NON-NLS-1$
+					new String[] { "1", "\"\"", "2", " ", "3", "\"", "4", "a b", "5", "\"bla\"", "6", "abcd", "7", "efgh", "8", "ij", "9", "x\"y\\", "10", "z\\\\z", "11", "two-quotes:\"\"", "12", "g\"h", "13", "\"a\" b" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$ //$NON-NLS-13$ //$NON-NLS-14$ //$NON-NLS-15$ //$NON-NLS-16$ //$NON-NLS-17$ //$NON-NLS-18$ //$NON-NLS-19$ //$NON-NLS-20$ //$NON-NLS-21$ //$NON-NLS-22$ //$NON-NLS-23$ //$NON-NLS-24$ //$NON-NLS-25$ //$NON-NLS-26$
+					"1 \"\" 2 \" \" 3 \\\" 4 \"a b\" 5 \\\"bla\\\" 6 abcd 7 efgh 8 ij 9 x\\\"y\\ 10 z\\\\z 11 two-quotes:\\\"\\\" 12 g\\\"h 13 \"\\\"a\\\" b\""); //$NON-NLS-1$
 		} else {
-			execute("1 \"\" 2 \" \" 3 \\\" 4 \"a b\" 5 \\\"bla\\\" 6 \"ab\"cd 7 ef\"gh\" 8 i\"\"j 9 \"x\\\"y\\\\\" 10 z\\\\z 11 \"two-quotes:\"\"\"\"\" 12 \"g\"\"h\" 13 \"\"\"a\"\" b\"",
-					new String[] { "1", "", "2", " ", "3", "\"", "4", "a b", "5", "\"bla\"", "6", "abcd", "7", "efgh", "8", "ij", "9", "x\"y\\", "10", "z\\z", "11", "two-quotes:", "12", "gh", "13", "a b" },
-					"1 \"\" 2 \" \" 3 \\\" 4 \"a b\" 5 \\\"bla\\\" 6 abcd 7 efgh 8 ij 9 x\\\"y\\\\ 10 z\\\\z 11 two-quotes: 12 gh 13 \"a b\"");
+			execute("1 \"\" 2 \" \" 3 \\\" 4 \"a b\" 5 \\\"bla\\\" 6 \"ab\"cd 7 ef\"gh\" 8 i\"\"j 9 \"x\\\"y\\\\\" 10 z\\\\z 11 \"two-quotes:\"\"\"\"\" 12 \"g\"\"h\" 13 \"\"\"a\"\" b\"", //$NON-NLS-1$
+					new String[] { "1", "", "2", " ", "3", "\"", "4", "a b", "5", "\"bla\"", "6", "abcd", "7", "efgh", "8", "ij", "9", "x\"y\\", "10", "z\\z", "11", "two-quotes:", "12", "gh", "13", "a b" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$ //$NON-NLS-13$ //$NON-NLS-14$ //$NON-NLS-15$ //$NON-NLS-16$ //$NON-NLS-17$ //$NON-NLS-18$ //$NON-NLS-19$ //$NON-NLS-20$ //$NON-NLS-21$ //$NON-NLS-22$ //$NON-NLS-23$ //$NON-NLS-24$ //$NON-NLS-25$ //$NON-NLS-26$
+					"1 \"\" 2 \" \" 3 \\\" 4 \"a b\" 5 \\\"bla\\\" 6 abcd 7 efgh 8 ij 9 x\\\"y\\\\ 10 z\\\\z 11 two-quotes: 12 gh 13 \"a b\""); //$NON-NLS-1$
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 public class PDAVirtualFindAction extends Action implements IUpdate {
 	
-    private TreeModelViewer fClientViewer;
+    private final TreeModelViewer fClientViewer;
 	
 	protected class VirtualViewerListener implements IViewerUpdateListener, ILabelUpdateListener {
 	    
@@ -121,8 +121,8 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
 	}
 	
 	private static class FindLabelProvider extends LabelProvider {
-		private VirtualTreeModelViewer fVirtualViewer;
-		private Map fTextCache = new HashMap();
+		private final VirtualTreeModelViewer fVirtualViewer;
+		private final Map fTextCache = new HashMap();
 		public FindLabelProvider(VirtualTreeModelViewer viewer, List items) {
 		    fVirtualViewer = viewer;
 		    for (int i = 0; i < items.size(); i++) {
@@ -141,7 +141,7 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
 	}
 
 	public PDAVirtualFindAction(IPresentationContext context) {
-		setText("Find");
+		setText("Find"); //$NON-NLS-1$
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".FindElementAction"); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.FIND_ELEMENT_ACTION);
 		setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
@@ -280,8 +280,8 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
 		    fClientViewer.getControl().getShell(), 
 		    labelProvider, 
 		    items.toArray());
-		dialog.setTitle("PDA Variables View Find");
-		dialog.setMessage("&Specify an element to select (? = any character, * = any String):");
+		dialog.setTitle("PDA Variables View Find"); //$NON-NLS-1$
+		dialog.setMessage("&Specify an element to select (? = any character, * = any String):"); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
 			if (elements.length == 1) {
@@ -304,9 +304,9 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
         } else {
             DebugUIPlugin.errorDialog(
                 fClientViewer.getControl().getShell(), 
-                "Error",
-                "Could not select item:" + labelProvider.getText(findItem),
-                new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Element no longer in viewer."));
+ "Error", //$NON-NLS-1$
+					"Could not select item:" + labelProvider.getText(findItem), //$NON-NLS-1$
+					new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Element no longer in viewer.")); //$NON-NLS-1$
         }	    
 	}
 	

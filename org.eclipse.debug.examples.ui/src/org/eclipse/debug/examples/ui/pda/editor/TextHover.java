@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class TextHover implements ITextHover {
         } catch (BadLocationException e) {
            return null;
         }
-        if (varName.startsWith("$") && varName.length() > 1) {
+		if (varName.startsWith("$") && varName.length() > 1) { //$NON-NLS-1$
             varName = varName.substring(1);
         }
    
@@ -72,7 +72,7 @@ public class TextHover implements ITextHover {
                 for (int i = 0; i < variables.length; i++) {
                     IVariable variable = variables[i];
                     if (variable.getName().equals(varName)) {
-                        return varName + " = " + variable.getValue().getValueString(); 
+						return varName + " = " + variable.getValue().getValueString(); //$NON-NLS-1$
                     }
                 }
             } catch (DebugException e) {

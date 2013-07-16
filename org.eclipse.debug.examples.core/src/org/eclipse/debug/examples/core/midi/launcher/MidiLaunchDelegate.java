@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,25 +44,25 @@ public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
 	 * Identifier for the MIDI launch configuration type
 	 * (value <code>midi.launchType</code>)
 	 */
-	public static final String ID_MIDI_LAUNCH_CONFIGURATION_TYPE = "midi.launchType";
+	public static final String ID_MIDI_LAUNCH_CONFIGURATION_TYPE = "midi.launchType"; //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute for the MIDI file to play
 	 * (value <code>midi.file</code>)
 	 */
-	public static final String ATTR_MIDI_FILE = "midi.file";
+	public static final String ATTR_MIDI_FILE = "midi.file"; //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute for the MIDI launcher. Specifies whether to throw
 	 * an exception when present. Value is one of <code>HANDLED</code> or <code>UNHANDLED</code>.
 	 */
-	public static final String ATTR_THROW_EXCEPTION = "throw.exception";
+	public static final String ATTR_THROW_EXCEPTION = "throw.exception"; //$NON-NLS-1$
 	
 	/**
 	 * Possible values for the <code>ATTR_THROW_EXCEPTION</code>.
 	 */
-	public static final String HANDLED = "HANDLED";
-	public static final String UNHANDLED = "UNHANDLED";
+	public static final String HANDLED = "HANDLED"; //$NON-NLS-1$
+	public static final String UNHANDLED = "UNHANDLED"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
@@ -71,19 +71,19 @@ public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
 		String excep = configuration.getAttribute(ATTR_THROW_EXCEPTION, (String)null);
 		if (excep != null) {
 			if (HANDLED.equals(excep)) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, 303, "Test handled exception during launch", null));
+				throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, 303, "Test handled exception during launch", null)); //$NON-NLS-1$
 			} else {
-				throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, "Test unhandled exception during launch", new Error("Test unhandled exception during launch")));
+				throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, "Test unhandled exception during launch", new Error("Test unhandled exception during launch"))); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		String fileName = configuration.getAttribute(ATTR_MIDI_FILE, (String)null);
 		if (fileName == null) {
-			abort("MIDI file not specified.", null);
+			abort("MIDI file not specified.", null); //$NON-NLS-1$
 		}
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IFile file = root.getFile(new Path(fileName));
 		if (!file.exists()) {
-			abort("MIDI file does not exist.", null);
+			abort("MIDI file does not exist.", null); //$NON-NLS-1$
 		}
 		Sequencer sequencer = null;
 		MidiFileFormat fileFormat = null;
@@ -95,24 +95,29 @@ public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
 				fileFormat = MidiSystem.getMidiFileFormat(location.toFile());
 			}
 		} catch (MidiUnavailableException e) {
-			abort("Cannot initialize sequencer.", e);
+			abort("Cannot initialize sequencer.", e); //$NON-NLS-1$
 		} catch (InvalidMidiDataException e) {
-			abort("Invalid MIDI file.", e);
+			abort("Invalid MIDI file.", e); //$NON-NLS-1$
 		} catch (IOException e) {
-			abort("Error reading MIDI file.", e);
+			abort("Error reading MIDI file.", e); //$NON-NLS-1$
 		}
-		BufferedInputStream stream = new BufferedInputStream(file.getContents());
-		try {
-			sequencer.setSequence(stream);
-		} catch (IOException e) {
-			abort("Error reading MIDI file", e);
-		} catch (InvalidMidiDataException e) {
-			abort("Inavlid MIDI file.", e);
+		if(sequencer != null) {
+			BufferedInputStream stream = new BufferedInputStream(file.getContents());
+			try {
+				sequencer.setSequence(stream);
+			} catch (IOException e) {
+				abort("Error reading MIDI file", e); //$NON-NLS-1$
+			} catch (InvalidMidiDataException e) {
+				abort("Inavlid MIDI file.", e); //$NON-NLS-1$
+			}
+			MidiLaunch midiLaunch = (MidiLaunch)launch;
+			midiLaunch.setSequencer(sequencer);
+			midiLaunch.setFormat(fileFormat);
+			sequencer.start();
 		}
-		MidiLaunch midiLaunch = (MidiLaunch)launch;
-		midiLaunch.setSequencer(sequencer);
-		midiLaunch.setFormat(fileFormat);
-		sequencer.start();
+		else {
+			abort("Could not create the sequencer", null); //$NON-NLS-1$
+		}
 	}
 
 	/**

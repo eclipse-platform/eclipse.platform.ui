@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,9 @@ public class PDAValue extends PDADebugElement implements IValue {
 		try {
 			Integer.parseInt(fValue);
 		} catch (NumberFormatException e) {
-			return "text";
+			return "text"; //$NON-NLS-1$
 		}
-		return "integer";
+		return "integer"; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
@@ -79,7 +79,7 @@ public class PDAValue extends PDADebugElement implements IValue {
 	    // Value with multiple words can be show as an array using logical 
 	    // structures. If the value has multiple words, it needs to indicate 
 	    // that it has children even if logical structures are not turned on.
-		return fValue.split("\\W+").length > 1;
+		return fValue.split("\\W+").length > 1; //$NON-NLS-1$
 	}
 	/*
 	 *  (non-Javadoc)

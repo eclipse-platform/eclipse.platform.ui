@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
@@ -67,7 +68,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
         fShell = new Shell(fDisplay);
         fShell.setSize(800, 600);
 		fShell.setLayout(new FillLayout());
-		fViewer = new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer"));
+		fViewer = new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer")); //$NON-NLS-1$
         fViewer.getTree().addControlListener(new ControlListener() {
             public void controlResized(ControlEvent e) {
                 fResized = true;
@@ -108,7 +109,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		static String[] makeDefaultColumnIds() {
             String[] columnIds = new String[5];
             for (int i = 0; i < columnIds.length; i++) {
-                columnIds[i] = "ColumnId_" + i;
+				columnIds[i] = "ColumnId_" + i; //$NON-NLS-1$
             }
             return columnIds;
 		}
@@ -149,7 +150,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		}
 
 		public String getId() {
-			return "MyColumnPresentationID";
+			return "MyColumnPresentationID"; //$NON-NLS-1$
 		}
 
 		public boolean isOptional() {
@@ -164,7 +165,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		MyColumnPresentation2() {
 			super();
 			for (int i = 0; i < columnIds.length; i++) {
-				columnIds[i] += "_2";
+				columnIds[i] += "_2"; //$NON-NLS-1$
 			}
 			repliedWidths = new int[columnIds.length];
 			Arrays.fill(repliedWidths, -2);
@@ -194,7 +195,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		}
 
 		public String getId() {
-			return "MyColumnPresentation2ID";
+			return "MyColumnPresentation2ID"; //$NON-NLS-1$
 		}
 	}
 
@@ -225,13 +226,13 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 
 	private TestModel makeModel(MyColumnPresentation cp, String rootSufffix) throws InterruptedException {
 		MyModel model = new MyModel(cp);
-		model.setRoot(new TestElement(model, "root" + rootSufffix, new TestElement[] {
-				new TestElement(model, "1", true, true, new TestElement[0]),
-				new TestElement(model, "2", true, false, new TestElement[0]),
-				new TestElement(model, "3", false, true, new TestElement[0]),
-				new TestElement(model, "4", false, false, new TestElement[0]),
-				new TestElement(model, "5", new TestElement[0]),
-				new TestElement(model, "6", new TestElement[0]) }));
+		model.setRoot(new TestElement(model, "root" + rootSufffix, new TestElement[] { //$NON-NLS-1$
+		new TestElement(model, "1", true, true, new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "2", true, false, new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "3", false, true, new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "4", false, false, new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "5", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "6", new TestElement[0]) })); //$NON-NLS-1$
 		fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
 		fViewer.setInput(model.getRootElement());
 		while (!fListener.isFinished()) {
@@ -253,11 +254,13 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	 */
 	public void testInitialColumnAverageWidth() throws InterruptedException {
         // Try to wait for the shell painting to settle
-        if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        if (!fDisplay.readAndDispatch ()) {
+			Thread.sleep(0);
+		}
         fResized = false;
 	    
 		MyColumnPresentation colPre = new MyColumnPresentation();
-		makeModel(colPre, "m1");
+		makeModel(colPre, "m1"); //$NON-NLS-1$
 		Tree tree = fViewer.getTree();
 		TreeColumn[] columns = tree.getColumns();
 		int treeWidth = tree.getSize().x;
@@ -284,11 +287,13 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	 */
 	public void testInitialColumnWidth() throws InterruptedException {
         // Try to wait for the shell painting to settle
-        if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        if (!fDisplay.readAndDispatch ()) {
+			Thread.sleep(0);
+		}
         fResized = false;
 
         MyColumnPresentation2 colPre = new MyColumnPresentation2();
-		makeModel(colPre, "m2");
+		makeModel(colPre, "m2"); //$NON-NLS-1$
 		Tree tree = fViewer.getTree();
 		TreeColumn[] columns = tree.getColumns();
 		
@@ -313,7 +318,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	 */
 	public void testRespectUserSettings() throws InterruptedException {
 		MyColumnPresentation2 colPre = new MyColumnPresentation2();
-		makeModel(colPre, "m2");
+		makeModel(colPre, "m2"); //$NON-NLS-1$
 		TreeColumn[] columns = fViewer.getTree().getColumns();
 		// simulate user resizing each column width
 		int[] newWidths = new int[columns.length];
@@ -327,8 +332,8 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		// get InternalTreeModelViewer to rebuild columns due to change of
 		// model and presentation - first set to another model and column
 		// presentation, then switch to a model with original presentation.
-		makeModel(new MyColumnPresentation(), "m1");
-		makeModel(colPre, "m3");
+		makeModel(new MyColumnPresentation(), "m1"); //$NON-NLS-1$
+		makeModel(colPre, "m3"); //$NON-NLS-1$
 		// verify user resized widths are used instead of the initial widths from IColumnPresentation2
 		columns = fViewer.getTree().getColumns();
 		for (int i = 0; i < columns.length; i++) {
@@ -363,7 +368,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	 */
 	public void testRespectMemento() throws InterruptedException {
 		MyColumnPresentation2 colPre = new MyColumnPresentation2();
-		makeModel(colPre, "m2");
+		makeModel(colPre, "m2"); //$NON-NLS-1$
 		TreeColumn[] columns = fViewer.getTree().getColumns();
 		// simulate user resizing each column width
 		int[] newWidths = new int[columns.length];
@@ -375,7 +380,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 			assertEquals(newWidths[i], columns[i].getWidth());
 		}
 		// save memento
-		final XMLMemento memento = XMLMemento.createWriteRoot("TEST"); 
+		final XMLMemento memento = XMLMemento.createWriteRoot("TEST"); //$NON-NLS-1$
 		fViewer.saveState(memento);
 		// throw away any settings inside the viewer and create a new viewer
 		// with memento settings, this is the same effect resulted from closing
@@ -383,7 +388,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		recreateViewer();
 		fViewer.initState(memento);
 		// get InternalTreeModelViewer to rebuild columns
-		makeModel(colPre, "m2");
+		makeModel(colPre, "m2"); //$NON-NLS-1$
 		// verify widths from memento are used instead of the initial widths from IColumnPresentation2
 		columns = fViewer.getTree().getColumns();
 		for (int i = 0; i < columns.length; i++) {
@@ -398,7 +403,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
     public void testChangedColumnIds() throws InterruptedException {
         MyColumnPresentation colPre = new MyColumnPresentation();
         
-        makeModel(colPre, "m1");
+		makeModel(colPre, "m1"); //$NON-NLS-1$
         TreeColumn[] columns = fViewer.getTree().getColumns();
         // Select visible columns
         fViewer.setVisibleColumns(new String[] { colPre.columnIds[0] });
@@ -411,13 +416,13 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
         // get InternalTreeModelViewer to rebuild columns due to change of
         // model and presentation - first set to another model and column
         // presentation, then switch to a model with original presentation.
-        makeModel(new MyColumnPresentation2(), "m2");
+		makeModel(new MyColumnPresentation2(), "m2"); //$NON-NLS-1$
         
         String[] newColumnIds = MyColumnPresentation.makeDefaultColumnIds();
-        newColumnIds[0] = "new_column_id";
+		newColumnIds[0] = "new_column_id"; //$NON-NLS-1$
         colPre = new MyColumnPresentation(newColumnIds);
         
-        makeModel(colPre, "m3");
+		makeModel(colPre, "m3"); //$NON-NLS-1$
         
         // verify user resized widths are used instead of the initial widths from IColumnPresentation2
         columns = fViewer.getTree().getColumns();

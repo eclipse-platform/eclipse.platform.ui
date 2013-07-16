@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class TestsPlugin extends AbstractUIPlugin {
 	public File getFileInPlugin(IPath path) {
 		try {
 			Bundle bundle = getDefault().getBundle();
-			URL installURL= new URL(bundle.getEntry("/"), path.toString());
+			URL installURL = new URL(bundle.getEntry("/"), path.toString()); //$NON-NLS-1$
 			URL localURL= FileLocator.toFileURL(installURL);//Platform.asLocalURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException e) {

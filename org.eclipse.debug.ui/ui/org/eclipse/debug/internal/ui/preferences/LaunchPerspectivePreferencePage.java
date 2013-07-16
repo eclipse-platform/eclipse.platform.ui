@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -361,6 +361,9 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				String modeString= fmodes.size() == 1 ? fmodes.get(0).toString() : fmodes.toString();
 				SWTFactory.createLabel(parent, modeString + ":", 1); //$NON-NLS-1$
 				combo = SWTFactory.createCombo(parent, SWT.READ_ONLY, 1, fgPerspectiveLabels);
+				if(combo == null) {
+					continue;
+				}
 				String text = getComboSelection(smodes);
 				if(text != null) {
 					combo.setText(text);

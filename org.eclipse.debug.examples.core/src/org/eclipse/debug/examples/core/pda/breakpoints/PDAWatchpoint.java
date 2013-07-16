@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,10 +36,10 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
     private String fLastSuspendType;
     
     // marker attributes
-    public static final String ACCESS = "ACCESS";
-    public static final String MODIFICATION = "MODIFICATION";
-    public static final String FUNCTION_NAME = "FUNCTION_NAME";
-    public static final String VAR_NAME = "VAR_NAME";
+    public static final String ACCESS = "ACCESS"; //$NON-NLS-1$
+    public static final String MODIFICATION = "MODIFICATION"; //$NON-NLS-1$
+    public static final String FUNCTION_NAME = "FUNCTION_NAME"; //$NON-NLS-1$
+    public static final String VAR_NAME = "VAR_NAME"; //$NON-NLS-1$
 
 	/**
 	 * Default constructor is required for the breakpoint manager
@@ -66,7 +66,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	public PDAWatchpoint(final IResource resource, final int lineNumber, final String functionName, final String varName, final boolean access, final boolean modification) throws CoreException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.watchpoint");
+				IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.watchpoint"); //$NON-NLS-1$
 				setMarker(marker);
 				setEnabled(true);
 				ensureMarker().setAttribute(IMarker.LINE_NUMBER, lineNumber);
@@ -74,7 +74,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 				setAccess(access);
 				setModification(modification);
 				setVariable(functionName, varName);
-				marker.setAttribute(IMarker.MESSAGE, "Watchpoint: " + resource.getName() + " [line: " + lineNumber + "]");
+				marker.setAttribute(IMarker.MESSAGE, "Watchpoint: " + resource.getName() + " [line: " + lineNumber + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		};
 		run(getMarkerRule(resource), runnable);
@@ -199,7 +199,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	public void handleEvent(PDAEvent event) {
         if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
             PDARunControlEvent rcEvent = (PDARunControlEvent)event;
-            if (rcEvent.fReason.equals("watch")) {
+            if (rcEvent.fReason.equals("watch")) { //$NON-NLS-1$
                 handleHit(rcEvent);
             }
         }
@@ -211,10 +211,10 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
      * @param event breakpoint event
      */
     private void handleHit(PDARunControlEvent event) {
-        String[] strings = event.fMessage.split(" ");
+        String[] strings = event.fMessage.split(" "); //$NON-NLS-1$
         if (strings.length == 4) {
             String fv = strings[3];
-            int j = fv.indexOf("::");
+            int j = fv.indexOf("::"); //$NON-NLS-1$
             if (j > 0) {
                 String fcn = fv.substring(0, j);
                 String var = fv.substring(j + 2);

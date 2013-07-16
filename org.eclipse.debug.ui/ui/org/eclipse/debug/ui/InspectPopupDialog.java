@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.debug.ui;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -50,6 +52,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * A <code>DebugPopup</code> that can be used to inspect an 
@@ -194,7 +197,15 @@ public class InspectPopupDialog extends DebugPopup {
 	    	int[] weights = fSashForm.getWeights();
 	    	if (weights.length == 2){
 	    		String weightString = weights[0] + ":" + weights[1]; //$NON-NLS-1$
-	    		DebugUIPlugin.getDefault().getPluginPreferences().setValue(PREF_INSPECT_POPUP_SASH_WEIGHTS, weightString);
+	    		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+	    		if(node != null) {
+	    			node.put(PREF_INSPECT_POPUP_SASH_WEIGHTS, weightString);
+	    			try {
+						node.flush();
+					} catch (BackingStoreException e) {
+						DebugUIPlugin.log(e);
+					}
+	    		}
 	    	}
 	    }
     }

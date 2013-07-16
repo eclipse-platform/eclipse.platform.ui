@@ -8,6 +8,7 @@
  * Contributors:
  *     Bjorn Freeman-Benson - initial API and implementation
  *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
+ *     IBM Coporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.examples.pdavm;
 
@@ -56,7 +57,7 @@ public class PDAVirtualMachine {
             fName = name; 
         }
         String fName;
-        String fGroup = "<no_group>";
+        String fGroup = "<no_group>"; //$NON-NLS-1$
         boolean fIsWriteable = true;
         Map fBitFields = new LinkedHashMap(0);
         int fValue;
@@ -91,7 +92,7 @@ public class PDAVirtualMachine {
             if (fArgs.length > next) {
                 return fArgs[next++];
             }
-            return "";
+            return ""; //$NON-NLS-1$
         }
 
         int getNextIntArg() {
@@ -207,7 +208,7 @@ public class PDAVirtualMachine {
         }
         
         void set(String name, Object value) {
-            if (name.startsWith("$")) {
+            if (name.startsWith("$")) { //$NON-NLS-1$
                 setRegisterValue(name, value);
             } else {
                 fLocalVariables.put(name, value);
@@ -215,7 +216,7 @@ public class PDAVirtualMachine {
         }
         
         Object get(String name) {
-            if (name.startsWith("$")) {
+            if (name.startsWith("$")) { //$NON-NLS-1$
                 return getRegisterValue(name);
             } else { 
                 return fLocalVariables.get(name);
@@ -314,8 +315,8 @@ public class PDAVirtualMachine {
     /** The eventstops table holds which events cause suspends and which do not. */
     final Map fEventStops = new HashMap();
     {
-        fEventStops.put("unimpinstr", Boolean.FALSE);
-        fEventStops.put("nosuchlabel", Boolean.FALSE);
+        fEventStops.put("unimpinstr", Boolean.FALSE); //$NON-NLS-1$
+        fEventStops.put("nosuchlabel", Boolean.FALSE); //$NON-NLS-1$
     }
 
     /**
@@ -333,29 +334,29 @@ public class PDAVirtualMachine {
     public static void main(String[] args) {
         String programFile = args.length >= 1 ? args[0] : null;
         if (programFile == null) {
-            System.err.println("Error: No program specified");
+            System.err.println("Error: No program specified"); //$NON-NLS-1$
             return;
         }
 
-        String debugFlag = args.length >= 2 ? args[1] : "";
-        boolean debug = "-debug".equals(debugFlag);
+        String debugFlag = args.length >= 2 ? args[1] : ""; //$NON-NLS-1$
+        boolean debug = "-debug".equals(debugFlag); //$NON-NLS-1$
         int commandPort = 0;
         int eventPort = 0;
 
         if (debug) {
-            String commandPortStr = args.length >= 3 ? args[2] : "";
+            String commandPortStr = args.length >= 3 ? args[2] : ""; //$NON-NLS-1$
             try {
                 commandPort = Integer.parseInt(commandPortStr);
             } catch (NumberFormatException e) {
-                System.err.println("Error: Invalid command port");
+                System.err.println("Error: Invalid command port"); //$NON-NLS-1$
                 return;
             }
 
-            String eventPortStr = args.length >= 4 ? args[3] : "";
+            String eventPortStr = args.length >= 4 ? args[3] : ""; //$NON-NLS-1$
             try {
                 eventPort = Integer.parseInt(eventPortStr);
             } catch (NumberFormatException e) {
-                System.err.println("Error: Invalid event port");
+                System.err.println("Error: Invalid event port"); //$NON-NLS-1$
                 return;
             }
         }
@@ -365,7 +366,7 @@ public class PDAVirtualMachine {
             pdaVM = new PDAVirtualMachine(programFile, debug, commandPort, eventPort);
             pdaVM.startDebugger();
         } catch (IOException e) {
-            System.err.println("Error: " + e.toString());
+            System.err.println("Error: " + e.toString()); //$NON-NLS-1$
             return;
         }
         pdaVM.run();
@@ -431,17 +432,17 @@ public class PDAVirtualMachine {
                 fEventStream.write('\n');
                 fEventStream.flush();
             } catch (IOException e) {
-                System.err.println("Error: " + e);
+                System.err.println("Error: " + e); //$NON-NLS-1$
                 System.exit(1);
             }
         } else if (error) {
-            System.err.println("Error: " + event);
+            System.err.println("Error: " + event); //$NON-NLS-1$
         }
     }
 
     void startDebugger() throws IOException {
         if (fDebug) {
-            System.out.println("-debug " + fCommandPort + " " + fEventPort);
+            System.out.println("-debug " + fCommandPort + " " + fEventPort); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         ServerSocket commandServerSocket = new ServerSocket(fCommandPort);
@@ -455,17 +456,17 @@ public class PDAVirtualMachine {
         fEventStream = new PrintStream(fEventSocket.getOutputStream());
         eventServerSocket.close();
 
-        System.out.println("debug connection accepted");
+        System.out.println("debug connection accepted"); //$NON-NLS-1$
 
-        fSuspendVM = "client";
+        fSuspendVM = "client"; //$NON-NLS-1$
     }
     
     void run() {
         int id = fNextThreadId++;
-        sendDebugEvent("vmstarted", false);
-        fThreads.put(new Integer(id), new PDAThread(id, "main", 0));
+        sendDebugEvent("vmstarted", false); //$NON-NLS-1$
+        fThreads.put(new Integer(id), new PDAThread(id, "main", 0)); //$NON-NLS-1$
         if (fDebug) {
-            sendDebugEvent("started " + id, false);
+            sendDebugEvent("started " + id, false); //$NON-NLS-1$
         }
 
         boolean allThreadsSuspended = false;
@@ -499,21 +500,21 @@ public class PDAVirtualMachine {
                         // If this thread is in a step-return operation, check
                         // if we've returned from a call.  
                         instruction = thread.fThreadCode[thread.fCurrentFrame.fPC];
-                        if ("return".equals(instruction)) {
+                        if ("return".equals(instruction)) { //$NON-NLS-1$
                             // Note: this will only be triggered if the current 
                             // thread also has the fStepReturn flag set.
                             if (fStepReturnVM) {
-                                fSuspendVM = thread.fID + " step";
+                                fSuspendVM = thread.fID + " step"; //$NON-NLS-1$
                             } else {
-                                thread.fSuspend = "step";
+                                thread.fSuspend = "step"; //$NON-NLS-1$
                             }
                         }
                     }
                     if (!thread.fRun) {
-                        sendDebugEvent("exited " + thread.fID, false);
+                        sendDebugEvent("exited " + thread.fID, false); //$NON-NLS-1$
                         fThreads.remove(new Integer(thread.fID));
                     } else if (thread.fSuspend != null) {
-                        sendDebugEvent("suspended " + thread.fID + " " + thread.fSuspend, false);
+                        sendDebugEvent("suspended " + thread.fID + " " + thread.fSuspend, false); //$NON-NLS-1$ //$NON-NLS-2$
                         thread.fStep = thread.fStepReturn = thread.fPerformingEval = false;
                     }
                 } 
@@ -524,7 +525,7 @@ public class PDAVirtualMachine {
             Thread.yield();
         }
         
-        sendDebugEvent("vmterminated", false);
+        sendDebugEvent("vmterminated", false); //$NON-NLS-1$
         if (fDebug) {
             try {
                 fCommandReceiveStream.close();
@@ -533,7 +534,7 @@ public class PDAVirtualMachine {
                 fEventStream.close();
                 fEventSocket.close();
             } catch (IOException e) {
-                System.out.println("Error: " + e);
+                System.out.println("Error: " + e); //$NON-NLS-1$
             }
         }
 
@@ -549,38 +550,38 @@ public class PDAVirtualMachine {
         Args args = new Args( (String[])tokens.toArray(new String[tokens.size()]) );
 
         boolean opValid = true;
-        if (op.equals("add")) iAdd(thread, args);
-        else if (op.equals("branch_not_zero")) iBranchNotZero(thread, args);
-        else if (op.equals("call")) iCall(thread, args);
-        else if (op.equals("dec")) iDec(thread, args);
-        else if (op.equals("def")) iDef(thread, args);
-        else if (op.equals("dup")) iDup(thread, args);
-        else if (op.equals("exec")) iExec(thread, args);            
-        else if (op.equals("halt")) iHalt(thread, args);
-        else if (op.equals("output")) iOutput(thread, args);
-        else if (op.equals("pop")) iPop(thread, args);
-        else if (op.equals("push")) iPush(thread, args);
-        else if (op.equals("return")) iReturn(thread, args);
-        else if (op.equals("var")) iVar(thread, args);
-        else if (op.equals("xyzzy")) iInternalEndEval(thread, args);
-        else if (op.startsWith(":")) {} // label
-        else if (op.startsWith("#")) {} // comment
+        if (op.equals("add")) iAdd(thread, args); //$NON-NLS-1$
+        else if (op.equals("branch_not_zero")) iBranchNotZero(thread, args); //$NON-NLS-1$
+        else if (op.equals("call")) iCall(thread, args); //$NON-NLS-1$
+        else if (op.equals("dec")) iDec(thread, args); //$NON-NLS-1$
+        else if (op.equals("def")) iDef(thread, args); //$NON-NLS-1$
+        else if (op.equals("dup")) iDup(thread, args); //$NON-NLS-1$
+        else if (op.equals("exec")) iExec(thread, args);             //$NON-NLS-1$
+        else if (op.equals("halt")) iHalt(thread, args); //$NON-NLS-1$
+        else if (op.equals("output")) iOutput(thread, args); //$NON-NLS-1$
+        else if (op.equals("pop")) iPop(thread, args); //$NON-NLS-1$
+        else if (op.equals("push")) iPush(thread, args); //$NON-NLS-1$
+        else if (op.equals("return")) iReturn(thread, args); //$NON-NLS-1$
+        else if (op.equals("var")) iVar(thread, args); //$NON-NLS-1$
+        else if (op.equals("xyzzy")) iInternalEndEval(thread, args); //$NON-NLS-1$
+        else if (op.startsWith(":")) {} // label //$NON-NLS-1$
+        else if (op.startsWith("#")) {} // comment //$NON-NLS-1$
         else {
             opValid = false;
         }
 
         if (!opValid) {
-            sendDebugEvent("unimplemented instruction " + op, true);
-            if ( ((Boolean)fEventStops.get("unimpinstr")).booleanValue() ) {
-                fSuspendVM = thread.fID + " event unimpinstr";
+            sendDebugEvent("unimplemented instruction " + op, true); //$NON-NLS-1$
+            if ( ((Boolean)fEventStops.get("unimpinstr")).booleanValue() ) { //$NON-NLS-1$
+                fSuspendVM = thread.fID + " event unimpinstr"; //$NON-NLS-1$
                 thread.fCurrentFrame.fPC--;
             }
         } else if (thread.fStep) {
             if (fStepVM) {
-                fSuspendVM = thread.fID + " step";
+                fSuspendVM = thread.fID + " step"; //$NON-NLS-1$
                 fStepVM = false;
             } else {
-                thread.fSuspend = "step";
+                thread.fSuspend = "step"; //$NON-NLS-1$
             }
             thread.fStep = false;
         }
@@ -600,11 +601,11 @@ public class PDAVirtualMachine {
                     fBreakpoints.containsKey(pc)) 
                 {
                     if ( ((Boolean)fBreakpoints.get(pc)).booleanValue() ) {
-                        fSuspendVM = thread.fID + " breakpoint " + pc;
+                        fSuspendVM = thread.fID + " breakpoint " + pc; //$NON-NLS-1$
                     } else {
-                        thread.fSuspend = "breakpoint " + pc;
+                        thread.fSuspend = "breakpoint " + pc; //$NON-NLS-1$
                         thread.fStep = thread.fStepReturn = false;
-                        sendDebugEvent("suspended " + thread.fID + " " + thread.fSuspend, false);
+                        sendDebugEvent("suspended " + thread.fID + " " + thread.fSuspend, false); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 }
             }
@@ -617,14 +618,14 @@ public class PDAVirtualMachine {
      */
     void yieldToDebug(boolean allThreadsSuspended) {
         if (fDebug) {
-            String line = "";
+            String line = ""; //$NON-NLS-1$
             try {
                 if (allThreadsSuspended || fCommandReceiveStream.ready()) {
                     line = fCommandReceiveStream.readLine();
                     processDebugCommand(line);
                 }
             } catch (IOException e) {
-                System.err.println("Error: " + e);
+                System.err.println("Error: " + e); //$NON-NLS-1$
                 System.exit(1);
             }
         }
@@ -635,7 +636,7 @@ public class PDAVirtualMachine {
      */
     void debugUI() {
         if (!fStarted) {
-            sendDebugEvent("vmsuspended " + fSuspendVM, false);
+            sendDebugEvent("vmsuspended " + fSuspendVM, false); //$NON-NLS-1$
         } else {
             fStarted = false;
         }
@@ -650,11 +651,11 @@ public class PDAVirtualMachine {
         }
         
         while (fSuspendVM != null) {
-            String line = "";
+            String line = ""; //$NON-NLS-1$
             try {
                 line = fCommandReceiveStream.readLine();
             } catch (IOException e) {
-                System.err.println("Error: " + e);
+                System.err.println("Error: " + e); //$NON-NLS-1$
                 System.exit(1);
                 return;
             }
@@ -662,9 +663,9 @@ public class PDAVirtualMachine {
         }
 
         if (fStepVM || fStepReturnVM) {
-            sendDebugEvent("vmresumed step", false);
+            sendDebugEvent("vmresumed step", false); //$NON-NLS-1$
         } else {
-            sendDebugEvent("vmresumed client", false);
+            sendDebugEvent("vmresumed client", false); //$NON-NLS-1$
         }
     }
 
@@ -681,43 +682,43 @@ public class PDAVirtualMachine {
         }
         Args args = new Args( (String[])tokens.toArray(new String[tokens.size()]));
 
-        if ("children".equals(command)) debugChildren(args);
-        else if ("clear".equals(command)) debugClearBreakpoint(args);
-        else if ("data".equals(command)) debugData(args);
-        else if ("drop".equals(command)) debugDropFrame(args);
-        else if ("eval".equals(command)) debugEval(args);
-        else if ("eventstop".equals(command)) debugEventStop(args);
-        else if ("frame".equals(command)) debugFrame(args);
-        else if ("groups".equals(command)) debugGroups(args);
-        else if ("popdata".equals(command)) debugPopData(args);
-        else if ("pushdata".equals(command)) debugPushData(args);
-        else if ("registers".equals(command)) debugRegisters(args);
-        else if ("restart".equals(command)) debugRestart(args);
-        else if ("resume".equals(command)) debugResume(args);
-        else if ("set".equals(command)) debugSetBreakpoint(args);
-        else if ("setdata".equals(command)) debugSetData(args);
-        else if ("setvar".equals(command)) debugSetVariable(args);
-        else if ("stack".equals(command)) debugStack(args);
-        else if ("stackdepth".equals(command)) debugStackDepth(args);
-        else if ("state".equals(command)) debugState(args);
-        else if ("step".equals(command)) debugStep(args);
-        else if ("stepreturn".equals(command)) debugStepReturn(args);
-        else if ("suspend".equals(command)) debugSuspend(args);
-        else if ("terminate".equals(command)) debugTerminate();
-        else if ("threads".equals(command)) debugThreads();
-        else if ("var".equals(command)) debugVar(args);
-        else if ("vmresume".equals(command)) debugVMResume();
-        else if ("vmsuspend".equals(command)) debugVMSuspend();
-        else if ("watch".equals(command)) debugWatch(args);
+        if ("children".equals(command)) debugChildren(args); //$NON-NLS-1$
+        else if ("clear".equals(command)) debugClearBreakpoint(args); //$NON-NLS-1$
+        else if ("data".equals(command)) debugData(args); //$NON-NLS-1$
+        else if ("drop".equals(command)) debugDropFrame(args); //$NON-NLS-1$
+        else if ("eval".equals(command)) debugEval(args); //$NON-NLS-1$
+        else if ("eventstop".equals(command)) debugEventStop(args); //$NON-NLS-1$
+        else if ("frame".equals(command)) debugFrame(args); //$NON-NLS-1$
+        else if ("groups".equals(command)) debugGroups(args); //$NON-NLS-1$
+        else if ("popdata".equals(command)) debugPopData(args); //$NON-NLS-1$
+        else if ("pushdata".equals(command)) debugPushData(args); //$NON-NLS-1$
+        else if ("registers".equals(command)) debugRegisters(args); //$NON-NLS-1$
+        else if ("restart".equals(command)) debugRestart(args); //$NON-NLS-1$
+        else if ("resume".equals(command)) debugResume(args); //$NON-NLS-1$
+        else if ("set".equals(command)) debugSetBreakpoint(args); //$NON-NLS-1$
+        else if ("setdata".equals(command)) debugSetData(args); //$NON-NLS-1$
+        else if ("setvar".equals(command)) debugSetVariable(args); //$NON-NLS-1$
+        else if ("stack".equals(command)) debugStack(args); //$NON-NLS-1$
+        else if ("stackdepth".equals(command)) debugStackDepth(args); //$NON-NLS-1$
+        else if ("state".equals(command)) debugState(args); //$NON-NLS-1$
+        else if ("step".equals(command)) debugStep(args); //$NON-NLS-1$
+        else if ("stepreturn".equals(command)) debugStepReturn(args); //$NON-NLS-1$
+        else if ("suspend".equals(command)) debugSuspend(args); //$NON-NLS-1$
+        else if ("terminate".equals(command)) debugTerminate(); //$NON-NLS-1$
+        else if ("threads".equals(command)) debugThreads(); //$NON-NLS-1$
+        else if ("var".equals(command)) debugVar(args); //$NON-NLS-1$
+        else if ("vmresume".equals(command)) debugVMResume(); //$NON-NLS-1$
+        else if ("vmsuspend".equals(command)) debugVMSuspend(); //$NON-NLS-1$
+        else if ("watch".equals(command)) debugWatch(args); //$NON-NLS-1$
         else {
-            sendCommandResponse("error: invalid command\n");
+            sendCommandResponse("error: invalid command\n"); //$NON-NLS-1$
         }
     }
 
     void debugChildren(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
 
@@ -727,7 +728,7 @@ public class PDAVirtualMachine {
         Frame frame = sfnumber >= thread.fFrames.size()    
             ? thread.fCurrentFrame : (Frame)thread.fFrames.get(sfnumber);
 
-        String varDot = var + ".";
+        String varDot = var + "."; //$NON-NLS-1$
         List children = new ArrayList();
         for (Iterator itr = frame.fLocalVariables.keySet().iterator(); itr.hasNext();) {
             String localVar = (String)itr.next();
@@ -750,15 +751,15 @@ public class PDAVirtualMachine {
         int line = args.getNextIntArg();
 
         fBreakpoints.remove( new Integer(line) );
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
-    private static Pattern fPackPattern = Pattern.compile("%([a-fA-F0-9][a-fA-F0-9])");
+    private static Pattern fPackPattern = Pattern.compile("%([a-fA-F0-9][a-fA-F0-9])"); //$NON-NLS-1$
 
     void debugData(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
 
@@ -774,7 +775,7 @@ public class PDAVirtualMachine {
     void debugDropFrame(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
 
@@ -782,34 +783,34 @@ public class PDAVirtualMachine {
             thread.fCurrentFrame = (Frame)thread.fFrames.remove(thread.fFrames.size() - 1);
         }
         thread.fCurrentFrame.fPC--;
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
         if (fSuspendVM != null) {
-            sendDebugEvent("vmresumed drop", false);
-            sendDebugEvent("vmsuspended " + thread.fID + " drop", false);
+            sendDebugEvent("vmresumed drop", false); //$NON-NLS-1$
+            sendDebugEvent("vmsuspended " + thread.fID + " drop", false); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-            sendDebugEvent("resumed " + thread.fID + " drop", false);
-            sendDebugEvent("suspended " + thread.fID + " drop", false);
+            sendDebugEvent("resumed " + thread.fID + " drop", false); //$NON-NLS-1$ //$NON-NLS-2$
+            sendDebugEvent("suspended " + thread.fID + " drop", false); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
     void debugEval(Args args) {
         if (fSuspendVM != null) {
-            sendCommandResponse("error: cannot evaluate while vm is suspended\n");        
+            sendCommandResponse("error: cannot evaluate while vm is suspended\n");         //$NON-NLS-1$
             return;
         }
         
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
         
         if (thread.fSuspend == null) {
-            sendCommandResponse("error: thread running\n");
+            sendCommandResponse("error: thread running\n"); //$NON-NLS-1$
             return;
         }
         
-        StringTokenizer tokenizer = new StringTokenizer(args.getNextStringArg(), "|");
+        StringTokenizer tokenizer = new StringTokenizer(args.getNextStringArg(), "|"); //$NON-NLS-1$
         tokenizer.countTokens();
 
         int numEvalLines = tokenizer.countTokens();
@@ -834,7 +835,7 @@ public class PDAVirtualMachine {
             }
             thread.fThreadCode[fCode.length + i] = lineBuf.toString();
         }
-        thread.fThreadCode[fCode.length + numEvalLines] = "xyzzy";
+        thread.fThreadCode[fCode.length + numEvalLines] = "xyzzy"; //$NON-NLS-1$
         thread.fThreadLabels = mapLabels(fCode);
 
         thread.fSavedPC = thread.fCurrentFrame.fPC;
@@ -843,28 +844,28 @@ public class PDAVirtualMachine {
         
         thread.fSuspend = null;
         
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
 
-        sendDebugEvent("resumed " + thread.fID + " eval", false);
+        sendDebugEvent("resumed " + thread.fID + " eval", false); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     void debugEventStop(Args args) {
         String event = args.getNextStringArg();
         int stop = args.getNextIntArg();
         fEventStops.put(event, new Boolean(stop > 0));
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugTerminate() {
-        sendCommandResponse("ok\n");
-        sendDebugEvent("vmterminated", false);
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
+        sendDebugEvent("vmterminated", false); //$NON-NLS-1$
         System.exit(0);
     }
 
     void debugFrame(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
 
@@ -875,9 +876,12 @@ public class PDAVirtualMachine {
         } else {
             frame = (Frame)thread.fFrames.get(sfnumber);
         }
-        sendCommandResponse(printFrame(frame) + "\n");
+        sendCommandResponse(printFrame(frame) + "\n"); //$NON-NLS-1$
     }
 
+    /**
+     * @param args
+     */
     void debugGroups(Args args) {
         TreeSet groups = new TreeSet();
         for (Iterator itr = fRegisters.values().iterator(); itr.hasNext();) {
@@ -896,24 +900,24 @@ public class PDAVirtualMachine {
     void debugPopData(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
 
         thread.fStack.pop();
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugPushData(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
         
         Object val = args.getNextIntOrStringArg();
         thread.fStack.push(val);
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugRegisters(Args args) {
@@ -951,43 +955,46 @@ public class PDAVirtualMachine {
         sendCommandResponse(response.toString());
     }
 
+    /**
+     * @param args
+     */
     void debugRestart(Args args) {
-        fSuspendVM = "restart";
+        fSuspendVM = "restart"; //$NON-NLS-1$
 
         for (Iterator itr = fThreads.keySet().iterator(); itr.hasNext();) {
             Integer id = (Integer)itr.next();
-            sendDebugEvent("exited " + id, false);            
+            sendDebugEvent("exited " + id, false);             //$NON-NLS-1$
         }
         fThreads.clear();
 
         int id = fNextThreadId++;
-        fThreads.put(new Integer(id), new PDAThread(id, "main", 0));
-        sendDebugEvent("started " + id, false);            
+        fThreads.put(new Integer(id), new PDAThread(id, "main", 0)); //$NON-NLS-1$
+        sendDebugEvent("started " + id, false);             //$NON-NLS-1$
         
         fRegisters.clear();
         
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugResume(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         } 
         if (fSuspendVM != null) {
-            sendCommandResponse("error: cannot resume thread when vm is suspended\n");
+            sendCommandResponse("error: cannot resume thread when vm is suspended\n"); //$NON-NLS-1$
             return;
         } 
         if (thread.fSuspend == null) {
-            sendCommandResponse("error: thread already running\n");
+            sendCommandResponse("error: thread already running\n"); //$NON-NLS-1$
             return;
         } 
         
         thread.fSuspend = null;
-        sendDebugEvent("resumed " + thread.fID + " client", false);
+        sendDebugEvent("resumed " + thread.fID + " client", false); //$NON-NLS-1$ //$NON-NLS-2$
         
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugSetBreakpoint(Args args) {
@@ -995,13 +1002,13 @@ public class PDAVirtualMachine {
         int stopVM = args.getNextIntArg();
         
         fBreakpoints.put(new Integer(line), new Boolean(stopVM != 0));
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugSetData(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
         
@@ -1013,13 +1020,13 @@ public class PDAVirtualMachine {
         } else {
             thread.fStack.add(0, val);
         }
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugSetVariable(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
 
@@ -1027,7 +1034,7 @@ public class PDAVirtualMachine {
         String var = args.getNextStringArg();
         Object val = args.getNextIntOrStringArg();
         while (args.hasNextArg()) {
-            val = val.toString() + " " + args.getNextStringArg();
+            val = val.toString() + " " + args.getNextStringArg(); //$NON-NLS-1$
         }
         
         if (sfnumber >= thread.fFrames.size()) {
@@ -1035,13 +1042,13 @@ public class PDAVirtualMachine {
         } else {
             ((Frame)thread.fFrames.get(sfnumber)).set(var, val);
         }
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugStack(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
 
@@ -1060,10 +1067,10 @@ public class PDAVirtualMachine {
     void debugStackDepth(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
-        sendCommandResponse( Integer.toString(thread.fFrames.size() + 1) + "\n" );
+        sendCommandResponse( Integer.toString(thread.fFrames.size() + 1) + "\n" ); //$NON-NLS-1$
     }
 
 
@@ -1092,19 +1099,19 @@ public class PDAVirtualMachine {
         PDAThread thread = args.getThreadArg();
         String response = null;
         if (thread == null) {
-            response = fSuspendVM == null ? "running" : fSuspendVM;
+            response = fSuspendVM == null ? "running" : fSuspendVM; //$NON-NLS-1$
         } else if (fSuspendVM != null) {
-            response = "vm";
+            response = "vm"; //$NON-NLS-1$
         } else {
-            response = thread.fSuspend == null ? "running" : thread.fSuspend;
+            response = thread.fSuspend == null ? "running" : thread.fSuspend; //$NON-NLS-1$
         }
-        sendCommandResponse(response + "\n");
+        sendCommandResponse(response + "\n"); //$NON-NLS-1$
     }
     
     void debugStep(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         } 
 
@@ -1123,20 +1130,20 @@ public class PDAVirtualMachine {
             thread.fStep = true;
         } else {
             if (thread.fSuspend == null) {
-                sendCommandResponse("error: thread already running\n");
+                sendCommandResponse("error: thread already running\n"); //$NON-NLS-1$
                 return;
             }
             thread.fSuspend = null;
             thread.fStep = true;
-            sendDebugEvent("resumed " + thread.fID + " step", false);
+            sendDebugEvent("resumed " + thread.fID + " step", false); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugStepReturn(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         } 
         
@@ -1146,34 +1153,34 @@ public class PDAVirtualMachine {
             thread.fStepReturn = true;
         } else {
             if (thread.fSuspend == null) {
-                sendCommandResponse("error: thread running\n");
+                sendCommandResponse("error: thread running\n"); //$NON-NLS-1$
                 return;
             }
             thread.fSuspend = null;
             thread.fStepReturn = true;
-            sendDebugEvent("resumed " + thread.fID + " step", false);
+            sendDebugEvent("resumed " + thread.fID + " step", false); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugSuspend(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         } 
         if (fSuspendVM != null) {
-            sendCommandResponse("error: vm already suspended\n");
+            sendCommandResponse("error: vm already suspended\n"); //$NON-NLS-1$
             return;
         }
         if (thread.fSuspend != null) {
-            sendCommandResponse("error: thread already suspended\n");
+            sendCommandResponse("error: thread already suspended\n"); //$NON-NLS-1$
             return;
         } 
         
-        thread.fSuspend = "client";
-        sendDebugEvent("suspended " + thread.fID + " client", false);
-        sendCommandResponse("ok\n");
+        thread.fSuspend = "client"; //$NON-NLS-1$
+        sendDebugEvent("suspended " + thread.fID + " client", false); //$NON-NLS-1$ //$NON-NLS-2$
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugThreads() {
@@ -1182,13 +1189,13 @@ public class PDAVirtualMachine {
             response.append(itr.next());
             response.append(' ');
         }
-        sendCommandResponse(response.toString().trim() + "\n");
+        sendCommandResponse(response.toString().trim() + "\n"); //$NON-NLS-1$
     }
 
     void debugVar(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {
-            sendCommandResponse("error: invalid thread\n");
+            sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
             return;
         }
 
@@ -1200,39 +1207,43 @@ public class PDAVirtualMachine {
         
         Object val = frame.get(var);
         if (val == null) {
-            sendCommandResponse("error: variable undefined\n");
+            sendCommandResponse("error: variable undefined\n"); //$NON-NLS-1$
         } else {
-            sendCommandResponse(val.toString() + "\n");
+            sendCommandResponse(val.toString() + "\n"); //$NON-NLS-1$
         }
     }
 
     void debugVMResume() {
         if (fSuspendVM == null) {
-            sendCommandResponse("error: vm already running\n");
+            sendCommandResponse("error: vm already running\n"); //$NON-NLS-1$
             return;
         } 
 
         fSuspendVM = null;
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugVMSuspend() {
         if (fSuspendVM != null) {
-            sendCommandResponse("error: vm already suspended\n");
+            sendCommandResponse("error: vm already suspended\n"); //$NON-NLS-1$
             return;
         }
 
-        fSuspendVM = "client";
-        sendCommandResponse("ok\n");
+        fSuspendVM = "client"; //$NON-NLS-1$
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
     void debugWatch(Args args) {
         String funcAndVar = args.getNextStringArg();
         int flags = args.getNextIntArg();
         fWatchpoints.put(funcAndVar, new Integer(flags));
-        sendCommandResponse("ok\n");
+        sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
+    /**
+     * @param thread
+     * @param args
+     */
     void iAdd(PDAThread thread, Args args) {
         Object val1 = thread.fStack.pop();
         Object val2 = thread.fStack.pop();
@@ -1252,9 +1263,9 @@ public class PDAVirtualMachine {
             if (thread.fThreadLabels.containsKey(label)) {
                 thread.fCurrentFrame.fPC = ((Integer)thread.fThreadLabels.get(label)).intValue();
             } else {
-                sendDebugEvent("no such label " + label, true);
-                if ( ((Boolean)fEventStops.get("nosuchlabel")).booleanValue() ) {
-                    fSuspendVM = thread.fID + " event nosuchlabel";
+                sendDebugEvent("no such label " + label, true); //$NON-NLS-1$
+                if ( ((Boolean)fEventStops.get("nosuchlabel")).booleanValue() ) { //$NON-NLS-1$
+                    fSuspendVM = thread.fID + " event nosuchlabel"; //$NON-NLS-1$
                     thread.fStack.push(val);
                     thread.fCurrentFrame.fPC--;
                 }
@@ -1268,14 +1279,18 @@ public class PDAVirtualMachine {
             thread.fFrames.add(thread.fCurrentFrame);
             thread.fCurrentFrame = new Frame(label, ((Integer)thread.fThreadLabels.get(label)).intValue());
         } else {
-            sendDebugEvent("no such label " + label, true);
-            if ( ((Boolean)fEventStops.get("nosuchlabel")).booleanValue() ) {
-                fSuspendVM = thread.fID + " event nosuchlabel";
+            sendDebugEvent("no such label " + label, true); //$NON-NLS-1$
+            if ( ((Boolean)fEventStops.get("nosuchlabel")).booleanValue() ) { //$NON-NLS-1$
+                fSuspendVM = thread.fID + " event nosuchlabel"; //$NON-NLS-1$
                 thread.fCurrentFrame.fPC--;
             }
         }
     }
 
+    /**
+     * @param thread
+     * @param args
+     */
     void iDec(PDAThread thread, Args args) {
         Object val = thread.fStack.pop();
         if (val instanceof Integer) {
@@ -1284,6 +1299,10 @@ public class PDAVirtualMachine {
         thread.fStack.push(val);
     }
 
+    /**
+     * @param thread
+     * @param args
+     */
     void iDef(PDAThread thread, Args args) {
         String type = args.getNextStringArg();
 
@@ -1291,30 +1310,30 @@ public class PDAVirtualMachine {
         String regName = getRegisterPartOfName(name);
         String bitFieldName = getBitFieldPartOfName(name);
 
-        if ("register".equals(type)) {
+        if ("register".equals(type)) { //$NON-NLS-1$
             Register reg = new Register(regName); 
             reg.fGroup = args.getNextStringArg();
             fRegisters.put(regName, reg);
             reg.fIsWriteable = args.getNextBooleanArg();
-        } else if ("bitfield".equals(type)) {
+        } else if ("bitfield".equals(type)) { //$NON-NLS-1$
             Register reg = (Register)fRegisters.get(regName);
             if (reg == null) return;
             BitField bitField = new BitField(bitFieldName);
             bitField.fBitOffset = args.getNextIntArg();
             bitField.fBitCount = args.getNextIntArg();
             reg.fBitFields.put(bitFieldName, bitField);
-        } else if ("mnemonic".equals(type)) {
+        } else if ("mnemonic".equals(type)) { //$NON-NLS-1$
             Register reg = (Register)fRegisters.get(regName);
             if (reg == null) return;
             BitField bitField = (BitField)reg.fBitFields.get(bitFieldName);
             if (bitField == null) return;
             bitField.fMnemonics.put(args.getNextStringArg(), new Integer(args.getNextIntArg()));
         }
-        sendDebugEvent("registers", false);
+        sendDebugEvent("registers", false); //$NON-NLS-1$
     }
 
     private String getRegisterPartOfName(String name) {
-        if (name.startsWith("$")) {
+        if (name.startsWith("$")) { //$NON-NLS-1$
             int end = name.indexOf('.');
             end = end != -1 ? end : name.length();
             return name.substring(1, end);
@@ -1324,12 +1343,16 @@ public class PDAVirtualMachine {
 
     private String getBitFieldPartOfName(String name) {
         int start = name.indexOf('.');
-        if (name.startsWith("$") && start != -1) {
+        if (name.startsWith("$") && start != -1) { //$NON-NLS-1$
             return name.substring(start + 1, name.length());
         }
         return null;        
     }
 
+    /**
+     * @param thread
+     * @param args
+     */
     void iDup(PDAThread thread, Args args) {
         Object val = thread.fStack.pop();
         thread.fStack.push(val);
@@ -1341,32 +1364,40 @@ public class PDAVirtualMachine {
         if (fLabels.containsKey(label)) {
             int id = fNextThreadId++;
             fThreads.put( new Integer(id), new PDAThread(id, label, ((Integer)fLabels.get(label)).intValue()) );
-            sendDebugEvent("started " + id, false);
+            sendDebugEvent("started " + id, false); //$NON-NLS-1$
         } else {
-            sendDebugEvent("no such label " + label, true);
-            if ( ((Boolean)fEventStops.get("nosuchlabel")).booleanValue() ) {
-                thread.fSuspend = "event nosuchlabel";
+            sendDebugEvent("no such label " + label, true); //$NON-NLS-1$
+            if ( ((Boolean)fEventStops.get("nosuchlabel")).booleanValue() ) { //$NON-NLS-1$
+                thread.fSuspend = "event nosuchlabel"; //$NON-NLS-1$
                 thread.fCurrentFrame.fPC--;
             }
         }
     }
 
+    /**
+     * @param thread
+     * @param args
+     */
     void iHalt(PDAThread thread, Args args) {
         thread.fRun = false;
     }
 
+    /**
+     * @param thread
+     * @param args
+     */
     void iOutput(PDAThread thread, Args args) {
         System.out.println(thread.fStack.pop());
     }
 
     void iPop(PDAThread thread, Args args) {
         String arg = args.getNextStringArg();
-        if (arg.startsWith("$")) {
+        if (arg.startsWith("$")) { //$NON-NLS-1$
             String var = arg.substring(1);
             thread.fCurrentFrame.set(var, thread.fStack.pop());
-            String key = thread.fCurrentFrame.fFunction + "::" + var;
+            String key = thread.fCurrentFrame.fFunction + "::" + var; //$NON-NLS-1$
             if ( fWatchpoints.containsKey(key) && (((Integer)fWatchpoints.get(key)).intValue() & 2) != 0 ) {
-                fSuspendVM = thread.fID + " watch write " + key;
+                fSuspendVM = thread.fID + " watch write " + key; //$NON-NLS-1$
             }
         } else {
             thread.fStack.pop();
@@ -1376,20 +1407,20 @@ public class PDAVirtualMachine {
     void iPush(PDAThread thread, Args args) {
         String arg = args.getNextStringArg();
         while (arg.length() != 0) {
-            if (arg.startsWith("$")) {
+            if (arg.startsWith("$")) { //$NON-NLS-1$
                 String var = arg.substring(1);
                 Object val = thread.fCurrentFrame.get(var);
-                if (val == null) val = "<undefined>";
+                if (val == null) val = "<undefined>"; //$NON-NLS-1$
                 thread.fStack.push(val);
-                String key = thread.fCurrentFrame.fFunction + "::" + var;
+                String key = thread.fCurrentFrame.fFunction + "::" + var; //$NON-NLS-1$
                 if (fWatchpoints.containsKey(key) && (((Integer)fWatchpoints.get(key)).intValue() & 1) != 0) {
-                    fSuspendVM = thread.fID + " watch read " + key;
+                    fSuspendVM = thread.fID + " watch read " + key; //$NON-NLS-1$
                 }
             } else {
                 Object val = arg;
                 if (args.hasNextArg()) {
                     while (args.hasNextArg()) {
-                        val = val.toString() + " " + args.getNextStringArg();
+                        val = val.toString() + " " + args.getNextStringArg(); //$NON-NLS-1$
                     }
                 } else {
                     try {
@@ -1404,6 +1435,10 @@ public class PDAVirtualMachine {
         }
     }
 
+    /**
+     * @param thread
+     * @param args
+     */
     void iReturn(PDAThread thread, Args args) {
         if (!thread.fFrames.isEmpty()) {
             thread.fCurrentFrame = (Frame)thread.fFrames.remove(thread.fFrames.size() - 1);
@@ -1419,13 +1454,17 @@ public class PDAVirtualMachine {
         thread.fCurrentFrame.set(var, new Integer(0));
     }
 
+    /**
+     * @param thread
+     * @param args
+     */
     void iInternalEndEval(PDAThread thread, Args args) {
         Object result = thread.fStack.pop();
         thread.fThreadCode = fCode;
         thread.fThreadLabels = fLabels;
         thread.fCurrentFrame.fPC = thread.fSavedPC;
-        sendDebugEvent("evalresult " + result, false);
-        thread.fSuspend = "eval";
+        sendDebugEvent("evalresult " + result, false); //$NON-NLS-1$
+        thread.fSuspend = "eval"; //$NON-NLS-1$
         thread.fPerformingEval = false;
     }
 

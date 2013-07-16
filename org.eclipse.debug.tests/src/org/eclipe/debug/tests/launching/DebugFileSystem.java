@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class DebugFileSystem extends FileSystem {
 	/**
 	 * Keys URIs to file stores for existing files
 	 */
-	private Map files = new HashMap();
+	private final Map files = new HashMap();
 
 	/**
 	 * Constructs the singleton
@@ -43,7 +43,7 @@ public class DebugFileSystem extends FileSystem {
 		system = this;
 		// create root of the file system
 		try {
-			setContents(new URI("debug", Path.ROOT.toString(), null), DIRECTORY_BYTES);
+			setContents(new URI("debug", Path.ROOT.toString(), null), DIRECTORY_BYTES); //$NON-NLS-1$
 		} catch (URISyntaxException e) {}
 	}
 	

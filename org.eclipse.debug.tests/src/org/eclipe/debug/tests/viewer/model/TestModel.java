@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems and others.
+ * Copyright (c) 2009, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
@@ -14,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
@@ -43,6 +42,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Display;
+import org.junit.Assert;
 
 /**
  * Test model for the use in unit tests.  This test model contains a set of 
@@ -57,7 +57,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         private final TestModel fModel;
         private final String fID;
         TestElement[] fChildren;
-        String fLabelAppendix = "";
+        String fLabelAppendix = ""; //$NON-NLS-1$
         boolean fExpanded;
         boolean fChecked;
         boolean fGrayed;
@@ -324,7 +324,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         update.done();
     }
     
-    public final static String ELEMENT_MEMENTO_ID = "id";
+    public final static String ELEMENT_MEMENTO_ID = "id"; //$NON-NLS-1$
     
     public void compareElements(final IElementCompareRequest[] updates) {
     	doUpdate(updates);
@@ -412,8 +412,8 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)_viewer;
         TestElement element = getElement(path);
         if ( Boolean.TRUE.equals(_viewer.getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK)) ) {
-            Assert.assertEquals(element.getChecked(), viewer.getElementChecked(path));
-            Assert.assertEquals(element.getGrayed(), viewer.getElementGrayed(path));
+            Assert.assertTrue(element.getChecked() == viewer.getElementChecked(path));
+            Assert.assertTrue(element.getGrayed() == viewer.getElementGrayed(path));
         }
         
         if (!expandedElementsOnly || path.getSegmentCount() == 0 || viewer.getExpandedState(path) ) {
@@ -424,14 +424,14 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             	if (TestModelUpdatesListener.isFiltered(children[i], filters)) {
             		continue;
             	}
-                Assert.assertEquals(children[i], viewer.getChildElement(path, viewerIndex));
+            	Assert.assertEquals(children[i], viewer.getChildElement(path, viewerIndex));
                 validateData(viewer, path.createChildPath(children[i]), expandedElementsOnly, filters);
             	viewerIndex++;
             }
             Assert.assertEquals(viewerIndex, viewer.getChildCount(path));            
         } else if (!viewer.getExpandedState(path)) {
             // If element not expanded, verify the plus sign.
-            Assert.assertEquals(viewer.getHasChildren(path), element.getChildren().length > 0);
+            Assert.assertTrue(viewer.getHasChildren(path) == element.getChildren().length > 0);
         }
     }
 
@@ -470,7 +470,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
                 }
             }
             if (j == children.length) {
-                throw new IllegalArgumentException("Invalid path");
+                throw new IllegalArgumentException("Invalid path"); //$NON-NLS-1$
             }
         }
         return delta;
@@ -486,7 +486,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     }
     
     public ModelDelta appendElementLabel(TreePath path, String labelAppendix) {
-        Assert.assertTrue(path.startsWith(fRootPath, null));
+        org.junit.Assert.assertTrue(path.startsWith(fRootPath, null));
         ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
         ModelDelta baseDelta = getBaseDelta(rootDelta);
         TreePath relativePath = getRelativePath(path);
@@ -499,7 +499,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     }
 
     public ModelDelta setElementChecked(TreePath path, boolean checked, boolean grayed) {
-        Assert.assertTrue(path.startsWith(fRootPath, null));
+    	Assert.assertTrue(path.startsWith(fRootPath, null));
         ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
         ModelDelta baseDelta = getBaseDelta(rootDelta);
         TreePath relativePath = getRelativePath(path);
@@ -658,7 +658,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     }
     
     public String toString() {
-        return getElementString(fRoot, "");
+        return getElementString(fRoot, ""); //$NON-NLS-1$
     }
     
     public String getElementString(TestElement element, String indent) {
@@ -668,14 +668,14 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         builder.append('\n');
         TestElement[] children = element.getChildren();
         for (int i = 0; i < children.length; i++) {
-            builder.append(getElementString(children[i], indent + "  "));
+            builder.append(getElementString(children[i], indent + "  ")); //$NON-NLS-1$
         }
         return builder.toString();
     }
     
     public static TestModel simpleSingleLevel() {
         TestModel model = new TestModel();
-        model.setRoot( new TestElement(model, "root", makeSingleLevelModelElements(model, 6, "")));
+        model.setRoot( new TestElement(model, "root", makeSingleLevelModelElements(model, 6, ""))); //$NON-NLS-1$ //$NON-NLS-2$
         return model;
     }
 
@@ -692,7 +692,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         TestElement[] elements = new TestElement[depth];
         for (int i = 0; i < depth; i++) {
             String name = prefix + i;
-            elements[i] = new TestElement(model, name, makeMultiLevelElements(model, i, name + "."));
+            elements[i] = new TestElement(model, name, makeMultiLevelElements(model, i, name + ".")); //$NON-NLS-1$
         }
         return elements;
     }    
@@ -706,35 +706,35 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     	TestElement[] elements = new TestElement[count];
         for (int i = 0; i < count; i++) {
             String name = prefix + i;
-            elements[i] = new TestElement(model, name, makeMultiLevelElements2(model, levelCounts, name + "."));
+            elements[i] = new TestElement(model, name, makeMultiLevelElements2(model, levelCounts, name + ".")); //$NON-NLS-1$
         }
         return elements;
     }    
 
     public static TestModel simpleMultiLevel() {
         TestModel model = new TestModel();
-        model.setRoot( new TestElement(model, "root", new TestElement[] {
-            new TestElement(model, "1", new TestElement[0]),
-            new TestElement(model, "2", true, false, new TestElement[] {
-                new TestElement(model, "2.1", true, true, new TestElement[0]),
-                new TestElement(model, "2.2", false, true, new TestElement[0]),
-                new TestElement(model, "2.3", true, false, new TestElement[0]),
+        model.setRoot( new TestElement(model, "root", new TestElement[] { //$NON-NLS-1$
+            new TestElement(model, "1", new TestElement[0]), //$NON-NLS-1$
+            new TestElement(model, "2", true, false, new TestElement[] { //$NON-NLS-1$
+                new TestElement(model, "2.1", true, true, new TestElement[0]), //$NON-NLS-1$
+                new TestElement(model, "2.2", false, true, new TestElement[0]), //$NON-NLS-1$
+                new TestElement(model, "2.3", true, false, new TestElement[0]), //$NON-NLS-1$
             }),
-            new TestElement(model, "3", new TestElement[] {
-                new TestElement(model, "3.1", new TestElement[] {
-                    new TestElement(model, "3.1.1", new TestElement[0]),
-                    new TestElement(model, "3.1.2", new TestElement[0]),
-                    new TestElement(model, "3.1.3", new TestElement[0]),
+            new TestElement(model, "3", new TestElement[] { //$NON-NLS-1$
+                new TestElement(model, "3.1", new TestElement[] { //$NON-NLS-1$
+                    new TestElement(model, "3.1.1", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.1.2", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.1.3", new TestElement[0]), //$NON-NLS-1$
                 }),
-                new TestElement(model, "3.2", new TestElement[] {
-                    new TestElement(model, "3.2.1", new TestElement[0]),
-                    new TestElement(model, "3.2.2", new TestElement[0]),
-                    new TestElement(model, "3.2.3", new TestElement[0]),
+                new TestElement(model, "3.2", new TestElement[] { //$NON-NLS-1$
+                    new TestElement(model, "3.2.1", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.2.2", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.2.3", new TestElement[0]), //$NON-NLS-1$
                 }),
-                new TestElement(model, "3.3", new TestElement[] {
-                    new TestElement(model, "3.3.1", new TestElement[0]),
-                    new TestElement(model, "3.3.2", new TestElement[0]),
-                    new TestElement(model, "3.3.3", new TestElement[0]),
+                new TestElement(model, "3.3", new TestElement[] { //$NON-NLS-1$
+                    new TestElement(model, "3.3.1", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.3.2", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.3.3", new TestElement[0]), //$NON-NLS-1$
                 }),
             })
         }) );
@@ -743,39 +743,39 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     
     public static TestModel compositeMultiLevel() {
         TestModel m2 = new TestModel();
-        m2.setRoot( new TestElement(m2, "m2.root", new TestElement[] {
-            new TestElement(m2, "m2.1", new TestElement[0]),
-            new TestElement(m2, "m2.2", true, false, new TestElement[] {
-                new TestElement(m2, "m2.2.1", true, true, new TestElement[0]),
-                new TestElement(m2, "m2.2.2", false, true, new TestElement[0]),
-                new TestElement(m2, "m2.2.3", true, false, new TestElement[0]),
+        m2.setRoot( new TestElement(m2, "m2.root", new TestElement[] { //$NON-NLS-1$
+            new TestElement(m2, "m2.1", new TestElement[0]), //$NON-NLS-1$
+            new TestElement(m2, "m2.2", true, false, new TestElement[] { //$NON-NLS-1$
+                new TestElement(m2, "m2.2.1", true, true, new TestElement[0]), //$NON-NLS-1$
+                new TestElement(m2, "m2.2.2", false, true, new TestElement[0]), //$NON-NLS-1$
+                new TestElement(m2, "m2.2.3", true, false, new TestElement[0]), //$NON-NLS-1$
             }),
         }) );
 
         TestModel m3 = new TestModel();
-        m3.setRoot( new TestElement(m3, "m3.root", new TestElement[] {
-            new TestElement(m3, "m3.1", new TestElement[0]),
-            new TestElement(m3, "m3.2", true, false, new TestElement[] {
-                new TestElement(m3, "m3.2.1", true, true, new TestElement[0]),
-                new TestElement(m3, "m3.2.2", false, true, new TestElement[0]),
-                new TestElement(m3, "m3.2.3", true, false, new TestElement[0]),
+        m3.setRoot( new TestElement(m3, "m3.root", new TestElement[] { //$NON-NLS-1$
+            new TestElement(m3, "m3.1", new TestElement[0]), //$NON-NLS-1$
+            new TestElement(m3, "m3.2", true, false, new TestElement[] { //$NON-NLS-1$
+                new TestElement(m3, "m3.2.1", true, true, new TestElement[0]), //$NON-NLS-1$
+                new TestElement(m3, "m3.2.2", false, true, new TestElement[0]), //$NON-NLS-1$
+                new TestElement(m3, "m3.2.3", true, false, new TestElement[0]), //$NON-NLS-1$
             }),
         }) );
 
         TestModel m4 = new TestModel();
-        m4.setRoot( new TestElement(m4, "m4.root", new TestElement[] {
-            new TestElement(m4, "m4.1", new TestElement[0]),
-            new TestElement(m4, "m4.2", true, false, new TestElement[] {
-                new TestElement(m4, "m4.2.1", true, true, new TestElement[0]),
-                new TestElement(m4, "m4.2.2", false, true, new TestElement[0]),
-                new TestElement(m4, "m4.2.3", true, false, new TestElement[0]),
+        m4.setRoot( new TestElement(m4, "m4.root", new TestElement[] { //$NON-NLS-1$
+            new TestElement(m4, "m4.1", new TestElement[0]), //$NON-NLS-1$
+            new TestElement(m4, "m4.2", true, false, new TestElement[] { //$NON-NLS-1$
+                new TestElement(m4, "m4.2.1", true, true, new TestElement[0]), //$NON-NLS-1$
+                new TestElement(m4, "m4.2.2", false, true, new TestElement[0]), //$NON-NLS-1$
+                new TestElement(m4, "m4.2.3", true, false, new TestElement[0]), //$NON-NLS-1$
             }),
         }) );
 
         TestModel m1 = new TestModel();
-        m1.setRoot( new TestElement(m1, "m1.root", new TestElement[] {
-            new TestElement(m1, "m1.1", new TestElement[0]),
-            new TestElement(m1, "m1.2", true, false, new TestElement[] {
+        m1.setRoot( new TestElement(m1, "m1.root", new TestElement[] { //$NON-NLS-1$
+            new TestElement(m1, "m1.1", new TestElement[0]), //$NON-NLS-1$
+            new TestElement(m1, "m1.2", true, false, new TestElement[] { //$NON-NLS-1$
                 m2.fRoot,
                 m3.fRoot,
                 m4.fRoot,
@@ -788,133 +788,133 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
 
     public static TestModel simpleDeepMultiLevel() {
         TestModel model = new TestModel();
-        model.setRoot( new TestElement(model, "root", new TestElement[] {
-            new TestElement(model, "1", new TestElement[0]),
-            new TestElement(model, "2", true, false, new TestElement[] {
-                new TestElement(model, "2.1", true, true, new TestElement[0]),
-                new TestElement(model, "2.2", false, true, new TestElement[0]),
-                new TestElement(model, "2.3", true, false, new TestElement[0]),
+        model.setRoot( new TestElement(model, "root", new TestElement[] { //$NON-NLS-1$
+            new TestElement(model, "1", new TestElement[0]), //$NON-NLS-1$
+            new TestElement(model, "2", true, false, new TestElement[] { //$NON-NLS-1$
+                new TestElement(model, "2.1", true, true, new TestElement[0]), //$NON-NLS-1$
+                new TestElement(model, "2.2", false, true, new TestElement[0]), //$NON-NLS-1$
+                new TestElement(model, "2.3", true, false, new TestElement[0]), //$NON-NLS-1$
             }),
-            new TestElement(model, "3", new TestElement[] {
-                new TestElement(model, "3.1", new TestElement[] {
-                    new TestElement(model, "3.1.1", new TestElement[0]),
-                    new TestElement(model, "3.1.2", new TestElement[0]),
-                    new TestElement(model, "3.1.3", new TestElement[0]),
+            new TestElement(model, "3", new TestElement[] { //$NON-NLS-1$
+                new TestElement(model, "3.1", new TestElement[] { //$NON-NLS-1$
+                    new TestElement(model, "3.1.1", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.1.2", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.1.3", new TestElement[0]), //$NON-NLS-1$
                 }),
-                new TestElement(model, "3.2", new TestElement[] {
-                    new TestElement(model, "3.2.1", new TestElement[0]),
-                    new TestElement(model, "3.2.2", new TestElement[0]),
-                    new TestElement(model, "3.2.3", new TestElement[0]),
+                new TestElement(model, "3.2", new TestElement[] { //$NON-NLS-1$
+                    new TestElement(model, "3.2.1", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.2.2", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.2.3", new TestElement[0]), //$NON-NLS-1$
                 }),
-                new TestElement(model, "3.3", new TestElement[] {
-                    new TestElement(model, "3.3.1", new TestElement[0]),
-                    new TestElement(model, "3.3.2", new TestElement[0]),
-                    new TestElement(model, "3.3.3", new TestElement[0]),
+                new TestElement(model, "3.3", new TestElement[] { //$NON-NLS-1$
+                    new TestElement(model, "3.3.1", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.3.2", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.3.3", new TestElement[0]), //$NON-NLS-1$
                 }),
-                new TestElement(model, "3.4", new TestElement[] {
-                    new TestElement(model, "3.4.1", new TestElement[0]),
-                    new TestElement(model, "3.4.2", new TestElement[0]),
-                    new TestElement(model, "3.4.3", new TestElement[0]),
+                new TestElement(model, "3.4", new TestElement[] { //$NON-NLS-1$
+                    new TestElement(model, "3.4.1", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.4.2", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.4.3", new TestElement[0]), //$NON-NLS-1$
                 }),
-                new TestElement(model, "3.5", new TestElement[] {
-                    new TestElement(model, "3.5.1", new TestElement[0]),
-                    new TestElement(model, "3.5.2", new TestElement[0]),
-                    new TestElement(model, "3.5.3", new TestElement[0]),
+                new TestElement(model, "3.5", new TestElement[] { //$NON-NLS-1$
+                    new TestElement(model, "3.5.1", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.5.2", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.5.3", new TestElement[0]), //$NON-NLS-1$
                 }),
-                new TestElement(model, "3.6", new TestElement[] {
-                    new TestElement(model, "3.6.1", new TestElement[0]),
-                    new TestElement(model, "3.6.2", new TestElement[0]),
-                    new TestElement(model, "3.6.3", new TestElement[] {
-                        new TestElement(model, "3.6.3.1", new TestElement[0]),
-                        new TestElement(model, "3.6.3.2", new TestElement[0]),
-                        new TestElement(model, "3.6.3.4", new TestElement[0]),
-                        new TestElement(model, "3.6.3.5", new TestElement[0]),
-                        new TestElement(model, "3.6.3.6", new TestElement[0]),
-                        new TestElement(model, "3.6.3.7", new TestElement[0]),
-                        new TestElement(model, "3.6.3.8", new TestElement[0]),
-                        new TestElement(model, "3.6.3.9", new TestElement[0]),
-                        new TestElement(model, "3.6.3.10", new TestElement[0]),
-                        new TestElement(model, "3.6.3.11", new TestElement[0]),
-                        new TestElement(model, "3.6.3.12", new TestElement[0]),
-                        new TestElement(model, "3.6.3.13", new TestElement[0]),
-                        new TestElement(model, "3.6.3.14", new TestElement[0]),
-                        new TestElement(model, "3.6.3.15", new TestElement[0]),
-                        new TestElement(model, "3.6.3.16", new TestElement[] {
-                            new TestElement(model, "3.6.3.16.1", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.2", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.4", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.5", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.6", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.7", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.8", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.9", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.10", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.11", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.12", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.13", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.14", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.15", new TestElement[0]),
-                            new TestElement(model, "3.6.3.16.16", new TestElement[] {
-                                new TestElement(model, "3.6.3.16.16.1", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.2", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.4", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.5", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.6", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.7", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.8", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.9", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.10", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.11", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.12", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.13", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.14", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.15", new TestElement[0]),
-                                new TestElement(model, "3.6.3.16.16.16", new TestElement[] {
-                                    new TestElement(model, "3.6.3.16.16.16.1", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.2", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.4", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.5", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.6", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.7", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.8", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.9", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.10", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.11", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.12", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.13", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.14", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.15", new TestElement[0]),
-                                    new TestElement(model, "3.6.3.16.16.16.16", new TestElement[] {
-                                        new TestElement(model, "3.6.3.16.16.16.16.1", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.2", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.4", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.5", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.6", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.7", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.8", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.9", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.10", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.11", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.12", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.13", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.14", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.15", new TestElement[0]),
-                                        new TestElement(model, "3.6.3.16.16.16.16.16", new TestElement[] {
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.1", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.2", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.4", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.5", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.6", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.7", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.8", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.9", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.10", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.11", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.12", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.13", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.14", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.15", new TestElement[0]),
-                                            new TestElement(model, "3.6.3.16.16.16.16.16.16", new TestElement[0]),
+                new TestElement(model, "3.6", new TestElement[] { //$NON-NLS-1$
+                    new TestElement(model, "3.6.1", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.6.2", new TestElement[0]), //$NON-NLS-1$
+                    new TestElement(model, "3.6.3", new TestElement[] { //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.1", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.2", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.4", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.5", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.6", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.7", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.8", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.9", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.10", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.11", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.12", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.13", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.14", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.15", new TestElement[0]), //$NON-NLS-1$
+                        new TestElement(model, "3.6.3.16", new TestElement[] { //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.1", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.2", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.4", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.5", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.6", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.7", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.8", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.9", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.10", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.11", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.12", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.13", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.14", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.15", new TestElement[0]), //$NON-NLS-1$
+                            new TestElement(model, "3.6.3.16.16", new TestElement[] { //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.1", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.2", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.4", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.5", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.6", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.7", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.8", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.9", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.10", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.11", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.12", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.13", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.14", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.15", new TestElement[0]), //$NON-NLS-1$
+                                new TestElement(model, "3.6.3.16.16.16", new TestElement[] { //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.1", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.2", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.4", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.5", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.6", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.7", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.8", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.9", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.10", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.11", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.12", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.13", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.14", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.15", new TestElement[0]), //$NON-NLS-1$
+                                    new TestElement(model, "3.6.3.16.16.16.16", new TestElement[] { //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.1", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.2", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.4", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.5", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.6", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.7", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.8", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.9", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.10", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.11", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.12", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.13", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.14", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.15", new TestElement[0]), //$NON-NLS-1$
+                                        new TestElement(model, "3.6.3.16.16.16.16.16", new TestElement[] { //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.1", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.2", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.4", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.5", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.6", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.7", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.8", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.9", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.10", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.11", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.12", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.13", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.14", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.15", new TestElement[0]), //$NON-NLS-1$
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.16", new TestElement[0]), //$NON-NLS-1$
                                         }),
                                     }),
                                 }),

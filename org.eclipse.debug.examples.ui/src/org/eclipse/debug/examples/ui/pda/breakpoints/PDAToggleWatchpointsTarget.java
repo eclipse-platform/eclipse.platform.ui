@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 	        final PDAStackFrame frame = var.getStackFrame();
 	        final Shell shell = part.getSite().getShell(); 
 	        
-	        new Job("Toggle PDA Watchpoint") {
+			new Job("Toggle PDA Watchpoint") { //$NON-NLS-1$
 	            { setSystem(true); }
 	            
 	            protected IStatus run(IProgressMonitor monitor) {
@@ -98,11 +98,11 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 	                } catch (final CoreException e) {
 	                    // Need to switch back to the UI thread to show the error
 	                    // dialog.
-	                    new WorkbenchJob(shell.getDisplay(), "Toggle PDA Watchpoint") {
+						new WorkbenchJob(shell.getDisplay(), "Toggle PDA Watchpoint") { //$NON-NLS-1$
 	                        { setSystem(true); }
 	                        
-	                        public IStatus runInUIThread(IProgressMonitor monitor) {
-	                            ErrorDialog.openError(shell, "Failed to create PDA watchpoint", "Failed to create PDA watchpoint.\n", e.getStatus());
+	                        public IStatus runInUIThread(IProgressMonitor submonitor) {
+								ErrorDialog.openError(shell, "Failed to create PDA watchpoint", "Failed to create PDA watchpoint.\n", e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 	                            return Status.OK_STATUS;
 	                        }
 	                    }.schedule();
@@ -129,8 +129,8 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 	    try {
     	    while(true) {
     	        String line = reader.readLine().trim();
-    	        if (line.startsWith("var")) {
-    	            String varName = line.substring("var".length()).trim();
+				if (line.startsWith("var")) { //$NON-NLS-1$
+					String varName = line.substring("var".length()).trim(); //$NON-NLS-1$
     	            if (varName.equals(var)) {
     	                break;
     	            }

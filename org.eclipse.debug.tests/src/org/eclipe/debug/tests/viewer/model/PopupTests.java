@@ -81,7 +81,11 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fShell.isDisposed()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
     }
 
     /**
@@ -98,22 +102,30 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
         TestElement element = model.getRootElement().getChildren()[0];
         TreePath elementPath = new TreePath(new Object[] { element });
         TestElement[] newChildren = new TestElement[] {
-            new TestElement(model, "1.1 - new", new TestElement[0]),
-            new TestElement(model, "1.2 - new", new TestElement[0]),
-            new TestElement(model, "1.3 - new", new TestElement[0]),
+ new TestElement(model, "1.1 - new", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "1.2 - new", new TestElement[0]), //$NON-NLS-1$
+		new TestElement(model, "1.3 - new", new TestElement[0]), //$NON-NLS-1$
         };
         ModelDelta delta = model.setElementChildren(elementPath, newChildren);
         
         fListener.reset(elementPath, element, -1, true, false); 
         model.postDelta(delta);
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
@@ -128,7 +140,11 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Create the delta
@@ -161,7 +177,9 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
                     break;
                 }
             }
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+            if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
         }
         model.validateData(fViewer, TreePath.EMPTY, true);
 
@@ -174,7 +192,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
             List selectionPathsList = Arrays.asList( ((ITreeSelection)selection).getPaths() );
             assertFalse(selectionPathsList.contains(path_root_3));
         } else {
-            fail("Not a tree selection");
+			fail("Not a tree selection"); //$NON-NLS-1$
         }
     }
     
@@ -192,21 +210,25 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished()) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Turn off auto-expansion
         fViewer.setAutoExpandLevel(0);
         
         // Set a selection in view
-        TreeSelection originalSelection = new TreeSelection(model.findElement("3.3.1"));
+		TreeSelection originalSelection = new TreeSelection(model.findElement("3.3.1")); //$NON-NLS-1$
         fViewer.setSelection(originalSelection);
 
         // Update the model
-        model.addElementChild(model.findElement("3"), null, 0, new TestElement(model, "3.0 - new", new TestElement[0]));
+		model.addElementChild(model.findElement("3"), null, 0, new TestElement(model, "3.0 - new", new TestElement[0])); //$NON-NLS-1$ //$NON-NLS-2$
         
         // Create the delta for element "3" with content update.
-        TreePath elementPath = model.findElement("3");
+		TreePath elementPath = model.findElement("3"); //$NON-NLS-1$
         ModelDelta rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
         ModelDelta elementDelta = model.getElementDelta(rootDelta, elementPath, true);
         elementDelta.setFlags(IModelDelta.CONTENT);
@@ -217,17 +239,20 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
         
         // Post the sub-tree update
         model.postDelta(rootDelta);
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) {
+			if (!fDisplay.readAndDispatch ()) {
+				Thread.sleep(0);
+			}
+		}
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
-        assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
+		assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true); //$NON-NLS-1$
         // On windows, getExpandedState() may return true for an element with no children:
         // assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.0 - new")) == false);
-        assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
-        assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.2")) == true);
-        assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.3")) == true);
+		assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true); //$NON-NLS-1$
+		assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.2")) == true); //$NON-NLS-1$
+		assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.3")) == true); //$NON-NLS-1$
         assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
 

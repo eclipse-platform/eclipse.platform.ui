@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
-import junit.framework.Assert;
 
 import org.eclipse.jface.viewers.TreePath;
+import org.junit.Assert;
 
 /**
  * Utility for comparing TreePath objects in unit tests.  This wrapper prints the tree 
@@ -38,14 +38,14 @@ public class TreePathWrapper {
     
     public String toString() {
         if (fPath.getSegmentCount() == 0) {
-            return "TreePath:EMPTY";
+            return "TreePath:EMPTY"; //$NON-NLS-1$
         }
         
-        StringBuffer buf = new StringBuffer("TreePath:[");
+        StringBuffer buf = new StringBuffer("TreePath:["); //$NON-NLS-1$
         
         for (int i = 0; i < fPath.getSegmentCount(); i++) {
             if (i != 0) {
-                buf.append(", ");                    
+                buf.append(", ");                     //$NON-NLS-1$
             }
             buf.append(fPath.getSegment(i));
         }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,12 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 	public PDALineBreakpoint(final IResource resource, final int lineNumber) throws CoreException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint");
+				IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint"); //$NON-NLS-1$
 				setMarker(marker);
 				marker.setAttribute(IBreakpoint.ENABLED, Boolean.TRUE);
 				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 				marker.setAttribute(IBreakpoint.ID, getModelIdentifier());
-				marker.setAttribute(IMarker.MESSAGE, "Line Breakpoint: " + resource.getName() + " [line: " + lineNumber + "]");
+				marker.setAttribute(IMarker.MESSAGE, "Line Breakpoint: " + resource.getName() + " [line: " + lineNumber + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		};
 		run(getMarkerRule(resource), runnable);
@@ -177,7 +177,7 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 	public void handleEvent(PDAEvent event) {
 		if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {
 		    PDARunControlEvent rcEvent = (PDARunControlEvent)event;
-		    if (rcEvent.fReason.equals("breakpoint")) {
+		    if (rcEvent.fReason.equals("breakpoint")) { //$NON-NLS-1$
 		        handleHit(rcEvent);
 		    }
 		}

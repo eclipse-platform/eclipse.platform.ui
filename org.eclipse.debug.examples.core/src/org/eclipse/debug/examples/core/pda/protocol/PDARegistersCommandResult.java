@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems and others.
+ * Copyright (c) 2008, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.examples.core.pda.protocol;
 
@@ -28,7 +29,7 @@ public class PDARegistersCommandResult extends PDACommandResult {
     
     PDARegistersCommandResult(String response) {
         super(response);
-        StringTokenizer st = new StringTokenizer(response, "#");
+        StringTokenizer st = new StringTokenizer(response, "#"); //$NON-NLS-1$
         List regList = new ArrayList();
         
         while (st.hasMoreTokens()) {

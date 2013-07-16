@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Bjorn Freeman-Benson - initial API and implementation
  *     Wind River - Pawel Piech - replaced actions with handlers (bug 229219)
  *     Pawel Piech (Wind River) - ported PDA Virtual Machine to Java (Bug 261400)
-******************************************************************************/
+ ******************************************************************************/
 package org.eclipse.debug.examples.ui.pda.views;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -139,7 +139,7 @@ public class DataStackView extends AbstractDebugView implements IDebugContextLis
 	}
 	
 	public void debugContextChanged(final DebugContextEvent event) {
-	    new UIJob(getSite().getShell().getDisplay(), "DataStackView update") {
+		new UIJob(getSite().getShell().getDisplay(), "DataStackView update") { //$NON-NLS-1$
 	        {
 	            setSystem(true);
 	        }

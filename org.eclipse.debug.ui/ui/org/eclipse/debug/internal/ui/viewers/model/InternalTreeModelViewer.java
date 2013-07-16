@@ -76,11 +76,10 @@ import org.eclipse.ui.IMemento;
  * 
  * @since 3.3
  */
-public class InternalTreeModelViewer extends TreeViewer 
-    implements IInternalTreeModelViewer, org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer
+public class InternalTreeModelViewer extends TreeViewer implements IInternalTreeModelViewer, org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer
 {
 	
-	private IPresentationContext fContext;
+	private final IPresentationContext fContext;
 	
     /**
      * Current column presentation or <code>null</code>
@@ -91,25 +90,25 @@ public class InternalTreeModelViewer extends TreeViewer
      * Map of columns presentation id to its visible columns id's (String[])
      * When a columns presentation is not in the map, default settings are used.
      */
-    private Map fVisibleColumns = new HashMap();
+    private final Map fVisibleColumns = new HashMap();
     
     /**
      * Map of column id's to persisted sizes
      */
-    private Map fColumnSizes = new HashMap();
+    private final Map fColumnSizes = new HashMap();
     
     /**
      * Map of column presentation id's to an array of integers representing the column order
      * for that presentation, or <code>null</code> if default.
      */
-    private Map fColumnOrder = new HashMap();
+    private final Map fColumnOrder = new HashMap();
     
     /**
      * Map of column presentation id to whether columns should be displayed
      * for that presentation (the user can toggle columns on/off when a 
      * presentation is optional.
      */
-    private Map fShowColumns = new HashMap();    
+    private final Map fShowColumns = new HashMap();    
     
     /**
      * Item's tree path cache 
@@ -176,7 +175,7 @@ public class InternalTreeModelViewer extends TreeViewer
 		}
 	}
 	
-	private ColumnListener fListener = new ColumnListener();    
+	private final ColumnListener fListener = new ColumnListener();    
 
 	/**
 	 * Proxy to cell modifier/editor support
@@ -259,7 +258,7 @@ public class InternalTreeModelViewer extends TreeViewer
 		
 	}
 	
-	private CellModifierProxy fCellModifier;
+	private final CellModifierProxy fCellModifier;
 	
 	
 	/**
@@ -739,8 +738,9 @@ public class InternalTreeModelViewer extends TreeViewer
     	
     	int treeWidgetWidth = tree.getSize().x;
     	int avg = treeWidgetWidth;
-    	if (visibleColumnIds != null)
-    		avg /= visibleColumnIds.length;
+    	if (visibleColumnIds != null) {
+			avg /= visibleColumnIds.length;
+		}
     	
         if (avg == 0) {
             tree.addPaintListener(new PaintListener() {
@@ -809,7 +809,9 @@ public class InternalTreeModelViewer extends TreeViewer
 				    for (int i = 0; i < columns.length; i++) {
 				        boolean columnAvailable = false;
 				        for (int j = 0; j < available.length; j++) {
-				            if (columns[i].equals(available[j])) columnAvailable = true;
+				            if (columns[i].equals(available[j])) {
+								columnAvailable = true;
+							}
 				        }
 				        
 				        if (!columnAvailable || presentation.getHeader(columns[i]) == null) {

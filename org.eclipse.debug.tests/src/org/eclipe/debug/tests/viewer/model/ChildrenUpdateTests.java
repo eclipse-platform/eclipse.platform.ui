@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2011 IBM Corporation and others.
+ *  Copyright (c) 2007, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,8 +14,8 @@ import junit.framework.TestCase;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.ChildrenUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.ILabelUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.ILabelUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.TreeModelContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -193,23 +193,23 @@ public class ChildrenUpdateTests extends TestCase {
 		TreeModelContentProvider cp = getContentProvider();
 		ChildrenUpdate update1 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 1, null);
 		ChildrenUpdate update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 2, null);
-		assertTrue("Should coalesce", update1.coalesce(update2));
-		assertEquals("Wrong offset", 1, update1.getOffset());
-		assertEquals("Wrong length", 2, update1.getLength());
+		assertTrue("Should coalesce", update1.coalesce(update2)); //$NON-NLS-1$
+		assertEquals("Wrong offset", 1, update1.getOffset()); //$NON-NLS-1$
+		assertEquals("Wrong length", 2, update1.getLength()); //$NON-NLS-1$
 		
 		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 3, null);
-		assertTrue("Should coalesce", update1.coalesce(update2));
-		assertEquals("Wrong offset", 1, update1.getOffset());
-		assertEquals("Wrong length", 3, update1.getLength());
+		assertTrue("Should coalesce", update1.coalesce(update2)); //$NON-NLS-1$
+		assertEquals("Wrong offset", 1, update1.getOffset()); //$NON-NLS-1$
+		assertEquals("Wrong length", 3, update1.getLength()); //$NON-NLS-1$
 		
 		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 2, null);
-		assertTrue("Should coalesce", update1.coalesce(update2));
-		assertEquals("Wrong offset", 1, update1.getOffset());
-		assertEquals("Wrong length", 3, update1.getLength());		
+		assertTrue("Should coalesce", update1.coalesce(update2)); //$NON-NLS-1$
+		assertEquals("Wrong offset", 1, update1.getOffset()); //$NON-NLS-1$
+		assertEquals("Wrong length", 3, update1.getLength()); //$NON-NLS-1$
 		
 		update2 = new ChildrenUpdate(cp, element, TreePath.EMPTY, element, 5, null);
-		assertFalse("Should not coalesce", update1.coalesce(update2));
-		assertEquals("Wrong offset", 1, update1.getOffset());
-		assertEquals("Wrong length", 3, update1.getLength());
+		assertFalse("Should not coalesce", update1.coalesce(update2)); //$NON-NLS-1$
+		assertEquals("Wrong offset", 1, update1.getOffset()); //$NON-NLS-1$
+		assertEquals("Wrong length", 3, update1.getLength()); //$NON-NLS-1$
 	}
 }

@@ -18,6 +18,6 @@
   </parent>
   <groupId>org.eclipse.core</groupId>
   <artifactId>org.eclipse.core.variables</artifactId>
-  <version>3.2.700-SNAPSHOT</version>
+  <version>3.2.800-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

@@ -53,7 +53,7 @@ public class BreakpointOrderingTests extends TestCase {
 	 */
 	static class TestBreakpoint implements IBreakpoint {
 
-		private String fText;
+		private final String fText;
 		private IMarker fMarker = null;
 
 		TestBreakpoint(String text) {
@@ -74,7 +74,7 @@ public class BreakpointOrderingTests extends TestCase {
 				ResourcesPlugin.getWorkspace().run( wr, null );
 			}
 			catch ( CoreException e ) {
-				fail("Unexpected exception: " + e.toString());
+				fail("Unexpected exception: " + e.toString()); //$NON-NLS-1$
 			}
 			
 		}
@@ -97,26 +97,26 @@ public class BreakpointOrderingTests extends TestCase {
 		}
 
 		public String getModelIdentifier() {
-			return "Test";
+			return "Test"; //$NON-NLS-1$
 		}
 
 		public boolean isEnabled() throws CoreException {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return false;
 		}
 
 		public boolean isPersisted() throws CoreException {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return false;
 		}
 
 		public boolean isRegistered() throws CoreException {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return false;
 		}
 
 		public void setEnabled(boolean enabled) throws CoreException {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		public void setMarker(IMarker marker) throws CoreException {
@@ -125,16 +125,16 @@ public class BreakpointOrderingTests extends TestCase {
 		}
 
 		public void setPersisted(boolean registered) throws CoreException {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		public void setRegistered(boolean registered) throws CoreException {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			
 		}
 
 		public Object getAdapter(Class adapter) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -144,7 +144,7 @@ public class BreakpointOrderingTests extends TestCase {
 	 * Test only implementation of ILineBreakpoint.
 	 */
 	static class TestLineBreakpoint extends TestBreakpoint implements ILineBreakpoint {
-		private int fLineNum;
+		private final int fLineNum;
 
 		TestLineBreakpoint(String text, int lineNum) {
 			super(text, IBreakpoint.LINE_BREAKPOINT_MARKER);
@@ -156,12 +156,12 @@ public class BreakpointOrderingTests extends TestCase {
 		}
 
 		public int getCharEnd() throws CoreException {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return 0;
 		}
 
 		public int getCharStart() throws CoreException {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return 0;
 		}
 	}
@@ -176,38 +176,38 @@ public class BreakpointOrderingTests extends TestCase {
 		}
 
 		protected Widget doFindInputItem(Object element) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
 		protected Widget doFindItem(Object element) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
 		protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		protected List getSelectionFromWidget() {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
 		protected void internalRefresh(Object element) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		public void reveal(Object element) {
-			fail("not implemented in test");			
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		protected void setSelectionToWidget(List l, boolean reveal) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		public Control getControl() {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}};	
 	
@@ -215,72 +215,72 @@ public class BreakpointOrderingTests extends TestCase {
 	IDebugModelPresentation fDebugModelPres = new IDebugModelPresentation() {
 
 		public void computeDetail(IValue value, IValueDetailListener listener) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		public Image getImage(Object element) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
 		public String getText(Object element) {
-			assertTrue("Unexpected element", element instanceof TestBreakpoint);
+			assertTrue("Unexpected element", element instanceof TestBreakpoint); //$NON-NLS-1$
 			return ((TestBreakpoint)element).getText();
 		}
 
 		public void setAttribute(String attribute, Object value) {			
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		public void addListener(ILabelProviderListener listener) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		public void dispose() {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		public boolean isLabelProperty(Object element, String property) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return false;
 		}
 
 		public void removeListener(ILabelProviderListener listener) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 		}
 
 		public String getEditorId(IEditorInput input, Object element) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}
 
 		public IEditorInput getEditorInput(Object element) {
-			fail("not implemented in test");
+			fail("not implemented in test"); //$NON-NLS-1$
 			return null;
 		}};
 	
 	// Test vector with some UNIX paths
 	TestBreakpoint[] createTestBreakpoints0() {
 		TestBreakpoint[] fTestBps = { 
-			new TestBreakpoint(""),
-			new TestBreakpoint("/file/text.c"),
-			new TestBreakpoint("/file/text.c:1"),
-			new TestLineBreakpoint("", 0),
-			new TestLineBreakpoint("/file/text.c", 0),
-			new TestLineBreakpoint("/file/text.c", 1),
-			new TestLineBreakpoint("/file/text.c:", 0),
-			new TestLineBreakpoint("/file/text.c:0", 0),
-			new TestLineBreakpoint("/file/text.c:1", 1),
-			new TestLineBreakpoint("/file/text.c:0002", 2),
-			new TestLineBreakpoint("/file/text.c:3xxx", 3),
-			new TestLineBreakpoint("/file/text.c:10xxx", 10),
-			new TestLineBreakpoint("/file/text.c:a_01", 1),
-			new TestLineBreakpoint("/file/text.c:a_01a", 1),
-			new TestLineBreakpoint("/file/text.c:a_09", 9),
-			new TestLineBreakpoint("/file/text.c:a_09a", 9),
-			new TestLineBreakpoint("/file/text.c:a_011", 11),
-			new TestLineBreakpoint("/file/text.c:a_011a", 11),
-			new TestLineBreakpoint("/file/text.c:y", 0),
+ new TestBreakpoint(""), //$NON-NLS-1$
+		new TestBreakpoint("/file/text.c"), //$NON-NLS-1$
+		new TestBreakpoint("/file/text.c:1"), //$NON-NLS-1$
+		new TestLineBreakpoint("", 0), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c", 0), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c", 1), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:", 0), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:0", 0), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:1", 1), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:0002", 2), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:3xxx", 3), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:10xxx", 10), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:a_01", 1), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:a_01a", 1), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:a_09", 9), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:a_09a", 9), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:a_011", 11), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:a_011a", 11), //$NON-NLS-1$
+		new TestLineBreakpoint("/file/text.c:y", 0), //$NON-NLS-1$
 		};
 		return fTestBps;
 	}	
@@ -288,19 +288,19 @@ public class BreakpointOrderingTests extends TestCase {
 	// Check plain numbers 
 	TestBreakpoint[] createTestBreakpoints1() {
 		TestBreakpoint[] fTestBps = { 
-			new TestLineBreakpoint("0", 0), 
-			new TestLineBreakpoint("1", 1), 
-			new TestLineBreakpoint("1_a", 1), 
-			new TestLineBreakpoint("001_b", 1), 
-			new TestLineBreakpoint("01_c", 1), 
-			new TestLineBreakpoint("3", 3), 
-			new TestLineBreakpoint("10", 10), 
-			new TestLineBreakpoint("11", 11), 
-			new TestLineBreakpoint("20", 20), 
-			new TestLineBreakpoint("110", 110), 
-			new TestLineBreakpoint("112", 112), 
-			new TestLineBreakpoint("112a", 112), 
-			new TestLineBreakpoint("112b", 112), 
+ new TestLineBreakpoint("0", 0), //$NON-NLS-1$
+		new TestLineBreakpoint("1", 1), //$NON-NLS-1$
+		new TestLineBreakpoint("1_a", 1), //$NON-NLS-1$
+		new TestLineBreakpoint("001_b", 1), //$NON-NLS-1$
+		new TestLineBreakpoint("01_c", 1), //$NON-NLS-1$
+		new TestLineBreakpoint("3", 3), //$NON-NLS-1$
+		new TestLineBreakpoint("10", 10), //$NON-NLS-1$
+		new TestLineBreakpoint("11", 11), //$NON-NLS-1$
+		new TestLineBreakpoint("20", 20), //$NON-NLS-1$
+		new TestLineBreakpoint("110", 110), //$NON-NLS-1$
+		new TestLineBreakpoint("112", 112), //$NON-NLS-1$
+		new TestLineBreakpoint("112a", 112), //$NON-NLS-1$
+		new TestLineBreakpoint("112b", 112), //$NON-NLS-1$
 		};
 		return fTestBps;
 	}	
@@ -308,13 +308,13 @@ public class BreakpointOrderingTests extends TestCase {
 	// Test consistent behavior with leading 0's
 	TestBreakpoint[] createTestBreakpoints2() {
 		TestBreakpoint[] fTestBps = { 
-			new TestLineBreakpoint("0", 0), 
-			new TestLineBreakpoint("00", 0), 
-			new TestLineBreakpoint("0000", 0), 
-			new TestLineBreakpoint("0001", 1), 
-			new TestLineBreakpoint("0010", 10), 
-			new TestLineBreakpoint("1000", 1000), 
-			new TestLineBreakpoint("10000", 10000), 
+ new TestLineBreakpoint("0", 0), //$NON-NLS-1$
+		new TestLineBreakpoint("00", 0), //$NON-NLS-1$
+		new TestLineBreakpoint("0000", 0), //$NON-NLS-1$
+		new TestLineBreakpoint("0001", 1), //$NON-NLS-1$
+		new TestLineBreakpoint("0010", 10), //$NON-NLS-1$
+		new TestLineBreakpoint("1000", 1000), //$NON-NLS-1$
+		new TestLineBreakpoint("10000", 10000), //$NON-NLS-1$
 		};
 		return fTestBps;
 	}	
@@ -322,10 +322,10 @@ public class BreakpointOrderingTests extends TestCase {
 	// Test Win32 paths
 	TestBreakpoint[] createTestBreakpoints3() {
 		TestBreakpoint[] fTestBps = { 
-			new TestLineBreakpoint(":a", 0),
-			new TestLineBreakpoint("c:\\file\\text.c:1", 1),
-			new TestLineBreakpoint("c:\\file\\text.c:2", 2),
-			new TestLineBreakpoint("d:\\file\\text.c:3", 3),
+ new TestLineBreakpoint(":a", 0), //$NON-NLS-1$
+		new TestLineBreakpoint("c:\\file\\text.c:1", 1), //$NON-NLS-1$
+		new TestLineBreakpoint("c:\\file\\text.c:2", 2), //$NON-NLS-1$
+		new TestLineBreakpoint("d:\\file\\text.c:3", 3), //$NON-NLS-1$
 		};
 		return fTestBps;
 	}	
@@ -360,11 +360,11 @@ public class BreakpointOrderingTests extends TestCase {
 					boolean equalCheck = (res == 0) == (inner == outer);
 					boolean ltCheck = (res < 0) == (inner < outer);
 					if (!equalCheck) {
-						System.err.println("Equal Comparison in between " + inner + " and " + outer + " ("+testBps[inner].getText()+ " and "+testBps[outer].getText()+") failed" );
+						System.err.println("Equal Comparison in between " + inner + " and " + outer + " (" + testBps[inner].getText() + " and " + testBps[outer].getText() + ") failed"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 						failed = true;
 					}
 					if (!ltCheck) {
-						System.err.println("Less Comparison in between " + inner + " and " + outer + " ("+testBps[inner].getText()+ " and "+testBps[outer].getText()+") failed" );
+						System.err.println("Less Comparison in between " + inner + " and " + outer + " (" + testBps[inner].getText() + " and " + testBps[outer].getText() + ") failed"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 						failed = true;
 					}					
 				}			

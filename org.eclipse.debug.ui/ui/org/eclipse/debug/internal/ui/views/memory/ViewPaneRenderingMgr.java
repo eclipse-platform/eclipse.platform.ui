@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -33,6 +36,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -50,8 +54,8 @@ import org.w3c.dom.NodeList;
  */
 public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 
-	private ArrayList fRenderings = new ArrayList();
-	private IMemoryRenderingContainer fViewPane;
+	private final ArrayList fRenderings = new ArrayList();
+	private final IMemoryRenderingContainer fViewPane;
 	
 	private static final String RENDERINGS_TAG = "persistedMemoryRenderings"; //$NON-NLS-1$
 	private static final String MEMORY_RENDERING_TAG = "memoryRendering"; //$NON-NLS-1$
@@ -66,8 +70,9 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 
 	public void removeMemoryBlockRendering(IMemoryBlock mem, String renderingId)
 	{
-		if(fRenderings == null)
+		if(fRenderings == null) {
 			return;
+		}
 		
 		IMemoryRendering[] toRemove = getRenderings(mem, renderingId);
 		
@@ -89,8 +94,9 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 	public void addMemoryBlockRendering(IMemoryRendering rendering) {
 		
 		// do not allow duplicated objects
-		if (fRenderings.contains(rendering))
+		if (fRenderings.contains(rendering)) {
 			return;
+		}
 		
 		fRenderings.add(rendering);
 		
@@ -105,11 +111,13 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 
 
 	public void removeMemoryBlockRendering(IMemoryRendering rendering) {
-		if(rendering == null)
+		if(rendering == null) {
 			return;
+		}
 		
-		if(!fRenderings.contains(rendering))
+		if(!fRenderings.contains(rendering)) {
 			return;
+		}
 		
 		fRenderings.remove(rendering);
 		
@@ -191,8 +199,9 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 
 	public void handleDebugEvents(DebugEvent[] events) {
 		
-		for (int i=0; i < events.length; i++)
+		for (int i=0; i < events.length; i++) {
 			handleDebugEvent(events[i]);
+		}
 		
 	}
 	
@@ -226,12 +235,18 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 		fRenderings.clear();
 		
 		String secondaryId = getViewSiteSecondaryId();
-		if (secondaryId != null)
-		{
+		if (secondaryId != null) {
 			// do not save renderings if this is not the primary rendering view
 			String prefid = getPrefId();
-			Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
-			prefs.setToDefault(prefid);
+			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+			if (node != null) {
+				node.remove(prefid);
+				try {
+					node.flush();
+				} catch (BackingStoreException e) {
+					DebugUIPlugin.log(e);
+				}
+			}
 		}
 			
 		DebugPlugin.getDefault().removeDebugEventListener(this);
@@ -243,7 +258,6 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 	 */
 	private void storeRenderings()
 	{
-		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
 		String renderingsStr= IInternalDebugCoreConstants.EMPTY_STRING;
 		try {
 			renderingsStr= getRenderingsAsXML();
@@ -256,11 +270,23 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 		}
 		
 		String prefid = getPrefId();
-		
-		if (renderingsStr != null)
-			prefs.setValue(prefid, renderingsStr);
-		else
-			prefs.setToDefault(prefid);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+		if(node != null) {
+			if (renderingsStr != null) {
+				node.put(prefid, renderingsStr);
+			}
+			else {
+				IEclipsePreferences def = DefaultScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+				if(def != null) {
+					node.put(prefid, def.get(prefid, IInternalDebugCoreConstants.EMPTY_STRING));
+				}
+			}
+			try {
+				node.flush();
+			} catch (BackingStoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
 	}
 
 	private String getPrefId() {
@@ -295,8 +321,9 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 	private String getRenderingsAsXML() throws IOException, ParserConfigurationException, TransformerException {
 		IMemoryRendering[] renderings= (IMemoryRendering[])fRenderings.toArray(new IMemoryRendering[fRenderings.size()]);
 		
-		if (renderings.length == 0)
+		if (renderings.length == 0) {
 			return null;
+		}
 		
 		Document document= LaunchManager.getDocument();
 		Element rootElement= document.createElement(RENDERINGS_TAG);
@@ -315,7 +342,11 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 	 * Load renderings currently stored.
 	 */
 	private void loadPersistedRenderings(String prefId) {
-		String renderingsStr= DebugUIPlugin.getDefault().getPluginPreferences().getString(prefId);
+		String renderingsStr = Platform.getPreferencesService().getString(
+				DebugUIPlugin.getUniqueIdentifier(), 
+				prefId, 
+				"",  //$NON-NLS-1$
+				null);
 		if (renderingsStr.length() == 0) {
 			return;
 		}
@@ -347,8 +378,9 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 				IMemoryBlock memoryBlock = null;
 				for (int j=0; j<memoryBlocks.length; j++)
 				{
-					if (Integer.toString(memoryBlocks[j].hashCode()).equals(memoryBlockHashCode))
+					if (Integer.toString(memoryBlocks[j].hashCode()).equals(memoryBlockHashCode)) {
 						memoryBlock = memoryBlocks[j];
+					}
 				}
 				
 				if (memoryBlock != null)
@@ -357,8 +389,9 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 					IMemoryRenderingType type = null;
 					for (int k=0; k<types.length; k++)
 					{
-						if (types[k].getId().equals(renderingId))
+						if (types[k].getId().equals(renderingId)) {
 							type = types[k];
+						}
 					}
 				
 					// if memory block is not found, the rendering is no longer valid

@@ -20,7 +20,9 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
@@ -65,6 +67,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * 
@@ -656,37 +659,41 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		return fVisibleViewPanes.contains(paneId);
 	}
 	
-	private void storeViewPaneVisibility()
-	{		
+	private void storeViewPaneVisibility() {		
 		fVisibleViewPanes.clear();
-		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
 		StringBuffer visibleViewPanes= new StringBuffer();
 		
 		Enumeration enumeration = fViewPaneControls.keys();
 		
-		while (enumeration.hasMoreElements())
-		{
+		while (enumeration.hasMoreElements()) {
 			String paneId = (String)enumeration.nextElement();
 			
 			Control control = (Control)fViewPaneControls.get(paneId);
-			if (control.isVisible())
-			{
+			if (control.isVisible()) {
 				visibleViewPanes.append(paneId);
 				visibleViewPanes.append(","); //$NON-NLS-1$
 				fVisibleViewPanes.add(paneId);
 			}
 		}
-		
-		prefs.setValue(getVisibilityPrefId(), visibleViewPanes.toString());		 
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+		if(node != null) {
+			try {
+				node.put(getVisibilityPrefId(), visibleViewPanes.toString());
+				node.flush();
+			} catch (BackingStoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
 	}
 	
-	private void loadViewPanesVisibility()
-	{
-		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
-		String visiblePanes = prefs.getString(getVisibilityPrefId());
+	private void loadViewPanesVisibility() {
+		String visiblePanes = Platform.getPreferencesService().getString(
+				DebugUIPlugin.getUniqueIdentifier(), 
+				getVisibilityPrefId(), 
+				null, 
+				null);
 		
-		if (visiblePanes != null && visiblePanes.length() > 0)
-		{
+		if (visiblePanes != null && visiblePanes.length() > 0) {
 			StringTokenizer tokenizer = new StringTokenizer(visiblePanes, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens())
 			{
@@ -694,8 +701,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 				fVisibleViewPanes.add(paneId);
 			}
 		}
-		else
-		{
+		else {
 			for (int i=0 ;i<defaultVisiblePaneIds.length; i++)
 			{
 				fVisibleViewPanes.add(defaultVisiblePaneIds[i]);
@@ -720,13 +726,14 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		fSashForm.layout();
 	}
 	
-	private void loadOrientation()
-	{
-		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
-		fViewOrientation = prefs.getInt(getOrientationPrefId());
+	private void loadOrientation() {
+		fViewOrientation = Platform.getPreferencesService().getInt(
+				DebugUIPlugin.getUniqueIdentifier(), 
+				getOrientationPrefId(), 
+				HORIZONTAL_VIEW_ORIENTATION, 
+				null);
 		
-		for (int i=0; i<fOrientationActions.length; i++)
-		{
+		for (int i=0; i<fOrientationActions.length; i++) {
 			if (fOrientationActions[i].getOrientation() == fViewOrientation)
 			{
 				fOrientationActions[i].run();
@@ -735,10 +742,16 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		updateOrientationActions();
 	}
 	
-	private void saveOrientation()
-	{
-		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(getOrientationPrefId(), fViewOrientation);
+	private void saveOrientation() {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugUIPlugin.getUniqueIdentifier());
+		if(node != null) {
+			try {
+				node.putInt(getOrientationPrefId(), fViewOrientation);
+				node.flush();
+			} catch (BackingStoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
 	}
 	
 	private void updateOrientationActions()

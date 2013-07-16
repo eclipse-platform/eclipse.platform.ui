@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,7 +117,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	private CheckboxTreeViewer fViewer = null;
 	private Text fFilePath = null;
 	private Button fOverwrite = null;
-	
+	private ConfigContentProvider fContentProvider = null;
 	/**
 	 * Constructor
 	 */
@@ -157,7 +157,8 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		fViewer = new CheckboxTreeViewer(tree);
 		fViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		fViewer.setComparator(new WorkbenchViewerComparator());
-		fViewer.setContentProvider(new ConfigContentProvider());
+		fContentProvider = new ConfigContentProvider();
+		fViewer.setContentProvider(fContentProvider);
 		fViewer.setInput(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes());
 		//we don't want to see builders....
 		fViewer.addFilter(new LaunchCategoryFilter(IInternalDebugUIConstants.ID_EXTERNAL_TOOL_BUILDER_LAUNCH_CATEGORY));
@@ -174,14 +175,20 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		Button button = SWTFactory.createPushButton(buttoncomp, WizardMessages.ExportLaunchConfigurationsWizardPage_8, null); 
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fViewer.setAllChecked(true);
+				Object[] items = fContentProvider.getElements(fViewer.getInput());
+				for (int i = 0; i < items.length; i++) {
+					fViewer.setSubtreeChecked(items[i], true);
+				}
 				setPageComplete(isComplete());
 			}
 		});
 		button = SWTFactory.createPushButton(buttoncomp, WizardMessages.ExportLaunchConfigurationsWizardPage_9, null); 
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fViewer.setAllChecked(false);
+				Object[] items = fContentProvider.getElements(fViewer.getInput());
+				for (int i = 0; i < items.length; i++) {
+					fViewer.setSubtreeChecked(items[i], false);
+				}
 				setPageComplete(isComplete());
 			}
 		});

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.debug.internal.ui.memory;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 
 /**
  * Represents an element that is capable of persisting properties.
@@ -47,17 +46,4 @@ public interface IPersistableDebugElement {
 	 */
 	public boolean supportsProperty(Object context, String propertyId);
 	
-	/**
-	 * Add the property change listener to the persistable.  The listener will
-	 * be notified when properties have changed from the peristable element.
-	 * @param listener is the listener to add
-	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener);
-	
-	/**
-	 * Remove the property change listener from the persistable.  The listener will
-	 * no longer be notified when properties are changed from the persistable element.
-	 * @param listener is the listener to remove
-	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener);
 }

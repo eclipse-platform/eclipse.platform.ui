@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class MidiStepOverHandler implements IStepOverHandler {
 	public boolean execute(IDebugCommandRequest request) {
 		// We could create a job to do this work, schedule it, then return to be asynchronous
 		// If running asynchronously, remember to return the enablement you want the action to have while this action is run
-		request.setStatus(new Status(IStatus.WARNING,"org.eclipse.debug.examples.ui","This is an example command handler overriding the default using an adapter on " + request.getElements()[0].getClass().getName()));
+		request.setStatus(new Status(IStatus.WARNING, "org.eclipse.debug.examples.ui", "This is an example command handler overriding the default using an adapter on " + request.getElements()[0].getClass().getName())); //$NON-NLS-1$ //$NON-NLS-2$
 		request.done();
 		return true;
 	}

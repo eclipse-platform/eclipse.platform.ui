@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2008, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.pda.breakpoints;
 
@@ -27,13 +28,13 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class PDAToggleWatchpointsTargetFactory implements IToggleBreakpointsTargetFactory {
 
-    private static final String TOGGLE_WATCHPOINT_TARGET_ACCESS = "org.eclipse.debug.examples.ui.pda.watchpoint_access";
-    private static final String TOGGLE_WATCHPOINT_TARGET_MODIFICATION = "org.eclipse.debug.examples.ui.pda.watchpoint_modification";
-    private static final String TOGGLE_WATCHPOINT_TARGET_BOTH = "org.eclipse.debug.examples.ui.pda.watchpoint_both";
+	private static final String TOGGLE_WATCHPOINT_TARGET_ACCESS = "org.eclipse.debug.examples.ui.pda.watchpoint_access"; //$NON-NLS-1$
+	private static final String TOGGLE_WATCHPOINT_TARGET_MODIFICATION = "org.eclipse.debug.examples.ui.pda.watchpoint_modification"; //$NON-NLS-1$
+	private static final String TOGGLE_WATCHPOINT_TARGET_BOTH = "org.eclipse.debug.examples.ui.pda.watchpoint_both"; //$NON-NLS-1$
     
     private static Set TOGGLE_WATCHPOINTS_TARGETS = new LinkedHashSet();
     
-    private Map fToggleWatchpointTargets = new HashMap(3);
+    private final Map fToggleWatchpointTargets = new HashMap(3);
     
     static {
         TOGGLE_WATCHPOINTS_TARGETS.add(TOGGLE_WATCHPOINT_TARGET_BOTH);
@@ -68,11 +69,11 @@ public class PDAToggleWatchpointsTargetFactory implements IToggleBreakpointsTarg
 
     public String getToggleTargetName(String targetID) {
         if (TOGGLE_WATCHPOINT_TARGET_BOTH.equals(targetID)) {
-            return "Watchpoints (Read/Write)";
+			return "Watchpoints (Read/Write)"; //$NON-NLS-1$
         } else if (TOGGLE_WATCHPOINT_TARGET_ACCESS.equals(targetID)) {
-            return "Watchpoints (Read)";
+			return "Watchpoints (Read)"; //$NON-NLS-1$
         } else if (TOGGLE_WATCHPOINT_TARGET_MODIFICATION.equals(targetID)) {
-            return "Watchpoints (Write)";
+			return "Watchpoints (Write)"; //$NON-NLS-1$
         } else { 
             return null;
         }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,30 +35,30 @@ public class DebugCorePlugin extends Plugin {
 	 * Unique identifier for the PDA debug model (value 
 	 * <code>pda.debugModel</code>).
 	 */
-	public static final String ID_PDA_DEBUG_MODEL = "pda.debugModel";
+	public static final String ID_PDA_DEBUG_MODEL = "pda.debugModel"; //$NON-NLS-1$
 	
 	/**
 	 * Name of the string substitution variable that resolves to the
 	 * location of a local Perl executable (value <code>perlExecutable</code>).
 	 */
-	public static final String VARIALBE_PERL_EXECUTABLE = "perlExecutable";
+	public static final String VARIALBE_PERL_EXECUTABLE = "perlExecutable"; //$NON-NLS-1$
 	/**
 	 * Launch configuration attribute key. Value is a path to a Perl
 	 * program. The path is a string representing a full path
 	 * to a Perl program in the workspace. 
 	 */
-	public static final String ATTR_PDA_PROGRAM = ID_PDA_DEBUG_MODEL + ".ATTR_PDA_PROGRAM";
+	public static final String ATTR_PDA_PROGRAM = ID_PDA_DEBUG_MODEL + ".ATTR_PDA_PROGRAM"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for the PDA launch configuration type
 	 * (value <code>pda.launchType</code>)
 	 */
-	public static final String ID_PDA_LAUNCH_CONFIGURATION_TYPE = "pda.launchType";	
+	public static final String ID_PDA_LAUNCH_CONFIGURATION_TYPE = "pda.launchType";	 //$NON-NLS-1$
 	
 	/**
 	 * Plug-in identifier.
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.debug.examples.core";
+	public static final String PLUGIN_ID = "org.eclipse.debug.examples.core"; //$NON-NLS-1$
 	
 	/**
 	 * The constructor.
@@ -110,7 +110,7 @@ public class DebugCorePlugin extends Plugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.debug.examples.core.pda.DebugCorePluginResources");
+				resourceBundle = ResourceBundle.getBundle("org.eclipse.debug.examples.core.pda.DebugCorePluginResources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}

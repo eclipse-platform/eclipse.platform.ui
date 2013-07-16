@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 			IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
 			if (resource != null) {
 				String extension = resource.getFileExtension();
-				if (extension != null && extension.equals("pda")) {
+				if (extension != null && extension.equals("pda")) { //$NON-NLS-1$
 					return editorPart;
 				}
 			}
@@ -161,7 +161,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	            IDocument document = documentProvider.getDocument(editor.getEditorInput());
 	            IRegion region = document.getLineInformationOfOffset(textSelection.getOffset());
 	            String string = document.get(region.getOffset(), region.getLength()).trim();
-	            if (string.startsWith("var ")) {
+				if (string.startsWith("var ")) { //$NON-NLS-1$
 	                String varName = string.substring(4).trim(); 
 	                String fcnName = getFunctionName(document, varName, document.getLineOfOffset(textSelection.getOffset()));
 	                return new String[] {varName, fcnName};
@@ -194,9 +194,9 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
             try {
                 IRegion information = document.getLineInformation(lineIndex);
                 String lineText = document.get(information.getOffset(), information.getLength());
-                if (lineText.startsWith(":")) {
+				if (lineText.startsWith(":")) { //$NON-NLS-1$
                     String label = lineText.substring(1);
-                    if (source.indexOf("call " + label) >= 0) {
+					if (source.indexOf("call " + label) >= 0) { //$NON-NLS-1$
                         return label;
                     }
                 }
@@ -204,7 +204,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
             } catch (BadLocationException e) {
             }
 	    }
-	    return "_main_";
+		return "_main_"; //$NON-NLS-1$
 	}
     
     /* (non-Javadoc)

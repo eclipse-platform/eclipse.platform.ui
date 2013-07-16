@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems and others.
+ * Copyright (c) 2008, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.pda.views;
 
@@ -50,7 +51,7 @@ abstract public class AbstractDataStackViewHandler extends AbstractHandler {
                 }
             }
         } else {
-            throw new ExecutionException("Handler must be with DataStackView only");
+			throw new ExecutionException("Handler must be with DataStackView only"); //$NON-NLS-1$
         }
         return null;
     }

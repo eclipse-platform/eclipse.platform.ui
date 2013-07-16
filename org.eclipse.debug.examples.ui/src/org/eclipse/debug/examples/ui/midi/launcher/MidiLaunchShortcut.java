@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,8 +121,8 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(DebugUIPlugin.getActiveWorkbenchShell(), labelProvider);
 		dialog.setElements(configList.toArray());
-		dialog.setTitle("Select Configuraiton");  
-		dialog.setMessage("&Select an existing configuration:");
+		dialog.setTitle("Select Configuraiton"); //$NON-NLS-1$
+		dialog.setMessage("&Select an existing configuration:"); //$NON-NLS-1$
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
@@ -144,7 +144,7 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, getLaunchManager().
 					generateLaunchConfigurationName(
-							"[" + file.getProject().getName() + "] " + file.getName()));
+"[" + file.getProject().getName() + "] " + file.getName())); //$NON-NLS-1$ //$NON-NLS-2$
 			workingCopy.setAttribute(MidiLaunchDelegate.ATTR_MIDI_FILE, file.getFullPath().toString());
 			workingCopy.setMappedResources(new IResource[]{file});
 			return workingCopy.doSave();

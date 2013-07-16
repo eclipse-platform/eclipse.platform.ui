@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,12 +66,12 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
      */
     private String getWatchpointText(PDAWatchpoint watchpoint) {
         try {
-	        String label = watchpoint.getVariableName() + " (" + watchpoint.getFunctionName() + ")";
+			String label = watchpoint.getVariableName() + " (" + watchpoint.getFunctionName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	        if (watchpoint.isAccess()) {
-	            label += " [read]";
+				label += " [read]"; //$NON-NLS-1$
 	        }
 	        if (watchpoint.isModification()) {
-	            label += " [write]";
+				label += " [write]"; //$NON-NLS-1$
 	        }
 	        return label;
         } catch (CoreException e) {
@@ -89,15 +89,15 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 			String pgmPath = target.getLaunch().getLaunchConfiguration().getAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, (String)null);
 			if (pgmPath != null) {
 			    IPath path = new Path(pgmPath);
-			    String label = "";
+				String label = ""; //$NON-NLS-1$
 			    if (target.isTerminated()) {
-			    	label = "<terminated>";
+					label = "<terminated>"; //$NON-NLS-1$
 			    }
-			    return label + "PDA [" + path.lastSegment() + "]";
+				return label + "PDA [" + path.lastSegment() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (CoreException e) {
 		}
-		return "PDA";
+		return "PDA"; //$NON-NLS-1$
 		
 	}
 	
@@ -109,7 +109,7 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	private String getStackFrameText(PDAStackFrame frame) {
 	    try {
-	       return frame.getName() + " (line: " + frame.getLineNumber() + ")"; 
+			return frame.getName() + " (line: " + frame.getLineNumber() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	    } catch (DebugException e) {
 	    }
 	    return null;
@@ -125,14 +125,14 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	private String getThreadText(PDAThread thread) {
 	    String label = thread.getName();
 	    if (thread.isStepping()) {
-	        label += " (stepping)";
+			label += " (stepping)"; //$NON-NLS-1$
 	    } else if (thread.isSuspended()) {
 	        IBreakpoint[] breakpoints = thread.getBreakpoints();
 	        if (breakpoints.length == 0) {
 	        	if (thread.getError() == null) {
-	        		label += " (suspended)";
+					label += " (suspended)"; //$NON-NLS-1$
 	        	} else {
-	        		label += " (" + thread.getError() + ")";
+					label += " (" + thread.getError() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	        	}
 	        } else {
 	            IBreakpoint breakpoint = breakpoints[0]; // there can only be one in PDA
@@ -141,18 +141,18 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	            	if (pdaBreakpoint instanceof PDAWatchpoint) {
 	            	    try {
 		            	    PDAWatchpoint watchpoint = (PDAWatchpoint)pdaBreakpoint;
-		            	    label += " (watchpoint: " + watchpoint.getSuspendType() + " " + watchpoint.getVariableName() + ")";
+							label += " (watchpoint: " + watchpoint.getSuspendType() + " " + watchpoint.getVariableName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	            	    } catch (CoreException e) {
 	            	    }
 	            	} else if (pdaBreakpoint.isRunToLineBreakpoint()) {
-	            		label += " (run to line)";
+						label += " (run to line)"; //$NON-NLS-1$
 	            	} else {
-	            		label += " (suspended at line breakpoint)";
+						label += " (suspended at line breakpoint)"; //$NON-NLS-1$
 	            	}
 	            }
 	        }
 	    } else if (thread.isTerminated()) {
-	        label = "<terminated> " + label;
+			label = "<terminated> " + label; //$NON-NLS-1$
 	    }
 	    return label;
 	}
@@ -161,7 +161,7 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
 	 */
 	public void computeDetail(IValue value, IValueDetailListener listener) {
-		String detail = "";
+		String detail = ""; //$NON-NLS-1$
 		try {
 			detail = value.getValueString();
 		} catch (DebugException e) {
@@ -185,7 +185,7 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	public String getEditorId(IEditorInput input, Object element) {
 		if (element instanceof IFile || element instanceof ILineBreakpoint) {
-			return "pda.editor";
+			return "pda.editor"; //$NON-NLS-1$
 		}
 		return null;
 	}

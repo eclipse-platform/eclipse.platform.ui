@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,10 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	/**
 	 * Column identifiers
 	 */
-	public static final String COL_TICK = "TICK";
-	public static final String COL_BYTES = "BYTES";
-	public static final String COL_COMMAND = "COMMAND";
-	public static final String COL_CHANNEL = "CHANNEL";
+	public static final String COL_TICK = "TICK"; //$NON-NLS-1$
+	public static final String COL_BYTES = "BYTES"; //$NON-NLS-1$
+	public static final String COL_COMMAND = "COMMAND"; //$NON-NLS-1$
+	public static final String COL_CHANNEL = "CHANNEL"; //$NON-NLS-1$
 
 	/**
 	 * All columns
@@ -40,7 +40,7 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	/**
 	 * Column presentation ID.
 	 */
-	public static final String ID = "org.eclipse.debug.examples.ui.midi.trackColumns";
+	public static final String ID = "org.eclipse.debug.examples.ui.midi.trackColumns"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getAvailableColumns()
@@ -54,18 +54,18 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	 */
 	public String getHeader(String id) {
 		if (COL_TICK.equals(id)) {
-			return "Tick";
+			return "Tick"; //$NON-NLS-1$
 		}
 		if (COL_BYTES.equals(id)) {
-			return "Bytes";
+			return "Bytes"; //$NON-NLS-1$
 		}
 		if (COL_CHANNEL.equals(id)) {
-			return "Channel";
+			return "Channel"; //$NON-NLS-1$
 		}
 		if (COL_COMMAND.equals(id)) {
-			return "Command";
+			return "Command"; //$NON-NLS-1$
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
