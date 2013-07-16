@@ -854,7 +854,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), NLS.bind(Messages.events_instantiate_1, builderName), e));
 			status.add(e.getStatus());
 		}
-		if (builder != null) {
+		if (builder == null) {
 			//unable to create the builder, so create a placeholder to fill in for it
 			builder = new MissingBuilder(builderName);
 		}
