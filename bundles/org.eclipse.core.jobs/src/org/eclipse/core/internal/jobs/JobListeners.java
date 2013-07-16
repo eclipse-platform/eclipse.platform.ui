@@ -101,10 +101,7 @@ class JobListeners {
 			}
 		}
 		//notify all local listeners
-		ListenerList list = ((InternalJob) event.getJob()).getListeners();
-		listeners = list == null ? null : list.getListeners();
-		if (listeners == null)
-			return;
+		listeners = ((InternalJob) event.getJob()).getListeners().getListeners();
 		size = listeners.length;
 		for (int i = 0; i < size; i++) {
 			try {

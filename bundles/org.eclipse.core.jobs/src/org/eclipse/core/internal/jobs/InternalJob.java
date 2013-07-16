@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,12 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 
 	private volatile int flags = Job.NONE;
 	private final int jobNumber = getNextJobNumber();
-	private ListenerList listeners = null;
+	/**
+	 * The list of job listeners. Never null.
+	 * @GuardedBy("itself")
+	 */
+	private final ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
+
 	private volatile IProgressMonitor monitor;
 	private String name;
 	/**
@@ -152,9 +157,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/* (non-Javadoc)
 	 * @see Job#addJobListener(IJobChangeListener)
 	 */
-	protected synchronized void addJobChangeListener(IJobChangeListener listener) {
-		if (listeners == null)
-			listeners = new ListenerList(ListenerList.IDENTITY);
+	protected void addJobChangeListener(IJobChangeListener listener) {
 		listeners.add(listener);
 	}
 
@@ -209,8 +212,8 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	}
 
 	/**
-	 * Returns the job listeners that are only listening to this job.  Returns 
-	 * <code>null</code> if this job has no listeners.
+	 * Returns the job listeners that are only listening to this job. Never returns
+	 * null.
 	 */
 	final ListenerList getListeners() {
 		return listeners;
@@ -409,12 +412,8 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/* (non-Javadoc)
 	 * @see Job#removeJobListener(IJobChangeListener)
 	 */
-	protected synchronized void removeJobChangeListener(IJobChangeListener listener) {
-		if (listeners != null) {
-			listeners.remove(listener);
-			if (listeners.isEmpty())
-				listeners = null;
-		}
+	protected void removeJobChangeListener(IJobChangeListener listener) {
+		listeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
