@@ -1370,6 +1370,9 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 					structureProvider, this, fileSystemObjects);
 			operation.setContext(getShell());
 			operation.run(monitor);
+			IStatus status = operation.getStatus();
+			if (!status.isOK())
+				throw new InvocationTargetException(new CoreException(status));
 			return true;
 		}
 		// import from file system
@@ -1429,6 +1432,9 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			// files
 			operation.setCreateContainerStructure(false);
 			operation.run(monitor);
+			IStatus status = operation.getStatus();
+			if (!status.isOK())
+				throw new InvocationTargetException(new CoreException(status));
 		}
 
 		return true;
