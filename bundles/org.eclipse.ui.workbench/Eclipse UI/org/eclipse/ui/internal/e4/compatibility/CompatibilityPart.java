@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -28,6 +26,7 @@ import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -97,6 +96,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 				beingDisposed = true;
 				WorkbenchPartReference reference = getReference();
 				// notify the workbench we're being closed
+				((WorkbenchPage) reference.getPage()).firePartDeactivatedIfActive(part);
 				((WorkbenchPage) reference.getPage()).firePartHidden(part);
 				((WorkbenchPage) reference.getPage()).firePartClosed(CompatibilityPart.this);
 			}

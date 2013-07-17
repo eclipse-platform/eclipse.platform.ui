@@ -5299,4 +5299,20 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		ICoolBarManager2 mgr = (ICoolBarManager2) legacyWindow.getCoolBarManager2();
 		mgr.resetItemOrder();
 	}
+
+	/**
+	 * Call {@link #firePartDeactivated(MPart)} if the passed part is the
+	 * currently active part according to the part service. This method should
+	 * only be called in the case of workbench shutdown, where E4 does not fire
+	 * deactivate listeners on the active part.
+	 * 
+	 * @param part
+	 */
+	public void firePartDeactivatedIfActive(MPart part) {
+		if (partService.getActivePart() == part) {
+			// At shutdown, e4 doesn't fire part deactivated on the active
+			// part.
+			firePartDeactivated(part);
+		}
+	}
 }
