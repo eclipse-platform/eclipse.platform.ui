@@ -253,7 +253,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 			setErrorMessage(WizardMessages.ImportLaunchConfigurationsWizardPage_3);
 			return false;
 		}
-		if(selectionGroup.getCheckedElementCount() < 1) {
+		if (getSelectedResources().size() < 1) {
 			setErrorMessage(WizardMessages.ImportLaunchConfigurationsWizardPage_4);
 			return false;
 		}

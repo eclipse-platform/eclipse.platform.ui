@@ -19,6 +19,9 @@ import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Color;
@@ -26,8 +29,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -45,8 +48,14 @@ public class DebugUIPlugin extends AbstractUIPlugin {
     private final static String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; //Disabled local toolbar icons //$NON-NLS-1$
     
     /**
-     *  Toolbar action to pop data stack
-     */
+	 * The id of the plugin
+	 * 
+	 * @since 1.4.200
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.debug.examples.ui"; //$NON-NLS-1$
+	/**
+	 * Toolbar action to pop data stack
+	 */
 	public final static String IMG_ELCL_POP = "IMG_ELCL_POP"; //$NON-NLS-1$
 	public final static String IMG_DLCL_POP = "IMG_DLCL_POP"; //$NON-NLS-1$
     
@@ -169,8 +178,15 @@ public class DebugUIPlugin extends AbstractUIPlugin {
      * <code>false</code> if this is not a shared image
      */
     private void declareImage(String key, String path) {
-		URL url = BundleUtility.find("org.eclipse.debug.examples.ui", path); //$NON-NLS-1$
-        ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+		ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
+		Bundle bundle = Platform.getBundle(PLUGIN_ID);
+		URL url = null;
+		if (bundle != null) {
+			url = FileLocator.find(bundle, new Path(path), null);
+			if (url != null) {
+				desc = ImageDescriptor.createFromURL(url);
+			}
+		}
         getImageRegistry().put(key, desc);
     }
     
