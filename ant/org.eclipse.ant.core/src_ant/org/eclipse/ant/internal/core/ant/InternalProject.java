@@ -25,11 +25,13 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
 
 /**
- * A subclass of Project to facilitate "faster" parsing with less garbage generated. This class is not used on Ant 1.6 and newer due to the
- * improvements in lazy loading of these Ant versions.
+ * A subclass of Project to facilitate "faster" parsing with
+ * less garbage generated. This class is not used on Ant 1.6 and newer
+ * due to the improvements in lazy loading of these Ant versions.
  * 
- * Only three tasks are loaded (property, taskdef and typedef: three tasks that can be defined outside of a target on Ant 1.5.1 or older).
- * 
+ * Only three tasks are loaded (property, taskdef and 
+ * typedef: three tasks that can be defined outside of a target on Ant 1.5.1 or older).
+ *
  * Datatypes are loaded if requested.
  * 
  * Derived from the original Ant Project class
@@ -37,17 +39,14 @@ import org.apache.tools.ant.ProjectComponent;
 public class InternalProject extends Project {
 
 	private Hashtable<String, Class<?>> typeNameToClass = null;
-
+	
 	public InternalProject() {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Project#init()
 	 */
-	@Override
 	public void init() throws BuildException {
 		setJavaVersionProperty();
 
@@ -58,23 +57,18 @@ public class InternalProject extends Project {
 			addTaskDefinition("typedef", taskClass); //$NON-NLS-1$
 			taskClass = Class.forName("org.apache.tools.ant.taskdefs.Taskdef"); //$NON-NLS-1$
 			addTaskDefinition("taskdef", taskClass); //$NON-NLS-1$
-		}
-		catch (NoClassDefFoundError e) {
+		} catch (NoClassDefFoundError e) {
 			throw new BuildException(InternalAntMessages.InternalAntRunner_Missing_Class, e);
-		}
-		catch (ClassNotFoundException c) {
+		} catch (ClassNotFoundException c) {
 			throw new BuildException(InternalAntMessages.InternalAntRunner_Missing_Class, c);
 		}
 
 		setSystemProperties();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Project#createDataType(java.lang.String)
 	 */
-	@Override
 	public Object createDataType(String typeName) throws BuildException {
 		if (typeNameToClass == null) {
 			initializeTypes();
@@ -94,8 +88,7 @@ public class InternalProject extends Project {
 			try {
 				ctor = typeClass.getConstructor(new Class[0]);
 				noArg = true;
-			}
-			catch (NoSuchMethodException nse) {
+			} catch (NoSuchMethodException nse) {
 				ctor = typeClass.getConstructor(new Class[] { Project.class });
 				noArg = false;
 			}
@@ -110,28 +103,21 @@ public class InternalProject extends Project {
 				((ProjectComponent) o).setProject(this);
 			}
 			return o;
-		}
-		catch (InvocationTargetException ite) {
+		} catch (InvocationTargetException ite) {
 			thrown = ite.getTargetException();
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			thrown = e;
-		}
-		catch (InstantiationException e) {
+		} catch (InstantiationException e) {
 			thrown = e;
-		}
-		catch (IllegalAccessException e) {
+		} catch (IllegalAccessException e) {
 			thrown = e;
-		}
-		catch (NoSuchMethodException nse) {
+		} catch (NoSuchMethodException nse) {
 			thrown = nse;
-		}
-		catch (NoClassDefFoundError ncdfe) {
+		} catch (NoClassDefFoundError ncdfe) {
 			thrown = ncdfe;
 		}
 		if (thrown != null) {
-			String message = MessageFormat.format(InternalAntMessages.InternalProject_could_not_create_type, new Object[] { typeName,
-					thrown.toString() });
+			String message= MessageFormat.format(InternalAntMessages.InternalProject_could_not_create_type, new Object[]{typeName, thrown.toString()});
 			throw new BuildException(message, thrown);
 		}
 		// this line is actually unreachable
@@ -158,26 +144,21 @@ public class InternalProject extends Project {
 				String typeName = (String) enumeration.nextElement();
 				String className = props.getProperty(typeName);
 				try {
-					Class<?> typeClass = Class.forName(className);
+					Class<?> typeClass= Class.forName(className);
 					typeNameToClass.put(typeName, typeClass);
-				}
-				catch (NoClassDefFoundError e) {
-					// ignore
-				}
-				catch (ClassNotFoundException c) {
-					// ignore
+				} catch (NoClassDefFoundError e) {
+					//ignore
+				} catch (ClassNotFoundException c) {
+					//ignore
 				}
 			}
-		}
-		catch (IOException ioe) {
+		} catch (IOException ioe) {
 			return;
 		}
 
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Project#getDataTypeDefinitions()
 	 */
 	@Override
@@ -187,14 +168,13 @@ public class InternalProject extends Project {
 		}
 		return typeNameToClass;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Project#addDataTypeDefinition(java.lang.String, java.lang.Class)
 	 */
 	@Override
-	public void addDataTypeDefinition(String typeName, Class<?> typeClass) {
+	public void addDataTypeDefinition(String typeName, Class typeClass) {
+		//TODO ANT-1.9.1 API USE
 		getDataTypeDefinitions();
 		typeNameToClass.put(typeName, typeClass);
 	}

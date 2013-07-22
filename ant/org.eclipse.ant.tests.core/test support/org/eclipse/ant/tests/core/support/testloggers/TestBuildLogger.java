@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core.support.testloggers;
 
+
 import java.io.PrintStream;
 
 import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.core.AntSecurityException;
@@ -22,27 +22,27 @@ import org.eclipse.core.runtime.OperationCanceledException;
 
 public class TestBuildLogger implements BuildLogger {
 
-	private int fMessageOutputLevel = Project.MSG_INFO;
-	private PrintStream fErr = null;
-	private PrintStream fOut = null;
-	private boolean fSetProperties = true;
-
+	private int fMessageOutputLevel= Project.MSG_INFO;
+	private PrintStream fErr= null;
+	private PrintStream fOut= null;
+    private boolean fSetProperties= true;
+	
 	/**
 	 * An exception that has already been logged.
 	 */
-	private Throwable fHandledException = null;
-
+	private Throwable fHandledException= null;
+	
+	
 	public TestBuildLogger() {
 	}
-
+	
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
 	 */
-	@Override
 	public void setMessageOutputLevel(int level) {
-		fMessageOutputLevel = level;
+		fMessageOutputLevel= level;
 	}
-
+	
 	protected int getMessageOutputLevel() {
 		return fMessageOutputLevel;
 	}
@@ -50,15 +50,13 @@ public class TestBuildLogger implements BuildLogger {
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setEmacsMode(boolean)
 	 */
-	@Override
 	public void setEmacsMode(boolean emacsMode) {
-		// do nothing
+		//do nothing
 	}
 
 	/**
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void buildStarted(BuildEvent event) {
 		AntTestChecker.getDefault().buildStarted(event.getProject().getName());
 	}
@@ -66,29 +64,27 @@ public class TestBuildLogger implements BuildLogger {
 	/**
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void buildFinished(BuildEvent event) {
 		handleException(event);
-		fHandledException = null;
+		fHandledException= null;
 		AntTestChecker.getDefault().buildFinished();
 	}
 
 	/**
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void targetStarted(BuildEvent event) {
 		AntTestChecker.getDefault().targetStarted(event.getTarget().getName());
-		if (fSetProperties) {
-			fSetProperties = false;
-			AntTestChecker.getDefault().setUserProperties(event.getProject().getProperties());
-		}
+        if (fSetProperties) {
+            fSetProperties= false;
+            //TODO ANT-1.9.1 API USE
+            AntTestChecker.getDefault().setUserProperties(event.getProject().getProperties());
+        }
 	}
 
 	/**
 	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void targetFinished(BuildEvent event) {
 		handleException(event);
 		AntTestChecker.getDefault().targetFinished();
@@ -97,7 +93,6 @@ public class TestBuildLogger implements BuildLogger {
 	/**
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void taskStarted(BuildEvent event) {
 		AntTestChecker.getDefault().taskStarted(event.getTask().getTaskName());
 	}
@@ -105,7 +100,6 @@ public class TestBuildLogger implements BuildLogger {
 	/**
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void taskFinished(BuildEvent event) {
 		handleException(event);
 		AntTestChecker.getDefault().targetFinished();
@@ -114,7 +108,6 @@ public class TestBuildLogger implements BuildLogger {
 	/**
 	 * @see BuildListener#messageLogged(BuildEvent)
 	 */
-	@Override
 	public void messageLogged(BuildEvent event) {
 		if (event.getPriority() > getMessageOutputLevel()) {
 			return;
@@ -126,63 +119,62 @@ public class TestBuildLogger implements BuildLogger {
 	protected PrintStream getErrorPrintStream() {
 		return fErr;
 	}
-
+	
 	protected PrintStream getOutputPrintStream() {
 		return fOut;
 	}
-
+	
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setErrorPrintStream(java.io.PrintStream)
 	 */
-	@Override
 	public void setErrorPrintStream(PrintStream err) {
-		// this build logger logs to "null" unless
-		// the user has explicitly set a logfile to use
+		//this build logger logs to "null" unless
+		//the user has explicitly set a logfile to use
 		if (err == System.err) {
-			fErr = null;
+			fErr= null;
 		} else {
-			fErr = err;
+			fErr= err;
 		}
 	}
 
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setOutputPrintStream(java.io.PrintStream)
 	 */
-	@Override
 	public void setOutputPrintStream(PrintStream output) {
-		// this build logger logs to "null" unless
-		// the user has explicitly set a logfile to use
+		//this build logger logs to "null" unless
+		//the user has explicitly set a logfile to use
 		if (output == System.out) {
-			fOut = null;
+			fOut= null;
 		} else {
-			fOut = output;
+			fOut= output;
 		}
 	}
-
+	
 	protected void logMessage(String message, int priority) {
 		if (priority > getMessageOutputLevel()) {
 			return;
 		}
-
+		
 		if (priority == Project.MSG_ERR) {
 			if (getErrorPrintStream() != null && getErrorPrintStream() != System.err) {
-				// user has designated to log to a logfile
+				//user has designated to log to a logfile
 				getErrorPrintStream().println(message);
 			}
 		} else {
 			if (getOutputPrintStream() != null && getOutputPrintStream() != System.out) {
-				// user has designated to log to a logfile
+				//user has designated to log to a logfile
 				getOutputPrintStream().println(message);
-			}
+			} 
 		}
 	}
-
+	
 	protected void handleException(BuildEvent event) {
 		Throwable exception = event.getException();
-		if (exception == null || exception == fHandledException || exception instanceof OperationCanceledException
-				|| exception instanceof AntSecurityException) {
+		if (exception == null || exception == fHandledException
+		|| exception instanceof OperationCanceledException
+		|| exception instanceof AntSecurityException) {
 			return;
 		}
-		fHandledException = exception;
+		fHandledException= exception;
 	}
 }

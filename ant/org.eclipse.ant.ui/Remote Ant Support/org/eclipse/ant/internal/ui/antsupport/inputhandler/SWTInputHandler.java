@@ -12,6 +12,8 @@
 
 package org.eclipse.ant.internal.ui.antsupport.inputhandler;
 
+import java.util.Iterator;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputRequest;
@@ -123,8 +125,9 @@ public class SWTInputHandler extends DefaultInputHandler {
 		if (fRequest instanceof MultipleChoiceInputRequest) {
 			fCombo = new Combo(fDialog, SWT.BORDER | SWT.READ_ONLY);
 			fCombo.add(""); //$NON-NLS-1$
-			for (String text : ((MultipleChoiceInputRequest) fRequest).getChoices()) {
-				fCombo.add(text);
+			// TODO ANT-1.9.1 API USE
+			for (Iterator<?> i = ((MultipleChoiceInputRequest) fRequest).getChoices().iterator(); i.hasNext();) {
+				fCombo.add((String) i.next());
 				fCombo.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 				fCombo.addSelectionListener(new SelectionAdapter() {
 					@Override

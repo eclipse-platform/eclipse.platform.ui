@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.core.ant;
 
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
- * Reports progress and checks for cancellation of a script execution.
+ * Reports progress and checks for cancelation of a script execution.
  */
 public class ProgressBuildListener implements BuildListener {
 
@@ -44,17 +45,18 @@ public class ProgressBuildListener implements BuildListener {
 	private Thread currentTaskThread;
 
 	/**
-	 * Contains the progress monitor instances for the various projects in a chain.
+	 *  Contains the progress monitor instances for the various
+	 *	projects in a chain.
 	 */
 	protected class ProjectMonitors {
 		/**
-		 * This field is null for the main project
+		 *  This field is null for the main project
 		 */
 		private Target mainTarget;
 		private IProgressMonitor mainMonitor;
 		private IProgressMonitor targetMonitor;
 		private IProgressMonitor taskMonitor;
-
+		
 		protected IProgressMonitor getMainMonitor() {
 			return mainMonitor;
 		}
@@ -95,13 +97,13 @@ public class ProgressBuildListener implements BuildListener {
 		ProjectMonitors monitors = new ProjectMonitors();
 		IProgressMonitor localmonitor = monitor;
 		if (localmonitor == null) {
-			localmonitor = new NullProgressMonitor();
+			localmonitor= new NullProgressMonitor();
 		}
 		monitors.setMainMonitor(localmonitor);
 		projects.put(mainProject, monitors);
-		ArrayList<Target> targets = new ArrayList<Target>(targetNames.size());
+		ArrayList<Target> targets= new ArrayList<Target>(targetNames.size());
 		for (String targetName : targetNames) {
-			Target target = mainProject.getTargets().get(targetName);
+			Target target = (Target) mainProject.getTargets().get(targetName);
 			if (target != null) {
 				targets.add(target);
 			}
@@ -110,12 +112,9 @@ public class ProgressBuildListener implements BuildListener {
 		monitors.getMainMonitor().beginTask(IAntCoreConstants.EMPTY_STRING, work);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void buildStarted(BuildEvent event) {
 		checkCanceled();
 	}
@@ -131,16 +130,17 @@ public class ProgressBuildListener implements BuildListener {
 	protected int countTarget(Target target, List<String> alreadySeen) {
 		int result = 1;
 		Project project = target.getProject();
-		Hashtable<String, Target> targets = project.getTargets();
-		String targetName;
-		Target dependency;
-		for (Enumeration<String> dependencies = target.getDependencies(); dependencies.hasMoreElements();) {
-			targetName = dependencies.nextElement();
-			if (alreadySeen.contains(targetName)) { // circular dependency or common dependency
+		//TODO ANT-1.9.1 API USE
+		Hashtable<?, ?> targets = project.getTargets();
+        String targetName;
+        Target dependency;
+		for (Enumeration<?> dependencies = target.getDependencies(); dependencies.hasMoreElements();) {
+			targetName = (String) dependencies.nextElement();
+            if (alreadySeen.contains(targetName)) { //circular dependency or common dependency
 				return result;
-			}
-			alreadySeen.add(targetName);
-			dependency = targets.get(targetName);
+            }
+            alreadySeen.add(targetName);
+			dependency = (Target) targets.get(targetName);
 			if (dependency != null) {
 				result = result + countTarget(dependency, alreadySeen);
 			}
@@ -158,17 +158,14 @@ public class ProgressBuildListener implements BuildListener {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void buildFinished(BuildEvent event) {
 		ProjectMonitors monitors = projects.get(mainProject);
 		monitors.getMainMonitor().done();
-		Set<Project> keys = projects.keySet();
-		Iterator<Project> itr = keys.iterator();
+		Set<Project> keys= projects.keySet();
+		Iterator<Project> itr= keys.iterator();
 		while (itr.hasNext()) {
 			Project project = itr.next();
 			project.removeBuildListener(this);
@@ -176,12 +173,9 @@ public class ProgressBuildListener implements BuildListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void targetStarted(BuildEvent event) {
 		checkCanceled();
 		Project currentProject = event.getProject();
@@ -205,7 +199,7 @@ public class ProgressBuildListener implements BuildListener {
 		ProjectMonitors monitors = new ProjectMonitors();
 		// remember the target so we can remove this monitors object later
 		monitors.setMainTarget(target);
-		ArrayList<Target> targets = new ArrayList<Target>(1);
+		ArrayList<Target> targets= new ArrayList<Target>(1);
 		targets.add(target);
 		int work = computeWork(targets);
 		ProjectMonitors parentMonitors = null;
@@ -222,12 +216,9 @@ public class ProgressBuildListener implements BuildListener {
 		return monitors;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void targetFinished(BuildEvent event) {
 		checkCanceled();
 		Project currentProject = event.getProject();
@@ -246,12 +237,9 @@ public class ProgressBuildListener implements BuildListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void taskStarted(BuildEvent event) {
 		checkCanceled();
 		Project currentProject = event.getProject();
@@ -267,7 +255,7 @@ public class ProgressBuildListener implements BuildListener {
 		if (task == null) {
 			return;
 		}
-		currentTaskThread = Thread.currentThread();
+		currentTaskThread= Thread.currentThread();
 		monitors.setTaskMonitor(subMonitorFor(monitors.getTargetMonitor(), 1));
 		monitors.getTaskMonitor().beginTask(IAntCoreConstants.EMPTY_STRING, 1);
 		// If this script is calling another one, track the project chain.
@@ -278,12 +266,9 @@ public class ProgressBuildListener implements BuildListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void taskFinished(BuildEvent event) {
 		checkCanceled();
 		Project project = event.getProject();
@@ -296,29 +281,26 @@ public class ProgressBuildListener implements BuildListener {
 			return;
 		}
 		monitors.getTaskMonitor().done();
-		currentTaskThread = null;
+		currentTaskThread= null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
-	@Override
 	public void messageLogged(BuildEvent event) {
 		checkCanceled();
 	}
 
 	protected void checkCanceled() {
-		// only cancel if the current task thread matches the current thread
-		// do not want to throw an exception in a separate thread or process
-		// see bug 32657
+		//only cancel if the current task thread matches the current thread
+		//do not want to throw an exception in a separate thread or process
+		//see bug 32657
 		if (currentTaskThread != null && currentTaskThread != Thread.currentThread()) {
 			return;
 		}
 		ProjectMonitors monitors = projects.get(mainProject);
 		if (monitors.getMainMonitor().isCanceled()) {
-			currentTaskThread = null;
+			currentTaskThread= null;
 			throw new OperationCanceledException(InternalAntMessages.ProgressBuildListener_Build_cancelled);
 		}
 	}

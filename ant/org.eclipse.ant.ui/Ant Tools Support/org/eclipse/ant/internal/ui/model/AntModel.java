@@ -507,7 +507,9 @@ public class AntModel implements IAntModel {
 	}
 
 	private void setPropertiesFromFiles(Project project, List<Properties> allProperties) {
-		for (Properties props : allProperties) {
+		Iterator<Properties> iter = allProperties.iterator();
+		while (iter.hasNext()) {
+			Properties props = iter.next();
 			Enumeration<?> propertyNames = props.propertyNames();
 			while (propertyNames.hasMoreElements()) {
 				String name = (String) propertyNames.nextElement();
@@ -1550,7 +1552,7 @@ public class AntModel implements IAntModel {
 		}
 	}
 
-	protected void removeDefinerTasks(String definerIdentifier, Hashtable<String, AntTypeDefinition> typeTable) {
+	protected void removeDefinerTasks(String definerIdentifier, Hashtable<String, Class<?>> typeTable) {
 		if (fDefinerNodeIdentifierToDefinedTasks == null) {
 			return;
 		}
