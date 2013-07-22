@@ -210,6 +210,7 @@ import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.MultiPageEditorSite;
 
 import org.eclipse.ui.texteditor.rulers.IColumnSupport;
 import org.eclipse.ui.texteditor.rulers.IContributedRulerColumn;
@@ -635,7 +636,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 								fLocalLastEditPosition= null;
 							}
 						}
-						TextEditorPlugin.getDefault().setLastEditPosition(new EditPosition(input, getEditorSite().getId(), fLocalLastEditPosition));
+
+						IEditorSite editorSite= getEditorSite();
+						if (editorSite instanceof MultiPageEditorSite)
+							editorSite= ((MultiPageEditorSite)editorSite).getMultiPageEditor().getEditorSite();
+						TextEditorPlugin.getDefault().setLastEditPosition(new EditPosition(input, editorSite.getId(), fLocalLastEditPosition));
 					}
 				}
 			}
