@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Tom Schindl and others.
+ * Copyright (c) 2006, 2013 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     Niels Lippke - initial API and implementation
+ *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -40,9 +41,9 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Example for full feature cell navigation until bug 230955 is fixed
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>, Niels Lippke <niels.lippke@airpas.com>
- * 
+ *
  */
 public class Snippet058CellNavigationIn34 {
 
@@ -76,13 +77,13 @@ public class Snippet058CellNavigationIn34 {
 	}
 
 	protected abstract class AbstractEditingSupport extends EditingSupport {
-		private CellEditor editor;
+		private final CellEditor editor;
 
 		public AbstractEditingSupport(TableViewer viewer) {
 			super(viewer);
 			this.editor = new TextCellEditor(viewer.getTable());
 		}
-		
+
 		public AbstractEditingSupport(TableViewer viewer, CellEditor editor) {
 			super(viewer);
 			this.editor = editor;
@@ -167,11 +168,11 @@ public class Snippet058CellNavigationIn34 {
 
 		});
 
-		
+
 		column.setEditingSupport(new AbstractEditingSupport(v) {
 
-			protected Object getValue(Object element) {				
-				return ((Person) element).email;	
+			protected Object getValue(Object element) {
+				return ((Person) element).email;
 			}
 
 			protected void doSetValue(Object element, Object value) {
@@ -192,13 +193,13 @@ public class Snippet058CellNavigationIn34 {
 			}
 
 		});
-		
-		ComboBoxCellEditor editor = new ComboBoxCellEditor(((TableViewer) v).getTable(), new String[] {"M","F"});
-		editor.setActivationStyle(ComboBoxCellEditor.DROP_DOWN_ON_TRAVERSE_ACTIVATION | 
+
+		ComboBoxCellEditor editor = new ComboBoxCellEditor(v.getTable(), new String[] {"M","F"});
+		editor.setActivationStyle(ComboBoxCellEditor.DROP_DOWN_ON_TRAVERSE_ACTIVATION |
 				ComboBoxCellEditor.DROP_DOWN_ON_PROGRAMMATIC_ACTIVATION |
 				ComboBoxCellEditor.DROP_DOWN_ON_MOUSE_ACTIVATION |
 				ComboBoxCellEditor.DROP_DOWN_ON_KEY_ACTIVATION);
-		
+
 		column.setEditingSupport(new AbstractEditingSupport(v, editor) {
 
 			protected Object getValue(Object element) {
@@ -216,24 +217,24 @@ public class Snippet058CellNavigationIn34 {
 			}
 
 		});
-		
+
 		CellNavigationStrategy naviStrat = new CellNavigationStrategy() {
 
 			public ViewerCell findSelectedCell(ColumnViewer viewer,
 					ViewerCell currentSelectedCell, Event event) {
 				ViewerCell cell = super.findSelectedCell(viewer, currentSelectedCell, event);
-				
+
 				if( cell != null ) {
 					v.getTable().showColumn(v.getTable().getColumn(cell.getColumnIndex()));
 				}
-				
+
 				return cell;
 			}
-			
+
 		};
-		
+
 		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(v,new FocusCellOwnerDrawHighlighter(v),naviStrat);
-		
+
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
 			protected boolean isEditorActivationEvent(
 					ColumnViewerEditorActivationEvent event) {
@@ -243,21 +244,21 @@ public class Snippet058CellNavigationIn34 {
 						|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
 			}
 		};
-		
+
 		TableViewerEditor.create(v, focusCellManager, actSupport, ColumnViewerEditor.TABBING_HORIZONTAL
 				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
 				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
-		
+
 		v.getColumnViewerEditor().addEditorActivationListener(new ColumnViewerEditorActivationListener() {
 
 			public void afterEditorActivated(
 					ColumnViewerEditorActivationEvent event) {
-				
+
 			}
 
 			public void afterEditorDeactivated(
 					ColumnViewerEditorDeactivationEvent event) {
-				
+
 			}
 
 			public void beforeEditorActivated(
@@ -268,11 +269,11 @@ public class Snippet058CellNavigationIn34 {
 
 			public void beforeEditorDeactivated(
 					ColumnViewerEditorDeactivationEvent event) {
-				
+
 			}
-			
+
 		});
-		
+
 		Person[] model = createModel();
 		v.setInput(model);
 		v.getTable().setLinesVisible(true);
