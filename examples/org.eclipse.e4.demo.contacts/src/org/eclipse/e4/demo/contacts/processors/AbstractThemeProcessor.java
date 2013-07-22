@@ -9,6 +9,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Kai Tödter - Adoption to contacts demo
+ *     Lars Vogel <lars.vogel@gmail.com> - Bug https://bugs.eclipse.org/413431
  ******************************************************************************/
 package org.eclipse.e4.demo.contacts.processors;
 
@@ -34,10 +35,10 @@ import org.osgi.framework.ServiceReference;
 
 public abstract class AbstractThemeProcessor {
 
-	@Execute
-	public void process() {
-		if (!check())
+	public void process(MApplication app) {
+		if (!check()) {
 			return;
+		}
 
 		// FIXME Remove once bug 314091 is resolved
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
@@ -50,10 +51,9 @@ public abstract class AbstractThemeProcessor {
 
 		List<ITheme> themes = engine.getThemes();
 		if (themes.size() > 0) {
-			MApplication application = getApplication();
 			
 			MCommand switchThemeCommand = null;
-			for (MCommand cmd : application.getCommands()) {
+			for (MCommand cmd : app.getCommands()) {
 				if ("contacts.switchTheme".equals(cmd.getElementId())) { //$NON-NLS-1$
 					switchThemeCommand = cmd;
 					break;
@@ -91,8 +91,6 @@ public abstract class AbstractThemeProcessor {
 
 	abstract protected void postprocess();
 	
-	abstract protected MApplication getApplication(); 
-
 	private String getCSSUri(String themeId) {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IExtensionPoint extPoint = registry
