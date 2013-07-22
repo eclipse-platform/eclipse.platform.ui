@@ -22,61 +22,66 @@ import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IFormattingContext;
 
 public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrategy {
- 
+
 	/** Documents to be formatted by this strategy */
-	private final LinkedList<IDocument> fDocuments= new LinkedList<IDocument>();
-    
+	private final LinkedList<IDocument> fDocuments = new LinkedList<IDocument>();
+
 	/** access to the preferences store * */
-	private FormattingPreferences prefs; 
-	
-	private int indent= -1;
-	
+	private FormattingPreferences prefs;
+
+	private int indent = -1;
+
 	public XmlDocumentFormattingStrategy() {
-	    this.prefs = new FormattingPreferences();
-    }
- 
-	public XmlDocumentFormattingStrategy(FormattingPreferences prefs, int indent) {
-	    Assert.isNotNull(prefs);
-	    this.prefs = prefs;
-	    this.indent= indent;
+		this.prefs = new FormattingPreferences();
 	}
-	
-	/* (non-Javadoc)
+
+	public XmlDocumentFormattingStrategy(FormattingPreferences prefs, int indent) {
+		Assert.isNotNull(prefs);
+		this.prefs = prefs;
+		this.indent = indent;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#format()
 	 */
+	@Override
 	public void format() {
- 
-        super.format();
-     	final IDocument document= fDocuments.removeFirst();
+
+		super.format();
+		final IDocument document = fDocuments.removeFirst();
 		if (document != null) {
-	        // TODO allow formatting of regions, not just the entire document; bug 75611
-	        String documentText = document.get();
-	        XmlDocumentFormatter formatter = new XmlDocumentFormatter();
-	        if (indent != -1) {
-	        	formatter.setInitialIndent(indent);
-	        }
-            formatter.setDefaultLineDelimiter(TextUtilities.getDefaultLineDelimiter(document));
-	        String formattedText = formatter.format(documentText, this.prefs);
-	        if (formattedText != null && !formattedText.equals(documentText)) {
-	        	document.set(formattedText);
-	        }
+			// allow formatting of regions, not just the entire document; bug 75611
+			String documentText = document.get();
+			XmlDocumentFormatter formatter = new XmlDocumentFormatter();
+			if (indent != -1) {
+				formatter.setInitialIndent(indent);
+			}
+			formatter.setDefaultLineDelimiter(TextUtilities.getDefaultLineDelimiter(document));
+			String formattedText = formatter.format(documentText, this.prefs);
+			if (formattedText != null && !formattedText.equals(documentText)) {
+				document.set(formattedText);
+			}
 		}
-     }
-     
-     /*
- 	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
- 	 */
- 	public void formatterStarts(final IFormattingContext context) {
- 		super.formatterStarts(context);
- 		fDocuments.addLast((IDocument) context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM));
- 	}
+	}
 
- 	/*
- 	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStops()
- 	 */
- 	public void formatterStops() {
- 		super.formatterStops();
+	/*
+	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
+	 */
+	@Override
+	public void formatterStarts(final IFormattingContext context) {
+		super.formatterStarts(context);
+		fDocuments.addLast((IDocument) context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM));
+	}
 
- 		fDocuments.clear();
- 	}
+	/*
+	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStops()
+	 */
+	@Override
+	public void formatterStops() {
+		super.formatterStops();
+
+		fDocuments.clear();
+	}
 }

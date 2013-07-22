@@ -160,7 +160,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 
 	private void initializeAsGlobal(boolean separateVM) {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-		List<?> prefProperties;
+		List<Property> prefProperties;
 		if (separateVM) {
 			prefProperties = prefs.getRemoteAntProperties();
 		} else {

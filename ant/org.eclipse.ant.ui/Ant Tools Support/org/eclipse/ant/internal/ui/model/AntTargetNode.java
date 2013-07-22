@@ -116,7 +116,7 @@ public class AntTargetNode extends AntElementNode {
 	@Override
 	public void reset() {
 		super.reset();
-		Map<String, Object> currentTargets = fTarget.getProject().getTargets();
+		Map<String, Target> currentTargets = fTarget.getProject().getTargets();
 		if (currentTargets.get(fTarget.getName()) != null) {
 			currentTargets.remove(fTarget.getName());
 		}
