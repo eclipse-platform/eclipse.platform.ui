@@ -11,8 +11,6 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
-import org.eclipse.e4.core.commands.ExpressionContext;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +20,9 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.internal.expressions.ReferenceExpression;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -230,27 +230,33 @@ public final class ContributionsAnalyzer {
 		return isVisible((MCoreExpression) contribution.getVisibleWhen(), eContext);
 	}
 
-	public static boolean isVisible(MCoreExpression exp, ExpressionContext eContext) {
-		Expression ref = null;
+	public static boolean isVisible(MCoreExpression exp, final ExpressionContext eContext) {
+		final Expression ref;
 		if (exp.getCoreExpression() instanceof Expression) {
 			ref = (Expression) exp.getCoreExpression();
 		} else {
 			ref = new ReferenceExpression(exp.getCoreExpressionId());
 			exp.setCoreExpression(ref);
 		}
-		try {
-			// Creates dependency on a predefined value that can be "poked" by the evaluation
-			// service
-			ExpressionInfo info = ref.computeExpressionInfo();
-			String[] names = info.getAccessedPropertyNames();
-			for (String name : names) {
-				eContext.getVariable(name + ".evaluationServiceLink"); //$NON-NLS-1$
-			}
-			return ref.evaluate(eContext) != EvaluationResult.FALSE;
-		} catch (CoreException e) {
-			trace("isVisible exception", e); //$NON-NLS-1$
+		// Creates dependency on a predefined value that can be "poked" by the evaluation
+		// service
+		ExpressionInfo info = ref.computeExpressionInfo();
+		String[] names = info.getAccessedPropertyNames();
+		for (String name : names) {
+			eContext.getVariable(name + ".evaluationServiceLink"); //$NON-NLS-1$
 		}
-		return false;
+		final boolean[] ret = new boolean[1];
+		ret[0] = false;
+		SafeRunner.run(new ISafeRunnable() {
+			public void run() throws Exception {
+				ret[0] = ref.evaluate(eContext) != EvaluationResult.FALSE;
+			}
+
+			public void handleException(Throwable exception) {
+				trace("isVisible exception", exception); //$NON-NLS-1$
+			}
+		});
+		return ret[0];
 	}
 
 	public static void addMenuContributions(final MMenu menuModel,
