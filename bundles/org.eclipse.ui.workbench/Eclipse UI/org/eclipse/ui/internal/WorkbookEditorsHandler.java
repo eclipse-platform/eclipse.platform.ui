@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Marc-Andre Laperle (Ericsson) - Bug 413278
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -20,6 +21,8 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -37,22 +40,30 @@ public class WorkbookEditorsHandler extends AbstractHandler {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow workbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		WorkbenchPage page = (WorkbenchPage) workbenchWindow.getActivePage();
-		if (page != null) {
-			MUIElement area = page.findSharedArea();
-			if (area instanceof MPlaceholder) {
-				area = ((MPlaceholder) area).getRef();
-			}
+		MUIElement uiElement = null;
 
-			MPartStack activeStack = getActiveStack(area);
-			if (activeStack != null) {
-				if (activeStack.getRenderer() instanceof StackRenderer
-						&& activeStack.getWidget() instanceof CTabFolder) {
-					StackRenderer stackRenderer = (StackRenderer) activeStack.getRenderer();
-					stackRenderer.showAvailableItems(activeStack,
-							(CTabFolder) activeStack.getWidget());
+		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
+		if (activeEditor != null) {
+			IWorkbenchWindow workbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+			WorkbenchPage page = (WorkbenchPage) workbenchWindow.getActivePage();
+			if (page != null) {
+				IWorkbenchPartReference reference = page.getReference(activeEditor);
+				if (reference != null) {
+					uiElement = page.getActiveElement(reference);
 				}
+			}
+		}
+
+		if (uiElement instanceof MPlaceholder) {
+			uiElement = ((MPlaceholder) uiElement).getRef();
+		}
+
+		MPartStack activeStack = getActiveStack(uiElement);
+		if (activeStack != null) {
+			if (activeStack.getRenderer() instanceof StackRenderer
+					&& activeStack.getWidget() instanceof CTabFolder) {
+				StackRenderer stackRenderer = (StackRenderer) activeStack.getRenderer();
+				stackRenderer.showAvailableItems(activeStack, (CTabFolder) activeStack.getWidget());
 			}
 		}
 		return null;
