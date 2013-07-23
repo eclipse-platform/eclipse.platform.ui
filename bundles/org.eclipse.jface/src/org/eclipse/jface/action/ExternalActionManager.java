@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -122,7 +123,7 @@ public final class ExternalActionManager {
 		 * will be removed from this set and the listener removed. This value
 		 * may be empty, but never <code>null</code>.
 		 */
-		private final Set loggedCommandIds = new HashSet();
+		private final Set<String> loggedCommandIds = new HashSet<String>();
 
 		/**
 		 * The list of listeners that have registered for property change
@@ -130,7 +131,7 @@ public final class ExternalActionManager {
 		 * to listeners (<code>IPropertyChangeListener</code> or
 		 * <code>ListenerList</code> of <code>IPropertyChangeListener</code>).
 		 */
-		private final Map registeredListeners = new HashMap();
+		private final Map<String, Object> registeredListeners = new HashMap<String, Object>();
 
 		/**
 		 * Constructs a new instance of <code>CommandCallback</code> with the
@@ -257,11 +258,11 @@ public final class ExternalActionManager {
 
 		public final void bindingManagerChanged(final BindingManagerEvent event) {
 			if (event.isActiveBindingsChanged()) {
-				final Iterator listenerItr = registeredListeners.entrySet()
+				final Iterator<Entry<String, Object>> listenerItr = registeredListeners.entrySet()
 						.iterator();
 				while (listenerItr.hasNext()) {
-					final Map.Entry entry = (Map.Entry) listenerItr.next();
-					final String commandId = (String) entry.getKey();
+					final Entry<String, Object> entry = listenerItr.next();
+					final String commandId = entry.getKey();
 					final Command command = commandManager
 							.getCommand(commandId);
 					final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(

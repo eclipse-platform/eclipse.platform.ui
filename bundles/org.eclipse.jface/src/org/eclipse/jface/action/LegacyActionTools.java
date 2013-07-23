@@ -38,7 +38,7 @@ public final class LegacyActionTools {
 	 * 
 	 * @see #findKeyCode
 	 */
-	private static Map keyCodes = null;
+	private static Map<String, Integer> keyCodes = null;
 
 	/**
 	 * Table of string representations of keys (key type: <code>Integer</code>,
@@ -47,7 +47,7 @@ public final class LegacyActionTools {
 	 * 
 	 * @see #findKeyString
 	 */
-	private static Map keyStrings = null;
+	private static Map<Integer, String> keyStrings = null;
 
 	/**
 	 * The localized uppercase version of ALT
@@ -71,7 +71,7 @@ public final class LegacyActionTools {
 	 * 
 	 * @see #findLocalizedKeyCode
 	 */
-	private static Map localizedKeyCodes = null;
+	private static Map<String, Integer> localizedKeyCodes = null;
 
 	/**
 	 * The localized uppercase version of SHIFT
@@ -276,7 +276,7 @@ public final class LegacyActionTools {
 			initKeyCodes();
 		}
 		token = token.toUpperCase();
-		Integer i = (Integer) keyCodes.get(token);
+		Integer i = keyCodes.get(token);
 		if (i != null) {
 			return i.intValue();
 		}
@@ -305,7 +305,7 @@ public final class LegacyActionTools {
 		}
 		int i = keyCode & ~(SWT.CTRL | SWT.ALT | SWT.SHIFT | SWT.COMMAND);
 		Integer integer = new Integer(i);
-		String result = (String) keyStrings.get(integer);
+		String result = keyStrings.get(integer);
 		if (result != null) {
 			return result;
 		}
@@ -331,7 +331,7 @@ public final class LegacyActionTools {
 			initLocalizedKeyCodes();
 		}
 		token = token.toUpperCase();
-		Integer i = (Integer) localizedKeyCodes.get(token);
+		Integer i = localizedKeyCodes.get(token);
 		if (i != null) {
 			return i.intValue();
 		}
@@ -478,7 +478,7 @@ public final class LegacyActionTools {
 	 * Initializes the internal key code table.
 	 */
 	private static final void initKeyCodes() {
-		keyCodes = new HashMap(40);
+		keyCodes = new HashMap<String, Integer>(40);
 
 		keyCodes.put("BACKSPACE", new Integer(8)); //$NON-NLS-1$
 		keyCodes.put("TAB", new Integer(9)); //$NON-NLS-1$
@@ -524,7 +524,7 @@ public final class LegacyActionTools {
 	 * Initializes the internal key string table.
 	 */
 	private static void initKeyStrings() {
-		keyStrings = new HashMap(40);
+		keyStrings = new HashMap<Integer, String>(40);
 
 		keyStrings.put(new Integer(8), JFaceResources.getString("Backspace")); //$NON-NLS-1$
 		keyStrings.put(new Integer(9), JFaceResources.getString("Tab")); //$NON-NLS-1$
@@ -578,7 +578,7 @@ public final class LegacyActionTools {
 	 * Initializes the localized internal key code table.
 	 */
 	private static void initLocalizedKeyCodes() {
-		localizedKeyCodes = new HashMap(40);
+		localizedKeyCodes = new HashMap<String, Integer>(40);
 
 		localizedKeyCodes.put(JFaceResources
 				.getString("Backspace").toUpperCase(), new Integer(8)); //$NON-NLS-1$

@@ -38,7 +38,7 @@ public class SubMenuManager extends SubContributionManager implements
      * monitor additions and removals.  If the visibility of the manager is modified
      * the visibility of the submenus is also modified.
      */
-    private Map mapMenuToWrapper;
+    private Map<IMenuManager, SubMenuManager> mapMenuToWrapper;
 
     /**
      * List of registered menu listeners (element type: <code>IMenuListener</code>).
@@ -105,9 +105,9 @@ public class SubMenuManager extends SubContributionManager implements
         // otherwise super's call to removeAll will remove them
         // before they can be disposed
         if (mapMenuToWrapper != null) {
-            Iterator iter = mapMenuToWrapper.values().iterator();
+            Iterator<SubMenuManager> iter = mapMenuToWrapper.values().iterator();
             while (iter.hasNext()) {
-                SubMenuManager wrapper = (SubMenuManager) iter.next();
+                SubMenuManager wrapper = iter.next();
                 wrapper.disposeManager();
             }
             mapMenuToWrapper.clear();
@@ -249,9 +249,9 @@ public class SubMenuManager extends SubContributionManager implements
      */
     protected IMenuManager getWrapper(IMenuManager mgr) {
         if (mapMenuToWrapper == null) {
-            mapMenuToWrapper = new HashMap(4);
+            mapMenuToWrapper = new HashMap<IMenuManager, SubMenuManager>(4);
         }
-        SubMenuManager wrapper = (SubMenuManager) mapMenuToWrapper.get(mgr);
+        SubMenuManager wrapper = mapMenuToWrapper.get(mgr);
         if (wrapper == null) {
             wrapper = wrapMenu(mgr);
             mapMenuToWrapper.put(mgr, wrapper);
@@ -294,9 +294,9 @@ public class SubMenuManager extends SubContributionManager implements
 	public void removeAll() {
         super.removeAll();
         if (mapMenuToWrapper != null) {
-            Iterator iter = mapMenuToWrapper.values().iterator();
+            Iterator<SubMenuManager> iter = mapMenuToWrapper.values().iterator();
             while (iter.hasNext()) {
-                SubMenuManager wrapper = (SubMenuManager) iter.next();
+                SubMenuManager wrapper = iter.next();
                 wrapper.removeAll();
             }
             mapMenuToWrapper.clear();
@@ -340,9 +340,9 @@ public class SubMenuManager extends SubContributionManager implements
 	public void setVisible(boolean visible) {
         super.setVisible(visible);
         if (mapMenuToWrapper != null) {
-            Iterator iter = mapMenuToWrapper.values().iterator();
+            Iterator<SubMenuManager> iter = mapMenuToWrapper.values().iterator();
             while (iter.hasNext()) {
-                SubMenuManager wrapper = (SubMenuManager) iter.next();
+                SubMenuManager wrapper = iter.next();
                 wrapper.setVisible(visible);
             }
         }

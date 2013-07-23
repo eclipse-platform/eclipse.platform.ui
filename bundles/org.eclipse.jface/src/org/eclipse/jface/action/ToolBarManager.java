@@ -247,7 +247,7 @@ public class ToolBarManager extends ContributionManager implements
 
 				// clean contains all active items without double separators
 				IContributionItem[] items = getItems();
-				ArrayList clean = new ArrayList(items.length);
+				ArrayList<IContributionItem> clean = new ArrayList<IContributionItem>(items.length);
 				IContributionItem separator = null;
 				//			long cleanStartTime= 0;
 				//			if (DEBUG) {
@@ -280,7 +280,7 @@ public class ToolBarManager extends ContributionManager implements
 
 				// determine obsolete items (removed or non active)
 				ToolItem[] mi = toolBar.getItems();
-				ArrayList toRemove = new ArrayList(mi.length);
+				ArrayList<ToolItem> toRemove = new ArrayList<ToolItem>(mi.length);
 				for (int i = 0; i < mi.length; i++) {
 					// there may be null items in a toolbar
 					if (mi[i] == null)
@@ -310,7 +310,7 @@ public class ToolBarManager extends ContributionManager implements
 
                     // remove obsolete items
                     for (int i = toRemove.size(); --i >= 0;) {
-                        ToolItem item = (ToolItem) toRemove.get(i);
+                        ToolItem item = toRemove.get(i);
                         if (!item.isDisposed()) {
                             Control ctrl = item.getControl();
                             if (ctrl != null) {
@@ -326,8 +326,8 @@ public class ToolBarManager extends ContributionManager implements
                     mi = toolBar.getItems();
                     int srcIx = 0;
                     int destIx = 0;
-                    for (Iterator e = clean.iterator(); e.hasNext();) {
-                        src = (IContributionItem) e.next();
+                    for (Iterator<IContributionItem> e = clean.iterator(); e.hasNext();) {
+                        src = e.next();
 
                         // get corresponding item in SWT widget
                         if (srcIx < mi.length) {

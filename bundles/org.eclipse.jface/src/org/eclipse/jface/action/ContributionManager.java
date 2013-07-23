@@ -44,7 +44,7 @@ public abstract class ContributionManager implements IContributionManager {
 	/**
 	 * The list of contribution items.
 	 */
-	private List contributions = new ArrayList();
+	private List<IContributionItem> contributions = new ArrayList<IContributionItem>();
 
 	/**
 	 * Indicates whether the widgets are in sync with the contributions.
@@ -104,16 +104,16 @@ public abstract class ContributionManager implements IContributionManager {
 	private void addToGroup(String groupName, IContributionItem item,
 			boolean append) {
 		int i;
-		Iterator items = contributions.iterator();
+		Iterator<IContributionItem> items = contributions.iterator();
 		for (i = 0; items.hasNext(); i++) {
-			IContributionItem o = (IContributionItem) items.next();
+			IContributionItem o = items.next();
 			if (o.isGroupMarker()) {
 				String id = o.getId();
 				if (id != null && id.equalsIgnoreCase(groupName)) {
 					i++;
 					if (append) {
 						for (; items.hasNext(); i++) {
-							IContributionItem ci = (IContributionItem) items
+							IContributionItem ci = items
 									.next();
 							if (ci.isGroupMarker()) {
 								break;
@@ -177,7 +177,7 @@ public abstract class ContributionManager implements IContributionManager {
 		System.out.println("   Number of elements: " + size);//$NON-NLS-1$
 		int sum = 0;
 		for (int i = 0; i < size; i++) {
-			if (((IContributionItem) contributions.get(i)).isVisible()) {
+			if (contributions.get(i).isVisible()) {
 				sum++;
 			}
 		}
@@ -189,9 +189,9 @@ public abstract class ContributionManager implements IContributionManager {
 	 * (non-Javadoc) Method declared on IContributionManager.
 	 */
 	public IContributionItem find(String id) {
-		Iterator e = contributions.iterator();
+		Iterator<IContributionItem> e = contributions.iterator();
 		while (e.hasNext()) {
-			IContributionItem item = (IContributionItem) e.next();
+			IContributionItem item = e.next();
 			String itemId = item.getId();
 			if (itemId != null && itemId.equalsIgnoreCase(id)) {
 				return item;
@@ -276,7 +276,7 @@ public abstract class ContributionManager implements IContributionManager {
 	 */
 	public int indexOf(String id) {
 		for (int i = 0; i < contributions.size(); i++) {
-			IContributionItem item = (IContributionItem) contributions.get(i);
+			IContributionItem item = contributions.get(i);
 			String itemId = item.getId();
 			if (itemId != null && itemId.equalsIgnoreCase(id)) {
 				return i;
@@ -376,8 +376,8 @@ public abstract class ContributionManager implements IContributionManager {
 			return true;
 		}
 		if (hasDynamicItems()) {
-			for (Iterator iter = contributions.iterator(); iter.hasNext();) {
-				IContributionItem item = (IContributionItem) iter.next();
+			for (Iterator<IContributionItem> iter = contributions.iterator(); iter.hasNext();) {
+				IContributionItem item = iter.next();
 				if (item.isDirty()) {
 					return true;
 				}
@@ -512,7 +512,7 @@ public abstract class ContributionManager implements IContributionManager {
 		}
 
 		// Remove the old item.
-		final IContributionItem oldItem = (IContributionItem) contributions
+		final IContributionItem oldItem = contributions
 				.get(index);
 		itemRemoved(oldItem);
 
@@ -522,7 +522,7 @@ public abstract class ContributionManager implements IContributionManager {
 
 		// Go through and remove duplicates.
 		for (int i = contributions.size() - 1; i > index; i--) {
-			IContributionItem item = (IContributionItem) contributions.get(i);
+			IContributionItem item = contributions.get(i);
 			if ((item != null) && (identifier.equals(item.getId()))) {
 				if (Policy.TRACE_TOOLBAR) {
 					System.out

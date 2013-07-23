@@ -766,7 +766,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
             if (menuExist()) {
                 // clean contains all active items without double separators
                 IContributionItem[] items = getItems();
-                List clean = new ArrayList(items.length);
+                List<IContributionItem> clean = new ArrayList<IContributionItem>(items.length);
                 IContributionItem separator = null;
                 for (int i = 0; i < items.length; ++i) {
                     IContributionItem ci = items[i];
@@ -808,8 +808,8 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                 int srcIx = 0;
                 int destIx = 0;
 
-                for (Iterator e = clean.iterator(); e.hasNext();) {
-                    IContributionItem src = (IContributionItem) e.next();
+                for (Iterator<IContributionItem> e = clean.iterator(); e.hasNext();) {
+                    IContributionItem src = e.next();
                     IContributionItem dest;
 
                     // get corresponding item in SWT widget
