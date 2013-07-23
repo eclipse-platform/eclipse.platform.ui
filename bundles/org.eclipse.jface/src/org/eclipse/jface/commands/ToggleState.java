@@ -32,8 +32,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class ToggleState extends PersistentState {
 
 	/**
-	 * Constructs a new <code>ToggleState</code>. By default, the toggle is
-	 * off (e.g., <code>false</code>).
+	 * Constructs a new <code>ToggleState</code>. By default, the toggle is off
+	 * (e.g., <code>false</code>).
 	 */
 	public ToggleState() {
 		setValue(Boolean.FALSE);
@@ -42,7 +42,7 @@ public class ToggleState extends PersistentState {
 	@Override
 	public final void load(final IPreferenceStore store,
 			final String preferenceKey) {
-		final boolean currentValue = ((Boolean) getValue()).booleanValue(); 
+		final boolean currentValue = ((Boolean) getValue()).booleanValue();
 		store.setDefault(preferenceKey, currentValue);
 		if (shouldPersist() && (store.contains(preferenceKey))) {
 			final boolean value = store.getBoolean(preferenceKey);

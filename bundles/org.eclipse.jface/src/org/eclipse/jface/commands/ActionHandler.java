@@ -22,8 +22,7 @@ import org.eclipse.swt.widgets.Event;
 
 /**
  * <p>
- * This class adapts instances of <code>IAction</code> to
- * <code>IHandler</code>.
+ * This class adapts instances of <code>IAction</code> to <code>IHandler</code>.
  * </p>
  * 
  * @since 3.1
@@ -79,8 +78,8 @@ public final class ActionHandler extends AbstractHandler {
 						final PropertyChangeEvent propertyChangeEvent) {
 					final String property = propertyChangeEvent.getProperty();
 					fireHandlerChanged(new HandlerEvent(ActionHandler.this,
-							IAction.ENABLED.equals(property), IAction.HANDLED
-									.equals(property)));
+							IAction.ENABLED.equals(property),
+							IAction.HANDLED.equals(property)));
 				}
 			};
 		}
@@ -108,7 +107,7 @@ public final class ActionHandler extends AbstractHandler {
 			action.removePropertyChangeListener(propertyChangeListener);
 		}
 	}
-	
+
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		if ((action.getStyle() == IAction.AS_CHECK_BOX)
@@ -138,17 +137,17 @@ public final class ActionHandler extends AbstractHandler {
 	public final IAction getAction() {
 		return action;
 	}
-	
+
 	@Override
 	public final boolean isEnabled() {
 		return action.isEnabled();
 	}
-	
+
 	@Override
 	public final boolean isHandled() {
 		return action.isHandled();
 	}
-	
+
 	@Override
 	public final void removeHandlerListener(
 			final IHandlerListener handlerListener) {
@@ -158,7 +157,7 @@ public final class ActionHandler extends AbstractHandler {
 			detachListener();
 		}
 	}
-	
+
 	@Override
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
