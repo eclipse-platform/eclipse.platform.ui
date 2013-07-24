@@ -255,10 +255,10 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	@Override
 	protected void cancelPressed() {
 		// Inform all pages that we are cancelling
-		Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
+		Iterator<IPreferenceNode> nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		final boolean[] cancelOK = new boolean[] { true }; 
 		while (nodes.hasNext()) {
-			final IPreferenceNode node = (IPreferenceNode) nodes.next();
+			final IPreferenceNode node = nodes.next();
 			if (getPage(node) != null) {
 				SafeRunnable.run(new SafeRunnable() {
 					public void run() {
@@ -301,9 +301,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 			 */
 			public void run() throws Exception {
-				List nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER);
+				List<IPreferenceNode> nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER);
 				for (int i = 0; i < nodes.size(); i++) {
-					IPreferenceNode node = (IPreferenceNode) nodes.get(i);
+					IPreferenceNode node = nodes.get(i);
 					node.disposeResources();
 				}
 				
@@ -791,9 +791,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 *         found.
 	 */
 	protected IPreferenceNode findNodeMatching(String nodeId) {
-		List nodes = preferenceManager.getElements(PreferenceManager.POST_ORDER);
-		for (Iterator i = nodes.iterator(); i.hasNext();) {
-			IPreferenceNode node = (IPreferenceNode) i.next();
+		List<IPreferenceNode> nodes = preferenceManager.getElements(PreferenceManager.POST_ORDER);
+		for (Iterator<IPreferenceNode> i = nodes.iterator(); i.hasNext();) {
+			IPreferenceNode node = i.next();
 			if (node.getId().equals(nodeId)) {
 				return node;
 			}
@@ -872,9 +872,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 * </p>
 	 */
 	protected void handleSave() {
-		Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
+		Iterator<IPreferenceNode> nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		while (nodes.hasNext()) {
-			IPreferenceNode node = (IPreferenceNode) nodes.next();
+			IPreferenceNode node = nodes.next();
 			IPreferencePage page = node.getPage();
 			if (page instanceof PreferencePage) {
 				// Save now in case tbe workbench does not shutdown cleanly
@@ -972,10 +972,10 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				boolean hasFailedOK = false;
 				try {
 					// Notify all the pages and give them a chance to abort
-					Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER)
+					Iterator<IPreferenceNode> nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER)
 							.iterator();
 					while (nodes.hasNext()) {
-						IPreferenceNode node = (IPreferenceNode) nodes.next();
+						IPreferenceNode node = nodes.next();
 						IPreferencePage page = node.getPage();
 						if (page != null) {
 							if (!page.performOk()){

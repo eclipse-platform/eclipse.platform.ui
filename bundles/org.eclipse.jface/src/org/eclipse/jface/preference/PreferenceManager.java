@@ -124,7 +124,7 @@ public class PreferenceManager {
      * @param order the traversal order, one of 
      *	<code>PRE_ORDER</code> and <code>POST_ORDER</code>
      */
-    protected void buildSequence(IPreferenceNode node, List sequence, int order) {
+    protected void buildSequence(IPreferenceNode node, List<IPreferenceNode> sequence, int order) {
         if (order == PRE_ORDER) {
 			sequence.add(node);
 		}
@@ -184,10 +184,10 @@ public class PreferenceManager {
      *  (element type: <code>IPreferenceNode</code>)
      *  in the given order
      */
-    public List getElements(int order) {
+    public List<IPreferenceNode> getElements(int order) {
         Assert.isTrue(order == PRE_ORDER || order == POST_ORDER,
                 "invalid traversal order");//$NON-NLS-1$
-        ArrayList sequence = new ArrayList();
+        ArrayList<IPreferenceNode> sequence = new ArrayList<IPreferenceNode>();
         IPreferenceNode[] subnodes = getRoot().getSubNodes();
         for (int i = 0; i < subnodes.length; i++) {
 			buildSequence(subnodes[i], sequence, order);

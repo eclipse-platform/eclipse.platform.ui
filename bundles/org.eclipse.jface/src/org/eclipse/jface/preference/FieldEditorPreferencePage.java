@@ -69,7 +69,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
     /**
      * The field editors, or <code>null</code> if not created yet.
      */
-    private List fields = null;
+    private List<FieldEditor> fields = null;
 
     /**
      * The layout style; either <code>FLAT</code> or <code>GRID</code>.
@@ -139,7 +139,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
      */
     protected void addField(FieldEditor editor) {
         if (fields == null) {
-			fields = new ArrayList();
+			fields = new ArrayList<FieldEditor>();
 		}
         fields.add(editor);
     }
@@ -153,7 +153,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
         ((GridLayout) fieldEditorParent.getLayout()).numColumns = numColumns;
         if (fields != null) {
             for (int i = 0; i < fields.size(); i++) {
-                FieldEditor fieldEditor = (FieldEditor) fields.get(i);
+                FieldEditor fieldEditor = fields.get(i);
                 fieldEditor.adjustForNumColumns(numColumns);
             }
         }
@@ -164,9 +164,9 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
      */
     protected void applyFont() {
         if (fields != null) {
-            Iterator e = fields.iterator();
+            Iterator<FieldEditor> e = fields.iterator();
             while (e.hasNext()) {
-                FieldEditor pe = (FieldEditor) e.next();
+                FieldEditor pe = e.next();
                 pe.applyFont();
             }
         }
@@ -180,9 +180,9 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
     private int calcNumberOfColumns() {
         int result = 0;
         if (fields != null) {
-            Iterator e = fields.iterator();
+            Iterator<FieldEditor> e = fields.iterator();
             while (e.hasNext()) {
-                FieldEditor pe = (FieldEditor) e.next();
+                FieldEditor pe = e.next();
                 result = Math.max(result, pe.getNumberOfControls());
             }
         }
@@ -201,7 +201,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
         if (fields != null) {
             int size = fields.size();
             for (int i = 0; i < size; i++) {
-                FieldEditor editor = (FieldEditor) fields.get(i);
+                FieldEditor editor = fields.get(i);
                 valid = valid && editor.isValid();
                 if (!valid) {
                     invalidFieldEditor = editor;
@@ -263,9 +263,9 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
 	public void dispose() {
         super.dispose();
         if (fields != null) {
-            Iterator e = fields.iterator();
+            Iterator<FieldEditor> e = fields.iterator();
             while (e.hasNext()) {
-                FieldEditor pe = (FieldEditor) e.next();
+                FieldEditor pe = e.next();
                 pe.setPage(null);
                 pe.setPropertyChangeListener(null);
                 pe.setPreferenceStore(null);
@@ -300,9 +300,9 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
      */
     protected void initialize() {
         if (fields != null) {
-            Iterator e = fields.iterator();
+            Iterator<FieldEditor> e = fields.iterator();
             while (e.hasNext()) {
-                FieldEditor pe = (FieldEditor) e.next();
+                FieldEditor pe = e.next();
                 pe.setPage(this);
                 pe.setPropertyChangeListener(this);
                 pe.setPreferenceStore(getPreferenceStore());
@@ -318,9 +318,9 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
     @Override
 	protected void performDefaults() {
         if (fields != null) {
-            Iterator e = fields.iterator();
+            Iterator<FieldEditor> e = fields.iterator();
             while (e.hasNext()) {
-                FieldEditor pe = (FieldEditor) e.next();
+                FieldEditor pe = e.next();
                 pe.loadDefault();
             }
         }
@@ -341,9 +341,9 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
     @Override
 	public boolean performOk() {
         if (fields != null) {
-            Iterator e = fields.iterator();
+            Iterator<FieldEditor> e = fields.iterator();
             while (e.hasNext()) {
-                FieldEditor pe = (FieldEditor) e.next();
+                FieldEditor pe = e.next();
                 pe.store();
                 pe.setPresentsDefaultValue(false);
             }
