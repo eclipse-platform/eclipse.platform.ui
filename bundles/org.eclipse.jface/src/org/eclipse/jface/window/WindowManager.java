@@ -39,13 +39,13 @@ public class WindowManager {
      * List of windows managed by this window manager
      * (element type: <code>Window</code>).
      */
-    private ArrayList windows = new ArrayList();
+    private ArrayList<Window> windows = new ArrayList<Window>();
 
     /**
      * List of window managers who have this window manager
      * as their parent (element type: <code>WindowManager</code>).
      */
-    private List subManagers;
+    private List<WindowManager> subManagers;
 
     /**
      * Creates an empty window manager without a parent window
@@ -87,7 +87,7 @@ public class WindowManager {
      */
     private void addWindowManager(WindowManager wm) {
         if (subManagers == null) {
-			subManagers = new ArrayList();
+			subManagers = new ArrayList<WindowManager>();
 		}
         if (!subManagers.contains(wm)) {
             subManagers.add(wm);
@@ -102,19 +102,19 @@ public class WindowManager {
      * and <code>false</code> if any window refused to close
      */
     public boolean close() {
-        List t = (List) windows.clone(); // make iteration robust 
-        Iterator e = t.iterator();
+        List<Window> t = new ArrayList<Window>(windows); // make iteration robust 
+        Iterator<Window> e = t.iterator();
         while (e.hasNext()) {
-            Window window = (Window) e.next();
+            Window window = e.next();
             boolean closed = window.close();
             if (!closed) {
 				return false;
 			}
         }
         if (subManagers != null) {
-            e = subManagers.iterator();
-            while (e.hasNext()) {
-                WindowManager wm = (WindowManager) e.next();
+            Iterator<WindowManager> i = subManagers.iterator();
+            while (i.hasNext()) {
+                WindowManager wm = i.next();
                 boolean closed = wm.close();
                 if (!closed) {
 					return false;
