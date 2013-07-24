@@ -11,9 +11,6 @@
 
 package org.eclipse.ant.internal.core.ant;
 
-import java.util.Iterator;
-import java.util.Vector;
-
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
@@ -31,22 +28,22 @@ public class EclipseAntMain extends Main {
 		Main projectHelpMain = new EclipseAntMain(eclipseAntProject);
 		projectHelpMain.startAnt(args, null, null);
 	}
-	
+
 	/*
 	 * @see org.apache.tools.ant.Main#exit(int)
 	 */
+	@Override
 	protected void exit(int exitCode) {
-		//disallow system exit
+		// disallow system exit
 	}
-	
+
 	/*
 	 * @see org.apache.tools.ant.Main#addBuildListeners(org.apache.tools.ant.Project)
 	 */
+	@Override
 	protected void addBuildListeners(Project project) {
-		//TODO ANT-1.9.1 API USE
-		Vector<?> list = fEclipseAntProject.getBuildListeners();
-		for (Iterator<?> i = list.iterator(); i.hasNext();) {
-			project.addBuildListener((BuildListener) i.next());
+		for (BuildListener listener : fEclipseAntProject.getBuildListeners()) {
+			project.addBuildListener(listener);
 		}
 	}
 }

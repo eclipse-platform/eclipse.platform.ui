@@ -10,52 +10,51 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core.testplugin;
 
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
 public class AntTestChecker {
-	
-	private static AntTestChecker deflt= null;
-	
+
+	private static AntTestChecker deflt = null;
+
 	private int taskStartedCount;
-	
+
 	private int taskFinishedCount;
-	
+
 	private int targetsStartedCount;
-	
+
 	private int targetsFinishedCount;
-	
+
 	private int buildsStartedCount;
-	
+
 	private int buildsFinishedCount;
-	
-	private List<String> messages= new ArrayList<String>();
-	
-	private List<String> targets= new ArrayList<String>();
-	
-	private List<String> tasks= new ArrayList<String>();
-	
-	private List<String> projects= new ArrayList<String>();
-	
-	private Hashtable<String, String> userProperties;
-	
-	private List<String> nameOfListeners= new ArrayList<String>();
-	
-	private AntTestChecker()  {
+
+	private List<String> messages = new ArrayList<String>();
+
+	private List<String> targets = new ArrayList<String>();
+
+	private List<String> tasks = new ArrayList<String>();
+
+	private List<String> projects = new ArrayList<String>();
+
+	private Hashtable<String, Object> userProperties;
+
+	private List<String> nameOfListeners = new ArrayList<String>();
+
+	private AntTestChecker() {
 	}
-	
+
 	/**
 	 * Returns the singleton AntTestChecker
 	 */
 	public static AntTestChecker getDefault() {
 		if (deflt == null) {
-			deflt= new AntTestChecker();
+			deflt = new AntTestChecker();
 		}
 		return deflt;
 	}
-	
+
 	/**
 	 * Resets the singleton AntTestChecker
 	 */
@@ -64,6 +63,7 @@ public class AntTestChecker {
 			deflt.resetState();
 		}
 	}
+
 	/**
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
@@ -71,13 +71,11 @@ public class AntTestChecker {
 		buildsFinishedCount++;
 	}
 
-	
 	public void buildStarted(String projectName) {
 		buildsStartedCount++;
 		projects.add(projectName);
 	}
 
-	
 	public void messageLogged(String message) {
 		messages.add(message);
 	}
@@ -111,9 +109,10 @@ public class AntTestChecker {
 		taskStartedCount++;
 		tasks.add(taskName);
 	}
-	
+
 	/**
 	 * Returns the buildsFinishedCount.
+	 * 
 	 * @return int
 	 */
 	public int getBuildsFinishedCount() {
@@ -122,6 +121,7 @@ public class AntTestChecker {
 
 	/**
 	 * Returns the buildsStartedCount.
+	 * 
 	 * @return int
 	 */
 	public int getBuildsStartedCount() {
@@ -130,6 +130,7 @@ public class AntTestChecker {
 
 	/**
 	 * Returns the messagesLoggedCount.
+	 * 
 	 * @return int
 	 */
 	public int getMessagesLoggedCount() {
@@ -138,6 +139,7 @@ public class AntTestChecker {
 
 	/**
 	 * Returns the targetsFinishedCount.
+	 * 
 	 * @return int
 	 */
 	public int getTargetsFinishedCount() {
@@ -146,6 +148,7 @@ public class AntTestChecker {
 
 	/**
 	 * Returns the targetsStartedCount.
+	 * 
 	 * @return int
 	 */
 	public int getTargetsStartedCount() {
@@ -154,6 +157,7 @@ public class AntTestChecker {
 
 	/**
 	 * Returns the taskFinishedCount.
+	 * 
 	 * @return int
 	 */
 	public int getTaskFinishedCount() {
@@ -162,66 +166,66 @@ public class AntTestChecker {
 
 	/**
 	 * Returns the taskStartedCount.
+	 * 
 	 * @return int
 	 */
 	public int getTaskStartedCount() {
 		return taskStartedCount;
 	}
-	
+
 	protected void resetState() {
-		taskStartedCount= 0;
-		taskFinishedCount= 0;
-		targetsStartedCount= 0;
-		targetsFinishedCount= 0;
-		buildsStartedCount= 0;
-		buildsFinishedCount= 0;
-		messages= new ArrayList<String>();
-		tasks= new ArrayList<String>();
-		targets= new ArrayList<String>();
-		projects= new ArrayList<String>();
-		userProperties= null;
-		nameOfListeners= new ArrayList<String>();
+		taskStartedCount = 0;
+		taskFinishedCount = 0;
+		targetsStartedCount = 0;
+		targetsFinishedCount = 0;
+		buildsStartedCount = 0;
+		buildsFinishedCount = 0;
+		messages = new ArrayList<String>();
+		tasks = new ArrayList<String>();
+		targets = new ArrayList<String>();
+		projects = new ArrayList<String>();
+		userProperties = null;
+		nameOfListeners = new ArrayList<String>();
 	}
-	
+
 	/**
-     * Return the message n from the last:
-     * e.g. getLoggedMessage(0) returns the most recent message
-     * 
-	 * @param n message index
+	 * Return the message n from the last: e.g. getLoggedMessage(0) returns the most recent message
+	 * 
+	 * @param n
+	 *            message index
 	 * @return the nth last message
 	 */
-    public String getLoggedMessage(int n) {
-        int idx = messages.size() - (n + 1);
-        if ((idx < 0) || (idx >= messages.size())) {
-            return null;
-        }
-        return messages.get(idx);
-    }
+	public String getLoggedMessage(int n) {
+		int idx = messages.size() - (n + 1);
+		if ((idx < 0) || (idx >= messages.size())) {
+			return null;
+		}
+		return messages.get(idx);
+	}
 
-    public String getLastMessageLogged() {
-        return getLoggedMessage(0);
-    }
-	
-	public void setUserProperties(Hashtable<String, String> userProperties) {
-		this.userProperties= userProperties;
+	public String getLastMessageLogged() {
+		return getLoggedMessage(0);
+	}
+
+	public void setUserProperties(Hashtable<String, Object> userProperties) {
+		this.userProperties = userProperties;
 	}
 
 	public String getUserProperty(String name) {
-		return userProperties.get(name);
+		return (String) userProperties.get(name);
 	}
-	
+
 	public List<String> getMessages() {
 		return messages;
 	}
-	
+
 	public List<String> getListeners() {
 		return nameOfListeners;
 	}
-	
+
 	public String getLastListener() {
 		return nameOfListeners.get(nameOfListeners.size() - 1);
 	}
-
 
 	public void addNameOfListener(String nameOfListener) {
 		this.nameOfListeners.add(nameOfListener);

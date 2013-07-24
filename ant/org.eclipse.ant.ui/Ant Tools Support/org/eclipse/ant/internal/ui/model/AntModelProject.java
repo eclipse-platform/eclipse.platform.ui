@@ -46,6 +46,7 @@ public class AntModelProject extends Project {
 		 * 
 		 * @see org.apache.tools.ant.PropertyHelper.PropertySetter#setNew(java.lang.String, java.lang.Object, org.apache.tools.ant.PropertyHelper)
 		 */
+		@Override
 		public boolean setNew(String property, Object value, PropertyHelper propertyHelper) {
 			setNewProperty(property, value.toString());
 			return false;
@@ -56,6 +57,7 @@ public class AntModelProject extends Project {
 		 * 
 		 * @see org.apache.tools.ant.PropertyHelper.PropertySetter#set(java.lang.String, java.lang.Object, org.apache.tools.ant.PropertyHelper)
 		 */
+		@Override
 		public boolean set(String property, Object value, PropertyHelper propertyHelper) {
 			return false;
 		}
@@ -167,14 +169,14 @@ public class AntModelProject extends Project {
 	 * @see org.apache.tools.ant.Project#getReference(java.lang.String)
 	 */
 	@Override
-	public Object getReference(String key) {
-		Object ref = super.getReference(key);/* references.get(key); */
+	public <T> T getReference(String key) {
+		T ref = super.getReference(key);/* references.get(key); */
 		if (ref == null) {
-			ref = idrefs.get(key);
+			ref = (T) idrefs.get(key);
 			if (ref instanceof UnknownElement) {
 				UnknownElement ue = (UnknownElement) ref;
 				ue.maybeConfigure();
-				return ue.getRealThing();
+				return (T) ue.getRealThing();
 			}
 		}
 		return ref;
@@ -186,9 +188,9 @@ public class AntModelProject extends Project {
 	 * @see org.apache.tools.ant.Project#getProperties()
 	 */
 	@Override
-	public Hashtable getProperties() {
+	public Hashtable<String, Object> getProperties() {
 		// override as we cannot remove properties from the Apache Ant project
-		Hashtable<String, String> allProps = super.getProperties();
+		Hashtable<String, Object> allProps = super.getProperties();
 		allProps.putAll(getUserProperties());
 		allProps.put("basedir", getBaseDir().getPath()); //$NON-NLS-1$
 		return allProps;

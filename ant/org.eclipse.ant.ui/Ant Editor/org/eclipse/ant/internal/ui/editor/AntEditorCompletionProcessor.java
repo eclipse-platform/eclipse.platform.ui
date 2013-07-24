@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.ExtensionPoint;
@@ -152,6 +153,13 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	protected final static int PROPOSAL_MODE_NESTED_ELEMENT_PROPOSAL = 7;
 
 	private final static ICompletionProposal[] NO_PROPOSALS = new ICompletionProposal[0];
+
+	/**
+	 * The fully qualified name of the {@link MacroInstance} class
+	 * 
+	 * @since 3.5.500
+	 */
+	private static final String MACROINSTANCE_NAME = "org.apache.tools.ant.taskdefs.MacroInstance"; //$NON-NLS-1$
 
 	/**
 	 * The line where the cursor sits now.
@@ -714,9 +722,9 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 				}
 			}
 		} else { // possibly a user defined task or type
-			Class<?> taskClass = getTaskClass(taskName);
+			AntTypeDefinition taskClass = getTaskClass(taskName);
 			if (taskClass != null) {
-				if (taskClass == MacroInstance.class) {
+				if (MACROINSTANCE_NAME.equals(taskClass.getClassName())) {
 					addMacroDefAttributeProposals(taskName, prefix, proposals);
 				} else {
 					IntrospectionHelper helper = getIntrospectionHelper(taskClass);
@@ -725,7 +733,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 					}
 				}
 			} else { // nested user defined element
-				Class<?> nestedType = getNestedType();
+				AntTypeDefinition nestedType = getNestedType();
 				if (nestedType != null) {
 					IntrospectionHelper helper = getIntrospectionHelper(nestedType);
 					if (helper != null) {
@@ -748,7 +756,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		}
 	}
 
-	private Class<?> getNestedType() {
+	private AntTypeDefinition getNestedType() {
 		AntElementNode currentNode = antModel.getNode(cursorPosition, false);
 		if (currentNode == null) {
 			return null;
@@ -757,18 +765,21 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		if (parent instanceof AntTaskNode) {
 			String parentName = parent.getName();
 			if (hasNestedElements(parentName)) {
-				Class<?> taskClass = getTaskClass(parentName);
+				AntTypeDefinition taskClass = getTaskClass(parentName);
 				if (taskClass != null) {
 					IntrospectionHelper helper = getIntrospectionHelper(taskClass);
 					if (helper != null) {
-						Class<?> nestedType = null;
 						try {
-							nestedType = helper.getElementType(currentNode.getName());
+							Class<?> nestedType = helper.getElementType(currentNode.getName());
+							// TODO probably a much better way to find the definition of a nested type than this
+							AntTypeDefinition def = new AntTypeDefinition();
+							def.setClass(nestedType);
+							def.setClassName(nestedType.getName());
+							return def;
 						}
 						catch (BuildException be) {
 							// do nothing
 						}
-						return nestedType;
 					}
 				}
 			}
@@ -776,15 +787,20 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		return null;
 	}
 
-	private IntrospectionHelper getIntrospectionHelper(Class<?> taskClass) {
-		IntrospectionHelper helper = null;
-		try {
-			helper = IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
+	private IntrospectionHelper getIntrospectionHelper(AntTypeDefinition taskClass) {
+		Project p = antModel.getProjectNode().getProject();
+		Class<?> clazz = taskClass.getExposedClass(p);
+		if (clazz != null) {
+			IntrospectionHelper helper = null;
+			try {
+				helper = IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), clazz);
+			}
+			catch (NoClassDefFoundError e) {
+				// ignore as a task may require additional classpath components
+			}
+			return helper;
 		}
-		catch (NoClassDefFoundError e) {
-			// ignore as a task may require additional classpath components
-		}
-		return helper;
+		return null;
 	}
 
 	private void addMacroDefAttributeProposals(String taskName, String prefix, List<ICompletionProposal> proposals) {
@@ -906,14 +922,14 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 				}
 			}
 		} else { // possibly a user defined task or type
-			Class<?> taskClass = getTaskClass(taskName);
+			AntTypeDefinition taskClass = getTaskClass(taskName);
 			if (taskClass != null) {
 				IntrospectionHelper helper = getIntrospectionHelper(taskClass);
 				if (helper != null) {
 					addAttributeValueProposals(helper, attributeName, prefix, proposals);
 				}
 			} else { // nested user defined element
-				Class<?> nestedType = getNestedType();
+				AntTypeDefinition nestedType = getNestedType();
 				if (nestedType != null) {
 					IntrospectionHelper helper = getIntrospectionHelper(nestedType);
 					if (helper != null) {
@@ -986,8 +1002,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	protected ICompletionProposal[] getPropertyProposals(IDocument document, String prefix, int aCursorPosition) {
 		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 		Map<String, ICompletionProposal> displayStringToProposals = new HashMap<String, ICompletionProposal>();
-		// TODO ANT-1.9.1 API USE
-		Map<String, ?> properties = findPropertiesFromDocument();
+		Map<String, Object> properties = findPropertiesFromDocument();
 
 		Image image = AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
 		// Determine replacement length and offset
@@ -1057,7 +1072,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		if (areTasksOrTypesValidChildren(parentName)) {
 			// use the definitions in the project as that includes more than what is defined in the DTD
 			Project project = antModel.getProjectNode().getProject();
-			Map<String, Class<?>> tasksAndTypes = ComponentHelper.getComponentHelper(project).getAntTypeTable();
+			Map<String, AntTypeDefinition> tasksAndTypes = ComponentHelper.getComponentHelper(project).getAntTypeTable();
 			createProposals(document, prefix, proposals, tasksAndTypes);
 			if (parentName.equals("project")) { //$NON-NLS-1$
 				if ("target".startsWith(prefix)) { //$NON-NLS-1$
@@ -1085,9 +1100,9 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 				}
 			} else {
 				// a nested element of a user defined task/type?
-				Class<?> taskClass = getTaskClass(parentName);
+				AntTypeDefinition taskClass = getTaskClass(parentName);
 				if (taskClass != null) {
-					if (taskClass == MacroInstance.class) {
+					if (MACROINSTANCE_NAME.equals(taskClass.getClassName())) {
 						currentProposalMode = PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
 						addMacroDefElementProposals(parentName, prefix, proposals);
 					} else {
@@ -1145,7 +1160,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		return NO_PROPOSALS;
 	}
 
-	private void createProposals(IDocument document, String prefix, List<ICompletionProposal> proposals, Map<String, Class<?>> tasks) {
+	private void createProposals(IDocument document, String prefix, List<ICompletionProposal> proposals, Map<String, AntTypeDefinition> tasks) {
 		Iterator<String> keys = tasks.keySet().iterator();
 		ICompletionProposal proposal;
 		String key;
@@ -1281,7 +1296,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		if (element != null) {
 			return !element.isEmpty();
 		}
-		Class<?> taskClass = getTaskClass(elementName);
+		AntTypeDefinition taskClass = getTaskClass(elementName);
 		if (taskClass != null) {
 			IntrospectionHelper helper = getIntrospectionHelper(taskClass);
 			if (helper != null) {
@@ -1559,12 +1574,12 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		return false;
 	}
 
-	private Class<?> getTaskClass(String taskName) {
-		Class<?> clss = null;
+	private AntTypeDefinition getTaskClass(String taskName) {
+		AntTypeDefinition clss = null;
 		AntProjectNode node = antModel.getProjectNode();
 		if (node != null) {
 			Project antProject = node.getProject();
-			Map<String, Class<?>> tasksAndTypes = ComponentHelper.getComponentHelper(antProject).getAntTypeTable();
+			Map<String, AntTypeDefinition> tasksAndTypes = ComponentHelper.getComponentHelper(antProject).getAntTypeTable();
 			clss = tasksAndTypes.get(taskName);
 			if (clss == null) {
 				clss = tasksAndTypes.get(antModel.getNamespaceCorrectName(taskName));
@@ -1619,7 +1634,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	 * 
 	 * @return a map with all the found properties
 	 */
-	private Map<String, String> findPropertiesFromDocument() {
+	private Map<String, Object> findPropertiesFromDocument() {
 		Project project = antModel.getProjectNode().getProject();
 		return project.getProperties();
 	}
