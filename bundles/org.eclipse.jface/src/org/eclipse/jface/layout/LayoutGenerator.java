@@ -126,12 +126,12 @@ import org.eclipse.swt.widgets.Scrollable;
         boolean hScroll = hasStyle(control, SWT.H_SCROLL);
         boolean vScroll = hasStyle(control, SWT.V_SCROLL);
 
-        boolean containsText = hasMethod(control, "setText", new Class[] { String.class }); //$NON-NLS-1$
+        boolean containsText = hasMethod(control, "setText", new Class<?>[] { String.class}); //$NON-NLS-1$
 
         // If the control has a setText method, an addModifyListener method, and
         // does not have
         // the SWT.READ_ONLY flag, assume it contains user-editable text.
-        boolean userEditable = !hasStyle(control, SWT.READ_ONLY) && containsText && hasMethod(control, "addModifyListener", new Class[] { ModifyListener.class }); //$NON-NLS-1$
+        boolean userEditable = !hasStyle(control, SWT.READ_ONLY) && containsText && hasMethod(control, "addModifyListener", new Class<?>[] { ModifyListener.class }); //$NON-NLS-1$
 
         // For controls containing user-editable text...
         if (userEditable) {
@@ -184,8 +184,8 @@ import org.eclipse.swt.widgets.Scrollable;
         return GridDataFactory.fillDefaults().grab(grabHorizontal, vScroll).align(SWT.FILL, vAlign).hint(hHint, vScroll ? defaultSize.y : SWT.DEFAULT);
     }
 
-    private static boolean hasMethod(Control control, String name, Class[] parameterTypes) {
-        Class c = control.getClass();
+    private static boolean hasMethod(Control control, String name, Class<?>[] parameterTypes) {
+        Class<? extends Control> c = control.getClass();
         try {
             return c.getMethod(name, parameterTypes) != null;
         } catch (SecurityException e) {
