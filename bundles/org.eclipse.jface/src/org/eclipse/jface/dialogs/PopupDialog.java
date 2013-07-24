@@ -1488,7 +1488,7 @@ public class PopupDialog extends Window {
 	 *            color assigned
 	 */
 	private void applyForegroundColor(Color color, Control control,
-			List exclusions) {
+			List<Control> exclusions) {
 		if (!exclusions.contains(control)) {
 			control.setForeground(color);
 		}
@@ -1513,7 +1513,7 @@ public class PopupDialog extends Window {
 	 *            color assigned
 	 */
 	private void applyBackgroundColor(Color color, Control control,
-			List exclusions) {
+			List<Control> exclusions) {
 		if (!exclusions.contains(control)) {
 			control.setBackground(color);
 		}
@@ -1567,8 +1567,8 @@ public class PopupDialog extends Window {
 	 * 
 	 * @return the List of controls
 	 */
-	protected List getForegroundColorExclusions() {
-		List list = new ArrayList(3);
+	protected List<Control> getForegroundColorExclusions() {
+		List<Control> list = new ArrayList<Control>(3);
 		if (infoLabel != null) {
 			list.add(infoLabel);
 		}
@@ -1588,8 +1588,8 @@ public class PopupDialog extends Window {
 	 * 
 	 * @return the List of controls
 	 */
-	protected List getBackgroundColorExclusions() {
-		List list = new ArrayList(2);
+	protected List<Control> getBackgroundColorExclusions() {
+		List<Control> list = new ArrayList<Control>(2);
 		if (titleSeparator != null) {
 			list.add(titleSeparator);
 		}

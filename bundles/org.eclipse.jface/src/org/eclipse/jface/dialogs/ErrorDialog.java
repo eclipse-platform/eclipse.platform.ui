@@ -495,9 +495,9 @@ public class ErrorDialog extends IconAndMessageDialog {
 			}
 			String message = buildingStatus.getMessage();
 			sb.append(message);
-			java.util.List lines = readLines(sb.toString());
-			for (Iterator iterator = lines.iterator(); iterator.hasNext();) {
-				String line = (String) iterator.next();
+			java.util.List<String> lines = readLines(sb.toString());
+			for (Iterator<String> iterator = lines.iterator(); iterator.hasNext();) {
+				String line = iterator.next();
 				listToPopulate.add(line);
 			}
 			incrementNesting = true;
@@ -541,8 +541,8 @@ public class ErrorDialog extends IconAndMessageDialog {
 		}
 	}
 	
-	private static java.util.List readLines(final String s) {
-		java.util.List lines = new ArrayList();
+	private static java.util.List<String> readLines(final String s) {
+		java.util.List<String> lines = new ArrayList<String>();
 		BufferedReader reader = new BufferedReader(new StringReader(s));
 		String line;
 		try {

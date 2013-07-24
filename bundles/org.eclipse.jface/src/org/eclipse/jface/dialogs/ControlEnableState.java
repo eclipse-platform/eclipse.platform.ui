@@ -25,12 +25,12 @@ public class ControlEnableState {
      * List of exception controls (element type: <code>Control</code>);
      * <code>null</code> if none.
      */
-    private List exceptions = null;
+    private List<Control> exceptions = null;
 
     /**
      * List of saved states (element type: <code>ItemState</code>).
      */
-    private List states;
+    private List<ItemState> states;
 
     /**
      * Internal class for recording the enable/disable state of a single
@@ -89,9 +89,9 @@ public class ControlEnableState {
      *            the list of controls to not disable (element type:
      *            <code>Control</code>), or <code>null</code> if none
      */
-    protected ControlEnableState(Control w, List exceptions) {
+    protected ControlEnableState(Control w, List<Control> exceptions) {
         super();
-        states = new ArrayList();
+        states = new ArrayList<ItemState>();
         this.exceptions = exceptions;
         readStateForAndDisable(w);
     }
@@ -120,7 +120,7 @@ public class ControlEnableState {
      *            <code>Control</code>)
      * @return an object capturing the enable/disable state
      */
-    public static ControlEnableState disable(Control w, List exceptions) {
+    public static ControlEnableState disable(Control w, List<Control> exceptions) {
         return new ControlEnableState(w, exceptions);
     }
 
@@ -152,7 +152,7 @@ public class ControlEnableState {
     public void restore() {
         int size = states.size();
         for (int i = 0; i < size; i++) {
-            ((ItemState) states.get(i)).restore();
+            states.get(i).restore();
         }
     }
 }
