@@ -222,7 +222,7 @@ public class FieldDecorationRegistry {
 	private int maxDecorationWidth = 0;
 	private int maxDecorationHeight = 0;
 
-	private HashMap /* <String id, FieldDecoration> */decorations = new HashMap();
+	private HashMap<String, Entry> decorations = new HashMap<String, Entry>();
 
 	/**
 	 * Get the default FieldDecorationRegistry.
@@ -393,12 +393,12 @@ public class FieldDecorationRegistry {
 	 * called in response to adding, removing, or replacing a decoration.
 	 */
 	private void recomputeMaximums() {
-		Iterator entries = decorations.values().iterator();
+		Iterator<Entry> entries = decorations.values().iterator();
 		
 		maxDecorationHeight = 0;
 		maxDecorationWidth = 0;
 		while (entries.hasNext()) {
-			Image image = ((Entry)entries.next()).getDecoration().getImage();
+			Image image = entries.next().getDecoration().getImage();
 			if (image != null) {
 				maxDecorationHeight = Math.max(maxDecorationHeight, image.getBounds().height);
 				maxDecorationWidth = Math.max(maxDecorationWidth, image.getBounds().width);

@@ -48,13 +48,13 @@ public class FieldAssistColors {
 	 * Keys are background colors, values are the color with the alpha value
 	 * applied
 	 */
-	private static Map requiredFieldColorMap = new HashMap();
+	private static Map<Color, Color> requiredFieldColorMap = new HashMap<Color, Color>();
 
 	/*
 	 * Keys are colors we have created, values are the displays on which they
 	 * were created.
 	 */
-	private static Map displays = new HashMap();
+	private static Map<Color, Display> displays = new HashMap<Color, Display>();
 
 	/**
 	 * Compute the RGB of the color that should be used for the background of a
@@ -156,7 +156,7 @@ public class FieldAssistColors {
 	 * Dispose any colors that were allocated for the given display.
 	 */
 	private static void disposeColors(Display display) {
-		List toBeRemoved = new ArrayList(1);
+		List<Color> toBeRemoved = new ArrayList<Color>(1);
 
 		if (DEBUG) {
 			System.out.println("Display map is " + displays.toString()); //$NON-NLS-1$
@@ -165,19 +165,19 @@ public class FieldAssistColors {
 		}
 
 		// Look for any stored colors that were created on this display
-		for (Iterator i = displays.keySet().iterator(); i.hasNext();) {
-			Color color = (Color) i.next();
-			if (((Display) displays.get(color)).equals(display)) {
+		for (Iterator<Color> i = displays.keySet().iterator(); i.hasNext();) {
+			Color color = i.next();
+			if (displays.get(color).equals(display)) {
 				// The color is on this display. Mark it for removal.
 				toBeRemoved.add(color);
 
 				// Now look for any references to it in the required field color
 				// map
-				List toBeRemovedFromRequiredMap = new ArrayList(1);
-				for (Iterator iter = requiredFieldColorMap.keySet().iterator(); iter
+				List<Color> toBeRemovedFromRequiredMap = new ArrayList<Color>(1);
+				for (Iterator<Color> iter = requiredFieldColorMap.keySet().iterator(); iter
 						.hasNext();) {
-					Color bgColor = (Color) iter.next();
-					if (((Color) requiredFieldColorMap.get(bgColor))
+					Color bgColor = iter.next();
+					if (requiredFieldColorMap.get(bgColor)
 							.equals(color)) {
 						// mark it for removal from the required field color map
 						toBeRemovedFromRequiredMap.add(bgColor);
@@ -194,7 +194,7 @@ public class FieldAssistColors {
 		// Remove references in the display map now that we are
 		// done iterating
 		for (int i = 0; i < toBeRemoved.size(); i++) {
-			Color color = (Color) toBeRemoved.get(i);
+			Color color = toBeRemoved.get(i);
 			// Removing from the display map must be done before disposing the
 			// color or else the comparison between this color and the one
 			// in the map will fail.

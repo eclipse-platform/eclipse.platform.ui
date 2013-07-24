@@ -66,7 +66,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 	 */
 	public IContentProposal[] getProposals(String contents, int position) {
 		if (filterProposals) {
-			ArrayList list = new ArrayList();
+			ArrayList<ContentProposal> list = new ArrayList<ContentProposal>();
 			for (int i = 0; i < proposals.length; i++) {
 				if (proposals[i].length() >= contents.length()
 						&& proposals[i].substring(0, contents.length())
@@ -74,7 +74,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 					list.add(new ContentProposal(proposals[i]));
 				}
 			}
-			return (IContentProposal[]) list.toArray(new IContentProposal[list
+			return list.toArray(new IContentProposal[list
 					.size()]);
 		}
 		if (contentProposals == null) {

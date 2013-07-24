@@ -15,7 +15,12 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
-
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.dialogs.PopupDialog;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -38,13 +43,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.dialogs.PopupDialog;
-import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Util;
-import org.eclipse.jface.viewers.ILabelProvider;
 
 /**
  * ContentProposalAdapter can be used to attach content proposal behavior to a
@@ -1053,7 +1051,7 @@ public class ContentProposalAdapter {
 
 			// Check each string for a match. Use the string displayed to the
 			// user, not the proposal content.
-			ArrayList list = new ArrayList();
+			ArrayList<IContentProposal> list = new ArrayList<IContentProposal>();
 			for (int i = 0; i < proposals.length; i++) {
 				String string = getString(proposals[i]);
 				if (string.length() >= filterString.length()
@@ -1063,7 +1061,7 @@ public class ContentProposalAdapter {
 				}
 
 			}
-			return (IContentProposal[]) list.toArray(new IContentProposal[list
+			return list.toArray(new IContentProposal[list
 					.size()]);
 		}
 
