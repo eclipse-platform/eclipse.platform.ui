@@ -38,7 +38,7 @@ import org.eclipse.ui.console.IHyperlink;
 
 public class SeparateVMTests extends AbstractAntUIBuildTest {
 
-	protected static final String PLUGIN_VERSION = "org.apache.ant_1.8.4"; //$NON-NLS-1$
+	protected static final String PLUGIN_VERSION = "org.apache.ant_1.9.2"; //$NON-NLS-1$
 
 	public SeparateVMTests(String name) {
 		super(name);
@@ -217,7 +217,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		launch("environmentVar"); //$NON-NLS-1$
 		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6); //$NON-NLS-1$
 		String message = ConsoleLineTracker.getMessage(1);
-		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, checkAntHomeMessage(message)); //$NON-NLS-1$
+		assertTrue("Incorrect message. Should end with org.apache.ant [" + message + "]", checkAntHomeMessage(message)); //$NON-NLS-1$ //$NON-NLS-2$
 		message = ConsoleLineTracker.getMessage(2);
 		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, checkAntHomeMessage(message)); //$NON-NLS-1$
 	}
