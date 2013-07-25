@@ -36,7 +36,7 @@ class FileImageDescriptor extends ImageDescriptor {
 	 * The class whose resource directory contain the file, or <code>null</code>
 	 * if none.
 	 */
-	private Class location;
+	private Class<?> location;
 
 	/**
 	 * The name of the file.
@@ -57,7 +57,7 @@ class FileImageDescriptor extends ImageDescriptor {
 	 * @param filename
 	 *            the name of the file
 	 */
-	FileImageDescriptor(Class clazz, String filename) {
+	FileImageDescriptor(Class<?> clazz, String filename) {
 		this.location = clazz;
 		this.name = filename;
 	}

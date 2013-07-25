@@ -13,7 +13,7 @@ package org.eclipse.jface.resource;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Abstract implementation of ResourceManager. Maintains reference counts for all previously
@@ -28,7 +28,7 @@ abstract class AbstractResourceManager extends ResourceManager {
     /**
      * Map of ResourceDescriptor onto RefCount. (null when empty)
      */
-    private HashMap map = null;
+    private HashMap<DeviceResourceDescriptor, RefCount> map = null;
     
     /**
      * Holds a reference count for a previously-allocated resource
@@ -73,11 +73,11 @@ abstract class AbstractResourceManager extends ResourceManager {
 
         // Lazily allocate the map
         if (map == null) {
-            map = new HashMap();
+            map = new HashMap<DeviceResourceDescriptor, RefCount>();
         }
         
         // Get the current reference count
-        RefCount count = (RefCount)map.get(descriptor);
+        RefCount count = map.get(descriptor);
         if (count != null) {
             // If this resource already exists, increment the reference count and return
             // the existing resource.
@@ -105,7 +105,7 @@ abstract class AbstractResourceManager extends ResourceManager {
         }
         
         // Find the existing resource
-        RefCount count = (RefCount)map.get(descriptor);
+        RefCount count = map.get(descriptor);
         if (count != null) {
             // If the resource exists, decrement the reference count.
             count.count--;
@@ -136,13 +136,13 @@ abstract class AbstractResourceManager extends ResourceManager {
             return;
         }
         
-        Collection entries = map.entrySet();
+        Collection<Entry<DeviceResourceDescriptor, RefCount>> entries = map.entrySet();
 
-        for (Iterator iter = entries.iterator(); iter.hasNext();) {
-            Map.Entry next = (Map.Entry) iter.next();
+        for (Iterator<Entry<DeviceResourceDescriptor, RefCount>> iter = entries.iterator(); iter.hasNext();) {
+            Entry<DeviceResourceDescriptor, RefCount> next = iter.next();
             
             Object key = next.getKey();
-            RefCount val = (RefCount)next.getValue();
+            RefCount val = next.getValue();
             
             deallocate(val.resource, (DeviceResourceDescriptor)key);
         }
@@ -158,7 +158,7 @@ abstract class AbstractResourceManager extends ResourceManager {
         if (map == null) {
             return null;
         }
-        RefCount refCount = (RefCount)map.get(descriptor);
+        RefCount refCount = map.get(descriptor);
         if (refCount == null)
         	return null;
 		return refCount.resource;

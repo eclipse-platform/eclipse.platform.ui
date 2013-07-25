@@ -52,7 +52,7 @@ public class ImageRegistry {
 
     private ResourceManager manager;
 
-    private Map table;
+    private Map<String, Entry> table;
     
     private Runnable disposeRunnable = new Runnable() {
         public void run() {
@@ -316,16 +316,16 @@ public class ImageRegistry {
     }
 
     private Entry getEntry(String key) {
-        return (Entry) getTable().get(key);
+        return getTable().get(key);
     }
 
     private void putEntry(String key, Entry entry) {
         getTable().put(key, entry);
     }
 
-    private Map getTable() {
+    private Map<String, Entry> getTable() {
         if (table == null) {
-            table = new HashMap(10);
+            table = new HashMap<String, Entry>(10);
         }
         return table;
     }
@@ -340,8 +340,8 @@ public class ImageRegistry {
         manager.cancelDisposeExec(disposeRunnable);
         
         if (table != null) {
-            for (Iterator i = table.values().iterator(); i.hasNext();) {
-                Entry entry = (Entry) i.next();
+            for (Iterator<Entry> i = table.values().iterator(); i.hasNext();) {
+                Entry entry = i.next();
                 if (entry.image != null) {
                     manager.destroyImage(entry.descriptor);
                 }

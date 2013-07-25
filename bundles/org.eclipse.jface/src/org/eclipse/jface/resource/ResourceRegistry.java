@@ -42,7 +42,7 @@ public abstract class ResourceRegistry extends EventManager {
      * @return the set of keys this manager knows about.  This collection
      * should be immutable.
      */
-    public abstract Set getKeySet();
+    public abstract Set<String> getKeySet();
 
     /**
      * Return whether or not the receiver has a value for the supplied key.

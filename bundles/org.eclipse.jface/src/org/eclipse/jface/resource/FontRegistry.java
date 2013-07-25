@@ -181,21 +181,21 @@ public class FontRegistry extends ResourceRegistry {
      * (key type: <code>String</code>, 
      *  value type: <code>FontRecord</code>.
      */
-    private Map stringToFontRecord = new HashMap(7);
+    private Map<String, FontRecord> stringToFontRecord = new HashMap<String, FontRecord>(7);
 
     /**
      * Table of known font data, keyed by symbolic font name
      * (key type: <code>String</code>, 
      *  value type: <code>org.eclipse.swt.graphics.FontData[]</code>).
      */
-    private Map stringToFontData = new HashMap(7);
+    private Map<String, FontData[]> stringToFontData = new HashMap<String, FontData[]>(7);
 
     /**
      * Collection of Fonts that are now stale to be disposed
      * when it is safe to do so (i.e. on shutdown).
      * @see List
      */
-    private List staleFonts = new ArrayList();
+    private List<Font> staleFonts = new ArrayList<Font>();
 
     /**
      * Runnable that cleans up the manager on disposal of the display.
@@ -449,7 +449,7 @@ public class FontRegistry extends ResourceRegistry {
      * @since 3.1
      */
     public FontData [] filterData(FontData [] fonts, Display display) {
-    	ArrayList good = new ArrayList(fonts.length);
+    	ArrayList<FontData> good = new ArrayList<FontData>(fonts.length);
     	for (int i = 0; i < fonts.length; i++) {
             FontData fd = fonts[i];
 
@@ -478,7 +478,7 @@ public class FontRegistry extends ResourceRegistry {
         	return null;
         }
         
-        return (FontData[]) good.toArray(new FontData[good.size()]);    	
+        return good.toArray(new FontData[good.size()]);    	
     }
     
 
@@ -556,7 +556,7 @@ public class FontRegistry extends ResourceRegistry {
      */
     private FontRecord defaultFontRecord() {
 
-        FontRecord record = (FontRecord) stringToFontRecord
+        FontRecord record = stringToFontRecord
                 .get(JFaceResources.DEFAULT_FONT);
         if (record == null) {
             Font defaultFont = calculateDefaultFont();
@@ -693,7 +693,7 @@ public class FontRegistry extends ResourceRegistry {
      * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
      */
     @Override
-	public Set getKeySet() {
+	public Set<String> getKeySet() {
         return Collections.unmodifiableSet(stringToFontData.keySet());
     }
 
@@ -711,7 +711,7 @@ public class FontRegistry extends ResourceRegistry {
     @Override
 	protected void clearCaches() {
 
-        Iterator iterator = stringToFontRecord.values().iterator();
+        Iterator<FontRecord> iterator = stringToFontRecord.values().iterator();
         while (iterator.hasNext()) {
             Object next = iterator.next();
             ((FontRecord) next).dispose();
@@ -728,7 +728,7 @@ public class FontRegistry extends ResourceRegistry {
      * Dispose of all of the fonts in this iterator.
      * @param iterator over Collection of Font
      */
-    private void disposeFonts(Iterator iterator) {
+    private void disposeFonts(Iterator<Font> iterator) {
         while (iterator.hasNext()) {
             Object next = iterator.next();
             ((Font) next).dispose();
@@ -808,12 +808,12 @@ public class FontRegistry extends ResourceRegistry {
         Assert.isNotNull(symbolicName);
         Assert.isNotNull(fontData);
 
-        FontData[] existing = (FontData[]) stringToFontData.get(symbolicName);
+        FontData[] existing = stringToFontData.get(symbolicName);
         if (Arrays.equals(existing, fontData)) {
 			return;
 		}
 
-        FontRecord oldFont = (FontRecord) stringToFontRecord
+        FontRecord oldFont = stringToFontRecord
                 .remove(symbolicName);
         stringToFontData.put(symbolicName, fontData);
         if (update) {
@@ -832,9 +832,9 @@ public class FontRegistry extends ResourceRegistry {
      */
     private void readResourceBundle(ResourceBundle bundle, String bundleName)
             throws MissingResourceException {
-        Enumeration keys = bundle.getKeys();
+        Enumeration<String> keys = bundle.getKeys();
         while (keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
+            String key = keys.nextElement();
             int pos = key.lastIndexOf('.');
             if (pos == -1) {
                 stringToFontData.put(key, new FontData[] { makeFontData(bundle
@@ -849,7 +849,7 @@ public class FontRegistry extends ResourceRegistry {
                     throw new MissingResourceException(
                             "Wrong key format ", bundleName, key); //$NON-NLS-1$
                 }
-                FontData[] elements = (FontData[]) stringToFontData.get(name);
+                FontData[] elements = stringToFontData.get(name);
                 if (elements == null) {
                     elements = new FontData[8];
                     stringToFontData.put(name, elements);

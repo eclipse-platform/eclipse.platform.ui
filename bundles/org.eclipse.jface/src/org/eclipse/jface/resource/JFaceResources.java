@@ -60,7 +60,7 @@ public class JFaceResources {
 	 * Map of Display onto DeviceResourceManager. Holds all the resources for
 	 * the associated display.
 	 */
-	private static final Map registries = new HashMap();
+	private static final Map<Display,DeviceResourceManager> registries = new HashMap<Display,DeviceResourceManager>();
 
 	/**
 	 * The symbolic font name for the banner font (value
@@ -198,12 +198,12 @@ public class JFaceResources {
 	 * @return the global resource manager for the given display
 	 */
 	public static ResourceManager getResources(final Display toQuery) {
-		ResourceManager reg = (ResourceManager) registries.get(toQuery);
+		ResourceManager reg = registries.get(toQuery);
 
 		if (reg == null) {
 			final DeviceResourceManager mgr = new DeviceResourceManager(toQuery);
 			reg = mgr;
-			registries.put(toQuery, reg);
+			registries.put(toQuery, mgr);
 			toQuery.disposeExec(new Runnable() {
 				/*
 				 * (non-Javadoc)
@@ -469,7 +469,7 @@ public class JFaceResources {
 	 * 
 	 */
 	private static final void declareImage(Object bundle, String key,
-			String path, Class fallback, String fallbackPath) {
+			String path, Class<?> fallback, String fallbackPath) {
 
 		ImageDescriptor descriptor = null;
 

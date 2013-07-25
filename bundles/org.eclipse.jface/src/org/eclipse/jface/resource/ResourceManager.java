@@ -45,7 +45,7 @@ public abstract class ResourceManager {
 	 * List of Runnables scheduled to run when the ResourceManager is disposed.
 	 * null if empty.
 	 */
-    private List disposeExecs = null;
+    private List<Runnable> disposeExecs = null;
     
     /**
      * Returns the Device for which this ResourceManager will create resources 
@@ -323,7 +323,7 @@ public abstract class ResourceManager {
         // here and throw it at the end of the method.
         RuntimeException foundException = null;
         
-        Runnable[] execs = (Runnable[]) disposeExecs.toArray(new Runnable[disposeExecs.size()]);
+        Runnable[] execs = disposeExecs.toArray(new Runnable[disposeExecs.size()]);
         for (int i = 0; i < execs.length; i++) {
             Runnable exec = execs[i];            
             
@@ -364,7 +364,7 @@ public abstract class ResourceManager {
         Assert.isNotNull(r);
         
         if (disposeExecs == null) {
-            disposeExecs = new ArrayList();
+            disposeExecs = new ArrayList<Runnable>();
         }
         
         disposeExecs.add(r);
