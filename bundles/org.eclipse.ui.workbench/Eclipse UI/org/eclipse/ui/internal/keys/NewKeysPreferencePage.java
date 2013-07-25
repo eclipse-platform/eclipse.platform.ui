@@ -148,7 +148,7 @@ public class NewKeysPreferencePage extends PreferencePage implements
 	/**
 	 * The number of items to show in the bindings table tree.
 	 */
-	private static final int ITEMS_TO_SHOW = 7;
+	private static final int ITEMS_TO_SHOW = 12;
 
 	private static final int COMMAND_NAME_COLUMN = 0;
 	private static final int KEY_SEQUENCE_COLUMN = 1;
@@ -504,7 +504,6 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		createTree(page);
 		createTreeControls(page);
 		createDataControls(page);
-		createButtonBar(page);
 
 		fill();
 
@@ -517,7 +516,7 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		gc.setFont(fDescriptionText.getFont());
 		FontMetrics metrics = gc.getFontMetrics();
 		gc.dispose();
-		int height = metrics.getHeight() * 4;
+		int height = metrics.getHeight() * 5 / 2;
 		
 		GridData gridData = new GridData();
 		gridData.grabExcessHorizontalSpace = true;
@@ -530,8 +529,7 @@ public class NewKeysPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Creates the button bar across the bottom of the preference page. This
-	 * button bar contains the "Advanced..." button.
+	 * Creates the button bar with "Filters..." and "Export CVS..." buttons.
 	 * 
 	 * @param parent
 	 *            The composite in which the button bar should be placed; never
@@ -550,6 +548,7 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		buttonBar.setLayout(layout);
 		gridData = new GridData();
 		gridData.horizontalAlignment = SWT.END;
+		gridData.grabExcessHorizontalSpace = true;
 		buttonBar.setLayoutData(gridData);
 
 		// Advanced button.
@@ -773,9 +772,9 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.horizontalSpan = 2;
+		gridData.widthHint = 200;
 		ViewerComparator comparator = new ViewerComparator();
 		fWhenCombo.setComparator(comparator);
-		fWhenCombo.getCombo().setVisibleItemCount(ITEMS_TO_SHOW);
 		fWhenCombo.getCombo().setLayoutData(gridData);
 		fWhenCombo.setContentProvider(new ModelContentProvider());
 		fWhenCombo.setLabelProvider(new ListLabelProvider());
@@ -1154,6 +1153,7 @@ public class NewKeysPreferencePage extends PreferencePage implements
 			}
 		});
 
+		createButtonBar(treeControls);
 		return treeControls;
 	}
 
