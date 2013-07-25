@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -87,6 +90,8 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 		try {
 			editor= page.openEditor(editPosition.getEditorInput(), editPosition.getEditorId());
 		} catch (PartInitException ex) {
+			IStatus status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "Go to Last Edit Location failed", ex); //$NON-NLS-1$
+			TextEditorPlugin.getDefault().getLog().log(status);
 			return;
 		}
 
