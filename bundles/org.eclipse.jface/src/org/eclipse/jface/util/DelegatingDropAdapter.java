@@ -99,7 +99,7 @@ import org.eclipse.swt.dnd.TransferData;
  * @since 3.0
  */
 public class DelegatingDropAdapter implements DropTargetListener {
-    private List listeners = new ArrayList();
+    private List<TransferDropTargetListener> listeners = new ArrayList<TransferDropTargetListener>();
 
     private TransferDropTargetListener currentListener;
 
@@ -273,7 +273,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
     public Transfer[] getTransfers() {
         Transfer[] types = new Transfer[listeners.size()];
         for (int i = 0; i < listeners.size(); i++) {
-            TransferDropTargetListener listener = (TransferDropTargetListener) listeners
+            TransferDropTargetListener listener = listeners
                     .get(i);
             types[i] = listener.getTransfer();
         }
@@ -352,9 +352,9 @@ public class DelegatingDropAdapter implements DropTargetListener {
         // to something other than what the user indicated.
         event.detail = originalDropType;
 
-        Iterator iter = listeners.iterator();
+        Iterator<TransferDropTargetListener> iter = listeners.iterator();
         while (iter.hasNext()) {
-            TransferDropTargetListener listener = (TransferDropTargetListener) iter
+            TransferDropTargetListener listener = iter
                     .next();
             TransferData dataType = getSupportedTransferType(event.dataTypes,
                     listener);

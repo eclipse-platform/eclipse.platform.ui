@@ -88,9 +88,9 @@ import org.eclipse.swt.dnd.TransferData;
  * @since 3.0
  */
 public class DelegatingDragAdapter implements DragSourceListener {
-    private List listeners = new ArrayList();
+    private List<TransferDragSourceListener> listeners = new ArrayList<TransferDragSourceListener>();
 
-    private List activeListeners = new ArrayList();
+    private List<TransferDragSourceListener> activeListeners = new ArrayList<TransferDragSourceListener>();
 
     private TransferDragSourceListener currentListener;
 
@@ -124,9 +124,9 @@ public class DelegatingDragAdapter implements DragSourceListener {
                     // The drag was canceled and currentListener was never set, so send the
                     // dragFinished event to all the active listeners. 
                     event.doit = false;
-                    Iterator iterator = activeListeners.iterator();
+                    Iterator<TransferDragSourceListener> iterator = activeListeners.iterator();
                     while (iterator.hasNext()) {
-						((TransferDragSourceListener) iterator.next())
+						iterator.next()
                                 .dragFinished(event);
 					}
                 }
@@ -171,11 +171,11 @@ public class DelegatingDragAdapter implements DragSourceListener {
         //		if (Policy.DEBUG_DRAG_DROP)
         //			System.out.println("Drag Start: " + toString()); //$NON-NLS-1$
         boolean doit = false; // true if any one of the listeners can handle the drag
-        List transfers = new ArrayList(listeners.size());
+        List<Transfer> transfers = new ArrayList<Transfer>(listeners.size());
 
         activeListeners.clear();
         for (int i = 0; i < listeners.size(); i++) {
-            final TransferDragSourceListener listener = (TransferDragSourceListener) listeners
+            final TransferDragSourceListener listener = listeners
                     .get(i);
             event.doit = true; // restore event.doit
             SafeRunnable.run(new SafeRunnable() {
@@ -191,7 +191,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
         }
 
         if (doit) {
-			((DragSource) event.widget).setTransfer((Transfer[]) transfers
+			((DragSource) event.widget).setTransfer(transfers
                     .toArray(new Transfer[transfers.size()]));
 		}
 
@@ -206,7 +206,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
     public Transfer[] getTransfers() {
         Transfer[] types = new Transfer[listeners.size()];
         for (int i = 0; i < listeners.size(); i++) {
-            TransferDragSourceListener listener = (TransferDragSourceListener) listeners
+            TransferDragSourceListener listener = listeners
                     .get(i);
             types[i] = listener.getTransfer();
         }
@@ -252,9 +252,9 @@ public class DelegatingDragAdapter implements DragSourceListener {
         if (event.dataType == null) {
 			return;
 		}
-        Iterator iterator = activeListeners.iterator();
+        Iterator<TransferDragSourceListener> iterator = activeListeners.iterator();
         while (iterator.hasNext()) {
-            TransferDragSourceListener listener = (TransferDragSourceListener) iterator
+            TransferDragSourceListener listener = iterator
                     .next();
 
             if (listener.getTransfer().isSupportedType(event.dataType)) {

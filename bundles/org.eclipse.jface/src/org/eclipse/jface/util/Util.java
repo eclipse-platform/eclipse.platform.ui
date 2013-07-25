@@ -33,8 +33,8 @@ public final class Util {
 	 * An unmodifiable, empty, sorted set. This value is guaranteed to never
 	 * change and never be <code>null</code>.
 	 */
-	public static final SortedSet EMPTY_SORTED_SET = Collections
-			.unmodifiableSortedSet(new TreeSet());
+	public static final SortedSet<?> EMPTY_SORTED_SET = Collections
+			.unmodifiableSortedSet(new TreeSet<Object>());
 
 	/**
 	 * A common zero-length string. It avoids needing write <code>NON-NLS</code>
@@ -51,7 +51,7 @@ public final class Util {
 	 *            The class which the object should be; must not be
 	 *            <code>null</code>.
 	 */
-	public static final void assertInstance(final Object object, final Class c) {
+	public static final void assertInstance(final Object object, final Class<?> c) {
 		assertInstance(object, c, false);
 	}
 
@@ -69,7 +69,7 @@ public final class Util {
 	 *            Whether the object is allowed to be <code>null</code>.
 	 */
 	private static final void assertInstance(final Object object,
-			final Class c, final boolean allowNull) {
+			final Class<?> c, final boolean allowNull) {
 		if (object == null && allowNull) {
 			return;
 		}
@@ -120,8 +120,8 @@ public final class Util {
 	 * @return The result of the comparison. <code>null</code> is considered
 	 *         to be the least possible value.
 	 */
-	public static final int compare(final Comparable left,
-			final Comparable right) {
+	public static final <T extends Comparable<? super T>> int compare(final T left,
+			final T right) {
 		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
@@ -145,8 +145,8 @@ public final class Util {
 	 *         to be the least possible value. A shorter array is considered
 	 *         less than a longer array.
 	 */
-	public static final int compare(final Comparable[] left,
-			final Comparable[] right) {
+	public static final <T extends Comparable<? super T>> int compare(final T[] left,
+			final T[] right) {
 		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
@@ -187,7 +187,7 @@ public final class Util {
 	 *         to be the least possible value. A shorter list is considered less
 	 *         than a longer list.
 	 */
-	public static final int compare(final List left, final List right) {
+	public static final <T extends Comparable<? super T>> int compare(final List<T> left, final List<T> right) {
 		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
@@ -203,8 +203,7 @@ public final class Util {
 			}
 
 			for (int i = 0; i < l; i++) {
-				int compareTo = compare((Comparable) left.get(i),
-						(Comparable) right.get(i));
+				int compareTo = compare(left.get(i), right.get(i));
 
 				if (compareTo != 0) {
 					return compareTo;

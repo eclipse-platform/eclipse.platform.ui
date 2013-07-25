@@ -42,7 +42,7 @@ public class Policy {
 
 	private static ILogger log;
 
-	private static Comparator viewerComparator;
+	private static Comparator<String> viewerComparator;
 
 	private static AnimatorFactory animatorFactory;
 
@@ -172,8 +172,8 @@ public class Policy {
 	 * 
 	 * @return a default comparator used by JFace to sort strings
 	 */
-	private static Comparator getDefaultComparator() {
-		return new Comparator() {
+	private static Comparator<String> getDefaultComparator() {
+		return new Comparator<String>() {
 			/**
 			 * Compares string s1 to string s2.
 			 * 
@@ -188,8 +188,8 @@ public class Policy {
 			 * @exception ClassCastException
 			 *                the arguments cannot be cast to Strings.
 			 */
-			public int compare(Object s1, Object s2) {
-				return ((String) s1).compareTo((String) s2);
+			public int compare(String s1, String s2) {
+				return s1.compareTo(s2);
 			}
 		};
 	}
@@ -200,7 +200,7 @@ public class Policy {
 	 * @return the comparator used by JFace to sort strings
 	 * @since 3.2
 	 */
-	public static Comparator getComparator() {
+	public static Comparator<String> getComparator() {
 		if (viewerComparator == null) {
 			viewerComparator = getDefaultComparator();
 		}
@@ -214,7 +214,7 @@ public class Policy {
 	 *            comparator used by JFace to sort strings
 	 * @since 3.2
 	 */
-	public static void setComparator(Comparator comparator) {
+	public static void setComparator(Comparator<String> comparator) {
 		org.eclipse.core.runtime.Assert.isTrue(viewerComparator == null);
 		viewerComparator = comparator;
 	}
