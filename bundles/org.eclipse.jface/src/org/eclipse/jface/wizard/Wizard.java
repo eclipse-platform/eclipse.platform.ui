@@ -73,7 +73,7 @@ public abstract class Wizard implements IWizard {
     /**
      * This wizard's list of pages (element type: <code>IWizardPage</code>).
      */
-    private List pages = new ArrayList();
+    private List<IWizardPage> pages = new ArrayList<IWizardPage>();
 
     /**
      * Indicates whether this wizard needs a progress monitor.
@@ -152,7 +152,7 @@ public abstract class Wizard implements IWizard {
     public boolean canFinish() {
         // Default implementation is to check if all pages are complete.
         for (int i = 0; i < pages.size(); i++) {
-            if (!((IWizardPage) pages.get(i)).isPageComplete()) {
+            if (!pages.get(i).isPageComplete()) {
 				return false;
 			}
         }
@@ -170,7 +170,7 @@ public abstract class Wizard implements IWizard {
     public void createPageControls(Composite pageContainer) {
         // the default behavior is to create all the pages controls
         for (int i = 0; i < pages.size(); i++) {
-            IWizardPage page = (IWizardPage) pages.get(i);
+            IWizardPage page = pages.get(i);
             page.createControl(pageContainer);
             // page is responsible for ensuring the created control is
             // accessable
@@ -190,7 +190,7 @@ public abstract class Wizard implements IWizard {
         // notify pages
         for (int i = 0; i < pages.size(); i++) {
 			try {
-	            ((IWizardPage) pages.get(i)).dispose();
+	            pages.get(i).dispose();
 			} catch (Exception e) {
 				Status status = new Status(IStatus.ERROR, Policy.JFACE, IStatus.ERROR, e.getMessage(), e);
 				Policy.getLog().log(status);
@@ -237,7 +237,7 @@ public abstract class Wizard implements IWizard {
 			// last page or page not found
             return null;
 		}
-        return (IWizardPage) pages.get(index + 1);
+        return pages.get(index + 1);
     }
 
     /*
@@ -245,7 +245,7 @@ public abstract class Wizard implements IWizard {
      */
     public IWizardPage getPage(String name) {
         for (int i = 0; i < pages.size(); i++) {
-            IWizardPage page = (IWizardPage) pages.get(i);
+            IWizardPage page = pages.get(i);
             String pageName = page.getName();
             if (pageName.equals(name)) {
 				return page;
@@ -265,7 +265,7 @@ public abstract class Wizard implements IWizard {
      * (non-Javadoc) Method declared on IWizard.
      */
     public IWizardPage[] getPages() {
-        return (IWizardPage[]) pages.toArray(new IWizardPage[pages.size()]);
+        return pages.toArray(new IWizardPage[pages.size()]);
     }
 
     /*
@@ -278,7 +278,7 @@ public abstract class Wizard implements IWizard {
 			// first page or page not found
             return null;
 		} 
-		return (IWizardPage) pages.get(index - 1);
+		return pages.get(index - 1);
     }
 
     /**
@@ -302,7 +302,7 @@ public abstract class Wizard implements IWizard {
         if (pages.size() == 0) {
 			return null;
 		}
-        return (IWizardPage) pages.get(0);
+        return pages.get(0);
     }
 
     /*
