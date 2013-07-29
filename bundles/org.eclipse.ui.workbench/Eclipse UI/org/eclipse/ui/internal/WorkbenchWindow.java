@@ -570,6 +570,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		if (title != null) {
 			getShell().setText(TextProcessor.process(title, TEXT_DELIMITERS));
 		}
+		workbench.getHelpSystem().setHelp(getShell(), IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
 
 		initializeDefaultServices();
 
@@ -701,7 +702,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, enableAnimations);
 
 		getShell().setData(this);
-		workbench.getHelpSystem().setHelp(getShell(), IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
 		trackShellActivation();
 	}
 
