@@ -29,10 +29,12 @@ import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -808,6 +810,7 @@ public class TrimStack {
 			hostPane.layout(true);
 			hostPane.moveAbove(null);
 			hostPane.setVisible(true);
+			isShowing = true;
 
 			// Activate the part that is being brought up...
 			if (minimizedElement instanceof MPartStack) {
@@ -821,9 +824,39 @@ public class TrimStack {
 						partService.activate((MPart) ph.getRef());
 					}
 				}
+			} else if (minimizedElement instanceof MPlaceholder
+					&& ((MPlaceholder) minimizedElement).getRef() instanceof MArea) {
+				MArea area = (MArea) ((MPlaceholder) minimizedElement).getRef();
+
+				// See if we can find an element to activate...
+				MPart partToActivate = null;
+				MElementContainer<MPartSashContainerElement> curContainer = area;
+				while (partToActivate == null && curContainer.getSelectedElement() != null) {
+					if (curContainer.getSelectedElement() instanceof MPart) {
+						partToActivate = (MPart) curContainer.getSelectedElement();
+					} else if (curContainer.getSelectedElement() instanceof MPlaceholder) {
+						MPlaceholder ph = (MPlaceholder) curContainer.getSelectedElement();
+						if (ph.getRef() instanceof MPart) {
+							partToActivate = (MPart) ph.getRef();
+						}
+					} else if (curContainer.getSelectedElement() instanceof MElementContainer<?>) {
+						curContainer = (MElementContainer<MPartSashContainerElement>) curContainer
+								.getSelectedElement();
+					}
+				}
+
+				// If we haven't found one then use the first
+				if (partToActivate == null) {
+					List<MPart> parts = modelService.findElements(area, null, MPart.class, null);
+					if (parts.size() > 0)
+						partToActivate = parts.get(0);
+				}
+
+				if (partToActivate != null) {
+					partService.activate(partToActivate);
+				}
 			}
 
-			isShowing = true;
 			fixToolItemSelection();
 		} else if (!show && isShowing) {
 			// Check to ensure that the client area is non-null since the
