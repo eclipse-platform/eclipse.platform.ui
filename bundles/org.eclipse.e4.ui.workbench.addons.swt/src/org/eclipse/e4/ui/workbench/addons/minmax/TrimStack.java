@@ -826,7 +826,7 @@ public class TrimStack {
 			ctf.setParent(hostPane);
 
 			clientArea.addControlListener(caResizeListener);
-			clientArea.getDisplay().addFilter(SWT.MouseUp, mouseDownFilter);
+			clientArea.getDisplay().addFilter(SWT.MouseDown, mouseDownFilter);
 
 			// Set the initial location
 			setPaneLocation(hostPane);
@@ -842,7 +842,7 @@ public class TrimStack {
 			// trimstack may be currently hosted in the limbo shell
 			if (clientArea != null) {
 				clientArea.removeControlListener(caResizeListener);
-				clientArea.getDisplay().removeFilter(SWT.MouseUp, mouseDownFilter);
+				clientArea.getDisplay().removeFilter(SWT.MouseDown, mouseDownFilter);
 			}
 
 			if (hostPane != null && hostPane.isVisible()) {
