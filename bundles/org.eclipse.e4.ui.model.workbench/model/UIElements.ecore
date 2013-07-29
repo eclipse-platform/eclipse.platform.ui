@@ -938,6 +938,11 @@
           </eAnnotations>
         </eStructuralFeatures>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="CompositePart" eSuperTypes="#//ui/basic/Part #//ui/basic/PartSashContainer">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a Part that is capable of supporting an internal structure. In order to be useful instances of this part muct be capable&#xD;&#xA;of managing their internal structure.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.1&#xD;&#xA;"/>
+        </eAnnotations>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="InputPart" eSuperTypes="#//ui/basic/Part #//ui/Input">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="&lt;p>&#xD;&#xA;This is a subclass of Part that allows tracking of an 'input'. While originally defined as&#xD;&#xA;a type of 'editor' it turns out that it may well be better to just use a regular Part and&#xD;&#xA;to store what would be the input as an entry on the Part's 'persistentData' map.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>

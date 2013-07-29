@@ -38,6 +38,15 @@ public interface MBasicFactory {
 	MPart createPart();
 
 	/**
+	 * Returns a new object of class '<em>Composite Part</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Composite Part</em>'.
+	 * @generated
+	 */
+	MCompositePart createCompositePart();
+
+	/**
 	 * Returns a new object of class '<em>Input Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

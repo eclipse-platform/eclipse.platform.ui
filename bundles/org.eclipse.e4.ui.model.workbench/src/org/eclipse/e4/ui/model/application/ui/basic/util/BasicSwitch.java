@@ -104,6 +104,27 @@ public class BasicSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case BasicPackageImpl.COMPOSITE_PART: {
+				MCompositePart compositePart = (MCompositePart)theEObject;
+				T1 result = caseCompositePart(compositePart);
+				if (result == null) result = casePart(compositePart);
+				if (result == null) result = casePartSashContainer(compositePart);
+				if (result == null) result = casePartSashContainerElement(compositePart);
+				if (result == null) result = caseStackElement(compositePart);
+				if (result == null) result = caseContribution(compositePart);
+				if (result == null) result = caseContext(compositePart);
+				if (result == null) result = caseUILabel(compositePart);
+				if (result == null) result = caseHandlerContainer(compositePart);
+				if (result == null) result = caseDirtyable(compositePart);
+				if (result == null) result = caseBindings(compositePart);
+				if (result == null) result = caseWindowElement(compositePart);
+				if (result == null) result = caseGenericTile(compositePart);
+				if (result == null) result = caseApplicationElement(compositePart);
+				if (result == null) result = caseElementContainer(compositePart);
+				if (result == null) result = caseUIElement(compositePart);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case BasicPackageImpl.INPUT_PART: {
 				MInputPart inputPart = (MInputPart)theEObject;
 				T1 result = caseInputPart(inputPart);
@@ -234,6 +255,21 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 casePart(MPart object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Composite Part</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Composite Part</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseCompositePart(MCompositePart object) {
 		return null;
 	}
 

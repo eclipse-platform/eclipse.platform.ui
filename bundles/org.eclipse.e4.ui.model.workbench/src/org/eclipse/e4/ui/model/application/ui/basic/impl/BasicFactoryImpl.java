@@ -70,6 +70,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case BasicPackageImpl.PART: return (EObject)createPart();
+			case BasicPackageImpl.COMPOSITE_PART: return (EObject)createCompositePart();
 			case BasicPackageImpl.INPUT_PART: return (EObject)createInputPart();
 			case BasicPackageImpl.PART_STACK: return (EObject)createPartStack();
 			case BasicPackageImpl.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
@@ -89,6 +90,16 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	public MPart createPart() {
 		PartImpl part = new PartImpl();
 		return part;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MCompositePart createCompositePart() {
+		CompositePartImpl compositePart = new CompositePartImpl();
+		return compositePart;
 	}
 
 	/**
