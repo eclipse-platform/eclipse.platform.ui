@@ -34,6 +34,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -108,28 +109,6 @@ public class TrimStack {
 	 * A map of created images from a part's icon URI path.
 	 */
 	private Map<String, Image> imageMap = new HashMap<String, Image>();
-
-	private Listener mouseDownFilter = new Listener() {
-		public void handleEvent(Event event) {
-			if (!(event.widget instanceof Control))
-				return;
-			Control ctrl = (Control) event.widget;
-			Point p = new Point(event.x, event.y);
-			p = event.display.map(ctrl, null, p);
-
-			Rectangle caBounds = hostPane.getBounds();
-			caBounds = event.display.map(hostPane.getParent(), null, caBounds);
-			boolean inHostPane = caBounds.contains(p);
-
-			TrimmedPartLayout tpl = (TrimmedPartLayout) hostPane.getShell().getLayout();
-			Rectangle shellCABounds = tpl.clientArea.getBounds();
-			shellCABounds = event.display.map(tpl.clientArea.getParent(), null, shellCABounds);
-			boolean inShellCA = shellCABounds.contains(p);
-
-			if (inShellCA && !inHostPane)
-				showStack(false);
-		}
-	};
 
 	ControlListener caResizeListener = new ControlListener() {
 		public void controlResized(ControlEvent e) {
@@ -826,7 +805,6 @@ public class TrimStack {
 			ctf.setParent(hostPane);
 
 			clientArea.addControlListener(caResizeListener);
-			clientArea.getDisplay().addFilter(SWT.MouseDown, mouseDownFilter);
 
 			// Set the initial location
 			setPaneLocation(hostPane);
@@ -835,6 +813,20 @@ public class TrimStack {
 			hostPane.moveAbove(null);
 			hostPane.setVisible(true);
 
+			// Activate the part that is being brought up...
+			if (minimizedElement instanceof MPartStack) {
+				MPartStack theStack = (MPartStack) minimizedElement;
+				MStackElement curSel = theStack.getSelectedElement();
+				if (curSel instanceof MPart) {
+					partService.activate((MPart) curSel);
+				} else if (curSel instanceof MPlaceholder) {
+					MPlaceholder ph = (MPlaceholder) curSel;
+					if (ph.getRef() instanceof MPart) {
+						partService.activate((MPart) ph.getRef());
+					}
+				}
+			}
+
 			isShowing = true;
 			fixToolItemSelection();
 		} else if (!show && isShowing) {
@@ -842,7 +834,6 @@ public class TrimStack {
 			// trimstack may be currently hosted in the limbo shell
 			if (clientArea != null) {
 				clientArea.removeControlListener(caResizeListener);
-				clientArea.getDisplay().removeFilter(SWT.MouseDown, mouseDownFilter);
 			}
 
 			if (hostPane != null && hostPane.isVisible()) {
