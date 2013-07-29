@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids - bug 69254
+ *     Hendrik Still <hendrik.still@gammas.de> - bug 412273
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -29,11 +30,13 @@ import org.eclipse.swt.widgets.Control;
  * and configured with a domain-specific content provider, label provider, element
  * filter (optional), and element sorter (optional).
  * </p>
+ * @param <E> Type of an element of the model
+ * @param <I> Type of the input
  * 
  * @see org.eclipse.jface.viewers.ListViewer
  * @since 3.0 (made non-final in 3.4)
  */
-public class ComboViewer extends AbstractListViewer {
+public class ComboViewer<E,I>  extends AbstractListViewer<E,I> {
 
     /**
      * This viewer's list control if this viewer is instantiated with a combo control; otherwise

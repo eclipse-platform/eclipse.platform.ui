@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hendrik Still <hendrik.still@gammas.de> - bug 412273
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
 /** 
  * A content provider mediates between the viewer's model
  * and the viewer itself.
+ * @param <I> Type of the input for the view
  * 
  * @see org.eclipse.jface.viewers.ContentViewer#setContentProvider(IContentProvider)
  */
-public interface IContentProvider {
+public interface IContentProvider<I> {
     /**
      * Disposes of this content provider.  
      * This is called by the viewer when it is disposed.
@@ -47,5 +49,5 @@ public interface IContentProvider {
      * @param newInput the new input element, or <code>null</code> if the viewer
      *   does not have an input
      */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput);
+    public void inputChanged(Viewer<I> viewer, I oldInput, I newInput);
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hendrik Still <hendrik.still@gammas.de> - bug 412273
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -47,25 +48,27 @@ import org.eclipse.swt.widgets.Control;
  * support selections (<code>setSelection</code>, <code>getSelection</code>)
  * </ul>
  * </p>
+ * @param <E> Type of an element of the model
+ * @param <I> Type of the input
  */
-public abstract class ContentViewer extends Viewer {
+public abstract class ContentViewer<E,I> extends Viewer<I>{
 
     /**
      * This viewer's content provider, or <code>null</code> if none.
      */
-    private IContentProvider contentProvider = null;
+    private IContentProvider<I> contentProvider = null;
 
     /**
      * This viewer's input, or <code>null</code> if none.
      * The viewer's input provides the "model" for the viewer's content.
      */
-    private Object input = null;
+    private I input = null;
 
     /**
      * This viewer's label provider. Initially <code>null</code>, but
      * lazily initialized (to a <code>SimpleLabelProvider</code>).
      */
-    private IBaseLabelProvider labelProvider = null;
+    private IBaseLabelProvider<E> labelProvider = null;
 
     /**
      * This viewer's label provider listener.
@@ -119,7 +122,7 @@ public abstract class ContentViewer extends Viewer {
      *
      * @return the content provider, or <code>null</code> if none
      */
-    public IContentProvider getContentProvider() {
+    public IContentProvider<I> getContentProvider() {
         return contentProvider;
     }
 
@@ -130,7 +133,7 @@ public abstract class ContentViewer extends Viewer {
      * content.
      */
     @Override
-	public Object getInput() {
+	public I getInput() {
         return input;
     }
 
@@ -148,9 +151,9 @@ public abstract class ContentViewer extends Viewer {
      *
      * @return a label provider
      */
-    public IBaseLabelProvider getLabelProvider() {
+    public IBaseLabelProvider<E> getLabelProvider() {
         if (labelProvider == null) {
-			labelProvider = new LabelProvider();
+			labelProvider = new LabelProvider<E>();
 		}
         return labelProvider;
     }
@@ -241,12 +244,12 @@ public abstract class ContentViewer extends Viewer {
      * @param contentProvider the content provider
      * @see #getContentProvider
      */
-    public void setContentProvider(IContentProvider contentProvider) {
+    public void setContentProvider(IContentProvider<I> contentProvider) {
         Assert.isNotNull(contentProvider);
-        IContentProvider oldContentProvider = this.contentProvider;
+        IContentProvider<I> oldContentProvider = this.contentProvider;
         this.contentProvider = contentProvider;
         if (oldContentProvider != null) {
-            Object currentInput = getInput();
+            I currentInput = getInput();
             oldContentProvider.inputChanged(this, currentInput, null);
             oldContentProvider.dispose();
             contentProvider.inputChanged(this, null, currentInput);
@@ -263,7 +266,7 @@ public abstract class ContentViewer extends Viewer {
      * if required.
      */
     @Override
-	public void setInput(Object input) {
+	public void setInput(I input) {
     	Control control = getControl();
 		if (control == null || control.isDisposed()) {
 			throw new IllegalStateException(
@@ -274,7 +277,7 @@ public abstract class ContentViewer extends Viewer {
                 .isTrue(getContentProvider() != null,
                         "ContentViewer must have a content provider when input is set."); //$NON-NLS-1$
 
-        Object oldInput = getInput();
+        I oldInput = getInput();
         contentProvider.inputChanged(this, oldInput, input);
         this.input = input;
 
@@ -295,8 +298,8 @@ public abstract class ContentViewer extends Viewer {
      *
      * @param labelProvider the label provider, or <code>null</code> if none
      */
-    public void setLabelProvider(IBaseLabelProvider labelProvider) {
-        IBaseLabelProvider oldProvider = this.labelProvider;
+    public void setLabelProvider(IBaseLabelProvider<E> labelProvider) {
+        IBaseLabelProvider<E> oldProvider = this.labelProvider;
         // If it hasn't changed, do nothing.
         // This also ensures that the provider is not disposed
         // if set a second time.
@@ -323,7 +326,7 @@ public abstract class ContentViewer extends Viewer {
 	 * 
 	 * @since 3.4
 	 */
-	void internalDisposeLabelProvider(IBaseLabelProvider oldProvider) {
+	void internalDisposeLabelProvider(IBaseLabelProvider<E> oldProvider) {
 		oldProvider.dispose();
 	}
 }
