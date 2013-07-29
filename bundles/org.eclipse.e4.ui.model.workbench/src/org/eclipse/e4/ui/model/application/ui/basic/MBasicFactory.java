@@ -16,6 +16,7 @@ package org.eclipse.e4.ui.model.application.ui.basic;
  * The <b>Factory</b> for the model.
  * It provides a create method for each non-abstract class of the model.
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-user-doc -->
  * @generated
  */
@@ -40,6 +41,7 @@ public interface MBasicFactory {
 	/**
 	 * Returns a new object of class '<em>Composite Part</em>'.
 	 * <!-- begin-user-doc -->
+	 * @since 1.1
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Composite Part</em>'.
 	 * @generated

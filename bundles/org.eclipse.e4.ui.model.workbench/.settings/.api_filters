@@ -20,6 +20,13 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MBasicFactory.java" type="org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/ItemType.java" type="org.eclipse.e4.ui.model.application.ui.menu.ItemType">
         <filter comment="Bug 411257 - .api_description files in Kepler release do not contain @noreference" id="371236918">
             <message_arguments>
