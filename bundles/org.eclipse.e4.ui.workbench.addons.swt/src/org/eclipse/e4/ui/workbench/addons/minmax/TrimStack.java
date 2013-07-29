@@ -109,6 +109,28 @@ public class TrimStack {
 	 */
 	private Map<String, Image> imageMap = new HashMap<String, Image>();
 
+	private Listener mouseDownFilter = new Listener() {
+		public void handleEvent(Event event) {
+			if (!(event.widget instanceof Control))
+				return;
+			Control ctrl = (Control) event.widget;
+			Point p = new Point(event.x, event.y);
+			p = event.display.map(ctrl, null, p);
+
+			Rectangle caBounds = hostPane.getBounds();
+			caBounds = event.display.map(hostPane.getParent(), null, caBounds);
+			boolean inHostPane = caBounds.contains(p);
+
+			TrimmedPartLayout tpl = (TrimmedPartLayout) hostPane.getShell().getLayout();
+			Rectangle shellCABounds = tpl.clientArea.getBounds();
+			shellCABounds = event.display.map(tpl.clientArea.getParent(), null, shellCABounds);
+			boolean inShellCA = shellCABounds.contains(p);
+
+			if (inShellCA && !inHostPane)
+				showStack(false);
+		}
+	};
+
 	ControlListener caResizeListener = new ControlListener() {
 		public void controlResized(ControlEvent e) {
 			if (hostPane != null && hostPane.isVisible())
@@ -804,6 +826,7 @@ public class TrimStack {
 			ctf.setParent(hostPane);
 
 			clientArea.addControlListener(caResizeListener);
+			clientArea.getDisplay().addFilter(SWT.MouseUp, mouseDownFilter);
 
 			// Set the initial location
 			setPaneLocation(hostPane);
@@ -817,8 +840,10 @@ public class TrimStack {
 		} else if (!show && isShowing) {
 			// Check to ensure that the client area is non-null since the
 			// trimstack may be currently hosted in the limbo shell
-			if (clientArea != null)
+			if (clientArea != null) {
 				clientArea.removeControlListener(caResizeListener);
+				clientArea.getDisplay().removeFilter(SWT.MouseUp, mouseDownFilter);
+			}
 
 			if (hostPane != null && hostPane.isVisible()) {
 				hostPane.setVisible(false);
