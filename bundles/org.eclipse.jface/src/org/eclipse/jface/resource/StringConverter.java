@@ -862,7 +862,8 @@ public class StringConverter {
      * @return The string representation of the font data object.
      * @deprecated use asString(FontData)
      */
-    public static String asDisplayableString(FontData value) {
+    @Deprecated
+	public static String asDisplayableString(FontData value) {
         Assert.isNotNull(value);
         StringBuffer buffer = new StringBuffer();
         buffer.append(value.getName());

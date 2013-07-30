@@ -195,7 +195,8 @@ public class InputDialog extends Dialog {
      * @return the error message label
      * @deprecated use setErrorMessage(String) instead
      */
-    protected Label getErrorMessageLabel() {
+    @Deprecated
+	protected Label getErrorMessageLabel() {
         return null;
     }
 

@@ -45,6 +45,7 @@ package org.eclipse.jface.util;
  *             with {@link org.eclipse.core.runtime.ListenerList#IDENTITY} as
  *             the argument.
  */
+@Deprecated
 public class ListenerList extends org.eclipse.core.runtime.ListenerList {
 
 	/**

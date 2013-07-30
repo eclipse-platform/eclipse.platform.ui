@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.2
  * @deprecated As of 3.3, this class is no longer necessary.
  */
+@Deprecated
 public class FieldAssistColors {
 
 	private static boolean DEBUG = false;

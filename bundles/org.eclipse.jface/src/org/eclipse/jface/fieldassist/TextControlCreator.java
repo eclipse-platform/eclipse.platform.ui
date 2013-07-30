@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Text;
  *             of {@link DecoratedField}.
  * 
  */
+@Deprecated
 public class TextControlCreator implements IControlCreator {
 
 	public Control createControl(Composite parent, int style) {

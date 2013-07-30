@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Text;
  * @deprecated As of 3.3, this class is no longer necessary.
  * 
  */
+@Deprecated
 public class ImageAndMessageArea extends Composite {
 
 	private int BORDER_MARGIN = IDialogConstants.HORIZONTAL_SPACING / 2;

@@ -314,7 +314,8 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
      * @return the tool tip text, or <code>null</code> if none
      * @deprecated 
      */
-    protected final String getToolTipText(int widgetId) {
+    @Deprecated
+	protected final String getToolTipText(int widgetId) {
         // return nothing by default
         return null;
     }

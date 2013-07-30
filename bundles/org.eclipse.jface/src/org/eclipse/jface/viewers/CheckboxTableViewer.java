@@ -67,7 +67,8 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      * @deprecated use newCheckList(Composite, int) or new CheckboxTableViewer(Table)
      *   instead (see below for details)
      */
-    public CheckboxTableViewer(Composite parent) {
+    @Deprecated
+	public CheckboxTableViewer(Composite parent) {
         this(parent, SWT.BORDER);
     }
 
@@ -102,7 +103,8 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      * @deprecated use newCheckList(Composite, int) or new CheckboxTableViewer(Table) 
      *   instead (see above for details)
      */
-    public CheckboxTableViewer(Composite parent, int style) {
+    @Deprecated
+	public CheckboxTableViewer(Composite parent, int style) {
         this(createTable(parent, style));
     }
 

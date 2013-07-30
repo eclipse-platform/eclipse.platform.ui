@@ -677,6 +677,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            the SWT selection listener
 	 * @deprecated
 	 */
+	@Deprecated
 	protected void addSelectionListener(Control control,
 			SelectionListener listener) {
 		// do nothing
@@ -2597,6 +2598,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            the child elements, or null
 	 * @deprecated this is no longer called by the framework
 	 */
+	@Deprecated
 	protected void updateChildren(Widget widget, Object parent,
 			Object[] elementChildren) {
 		updateChildren(widget, parent, elementChildren, true);
@@ -2859,6 +2861,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @deprecated This method was inadvertently released as API but is not
 	 *             intended to be called by clients.
 	 */
+	@Deprecated
 	public Item[] getChildren(Widget widget,  Object[] elementChildren) {
 		return getChildren(widget);
 	}

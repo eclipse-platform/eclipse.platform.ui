@@ -67,6 +67,7 @@ public abstract class Dialog extends Window {
 	 * @deprecated use
 	 *             org.eclipse.swt.widgets.Display.getSystemImage(SWT.ICON_ERROR)
 	 */
+	@Deprecated
 	public static final String DLG_IMG_ERROR = "dialog_error_image"; //$NON-NLS-1$
 
 	/**
@@ -75,6 +76,7 @@ public abstract class Dialog extends Window {
 	 * @deprecated use
 	 *             org.eclipse.swt.widgets.Display.getSystemImage(SWT.ICON_INFORMATION)
 	 */
+	@Deprecated
 	public static final String DLG_IMG_INFO = "dialog_info_imageg"; //$NON-NLS-1$
 
 	/**
@@ -83,6 +85,7 @@ public abstract class Dialog extends Window {
 	 * 
 	 * @deprecated org.eclipse.swt.widgets.Display.getSystemImage(SWT.ICON_QUESTION)
 	 */
+	@Deprecated
 	public static final String DLG_IMG_QUESTION = "dialog_question_image"; //$NON-NLS-1$
 
 	/**
@@ -92,6 +95,7 @@ public abstract class Dialog extends Window {
 	 * @deprecated use
 	 *             org.eclipse.swt.widgets.Display.getSystemImage(SWT.ICON_WARNING)
 	 */
+	@Deprecated
 	public static final String DLG_IMG_WARNING = "dialog_warning_image"; //$NON-NLS-1$
 
 	/**
@@ -869,6 +873,7 @@ public abstract class Dialog extends Window {
 	 * @deprecated Use <code>getButton(IDialogConstants.CANCEL_ID)</code>
 	 *             instead. This method will be removed soon.
 	 */
+	@Deprecated
 	protected Button getCancelButton() {
 		return getButton(IDialogConstants.CANCEL_ID);
 	}
@@ -922,6 +927,7 @@ public abstract class Dialog extends Window {
 	 * @deprecated Use <code>getButton(IDialogConstants.OK_ID)</code> instead.
 	 *             This method will be removed soon.
 	 */
+	@Deprecated
 	protected Button getOKButton() {
 		return getButton(IDialogConstants.OK_ID);
 	}

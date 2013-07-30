@@ -111,6 +111,7 @@ public class PopupDialog extends Window {
 	 * 
 	 * @deprecated Since 3.4, this is retained only for backward compatibility.
 	 */
+	@Deprecated
 	private static final String DIALOG_USE_PERSISTED_BOUNDS = "DIALOG_USE_PERSISTED_BOUNDS"; //$NON-NLS-1$
 
 	/**
@@ -121,6 +122,7 @@ public class PopupDialog extends Window {
 	 * @deprecated This is marked deprecated at its introduction to discourage
 	 *             future dependency
 	 */
+	@Deprecated
 	private static final String DIALOG_VALUE_MIGRATED_TO_34 = "hasBeenMigratedTo34"; //$NON-NLS-1$
 
 	/**
@@ -453,6 +455,7 @@ public class PopupDialog extends Window {
 	 * @deprecated As of 3.4, replaced by
 	 *             {@link #PopupDialog(Shell, int, boolean, boolean, boolean, boolean, boolean, String, String)}
 	 */
+	@Deprecated
 	public PopupDialog(Shell parent, int shellStyle, boolean takeFocusOnOpen,
 			boolean persistBounds, boolean showDialogMenu,
 			boolean showPersistActions, String titleText, String infoText) {
@@ -1090,6 +1093,7 @@ public class PopupDialog extends Window {
 	 *             {@link #getPersistSize()} to determine separately whether
 	 *             size or location should be persisted.
 	 */
+	@Deprecated
 	protected boolean getPersistBounds() {
 		return persistLocation && persistSize;
 	}

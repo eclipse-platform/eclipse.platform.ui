@@ -627,6 +627,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
      *  
      *  @since 3.2
      */
+	@Deprecated
 	public void setAllChecked(boolean state) {
 		setAllChecked(state,  getTree().getItems());
 		
@@ -639,6 +640,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	 * @deprecated
 	 * @see #setAllChecked(boolean)
 	 */
+	@Deprecated
 	private void setAllChecked(boolean state, TreeItem[] items) {
 		for (int i = 0; i < items.length; i++) {
 			items[i].setChecked(state);			

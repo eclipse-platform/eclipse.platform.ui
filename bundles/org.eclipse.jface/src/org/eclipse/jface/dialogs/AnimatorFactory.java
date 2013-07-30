@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.2
  * @deprecated as of 3.3, this class is no longer used.
  */
+@Deprecated
 public class AnimatorFactory {
 	/**
 	 * Creates a new ControlAnimator for use by JFace in animating
