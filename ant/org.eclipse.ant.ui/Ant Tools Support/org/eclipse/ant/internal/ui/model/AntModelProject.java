@@ -168,6 +168,7 @@ public class AntModelProject extends Project {
 	 * 
 	 * @see org.apache.tools.ant.Project#getReference(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getReference(String key) {
 		T ref = super.getReference(key);/* references.get(key); */
