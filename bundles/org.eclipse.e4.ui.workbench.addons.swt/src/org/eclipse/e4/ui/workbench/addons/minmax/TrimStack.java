@@ -34,6 +34,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -807,6 +808,20 @@ public class TrimStack {
 			hostPane.layout(true);
 			hostPane.moveAbove(null);
 			hostPane.setVisible(true);
+
+			// Activate the part that is being brought up...
+			if (minimizedElement instanceof MPartStack) {
+				MPartStack theStack = (MPartStack) minimizedElement;
+				MStackElement curSel = theStack.getSelectedElement();
+				if (curSel instanceof MPart) {
+					partService.activate((MPart) curSel);
+				} else if (curSel instanceof MPlaceholder) {
+					MPlaceholder ph = (MPlaceholder) curSel;
+					if (ph.getRef() instanceof MPart) {
+						partService.activate((MPart) ph.getRef());
+					}
+				}
+			}
 
 			isShowing = true;
 			fixToolItemSelection();
