@@ -36,71 +36,78 @@ import org.eclipse.ui.externaltools.internal.model.BuilderUtils;
 public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 
 	static final String EXT_BUILD_FILE_NAME = "ext-builders.xml"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param name
 	 */
 	public AbstractExternalToolTest(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Creates a new external tool builder for the given project from the given {@link ILaunchConfiguration}
 	 * 
-	 * @param project the parent project
-	 * @param name the name of the config
-	 * @param args the argument map to set in the new configuration
+	 * @param project
+	 *            the parent project
+	 * @param name
+	 *            the name of the config
+	 * @param args
+	 *            the argument map to set in the new configuration
 	 * @return a new Ant build {@link ILaunchConfiguration} or <code>null</code>
 	 * @throws Exception
 	 */
-	protected ILaunchConfiguration createExternalToolBuilder(IProject project, String name, Map<?, ?> args) throws Exception {
+	protected ILaunchConfiguration createExternalToolBuilder(IProject project, String name, Map<String, ? extends Object> args) throws Exception {
 		IFolder dir = getProject().getFolder(BuilderCoreUtils.BUILDER_FOLDER_NAME);
-		if(!dir.exists()) {
+		if (!dir.exists()) {
 			dir.create(true, true, null);
 		}
 		ILaunchConfigurationType type = AbstractAntUITest.getLaunchManager().getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE);
-		if(type != null) {
+		if (type != null) {
 			ILaunchConfigurationWorkingCopy config = type.newInstance(dir, name);
 			config.setAttributes(args);
 			return config.doSave();
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates a new external tool Ant build configuration that has never been saved
+	 * 
 	 * @param project
 	 * @param name
 	 * @param args
 	 * @return
 	 * @throws Exception
 	 */
-	protected ILaunchConfigurationWorkingCopy createExternalToolBuilderWorkingCopy(IProject project, String name, Map<?, ?> args) throws Exception {
+	protected ILaunchConfigurationWorkingCopy createExternalToolBuilderWorkingCopy(IProject project, String name, Map<String, Object> args) throws Exception {
 		IFolder dir = getProject().getFolder(BuilderCoreUtils.BUILDER_FOLDER_NAME);
-		if(!dir.exists()) {
+		if (!dir.exists()) {
 			dir.create(true, true, null);
 		}
 		ILaunchConfigurationType type = AbstractAntUITest.getLaunchManager().getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE);
-		if(type != null) {
+		if (type != null) {
 			ILaunchConfigurationWorkingCopy config = type.newInstance(dir, name);
 			config.setAttributes(args);
 			return config;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates a new empty {@link ICommand}
+	 * 
 	 * @return the new build {@link ICommand}
 	 * @throws Exception
 	 */
 	protected ICommand createEmptyBuildCommand() throws Exception {
 		return getProject().getDescription().newCommand();
 	}
-	
+
 	/**
 	 * Creates a new builder {@link ICommand}
+	 * 
 	 * @param config
 	 * @return the new builder {@link ICommand}
 	 * @throws Exception
@@ -108,15 +115,14 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	protected ICommand createBuildCommand(ILaunchConfiguration config) throws Exception {
 		return BuilderUtils.commandFromLaunchConfig(getProject(), config);
 	}
-	
+
 	/**
-	 * Returns a map of arguments for an Ant buildfile using
-	 * Eclipse 2.0 arguments.
+	 * Returns a map of arguments for an Ant buildfile using Eclipse 2.0 arguments.
 	 * 
 	 * @return a map of 2.0 arguments for an Ant buildfile.
 	 */
 	protected Map<String, String> get20AntArgumentMap() {
-		HashMap<String, String> arguments= new HashMap<String, String>();
+		HashMap<String, String> arguments = new HashMap<String, String>();
 		arguments.put(ExternalToolMigration.TAG_VERSION, "2.0"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TOOL_TYPE, "org.eclipse.ui.externaltools.type.ant"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TOOL_NAME, "ant tool"); //$NON-NLS-1$
@@ -129,15 +135,14 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 		arguments.put(ExternalToolMigration.TAG_TOOL_DIRECTORY, "working dir"); //$NON-NLS-1$
 		return arguments;
 	}
-	
+
 	/**
-	 * Returns a map of arguments for executing a program
-	 * using Eclipse 2.0 arguments.
+	 * Returns a map of arguments for executing a program using Eclipse 2.0 arguments.
 	 * 
 	 * @return a map of 2.0 arguments for a program
 	 */
 	protected Map<String, String> get20ProgramArgumentMap() {
-		HashMap<String, String> arguments= new HashMap<String, String>();
+		HashMap<String, String> arguments = new HashMap<String, String>();
 		arguments.put(ExternalToolMigration.TAG_VERSION, "2.0"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TOOL_TYPE, "org.eclipse.ui.externaltools.type.program"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TOOL_NAME, "program tool"); //$NON-NLS-1$
@@ -150,15 +155,14 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 		arguments.put(ExternalToolMigration.TAG_TOOL_DIRECTORY, "working dir"); //$NON-NLS-1$
 		return arguments;
 	}
-	
+
 	/**
-	 * Returns a map of arguments for executing an Ant
-	 * buildfile using Eclipse 2.1 arguments.
+	 * Returns a map of arguments for executing an Ant buildfile using Eclipse 2.1 arguments.
 	 * 
 	 * @return a map of 2.1 arguments for an Ant buildfile
 	 */
 	protected Map<String, String> get21AntArgumentMap() {
-		HashMap<String, String> arguments= new HashMap<String, String>();
+		HashMap<String, String> arguments = new HashMap<String, String>();
 		arguments.put(ExternalToolMigration.TAG_VERSION, "2.1"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_NAME, "ant config"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TYPE, ExternalToolMigration.TOOL_TYPE_ANT_BUILD);
@@ -176,15 +180,14 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 		arguments.put(ExternalToolMigration.TAG_EXTRA_ATTR, ExternalToolMigration.RUN_TARGETS_ATTRIBUTE + "=target1,target2"); //$NON-NLS-1$
 		return arguments;
 	}
-	
+
 	/**
-	 * Returns a map of arguments for executing a program
-	 * buildfile using Eclipse 2.1 arguments.
+	 * Returns a map of arguments for executing a program buildfile using Eclipse 2.1 arguments.
 	 * 
 	 * @return a map of 2.1 arguments for a program
 	 */
 	protected Map<String, String> get21ProgramArgumentMap() {
-		HashMap<String, String> arguments= new HashMap<String, String>();
+		HashMap<String, String> arguments = new HashMap<String, String>();
 		arguments.put(ExternalToolMigration.TAG_VERSION, "2.1"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_NAME, "program config"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TYPE, IExternalToolConstants.TOOL_TYPE_PROGRAM);
