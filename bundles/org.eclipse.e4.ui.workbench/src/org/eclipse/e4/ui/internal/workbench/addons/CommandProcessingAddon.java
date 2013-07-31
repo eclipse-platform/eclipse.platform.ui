@@ -17,9 +17,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.CommandManagerEvent;
+import org.eclipse.core.commands.ICommandManagerListener;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterType;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.Activator;
@@ -32,6 +36,7 @@ import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -51,9 +56,49 @@ public class CommandProcessingAddon {
 	@Inject
 	private IEventBroker broker;
 
+	@Inject
+	private EModelService modelService;
+
 	private Category undefinedCategory;
 
 	private EventHandler additionHandler;
+
+	private ICommandManagerListener cmListener;
+
+	/**
+	 * @param cmd
+	 * @param modelService
+	 * @param categoryModel
+	 * @return a command model element
+	 * @throws NotDefinedException
+	 */
+	public static MCommand createCommand(Command cmd, EModelService modelService,
+			final MCategory categoryModel) throws NotDefinedException {
+		MCommand command = modelService.createModelElement(MCommand.class);
+		command.setElementId(cmd.getId());
+		command.setCategory(categoryModel);
+		command.setCommandName(cmd.getName());
+		command.setDescription(cmd.getDescription());
+
+		// deal with parameters
+		// command.getParameters().addAll(parameters);
+		IParameter[] cmdParms = cmd.getParameters();
+		if (cmdParms != null) {
+			for (IParameter cmdParm : cmdParms) {
+				MCommandParameter parmModel = modelService
+						.createModelElement(MCommandParameter.class);
+				parmModel.setElementId(cmdParm.getId());
+				parmModel.setName(cmdParm.getName());
+				parmModel.setOptional(cmdParm.isOptional());
+				ParameterType parmType = cmd.getParameterType(cmdParm.getId());
+				if (parmType != null) {
+					parmModel.setTypeId(parmType.getId());
+				}
+				command.getParameters().add(parmModel);
+			}
+		}
+		return command;
+	}
 
 	@PostConstruct
 	public void init() {
@@ -63,10 +108,12 @@ public class CommandProcessingAddon {
 		createCategories();
 		createCommands();
 		registerModelListeners();
+		registerCommandListener();
 	}
 
 	@PreDestroy
 	public void dispose() {
+		unregisterCommandListener();
 		unregsiterModelListeners();
 	}
 
@@ -93,6 +140,57 @@ public class CommandProcessingAddon {
 	private void unregsiterModelListeners() {
 		broker.unsubscribe(additionHandler);
 		broker.unsubscribe(additionHandler);
+	}
+
+	private void registerCommandListener() {
+		cmListener = new ICommandManagerListener() {
+			public void commandManagerChanged(CommandManagerEvent commandManagerEvent) {
+				if (commandManagerEvent.isCommandChanged()) {
+					if (commandManagerEvent.isCommandDefined()) {
+						final String commandId = commandManagerEvent.getCommandId();
+						if (findCommand(commandId) != null) {
+							return;
+						}
+						final Command command = commandManagerEvent.getCommandManager().getCommand(
+								commandId);
+
+						try {
+							MCategory categoryModel = findCategory(command.getCategory().getId());
+							final MCommand createdCommand = createCommand(command, modelService,
+									categoryModel);
+							application.getCommands().add(createdCommand);
+						} catch (NotDefinedException e) {
+							Activator.getDefault().getLogService()
+									.log(0, "Failed to create command " + commandId, e); //$NON-NLS-1$
+						}
+					}
+				}
+			}
+		};
+		commandManager.addCommandManagerListener(cmListener);
+	}
+
+	private void unregisterCommandListener() {
+		commandManager.removeCommandManagerListener(cmListener);
+	}
+
+	protected MCommand findCommand(String commandId) {
+		for (MCommand cmd : application.getCommands()) {
+			if (commandId.equals(cmd.getElementId())) {
+				return cmd;
+			}
+		}
+		return null;
+	}
+
+	protected MCategory findCategory(String id) {
+		final List<MCategory> categories = application.getCategories();
+		for (MCategory cat : categories) {
+			if (id.equals(cat.getElementId())) {
+				return cat;
+			}
+		}
+		return null;
 	}
 
 	private void createCommands() {
