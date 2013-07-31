@@ -26,8 +26,7 @@ import org.eclipse.jface.action.ToolBarContributionItem;
  * 
  * @since 3.2
  */
-public class ToolBarContributionItem2 extends ToolBarContributionItem implements
-		IToolBarContributionItem {
+public class ToolBarContributionItem2 extends ToolBarContributionItem {
 
 	/**
 	 * 
